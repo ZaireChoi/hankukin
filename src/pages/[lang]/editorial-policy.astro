@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LOCALES } from '../../config/brand.mjs';
+export async function getStaticPaths(){ return LOCALES.map((lang)=>({params:{lang}})); }
+const { lang } = Astro.params;
+---
+<BaseLayout lang={lang} path="editorial-policy" title="Editorial Policy"
+  description="Which sources we accept, how claims are worded, and what we refuse to publish.">
+  <div class="wrap policy">
+    <h1>Editorial Policy</h1>
+    <p class="updated">Last updated 13 August 2026</p>
+
+    <p>This page describes how information on HANKUKIN is sourced, graded and worded. It is written
+    for readers, but it is also the specification the publishing system runs on.</p>
+
+    <h2>Sources we accept</h2>
+    <ul>
+      <li>Broadcasters, production companies and agencies</li>
+      <li>Official artist and cast channels</li>
+      <li>Korea Tourism Organization, local governments and cultural institutions</li>
+      <li>Official restaurant, hotel and brand websites</li>
+      <li>Map and booking platforms</li>
+      <li>Named aggregate data such as Naver DataLab</li>
+      <li>Official interviews and established news media</li>
+    </ul>
+
+    <h2>Sources we do not treat as fact</h2>
+    <ul>
+      <li>Anonymous community posts</li>
+      <li>Fan blogs without their own sourcing</li>
+      <li>Sighting reports</li>
+      <li>Private accounts</li>
+      <li>Re-uploaded video whose only sourcing is its own description</li>
+    </ul>
+
+    <h2>How claims are worded</h2>
+    <p>The strength of a statement is determined by its sources, not by an editor's confidence. Every
+    location claim on this site carries one of the following labels, and the label is assigned
+    automatically:</p>
+    <ul>
+      <li><strong>Official filming location</strong> — confirmed by the production or a public body</li>
+      <li><strong>Confirmed in an official interview</strong> — a linked interview says so</li>
+      <li><strong>Official social media appearance</strong> — posted by an official account</li>
+      <li><strong>Reported by reliable media</strong> — at least two established outlets</li>
+      <li><strong>Inspired by the scene/look</strong> — a resemblance, not a confirmed fact</li>
+      <li><strong>Suggested nearby experience</strong> — our own recommendation, unrelated to any artist</li>
+    </ul>
+    <p>If the evidence for a stronger label is missing, the statement is automatically demoted to a
+    weaker one. It is never promoted.</p>
+
+    <h2>What is discarded outright</h2>
+    <p>The following are removed before drafting and are never escalated to a human for a decision:
+    current or former home addresses; family, friends or schools; real-time movements or sightings;
+    unverified claims about places an artist frequents; private relationships or health; medical or
+    cosmetic-procedure claims attached to a named person; routes that could enable stalking; any
+    personal information about a minor; and images whose rights are unclear.</p>
+
+    <h2>Photographs and images</h2>
+    <p>We do not copy drama screencaps or celebrity photographs. Images on this site are either
+    openly licensed location photography, self-made maps and diagrams, merchant-supplied product
+    images, or clearly labelled illustrations. Every image stores its licence, source and credit —
+    an image missing any of the three cannot be published.</p>
+
+    <h2>Photo guidance</h2>
+    <p>Where we suggest how to frame a shot, we are describing a vantage point that visitors can
+    reach. We are not stating where the production placed its camera, and we say so on every page
+    that carries photo guidance.</p>
+
+    <h2>Keeping pages current</h2>
+    <p>Addresses, business status and outbound links are checked automatically on a schedule. Prices
+    carry the date they were checked. When a place closes permanently, booking and purchase links are
+    removed and the page is kept only as a record of the filming site. Every article shows its last
+    verification date.</p>
+
+    <h2>Corrections</h2>
+    <p>Report an error from any page. Where reports indicate a substantive problem, the page is
+    withdrawn from public view while it is re-checked, rather than left up with a note.</p>
+
+    <h2>AI assistance</h2>
+    <p>Research, drafting, translation and verification are carried out with AI assistance under this
+    policy. Sources are recorded and linked. AI assistance does not relax any rule on this page — the
+    rules exist precisely because the volume is automated.</p>
+  </div>
+</BaseLayout>

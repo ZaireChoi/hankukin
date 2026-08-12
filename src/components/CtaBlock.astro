@@ -1,0 +1,22 @@
+---
+/** Visit Korea / Bring Korea Home — 관련성이 있을 때만 렌더링한다 (문서 01 §4) */
+const { heading, items = [], note } = Astro.props;
+const rel = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', suggested: 'Suggested' };
+---
+{items.length > 0 && (
+  <section class="block">
+    <h2>{heading}</h2>
+    <div class="cta-group">
+      {items.map((i) => (
+        <a class="cta" href={i.url} rel="sponsored nofollow noopener" target="_blank">
+          <span>
+            <span class="l">{i.label}</span><br />
+            <span class="m">{i.merchant} · <span class="rel">{rel[i.relationship] ?? i.relationship}</span></span>
+          </span>
+          <span class="arrow">→</span>
+        </a>
+      ))}
+    </div>
+    {note && <p class="notice">{note}</p>}
+  </section>
+)}

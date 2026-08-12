@@ -1,0 +1,15 @@
+# Phase 2 자리표시 — 링크·장소 상태 자동 점검 (05 §4)
+# 활성화 전 필요: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CLOUDFLARE_DEPLOY_HOOK_URL
+name: link-check
+on:
+  schedule:
+    - cron: '0 18 * * *'   # 매일 03:00 KST
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: echo "Phase 2에서 구현. 현재는 수동 실행만 가능한 자리표시."

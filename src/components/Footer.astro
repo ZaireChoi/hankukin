@@ -1,0 +1,22 @@
+---
+import { BRAND } from '../config/brand.mjs';
+const { lang = 'en' } = Astro.props;
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="wrap wide">
+    <div class="cols">
+      <a href={`/${lang}/about`}>About</a>
+      <a href={`/${lang}/editorial-policy`}>Editorial Policy</a>
+      <a href={`/${lang}/affiliate-disclosure`}>Affiliate Disclosure</a>
+      <a href={`/${lang}/privacy`}>Privacy Policy</a>
+      <a href={`/${lang}/contact`}>Contact &amp; Report an Error</a>
+    </div>
+    <p class="fine">
+      {BRAND.name} — {BRAND.tagline} We are an independent guide and are not affiliated with any
+      broadcaster, agency, artist or public body. Some links are affiliate links; see our
+      <a href={`/${lang}/affiliate-disclosure`}>disclosure</a>.
+    </p>
+    <p class="fine">© {year} {BRAND.legalName || BRAND.name}. Contact: {BRAND.supportEmail}</p>
+  </div>
+</footer>

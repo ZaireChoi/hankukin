@@ -1,0 +1,7 @@
+---
+import { ALLOWED_WORDING } from '../lib/claims.mjs';
+const { wording } = Astro.props;
+const w = Object.values(ALLOWED_WORDING).find((x) => x.id === wording) ?? ALLOWED_WORDING.INSPIRED_BY;
+const mark = w.tone === 'verified' ? '✓' : w.tone === 'reported' ? '◐' : '○';
+---
+<span class={`badge ${w.tone}`} title="How this claim is sourced">{mark} {w.label}</span>

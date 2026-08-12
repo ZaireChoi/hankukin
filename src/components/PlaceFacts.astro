@@ -1,0 +1,35 @@
+---
+const { place, visit } = Astro.props;
+const statusLabel = {
+  operating:'Operating', temporarily_closed:'Temporarily closed',
+  permanently_closed:'Permanently closed', unknown:'Not verified',
+};
+/** 영구폐업이면 예약·구매 CTA를 제거한다 (05 §4) — 이 플래그를 기사 페이지가 읽는다 */
+---
+<section class="block">
+  <h2>The place</h2>
+  <dl class="facts">
+    <dt>Name</dt><dd>{place.name}{place.nameKo && <> · {place.nameKo}</>}</dd>
+    <dt>Address</dt><dd>{place.address}</dd>
+    <dt>Status</dt><dd>{statusLabel[place.businessStatus]}</dd>
+    {place.publicAccess === false && (<><dt>Access</dt><dd>Restricted — not freely open to visitors</dd></>)}
+    <dt>Best season</dt><dd>{visit.bestSeason}</dd>
+    <dt>Getting there</dt><dd>{visit.gettingThere}</dd>
+    {visit.transportCost && (<><dt>Transport</dt><dd>{visit.transportCost}</dd></>)}
+    {visit.admission && (<><dt>Admission</dt><dd>{visit.admission}</dd></>)}
+    {visit.whatToBring?.length > 0 && (<><dt>Bring</dt><dd>{visit.whatToBring.join(', ')}</dd></>)}
+  </dl>
+  {place.safetyNotes && <p class="notice warn">{place.safetyNotes}</p>}
+  <div class="cta-group" style="margin-top:.9rem">
+    {place.mapUrl && (
+      <a class="cta" href={place.mapUrl} rel="noopener" target="_blank" data-event="map_open">
+        <span class="l">Open in Maps</span><span class="arrow">→</span>
+      </a>
+    )}
+    {place.officialUrl && (
+      <a class="cta" href={place.officialUrl} rel="nofollow noopener" target="_blank">
+        <span class="l">Official page — check hours before you go</span><span class="arrow">→</span>
+      </a>
+    )}
+  </div>
+</section>

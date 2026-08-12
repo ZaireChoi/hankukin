@@ -1,0 +1,139 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ClaimBadge from '../../../components/ClaimBadge.astro';
+import CtaBlock from '../../../components/CtaBlock.astro';
+import SourceList from '../../../components/SourceList.astro';
+import PlaceFacts from '../../../components/PlaceFacts.astro';
+import { NOTICES } from '../../../lib/claims.mjs';
+import { LOCALES } from '../../../config/brand.mjs';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('scenes', (e) => !e.data.draft);
+  return LOCALES.flatMap((lang) =>
+    entries.filter((e) => e.data.lang === lang).map((entry) => ({
+      params: { lang, slug: entry.id }, props: { entry },
+    }))
+  );
+}
+
+const { entry } = Astro.props;
+const { lang, slug } = Astro.params;
+const d = entry.data;
+const { Content } = await render(entry);
+
+/** 영구폐업 시 예약·구매 CTA 자동 제거 (05 §4) */
+const closed = d.place.businessStatus === 'permanently_closed';
+const visitLinks = closed ? [] : d.visitKorea;
+
+const hasAffiliate = visitLinks.length > 0 || d.bringKoreaHome.length > 0;
+const slotLabel = { morning:'Morning', lunch:'Lunch', afternoon:'Afternoon', evening:'Evening', night:'Night' };
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Article',
+      headline: d.title,
+      description: d.summary,
+      datePublished: d.publishedAt.toISOString(),
+      dateModified: d.checkedAt.toISOString(),
+      inLanguage: lang,
+      about: { '@type': 'CreativeWork', name: d.work },
+    },
+    {
+      '@type': 'TouristAttraction',
+      name: d.place.name,
+      address: d.place.address,
+      ...(d.place.lat && d.place.lng
+        ? { geo: { '@type': 'GeoCoordinates', latitude: d.place.lat, longitude: d.place.lng } }
+        : {}),
+      ...(d.place.officialUrl ? { url: d.place.officialUrl } : {}),
+    },
+  ],
+};
+---
+<BaseLayout title={d.title} description={d.summary} lang={lang}
+            path={`scenes/${slug}`} jsonLd={jsonLd}>
+  <article class="wrap">
+
+    <!-- 1·2·3. 제목 / 요약 / 작품·스타 -->
+    <header class="article-head">
+      <p class="kicker">HANKUKIN Scenes · {d.work}</p>
+      <h1>{d.title}</h1>
+      <p class="summary">{d.summary}</p>
+      <div class="meta">
+        <ClaimBadge wording={d.claimWording} />
+        {d.stars.length > 0 && <span>{d.stars.join(' · ')}</span>}
+        <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
+      </div>
+    </header>
+
+    {closed && (
+      <p class="notice warn">This location has permanently closed. We keep the page as a record of
+      the filming site, but booking and purchase links have been removed.</p>
+    )}
+
+    {hasAffiliate && <p class="notice">{NOTICES.affiliate}</p>}
+
+    <!-- 4·5. 장면이 중요한 이유 / 근거 (본문) -->
+    <section class="block">
+      <h2>Why this scene matters</h2>
+      <div class="prose"><Content /></div>
+    </section>
+
+    <!-- 6·7·8. 사진 재현 정보 -->
+    <section class="block">
+      <h2>How to get a similar photo</h2>
+      <dl class="facts">
+        <dt>Where to stand</dt><dd>{d.photoTips.whereToStand}</dd>
+        <dt>Which way to face</dt><dd>{d.photoTips.direction}</dd>
+        <dt>Framing</dt><dd>{d.photoTips.orientation}{d.photoTips.zoom && <> · {d.photoTips.zoom}</>}</dd>
+        <dt>Best time</dt><dd>{d.photoTips.bestTime}</dd>
+        {d.photoTips.crowdTip && (<><dt>Avoiding crowds</dt><dd>{d.photoTips.crowdTip}</dd></>)}
+        {d.photoTips.props.length > 0 && (<><dt>Simple props</dt><dd>{d.photoTips.props.join(', ')}</dd></>)}
+      </dl>
+      <p class="notice">{NOTICES.photoAngle}</p>
+    </section>
+
+    <!-- 9·10·13. 장소·교통·비용 -->
+    <PlaceFacts place={d.place} visit={d.visit} />
+
+    <!-- 11·12. 시간대별 주변 일정 -->
+    {d.itinerary.length > 0 && (
+      <section class="block">
+        <h2>Fit it into your day</h2>
+        <ol class="itin">
+          {d.itinerary.map((s) => (
+            <li>
+              <span class="slot">{slotLabel[s.slot]}</span>
+              <span><span class="t">{s.title}</span><br /><span class="d">{s.detail}</span></span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    <!-- 14. 주변 문화·역사 -->
+    {d.nearbyCulture && (
+      <section class="block">
+        <h2>Korean culture &amp; history nearby</h2>
+        <div class="prose"><p>{d.nearbyCulture}</p></div>
+      </section>
+    )}
+
+    <!-- 15·16. 두 전환경로 -->
+    <CtaBlock heading="Visit Korea" items={visitLinks} />
+    <CtaBlock heading="Bring Korea Home" items={d.bringKoreaHome}
+              note="Availability and shipping vary by country. Prices were checked on the dates shown on each merchant page." />
+
+    <!-- 17·18. 출처·확인일 / 고지 -->
+    <SourceList sources={d.sources} checkedAt={d.checkedAt} />
+    <section class="block">
+      <p class="notice">{NOTICES.aiAssisted}</p>
+      <p class="notice">Spotted something wrong or out of date?
+        <a href={`/${lang}/contact`}>Report an error</a> — we take pages down while we re-check them.</p>
+    </section>
+
+  </article>
+</BaseLayout>

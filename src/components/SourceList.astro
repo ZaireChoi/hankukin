@@ -1,0 +1,23 @@
+---
+const { sources = [], checkedAt } = Astro.props;
+const label = {
+  official_production:'Official — production', official_interview:'Official — interview',
+  official_social:'Official — social account', public_institution:'Public institution',
+  reliable_media:'Media', aggregate_data:'Aggregate data',
+  merchant_official:'Merchant official site', editorial:'Editorial',
+};
+const fmt = (d) => new Date(d).toISOString().slice(0, 10);
+---
+<section class="block">
+  <h2>Sources &amp; last checked</h2>
+  <ul class="sources">
+    {sources.map((s) => (
+      <li>
+        <span class="st">{label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}</span>
+        <a href={s.url} rel="nofollow noopener" target="_blank">{s.title}</a>
+      </li>
+    ))}
+  </ul>
+  <p class="notice">This page was last verified on {fmt(checkedAt)}. Opening hours, prices and
+  business status change often — please confirm on the official page before you travel.</p>
+</section>

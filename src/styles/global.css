@@ -1,0 +1,100 @@
+:root{
+  --ink:#12100f; --ink-2:#4a4340; --ink-3:#8a807a;
+  --paper:#fffdfa; --paper-2:#f6f1ea; --line:#e5ddd3;
+  --accent:#c8341f;          /* HANKUKIN 강조: 'IN' 과 CTA */
+  --accent-soft:#fdf0ed;
+  --verified:#1f7a4d; --reported:#a8790f; --suggested:#6b6560;
+  --maxw:44rem;
+  --font-sans:"Pretendard","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-serif:"Newsreader","Iowan Old Style",Georgia,serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--font-sans); font-size:17px; line-height:1.65;
+}
+a{color:inherit}
+img{max-width:100%; height:auto; display:block}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 1.15rem}
+.wide{max-width:64rem}
+
+/* ---------- header ---------- */
+.site-header{border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:0; z-index:20}
+.site-header .bar{display:flex; align-items:center; gap:1rem; height:56px}
+.logo{font-weight:800; letter-spacing:-.02em; font-size:1.15rem; text-decoration:none}
+.logo .in{color:var(--accent)}
+.nav{display:flex; gap:.9rem; margin-left:auto; overflow-x:auto; scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{font-size:.85rem; text-decoration:none; color:var(--ink-2); white-space:nowrap; padding:.3rem 0}
+.nav a:hover,.nav a[aria-current]{color:var(--accent)}
+
+/* ---------- hero / home ---------- */
+.hero{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--line)}
+.hero h1{font-family:var(--font-serif); font-size:clamp(1.9rem,6vw,2.7rem); line-height:1.15; margin:0 0 .6rem; letter-spacing:-.02em}
+.hero p{color:var(--ink-2); margin:0; max-width:34rem}
+.q{font-size:.78rem; text-transform:uppercase; letter-spacing:.09em; color:var(--accent); font-weight:700; margin:0 0 .5rem}
+
+.cards{display:grid; gap:.7rem; grid-template-columns:repeat(2,1fr); margin:1.6rem 0}
+@media(min-width:640px){.cards{grid-template-columns:repeat(4,1fr)}}
+.card{border:1px solid var(--line); border-radius:10px; padding:.85rem .9rem; text-decoration:none; background:var(--paper)}
+.card:hover{border-color:var(--accent); background:var(--accent-soft)}
+.card .k{font-size:.68rem; text-transform:uppercase; letter-spacing:.07em; color:var(--ink-3)}
+.card .v{font-weight:700; font-size:.98rem; margin-top:.15rem}
+
+/* ---------- article ---------- */
+.article-head{padding:2rem 0 1.2rem}
+.article-head h1{font-family:var(--font-serif); font-size:clamp(1.7rem,5.2vw,2.35rem); line-height:1.2; margin:.5rem 0 .7rem; letter-spacing:-.015em}
+.summary{font-size:1.05rem; color:var(--ink-2); margin:0}
+.kicker{font-size:.76rem; text-transform:uppercase; letter-spacing:.09em; color:var(--ink-3); font-weight:700}
+.meta{display:flex; flex-wrap:wrap; gap:.4rem .8rem; font-size:.78rem; color:var(--ink-3); margin-top:.9rem}
+
+.badge{display:inline-flex; align-items:center; gap:.35rem; font-size:.72rem; font-weight:700;
+  padding:.22rem .5rem; border-radius:999px; border:1px solid currentColor; letter-spacing:.01em}
+.badge.verified{color:var(--verified)}
+.badge.reported{color:var(--reported)}
+.badge.suggested{color:var(--suggested)}
+
+section.block{padding:1.4rem 0; border-top:1px solid var(--line)}
+section.block > h2{font-size:.79rem; text-transform:uppercase; letter-spacing:.09em; color:var(--ink-3); margin:0 0 .7rem; font-weight:700}
+.prose p{margin:0 0 .9rem}
+.prose h3{font-size:1.05rem; margin:1.4rem 0 .5rem}
+
+dl.facts{display:grid; grid-template-columns:auto 1fr; gap:.45rem .9rem; margin:0; font-size:.93rem}
+dl.facts dt{color:var(--ink-3); font-size:.8rem; padding-top:.12rem}
+dl.facts dd{margin:0}
+
+ol.itin{list-style:none; padding:0; margin:0; display:grid; gap:.6rem}
+ol.itin li{display:grid; grid-template-columns:5.2rem 1fr; gap:.8rem; padding:.6rem .75rem; border:1px solid var(--line); border-radius:9px}
+ol.itin .slot{font-size:.7rem; text-transform:uppercase; letter-spacing:.06em; color:var(--accent); font-weight:700; padding-top:.15rem}
+ol.itin .t{font-weight:700; font-size:.95rem}
+ol.itin .d{color:var(--ink-2); font-size:.9rem}
+
+.cta-group{display:grid; gap:.5rem; margin-top:.3rem}
+.cta{display:flex; align-items:center; justify-content:space-between; gap:.8rem;
+  border:1px solid var(--line); border-radius:9px; padding:.7rem .85rem; text-decoration:none; background:var(--paper)}
+.cta:hover{border-color:var(--accent); background:var(--accent-soft)}
+.cta .l{font-weight:600; font-size:.95rem}
+.cta .m{font-size:.74rem; color:var(--ink-3)}
+.cta .arrow{color:var(--accent); font-weight:700}
+.rel{font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3)}
+
+.notice{background:var(--paper-2); border-left:3px solid var(--line); padding:.7rem .85rem;
+  font-size:.83rem; color:var(--ink-2); border-radius:0 7px 7px 0; margin:.6rem 0}
+.notice.warn{border-left-color:var(--accent)}
+
+ul.sources{list-style:none; padding:0; margin:0; display:grid; gap:.5rem; font-size:.85rem}
+ul.sources li{display:grid; gap:.1rem}
+ul.sources .st{font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-3)}
+
+/* ---------- footer ---------- */
+.site-footer{border-top:1px solid var(--line); margin-top:2.5rem; padding:1.6rem 0 2.5rem; font-size:.82rem; color:var(--ink-3)}
+.site-footer .cols{display:flex; flex-wrap:wrap; gap:.6rem 1.1rem; margin-bottom:.9rem}
+.site-footer a{color:var(--ink-2)}
+.site-footer .fine{line-height:1.55}
+
+/* ---------- policy pages ---------- */
+.policy h1{font-family:var(--font-serif); font-size:1.9rem; margin:2rem 0 .4rem}
+.policy h2{font-size:1.08rem; margin:1.8rem 0 .5rem}
+.policy p,.policy li{color:var(--ink-2)}
+.policy .updated{font-size:.8rem; color:var(--ink-3); margin-bottom:1.6rem}

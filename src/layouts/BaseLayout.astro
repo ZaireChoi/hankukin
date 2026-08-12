@@ -1,0 +1,70 @@
+---
+import { BRAND, LOCALES, HREFLANG, DEFAULT_LOCALE } from '../config/brand.mjs';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+const {
+  title,
+  description = BRAND.defaultMetaDescription,
+  lang = DEFAULT_LOCALE,
+  path = '',              // 언어 세그먼트를 뺀 경로. 예: 'scenes/goblin-jumunjin-breakwater'
+  jsonLd = null,
+  noindex = false,
+} = Astro.props;
+
+const site = Astro.site ?? new URL(`https://${BRAND.canonicalHost}`);
+const clean = path.replace(/^\/|\/$/g, '');
+const canonical = new URL(`/${lang}/${clean}`.replace(/\/+$/, '/'), site).href;
+const fullTitle = title ? `${title} — ${BRAND.name}` : BRAND.defaultMetaTitle;
+
+const org = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: BRAND.name,
+  url: site.href,
+  slogan: BRAND.tagline,
+  description: BRAND.defaultMetaDescription,
+};
+---
+<!doctype html>
+<html lang={HREFLANG[lang] ?? lang}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+  {/* hreflang — Phase 1은 영어 단일이지만 구조를 미리 넣어둔다 (결정서 §4.2) */}
+  {LOCALES.map((l) => (
+    <link rel="alternate" hreflang={HREFLANG[l] ?? l}
+          href={new URL(`/${l}/${clean}`.replace(/\/+$/, '/'), site).href} />
+  ))}
+  <link rel="alternate" hreflang="x-default"
+        href={new URL(`/${DEFAULT_LOCALE}/${clean}`.replace(/\/+$/, '/'), site).href} />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={BRAND.name} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="alternate" type="application/rss+xml" title={BRAND.name} href="/rss.xml" />
+
+  <script type="application/ld+json" set:html={JSON.stringify(org)} />
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+  {/* 측정 ID가 설정된 경우에만 렌더링한다 — 더미 ID를 넣지 않는다 */}
+  {BRAND.analytics.ga4MeasurementId && (
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${BRAND.analytics.ga4MeasurementId}`}></script>
+  )}
+</head>
+<body>
+  <Header lang={lang} />
+  <main><slot /></main>
+  <Footer lang={lang} />
+</body>
+</html>

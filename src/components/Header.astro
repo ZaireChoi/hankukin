@@ -1,0 +1,16 @@
+---
+import { BRAND, CATEGORIES } from '../config/brand.mjs';
+const { lang = 'en' } = Astro.props;
+const here = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="wrap wide bar">
+    <a class="logo" href={`/${lang}/`}>HANKUK<span class="in">IN</span></a>
+    <nav class="nav" aria-label="Primary">
+      {CATEGORIES.map((c) => (
+        <a href={`/${lang}/${c.path}/`}
+           aria-current={here.includes(`/${c.path}`) ? 'page' : undefined}>{c.blurb}</a>
+      ))}
+    </nav>
+  </div>
+</header>

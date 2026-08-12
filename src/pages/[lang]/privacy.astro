@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { BRAND, LOCALES } from '../../config/brand.mjs';
+export async function getStaticPaths(){ return LOCALES.map((lang)=>({params:{lang}})); }
+const { lang } = Astro.params;
+---
+<BaseLayout lang={lang} path="privacy" title="Privacy Policy"
+  description="What data HANKUKIN collects, which third parties are involved, and how cookies are used.">
+  <div class="wrap policy">
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated 13 August 2026</p>
+
+    <p>This policy explains what happens to data when you visit {BRAND.primaryDomain}. It covers
+    cookies, analytics, advertising and affiliate tracking.</p>
+
+    <h2>What we collect ourselves</h2>
+    <p>We do not ask you to create an account and we do not collect names, addresses or payment
+    details. If you email us or submit an error report, we receive whatever you choose to send and
+    keep it only as long as needed to respond.</p>
+
+    <h2>Cookies, web beacons and IP addresses</h2>
+    <p>This site and the third parties listed below may use cookies, web beacons and similar
+    technologies, and may receive your IP address, device and browser information, approximate
+    location derived from your IP address, and the pages you view. This information is used to
+    measure traffic, to attribute referrals to merchants, and to select and measure advertising.</p>
+
+    <h2>Third parties that may set cookies</h2>
+    <p><strong>Please note that third parties, including advertising partners, may set cookies on
+    your device through this site.</strong> We do not control those cookies. The third parties we
+    work with are:</p>
+    <ul>
+      <li><strong>Analytics providers</strong> — to count visits and understand which pages are useful.</li>
+      <li><strong>Advertising networks, including Google</strong> — Google and its partners may use
+      cookies to serve ads based on your prior visits to this and other websites. You can review how
+      Google uses information from sites that use its services at
+      <a href="https://policies.google.com/technologies/partner-sites" rel="nofollow noopener" target="_blank">policies.google.com/technologies/partner-sites</a>,
+      and manage personalised advertising at
+      <a href="https://www.google.com/settings/ads" rel="nofollow noopener" target="_blank">google.com/settings/ads</a>.
+      You may opt out of personalised advertising from participating vendors at
+      <a href="https://www.aboutads.info/choices/" rel="nofollow noopener" target="_blank">aboutads.info/choices</a>.</li>
+      <li><strong>Affiliate networks and merchants</strong> — when you follow a link to a merchant,
+      that merchant may set a cookie to attribute your visit to us. Their own privacy policy governs
+      what happens on their site.</li>
+    </ul>
+
+    <h2>Controlling cookies</h2>
+    <p>Most browsers let you refuse or delete cookies through their settings. Blocking cookies will
+    not prevent you from reading this site, though some measurement and attribution will not work.</p>
+
+    <h2>Children</h2>
+    <p>This site is not directed at children, and we do not knowingly collect personal information
+    from them. We also do not collect or republish personal information about minors as editorial
+    subject matter — see our <a href={`/${lang}/editorial-policy`}>editorial policy</a>.</p>
+
+    <h2>Your rights</h2>
+    <p>Depending on where you live, you may have the right to access, correct or delete personal data
+    we hold about you, or to object to its processing. Contact us at {BRAND.supportEmail} and we will
+    respond within a reasonable period.</p>
+
+    <h2>External links</h2>
+    <p>This site links to merchants, official pages and news sources. We are not responsible for the
+    privacy practices of those sites.</p>
+
+    <h2>Changes</h2>
+    <p>We will update this page when our processing changes, and will revise the date at the top.</p>
+
+    <h2>Contact</h2>
+    <p>{BRAND.supportEmail}</p>
+  </div>
+</BaseLayout>

@@ -1,0 +1,46 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { BRAND, LOCALES, CATEGORIES } from '../../config/brand.mjs';
+
+export async function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+const { lang } = Astro.params;
+const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lang === lang))
+  .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
+---
+<BaseLayout lang={lang} path="">
+  <div class="wrap">
+    <section class="hero">
+      <p class="q">Who brought you to Korea?</p>
+      <h1>Follow the story. Visit the place.<br />Taste the culture. Bring Korea home.</h1>
+      <p>{BRAND.defaultMetaDescription}</p>
+    </section>
+
+    <div class="cards">
+      {CATEGORIES.map((c) => (
+        <a class="card" href={`/${lang}/${c.path}/`}>
+          <div class="k">{c.blurb}</div>
+          <div class="v">{c.label}</div>
+        </a>
+      ))}
+    </div>
+
+    <section class="block">
+      <h2>Latest scenes</h2>
+      {scenes.length === 0 ? (
+        <p class="notice">No published articles yet.</p>
+      ) : (
+        <ul class="sources">
+          {scenes.map((s) => (
+            <li>
+              <span class="st">{s.data.work}</span>
+              <a href={`/${lang}/scenes/${s.id}/`}>{s.data.title}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  </div>
+</BaseLayout>
