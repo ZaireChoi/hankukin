@@ -5,6 +5,9 @@ name: probe-tourapi
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -12,7 +15,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - name: TourAPI 호출
+      - name: 단위 테스트
+        run: node scripts/__tests__/tourapi.test.mjs
+
+      - name: TourAPI 호출 검증
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
         run: node scripts/probe-tourapi.mjs
+
+      - name: 장소 보강
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/enrich-locations.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/locations.json
+          if git diff --staged --quiet; then echo "변경 없음";
+          else
+            git commit -m "chore(locations): 한국관광공사 데이터로 장소 보강"
+            git push
+          fi

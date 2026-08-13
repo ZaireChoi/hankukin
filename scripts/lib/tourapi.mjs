@@ -72,18 +72,116 @@ async function call(path, params, { retries = 3, log = console } = {}) {
   throw lastErr;
 }
 
+/**
+ * 시·도 코드. TourAPI 의 areaCode 값이다.
+ * 동명이인 방어와 지역기반 조회에 쓴다.
+ */
+export const AREA_CODE = {
+  '서울': 1, '인천': 2, '대전': 3, '대구': 4, '광주': 5, '부산': 6, '울산': 7, '세종': 8,
+  '경기': 31, '강원': 32, '충북': 33, '충남': 34, '경북': 35, '경남': 36, '전북': 37, '전남': 38, '제주': 39,
+};
+
+/** 주소 문자열에서 시·도를 뽑아낸다 */
+export function regionOf(address = '') {
+  const a = String(address);
+  for (const key of Object.keys(AREA_CODE)) if (a.startsWith(key)) return key;
+  // '강원특별자치도', '전북특별자치도' 같은 표기 대응
+  const m = /^(\S+?)(특별자치도|특별시|광역시|도)/.exec(a);
+  if (m) { const k = m[1].slice(0, 2); if (AREA_CODE[k]) return k; }
+  return null;
+}
+
+/**
+ * 키워드 변형을 만든다.
+ * 2026-08-13 실측: '주문진해수욕장' 0건. 등재명이 붙여쓰기/띄어쓰기 중 무엇인지 알 수 없다.
+ * 한 번 실패했다고 '없는 장소' 로 판정하면 안 되므로 몇 가지 형태를 순차로 시도한다.
+ */
+export function keywordVariants(keyword) {
+  const k = String(keyword).trim();
+  const out = new Set([k]);
+  out.add(k.replace(/\s+/g, ''));                       // 띄어쓰기 제거
+  if (!k.includes(' ')) {
+    // 흔한 접미사 앞에서 띄어쓰기
+    const m = /^(.*?)(해수욕장|해변|방파제|저수지|자연휴양림|수목원|미술관|박물관)$/.exec(k);
+    if (m && m[1]) out.add(`${m[1]} ${m[2]}`);
+  }
+  // 접미사를 흔한 동의어로 치환
+  if (k.includes('해수욕장')) out.add(k.replace('해수욕장', '해변'));
+  if (k.includes('해변')) out.add(k.replace('해변', '해수욕장'));
+  return [...out];
+}
+
 /** 키워드로 장소를 찾는다. 절대 throw 하지 않는다. */
-export async function searchPlace(keyword, { rows = 5, log = console } = {}) {
+export async function searchPlace(keyword, { rows = 5, areaCode = null, log = console } = {}) {
+  const params = { keyword, numOfRows: String(rows), pageNo: '1' };
+  if (areaCode) params.areaCode = String(areaCode);
   try {
-    const body = await call('/searchKeyword2', { keyword, numOfRows: String(rows), pageNo: '1' }, { log });
+    const body = await call('/searchKeyword2', params, { log });
     const items = body?.items?.item;
     const list = Array.isArray(items) ? items : items ? [items] : [];
-    log.info?.(`[tourapi] "${keyword}" → ${list.length}건`);
     return list.map(normalizeItem);
   } catch (e) {
     log.error?.(`[tourapi] 검색 실패 (${keyword}): ${e.message}`);
     return null;
   }
+}
+
+/**
+ * 장소 해석 — 이 모듈의 주 진입점.
+ *
+ * 두 가지를 방어한다 (2026-08-13 실측):
+ *   ① 검색 실패: 키워드 변형을 순차 시도한다. 한 형태가 0건이어도 포기하지 않는다.
+ *   ② 동명이인: '경복궁' 검색에 울산 업소가 섞여 나왔다. 기대 지역과 대조하고,
+ *      좁히지 못한 채 후보가 2건 이상이면 **자동 채택하지 않는다.**
+ *      틀린 좌표를 넣느니 사람에게 넘기는 편이 낫다.
+ *
+ * @returns {Promise<{status, place?, candidates?, tried, note}>}
+ */
+export const RESOLVE = {
+  OK: 'ok',                     // 단일 후보 확정
+  AMBIGUOUS: 'ambiguous',       // 후보 여럿 — 사람이 선택해야 함
+  NOT_FOUND: 'not_found',       // 어떤 변형으로도 못 찾음
+  ERROR: 'error',
+};
+
+export async function resolvePlace(keyword, { expectRegion = null, log = console } = {}) {
+  const tried = [];
+  const areaCode = expectRegion ? AREA_CODE[expectRegion] ?? null : null;
+
+  for (const variant of keywordVariants(keyword)) {
+    const items = await searchPlace(variant, { rows: 10, areaCode, log });
+    tried.push({ keyword: variant, areaCode, count: items?.length ?? null });
+    if (items === null) return { status: RESOLVE.ERROR, tried, note: 'API 호출 실패' };
+    if (items.length === 0) { await sleep(250); continue; }
+
+    // 기대 지역이 있으면 주소로 한 번 더 거른다 (areaCode 를 못 쓴 경우 대비)
+    const filtered = expectRegion
+      ? items.filter((it) => regionOf(it.address ?? '') === expectRegion)
+      : items;
+    const pool = filtered.length > 0 ? filtered : items;
+
+    if (pool.length === 1) {
+      return { status: RESOLVE.OK, place: pool[0], tried,
+               note: `"${variant}" 로 단일 확정${expectRegion ? ` (${expectRegion} 필터)` : ''}` };
+    }
+    // 제목이 검색어와 정확히 같은 것이 하나뿐이면 그것으로 확정
+    const exact = pool.filter((it) => String(it.title).replace(/\s+/g, '') === variant.replace(/\s+/g, ''));
+    if (exact.length === 1) {
+      return { status: RESOLVE.OK, place: exact[0], tried, note: `"${variant}" 제목 완전일치로 확정` };
+    }
+    return { status: RESOLVE.AMBIGUOUS, candidates: pool.slice(0, 5), tried,
+             note: `후보 ${pool.length}건 — 지역을 지정하거나 사람이 선택해야 합니다.` };
+  }
+  return { status: RESOLVE.NOT_FOUND, tried, note: '모든 키워드 변형에서 0건' };
+}
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** 소개글에 촬영지 언급이 있는지 — 있으면 게이트를 열 근거가 된다 */
+export const FILMING_HINTS = ['촬영', '드라마', '영화', '로케이션'];
+export function mentionsFilming(overview = '') {
+  const hits = FILMING_HINTS.filter((k) => String(overview).includes(k));
+  return { mentioned: hits.length > 0, hits };
 }
 
 /** 상세 소개 (개요문) */
