@@ -112,8 +112,8 @@ export function keywordVariants(keyword) {
 }
 
 /** 키워드로 장소를 찾는다. 절대 throw 하지 않는다. */
-export async function searchPlace(keyword, { rows = 5, areaCode = null, log = console } = {}) {
-  const params = { keyword, numOfRows: String(rows), pageNo: '1' };
+export async function searchPlace(keyword, { rows = 5, page = 1, areaCode = null, log = console } = {}) {
+  const params = { keyword, numOfRows: String(rows), pageNo: String(page) };
   if (areaCode) params.areaCode = String(areaCode);
   try {
     const body = await call('/searchKeyword2', params, { log });
@@ -184,6 +184,47 @@ export function mentionsFilming(overview = '') {
   return { mentioned: hits.length > 0, hits };
 }
 
+/**
+ * 소개글에서 '어느 작품인가' 를 뽑아낸다.
+ *
+ * 왜 이게 가능한가:
+ *   한국관광공사 소개글은 작품명을 괄호류로 감싸는 관행이 있다.
+ *   "드라마 <도깨비> 촬영지로 유명해졌다" / "영화 「기생충」의 배경이 된"
+ *   따라서 촬영지 정보는 이미 공공기관 데이터 안에 있다. 사람이 기억할 필요가 없다.
+ *
+ * 왜 문맥을 보는가:
+ *   괄호를 무조건 작품명으로 보면 <문의처>, <이용료> 같은 것까지 작품이 된다.
+ *   근처에 촬영 문맥어가 있을 때만 채택한다. 놓치는 편이 지어내는 것보다 낫다.
+ */
+const BRACKET_RE = /<([^<>\n]{1,30})>|〈([^〈〉\n]{1,30})〉|《([^《》\n]{1,30})》|「([^「」\n]{1,30})」|『([^『』\n]{1,30})』|\[([^[\]\n]{1,30})\]|'([^'\n]{1,30})'|‘([^‘’\n]{1,30})’|“([^“”\n]{1,30})”/g;
+const WORK_CONTEXT = ['촬영', '드라마', '영화', '로케이션', '방영', '세트장', '뮤직비디오'];
+const CONTEXT_WINDOW = 45;
+/** 그 자체로는 작품명이 될 수 없는 것들 */
+const NOT_A_TITLE = /^(촬영지?|드라마|영화|세트장|로케이션|문의|이용료|주차|위치|주소|교통|안내|참고|주의|현재|기타|무료|유료)$/;
+
+export function extractWorkTitles(overview = '') {
+  const text = String(overview);
+  const seen = new Map();
+  for (const m of text.matchAll(BRACKET_RE)) {
+    const raw = m.slice(1).find((g) => g != null);
+    if (raw == null) continue;
+    const title = raw.trim();
+    if (!title) continue;
+    if (NOT_A_TITLE.test(title)) continue;
+    if (/^[\d\s.,~\-–—:()]+$/.test(title)) continue;      // 날짜·시간·숫자
+    if (/(원|명|시간|분|㎞|km|m²|번지)$/.test(title)) continue;  // 단위로 끝나면 정보 표기
+
+    const from = Math.max(0, m.index - CONTEXT_WINDOW);
+    const to = Math.min(text.length, m.index + m[0].length + CONTEXT_WINDOW);
+    const context = text.slice(from, to);
+    const evidence = WORK_CONTEXT.filter((w) => context.includes(w));
+    if (evidence.length === 0) continue;
+
+    if (!seen.has(title)) seen.set(title, { title, evidence, context: context.replace(/\s+/g, ' ').trim() });
+  }
+  return [...seen.values()];
+}
+
 /** 상세 소개 (개요문) */
 export async function fetchOverview(contentId, { log = console } = {}) {
   try {
@@ -211,8 +252,42 @@ function normalizeItem(it) {
   };
 }
 
+/**
+ * HTML 태그만 제거한다. 꺾쇠 안의 모든 것을 지우지 않는다.
+ *
+ * 2026-08-13 발견한 결함:
+ *   이전 구현은 /<[^>]+>/g 였다. 한국관광공사 소개글은 작품명을 꺾쇠로 감싼다 —
+ *   "주문진 방파제는 드라마 <도깨비> 촬영지로 유명해졌다."
+ *   그 정규식이 <도깨비> 를 태그로 보고 지웠고, 저장된 소개글에는
+ *   "드라마  촬영지" 처럼 공백 두 칸만 남았다.
+ *   즉 우리가 찾으려던 정보를 우리 손으로 삭제하고 있었다.
+ *
+ *   그래서 실제 HTML 태그 이름을 화이트리스트로 못박는다.
+ *   목록에 없는 꺾쇠는 본문으로 간주해 그대로 둔다. <Winter Sonata> 같은
+ *   영문 제목도 살아남아야 하므로 '영문으로 시작하면 태그' 규칙은 쓰지 않는다.
+ */
+const HTML_TAG_NAMES = [
+  'br', 'p', 'b', 'strong', 'i', 'em', 'u', 's', 'span', 'div', 'a', 'img',
+  'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'ul', 'ol', 'li',
+  'font', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+  'pre', 'blockquote', 'sup', 'sub', 'small', 'center', 'iframe', 'script', 'style',
+];
+const HTML_TAG_RE = new RegExp(
+  `<!--[\\s\\S]*?-->|</?(?:${HTML_TAG_NAMES.join('|')})(?:\\s[^<>]*)?/?>`,
+  'gi',
+);
+
 export function stripTags(s) {
-  return String(s).replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '').replace(/\s+\n/g, '\n').trim();
+  return String(s)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(HTML_TAG_RE, '')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
 }
 
 /** TourAPI 결과를 우리 출처 형식으로 변환한다 (공공누리 1유형 — 출처 표시 필수) */

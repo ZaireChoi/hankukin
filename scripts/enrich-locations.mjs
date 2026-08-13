@@ -15,9 +15,10 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { assertTourApiKey, resolvePlace, fetchOverview, toSource, mentionsFilming, RESOLVE } from './lib/tourapi.mjs';
+import { assertTourApiKey, resolvePlace, fetchOverview, toSource, mentionsFilming, extractWorkTitles, RESOLVE } from './lib/tourapi.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const REFRESH_OVERVIEW = process.env.REFRESH_OVERVIEW === '1';
 const log = {
   info: (...a) => console.log('[enrich]', ...a),
   warn: (...a) => console.warn('[enrich][warn]', ...a),
@@ -33,8 +34,28 @@ export async function main() {
   const report = [];
   for (const [workTitle, work] of Object.entries(works)) {
     for (const place of work.places ?? []) {
-      // 이미 공공기관 출처가 붙어 있으면 건너뛴다
-      if (place.tourapi?.contentId) { report.push({ work: workTitle, place: place.nameKo ?? place.name, status: 'skip', note: '이미 보강됨' }); continue; }
+      // 이미 공공기관 출처가 붙어 있으면 건너뛴다.
+      // 다만 소개글은 다시 읽어야 할 때가 있다 —
+      // stripTags 결함으로 <작품명> 을 지운 채 저장된 이력이 있고(2026-08-13),
+      // 한국관광공사 쪽 소개글이 갱신되기도 한다. 상세조회 1회면 되므로 저렴하다.
+      if (place.tourapi?.contentId) {
+        if (REFRESH_OVERVIEW) {
+          const fresh = await fetchOverview(place.tourapi.contentId, { log });
+          if (fresh) {
+            place.tourapi.overview = fresh;
+            const m = mentionsFilming(fresh);
+            place.tourapi.mentionsFilming = m.mentioned;
+            place.tourapi.filmingHits = m.hits;
+            place.tourapi.works = extractWorkTitles(fresh).map((w) => w.title);
+            place.tourapi.refreshedAt = new Date().toISOString().slice(0, 10);
+            report.push({ work: workTitle, place: place.nameKo ?? place.name, status: 'refresh',
+                          note: `작품명 ${place.tourapi.works.length}건` });
+            continue;
+          }
+        }
+        report.push({ work: workTitle, place: place.nameKo ?? place.name, status: 'skip', note: '이미 보강됨' });
+        continue;
+      }
 
       const query = place.nameKo ?? place.name;
       const expectRegion = place.expectRegion ?? null;
@@ -53,6 +74,7 @@ export async function main() {
           lat: it.lat, lng: it.lng, image: it.image, modifiedAt: it.modifiedAt,
           overview: overview ? overview.slice(0, 600) : null,
           mentionsFilming: filming.mentioned, filmingHits: filming.hits,
+          works: extractWorkTitles(overview ?? '').map((w) => w.title),
           resolvedBy: r.note,
         };
         // 공공기관 출처 추가 (중복 방지)

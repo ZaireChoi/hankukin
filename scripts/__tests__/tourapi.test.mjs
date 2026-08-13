@@ -3,7 +3,7 @@
  * 2026-08-13 실호출에서 드러난 두 결함(검색 실패·동명이인)의 회귀 방지가 목적이다.
  */
 import assert from 'node:assert/strict';
-import { keywordVariants, regionOf, normalizeKey, mentionsFilming, stripTags } from '../lib/tourapi.mjs';
+import { keywordVariants, regionOf, normalizeKey, mentionsFilming, stripTags, extractWorkTitles } from '../lib/tourapi.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -62,6 +62,53 @@ t('관광 소개글만 있으면 언급 없음 (실측: 위양지)', () => {
 });
 t('HTML 태그를 제거한다', () => {
   assert.equal(stripTags('강릉 <b>주문진</b><br />방파제'), '강릉 주문진\n방파제');
+});
+
+console.log('\n[5] stripTags 회귀 — 꺾쇠 안의 작품명을 지우지 않는다');
+t('작품명을 태그로 오인하지 않는다 (실측: 도깨비가 삭제됐던 건)', () => {
+  const out = stripTags('주문진 방파제는 드라마 <도깨비> 촬영지로 유명해졌다.');
+  assert.ok(out.includes('<도깨비>'), out);
+  assert.ok(!/드라마\s{2,}촬영지/.test(out), '공백 두 칸이 남으면 안 된다');
+});
+t('영문 작품명도 살아남는다', () => {
+  assert.ok(stripTags('드라마 <Winter Sonata> 촬영지').includes('<Winter Sonata>'));
+});
+t('진짜 태그는 여전히 지운다', () => {
+  assert.equal(stripTags('<p class="x">본문</p><!-- 주석 -->'), '본문');
+});
+t('HTML 엔티티를 되돌린다', () => {
+  assert.equal(stripTags('제작사&nbsp;&amp;&nbsp;방송사'), '제작사 & 방송사');
+});
+
+console.log('\n[6] 작품명 추출 — 촬영지 정보는 데이터가 이미 말하고 있다');
+t('꺾쇠 작품명을 촬영 문맥과 함께 뽑는다', () => {
+  const r = extractWorkTitles('주문진 방파제는 드라마 <도깨비> 촬영지로 유명해졌다.');
+  assert.deepEqual(r.map((x) => x.title), ['도깨비']);
+  assert.ok(r[0].evidence.includes('촬영'));
+});
+t('여러 괄호 형식을 모두 인식한다', () => {
+  const got = (s) => extractWorkTitles(s).map((x) => x.title);
+  assert.deepEqual(got('영화 「기생충」 촬영지'), ['기생충']);
+  assert.deepEqual(got('드라마 《사랑의 불시착》 로케이션'), ['사랑의 불시착']);
+  assert.deepEqual(got("드라마 '오징어 게임' 촬영"), ['오징어 게임']);
+});
+t('한 문장에 두 작품이 있으면 둘 다 뽑는다', () => {
+  const r = extractWorkTitles('드라마 <도깨비> 와 <미스터 션샤인> 의 촬영지다.');
+  assert.deepEqual(r.map((x) => x.title), ['도깨비', '미스터 션샤인']);
+});
+t('촬영 문맥이 없으면 뽑지 않는다 — 오탐 방지가 최우선', () => {
+  assert.deepEqual(extractWorkTitles('입장료는 <성인 3000원> 이다.'), []);
+  assert.deepEqual(extractWorkTitles('자세한 내용은 <문의처> 참조'), []);
+});
+t('문맥어 자체는 작품명이 아니다', () => {
+  assert.deepEqual(extractWorkTitles('<촬영지> 안내입니다. 드라마 촬영'), []);
+});
+t('같은 작품이 두 번 나와도 한 번만 센다', () => {
+  const r = extractWorkTitles('드라마 <도깨비> 촬영지. <도깨비> 팬들이 찾는다. 촬영');
+  assert.equal(r.length, 1);
+});
+t('실측: 위양지 소개글에서는 아무것도 나오지 않는다', () => {
+  assert.deepEqual(extractWorkTitles('위양지는 선량한 백성들을 위해 축조했다고 하여 붙여진 이름이다.'), []);
 });
 
 console.log(`\n결과: ${pass} 통과, ${fail} 실패\n`);

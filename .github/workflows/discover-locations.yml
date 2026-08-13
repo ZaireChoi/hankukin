@@ -1,0 +1,55 @@
+# 촬영지 자동 발굴 — 한국관광공사 데이터에서 '작품 → 장소' 를 스스로 찾아낸다.
+#
+# 사람이 기억으로 장소를 적는 방식을 대체한다.
+# 기억은 근거가 아니고, 근거 없는 촬영지는 우리가 반려한 목격담과 등급이 같다.
+#
+# 주 1회로 충분하다. 관광 콘텐츠 등재는 빠르게 변하지 않는다.
+name: discover-locations
+
+on:
+  schedule:
+    - cron: '0 20 * * 0'      # 매주 월요일 05:00 KST
+  workflow_dispatch:
+    inputs:
+      max_detail:
+        description: '이번 회차 상세조회 한도 (쿼터 보호)'
+        required: false
+        default: '200'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: discover-locations
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: 단위 테스트
+        run: |
+          node scripts/__tests__/tourapi.test.mjs
+          node scripts/__tests__/discover.test.mjs
+
+      - name: 촬영지 발굴
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+          MAX_DETAIL: ${{ github.event.inputs.max_detail || '200' }}
+        run: node scripts/discover-locations.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/filming-index.json
+          if git diff --staged --quiet; then echo "변경 없음";
+          else
+            git commit -m "chore(discover): 한국관광공사 데이터에서 촬영지 색인 갱신"
+            git pull --rebase
+            git push
+          fi
