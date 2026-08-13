@@ -13,11 +13,40 @@ const source = z.object({
   checkedAt: z.coerce.date(),
 });
 
-/** 이미지 — license/source/credit 중 하나라도 비면 스키마 검증에서 빌드가 실패한다 (결정서 §5.3) */
-const image = z.object({
-  src: z.string(),
-  alt: z.string(),
-  license: z.string().min(1),
+/**
+ * 이미지 — license/source/credit 중 하나라도 비면 빌드가 실패한다 (결정서 §5.3).
+ *
+ * 2026-08-13 보강 두 가지:
+ *
+ * ① src 를 문자열이 아니라 Astro 의 image() 로 받는다.
+ *    문자열이면 파일이 없어도 빌드가 통과한다. 즉 깨진 이미지를 발행할 수 있었다.
+ *    image() 는 파일이 실제로 있어야 통과하고, 크기·포맷 최적화도 함께 해준다.
+ *
+ * ② license 를 자유 문자열이 아니라 코드로 받는다.
+ *    "공공누리 1유형쯤 되겠지" 같은 판단이 들어갈 자리를 없앤다.
+ *    한국관광공사 자료는 사진마다 유형이 다르다 — 포토코리아 페이지에도
+ *    kogl_variant_01~04 가 모두 존재한다. 4유형은 상업적 이용이 불가하므로
+ *    애초에 열거형에서 뺀다. 넣을 수 없으면 실수할 수도 없다.
+ */
+const LICENSE = {
+  'kogl-1': { label: '공공누리 제1유형 (출처표시)', canModify: true },
+  'kogl-3': { label: '공공누리 제3유형 (출처표시-변경금지)', canModify: false },
+  'cc0': { label: 'CC0 / Public Domain', canModify: true },
+  'cc-by': { label: 'CC BY', canModify: true },
+  'cc-by-sa': { label: 'CC BY-SA', canModify: true },
+  'own': { label: '자체 촬영·제작', canModify: true },
+};
+export const LICENSE_LABEL = Object.fromEntries(
+  Object.entries(LICENSE).map(([k, v]) => [k, v.label]),
+);
+export const LICENSE_CAN_MODIFY = Object.fromEntries(
+  Object.entries(LICENSE).map(([k, v]) => [k, v.canModify]),
+);
+
+const imageSchema = (image) => z.object({
+  src: image(),
+  alt: z.string().min(5),
+  license: z.enum(Object.keys(LICENSE)),
   sourceUrl: z.string().url().or(z.literal('self')),
   credit: z.string().min(1),
   isIllustration: z.boolean().default(false),
@@ -32,7 +61,8 @@ const affiliateLink = z.object({
   priceCheckedAt: z.coerce.date().optional(),
 });
 
-const baseFields = {
+/** image() 는 스키마 컨텍스트에서만 얻을 수 있어 팩토리로 만든다 */
+const baseFields = (image) => ({
   title: z.string(),
   summary: z.string().min(20).max(400),
   lang: z.string().default('en'),
@@ -40,15 +70,15 @@ const baseFields = {
   checkedAt: z.coerce.date(),
   riskGrade: z.enum(['green', 'yellow']),      // red 는 발행되지 않으므로 스키마에 존재하지 않는다
   contentScore: z.number().min(65).max(100),   // 65점 미만은 빌드 자체가 실패한다 (04 §4)
-  hero: image.optional(),
+  hero: imageSchema(image).optional(),
   sources: z.array(source).min(1),
   draft: z.boolean().default(false),
-};
+});
 
 const scenes = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/scenes' }),
-  schema: z.object({
-    ...baseFields,
+  schema: ({ image }) => z.object({
+    ...baseFields(image),
     work: z.string(),
     workType: z.enum(['drama', 'film', 'mv', 'variety']),
     stars: z.array(z.string()).default([]),
@@ -97,7 +127,9 @@ const scenes = defineCollection({
 
 const guides = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/guides' }),
-  schema: z.object({ ...baseFields, region: z.string().optional(), era: z.string().optional() }),
+  schema: ({ image }) => z.object({
+    ...baseFields(image), region: z.string().optional(), era: z.string().optional(),
+  }),
 });
 
 export const collections = { scenes, guides };

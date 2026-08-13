@@ -5,3 +5,6 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+
+# 자동 푸시 로그 (로컬 전용)
+.auto-push.log

@@ -1,0 +1,52 @@
+# 이미지 수집 — 한국관광공사 이미지를 저작권 확인 후 저장소로 가져온다.
+#
+# 사람 개입이 없다. 포토코리아는 다운로드에 로그인이 걸려서
+# 사진 한 장마다 운영자가 붙어야 했다. 그건 파이프라인이 아니다.
+#
+# 화질은 조금 포기하고 자동화를 얻는 선택이다 (2026-08-13 결정).
+name: fetch-images
+
+on:
+  schedule:
+    - cron: '30 20 * * 0'      # 매주 월요일 05:30 KST — 촬영지 발굴 30분 뒤
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-images
+  cancel-in-progress: false
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: 단위 테스트
+        run: |
+          node scripts/__tests__/tourapi.test.mjs
+          node scripts/__tests__/images.test.mjs
+
+      - name: sharp 설치 (리사이즈용)
+        run: npm i sharp --no-save
+
+      - name: 이미지 수집
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/fetch-images.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add src/assets/images data/images.json
+          if git diff --staged --quiet; then echo "변경 없음";
+          else
+            git commit -m "chore(images): 한국관광공사 이미지 수집 (저작권 유형 확인분만)"
+            git pull --rebase
+            git push
+          fi
