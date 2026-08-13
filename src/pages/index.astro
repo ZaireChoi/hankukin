@@ -1,4 +1,27 @@
 ---
+/**
+ * 루트 진입점.
+ *
+ * 정상 경로는 public/_redirects 의 엣지 302 다. 이 페이지는 그것이 적용되지 않는
+ * 환경(로컬 미리보기, 다른 호스팅)을 위한 폴백이다.
+ *
+ * Astro 의 Astro.redirect() 를 쓰지 않는 이유:
+ *   정적 빌드에서는 HTTP 리디렉션이 불가능하므로 Astro 가 안내 문구가 담긴 HTML 을
+ *   생성한다. 실제로 "Redirecting from / to /en/" 이 사용자에게 노출됐다.
+ *   여기서는 문구 없이 즉시 이동시키고, 색인도 막는다.
+ */
 import { DEFAULT_LOCALE } from '../config/brand.mjs';
-return Astro.redirect(`/${DEFAULT_LOCALE}/`, 302);
+const target = `/${DEFAULT_LOCALE}/`;
 ---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="refresh" content={`0; url=${target}`} />
+  <link rel="canonical" href={new URL(target, Astro.site).href} />
+  <meta name="robots" content="noindex" />
+  <title>HANKUKIN</title>
+  <script is:inline set:html={`location.replace(${JSON.stringify(target)});`} />
+</head>
+<body></body>
+</html>

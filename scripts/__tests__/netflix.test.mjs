@@ -8,7 +8,7 @@
  */
 import assert from 'node:assert/strict';
 import { parseTsv, parseGlobalTsv, parsePageText, noveltyScore } from '../lib/netflix.mjs';
-import { matchTitle } from '../lib/youtube.mjs';
+import { matchTitle, buzzStrength, BUZZ_MIN_VIEWS } from '../lib/youtube.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -127,6 +127,24 @@ t('완화 기준에서도 무관한 영상은 걸리지 않는다', () => {
 });
 t('영어 원제는 여전히 엄격한 기준을 유지한다', () => {
   assert.equal(matchTitle('Wrath', YT).reason, 'title_too_generic');
+});
+
+console.log('\n[5] 검색 화제성 신호');
+t('임계치 미만은 신호로 인정하지 않는다', () => {
+  assert.equal(buzzStrength({ videos: 5, topViews: BUZZ_MIN_VIEWS - 1 }), null);
+});
+t('검색 결과가 없으면 null', () => {
+  assert.equal(buzzStrength({ videos: 0, topViews: 0 }), null);
+});
+t('로그 스케일이라 K-pop MV 가 드라마를 압도하지 않는다', () => {
+  const drama = buzzStrength({ videos: 5, topViews: 500_000 });
+  const kpop  = buzzStrength({ videos: 5, topViews: 50_000_000 });
+  assert.ok(drama > 0.4, `드라마 ${drama} 도 유의미한 값이어야 한다`);
+  assert.ok(kpop <= 1);
+  assert.ok(kpop - drama < 0.6, `격차 ${(kpop - drama).toFixed(2)} 가 과도하면 안 된다`);
+});
+t('상한은 1을 넘지 않는다', () => {
+  assert.ok(buzzStrength({ videos: 5, topViews: 999_000_000 }) <= 1);
 });
 
 console.log(`\n결과: ${pass} 통과, ${fail} 실패\n`);

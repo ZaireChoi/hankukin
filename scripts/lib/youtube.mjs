@@ -104,6 +104,81 @@ export function matchTitle(workTitle, videos, { minChars = 6, minWords = 2 } = {
   };
 }
 
+/**
+ * 작품명을 직접 검색해 '최근 화제성'을 측정한다.
+ *
+ * 왜 필요한가 (2026-08-13 실측):
+ *   인기영상(trending) 목록만으로는 드라마를 잡지 못한다. 한국 트렌딩은 음악·예능이
+ *   지배하므로, Netflix 6위 사극이 그 안에 들어올 이유가 없다. 실제로 130개를 훑어
+ *   교차 검증 0건이었다.
+ *   기다리는 대신 능동적으로 찾는다.
+ *
+ * 비용: search.list 는 100 유닛 (videos.list 의 100배). 작품 10편이면 1,000 유닛으로
+ *       일일 할당량 10,000 의 10% 다. 감당 가능하지만 남발하면 안 되므로,
+ *       트렌딩 매칭이 실패한 작품에 대해서만 호출한다.
+ *
+ * @returns {Promise<{videos:number, totalViews:number, topViews:number, samples:Array}|null>}
+ */
+export async function searchRecentBuzz(query, {
+  regionCode = 'KR', days = 21, maxResults = 10, log = console,
+} = {}) {
+  try {
+    const publishedAfter = new Date(Date.now() - days * 86400000).toISOString();
+    const p = new URLSearchParams({
+      part: 'snippet', type: 'video', q: query, regionCode,
+      publishedAfter, order: 'viewCount', maxResults: String(maxResults), key: apiKey(),
+    });
+    const res = await fetch(`${BASE}/search?${p}`);
+    if (!res.ok) {
+      log.warn?.(`[youtube:search] ${res.status} (${query}): ${(await res.text()).slice(0, 200)}`);
+      return null;
+    }
+    const json = await res.json();
+    const ids = (json.items ?? []).map((i) => i.id?.videoId).filter(Boolean);
+    if (ids.length === 0) return { videos: 0, totalViews: 0, topViews: 0, samples: [] };
+
+    // 조회수는 search 응답에 없다. videos.list 로 한 번 더 부른다 (1 유닛).
+    const sp = new URLSearchParams({ part: 'snippet,statistics', id: ids.join(','), key: apiKey() });
+    const sres = await fetch(`${BASE}/videos?${sp}`);
+    if (!sres.ok) return { videos: ids.length, totalViews: 0, topViews: 0, samples: [] };
+    const sjson = await sres.json();
+
+    const vids = (sjson.items ?? []).map((v) => ({
+      title: v.snippet?.title ?? '', channel: v.snippet?.channelTitle ?? '',
+      publishedAt: v.snippet?.publishedAt ?? null, views: Number(v.statistics?.viewCount ?? 0),
+    })).sort((a, b) => b.views - a.views);
+
+    const totalViews = vids.reduce((s, v) => s + v.views, 0);
+    return {
+      videos: vids.length,
+      totalViews,
+      topViews: vids[0]?.views ?? 0,
+      samples: vids.slice(0, 3),
+    };
+  } catch (e) {
+    log.error?.(`[youtube:search] 실패 (${query}): ${e.message}`);
+    return null;
+  }
+}
+
+/**
+ * 검색 화제성을 0~1 신호로 변환한다.
+ *
+ * 주의: 절대 조회수를 그대로 쓰지 않는다. K-pop MV 는 수천만이고 드라마 클립은 수십만이라
+ * 같은 척도로 비교하면 음악이 항상 이긴다. 로그 스케일로 눌러 비교 가능하게 만든다.
+ * 그리고 임계치 미만이면 신호로 인정하지 않는다 — 아무 작품이나 검색하면 영상 몇 개는 나오므로,
+ * '검색 결과가 있다'는 사실 자체는 신호가 아니다.
+ */
+export const BUZZ_MIN_VIEWS = 50_000;   // 이보다 낮으면 화제성으로 보지 않는다
+
+export function buzzStrength(buzz) {
+  if (!buzz || buzz.videos === 0) return null;
+  if (buzz.topViews < BUZZ_MIN_VIEWS) return null;
+  // 5만 = 0.0, 500만 = 1.0 (로그 스케일)
+  const v = Math.log10(buzz.topViews / BUZZ_MIN_VIEWS) / Math.log10(100);
+  return Number(Math.max(0, Math.min(1, v)).toFixed(3));
+}
+
 /** 매칭된 트렌딩 영상들로부터 신호 강도를 계산한다 (0~1). */
 export function trendingStrength(hits) {
   if (!hits || hits.length === 0) return null;

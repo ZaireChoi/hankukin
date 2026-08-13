@@ -20,7 +20,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { fetchTop10, noveltyScore } from './lib/netflix.mjs';
 import { newsCount } from './lib/datalab.mjs';
-import { fetchMostPopular, matchTitle, trendingStrength, CATEGORY } from './lib/youtube.mjs';
+import { fetchMostPopular, matchTitle, trendingStrength, searchRecentBuzz, buzzStrength, CATEGORY } from './lib/youtube.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'data', 'releases');
@@ -168,12 +168,44 @@ export async function main() {
                   via: m.via ?? null, triedAliases: verifiedAliases.length };
     if (m.matched) {
       c.youtube.strength = trendingStrength(m.hits);
+      c.youtube.method = 'trending';
       c.independentSources = 2;                 // Netflix + YouTube
       c.score = Number(Math.min(1, c.score + 0.2 * (c.youtube.strength ?? 0.5)).toFixed(3));
     } else {
       c.independentSources = 1;
     }
   }
+
+  // ── 2차: 트렌딩에서 못 잡은 작품은 직접 검색한다 ──────────────
+  // search.list 는 100 유닛이라 남발하지 않는다. 상위 후보 중 미매칭 건에만 쓴다.
+  const SEARCH_BUDGET = 8;
+  const needSearch = [...seen.values()]
+    .filter((c) => !c.youtube?.matched)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, SEARCH_BUDGET);
+
+  let searchUnits = 0;
+  for (const c of needSearch) {
+    // 검증된 한국어 별칭이 있으면 그걸로 검색하는 편이 정확하다
+    const q = (aliases[c.title] ?? [])[0] ?? c.title;
+    const buzz = await searchRecentBuzz(q, { log });
+    searchUnits += 101;
+    if (!buzz) continue;
+    const strength = buzzStrength(buzz);
+    c.youtube = {
+      ...c.youtube, method: 'search', query: q,
+      videos: buzz.videos, topViews: buzz.topViews, samples: buzz.samples,
+      strength, matched: strength != null,
+      reason: strength != null ? 'search_buzz' : 'below_buzz_threshold',
+    };
+    if (strength != null) {
+      c.independentSources = 2;
+      c.score = Number(Math.min(1, c.score + 0.2 * strength).toFixed(3));
+    }
+    await new Promise((r) => setTimeout(r, 200));
+  }
+  out.youtubeQuotaUnits = 3 + searchUnits;   // 인기영상 3회 + 검색
+  log.info(`YouTube 할당량 사용: 약 ${out.youtubeQuotaUnits} 유닛 / 일일 10,000`);
 
   // ── 뉴스 신호 (보조, 네이버 승인 시 활성) ─────────────────────
   for (const c of seen.values()) {

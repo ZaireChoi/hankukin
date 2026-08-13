@@ -1,0 +1,4 @@
+# Cloudflare Pages 리디렉션 규칙.
+# 루트를 기본 언어로 보낸다. Astro 의 정적 리디렉션은 HTML 페이지를 생성해
+# "Redirecting from / to /en/" 이 잠깐 노출되므로, 엣지에서 처리한다.
+/    /en/    302
