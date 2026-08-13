@@ -228,6 +228,59 @@ export function extractWorkTitles(overview = '') {
   return [...seen.values()];
 }
 
+/**
+ * 이미지 저작권 유형 — 한국관광공사가 이미지마다 직접 알려준다.
+ *
+ * 왜 중요한가:
+ *   "한국관광공사 사진은 공공누리 1유형" 이라는 말은 대체로 맞지만 전부는 아니다.
+ *   TourAPI 의 이미지는 지자체·사업자가 제공한 것도 섞여 있고, 유형이 다르다.
+ *   그래서 통념이 아니라 응답의 cpyrhtDivCd 를 근거로 삼는다.
+ *
+ * 유형별 우리 정책:
+ *   Type1  출처표시            → 사용 가능. 자르기·보정 가능.
+ *   Type3  출처표시 + 변경금지 → 사용 가능하되 **원본 그대로만**. 크롭·필터 금지.
+ *   그 외/누락                 → 쓰지 않는다. 모르면 안 쓴다.
+ */
+export const IMAGE_LICENSE = {
+  Type1: { code: 'Type1', label: '공공누리 제1유형 (출처표시)', commercial: true, canModify: true },
+  Type3: { code: 'Type3', label: '공공누리 제3유형 (출처표시-변경금지)', commercial: true, canModify: false },
+};
+
+export function classifyImageLicense(cpyrhtDivCd) {
+  const key = String(cpyrhtDivCd ?? '').trim();
+  return IMAGE_LICENSE[key] ?? null;   // null = 사용 불가
+}
+
+/** 장소의 이미지 목록. 저작권 유형을 확인할 수 없는 것은 제외한다. */
+export async function fetchImages(contentId, { log = console } = {}) {
+  try {
+    const body = await call('/detailImage2',
+      { contentId: String(contentId), imageYN: 'Y', numOfRows: '20', pageNo: '1' }, { log });
+    const items = body?.items?.item;
+    const list = Array.isArray(items) ? items : items ? [items] : [];
+    const usable = [];
+    let rejected = 0;
+    for (const it of list) {
+      const lic = classifyImageLicense(it.cpyrhtDivCd);
+      if (!lic) { rejected++; continue; }
+      usable.push({
+        src: it.originimgurl || it.smallimageurl,
+        thumb: it.smallimageurl ?? null,
+        name: it.imgname ?? null,
+        license: lic.label,
+        canModify: lic.canModify,
+        credit: '한국관광공사',
+        sourceUrl: `https://api.visitkorea.or.kr/#/detail?cotId=${contentId}`,
+      });
+    }
+    if (rejected > 0) log.info?.(`[tourapi] 저작권 유형 미확인 이미지 ${rejected}건 제외 (${contentId})`);
+    return { usable, rejected, total: list.length };
+  } catch (e) {
+    log.warn?.(`[tourapi] 이미지 조회 실패 (${contentId}): ${e.message}`);
+    return null;
+  }
+}
+
 /** 상세 소개 (개요문) */
 export async function fetchOverview(contentId, { log = console } = {}) {
   try {
