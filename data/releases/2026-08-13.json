@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-13T03:40:41.940Z",
+  "collectedAt": "2026-08-13T03:48:54.474Z",
   "charts": {
     "korea": [
       {
@@ -158,155 +158,25 @@
   },
   "candidates": [
     {
-      "title": "The Idaho Murders: College Nightmare",
-      "season": "The Idaho Murders: College Nightmare: Season 1",
+      "title": "Our Sticky Love",
+      "season": "Our Sticky Love: Limited Series",
       "charts": [
+        "korea",
         "global"
       ],
-      "bothCharts": false,
-      "rank": 1,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 1,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.71,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "My Daughter's Father",
-      "season": "My Daughter's Father: Season 1",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
-      "rank": 1,
-      "weeksInTop10": 3,
-      "novelty": "new_entry",
-      "noveltyScore": 1,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.71,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "My Life With the Walter Boys",
-      "season": "My Life With the Walter Boys: Season 3",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
+      "alsoGlobal": true,
       "rank": 2,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.96,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.69,
+      "score": 0.54,
       "youtube": {
         "matched": false,
         "reason": "no_match",
         "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Wrath",
-      "season": "Wrath: Season 1",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
-      "rank": 2,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.96,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.69,
-      "youtube": {
-        "matched": false,
-        "reason": "title_too_generic",
-        "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "The Bombing of Pan Am 103",
-      "season": "The Bombing of Pan Am 103: Limited Series",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
-      "rank": 3,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.92,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.67,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "I Will Find You",
-      "season": "I Will Find You: Limited Series",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
-      "rank": 4,
-      "weeksInTop10": 8,
-      "novelty": "new_entry",
-      "noveltyScore": 0.88,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.65,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Ransom Canyon",
-      "season": "Ransom Canyon: Season 2",
-      "charts": [
-        "global"
-      ],
-      "bothCharts": false,
-      "rank": 5,
-      "weeksInTop10": 3,
-      "novelty": "new_entry",
-      "noveltyScore": 0.84,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.63,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -318,7 +188,7 @@
         "korea",
         "global"
       ],
-      "bothCharts": true,
+      "alsoGlobal": true,
       "rank": 3,
       "weeksInTop10": 4,
       "novelty": "holding",
@@ -330,6 +200,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -341,7 +212,7 @@
         "korea",
         "global"
       ],
-      "bothCharts": true,
+      "alsoGlobal": true,
       "rank": 4,
       "weeksInTop10": 1,
       "novelty": "holding",
@@ -353,29 +224,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
-        "triedAliases": 0
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Our Sticky Love",
-      "season": "Our Sticky Love: Limited Series",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "bothCharts": true,
-      "rank": 2,
-      "weeksInTop10": 1,
-      "novelty": "holding",
-      "noveltyScore": 0.36,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.48,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -386,7 +235,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 6,
       "weeksInTop10": 4,
       "novelty": "holding",
@@ -396,8 +245,9 @@
       "score": 0.45,
       "youtube": {
         "matched": false,
-        "reason": "title_too_generic",
+        "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 1
       },
       "independentSources": 1
@@ -408,7 +258,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 5,
       "weeksInTop10": 5,
       "novelty": "holding",
@@ -420,6 +270,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -430,7 +281,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 1,
       "weeksInTop10": 1,
       "novelty": "holding",
@@ -442,6 +293,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -452,7 +304,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 8,
       "weeksInTop10": 1,
       "novelty": "holding",
@@ -464,6 +316,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -474,7 +327,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 7,
       "weeksInTop10": 7,
       "novelty": "saturated",
@@ -486,6 +339,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -496,7 +350,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 10,
       "weeksInTop10": 2,
       "novelty": "holding",
@@ -508,6 +362,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
@@ -518,7 +373,7 @@
       "charts": [
         "korea"
       ],
-      "bothCharts": false,
+      "alsoGlobal": false,
       "rank": 9,
       "weeksInTop10": 2,
       "novelty": "holding",
@@ -530,6 +385,7 @@
         "matched": false,
         "reason": "no_match",
         "hits": [],
+        "via": null,
         "triedAliases": 0
       },
       "independentSources": 1
