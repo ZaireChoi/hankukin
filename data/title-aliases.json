@@ -1,0 +1,36 @@
+{
+  "_comment": [
+    "Netflix 영어 제목 → 한국 YouTube 에서 쓰이는 한국어 제목.",
+    "이게 없으면 한국 트렌딩 영상과 매칭되지 않는다 (영어로 한국어를 찾게 되므로).",
+    "",
+    "verified 가 false 인 항목은 추정이며 매칭에 사용하지 않는다.",
+    "틀린 별칭은 '없는 신호'를 만들어내므로, 비어 있는 편이 틀린 것보다 낫다.",
+    "확인 후 verified 를 true 로 바꾸고 verifiedBy 에 근거를 적을 것."
+  ],
+  "entries": [
+    {
+      "title": "The East Palace",
+      "aliases": ["동궁"],
+      "verified": true,
+      "verifiedBy": "운영자 확인 (2026-08-13)"
+    },
+    {
+      "title": "Our Sticky Love",
+      "aliases": ["끈적한 사랑"],
+      "verified": false,
+      "verifiedBy": null
+    },
+    {
+      "title": "Agent Kim Reactivated",
+      "aliases": ["에이전트 김"],
+      "verified": false,
+      "verifiedBy": null
+    },
+    {
+      "title": "I am Solo",
+      "aliases": ["나는 SOLO", "나는솔로"],
+      "verified": false,
+      "verifiedBy": null
+    }
+  ]
+}

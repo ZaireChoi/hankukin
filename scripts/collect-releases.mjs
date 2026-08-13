@@ -62,12 +62,12 @@ export async function main() {
   // ── 차트 수집 ────────────────────────────────────────────────
   // 한국 = 진짜 한국에서 뜨는 것(진정성), 글로벌 = 우리 독자가 보는 것(수요).
   const targets = [
-    { key: 'korea',  country: 'south-korea', iso: 'KR', label: '한국' },
-    { key: 'global', country: 'global',      iso: '',   label: '글로벌' },
+    { key: 'korea',  country: 'south-korea', iso: 'KR', scope: 'country', label: '한국' },
+    { key: 'global', country: 'global',      iso: '',   scope: 'global',  label: '글로벌' },
   ];
 
   for (const t of targets) {
-    const res = await fetchTop10({ country: t.country, iso: t.iso || 'KR', kind: 'tv', log });
+    const res = await fetchTop10({ country: t.country, iso: t.iso || 'KR', scope: t.scope, kind: 'tv', log });
     if (!res) { out.errors.push({ stage: `netflix:${t.key}`, message: '수집 실패' }); continue; }
     out.charts[t.key] = res.rows;
     out.sourceMode ??= res.source;
@@ -79,10 +79,13 @@ export async function main() {
   }
 
   // ── 후보 산출 ────────────────────────────────────────────────
+  const hasHistory = Object.values(previous).some((v) => Array.isArray(v) && v.length > 0);
+  if (!hasHistory) log.warn('이전 스냅샷이 없습니다 — 신규 판정은 누적 주차를 근거로 대체합니다.');
+
   const seen = new Map();
   for (const [key, rows] of Object.entries(out.charts)) {
     for (const row of rows) {
-      const novelty = noveltyScore(row, previous[key] ?? []);
+      const novelty = noveltyScore(row, previous[key] ?? [], { hasHistory });
       const loc = locationPotential(row.title);
       const prior = seen.get(row.title);
       // 한국·글로벌 양쪽에 모두 오르면 가장 강한 기회다
@@ -124,9 +127,31 @@ export async function main() {
     out.errors.push({ stage: 'youtube', message: '인기영상 수집 실패' });
   }
 
+  // Netflix 는 영어 제목, 한국 YouTube 트렌딩은 한국어 제목을 쓴다.
+  // 별칭이 없으면 매칭이 구조적으로 실패한다 (2026-08-13 첫 실행에서 10건 중 0건).
+  // 검증된 별칭만 사용한다. 추정 별칭은 없는 신호를 만들 수 있으므로 매칭에서 제외한다.
+  const aliases = {};
+  let unverifiedCount = 0;
+  try {
+    const raw = JSON.parse(await readFile(path.join(ROOT, 'data', 'title-aliases.json'), 'utf8'));
+    for (const e of raw.entries ?? []) {
+      if (e.verified) aliases[e.title] = e.aliases;
+      else unverifiedCount++;
+    }
+    log.info(`별칭 ${Object.keys(aliases).length}건 사용 (미검증 ${unverifiedCount}건은 제외)`);
+  } catch { log.warn('title-aliases.json 없음 — 영어 제목으로만 매칭합니다.'); }
+  out.aliasesUsed = Object.keys(aliases).length;
+  out.aliasesUnverified = unverifiedCount;
+
   for (const c of seen.values()) {
-    const m = matchTitle(c.title, ytBuckets);
-    c.youtube = { matched: m.matched, reason: m.reason, hits: m.hits };
+    const names = [c.title, ...(aliases[c.title] ?? [])];
+    let m = { matched: false, reason: 'no_match', hits: [] };
+    for (const n of names) {
+      const r = matchTitle(n, ytBuckets);
+      if (r.matched) { m = r; break; }
+      if (r.reason === 'title_too_generic' && m.reason === 'no_match') m.reason = r.reason;
+    }
+    c.youtube = { matched: m.matched, reason: m.reason, hits: m.hits, triedAliases: names.length - 1 };
     if (m.matched) {
       c.youtube.strength = trendingStrength(m.hits);
       c.independentSources = 2;                 // Netflix + YouTube
