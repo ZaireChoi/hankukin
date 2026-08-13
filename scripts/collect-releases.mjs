@@ -187,14 +187,20 @@ export async function main() {
   let searchUnits = 0;
   for (const c of needSearch) {
     // 검증된 한국어 별칭이 있으면 그걸로 검색하는 편이 정확하다
-    const q = (aliases[c.title] ?? [])[0] ?? c.title;
-    const buzz = await searchRecentBuzz(q, { log });
+    const verified = aliases[c.title] ?? [];
+    const q = verified[0] ?? c.title;
+    // 검색어는 하나지만, 관련성 판정은 원제와 검증된 별칭 모두로 한다.
+    const buzz = await searchRecentBuzz(q, {
+      log, names: [c.title, ...verified],
+      matchOpts: verified.length > 0 ? { minChars: 2, minWords: 1 } : {},
+    });
     searchUnits += 101;
     if (!buzz) continue;
     const strength = buzzStrength(buzz);
     c.youtube = {
       ...c.youtube, method: 'search', query: q,
-      videos: buzz.videos, topViews: buzz.topViews, samples: buzz.samples,
+      videos: buzz.videos, relevant: buzz.relevant, rejected: buzz.rejected,
+      topViews: buzz.topViews, samples: buzz.samples,
       strength, matched: strength != null,
       reason: strength != null ? 'search_buzz' : 'below_buzz_threshold',
     };

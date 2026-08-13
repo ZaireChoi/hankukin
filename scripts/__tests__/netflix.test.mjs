@@ -8,7 +8,7 @@
  */
 import assert from 'node:assert/strict';
 import { parseTsv, parseGlobalTsv, parsePageText, noveltyScore } from '../lib/netflix.mjs';
-import { matchTitle, buzzStrength, BUZZ_MIN_VIEWS } from '../lib/youtube.mjs';
+import { matchTitle, buzzStrength, filterRelevant, BUZZ_MIN_VIEWS } from '../lib/youtube.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -131,20 +131,64 @@ t('영어 원제는 여전히 엄격한 기준을 유지한다', () => {
 
 console.log('\n[5] 검색 화제성 신호');
 t('임계치 미만은 신호로 인정하지 않는다', () => {
-  assert.equal(buzzStrength({ videos: 5, topViews: BUZZ_MIN_VIEWS - 1 }), null);
+  assert.equal(buzzStrength({ videos: 5, relevant: 5, topViews: BUZZ_MIN_VIEWS - 1 }), null);
 });
 t('검색 결과가 없으면 null', () => {
-  assert.equal(buzzStrength({ videos: 0, topViews: 0 }), null);
+  assert.equal(buzzStrength({ videos: 0, relevant: 0, topViews: 0 }), null);
 });
-t('로그 스케일이라 K-pop MV 가 드라마를 압도하지 않는다', () => {
-  const drama = buzzStrength({ videos: 5, topViews: 500_000 });
-  const kpop  = buzzStrength({ videos: 5, topViews: 50_000_000 });
-  assert.ok(drama > 0.4, `드라마 ${drama} 도 유의미한 값이어야 한다`);
-  assert.ok(kpop <= 1);
-  assert.ok(kpop - drama < 0.6, `격차 ${(kpop - drama).toFixed(2)} 가 과도하면 안 된다`);
+
+console.log('\n[5-B] 검색 결과 관련성 필터 (2026-08-13 실측 오탐)');
+// 실제로 'Badly in Love' 검색에서 나왔던 무관한 영상들
+const SEARCH_HITS = [
+  { title: '입만 열면 어질어질한 "진짜 갸루걸"', views: 2399939 },
+  { title: 'When Both Are Madly in Love ! #tmkoc #funny #jethalal', views: 984459 },
+  { title: 'Badly in Love ep3 리액션 #kdrama', views: 700000 },
+];
+t('작품명이 제목에 없는 영상은 걸러진다', () => {
+  const rel = filterRelevant(SEARCH_HITS, ['Badly in Love']);
+  assert.equal(rel.length, 1);
+  assert.match(rel[0].title, /Badly in Love ep3/);
+});
+t('인도 시트콤(#tmkoc)이 한국 드라마 신호로 잡히지 않는다', () => {
+  const rel = filterRelevant(SEARCH_HITS, ['Badly in Love']);
+  assert.ok(!rel.some((v) => v.title.includes('tmkoc')));
+});
+t('관련 영상이 1개뿐이면 신호로 인정하지 않는다', () => {
+  assert.equal(buzzStrength({ videos: 10, relevant: 1, topViews: 5_000_000 }), null);
+});
+t('관련 영상 2개 이상 + 조회수 충족이면 신호가 된다', () => {
+  assert.ok(buzzStrength({ videos: 10, relevant: 3, topViews: 3_000_000 }) > 0);
+});
+t('검증된 한국어 별칭은 완화 기준으로 관련성을 판정한다', () => {
+  const vids = [
+    { title: '멋 부리려고 다리를 꼰 게 아니라 #동궁 #조승우', views: 3270886 },
+    { title: '전혀 무관한 영상', views: 100 },
+  ];
+  assert.equal(filterRelevant(vids, ['The East Palace', '동궁']).length, 0);
+  assert.equal(filterRelevant(vids, ['The East Palace', '동궁'], { minChars: 2, minWords: 1 }).length, 1);
+});
+t('실측 수준의 드라마 조회수가 유의미한 점수를 받는다', () => {
+  // 2026-08-13 실측: 동궁 327만, Our Sticky Love 179만, Spooky in Love 115만
+  const dongung = buzzStrength({ videos: 10, relevant: 3, topViews: 3_270_886 });
+  const sticky  = buzzStrength({ videos: 10, relevant: 3, topViews: 1_792_524 });
+  assert.ok(dongung > 0.4, `동궁 ${dongung} 이 유의미해야 한다`);
+  assert.ok(sticky > 0.3, `Our Sticky Love ${sticky} 이 유의미해야 한다`);
+  assert.ok(dongung > sticky, '조회수가 높으면 점수도 높아야 한다');
+});
+t('조회수가 아무리 커도 1을 넘지 못한다 — 이것이 K-pop 편향을 막는 장치', () => {
+  // 조회수를 그대로 쓰면 K-pop MV(수천만~수억)가 드라마 클립(수백만)을 항상 이긴다.
+  // 로그 스케일 + 상한으로 기여도를 최대 0.2점(가중치)으로 묶는다.
+  const kpop = buzzStrength({ videos: 10, relevant: 3, topViews: 200_000_000 });
+  assert.equal(kpop, 1);
+  const contribution = 0.2 * kpop;
+  assert.ok(contribution <= 0.2, '최종 점수 기여도는 가중치를 넘지 않는다');
+});
+t('임계치 바로 위는 낮은 점수를 받는다', () => {
+  const barely = buzzStrength({ videos: 10, relevant: 2, topViews: 320_000 });
+  assert.ok(barely < 0.1, `겨우 넘긴 값 ${barely} 은 낮아야 한다`);
 });
 t('상한은 1을 넘지 않는다', () => {
-  assert.ok(buzzStrength({ videos: 5, topViews: 999_000_000 }) <= 1);
+  assert.ok(buzzStrength({ videos: 5, relevant: 3, topViews: 999_000_000 }) <= 1);
 });
 
 console.log(`\n결과: ${pass} 통과, ${fail} 실패\n`);

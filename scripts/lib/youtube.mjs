@@ -121,6 +121,7 @@ export function matchTitle(workTitle, videos, { minChars = 6, minWords = 2 } = {
  */
 export async function searchRecentBuzz(query, {
   regionCode = 'KR', days = 21, maxResults = 10, log = console,
+  names = null, matchOpts = {},
 } = {}) {
   try {
     const publishedAfter = new Date(Date.now() - days * 86400000).toISOString();
@@ -135,12 +136,12 @@ export async function searchRecentBuzz(query, {
     }
     const json = await res.json();
     const ids = (json.items ?? []).map((i) => i.id?.videoId).filter(Boolean);
-    if (ids.length === 0) return { videos: 0, totalViews: 0, topViews: 0, samples: [] };
+    if (ids.length === 0) return { videos: 0, relevant: 0, totalViews: 0, topViews: 0, samples: [], rejected: 0 };
 
     // 조회수는 search 응답에 없다. videos.list 로 한 번 더 부른다 (1 유닛).
     const sp = new URLSearchParams({ part: 'snippet,statistics', id: ids.join(','), key: apiKey() });
     const sres = await fetch(`${BASE}/videos?${sp}`);
-    if (!sres.ok) return { videos: ids.length, totalViews: 0, topViews: 0, samples: [] };
+    if (!sres.ok) return { videos: ids.length, relevant: 0, totalViews: 0, topViews: 0, samples: [], rejected: 0 };
     const sjson = await sres.json();
 
     const vids = (sjson.items ?? []).map((v) => ({
@@ -148,12 +149,16 @@ export async function searchRecentBuzz(query, {
       publishedAt: v.snippet?.publishedAt ?? null, views: Number(v.statistics?.viewCount ?? 0),
     })).sort((a, b) => b.views - a.views);
 
-    const totalViews = vids.reduce((s, v) => s + v.views, 0);
+    // 관련성 필터: 제목에 작품명(또는 검증된 별칭)이 실제로 등장해야 한다.
+    const rel = filterRelevant(vids, names ?? [query], matchOpts);
+    const totalViews = rel.reduce((s, v) => s + v.views, 0);
     return {
       videos: vids.length,
+      relevant: rel.length,
       totalViews,
-      topViews: vids[0]?.views ?? 0,
-      samples: vids.slice(0, 3),
+      topViews: rel[0]?.views ?? 0,
+      samples: rel.slice(0, 3),
+      rejected: vids.length - rel.length,
     };
   } catch (e) {
     log.error?.(`[youtube:search] 실패 (${query}): ${e.message}`);
@@ -169,10 +174,33 @@ export async function searchRecentBuzz(query, {
  * 그리고 임계치 미만이면 신호로 인정하지 않는다 — 아무 작품이나 검색하면 영상 몇 개는 나오므로,
  * '검색 결과가 있다'는 사실 자체는 신호가 아니다.
  */
-export const BUZZ_MIN_VIEWS = 50_000;   // 이보다 낮으면 화제성으로 보지 않는다
+export const BUZZ_MIN_VIEWS = 300_000;   // 이보다 낮으면 화제성으로 보지 않는다
+export const BUZZ_MIN_RELEVANT = 2;      // 제목에 작품명이 실제로 등장하는 영상 최소 개수
+
+/**
+ * 검색 결과 중 '실제로 그 작품을 말하는' 영상만 남긴다.
+ *
+ * 2026-08-13 실측 문제:
+ *   'Badly in Love' 로 검색했더니 인도 시트콤(#tmkoc)과 무관한 한국 예능 클립이 잡혔고,
+ *   그것들을 근거로 독립 신호 2개를 인정해버렸다. 10편 중 7편이 이렇게 통과했다.
+ *   검색이 결과를 돌려줬다는 사실은 신호가 아니다. 제목이 작품을 가리켜야 신호다.
+ */
+export function filterRelevant(videos, names, opts = {}) {
+  const needles = names.map((n) => normalizeTitle(n)).filter((n) => {
+    const minChars = opts.minChars ?? 6, minWords = opts.minWords ?? 2;
+    return n.length >= minChars && n.split(' ').length >= minWords;
+  });
+  if (needles.length === 0) return [];
+  return videos.filter((v) => {
+    const t = normalizeTitle(v.title);
+    return needles.some((n) => t.includes(n));
+  });
+}
 
 export function buzzStrength(buzz) {
-  if (!buzz || buzz.videos === 0) return null;
+  if (!buzz || !buzz.videos) return null;
+  const relevant = buzz.relevant ?? buzz.videos;
+  if (relevant < BUZZ_MIN_RELEVANT) return null;
   if (buzz.topViews < BUZZ_MIN_VIEWS) return null;
   // 5만 = 0.0, 500만 = 1.0 (로그 스케일)
   const v = Math.log10(buzz.topViews / BUZZ_MIN_VIEWS) / Math.log10(100);
