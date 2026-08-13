@@ -1,6 +1,7 @@
 /** 신작 레이더 통합 드라이런 — 2026-08-13 실제 한국 TOP10 데이터 사용 */
 process.env.NAVER_CLIENT_ID ||= 'dryrun';
 process.env.NAVER_CLIENT_SECRET ||= 'dryrun';
+process.env.YOUTUBE_API_KEY ||= 'dryrun';
 
 const TSV = [
   'week\tcountry_iso2\tcountry_name\tcategory\tweekly_rank\tshow_title\tseason_title\tcumulative_weeks_in_top_10',
@@ -15,6 +16,14 @@ global.fetch = async (url) => {
   if (u.includes('all-weeks-countries.tsv')) return { ok: true, status: 200, text: async () => TSV };
   if (u.includes('/search/news.json'))
     return { ok: true, status: 200, json: async () => ({ total: 842, items: [{ pubDate: 'Wed, 12 Aug 2026 09:00:00 +0900' }] }) };
+  if (u.includes('youtube/v3/videos'))
+    return { ok: true, status: 200, json: async () => ({ items: [
+      // 실제 트렌딩 목록을 흉내낸다. East Palace 는 걸리고, I am Solo 는 매칭 조건 미달로 걸리지 않아야 한다.
+      { id:'a', snippet:{ title:'[MV] The East Palace OST Special Clip', channelTitle:'tvN', categoryId:'24' }, statistics:{ viewCount:'1200000' } },
+      { id:'b', snippet:{ title:'The East Palace 하이라이트 모음', channelTitle:'Netflix Korea', categoryId:'24' }, statistics:{ viewCount:'800000' } },
+      { id:'c', snippet:{ title:'Solo 신곡 무대', channelTitle:'MusicBank', categoryId:'10' }, statistics:{ viewCount:'500000' } },
+      { id:'d', snippet:{ title:'전혀 무관한 브이로그', channelTitle:'vlog', categoryId:'24' }, statistics:{ viewCount:'100000' } },
+    ] }) };
   throw new Error('unexpected ' + u);
 };
 
@@ -39,10 +48,19 @@ check('1위 장기체류 예능이 1순위 후보가 아님', !top.title.include
 check('신규 진입 또는 사극이 상위에 옴',
       top.novelty === 'new_entry' || top.locationPotential === 1.0);
 check('뉴스 신호가 붙음', out.candidates.every((c) => c.news?.total > 0));
+check('YouTube 트렌딩을 스캔함', out.youtubeVideosScanned > 0);
+check('East Palace 가 YouTube 에서 교차 검증됨',
+      out.candidates.find((c) => c.title.includes('East Palace'))?.youtube?.matched === true);
+check('교차 검증된 작품은 독립 신호 2개',
+      out.candidates.find((c) => c.title.includes('East Palace'))?.independentSources === 2);
+check("짧고 흔한 제목('I am Solo')은 우연 매칭되지 않음",
+      out.candidates.find((c) => c.title.includes('I am Solo'))?.youtube?.matched === false);
+check('교차 검증 실패 작품은 신호 1개로 남음',
+      out.candidates.find((c) => c.title.includes('I am Solo'))?.independentSources === 1);
 
 console.log('\n=== 최종 순위 ===');
 for (const [i, c] of out.candidates.entries())
-  console.log(`  ${i + 1}. ${c.title}  (score ${c.score}, ${c.novelty}, 촬영지 ${c.locationPotential})`);
+  console.log(`  ${i + 1}. ${c.title}  score ${c.score} · ${c.novelty} · 촬영지 ${c.locationPotential} · 신호 ${c.independentSources}개${c.youtube?.matched ? ` (YouTube ✓ ${c.youtube.strength})` : ''}`);
 
 console.log(`\n${fail ? `실패 ${fail}건` : '전부 통과'}\n`);
 process.exit(fail ? 1 : 0);

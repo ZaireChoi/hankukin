@@ -19,7 +19,8 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { fetchTop10, noveltyScore } from './lib/netflix.mjs';
-import { newsCount, assertCredentials } from './lib/datalab.mjs';
+import { newsCount } from './lib/datalab.mjs';
+import { fetchMostPopular, matchTitle, trendingStrength, CATEGORY } from './lib/youtube.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'data', 'releases');
@@ -46,7 +47,6 @@ export function locationPotential(title) {
 }
 
 export async function main() {
-  assertCredentials();
   const today = new Date();
 
   // 이전 스냅샷 (신규 진입·순위 상승 판정용)
@@ -108,12 +108,40 @@ export async function main() {
     }
   }
 
-  // ── 뉴스 신호 (보조) ─────────────────────────────────────────
+  // ── YouTube 교차 검증 (두 번째 독립 신호) ─────────────────────
+  // Netflix 순위 = 실제 시청 / YouTube 트렌딩 = 화제성.
+  // 성격이 다르므로 같은 작품을 함께 가리키면 독립 신호 2개로 인정한다.
+  const ytBuckets = [];
+  for (const cat of [null, CATEGORY.ENTERTAINMENT, CATEGORY.MUSIC]) {
+    const r = await fetchMostPopular({ regionCode: 'KR', categoryId: cat, log });
+    if (r) ytBuckets.push(...r.items);
+    await new Promise((r2) => setTimeout(r2, 200));
+  }
+  out.youtubeVideosScanned = ytBuckets.length;
+
+  if (ytBuckets.length === 0) {
+    log.warn('YouTube 신호를 가져오지 못했습니다 — Netflix 단일 신호로만 진행합니다.');
+    out.errors.push({ stage: 'youtube', message: '인기영상 수집 실패' });
+  }
+
+  for (const c of seen.values()) {
+    const m = matchTitle(c.title, ytBuckets);
+    c.youtube = { matched: m.matched, reason: m.reason, hits: m.hits };
+    if (m.matched) {
+      c.youtube.strength = trendingStrength(m.hits);
+      c.independentSources = 2;                 // Netflix + YouTube
+      c.score = Number(Math.min(1, c.score + 0.2 * (c.youtube.strength ?? 0.5)).toFixed(3));
+    } else {
+      c.independentSources = 1;
+    }
+  }
+
+  // ── 뉴스 신호 (보조, 네이버 승인 시 활성) ─────────────────────
   for (const c of seen.values()) {
     try {
       const n = await newsCount(c.title, { log });
       if (n) c.news = n;
-    } catch (e) { log.warn(`뉴스 조회 실패 ${c.title}: ${e.message}`); }
+    } catch (e) { log.warn(`뉴스 조회 생략 ${c.title}: ${e.message}`); }
     await new Promise((r) => setTimeout(r, 200));
   }
 
@@ -124,12 +152,15 @@ export async function main() {
   await writeFile(latestPath, JSON.stringify(out, null, 2), 'utf8');
 
   console.table(out.candidates.slice(0, 10).map((c) => ({
-    title: c.title.slice(0, 34),
+    title: c.title.slice(0, 30),
     score: c.score,
     novelty: c.novelty,
     location: c.locationPotential,
-    charts: c.charts.join('+'),
+    youtube: c.youtube?.matched ? `✓ ${c.youtube.strength}` : '-',
+    sources: c.independentSources,
   })));
+  const corroborated = out.candidates.filter((c) => c.independentSources >= 2);
+  log.info(`독립 신호 2개 이상 확보: ${corroborated.length}건 / 전체 ${out.candidates.length}건`);
   log.info(`후보 ${out.candidates.length}건 저장`);
   if (out.sourceMode === 'page') {
     log.warn('페이지 폴백으로 수집했습니다 — 구조 변경에 취약하니 결과를 한 번 눈으로 확인하세요.');
