@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-13T04:35:52.688Z",
+  "collectedAt": "2026-08-13T04:42:51.923Z",
   "charts": {
     "korea": [
       {
@@ -171,7 +171,7 @@
       "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.695,
+      "score": 0.618,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -181,77 +181,30 @@
         "method": "search",
         "query": "Our Sticky Love",
         "videos": 10,
-        "topViews": 1792524,
+        "relevant": 9,
+        "rejected": 1,
+        "topViews": 1792633,
         "samples": [
           {
             "title": "Her Reactions Were So Funny 😂 Our Sticky Love 💗 #Kdrama #JungHaeIn #HaYoung #OurStickyLove",
             "channel": "ThrillVille",
             "publishedAt": "2026-08-07T13:40:10Z",
-            "views": 1792524
+            "views": 1792633
           },
           {
             "title": "Bro was Caught in the ACT 😫🤣😭🔥 | Our sticky love | Netflix | Manda bala",
             "channel": "Esther Edits🌹💙",
             "publishedAt": "2026-08-10T13:56:20Z",
-            "views": 1716844
+            "views": 1717524
           },
           {
             "title": "The Fate Of Always Finding Her 💗 Our Sticky Love ✨ #Kdrama #JungHaeIn #HaYoung #OurStickyLove",
             "channel": "ThrillVille",
             "publishedAt": "2026-08-09T15:58:33Z",
-            "views": 1590047
+            "views": 1590386
           }
         ],
-        "strength": 0.777
-      },
-      "independentSources": 2
-    },
-    {
-      "title": "Badly in Love",
-      "season": "Badly in Love: Season 2",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "alsoGlobal": true,
-      "rank": 4,
-      "weeksInTop10": 1,
-      "novelty": "holding",
-      "noveltyScore": 0.28,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.668,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Badly in Love",
-        "videos": 10,
-        "topViews": 2399939,
-        "samples": [
-          {
-            "title": "입만 열면 어질어질한 \"진짜 갸루걸\"",
-            "channel": "폭스토리",
-            "publishedAt": "2026-08-05T13:42:40Z",
-            "views": 2399939
-          },
-          {
-            "title": "실시간 인기 급상승 중인 불량 연애 막내 타이짱",
-            "channel": "폭스토리",
-            "publishedAt": "2026-08-09T20:00:24Z",
-            "views": 1819855
-          },
-          {
-            "title": "When Both Are Madly in Love ! #tmkoc #funny #jethalal #daya #shortsfeed",
-            "channel": "Taarak Mehta Ka Ooltah Chashmah",
-            "publishedAt": "2026-08-08T05:30:25Z",
-            "views": 984459
-          }
-        ],
-        "strength": 0.841
+        "strength": 0.388
       },
       "independentSources": 2
     },
@@ -269,7 +222,7 @@
       "noveltyScore": 0.32,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.656,
+      "score": 0.578,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -279,28 +232,30 @@
         "method": "search",
         "query": "Spooky in Love",
         "videos": 10,
-        "topViews": 1149860,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1149876,
         "samples": [
           {
             "title": "spooky in love New kdrama #kdrama#shorts#shorsfeed#viral#trending#ytshorts#yt#funny",
             "channel": "Drama Spark",
             "publishedAt": "2026-08-02T05:30:29Z",
-            "views": 1149860
+            "views": 1149876
           },
           {
             "title": "TRUST MEN or DIE 👀🤣😭💔 | Spooky in love | TVN | Tiki Tiki",
             "channel": "Esther Edits🌹💙",
             "publishedAt": "2026-07-23T14:30:44Z",
-            "views": 660670
+            "views": 660701
           },
           {
-            "title": "Poor Baby Ghost 🥺💖#spookyinlove #parkeunbin #yangsejong #ongseongwu #kdramaedit #foryou #viral",
-            "channel": "Meowhima Editx",
-            "publishedAt": "2026-07-30T17:35:45Z",
-            "views": 533910
+            "title": "Bro fumbled on most important moment in spooky in love ep 8 #parkeunbin",
+            "channel": "Avimax ",
+            "publishedAt": "2026-08-10T01:31:10Z",
+            "views": 371581
           }
         ],
-        "strength": 0.681
+        "strength": 0.292
       },
       "independentSources": 2
     },
@@ -317,7 +272,7 @@
       "noveltyScore": 0.2,
       "locationPotential": 1,
       "locationNote": "사극·궁궐 — 고궁/한옥 촬영지, 문화·역사 축과 중첩",
-      "score": 0.632,
+      "score": 0.554,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -327,30 +282,64 @@
         "method": "search",
         "query": "동궁",
         "videos": 10,
-        "topViews": 3270886,
+        "relevant": 9,
+        "rejected": 1,
+        "topViews": 3270895,
         "samples": [
           {
             "title": "멋 부리려고 다리를 꼰 게 아니라 #동궁 #조승우 #노윤서 #남주혁",
             "channel": "귀조순",
             "publishedAt": "2026-07-25T10:00:11Z",
-            "views": 3270886
-          },
-          {
-            "title": "가짜 폭로에 매장당할 뻔한 남주혁을 '동창 20명'이 나서서 살려냄",
-            "channel": "쇼츠볼결심",
-            "publishedAt": "2026-07-23T11:00:29Z",
-            "views": 2722002
+            "views": 3270895
           },
           {
             "title": "남주혁을 촬영장까지 찾으러 간 꺼먹살이 I 동궁 #넷플릭스 #동궁 #남주혁 #꺼먹살이",
             "channel": "빽플릭",
             "publishedAt": "2026-07-25T10:00:20Z",
-            "views": 1295894
+            "views": 1295897
+          },
+          {
+            "title": "동궁 노윤서 레전드 용안",
+            "channel": "리즈시절 천개 모으기",
+            "publishedAt": "2026-07-26T17:36:52Z",
+            "views": 671363
           }
         ],
-        "strength": 0.908
+        "strength": 0.519
       },
       "independentSources": 2
+    },
+    {
+      "title": "Badly in Love",
+      "season": "Badly in Love: Season 2",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 4,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.28,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.5,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Badly in Love",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
     },
     {
       "title": "The Apartment Job",
@@ -365,40 +354,30 @@
       "noveltyScore": 0.24,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.464,
+      "score": 0.33,
       "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
+        "matched": false,
+        "reason": "below_buzz_threshold",
         "hits": [],
         "via": null,
         "triedAliases": 0,
         "method": "search",
         "query": "The Apartment Job",
         "videos": 10,
-        "topViews": 1099262,
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 470374,
         "samples": [
-          {
-            "title": "His fake wife is his biggest flex 😉#theapartmentjob #jisung #hayoonkyung #kdrama #edit #foryou #flex",
-            "channel": "Tommo",
-            "publishedAt": "2026-07-25T02:00:23Z",
-            "views": 1099262
-          },
           {
             "title": "🎬The apartment job #kdrama #cdrama #kdramaedit #trending #theapartmentjob",
             "channel": "Editz678",
             "publishedAt": "2026-08-05T12:30:39Z",
-            "views": 470120
-          },
-          {
-            "title": "They are so cute😍 || #kdrama #viral #shorts #romance #family #jisung #hayoonkyung #fyp #baby",
-            "channel": "BabyTreat",
-            "publishedAt": "2026-07-25T18:00:33Z",
-            "views": 453446
+            "views": 470374
           }
         ],
-        "strength": 0.671
+        "strength": null
       },
-      "independentSources": 2
+      "independentSources": 1
     },
     {
       "title": "Agent Kim Reactivated",
@@ -413,7 +392,7 @@
       "noveltyScore": 0.1,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.408,
+      "score": 0.286,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -423,28 +402,24 @@
         "method": "search",
         "query": "Agent Kim Reactivated",
         "videos": 10,
-        "topViews": 1492751,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 539796,
         "samples": [
           {
-            "title": "소지섭 구하러 온 최대훈X윤경호🥺 | 김부장 | SBS",
-            "channel": "SBS ",
-            "publishedAt": "2026-07-25T03:00:30Z",
-            "views": 1492751
+            "title": "Mission Completed Finally 🎀 Agent Kim Reactivated ✨ #Kdrama #SoJiSub #SonNaEun #AgentKimReactivated",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-07-26T03:20:34Z",
+            "views": 539796
           },
           {
-            "title": "🔥 Kamzor Baap Nikla Deadly K!ller… Beti Ke Liye Jo Kiya, Sab Shock | Kdrama Explained in Hindi",
-            "channel": "Alex Explainer Hindi",
-            "publishedAt": "2026-08-01T03:52:00Z",
-            "views": 1255051
-          },
-          {
-            "title": "One last goodbye #shorts #drama",
-            "channel": "Hidden Drama",
-            "publishedAt": "2026-07-26T11:05:11Z",
-            "views": 823922
+            "title": "Agent Kim Reactivated | TAHIMIK LANG SYA! PERO WAG NA WAG MO SYANG GAGALITIN DAHIL...",
+            "channel": "AgNus Project",
+            "publishedAt": "2026-07-28T04:17:04Z",
+            "views": 303950
           }
         ],
-        "strength": 0.738
+        "strength": 0.128
       },
       "independentSources": 2
     },
@@ -461,40 +436,23 @@
       "noveltyScore": 0.4,
       "locationPotential": 0.2,
       "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
-      "score": 0.395,
+      "score": 0.27,
       "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
+        "matched": false,
+        "reason": "below_buzz_threshold",
         "hits": [],
         "via": null,
         "triedAliases": 0,
         "method": "search",
         "query": "I am Solo",
         "videos": 10,
-        "topViews": 894823,
-        "samples": [
-          {
-            "title": "알고보면 소름 쫙쫙! 28 영자 영철 #나는솔로 #나솔사계 #나솔",
-            "channel": "신나는연애",
-            "publishedAt": "2026-08-05T11:48:48Z",
-            "views": 894823
-          },
-          {
-            "title": "나는솔로 15기 영철 결혼식 18기 영호 30기 영자 참석",
-            "channel": "강기자TV",
-            "publishedAt": "2026-07-26T13:43:12Z",
-            "views": 708800
-          },
-          {
-            "title": "나는솔로 32기 영호 정희 스킨십 부러운 영자",
-            "channel": "강기자TV",
-            "publishedAt": "2026-08-07T13:45:14Z",
-            "views": 629468
-          }
-        ],
-        "strength": 0.626
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
       },
-      "independentSources": 2
+      "independentSources": 1
     },
     {
       "title": "Rookie Kim’s Stock Market Mission",
@@ -519,6 +477,8 @@
         "method": "search",
         "query": "Rookie Kim’s Stock Market Mission",
         "videos": 0,
+        "relevant": 0,
+        "rejected": 0,
         "topViews": 0,
         "samples": [],
         "strength": null
