@@ -34,6 +34,85 @@ export const SWEEP_KEYWORDS = [
   '영화마을',
 ];
 
+/**
+ * K-pop 성지 훑기 키워드.
+ *
+ * 이 축이 가능하다는 증거는 1회차 실측에서 나왔다:
+ *   "주문진읍 BTS 앨범사진 촬영지 (버스정류장)" — 강릉시청 출처로 등재돼 있다.
+ *   공공기관 데이터에 K-pop 장소가 실재한다는 뜻이다.
+ *
+ * 드라마 축과 분리하는 이유:
+ *   근거의 성격이 다르다. 드라마는 '어느 작품을 촬영했는가' 이고,
+ *   K-pop 은 '어느 아티스트와 연결되는가' 다. 섞으면 둘 다 흐려진다.
+ */
+export const KPOP_SWEEP_KEYWORDS = [
+  'BTS',
+  '방탄소년단',
+  'K-POP',
+  '케이팝',
+  '아이돌',
+  '뮤직비디오',
+  '한류',
+  '앨범',
+  '연예인',
+  '팬미팅',
+];
+
+/** K-pop 문맥어 — 이게 있어야 K-pop 성지로 본다 */
+export const KPOP_HINTS = [
+  'K-POP', 'K팝', '케이팝', '아이돌', '뮤직비디오', '앨범', '한류',
+  '보이그룹', '걸그룹', '팬덤', '데뷔', '음반', '가요',
+];
+export function mentionsKpop(text = '') {
+  const s = String(text).toUpperCase();
+  const hits = KPOP_HINTS.filter((k) => s.includes(k.toUpperCase()));
+  return { mentioned: hits.length > 0, hits };
+}
+
+/**
+ * 아티스트명 추출 — 최선을 다하되, 못 뽑아도 실패가 아니다.
+ *
+ * 장소 자체가 공공기관 데이터에 K-pop 문맥으로 등재된 것이 1차 근거이고,
+ * 아티스트 이름은 그 위에 붙는 부가 정보다. 확실하지 않으면 비워 둔다.
+ *
+ * 라틴 대문자 약어는 방송사·일반 약어와 충돌하므로 차단 목록을 둔다.
+ * 'MBC 드라마' 를 아티스트로 잡는 순간 이 기능은 쓸모가 없어진다.
+ */
+const NOT_AN_ARTIST = new Set([
+  'MBC', 'SBS', 'KBS', 'EBS', 'JTBC', 'TVN', 'OCN', 'ENA', 'TV', 'OST', 'MV', 'CF', 'PD', 'MC',
+  'KTX', 'SRT', 'ATM', 'DMZ', 'ICT', 'LED', 'SNS', 'CCTV', 'USB', 'PC', 'AI', 'VR', 'AR',
+  'USA', 'UK', 'KFC', 'GS', 'SK', 'LG', 'KT', 'CU', 'NO', 'OK', 'AM', 'PM', 'KM', 'CM',
+  'K-POP', 'KPOP', 'K팝', 'POP', 'MT', 'WC', 'DIY', 'SF', 'UN', 'WHO', 'GDP',
+]);
+/**
+ * 하이픈 안쪽 조각을 잡지 않는다.
+ * \b 만 쓰면 "K-POP" 에서 "POP" 이 아티스트로 잡힌다 (테스트가 잡아냈다).
+ */
+const LATIN_ACRONYM = /(?<![A-Za-z0-9-])[A-Z][A-Z0-9]{1,5}(?![A-Za-z0-9-])/g;
+
+export function extractArtists(text = '', { extractWorkTitles }) {
+  const s = String(text);
+  if (!mentionsKpop(s).mentioned) return [];
+  const out = new Map();
+
+  // ① 라틴 대문자 약어 (BTS, EXO, NCT …)
+  for (const m of s.matchAll(LATIN_ACRONYM)) {
+    const name = m[0];
+    if (NOT_AN_ARTIST.has(name)) continue;
+    if (!out.has(name)) out.set(name, { title: name, evidence: ['영문표기'], context: contextAround(s, m.index, m[0].length) });
+  }
+
+  // ② 괄호로 감싼 이름 — 드라마 축과 같은 추출기를 재사용한다
+  for (const w of extractWorkTitles(s)) {
+    if (!out.has(w.title)) out.set(w.title, { ...w, evidence: [...w.evidence, '괄호표기'] });
+  }
+  return [...out.values()];
+}
+
+function contextAround(s, index, len, pad = 45) {
+  return s.slice(Math.max(0, index - pad), Math.min(s.length, index + len + pad)).replace(/\s+/g, ' ').trim();
+}
+
 /** 방문 가능성이 낮은 유형을 미리 걸러낸다 (음식점·숙박·쇼핑) */
 const VISITABLE_CONTENT_TYPES = new Set(['12', '14', '15', '25', '28']);
 //  12 관광지 · 14 문화시설 · 15 축제공연행사 · 25 여행코스 · 28 레포츠
@@ -100,10 +179,13 @@ export function extractFromPlaceName(title = '', address = '') {
  * 한 장소의 조사 결과를 만든다.
  * 작품명을 못 뽑아도 버리지 않는다 — '촬영 언급은 있으나 작품 불명' 도 정보다.
  */
-export function toFinding(place, overview, { extractWorkTitles, mentionsFilming, regionOf }) {
+export function toFinding(place, overview, { extractWorkTitles, mentionsFilming, regionOf }, { kind = 'drama' } = {}) {
   const text = overview ?? '';
+  const haystack = `${place.title ?? ''} ${text}`;
   const filming = mentionsFilming(text);
   const works = extractWorkTitles(text);
+  const kpop = mentionsKpop(haystack);
+  const artists = kpop.mentioned ? extractArtists(haystack, { extractWorkTitles }) : [];
 
   // 소개글에서 못 뽑았을 때 등재명이 마지막 수단이 된다
   const fromName = extractFromPlaceName(place.title, place.address);
@@ -112,6 +194,10 @@ export function toFinding(place, overview, { extractWorkTitles, mentionsFilming,
   const redaction = detectRedaction(`${place.title ?? ''} ${text}`);
 
   return {
+    kind,
+    isKpopPlace: kpop.mentioned,
+    kpopHits: kpop.hits,
+    artists: artists.map((a) => ({ title: a.title, evidence: a.evidence, context: a.context })),
     upstreamRedacted: redaction.redacted,
     redactionSigns: redaction.signs,
     contentId: String(place.contentId),
@@ -157,6 +243,33 @@ export function indexByWork(findings) {
 }
 
 /**
+ * K-pop 성지를 아티스트 기준으로 뒤집는다.
+ * 아티스트를 못 뽑은 곳도 버리지 않는다 — 장소 자체가 K-pop 문맥으로
+ * 등재됐다는 사실만으로도 '아티스트 미상' 항목으로서 값어치가 있다.
+ */
+export function indexByArtist(findings) {
+  const byArtist = {};
+  const unnamed = [];
+  for (const f of findings) {
+    if (!f.isKpopPlace) continue;
+    const entry = {
+      contentId: f.contentId, name: f.title, address: f.address,
+      region: f.region, lat: f.lat, lng: f.lng, kpopHits: f.kpopHits,
+    };
+    if (!f.artists?.length) { unnamed.push(entry); continue; }
+    for (const a of f.artists) {
+      (byArtist[a.title] ??= []).push({ ...entry, evidence: a.evidence, context: a.context });
+    }
+  }
+  return {
+    byArtist: Object.fromEntries(
+      Object.entries(byArtist).sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0])),
+    ),
+    unnamed,
+  };
+}
+
+/**
  * 이전 결과와 합친다. 쿼터 때문에 한 번에 다 못 훑으므로 이어달리기가 기본이다.
  * 같은 contentId 는 새 결과로 덮는다 (소개글이 갱신될 수 있다).
  */
@@ -176,6 +289,9 @@ export function summarize(findings) {
     filmingMentioned: withFilming.length,
     workIdentified: withWork.length,
     upstreamRedacted: findings.filter((f) => f.upstreamRedacted).length,
+    kpopPlaces: findings.filter((f) => f.isKpopPlace).length,
+    kpopArtists: Object.keys(indexByArtist(findings).byArtist).length,
+    kpopUnnamed: indexByArtist(findings).unnamed.length,
     works: Object.keys(byWork).length,
     top: Object.entries(byWork).slice(0, 15).map(([title, places]) => ({ title, places: places.length })),
   };

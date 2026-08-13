@@ -7,7 +7,8 @@
 import assert from 'node:assert/strict';
 import { extractWorkTitles, mentionsFilming, regionOf } from '../lib/tourapi.mjs';
 import { toFinding, indexByWork, mergeFindings, summarize, isVisitableType, SWEEP_KEYWORDS,
-         detectRedaction, extractFromPlaceName } from '../lib/discover.mjs';
+         detectRedaction, extractFromPlaceName,
+         KPOP_SWEEP_KEYWORDS, mentionsKpop, extractArtists, indexByArtist } from '../lib/discover.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -142,10 +143,61 @@ t('소개글 추출이 되면 등재명을 중복으로 넣지 않는다', () =>
   assert.equal(f.works.filter((w) => w.title === '웰컴투동막골').length, 1);
 });
 
-console.log('\n[8] 훑기 키워드');
+console.log('\n[8] K-pop 성지 — 1회차에 실제로 잡힌 BTS 버스정류장이 기준이다');
+const BTS_TITLE = '주문진읍 BTS 앨범사진 촬영지 (버스정류장)';
+const BTS_OVERVIEW = 'BTS 버스 정류장은 강릉 주문진 해변에 위치한 BTS 앨범재킷 촬영장소로 많은 국내외 관광객들이 찾고 있는 핫 플레이스다. K-POP 최초로 미국 빌보드 음반차트 1위를 기록한 방탄소년단의 앨범재킷 사진 속에서 등장한 바닷가 버스 정류장이다. (출처 : 강릉시청)';
+
+t('K-pop 문맥을 인식한다', () => {
+  const r = mentionsKpop(BTS_OVERVIEW);
+  assert.equal(r.mentioned, true);
+  assert.ok(r.hits.includes('K-POP'));
+});
+t('드라마 소개글을 K-pop 으로 오인하지 않는다', () => {
+  assert.equal(mentionsKpop('주문진 방파제는 드라마 <도깨비> 촬영지로 유명해졌다.').mentioned, false);
+});
+t('실측: BTS 를 아티스트로 뽑는다', () => {
+  const a = extractArtists(`${BTS_TITLE} ${BTS_OVERVIEW}`, { extractWorkTitles });
+  assert.ok(a.some((x) => x.title === 'BTS'), JSON.stringify(a));
+});
+t('방송사 약어를 아티스트로 잡지 않는다 — 이걸 틀리면 기능이 무용지물이다', () => {
+  const a = extractArtists('MBC 와 SBS 가 촬영한 K-POP 프로그램. KBS 아이돌 무대.', { extractWorkTitles });
+  assert.deepEqual(a.map((x) => x.title), []);
+});
+t('K-pop 문맥이 없으면 약어를 뽑지 않는다', () => {
+  assert.deepEqual(extractArtists('KTX 로 갈 수 있는 ATM 이 있는 곳', { extractWorkTitles }), []);
+});
+t('실측: BTS 정류장은 K-pop 성지이면서 드라마 작품은 없다', () => {
+  const f = toFinding(place({ contentId: 'bts', title: BTS_TITLE, address: '강원특별자치도 강릉시 주문진읍' }),
+    BTS_OVERVIEW, deps, { kind: 'kpop' });
+  assert.equal(f.isKpopPlace, true);
+  assert.equal(f.kind, 'kpop');
+  assert.ok(f.artists.some((a) => a.title === 'BTS'));
+  assert.deepEqual(f.works, []);
+});
+t('아티스트 색인이 드라마 색인과 섞이지 않는다', () => {
+  const findings = [
+    toFinding(place({ contentId: 'bts', title: BTS_TITLE }), BTS_OVERVIEW, deps, { kind: 'kpop' }),
+    toFinding(place({ contentId: 'gob' }), '드라마 <도깨비> 촬영지', deps, { kind: 'drama' }),
+  ];
+  const { byArtist } = indexByArtist(findings);
+  assert.ok(byArtist['BTS']);
+  assert.equal(byArtist['도깨비'], undefined);
+  assert.equal(indexByWork(findings)['BTS'], undefined);
+});
+t('아티스트를 못 뽑아도 K-pop 장소로는 남긴다', () => {
+  const f = toFinding(place({ contentId: 'z', title: '한류스타 거리' }),
+    '한류 아이돌 팬덤이 즐겨 찾는 거리다.', deps, { kind: 'kpop' });
+  const { byArtist, unnamed } = indexByArtist([f]);
+  assert.equal(Object.keys(byArtist).length, 0);
+  assert.equal(unnamed.length, 1);
+});
+
+console.log('\n[9] 훑기 키워드');
 t('키워드가 비어 있지 않고 중복이 없다', () => {
   assert.ok(SWEEP_KEYWORDS.length >= 4);
   assert.equal(new Set(SWEEP_KEYWORDS).size, SWEEP_KEYWORDS.length);
+  assert.ok(KPOP_SWEEP_KEYWORDS.length >= 4);
+  assert.equal(new Set(KPOP_SWEEP_KEYWORDS).size, KPOP_SWEEP_KEYWORDS.length);
 });
 
 console.log(`\n결과: ${pass} 통과, ${fail} 실패\n`);

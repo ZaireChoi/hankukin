@@ -31,7 +31,8 @@ import {
   extractWorkTitles, mentionsFilming, regionOf,
 } from './lib/tourapi.mjs';
 import {
-  SWEEP_KEYWORDS, toFinding, mergeFindings, indexByWork, summarize, isVisitableType,
+  SWEEP_KEYWORDS, KPOP_SWEEP_KEYWORDS, toFinding, mergeFindings,
+  indexByWork, indexByArtist, summarize, isVisitableType,
 } from './lib/discover.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -63,24 +64,46 @@ export async function main() {
 
   // ── 1. 후보 수집 (검색 단계) ────────────────────────────────
   const candidates = new Map();
+  const kindOf = new Map();          // contentId → 'drama' | 'kpop' (어느 훑기에서 나왔는가)
   let searchCalls = 0, seenTotal = 0, droppedByType = 0;
-  for (const keyword of SWEEP_KEYWORDS) {
+  const sweeps = [
+    ...SWEEP_KEYWORDS.map((k) => ({ keyword: k, kind: 'drama' })),
+    ...KPOP_SWEEP_KEYWORDS.map((k) => ({ keyword: k, kind: 'kpop' })),
+  ];
+  // 접속 자체가 안 되는 상황에서 22개 키워드를 다 돌면 7분을 버린다.
+  // 2026-08-13 2회차가 그랬다 — 'fetch failed' 가 전부였는데 6분 47초를 갈았다.
+  // 연속 실패가 임계치를 넘으면 즉시 멈춘다. 빨리 실패하는 편이 낫다.
+  const ABORT_AFTER_CONSECUTIVE_FAILURES = 3;
+  let consecutiveFailures = 0;
+
+  for (const { keyword, kind } of sweeps) {
     const before = candidates.size;
     for (let page = 1; page <= PAGES_PER_KEYWORD; page++) {
       const items = await searchPlace(keyword, { rows: ROWS_PER_PAGE, page, log });
       searchCalls++;
-      if (items === null) { log.warn(`검색 실패: ${keyword} p${page}`); break; }
+      if (items === null) {
+        log.warn(`검색 실패: ${keyword} p${page}`);
+        if (++consecutiveFailures >= ABORT_AFTER_CONSECUTIVE_FAILURES) {
+          throw new Error(
+            `연속 ${consecutiveFailures}회 검색 실패 — TourAPI 에 접속할 수 없습니다.\n` +
+            `  1회차는 같은 키로 성공했으므로 인증 문제가 아닐 가능성이 높습니다.\n` +
+            `  공공데이터포털(data.go.kr) 점검·장애를 확인하고 나중에 다시 실행하세요.`);
+        }
+        break;
+      }
+      consecutiveFailures = 0;
       if (items.length === 0) break;
       for (const it of items) {
         seenTotal++;
         // 어디서 줄어드는지 보이게 한다 — 조용히 0건이 되는 것이 가장 나쁘다
         if (!isVisitableType(it.contentTypeId)) { droppedByType++; continue; }
-        if (!candidates.has(String(it.contentId))) candidates.set(String(it.contentId), it);
+        const id = String(it.contentId);
+        if (!candidates.has(id)) { candidates.set(id, it); kindOf.set(id, kind); }
       }
       if (items.length < ROWS_PER_PAGE) break;
       await sleep(200);
     }
-    log.info(`"${keyword}" → 신규 ${candidates.size - before}곳 (누적 ${candidates.size})`);
+    log.info(`[${kind}] "${keyword}" → 신규 ${candidates.size - before}곳 (누적 ${candidates.size})`);
   }
   log.info(`검색 결과 총 ${seenTotal}건 · 유형 제외 ${droppedByType}건 · 방문가능 후보 ${candidates.size}곳`);
 
@@ -103,7 +126,8 @@ export async function main() {
   for (const [i, it] of targets.entries()) {
     const overview = await fetchOverview(it.contentId, { log });
     if (overview == null) detailFailures++;
-    next.push(toFinding(it, overview, { extractWorkTitles, mentionsFilming, regionOf }));
+    next.push(toFinding(it, overview, { extractWorkTitles, mentionsFilming, regionOf },
+                        { kind: kindOf.get(String(it.contentId)) ?? 'drama' }));
     if ((i + 1) % 25 === 0) log.info(`  ${i + 1}/${targets.length} …`);
     await sleep(150);
   }
@@ -116,6 +140,7 @@ export async function main() {
   // ── 3. 저장 ────────────────────────────────────────────────
   const findings = mergeFindings(previous, next);
   const byWork = indexByWork(findings);
+  const { byArtist, unnamed } = indexByArtist(findings);
   const stats = summarize(findings);
 
   await mkdir(path.dirname(OUT), { recursive: true });
@@ -133,6 +158,7 @@ export async function main() {
     generatedAt: new Date().toISOString(),
     stats,
     byWork,
+    kpop: { byArtist, unnamed },
     findings,
   }, null, 2) + '\n', 'utf8');
 
@@ -143,6 +169,13 @@ export async function main() {
   console.log(`상류(한국관광공사) 데이터에서 작품명이 이미 지워진 곳 ${stats.upstreamRedacted}곳 — 추측하지 않고 표시만 함`);
   console.log(`확인된 작품 ${stats.works}편\n`);
   for (const w of stats.top) console.log(`  ${String(w.places).padStart(3)}곳  ${w.title}`);
+
+  console.log(`\n──── K-pop 성지 ${stats.kpopPlaces}곳 · 아티스트 ${stats.kpopArtists}명 · 아티스트 미상 ${stats.kpopUnnamed}곳 ────`);
+  for (const [name, places] of Object.entries(byArtist).slice(0, 15)) {
+    console.log(`  ${String(places.length).padStart(3)}곳  ${name}`);
+  }
+  for (const p of unnamed.slice(0, 10)) console.log(`    ·  ${p.name} (${p.region ?? '지역미상'})`);
+
   console.log('\n색인:', path.relative(ROOT, OUT));
   return stats;
 }
