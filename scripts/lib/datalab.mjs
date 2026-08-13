@@ -17,6 +17,18 @@ function creds() {
   return { id, secret };
 }
 
+/**
+ * 자격증명을 '수집 시작 전에' 검사한다.
+ *
+ * 왜 별도 함수인가: creds() 는 post() 안에서 호출되는데, post() 의 예외는
+ * 호출부의 배치 try/catch 가 잡아서 '부분 실패'로 기록하고 넘어간다.
+ * 그 결과 키가 없어도 스크립트가 정상 종료(exit 0)해버린다.
+ * 2026-08-13 CI 에서 실제로 발생했다 — 워크플로는 초록불, 수집된 신호는 0건.
+ */
+export function assertCredentials() {
+  creds();
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function post(path, body, { retries = 3, log = console } = {}) {

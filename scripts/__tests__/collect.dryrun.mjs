@@ -60,5 +60,28 @@ check('검색량 부족 토픽은 insufficient_volume 으로 표시됨',
 check('단일 신호 토픽이 emerging 을 넘지 않음',
       Object.values(out.topics).every((t) => t.evaluation.independentSources >= 2 || ['emerging', null].includes(t.evaluation.stage)));
 
-console.log(`\n${fail ? `실패 ${fail}건` : '전부 통과'}\n`);
-process.exit(fail ? 1 : 0);
+if (fail) { console.log(`\n실패 ${fail}건\n`); process.exit(1); }
+
+// ── 회귀 테스트: 자격증명 없음 = 조용한 성공이 아니라 명시적 실패 ──────────
+// 2026-08-13 CI 에서 실제로 초록불이 뜬 버그. 다시는 통과하지 않게 고정한다.
+{
+  console.log('\n=== 회귀: 자격증명 누락 시 실패해야 함 ===');
+  const savedId = process.env.NAVER_CLIENT_ID, savedSecret = process.env.NAVER_CLIENT_SECRET;
+  delete process.env.NAVER_CLIENT_ID;
+  delete process.env.NAVER_CLIENT_SECRET;
+  let threw = false;
+  try {
+    const { main: m2 } = await import('../collect-trends.mjs?nocache=' + Date.now());
+    await m2();
+  } catch (e) {
+    threw = true;
+    console.log('  ✓ 예외 발생:', e.message.slice(0, 60));
+  }
+  process.env.NAVER_CLIENT_ID = savedId;
+  process.env.NAVER_CLIENT_SECRET = savedSecret;
+  if (!threw) { console.log('  ✗ 자격증명 없이도 성공해버림 — 이것이 원래 버그'); process.exit(1); }
+}
+console.log('\n전부 통과\n');
+process.exit(0);
+{
+}

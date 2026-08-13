@@ -15,7 +15,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { searchTrend, shoppingCategoryTrend, newsCount, TOPICS_PER_REQUEST } from './lib/datalab.mjs';
+import { searchTrend, shoppingCategoryTrend, newsCount, assertCredentials, TOPICS_PER_REQUEST } from './lib/datalab.mjs';
 import { normalizeAgainstAnchor, momentum, evaluateStage, dropIncompletePeriod, SIGNAL_STATUS } from './lib/normalize.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,6 +32,9 @@ const log = {
 };
 
 export async function main() {
+  // 배치 try/catch 가 인증 오류를 삼켜 '조용한 성공'이 되는 것을 막는다.
+  assertCredentials();
+
   const today = new Date();
   const start = iso(new Date(today.getTime() - LOOKBACK_DAYS * 86400000));
   const end = iso(today);
@@ -120,6 +123,24 @@ export async function main() {
       signals: t.signals,
       weeksObserved: Math.max(0, ...t.signals.map((s) => s.weeksObserved ?? 0)),
     });
+  }
+
+  // ── 5. 수집 실패 판정 ────────────────────────────────────────
+  // 사용 가능한 신호가 하나도 없으면 '성공'이 아니다.
+  // 빈 파일을 커밋하면 데이터가 쌓이는 것처럼 보여서 더 위험하다 — 아예 쓰지 않는다.
+  const usableSignals = Object.values(collected.topics).reduce(
+    (n, t) => n + t.signals.filter((s) => s.status === SIGNAL_STATUS.OK && s.momentum != null).length, 0);
+
+  if (usableSignals === 0) {
+    log.error('사용 가능한 신호가 0건입니다. 파일을 쓰지 않고 실패로 종료합니다.');
+    for (const e of collected.errors) log.error(` - ${e.stage}: ${e.message}`);
+    throw new Error(`수집 실패: 사용 가능한 신호 0건 (오류 ${collected.errors.length}건)`);
+  }
+
+  // 절반 이상 실패했으면 성공으로 치되 크게 경고한다.
+  const topicCount = Object.keys(collected.topics).length;
+  if (collected.errors.length > 0 && usableSignals < topicCount) {
+    log.warn(`부분 수집: 사용 가능한 신호 ${usableSignals}건 / 토픽 ${topicCount}개`);
   }
 
   if (!existsSync(OUT_DIR)) await mkdir(OUT_DIR, { recursive: true });
