@@ -1,0 +1,48 @@
+# Korea Now 신호 수집 — 매일 1회
+#
+# 데이터는 소급 생성이 불가능하므로, 사이트 발행 시작 전부터 돌린다.
+# 결과는 저장소에 커밋되어 그 자체가 백업이 된다 (결정서 §3.4).
+name: collect-trends
+
+on:
+  schedule:
+    - cron: '30 19 * * *'      # 04:30 KST — 전날 데이터가 안정된 시각
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-trends
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 단위 테스트 (정규화 로직)
+        run: node scripts/__tests__/normalize.test.mjs
+
+      - name: 신호 수집
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: node scripts/collect-trends.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/signals
+          if git diff --staged --quiet; then
+            echo "변경 없음"
+          else
+            git commit -m "chore(signals): $(date -u +%Y-%m-%d) 트렌드 신호 수집"
+            git push
+          fi

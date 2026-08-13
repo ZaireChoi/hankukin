@@ -1,0 +1,24 @@
+{
+  "_comment": [
+    "Korea Now 관측 대상. 여기 있다고 발행되는 것이 아니라, 신호를 '쌓기' 시작하는 목록이다.",
+    "anchor 는 모든 요청에 끼워 넣는 고정 기준 키워드다. DataLab ratio 가 요청 내 상대값이므로,",
+    "앵커 없이는 서로 다른 날의 수집 결과를 비교할 수 없다. 앵커는 절대 바꾸지 않는다.",
+    "바꾸면 그 이전 데이터와의 연속성이 끊긴다."
+  ],
+  "anchor": { "name": "__anchor__", "keywords": ["김치"] },
+  "searchTopics": [
+    { "id": "tanghulu",      "name": "탕후루",     "keywords": ["탕후루"],                 "category": "food" },
+    { "id": "yakgwa",        "name": "약과",       "keywords": ["약과", "생약과"],          "category": "food" },
+    { "id": "dubai-choco",   "name": "두바이초콜릿", "keywords": ["두바이초콜릿"],           "category": "food" },
+    { "id": "glass-skin",    "name": "글래스스킨",  "keywords": ["글래스스킨", "물광"],      "category": "beauty" },
+    { "id": "seongsu",       "name": "성수동",     "keywords": ["성수동", "성수 팝업"],      "category": "places" },
+    { "id": "y2k-fashion",   "name": "Y2K패션",    "keywords": ["Y2K 패션", "와이투케이"],   "category": "fashion" },
+    { "id": "lip-tint",      "name": "립틴트",     "keywords": ["립틴트"],                 "category": "beauty" },
+    { "id": "hanbok-rental", "name": "한복대여",    "keywords": ["한복대여", "한복체험"],     "category": "lifestyle" }
+  ],
+  "shoppingCategories": [
+    { "id": "beauty", "name": "화장품/미용", "code": "50000002" },
+    { "id": "food",   "name": "식품",       "code": "50000006" },
+    { "id": "fashion","name": "패션의류",    "code": "50000000" }
+  ]
+}

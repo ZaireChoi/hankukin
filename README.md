@@ -70,11 +70,37 @@ db/schema.sql              ← Supabase Phase 1 스키마
       (현재 샘플 기사의 링크는 **트래킹 없는 일반 링크**다. 수익이 발생하지 않는다)
 - [ ] 샘플 기사 `goblin-jumunjin-breakwater`의 출처 2건을 직접 열어 재확인
 
-## Phase 2 예정
+## Korea Now 신호 수집기 (구현 완료 · 발행은 아직)
 
-- Korea Now 신호 수집기 (Naver DataLab 검색·쇼핑)
-- Slang Decoder 엔트리
-- GitHub Actions 자동 발행 파이프라인
+```bash
+node scripts/__tests__/normalize.test.mjs    # 정규화 로직 단위 테스트
+node scripts/__tests__/collect.dryrun.mjs    # API 키 없이 파이프라인 검증
+node scripts/collect-trends.mjs              # 실제 수집 (네이버 키 필요)
+```
+
+**이 수집기는 발행하지 않는다. 신호만 쌓는다.** 트렌드 판정에는 완료된 4주치가 필요하고
+데이터는 소급 생성이 불가능하므로, 사이트가 완성되기 전부터 돌려야 한다.
+
+### 실제 API 응답을 관측해 방어한 함정 3가지
+
+2026-08-13 실측 기준이며, `scripts/__tests__/normalize.test.mjs` 가 실제 응답으로 회귀 검증한다.
+
+| 함정 | 관측 사실 | 방어 |
+|---|---|---|
+| **ratio 는 요청 내 상대값** | 한 요청의 최댓값이 항상 100 | 모든 요청에 고정 앵커 키워드를 넣고 앵커 대비 비율만 비교 |
+| **마지막 구간은 진행 중** | 약과 76.9 → 26.0 (같은 추세인데 -66%) | 완료되지 않은 구간은 버림. 안 버리면 전부 Cooling 오판 |
+| **검색량 부족 = 빈 배열** | `두바이스크림` → `data: []` | `insufficient_volume` 로 구분. 하락으로 세지 않음 |
+
+### 단일 신호 상한
+
+독립 신호가 1개면 아무리 급등해도 `emerging` 을 넘지 못한다 (05 §8, 11 §4).
+이 규칙은 세 겹으로 강제된다 — `evaluateStage()`, 단위 테스트, 그리고 DB 제약
+`trend_topic.single_source_capped`. 같은 소스 2건은 독립 2건으로 세지 않는다.
+
+## Phase 2 남은 것
+
+- Slang Decoder 엔트리 30개
+- 자동 발행 파이프라인 (초안 → 위험등급 → 발행)
 - 주간 운영자 대시보드
 
 `now` / `decode` / `guides` 페이지는 현재 `noindex` 이며 사이트맵에서도 제외된다.
