@@ -61,7 +61,7 @@ export const HREFLANG = {
  * 아직 발행하지 않은 섹션. noindex 처리되고 사이트맵에서도 제외된다.
  * Phase 2 에서 실제 콘텐츠가 생기면 여기서 제거하는 것만으로 색인이 열린다.
  */
-export const NOINDEX_PATHS = ['now', 'decode', 'guides'];
+export const NOINDEX_PATHS = ['now', 'decode'];   // guides 는 2026-08-13 발행 시작
 
 export const CATEGORIES = [
   { key: 'scenes',  path: 'scenes',  label: 'HANKUKIN Scenes', blurb: 'Where to Go' },

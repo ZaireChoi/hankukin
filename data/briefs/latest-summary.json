@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-08-13T04:53:44.652Z",
+  "radarCollectedAt": "2026-08-13T04:35:52.688Z",
+  "counts": {
+    "total": 6,
+    "ready": 0,
+    "needsLocation": 6,
+    "needsSignal": 0,
+    "skip": 0
+  },
+  "briefs": [
+    {
+      "title": "Our Sticky Love",
+      "slug": "our-sticky-love",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.695,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Badly in Love",
+      "slug": "badly-in-love",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.668,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Spooky in Love",
+      "slug": "spooky-in-love",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.656,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "The East Palace",
+      "slug": "the-east-palace",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.632,
+      "independentSources": 2,
+      "locationPotential": 1
+    },
+    {
+      "title": "The Apartment Job",
+      "slug": "the-apartment-job",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.464,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Agent Kim Reactivated",
+      "slug": "agent-kim-reactivated",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.408,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    }
+  ]
+}

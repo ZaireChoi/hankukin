@@ -22,8 +22,10 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
 
-      - name: 파서 단위 테스트
-        run: node scripts/__tests__/netflix.test.mjs
+      - name: 단위 테스트
+        run: |
+          node scripts/__tests__/netflix.test.mjs
+          node scripts/__tests__/brief.test.mjs
 
       - name: 신작 차트 수집
         env:
@@ -32,13 +34,16 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: node scripts/collect-releases.mjs
 
+      - name: 조사 브리프 생성 (파이프라인 1단계)
+        run: node scripts/make-briefs.mjs
+
       - name: 결과 커밋
         run: |
           git config user.name  "hankukin-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add data/releases
+          git add data/releases data/briefs
           if git diff --staged --quiet; then echo "변경 없음";
           else
-            git commit -m "chore(releases): $(date -u +%Y-%m-%d) 신작 차트 수집"
+            git commit -m "chore(releases): $(date -u +%Y-%m-%d) 신작 차트 수집 + 조사 브리프"
             git push
           fi

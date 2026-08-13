@@ -1,0 +1,18 @@
+# TourAPI 실호출 검증 — 수동 실행 전용.
+# 어댑터가 실제 응답으로 동작하는지 한 번 확인하기 위한 일회성 도구다.
+name: probe-tourapi
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: TourAPI 호출
+        env:
+          DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
+        run: node scripts/probe-tourapi.mjs

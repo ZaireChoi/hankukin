@@ -1,0 +1,36 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { LOCALES } from '../../../config/brand.mjs';
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
+const { lang } = Astro.params;
+const guides = (await getCollection('guides', (e) => !e.data.draft && e.data.lang === lang))
+  .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
+const jsonLd = {
+  '@context': 'https://schema.org', '@type': 'ItemList',
+  itemListElement: guides.map((g, i) => ({ '@type':'ListItem', position:i+1, name:g.data.title,
+    url: new URL(`/${lang}/guides/${g.id}/`, Astro.site).href })),
+};
+---
+<BaseLayout lang={lang} path="guides" title="Culture &amp; History"
+  description="The history and culture behind the places, stories and words — sourced from public institutions."
+  jsonLd={jsonLd}>
+  <div class="wrap">
+    <section class="hero">
+      <p class="q">Why It Matters</p>
+      <h1>Culture &amp; History</h1>
+      <p>The background behind the places you visit and the stories you watch — with sources you can check.</p>
+    </section>
+    <section class="block">
+      <h2>All articles</h2>
+      <ul class="sources">
+        {guides.map((g) => (
+          <li>
+            <span class="st">{g.data.era ?? 'Korea'}{g.data.region ? ` · ${g.data.region}` : ''}</span>
+            <a href={`/${lang}/guides/${g.id}/`}>{g.data.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
