@@ -9,7 +9,14 @@ export default defineConfig({
   i18n: {
     defaultLocale: DEFAULT_LOCALE,
     locales: [...LOCALES],
-    routing: { prefixDefaultLocale: true },
+    routing: {
+      prefixDefaultLocale: true,
+      // Astro 가 루트 리디렉션 HTML 을 자동 생성하지 않게 한다.
+      // 자동 생성물은 2초 지연 meta refresh 와 "Redirecting from / to /en/" 문구를 포함해
+      // 방문자에게 그대로 노출됐다. 루트는 public/_redirects 의 엣지 302 로 처리하고,
+      // src/pages/index.astro 는 그것이 없는 환경을 위한 무음 폴백이다.
+      redirectToDefaultLocale: false,
+    },
   },
   integrations: [
     mdx(),
