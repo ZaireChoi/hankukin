@@ -20,12 +20,18 @@
  * 넓게 잡되, 판정은 소개글 본문으로 한다.
  */
 export const SWEEP_KEYWORDS = [
+  '촬영지',
+  '촬영장',
+  '촬영장소',
+  '세트장',
+  '오픈세트장',
+  '드라마촬영장',
   '드라마 촬영지',
   '영화 촬영지',
-  '촬영지',
-  '드라마세트장',
-  '촬영장',
-  '오픈세트장',
+  '영상테마파크',
+  '드라마세트',
+  '로케이션',
+  '영화마을',
 ];
 
 /** 방문 가능성이 낮은 유형을 미리 걸러낸다 (음식점·숙박·쇼핑) */
@@ -37,6 +43,60 @@ export function isVisitableType(contentTypeId) {
 }
 
 /**
+ * 상류(한국관광공사) 쪽에서 작품명이 이미 지워진 흔적을 찾는다.
+ *
+ * 2026-08-13 실측:
+ *   "2010년 MBC 드라마 가 처음 촬영되었고, 이후 , , , , 등의 드라마와"
+ *   "SBS 드라마 의 촬영지이다"
+ *   "해양드라마세트장 ( 촬영지)"      ← 등재명 자체에 구멍
+ *
+ *   등재명은 우리 코드가 손대지 않는 필드인데도 비어 있다.
+ *   즉 우리가 오늘 고친 것과 같은 결함이 그쪽 시스템에도 있다.
+ *
+ * 왜 표시만 하고 채우지 않는가:
+ *   문맥으로 추측하면 그 순간 우리도 목격담을 쓰는 것이 된다.
+ *   비어 있음을 '비어 있다' 고 기록하는 편이 낫다.
+ */
+const REDACTION_SIGNS = [
+  /드라마\s+(?:가|를|의|와|과|는|이)\s/,    // 조사 앞이 비어 있음
+  /영화\s+(?:가|를|의|와|과|는|이)\s/,
+  /(?:^|[^,])\s,\s*,\s*,/,                  // ", , ," 연속 — 목록이 통째로 사라짐
+  /\(\s+촬영지\)/,                          // "( 촬영지)"
+  /「\s*」|〈\s*〉|《\s*》/,                 // 빈 괄호가 남음
+];
+
+export function detectRedaction(text = '') {
+  const hits = REDACTION_SIGNS.filter((re) => re.test(String(text)));
+  return { redacted: hits.length > 0, signs: hits.length };
+}
+
+/**
+ * 장소 등재명에서 작품을 뽑는다.
+ *
+ * "낭만닥터김사부촬영지", "웰컴투동막골촬영지", "태양의 후예 촬영지" —
+ * 한국관광공사가 **이름 자체에** 작품을 넣어 등재한 경우다.
+ * 소개글이 지워졌어도 이름은 남아 있으므로, 상류 결손의 실질적 복구 수단이 된다.
+ *
+ * 지명을 작품으로 오인하지 않는 것이 핵심이다.
+ *   "문경새재 오픈세트장" → 문경새재 는 지명 (주소에 '문경' 이 있다)
+ *   "완도 청해포구촬영장" → 완도 도 지명
+ *   "순천 드라마촬영장"   → '드라마' 라는 일반어가 섞여 있다
+ */
+const NAME_SUFFIX = /^(.+?)\s*(?:오픈세트장|드라마세트장|드라마촬영장|영화촬영장|촬영세트장|세트장|촬영장소|촬영장|촬영지)$/;
+const GENERIC_IN_NAME = /(드라마|영화|세트|촬영|테마파크|스튜디오|공원|마을|해변|해수욕장|저수지|폭포|계곡)/;
+
+export function extractFromPlaceName(title = '', address = '') {
+  const m = NAME_SUFFIX.exec(String(title).trim());
+  if (!m) return null;
+  const name = m[1].trim();
+  if (name.length < 3) return null;                 // '연천', '남이' 같은 조각 방지
+  if (GENERIC_IN_NAME.test(name)) return null;      // 일반어가 섞이면 작품명이 아니다
+  const addr = String(address ?? '');
+  if (addr && (addr.includes(name) || addr.includes(name.slice(0, 2)))) return null;  // 지명
+  return { title: name, evidence: ['등재명'], context: `한국관광공사 등재명: "${title}"` };
+}
+
+/**
  * 한 장소의 조사 결과를 만든다.
  * 작품명을 못 뽑아도 버리지 않는다 — '촬영 언급은 있으나 작품 불명' 도 정보다.
  */
@@ -44,7 +104,16 @@ export function toFinding(place, overview, { extractWorkTitles, mentionsFilming,
   const text = overview ?? '';
   const filming = mentionsFilming(text);
   const works = extractWorkTitles(text);
+
+  // 소개글에서 못 뽑았을 때 등재명이 마지막 수단이 된다
+  const fromName = extractFromPlaceName(place.title, place.address);
+  if (fromName && !works.some((w) => w.title === fromName.title)) works.push(fromName);
+
+  const redaction = detectRedaction(`${place.title ?? ''} ${text}`);
+
   return {
+    upstreamRedacted: redaction.redacted,
+    redactionSigns: redaction.signs,
     contentId: String(place.contentId),
     title: place.title,
     address: place.address ?? null,
@@ -106,6 +175,7 @@ export function summarize(findings) {
     scanned: findings.length,
     filmingMentioned: withFilming.length,
     workIdentified: withWork.length,
+    upstreamRedacted: findings.filter((f) => f.upstreamRedacted).length,
     works: Object.keys(byWork).length,
     top: Object.entries(byWork).slice(0, 15).map(([title, places]) => ({ title, places: places.length })),
   };

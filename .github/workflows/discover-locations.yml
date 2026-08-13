@@ -14,7 +14,11 @@ on:
       max_detail:
         description: '이번 회차 상세조회 한도 (쿼터 보호)'
         required: false
-        default: '200'
+        default: '300'
+      rescan:
+        description: '이미 훑은 곳도 다시 읽기 (추출 로직을 고쳤을 때 1)'
+        required: false
+        default: '0'
 
 permissions:
   contents: write
@@ -39,7 +43,8 @@ jobs:
       - name: 촬영지 발굴
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
-          MAX_DETAIL: ${{ github.event.inputs.max_detail || '200' }}
+          MAX_DETAIL: ${{ github.event.inputs.max_detail || '300' }}
+          RESCAN: ${{ github.event.inputs.rescan || '0' }}
         run: node scripts/discover-locations.mjs
 
       - name: 결과 커밋

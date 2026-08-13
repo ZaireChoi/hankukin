@@ -6,7 +6,8 @@
  */
 import assert from 'node:assert/strict';
 import { extractWorkTitles, mentionsFilming, regionOf } from '../lib/tourapi.mjs';
-import { toFinding, indexByWork, mergeFindings, summarize, isVisitableType, SWEEP_KEYWORDS } from '../lib/discover.mjs';
+import { toFinding, indexByWork, mergeFindings, summarize, isVisitableType, SWEEP_KEYWORDS,
+         detectRedaction, extractFromPlaceName } from '../lib/discover.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -94,7 +95,54 @@ t('조사·언급·작품확인을 구분해서 센다', () => {
   assert.equal(s.workIdentified, 1);
 });
 
-console.log('\n[6] 훑기 키워드');
+console.log('\n[6] 상류 결손 감지 — 한국관광공사 쪽에서 이미 지워진 건');
+t('실측: "드라마 가 처음 촬영되었고" 를 결손으로 본다', () => {
+  assert.equal(detectRedaction('2010년 MBC 드라마 가 처음 촬영되었고, 이후 , , , , 등의').redacted, true);
+});
+t('실측: "SBS 드라마 의 촬영지이다" 를 결손으로 본다', () => {
+  assert.equal(detectRedaction('2016년 방영되었던 SBS 드라마 의 촬영지이다.').redacted, true);
+});
+t('실측: 등재명 "해양드라마세트장 ( 촬영지)" 를 결손으로 본다', () => {
+  assert.equal(detectRedaction('해양드라마세트장 ( 촬영지)').redacted, true);
+});
+t('정상 문장을 결손으로 오인하지 않는다', () => {
+  assert.equal(detectRedaction('주문진 방파제는 드라마 <도깨비> 촬영지로 유명해졌다.').redacted, false);
+  assert.equal(detectRedaction('드라마 <킹덤>, <슈룹> 을 촬영한 세트장이다.').redacted, false);
+});
+t('결손은 표시만 하고 작품을 지어내지 않는다', () => {
+  const f = toFinding(place({ contentId: 'x', title: '해양드라마세트장 ( 촬영지)' }),
+    '2010년 MBC 드라마 가 처음 촬영되었고, 이후 , , , , 등의 드라마가 촬영됐다.', deps);
+  assert.equal(f.upstreamRedacted, true);
+  assert.deepEqual(f.works, []);
+});
+
+console.log('\n[7] 등재명에서 작품 복구 — 소개글이 지워졌을 때의 마지막 수단');
+t('실측: 낭만닥터김사부촬영지 에서 작품을 얻는다', () => {
+  const r = extractFromPlaceName('낭만닥터김사부촬영지', '경기도 포천시 영북면');
+  assert.equal(r.title, '낭만닥터김사부');
+  assert.deepEqual(r.evidence, ['등재명']);
+});
+t('실측: "태양의 후예 촬영지" 처럼 띄어쓴 형태도 된다', () => {
+  assert.equal(extractFromPlaceName('태양의 후예 촬영지', '강원특별자치도 태백시').title, '태양의 후예');
+});
+t('실측: 지명을 작품으로 오인하지 않는다 (문경새재·완도)', () => {
+  assert.equal(extractFromPlaceName('문경새재 오픈세트장', '경상북도 문경시 문경읍'), null);
+  assert.equal(extractFromPlaceName('완도 청해포구촬영장', '전라남도 완도군 완도읍'), null);
+});
+t('실측: 일반어가 섞인 이름은 거르낸다 (순천 드라마촬영장)', () => {
+  assert.equal(extractFromPlaceName('순천 드라마촬영장', '전라남도 순천시'), null);
+  assert.equal(extractFromPlaceName('해양드라마세트장', '경상남도 창원시'), null);
+});
+t('접미사가 없으면 아무것도 뽑지 않는다', () => {
+  assert.equal(extractFromPlaceName('경복궁', '서울특별시 종로구'), null);
+});
+t('소개글 추출이 되면 등재명을 중복으로 넣지 않는다', () => {
+  const f = toFinding(place({ contentId: 'y', title: '웰컴투동막골촬영지', address: '강원특별자치도 평창군' }),
+    "영화 '웰컴투동막골' 의 촬영지로 알려진 곳이다.", deps);
+  assert.equal(f.works.filter((w) => w.title === '웰컴투동막골').length, 1);
+});
+
+console.log('\n[8] 훑기 키워드');
 t('키워드가 비어 있지 않고 중복이 없다', () => {
   assert.ok(SWEEP_KEYWORDS.length >= 4);
   assert.equal(new Set(SWEEP_KEYWORDS).size, SWEEP_KEYWORDS.length);

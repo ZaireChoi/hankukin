@@ -39,6 +39,7 @@ const OUT = path.join(ROOT, 'data', 'filming-index.json');
 const ROWS_PER_PAGE = 100;
 const PAGES_PER_KEYWORD = Number(process.env.PAGES_PER_KEYWORD ?? 3);
 const MAX_DETAIL = Number(process.env.MAX_DETAIL ?? 200);
+const RESCAN = process.env.RESCAN === '1';
 
 const log = {
   info: (...a) => console.log('[discover]', ...a),
@@ -62,29 +63,38 @@ export async function main() {
 
   // ── 1. 후보 수집 (검색 단계) ────────────────────────────────
   const candidates = new Map();
-  let searchCalls = 0;
+  let searchCalls = 0, seenTotal = 0, droppedByType = 0;
   for (const keyword of SWEEP_KEYWORDS) {
+    const before = candidates.size;
     for (let page = 1; page <= PAGES_PER_KEYWORD; page++) {
       const items = await searchPlace(keyword, { rows: ROWS_PER_PAGE, page, log });
       searchCalls++;
       if (items === null) { log.warn(`검색 실패: ${keyword} p${page}`); break; }
       if (items.length === 0) break;
       for (const it of items) {
-        if (!isVisitableType(it.contentTypeId)) continue;
+        seenTotal++;
+        // 어디서 줄어드는지 보이게 한다 — 조용히 0건이 되는 것이 가장 나쁘다
+        if (!isVisitableType(it.contentTypeId)) { droppedByType++; continue; }
         if (!candidates.has(String(it.contentId))) candidates.set(String(it.contentId), it);
       }
       if (items.length < ROWS_PER_PAGE) break;
       await sleep(200);
     }
-    log.info(`"${keyword}" 까지 누적 후보 ${candidates.size}곳`);
+    log.info(`"${keyword}" → 신규 ${candidates.size - before}곳 (누적 ${candidates.size})`);
   }
+  log.info(`검색 결과 총 ${seenTotal}건 · 유형 제외 ${droppedByType}건 · 방문가능 후보 ${candidates.size}곳`);
 
   if (candidates.size === 0) {
     throw new Error('후보를 한 곳도 찾지 못했습니다. 인증키 또는 API 상태를 확인하세요.');
   }
 
   // ── 2. 소개글 조회 (상세 단계) ──────────────────────────────
-  const fresh = [...candidates.values()].filter((it) => !known.has(String(it.contentId)));
+  // 추출 로직이 바뀌면 이미 훑은 곳도 다시 읽어야 한다.
+  // 로직만 고치고 옛 결과를 그대로 두면, 고친 줄 알고 넘어가게 된다.
+  const fresh = RESCAN
+    ? [...candidates.values()]
+    : [...candidates.values()].filter((it) => !known.has(String(it.contentId)));
+  if (RESCAN) log.info('RESCAN=1 — 이전에 훑은 곳도 다시 읽습니다.');
   const targets = fresh.slice(0, MAX_DETAIL);
   log.info(`신규 ${fresh.length}곳 중 이번 회차 ${targets.length}곳을 조회합니다 (한도 ${MAX_DETAIL}).`);
 
@@ -130,6 +140,7 @@ export async function main() {
   console.log('\n──────── 발굴 결과 ────────');
   console.log(`검색 호출 ${searchCalls}회 · 상세 조회 ${targets.length}회 (실패 ${detailFailures})`);
   console.log(`누적 조사 ${stats.scanned}곳 · 촬영 언급 ${stats.filmingMentioned}곳 · 작품명 확인 ${stats.workIdentified}곳`);
+  console.log(`상류(한국관광공사) 데이터에서 작품명이 이미 지워진 곳 ${stats.upstreamRedacted}곳 — 추측하지 않고 표시만 함`);
   console.log(`확인된 작품 ${stats.works}편\n`);
   for (const w of stats.top) console.log(`  ${String(w.places).padStart(3)}곳  ${w.title}`);
   console.log('\n색인:', path.relative(ROOT, OUT));
