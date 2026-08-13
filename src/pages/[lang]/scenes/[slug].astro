@@ -7,6 +7,7 @@ import SourceList from '../../../components/SourceList.astro';
 import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { LOCALES } from '../../../config/brand.mjs';
+import { anyAffiliate } from '../../../config/merchants.mjs';
 
 export async function getStaticPaths() {
   const entries = await getCollection('scenes', (e) => !e.data.draft);
@@ -26,7 +27,14 @@ const { Content } = await render(entry);
 const closed = d.place.businessStatus === 'permanently_closed';
 const visitLinks = closed ? [] : d.visitKorea;
 
-const hasAffiliate = visitLinks.length > 0 || d.bringKoreaHome.length > 0;
+/**
+ * 제휴 고지는 '링크가 있으니까' 띄우는 것이 아니라
+ * '실제로 제휴 관계가 있으니까' 띄운다 (2026-08-13 수정).
+ * 신청·승인 전에 수수료를 받는다고 쓰면 그건 거짓 고지다.
+ */
+const allLinks = [...visitLinks, ...d.bringKoreaHome];
+const hasLinks = allLinks.length > 0;
+const hasAffiliate = anyAffiliate(allLinks);
 const slotLabel = { morning:'Morning', lunch:'Lunch', afternoon:'Afternoon', evening:'Evening', night:'Night' };
 
 const jsonLd = {
@@ -74,7 +82,9 @@ const jsonLd = {
       the filming site, but booking and purchase links have been removed.</p>
     )}
 
-    {hasAffiliate && <p class="notice">{NOTICES.affiliate}</p>}
+    {hasAffiliate
+      ? <p class="notice">{NOTICES.affiliate}</p>
+      : hasLinks && <p class="notice">{NOTICES.noAffiliate}</p>}
 
     <!-- 4·5. 장면이 중요한 이유 / 근거 (본문) -->
     <section class="block">

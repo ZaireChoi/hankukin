@@ -187,6 +187,10 @@ export const NOTICES = {
     "This is a suggested photo angle for visitors, not the production's confirmed camera position.",
   affiliate:
     'This article contains affiliate links. We may earn a commission if you book or purchase through them, at no additional cost to you.',
+  // 제휴 관계가 없을 때 쓰는 문구. 링크가 있다고 해서 제휴 고지를 띄우면
+  // 받지도 않는 수수료를 받는다고 말하는 것이 된다 (2026-08-13 수정).
+  noAffiliate:
+    'These are plain links to merchants we think are useful. We are not in an affiliate relationship with them and earn nothing if you book or purchase. If that changes, this notice will change with it.',
   aiAssisted:
     'This article was researched, drafted and fact-checked with AI assistance under an editorial policy. Sources and the last verification date are listed above.',
   trendScore:

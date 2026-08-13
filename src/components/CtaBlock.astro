@@ -1,14 +1,26 @@
 ---
 /** Visit Korea / Bring Korea Home — 관련성이 있을 때만 렌더링한다 (문서 01 §4) */
+import { isAffiliate, decorate } from '../config/merchants.mjs';
 const { heading, items = [], note } = Astro.props;
 const rel = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', suggested: 'Suggested' };
+
+/**
+ * rel="sponsored" 는 '금전적 대가가 있는 링크' 를 뜻한다.
+ * 제휴가 아닌 링크에 붙이면 검색엔진에도 사실과 다른 신고를 하는 셈이다.
+ * 승인된 곳에만 sponsored 를 붙이고, 추적 태그도 그때만 붙는다.
+ */
+const prepared = items.map((i) => ({
+  ...i,
+  href: decorate(i.url, i.merchant),
+  rel: isAffiliate(i.merchant) ? 'sponsored nofollow noopener' : 'nofollow noopener',
+}));
 ---
-{items.length > 0 && (
+{prepared.length > 0 && (
   <section class="block">
     <h2>{heading}</h2>
     <div class="cta-group">
-      {items.map((i) => (
-        <a class="cta" href={i.url} rel="sponsored nofollow noopener" target="_blank">
+      {prepared.map((i) => (
+        <a class="cta" href={i.href} rel={i.rel} target="_blank">
           <span>
             <span class="l">{i.label}</span><br />
             <span class="m">{i.merchant} · <span class="rel">{rel[i.relationship] ?? i.relationship}</span></span>

@@ -17,6 +17,7 @@
 
 const BASE = 'https://apis.data.go.kr/B551011/KorService2';
 const SERVICE_NAME = 'HANKUKIN/0.1';
+const FETCH_TIMEOUT_MS = Number(process.env.TOURAPI_TIMEOUT_MS ?? 8000);
 
 /**
  * 인증키는 Encoding/Decoding 두 형태로 발급된다.
@@ -47,7 +48,9 @@ async function call(path, params, { retries = 3, log = console } = {}) {
   let lastErr;
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(`${BASE}${path}?${p}`);
+      // 타임아웃이 없으면 응답 없는 연결에 30초씩 매달린다.
+      // 2026-08-13 3회차가 그랬다 — 3번 시도에 1분 42초를 썼고 전부 'fetch failed' 였다.
+      const res = await fetch(`${BASE}${path}?${p}`, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
       const text = await res.text();
 
       // 오류가 JSON 이 아니라 XML 로 오는 경우가 많다 — 그대로 삼키면 원인을 못 찾는다
