@@ -8,6 +8,7 @@
  */
 import assert from 'node:assert/strict';
 import { parseTsv, parseGlobalTsv, parsePageText, noveltyScore } from '../lib/netflix.mjs';
+import { matchTitle } from '../lib/youtube.mjs';
 
 let pass = 0, fail = 0;
 const t = (n, f) => { try { f(); console.log('  ✓', n); pass++; } catch (e) { console.log('  ✗', n, '\n     ', e.message); fail++; } };
@@ -103,6 +104,29 @@ t('6위 상승작이 1위 장기체류작보다 높다', () => {
   assert.equal(saturated.reason, 'saturated');
   assert.ok(climbing.score > saturated.score,
     `상승 ${climbing.score} 가 포화 ${saturated.score} 보다 커야 한다`);
+});
+
+console.log('\n[4] 한국어 별칭 매칭 (2026-08-13 실측 버그)');
+const YT = [
+  { rank: 3, title: '동궁 6화 하이라이트', channel: 'tvN', viewCount: 900000 },
+  { rank: 9, title: '전혀 무관한 브이로그', channel: 'vlog', viewCount: 1000 },
+];
+t("짧은 한국어 제목은 기본 기준에서 걸러진다 — 이것이 원래 동작", () => {
+  const r = matchTitle('동궁', YT);
+  assert.equal(r.matched, false);
+  assert.equal(r.reason, 'title_too_generic');
+});
+t('검증된 별칭은 완화 기준으로 매칭된다', () => {
+  const r = matchTitle('동궁', YT, { minChars: 2, minWords: 1 });
+  assert.equal(r.matched, true);
+  assert.equal(r.hits[0].rank, 3);
+});
+t('완화 기준에서도 무관한 영상은 걸리지 않는다', () => {
+  const r = matchTitle('동궁', [YT[1]], { minChars: 2, minWords: 1 });
+  assert.equal(r.matched, false);
+});
+t('영어 원제는 여전히 엄격한 기준을 유지한다', () => {
+  assert.equal(matchTitle('Wrath', YT).reason, 'title_too_generic');
 });
 
 console.log(`\n결과: ${pass} 통과, ${fail} 실패\n`);

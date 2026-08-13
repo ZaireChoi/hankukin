@@ -82,34 +82,40 @@ export async function main() {
   const hasHistory = Object.values(previous).some((v) => Array.isArray(v) && v.length > 0);
   if (!hasHistory) log.warn('이전 스냅샷이 없습니다 — 신규 판정은 누적 주차를 근거로 대체합니다.');
 
-  const seen = new Map();
-  for (const [key, rows] of Object.entries(out.charts)) {
-    for (const row of rows) {
-      const novelty = noveltyScore(row, previous[key] ?? [], { hasHistory });
-      const loc = locationPotential(row.title);
-      const prior = seen.get(row.title);
-      // 한국·글로벌 양쪽에 모두 오르면 가장 강한 기회다
-      const bothCharts = Boolean(prior);
-      const score = Number((
-        novelty.score * 0.5 + loc.score * 0.35 + (bothCharts ? 0.15 : 0)
-      ).toFixed(3));
+  /**
+   * 후보는 '한국 차트'에서만 뽑는다.
+   *
+   * 2026-08-13 실측: 글로벌 차트를 후보 공급원으로 쓰자 미국 실화 범죄 다큐
+   * (The Idaho Murders)가 1위 후보로 올라왔다. HANKUKIN 은 한국 콘텐츠를 다루는
+   * 사이트이고, 한국에 촬영지가 없는 작품은 아무리 인기가 높아도 쓸 것이 없다.
+   *
+   * 글로벌 차트는 '한국 작품이 해외에서도 통하는가'를 확인하는 용도로만 쓴다.
+   * 우리 독자가 해외에 있으므로 그 교차 확인은 여전히 의미가 있다.
+   */
+  const globalTitles = new Set((out.charts.global ?? []).map((r) => r.title));
+  const koreaRows = out.charts.korea ?? [];
+  if (koreaRows.length === 0) throw new Error('한국 차트를 수집하지 못했습니다.');
 
-      if (prior) {
-        prior.score = Math.max(prior.score, score);
-        prior.charts.push(key);
-        prior.bothCharts = true;
-      } else {
-        seen.set(row.title, {
-          title: row.title, season: row.season ?? '',
-          charts: [key], bothCharts: false,
-          rank: row.rank, weeksInTop10: row.weeksInTop10,
-          novelty: novelty.reason, noveltyScore: novelty.score,
-          locationPotential: loc.score, locationNote: loc.note,
-          score,
-        });
-      }
-    }
+  const seen = new Map();
+  for (const row of koreaRows) {
+    const novelty = noveltyScore(row, previous.korea ?? [], { hasHistory });
+    const loc = locationPotential(row.title);
+    const alsoGlobal = globalTitles.has(row.title);
+    const score = Number((
+      novelty.score * 0.5 + loc.score * 0.35 + (alsoGlobal ? 0.15 : 0)
+    ).toFixed(3));
+
+    seen.set(row.title, {
+      title: row.title, season: row.season ?? '',
+      charts: alsoGlobal ? ['korea', 'global'] : ['korea'],
+      alsoGlobal,
+      rank: row.rank, weeksInTop10: row.weeksInTop10,
+      novelty: novelty.reason, noveltyScore: novelty.score,
+      locationPotential: loc.score, locationNote: loc.note,
+      score,
+    });
   }
+  log.info(`후보 ${seen.size}건 (한국 차트 기준) · 글로벌 동시 진입 ${[...seen.values()].filter((c) => c.alsoGlobal).length}건`);
 
   // ── YouTube 교차 검증 (두 번째 독립 신호) ─────────────────────
   // Netflix 순위 = 실제 시청 / YouTube 트렌딩 = 화제성.
@@ -144,14 +150,22 @@ export async function main() {
   out.aliasesUnverified = unverifiedCount;
 
   for (const c of seen.values()) {
-    const names = [c.title, ...(aliases[c.title] ?? [])];
+    // 원제는 엄격한 기준으로, 사람이 검증한 별칭은 완화된 기준으로 매칭한다.
+    // 짧은 한국어 제목('동궁' 2글자)이 genericity 검사에 걸려 통째로 배제되던 문제를 푼다.
+    // 완화의 근거는 '사람이 확인했다'는 사실이지, 글자 수가 아니다.
+    const verifiedAliases = aliases[c.title] ?? [];
+    const attempts = [
+      { name: c.title, opts: {} },
+      ...verifiedAliases.map((a) => ({ name: a, opts: { minChars: 2, minWords: 1 } })),
+    ];
     let m = { matched: false, reason: 'no_match', hits: [] };
-    for (const n of names) {
-      const r = matchTitle(n, ytBuckets);
-      if (r.matched) { m = r; break; }
+    for (const a of attempts) {
+      const r = matchTitle(a.name, ytBuckets, a.opts);
+      if (r.matched) { m = { ...r, via: a.name }; break; }
       if (r.reason === 'title_too_generic' && m.reason === 'no_match') m.reason = r.reason;
     }
-    c.youtube = { matched: m.matched, reason: m.reason, hits: m.hits, triedAliases: names.length - 1 };
+    c.youtube = { matched: m.matched, reason: m.reason, hits: m.hits,
+                  via: m.via ?? null, triedAliases: verifiedAliases.length };
     if (m.matched) {
       c.youtube.strength = trendingStrength(m.hits);
       c.independentSources = 2;                 // Netflix + YouTube
@@ -181,6 +195,7 @@ export async function main() {
     score: c.score,
     novelty: c.novelty,
     location: c.locationPotential,
+    global: c.alsoGlobal ? '✓' : '-',
     youtube: c.youtube?.matched ? `✓ ${c.youtube.strength}` : '-',
     sources: c.independentSources,
   })));
