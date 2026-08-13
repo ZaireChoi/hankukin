@@ -32,9 +32,56 @@ export function classifyChannel(name = '') {
 export const GATE = {
   READY: 'ready',                     // 촬영지 출처 확보 — 초안 생성 가능
   NEEDS_LOCATION: 'needs_location',   // 작품은 확인, 촬영지 근거 없음
+  NEEDS_ACCESS: 'needs_access',       // 촬영지는 확인, 방문 불가
   NEEDS_SIGNAL: 'needs_signal',       // 독립 신호 부족
   SKIP: 'skip',                        // 촬영지가 나올 수 없는 유형
 };
+
+/** 게이트를 열 수 있는 출처 등급 (06 §1) */
+const STRONG_SOURCE_TYPES = [
+  'official_production', 'official_interview', 'official_social', 'public_institution',
+];
+
+/**
+ * 장소 근거를 등급별로 집계한다.
+ *
+ * 핵심 구분 — 2026-08-13 실측에서 배운 것:
+ *   '장소가 실재한다' 와 '그 장소가 촬영지다' 는 다른 주장이다.
+ *   한국관광공사가 위양지를 소개한다고 해서 동궁 촬영지가 되는 것은 아니다.
+ *   반대로 주문진 방파제 소개글에는 "드라마 촬영지로 유명해졌다" 가 들어있고,
+ *   그건 공공기관이 촬영 사실을 직접 서술한 것이므로 등급이 다르다.
+ */
+export function locationEvidence(locations) {
+  const places = locations?.places ?? [];
+  const sources = locations?.sources ?? [];
+
+  const resolved = places.filter((p) => p.tourapi?.contentId);
+  const filmingConfirmed = resolved.filter((p) => p.tourapi?.mentionsFilming === true);
+  const unresolved = places.filter((p) => !p.tourapi?.contentId);
+  const strongSources = sources.filter((s) => STRONG_SOURCE_TYPES.includes(s.type));
+
+  // 방문 가능성. publicAccess 가 명시적으로 false 인 것만 제외한다 (미지정은 통과).
+  const visitable = places.filter((p) => p.publicAccess !== false);
+  const allBlocked = places.length > 0 && visitable.length === 0;
+
+  // 어떤 표현까지 허용되는가 (04 §3)
+  let claimWording = 'inspired_by';
+  if (filmingConfirmed.length > 0) claimWording = 'official_filming_location';
+  else if (strongSources.length > 0 && resolved.length > 0) claimWording = 'suggested_nearby';
+
+  return {
+    places: places.length,
+    resolved: resolved.length,
+    unresolved: unresolved.length,
+    filmingConfirmed: filmingConfirmed.length,
+    strongSources: strongSources.length,
+    visitable: visitable.length,
+    allBlocked,
+    claimWording,
+    confirmedPlaceNames: filmingConfirmed.map((p) => p.nameKo ?? p.name),
+    unresolvedNames: unresolved.map((p) => p.nameKo ?? p.name),
+  };
+}
 
 /**
  * 브리프 하나를 만든다.
@@ -43,6 +90,7 @@ export const GATE = {
  */
 export function buildBrief(c, known = {}) {
   const locations = known[c.title] ?? null;
+  const evidence = locationEvidence(locations);
 
   const officialEvidence = (c.youtube?.samples ?? [])
     .map((s) => ({ ...s, channel: s.channel, ...classifyChannel(s.channel) }))
@@ -53,7 +101,12 @@ export function buildBrief(c, known = {}) {
     independentSources: c.independentSources ?? 1,
     hasTwoSignals: (c.independentSources ?? 1) >= 2,
     officialChannelSeen: officialEvidence.length > 0,
-    hasVerifiedLocation: Boolean(locations?.sources?.length),
+    // '출처가 배열에 있다' 가 아니라 '공공기관이 촬영 사실을 서술했다' 를 본다
+    hasVerifiedLocation: evidence.filmingConfirmed > 0,
+    resolvedPlaces: evidence.resolved,
+    unresolvedPlaces: evidence.unresolved,
+    strongSources: evidence.strongSources,
+    visitablePlaces: evidence.visitable,
     locationPotential: c.locationPotential ?? 0,
   };
 
@@ -66,10 +119,16 @@ export function buildBrief(c, known = {}) {
     reason = `독립 신호가 ${checks.independentSources}개입니다. 2개 미만이면 "Emerging" 이상으로 표기할 수 없어 기사 가치가 낮습니다.`;
   } else if (!checks.hasVerifiedLocation) {
     gate = GATE.NEEDS_LOCATION;
-    reason = '촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.';
+    reason = evidence.resolved > 0
+      ? `장소 ${evidence.resolved}곳이 확인됐지만, 공공기관이 촬영 사실을 서술한 근거가 없습니다. 장소가 실재하는 것과 그곳이 촬영지인 것은 다른 주장입니다.`
+      : '촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.';
+  } else if (evidence.allBlocked) {
+    gate = GATE.NEEDS_ACCESS;
+    reason = '촬영지는 확인됐지만 모든 장소가 방문 불가입니다. 방문할 수 없는 곳은 Visit Korea 콘텐츠가 되지 않습니다.';
   } else {
     gate = GATE.READY;
-    reason = '촬영지 출처가 확보되어 초안 생성이 가능합니다.';
+    reason = `공공기관이 촬영 사실을 서술한 장소 ${evidence.filmingConfirmed}곳을 확보했습니다. `
+           + `허용 표현: ${evidence.claimWording}.`;
   }
 
   return {
@@ -82,6 +141,7 @@ export function buildBrief(c, known = {}) {
     novelty: c.novelty,
     locationNote: c.locationNote,
     checks,
+    evidence,
     officialEvidence: officialEvidence.slice(0, 3),
     buzz: c.youtube?.matched
       ? { method: c.youtube.method, relevant: c.youtube.relevant, topViews: c.youtube.topViews, strength: c.youtube.strength }
@@ -90,12 +150,20 @@ export function buildBrief(c, known = {}) {
     gate,
     reason,
     /** 아직 채워지지 않은 것 — 사람이 확인해야 할 목록 */
-    missing: buildMissing(checks, locations),
+    missing: buildMissing(checks, locations, evidence),
   };
 }
 
-function buildMissing(checks, locations) {
+function buildMissing(checks, locations, evidence = {}) {
   const m = [];
+  if (evidence.unresolved > 0) {
+    m.push({
+      item: `장소 조회 실패 ${evidence.unresolved}곳 — ${(evidence.unresolvedNames ?? []).join(', ')}`,
+      whereToLook: ['한국관광공사 등재명 확인 (이름 표기가 다를 수 있음)', 'locations.json 의 nameKo 를 등재명으로 수정'],
+      required: false,
+      note: 'TourAPI 키워드 변형을 모두 시도했으나 0건입니다. 등재명이 다르거나 미등재일 수 있습니다.',
+    });
+  }
   if (!checks.hasVerifiedLocation) {
     m.push({
       item: '촬영지와 그 출처',
@@ -140,6 +208,7 @@ export function renderBrief(b) {
   const gateLabel = {
     [GATE.READY]: '✅ 초안 생성 가능',
     [GATE.NEEDS_LOCATION]: '⛔ 발행 불가 — 촬영지 근거 없음',
+    [GATE.NEEDS_ACCESS]: '⛔ 발행 불가 — 방문 불가 장소',
     [GATE.NEEDS_SIGNAL]: '⚠️ 보류 — 독립 신호 부족',
     [GATE.SKIP]: '⏭️ 제외 — 촬영지 부적합',
   }[b.gate];
@@ -176,13 +245,27 @@ export function renderBrief(b) {
     lines.push('');
   }
 
-  if (b.locations?.sources?.length) {
-    lines.push('## 확보된 촬영지', '');
-    for (const loc of b.locations.places ?? []) {
-      lines.push(`- **${loc.name}** — ${loc.address ?? '주소 확인 필요'}`);
+  if (b.evidence?.places > 0) {
+    lines.push('## 장소 근거', '',
+      '| 항목 | 값 |', '|---|---|',
+      `| 등록된 장소 | ${b.evidence.places}곳 |`,
+      `| 공공기관 데이터 확인 | ${b.evidence.resolved}곳 |`,
+      `| **촬영 사실 서술 확인** | **${b.evidence.filmingConfirmed}곳** |`,
+      `| 조회 실패 | ${b.evidence.unresolved}곳 |`,
+      `| 허용 표현 | \`${b.evidence.claimWording}\` |`,
+      '');
+    for (const loc of b.locations?.places ?? []) {
+      const ta = loc.tourapi;
+      const mark = ta?.mentionsFilming ? '✓ 촬영 서술' : ta ? '· 장소만 확인' : '✗ 미확인';
+      lines.push(`- **${loc.nameKo ?? loc.name}** — ${ta?.address ?? loc.address ?? '주소 미확인'} · ${mark}`);
+      if (ta?.mentionsFilming && ta.overview) {
+        lines.push(`  > ${ta.overview.slice(0, 160).replace(/\n/g, ' ')}...`);
+      }
     }
     lines.push('', '### 출처', '');
-    for (const s of b.locations.sources) lines.push(`- [${s.title}](${s.url}) · ${s.type} · 확인일 ${s.checkedAt}`);
+    for (const s of b.locations?.sources ?? []) {
+      lines.push(`- [${s.title}](${s.url}) · ${s.type} · 확인일 ${s.checkedAt}${s.attribution ? ` · ${s.attribution}` : ''}`);
+    }
     lines.push('');
   }
 
