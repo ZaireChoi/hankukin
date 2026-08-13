@@ -1,0 +1,43 @@
+# 신작 레이더 — 드라마·K-pop 시의성 신호
+# Netflix Tudum 은 매주 화요일(KST 기준) 갱신되므로 주 2회 확인한다.
+name: collect-releases
+
+on:
+  schedule:
+    - cron: '0 20 * * 2,5'     # 화·금 05:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-releases
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: 파서 단위 테스트
+        run: node scripts/__tests__/netflix.test.mjs
+
+      - name: 신작 차트 수집
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: node scripts/collect-releases.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/releases
+          if git diff --staged --quiet; then echo "변경 없음";
+          else
+            git commit -m "chore(releases): $(date -u +%Y-%m-%d) 신작 차트 수집"
+            git push
+          fi
