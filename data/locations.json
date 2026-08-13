@@ -17,12 +17,53 @@
           "name": "Jumunjin Breakwater",
           "nameKo": "주문진 방파제",
           "address": "강원특별자치도 강릉시 주문진읍 해안로 1609 일대",
-          "expectRegion": "강원"
+          "expectRegion": "강원",
+          "lat": 37.8796220881,
+          "lng": 128.8335906768,
+          "tourapi": {
+            "contentId": "131271",
+            "title": "주문진 방파제",
+            "address": "강원특별자치도 강릉시 주문진읍 해안로 1609",
+            "lat": 37.8796220881,
+            "lng": 128.8335906768,
+            "image": "http://tong.visitkorea.or.kr/cms/resource/81/2656581_image2_1.jpg",
+            "modifiedAt": "20251028141125",
+            "overview": "주문진 방파제는 드라마  촬영지로 유명해졌다. 등장인물들이 처음 만나는 장소로 등장한 방파제는 여전히 드라마 속 멋진 풍광을 그대로 간직하고 있다. 이곳을 찾은 사람들은 드라마의 장면을 따라 하며 주인공이 된 듯한 기분을 만끽한다. 주문진 방파제는 동방파제와 서방파제로 이루어져 있다. 동방파제는 1㎞이고 서방파제는 200m로 되어있다. 봄부터 9월까지는 가자미낚시가 이어지고 10월에 들어서는 노래미, 학꽁치, 우럭이 나온다. 11월 이후부터 3월까지는 숭어와 황어가 주어종이 된다. 최고의 시즌은 10월부터 3월까지이다.",
+            "mentionsFilming": true,
+            "filmingHits": [
+              "촬영",
+              "드라마"
+            ],
+            "resolvedBy": "\"주문진 방파제\" 로 단일 확정 (강원 필터)"
+          }
         },
         {
           "name": "Jumunjin Beach",
           "nameKo": "주문진해수욕장",
-          "expectRegion": "강원"
+          "expectRegion": "강원",
+          "tourapiAttempt": {
+            "status": "not_found",
+            "note": "모든 키워드 변형에서 0건",
+            "tried": [
+              {
+                "keyword": "주문진해수욕장",
+                "areaCode": 32,
+                "count": 0
+              },
+              {
+                "keyword": "주문진 해수욕장",
+                "areaCode": 32,
+                "count": 0
+              },
+              {
+                "keyword": "주문진해변",
+                "areaCode": 32,
+                "count": 0
+              }
+            ],
+            "candidates": null,
+            "attemptedAt": "2026-08-13"
+          }
         }
       ],
       "sources": [
@@ -31,6 +72,13 @@
           "url": "https://www.gn.go.kr/tour/sub02_01_03.do",
           "type": "public_institution",
           "checkedAt": "2026-08-13"
+        },
+        {
+          "title": "주문진 방파제 — 한국관광공사 국문 관광정보 서비스",
+          "url": "https://api.visitkorea.or.kr/#/detail?cotId=131271",
+          "type": "public_institution",
+          "checkedAt": "2026-08-13",
+          "attribution": "한국관광공사 (공공누리 제1유형)"
         }
       ]
     },
