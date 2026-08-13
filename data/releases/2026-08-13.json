@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-08-13T02:44:52.308Z",
+  "collectedAt": "2026-08-13T03:40:41.940Z",
   "charts": {
     "korea": [
       {
@@ -77,117 +77,237 @@
       {
         "week": "2026-08-09",
         "rank": 1,
-        "title": "I am Solo",
-        "season": "I am Solo: Part 33",
-        "weeksInTop10": 1
+        "title": "The Idaho Murders: College Nightmare",
+        "season": "The Idaho Murders: College Nightmare: Season 1",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-08-09",
+        "rank": 1,
+        "title": "My Daughter's Father",
+        "season": "My Daughter's Father: Season 1",
+        "weeksInTop10": 3,
+        "category": "TV (Non-English)"
       },
       {
         "week": "2026-08-09",
         "rank": 2,
-        "title": "Our Sticky Love",
-        "season": "Our Sticky Love: Limited Series",
-        "weeksInTop10": 1
+        "title": "My Life With the Walter Boys",
+        "season": "My Life With the Walter Boys: Season 3",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-08-09",
+        "rank": 2,
+        "title": "Wrath",
+        "season": "Wrath: Season 1",
+        "weeksInTop10": 2,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-08-09",
+        "rank": 3,
+        "title": "The Bombing of Pan Am 103",
+        "season": "The Bombing of Pan Am 103: Limited Series",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
       },
       {
         "week": "2026-08-09",
         "rank": 3,
         "title": "Spooky in Love",
         "season": "Spooky in Love: Limited Series",
-        "weeksInTop10": 4
+        "weeksInTop10": 4,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-08-09",
+        "rank": 4,
+        "title": "I Will Find You",
+        "season": "I Will Find You: Limited Series",
+        "weeksInTop10": 8,
+        "category": "TV (English)"
       },
       {
         "week": "2026-08-09",
         "rank": 4,
         "title": "Badly in Love",
         "season": "Badly in Love: Season 2",
-        "weeksInTop10": 1
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
       },
       {
         "week": "2026-08-09",
         "rank": 5,
-        "title": "The Apartment Job",
-        "season": "The Apartment Job: Limited Series",
-        "weeksInTop10": 5
+        "title": "Ransom Canyon",
+        "season": "Ransom Canyon: Season 2",
+        "weeksInTop10": 3,
+        "category": "TV (English)"
       },
       {
         "week": "2026-08-09",
-        "rank": 6,
-        "title": "The East Palace",
-        "season": "The East Palace: Limited Series",
-        "weeksInTop10": 4
-      },
-      {
-        "week": "2026-08-09",
-        "rank": 7,
-        "title": "Agent Kim Reactivated",
-        "season": "Agent Kim Reactivated: Limited Series",
-        "weeksInTop10": 7
-      },
-      {
-        "week": "2026-08-09",
-        "rank": 8,
-        "title": "Rookie Kim’s Stock Market Mission",
-        "season": "Rookie Kim’s Stock Market Mission: Season 1",
-        "weeksInTop10": 1
-      },
-      {
-        "week": "2026-08-09",
-        "rank": 9,
-        "title": "Better Late Than Single: After Service",
-        "season": "Better Late Than Single: After Service: Season 1",
-        "weeksInTop10": 2
-      },
-      {
-        "week": "2026-08-09",
-        "rank": 10,
-        "title": "Agent Kim Reactivated – the Universe",
-        "season": "Agent Kim Reactivated – the Universe 2026",
-        "weeksInTop10": 2
+        "rank": 5,
+        "title": "Our Sticky Love",
+        "season": "Our Sticky Love: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
       }
     ]
   },
   "candidates": [
     {
-      "title": "The East Palace",
-      "season": "The East Palace: Limited Series",
+      "title": "The Idaho Murders: College Nightmare",
+      "season": "The Idaho Murders: College Nightmare: Season 1",
       "charts": [
-        "korea",
         "global"
       ],
-      "bothCharts": true,
-      "rank": 6,
-      "weeksInTop10": 4,
+      "bothCharts": false,
+      "rank": 1,
+      "weeksInTop10": 2,
       "novelty": "new_entry",
-      "noveltyScore": 0.8,
-      "locationPotential": 1,
-      "locationNote": "사극·궁궐 — 고궁/한옥 촬영지, 문화·역사 축과 중첩",
-      "score": 0.9,
+      "noveltyScore": 1,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.71,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
     {
-      "title": "Our Sticky Love",
-      "season": "Our Sticky Love: Limited Series",
+      "title": "My Daughter's Father",
+      "season": "My Daughter's Father: Season 1",
       "charts": [
-        "korea",
         "global"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
+      "rank": 1,
+      "weeksInTop10": 3,
+      "novelty": "new_entry",
+      "noveltyScore": 1,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.71,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "My Life With the Walter Boys",
+      "season": "My Life With the Walter Boys: Season 3",
+      "charts": [
+        "global"
+      ],
+      "bothCharts": false,
       "rank": 2,
       "weeksInTop10": 1,
       "novelty": "new_entry",
       "noveltyScore": 0.96,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.84,
+      "score": 0.69,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Wrath",
+      "season": "Wrath: Season 1",
+      "charts": [
+        "global"
+      ],
+      "bothCharts": false,
+      "rank": 2,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.96,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.69,
+      "youtube": {
+        "matched": false,
+        "reason": "title_too_generic",
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Bombing of Pan Am 103",
+      "season": "The Bombing of Pan Am 103: Limited Series",
+      "charts": [
+        "global"
+      ],
+      "bothCharts": false,
+      "rank": 3,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.92,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.67,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I Will Find You",
+      "season": "I Will Find You: Limited Series",
+      "charts": [
+        "global"
+      ],
+      "bothCharts": false,
+      "rank": 4,
+      "weeksInTop10": 8,
+      "novelty": "new_entry",
+      "noveltyScore": 0.88,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.65,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Ransom Canyon",
+      "season": "Ransom Canyon: Season 2",
+      "charts": [
+        "global"
+      ],
+      "bothCharts": false,
+      "rank": 5,
+      "weeksInTop10": 3,
+      "novelty": "new_entry",
+      "noveltyScore": 0.84,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.63,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -201,15 +321,16 @@
       "bothCharts": true,
       "rank": 3,
       "weeksInTop10": 4,
-      "novelty": "new_entry",
-      "noveltyScore": 0.92,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.82,
+      "score": 0.52,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -223,15 +344,61 @@
       "bothCharts": true,
       "rank": 4,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.88,
+      "novelty": "holding",
+      "noveltyScore": 0.28,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.8,
+      "score": 0.5,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Our Sticky Love",
+      "season": "Our Sticky Love: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "bothCharts": true,
+      "rank": 2,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.48,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The East Palace",
+      "season": "The East Palace: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "bothCharts": false,
+      "rank": 6,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
+      "locationPotential": 1,
+      "locationNote": "사극·궁궐 — 고궁/한옥 촬영지, 문화·역사 축과 중첩",
+      "score": 0.45,
+      "youtube": {
+        "matched": false,
+        "reason": "title_too_generic",
+        "hits": [],
+        "triedAliases": 1
       },
       "independentSources": 1
     },
@@ -239,43 +406,21 @@
       "title": "The Apartment Job",
       "season": "The Apartment Job: Limited Series",
       "charts": [
-        "korea",
-        "global"
+        "korea"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
       "rank": 5,
       "weeksInTop10": 5,
-      "novelty": "new_entry",
-      "noveltyScore": 0.84,
+      "novelty": "holding",
+      "noveltyScore": 0.24,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.78,
+      "score": 0.33,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Agent Kim Reactivated",
-      "season": "Agent Kim Reactivated: Limited Series",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "bothCharts": true,
-      "rank": 7,
-      "weeksInTop10": 7,
-      "novelty": "new_entry",
-      "noveltyScore": 0.76,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.74,
-      "youtube": {
-        "matched": false,
-        "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -283,21 +428,21 @@
       "title": "I am Solo",
       "season": "I am Solo: Part 33",
       "charts": [
-        "korea",
-        "global"
+        "korea"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
       "rank": 1,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.4,
       "locationPotential": 0.2,
       "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
-      "score": 0.72,
+      "score": 0.27,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -305,21 +450,43 @@
       "title": "Rookie Kim’s Stock Market Mission",
       "season": "Rookie Kim’s Stock Market Mission: Season 1",
       "charts": [
-        "korea",
-        "global"
+        "korea"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
       "rank": 8,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.72,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.72,
+      "score": 0.27,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Agent Kim Reactivated",
+      "season": "Agent Kim Reactivated: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "bothCharts": false,
+      "rank": 7,
+      "weeksInTop10": 7,
+      "novelty": "saturated",
+      "noveltyScore": 0.1,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.26,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -327,21 +494,21 @@
       "title": "Agent Kim Reactivated – the Universe",
       "season": "Agent Kim Reactivated – the Universe 2026",
       "charts": [
-        "korea",
-        "global"
+        "korea"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
       "rank": 10,
       "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.64,
+      "novelty": "holding",
+      "noveltyScore": 0.04,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.68,
+      "score": 0.23,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -349,26 +516,28 @@
       "title": "Better Late Than Single: After Service",
       "season": "Better Late Than Single: After Service: Season 1",
       "charts": [
-        "korea",
-        "global"
+        "korea"
       ],
-      "bothCharts": true,
+      "bothCharts": false,
       "rank": 9,
       "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.68,
+      "novelty": "holding",
+      "noveltyScore": 0.08,
       "locationPotential": 0.2,
       "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
-      "score": 0.56,
+      "score": 0.11,
       "youtube": {
         "matched": false,
         "reason": "no_match",
-        "hits": []
+        "hits": [],
+        "triedAliases": 0
       },
       "independentSources": 1
     }
   ],
   "errors": [],
   "sourceMode": "tsv",
-  "youtubeVideosScanned": 130
+  "youtubeVideosScanned": 130,
+  "aliasesUsed": 1,
+  "aliasesUnverified": 3
 }
