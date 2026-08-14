@@ -44,6 +44,40 @@ try {
   if (-not $c) { $c = Get-Command npm -ErrorAction SilentlyContinue }
   $npm = if ($c) { $c.Source } else { $null }
 
+  # ── 0. 사진 수집 (하루 한 번) ─────────────────────────────────
+  #
+  # 왜 여기에 붙였나 (2026-08-14):
+  #   사진 받을 때마다 운영자가 .bat 을 눌러야 했다. 그건 자동화가 아니다.
+  #   이미 10분마다 도는 작업이 있으니, 새 등록 없이 여기에 얹는다.
+  #   매번 돌면 낭비이므로 마지막 실행 시각을 파일로 남기고 12시간 간격을 둔다.
+  #
+  #   한국 공공데이터는 GitHub Actions(미국)에서 접속이 안 된다.
+  #   그래서 이 PC 에서 받는 것이 유일한 방법이다.
+  $stamp = Join-Path $repo '.last-media-fetch'
+  $due = $true
+  if (Test-Path $stamp) {
+    $last = (Get-Item $stamp).LastWriteTime
+    if ((Get-Date) - $last -lt [TimeSpan]::FromHours(12)) { $due = $false }
+  }
+  if ($due) {
+    Log "사진 수집 시작 (12시간 주기)"
+    $ps1 = Join-Path $PSScriptRoot 'fetch-heritage-images.ps1'
+    if (Test-Path $ps1) {
+      try { & $ps1 *> $null; Log "  궁궐 사진: 완료" }
+      catch { Log "  궁궐 사진 실패: $($_.Exception.Message)" }
+    }
+    $ps2 = Join-Path $PSScriptRoot 'fetch-tourapi-images.ps1'
+    if (Test-Path $ps2) {
+      if (Test-Path (Join-Path $repo '.env.local')) {
+        try { & $ps2 *> $null; Log "  촬영지 사진: 완료" }
+        catch { Log "  촬영지 사진 실패: $($_.Exception.Message)" }
+      } else {
+        Log "  촬영지 사진: 건너뜀 (.env.local 없음 — 인증키 미설정)"
+      }
+    }
+    Set-Content -Path $stamp -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8
+  }
+
   # ── 1. 변경이 없으면 조용히 끝낸다 ────────────────────────────
   $status = & $git status --porcelain
   if (-not $status) { Log "실행: 변경 없음"; exit 0 }

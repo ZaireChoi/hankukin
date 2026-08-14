@@ -132,4 +132,26 @@ const guides = defineCollection({
   }),
 });
 
-export const collections = { scenes, guides };
+/**
+ * Decode — 자막이 놓치는 것.
+ *
+ * 원래 Phase 2 로 묶여 있었으나, 정의를 다시 보니 신호 데이터가 필요 없다.
+ * 호칭·존댓말·말투는 지금 1차 출처(국립국어원 등)로 쓸 수 있다 (2026-08-14).
+ */
+const decode = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/decode' }),
+  schema: ({ image }) => z.object({
+    ...baseFields(image),
+    // 다루는 표현들. 검색·색인에 쓴다.
+    expressions: z.array(z.object({
+      ko: z.string(),
+      romanized: z.string().optional(),
+      literal: z.string().optional(),
+      register: z.enum(['casual', 'polite', 'formal', 'slang', 'varies']).default('varies'),
+    })).default([]),
+    region: z.string().optional(),
+    era: z.string().optional(),
+  }),
+});
+
+export const collections = { scenes, guides, decode };
