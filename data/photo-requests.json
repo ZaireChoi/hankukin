@@ -18,34 +18,181 @@
     "",
     "  앞서 확인된 것: 서울빛초롱축제·광통교·청계천박물관은 TourAPI 에",
     "  그 이름으로 등재돼 있지 않다 (totalCount 0). 목록에서 뺐다.",
-    "  나머지 키워드의 성패는 이번 실행 로그(.photo-fetch.log)에 남는다."
+    "  나머지 키워드의 성패는 이번 실행 로그(.photo-fetch.log)에 남는다.",
+    "",
+    "2026-08-14 2차 — '궁궐 사진이 아직 중복으로 보인다' 는 지적.",
+    "  파일은 전부 달랐지만 14장이 **전부 경복궁**이었다. 5대궁 기사도,",
+    "  단청도, 한복도 경복궁만 보여준다. 읽는 사람에게는 같은 곳이다.",
+    "  => 나머지 궁을 받는다. 창덕궁은 본궁이 검색되지 않아 등재명을 직접 지정한다."
   ],
   "requests": [
-    { "keyword": "서울세계불꽃축제", "expectRegion": "서울", "slug": "seoul-fireworks" },
-    { "keyword": "보령머드축제", "expectRegion": "충남", "slug": "boryeong-mud" },
-    { "keyword": "화천산천어축제", "expectRegion": "강원", "slug": "hwacheon-ice" },
-    { "keyword": "진주남강유등축제", "expectRegion": "경남", "slug": "jinju-lantern" },
-    { "keyword": "안동국제탈춤페스티벌", "expectRegion": "경북", "slug": "andong-mask" },
-    { "keyword": "부산불꽃축제", "expectRegion": "부산", "slug": "busan-fireworks" },
-    { "keyword": "진해군항제", "expectRegion": "경남", "slug": "jinhae-cherry" },
-    { "keyword": "서울밤도깨비야시장", "expectRegion": "서울", "slug": "bamdokkaebi-night-market" },
-    { "keyword": "남산서울타워", "expectRegion": "서울", "slug": "namsan-tower" },
-    { "keyword": "여의도한강공원", "expectRegion": "서울", "slug": "hangang-yeouido" },
-    { "keyword": "롯데월드", "expectRegion": "서울", "slug": "lotte-world" },
-    { "keyword": "광장시장", "expectRegion": "서울", "slug": "gwangjang-market" },
-    { "keyword": "통인시장", "expectRegion": "서울", "slug": "tongin-market" },
-    { "keyword": "망원시장", "expectRegion": "서울", "slug": "mangwon-market" },
-    { "keyword": "경동시장", "expectRegion": "서울", "slug": "gyeongdong-market" },
-    { "keyword": "신당동떡볶이골목", "expectRegion": "서울", "slug": "sindang-tteokbokki" },
-    { "keyword": "명동", "expectRegion": "서울", "slug": "myeongdong" },
-    { "keyword": "홍대", "expectRegion": "서울", "slug": "hongdae" },
-    { "keyword": "이태원", "expectRegion": "서울", "slug": "itaewon" },
-    { "keyword": "인사동", "expectRegion": "서울", "slug": "insadong" },
-    { "keyword": "북촌한옥마을", "expectRegion": "서울", "slug": "bukchon" },
-    { "keyword": "익선동", "expectRegion": "서울", "slug": "ikseondong" },
-    { "keyword": "서울숲", "expectRegion": "서울", "slug": "seoul-forest" },
-    { "keyword": "창덕궁", "expectRegion": "서울", "slug": "changdeokgung" },
-    { "keyword": "청계광장", "expectRegion": "서울", "slug": "cheonggye-plaza" },
-    { "keyword": "서울역", "expectRegion": "서울", "slug": "seoul-station" }
+    {
+      "keyword": "서울세계불꽃축제",
+      "expectRegion": "서울",
+      "slug": "seoul-fireworks"
+    },
+    {
+      "keyword": "보령머드축제",
+      "expectRegion": "충남",
+      "slug": "boryeong-mud"
+    },
+    {
+      "keyword": "화천산천어축제",
+      "expectRegion": "강원",
+      "slug": "hwacheon-ice"
+    },
+    {
+      "keyword": "진주남강유등축제",
+      "expectRegion": "경남",
+      "slug": "jinju-lantern"
+    },
+    {
+      "keyword": "안동국제탈춤페스티벌",
+      "expectRegion": "경북",
+      "slug": "andong-mask"
+    },
+    {
+      "keyword": "부산불꽃축제",
+      "expectRegion": "부산",
+      "slug": "busan-fireworks"
+    },
+    {
+      "keyword": "진해군항제",
+      "expectRegion": "경남",
+      "slug": "jinhae-cherry"
+    },
+    {
+      "keyword": "서울밤도깨비야시장",
+      "expectRegion": "서울",
+      "slug": "bamdokkaebi-night-market"
+    },
+    {
+      "keyword": "남산서울타워",
+      "expectRegion": "서울",
+      "slug": "namsan-tower"
+    },
+    {
+      "keyword": "여의도한강공원",
+      "expectRegion": "서울",
+      "slug": "hangang-yeouido"
+    },
+    {
+      "keyword": "광장시장",
+      "expectRegion": "서울",
+      "slug": "gwangjang-market"
+    },
+    {
+      "keyword": "통인시장",
+      "expectRegion": "서울",
+      "slug": "tongin-market"
+    },
+    {
+      "keyword": "망원시장",
+      "expectRegion": "서울",
+      "slug": "mangwon-market"
+    },
+    {
+      "keyword": "경동시장",
+      "expectRegion": "서울",
+      "slug": "gyeongdong-market"
+    },
+    {
+      "keyword": "신당동떡볶이골목",
+      "expectRegion": "서울",
+      "slug": "sindang-tteokbokki"
+    },
+    {
+      "keyword": "명동",
+      "expectRegion": "서울",
+      "slug": "myeongdong"
+    },
+    {
+      "keyword": "홍대",
+      "expectRegion": "서울",
+      "slug": "hongdae"
+    },
+    {
+      "keyword": "이태원",
+      "expectRegion": "서울",
+      "slug": "itaewon"
+    },
+    {
+      "keyword": "인사동",
+      "expectRegion": "서울",
+      "slug": "insadong"
+    },
+    {
+      "keyword": "북촌한옥마을",
+      "expectRegion": "서울",
+      "slug": "bukchon"
+    },
+    {
+      "keyword": "익선동",
+      "expectRegion": "서울",
+      "slug": "ikseondong"
+    },
+    {
+      "keyword": "서울숲",
+      "expectRegion": "서울",
+      "slug": "seoul-forest"
+    },
+    {
+      "keyword": "창덕궁",
+      "expectRegion": "서울",
+      "slug": "changdeokgung"
+    },
+    {
+      "keyword": "청계광장",
+      "expectRegion": "서울",
+      "slug": "cheonggye-plaza"
+    },
+    {
+      "keyword": "서울역",
+      "expectRegion": "서울",
+      "slug": "seoul-station"
+    },
+    {
+      "keyword": "창덕궁과 후원",
+      "expectRegion": "서울",
+      "slug": "changdeokgung-huwon"
+    },
+    {
+      "keyword": "창덕궁",
+      "expectRegion": "서울",
+      "slug": "changdeokgung-injeongmun",
+      "exactTitle": "창덕궁 인정문"
+    },
+    {
+      "keyword": "창덕궁",
+      "expectRegion": "서울",
+      "slug": "changdeokgung-nakseonjae",
+      "exactTitle": "창덕궁 낙선재"
+    },
+    {
+      "keyword": "덕수궁",
+      "expectRegion": "서울",
+      "slug": "deoksugung"
+    },
+    {
+      "keyword": "창경궁",
+      "expectRegion": "서울",
+      "slug": "changgyeonggung"
+    },
+    {
+      "keyword": "종묘",
+      "expectRegion": "서울",
+      "slug": "jongmyo"
+    },
+    {
+      "keyword": "경희궁",
+      "expectRegion": "서울",
+      "slug": "gyeonghuigung"
+    },
+    {
+      "keyword": "롯데월드",
+      "expectRegion": "서울",
+      "slug": "lotte-world-tower",
+      "exactTitle": "롯데월드타워&롯데월드몰"
+    }
   ]
 }

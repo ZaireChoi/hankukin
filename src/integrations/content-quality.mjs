@@ -32,6 +32,7 @@ const HERO_EXEMPT = {
 };
 
 const TITLE_MAX = 62;   // 검색 결과에서 잘리는 대략의 길이
+const IMG_SUBJ = /assets\/images\/[\w/-]+\/([\w.-]+)\.(?:jpg|jpeg|png|webp|avif)/gi;
 
 function walk(dir) {
   const out = [];
@@ -80,6 +81,27 @@ export default function contentQuality() {
           const charts = (body.match(/<Chart\w+/g) ?? []).length;
           if (figures.length + charts === 0) {
             warn.push(`${slug}: 본문에 사진·도표가 하나도 없습니다 (대표사진만 있음)`);
+          }
+
+          // ── 3-b. 사진이 전부 한 곳인가 ──────────────────────────
+          //
+          // 2026-08-14 운영자: "궁궐 사진이 아직 중복적으로 사용된 것이 보인다".
+          //   파일은 전부 달랐다. 그런데 14장이 **전부 경복궁**이었다.
+          //   5대궁 기사도, 단청도, 한복도 경복궁만 보여준다.
+          //   파일명이 다른 것과 다른 곳을 보여주는 것은 다른 말이다.
+          //
+          //   파일명 첫 토큰을 피사체로 본다 (gyeongbokgung-geunjeongjeon-hall → gyeongbokgung).
+          //   기사 슬러그에 그 이름이 없는데 사진이 전부 그 한 곳이면 알린다.
+          const shots = [...text.matchAll(IMG_SUBJ)].map((m) => m[1].split('-')[0].toLowerCase());
+          const subjects = new Set(shots);
+          if (shots.length >= 2 && subjects.size === 1) {
+            const only = [...subjects][0];
+            if (!slug.toLowerCase().includes(only)) {
+              warn.push(
+                `${slug}: 사진 ${shots.length}장이 전부 '${only}' 한 곳입니다. ` +
+                '읽는 사람에게는 같은 곳을 반복해 보여주는 것으로 읽힙니다.',
+              );
+            }
           }
 
           // ── 4. 제목 길이 ────────────────────────────────────────
