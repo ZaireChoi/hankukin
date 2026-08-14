@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import noSharedImages from './src/integrations/no-shared-images.mjs';
 import { BRAND, LOCALES, DEFAULT_LOCALE, NOINDEX_PATHS } from './src/config/brand.mjs';
 
 export default defineConfig({
@@ -19,6 +20,7 @@ export default defineConfig({
     },
   },
   integrations: [
+    noSharedImages(),
     mdx(),
     sitemap({
       i18n: { defaultLocale: DEFAULT_LOCALE, locales: Object.fromEntries(LOCALES.map((l) => [l, l])) },

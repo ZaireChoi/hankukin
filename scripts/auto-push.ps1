@@ -69,9 +69,16 @@ try {
       if (Test-Path $ps) {
         # 출력을 버리면 왜 못 받았는지 알 수 없다 (2026-08-14).
         # 파일로 남기고, 요약 한 줄은 로그에도 적는다.
+        #
+        # 2>&1 로는 아무것도 잡히지 않았다 (2026-08-14 재수정).
+        #   PowerShell 5.0 부터 Write-Host 는 정보 스트림(6번)으로 나간다.
+        #   2>&1 은 오류 스트림만 받으므로 $result 가 항상 비었고,
+        #   그것을 그대로 Out-File 해서 .photo-fetch.log 가 매번 빈 파일이 됐다.
+        #   스크립트는 정상 동작하며 출력하고 있었는데 우리가 못 보고 있었다.
+        #   *>&1 은 모든 스트림을 받는다.
         $outLog = Join-Path $repo '.photo-fetch.log'
         try {
-          $result = & $ps 2>&1
+          $result = & $ps *>&1
           $result | Out-File -FilePath $outLog -Encoding UTF8
           $summary = ($result | Where-Object { $_ -match '요청 \d+건' } | Select-Object -Last 1)
           Log ("요청 사진 수집: " + $(if ($summary) { $summary } else { '완료' }))

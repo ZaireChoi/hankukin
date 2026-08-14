@@ -7,8 +7,8 @@ checkedAt: 2026-08-14
 riskGrade: green
 contentScore: 79
 hero:
-  src: ../../assets/images/places/cheonggyecheon-2.jpg
-  alt: A crowd gathered at night around illuminated winter decorations along Cheonggyecheon in central Seoul
+  src: ../../assets/images/places/namdaemun-market-2.jpg
+  alt: A pedestrian lane in Namdaemun Market painted with a no-vehicle marking and a direction sign to Seoul Station
   license: kogl-3
   sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=264570
   credit: 한국관광공사 (Korea Tourism Organization)
@@ -24,12 +24,12 @@ sources:
 ---
 
 import Figure from '../../components/Figure.astro';
-import lights from '../../assets/images/places/cheonggyecheon-1.jpg';
+import skyline from '../../assets/images/places/ddp-5.jpg';
 
-export const KTO = {
+export const KTO_DDP = {
   credit: '한국관광공사 (Korea Tourism Organization)',
-  license: 'kogl-3',
-  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264570',
+  license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2470006',
 };
 
 If you watch Korean drama with subtitles, you have probably hit this. A character says they are twenty-five. Later someone says they were born in 1999. The arithmetic does not work, and the subtitle does not explain.
@@ -73,9 +73,9 @@ This is the part most explanations skip.
 
 So if you hear two different ages for the same person, neither is necessarily wrong. One may be the legal figure and the other the conversational one.
 
-<Figure src={lights} alt="Illuminated winter figures behind a low white fence beside a Seoul street at night"
-        caption="Cheonggyecheon in winter. Everyone in a Korean crowd born in the same calendar year shared an age under the old system — which is why birth year, not birthday, is what people ask each other."
-        {...KTO} />
+<Figure src={skyline} alt="The curved metal shell of Dongdaemun Design Plaza curving away above a Seoul street"
+        caption="Seoul in 2026. The law settled the arithmetic in 2023; it did not settle the habit. People still ask the birth year, because that is the number the rest of the conversation depends on."
+        {...KTO_DDP} />
 
 ## Why the old system was so hard to drop
 

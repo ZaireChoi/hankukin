@@ -30,12 +30,19 @@ sources:
 ---
 
 import Figure from '../../components/Figure.astro';
+import arrivals from '../../assets/images/places/incheon-airport-3.jpg';
 import ddp from '../../assets/images/places/ddp-1.jpg';
 
 export const KTO = {
   credit: '한국관광공사 (Korea Tourism Organization)',
   license: 'kogl-3',
   sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264303',
+};
+
+export const KTO_AIRPORT = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2535506',
 };
 
 Seoul is a city you can cross for the price of a coffee, at almost any hour, without ever looking at a timetable. Nine lines under the centre alone, buses colour-coded by how far they go, taxis that arrive in under two minutes and take card. For a lot of visitors this is the first thing about Korea that genuinely surprises them — not a monument, the transport.
@@ -130,6 +137,10 @@ The over-65 exemption is worth knowing about because it is generous and applies 
 **Tap out. Every time.** Seoul Transportation Corporation applies a penalty for failing to tap off: the base fare — ₩1,550 for an adult — is charged again on your next journey. It is not a fine you can dispute at a counter; it lands automatically.
 
 **Youth and child rates require registration.** The discounted fares above are not automatic. The card has to be registered as a youth or child card first, through T-money, or the adult rate is charged.
+
+<Figure src={arrivals} alt="Travellers crossing the arrivals hall at Incheon International Airport past rows of information screens"
+        caption="Arrivals at Incheon. Every fare below starts here — and the first decision, train or bus or taxi, is the one with the widest price gap of the whole trip."
+        {...KTO_AIRPORT} />
 
 ## What this article does not claim
 
