@@ -52,8 +52,17 @@ try {
   Log "실행: 변경 $changed 건 — 검증 시작"
 
   # ── 2. 단위 테스트 ────────────────────────────────────────────
+  # node.exe 는 PATH 에 없을 수 있다 (이 PC 가 그랬다). 흔한 설치 경로도 뒤진다.
   $c = Get-Command node -ErrorAction SilentlyContinue
   $node = if ($c) { $c.Source } else { $null }
+  if (-not $node) {
+    foreach ($p in @("$env:ProgramFiles\nodejs\node.exe", "${env:ProgramFiles(x86)}\nodejs\node.exe",
+                     "$env:LOCALAPPDATA\Programs\nodejs\node.exe", "$env:APPDATA\nvm\node.exe",
+                     "$env:ProgramFiles\nodejs\node_modules\npm\bin\node.exe")) {
+      if (Test-Path $p) { $node = $p; break }
+    }
+  }
+  $verified = $true      # 검증을 실제로 했는가. 건너뛰면 false 로 내려간다.
   if ($node) {
     $failed = $false
     Get-ChildItem (Join-Path $repo 'scripts\__tests__\*.test.mjs') | ForEach-Object {
@@ -63,6 +72,7 @@ try {
     if ($failed) { Log "중단: 테스트 실패 — 올리지 않습니다"; exit 1 }
   } else {
     Log "  경고: node 를 찾지 못해 테스트를 건너뜁니다"
+    $verified = $false
   }
 
   # ── 3. 빌드 (스키마 위반·이미지 누락이 여기서 걸린다) ─────────
@@ -71,6 +81,7 @@ try {
     if ($LASTEXITCODE -ne 0) { Log "중단: 빌드 실패 — 올리지 않습니다"; exit 1 }
   } else {
     Log "  경고: npm 을 찾지 못해 빌드를 건너뜁니다"
+    $verified = $false
   }
 
   # ── 4. 커밋 메시지를 변경 내용에서 만든다 ─────────────────────
@@ -82,7 +93,10 @@ try {
     elseif ($files -match '^\.github/')    { 'ci' }
     elseif ($files -match '^data/')        { 'data' }
     else                                   { 'chore' }
-  $msg = "auto($area): $changed files - verified"
+  # 검증을 건너뛰었으면 'verified' 라고 쓰지 않는다.
+  # 확인하지 않은 것을 확인했다고 적으면, 나중에 커밋 로그를 믿을 수 없게 된다.
+  $tag = if ($verified) { 'verified' } else { 'UNVERIFIED - node/npm missing' }
+  $msg = "auto($area): $changed files - $tag"
 
   # ── 5. 올린다 ─────────────────────────────────────────────────
   & $git add -A
