@@ -76,13 +76,35 @@ foreach ($r in $req.requests) {
   if (-not $items) { Write-Host ("  [없음] {0}: 검색 결과 0건" -f $r.keyword); continue }
   if ($items -isnot [array]) { $items = @($items) }
 
-  # 후보가 여럿이면 제목이 정확히 같은 것을 우선. 못 좁히면 건너뛴다 (엉뚱한 장소 방지)
-  $exact = @($items | Where-Object { ($_.title -replace '\s','') -eq ($r.keyword -replace '\s','') })
-  $pick = if ($exact.Count -eq 1) { $exact[0] } elseif ($items.Count -eq 1) { $items[0] } else { $null }
+  # 후보 고르기 (2026-08-14 수정)
+  #   처음에는 '제목 완전일치' 만 허용했더니 한 곳도 못 골랐다.
+  #   "홍대" 의 등재명은 "홍대거리", "명동" 은 "명동거리" 라 완전일치가 안 된다.
+  #   그렇다고 아무거나 집으면 엉뚱한 장소가 들어온다 (경복궁 검색에 울산 업소가 섞인 적 있다).
+  #
+  #   그래서 3단계로 좁힌다:
+  #     ① 제목 완전일치가 하나면 그것
+  #     ② 없으면, 제목에 키워드가 들어가고 기대 지역과 맞는 것 중 첫 번째
+  #        (TourAPI 는 관련도순으로 준다)
+  #     ③ 그것도 없으면 건너뛴다
+  $kw = $r.keyword -replace '\s',''
+  $exact = @($items | Where-Object { ($_.title -replace '\s','') -eq $kw })
+  $pick = $null
+  $how = ''
+  if ($exact.Count -eq 1) { $pick = $exact[0]; $how = '제목 완전일치' }
+  elseif ($items.Count -eq 1) { $pick = $items[0]; $how = '결과 1건' }
+  else {
+    $contains = @($items | Where-Object { ($_.title -replace '\s','') -like "*$kw*" })
+    if ($r.expectRegion) {
+      $inRegion = @($contains | Where-Object { $_.addr1 -and $_.addr1.StartsWith($r.expectRegion) })
+      if ($inRegion.Count -gt 0) { $contains = $inRegion }
+    }
+    if ($contains.Count -gt 0) { $pick = $contains[0]; $how = "제목 포함 + 지역 일치 ($($contains.Count)건 중 첫째)" }
+  }
   if (-not $pick) {
-    Write-Host ("  [모호] {0}: 후보 {1}건 — 자동 선택하지 않습니다" -f $r.keyword, $items.Count)
+    Write-Host ("  [모호] {0}: 후보 {1}건 중 키워드를 제목에 포함한 것이 없습니다 — 건너뜁니다" -f $r.keyword, $items.Count)
     continue
   }
+  Write-Host ("  [선택] {0} → {1} ({2})" -f $r.keyword, $pick.title, $how)
   $cid = $pick.contentid
 
   # ② 이미지 + 저작권 유형

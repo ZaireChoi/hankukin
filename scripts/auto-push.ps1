@@ -67,7 +67,15 @@ try {
     if ($raw -match '"requests"\s*:\s*\[\s*\{') {
       $ps = Join-Path $PSScriptRoot 'fetch-requested-images.ps1'
       if (Test-Path $ps) {
-        try { & $ps *> $null; Log "요청 사진 수집: 완료" }
+        # 출력을 버리면 왜 못 받았는지 알 수 없다 (2026-08-14).
+        # 파일로 남기고, 요약 한 줄은 로그에도 적는다.
+        $outLog = Join-Path $repo '.photo-fetch.log'
+        try {
+          $result = & $ps 2>&1
+          $result | Out-File -FilePath $outLog -Encoding UTF8
+          $summary = ($result | Where-Object { $_ -match '요청 \d+건' } | Select-Object -Last 1)
+          Log ("요청 사진 수집: " + $(if ($summary) { $summary } else { '완료' }))
+        }
         catch { Log "요청 사진 수집 실패: $($_.Exception.Message)" }
       }
     }

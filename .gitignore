@@ -15,3 +15,4 @@ dist/
 # 로컬 인증키 (절대 커밋되지 않음)
 .env.local
 사진받기-촬영지.bat
+.photo-fetch.log

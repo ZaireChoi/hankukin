@@ -8,10 +8,50 @@
     "expectRegion 은 동명이인 방어용이다."
   ],
   "requests": [
-    { "keyword": "창덕궁",   "expectRegion": "서울", "slug": "changdeokgung" },
-    { "keyword": "광장시장", "expectRegion": "서울", "slug": "gwangjang-market" },
-    { "keyword": "통인시장", "expectRegion": "서울", "slug": "tongin-market" },
-    { "keyword": "명동",     "expectRegion": "서울", "slug": "myeongdong" },
-    { "keyword": "홍대",     "expectRegion": "서울", "slug": "hongdae" }
+    {
+      "keyword": "창덕궁",
+      "expectRegion": "서울",
+      "slug": "changdeokgung"
+    },
+    {
+      "keyword": "광장시장",
+      "expectRegion": "서울",
+      "slug": "gwangjang-market"
+    },
+    {
+      "keyword": "통인시장",
+      "expectRegion": "서울",
+      "slug": "tongin-market"
+    },
+    {
+      "keyword": "명동",
+      "expectRegion": "서울",
+      "slug": "myeongdong"
+    },
+    {
+      "keyword": "홍대",
+      "expectRegion": "서울",
+      "slug": "hongdae"
+    },
+    {
+      "keyword": "서울밤도깨비야시장",
+      "expectRegion": "서울",
+      "slug": "bamdokkaebi-night-market"
+    },
+    {
+      "keyword": "청계천",
+      "expectRegion": "서울",
+      "slug": "cheonggyecheon"
+    },
+    {
+      "keyword": "남대문시장",
+      "expectRegion": "서울",
+      "slug": "namdaemun-market"
+    },
+    {
+      "keyword": "동대문디자인플라자",
+      "expectRegion": "서울",
+      "slug": "ddp"
+    }
   ]
 }
