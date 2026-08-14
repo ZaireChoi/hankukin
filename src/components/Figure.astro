@@ -18,10 +18,26 @@ const LICENSE_LABEL = {
 };
 
 const { src, alt, credit, license, sourceUrl, caption, widths = [640, 960, 1280] } = Astro.props;
+
+/**
+ * 변경금지 라이선스는 Astro 최적화를 태우지 않는다 (2026-08-14).
+ *
+ * 공공누리 제3유형은 '출처표시 + 변경금지' 다.
+ * Astro 의 <Image> 는 리사이즈하고 WebP 로 변환한다 — 그것도 변경이다.
+ * 다운로드 스크립트에서는 리사이즈를 막아놓고 화면에서 변환하면 소용이 없다.
+ *
+ * 그래서 3유형은 원본 파일을 그대로 내보낸다. 페이지가 조금 무거워지지만
+ * 라이선스를 지키는 쪽이 먼저다.
+ */
+const NO_MODIFY = new Set(['kogl-3']);
+const mustKeepOriginal = NO_MODIFY.has(license);
 ---
 <figure class="fig">
-  <Image src={src} alt={alt} widths={widths}
-         sizes="(min-width: 800px) 760px, 100vw" loading="lazy" decoding="async" />
+  {mustKeepOriginal
+    ? <img src={src.src} alt={alt} width={src.width} height={src.height}
+           loading="lazy" decoding="async" />
+    : <Image src={src} alt={alt} widths={widths}
+             sizes="(min-width: 800px) 760px, 100vw" loading="lazy" decoding="async" />}
   <figcaption>
     {caption && <span class="cap">{caption}</span>}
     <span class="credit">

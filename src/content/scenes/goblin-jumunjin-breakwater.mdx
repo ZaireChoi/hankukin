@@ -10,6 +10,12 @@ publishedAt: 2026-08-13
 checkedAt: 2026-08-13
 riskGrade: green
 contentScore: 82
+hero:
+  src: ../../assets/images/scenes/jumunjin-breakwater-11.jpg
+  alt: Two people standing at the end of a rocky breakwater running out from the beach into the East Sea at Jumunjin
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=131271
+  credit: 한국관광공사 (Korea Tourism Organization)
 
 place:
   name: "Jumunjin Breakwater"
@@ -81,6 +87,16 @@ sources:
     checkedAt: 2026-08-13
 ---
 
+import Figure from '../../components/Figure.astro';
+import harbour from '../../assets/images/scenes/jumunjin-breakwater-1.jpg';
+import breakwaters from '../../assets/images/scenes/jumunjin-breakwater-4.jpg';
+
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=131271',
+};
+
 In the sixth episode of *Goblin*, Ji Eun-tak blows out a birthday candle on a breakwater and the
 Goblin appears behind her, buckwheat flowers in hand. It is the scene the drama is remembered by,
 and it is one of the few from the series that you can stand inside almost exactly as it was shot.
@@ -90,6 +106,10 @@ Jumunjin and Yeongjin beaches in Gangneung, and Gangneung City lists it among th
 on its official tourism portal. There is no gate, no ticket and no opening time. You walk out onto
 the concrete and that is the whole of it.
 
+<Figure src={harbour} alt="Fishing boats moored at Jumunjin harbour with the town behind"
+        caption="Jumunjin is a working fishing port first and a filming location second. The harbour sits a few minutes from the breakwater."
+        {...KTO} />
+
 What surprises most visitors is the scale. On screen the breakwater reads as a narrow finger of
 stone against an empty sea. In person it is wider, lower, and the working harbour sits close behind
 you — which is why the framing below matters more than the spot itself. Turn the wrong way and you
@@ -97,3 +117,7 @@ photograph a fishing port.
 
 Come outside July and August if you can. The scene's mood belongs to cold, flat light, and the
 summer crowds queue at the tip for the same three metres of concrete.
+
+<Figure src={breakwaters} alt="The outer breakwaters at Jumunjin with red and orange lighthouses, seen from shore"
+        caption="The outer breakwaters and their lighthouses. Useful for orientation — the drama's breakwater is the smaller one running out from the beach, not these."
+        {...KTO} />

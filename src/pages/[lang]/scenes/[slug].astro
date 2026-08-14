@@ -4,6 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ClaimBadge from '../../../components/ClaimBadge.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
 import SourceList from '../../../components/SourceList.astro';
+import Figure from '../../../components/Figure.astro';
 import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { LOCALES } from '../../../config/brand.mjs';
@@ -85,6 +86,12 @@ const jsonLd = {
     {hasAffiliate
       ? <p class="notice">{NOTICES.affiliate}</p>
       : hasLinks && <p class="notice">{NOTICES.noAffiliate}</p>}
+
+    {d.hero && (
+      <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}
+              license={d.hero.license} sourceUrl={d.hero.sourceUrl}
+              widths={[640, 960, 1280, 1600]} />
+    )}
 
     <!-- 4·5. 장면이 중요한 이유 / 근거 (본문) -->
     <section class="block">
