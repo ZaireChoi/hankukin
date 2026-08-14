@@ -1,0 +1,131 @@
+---
+title: "Korea Food Prices 2026: What 8 Everyday Dishes Cost"
+summary: "The Korean government surveys the price of the same eight restaurant dishes in every province, every month, and publishes it. A bowl of naengmyeon is ₩12,615 in Seoul and ₩9,667 in South Jeolla. Bibimbap costs more in Jeonbuk than in Seoul. Here is the whole table, and what it means for your budget."
+lang: en
+region: "Korea"
+publishedAt: 2026-08-14
+checkedAt: 2026-08-14
+faresCheckedAt: 2026-08-14
+riskGrade: green
+contentScore: 86
+hero:
+  src: ../../assets/images/places/gwangjang-market-1.jpg
+  alt: Bindaetteok mung bean pancakes frying in oil on a wide flat griddle at Gwangjang Market
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=132183
+  credit: 한국관광공사 (Korea Tourism Organization)
+sources:
+  - title: "외식비 — 한국소비자원 참가격 (지역별 8개 품목 평균가격, 2026년 6월)"
+    url: "https://www.price.go.kr/tprice/portal/servicepriceinfo/dineoutprice/dineOutPriceList.do"
+    type: public_institution
+    checkedAt: 2026-08-14
+  - title: "개인서비스요금 — 한국소비자원 참가격 (세탁·숙박·이용·미용·목욕, 2026년 6월)"
+    url: "https://www.price.go.kr/tprice/portal/servicepriceinfo/serviceindustryprice/serviceIndustryPriceList.do"
+    type: public_institution
+    checkedAt: 2026-08-14
+---
+
+import Figure from '../../components/Figure.astro';
+import ChartFoodPrices from '../../components/ChartFoodPrices.astro';
+import stack from '../../assets/images/places/gwangjang-market-5.jpg';
+import street from '../../assets/images/places/myeongdong-5.jpg';
+
+export const KTO_MD = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264311',
+};
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=132183',
+};
+
+You sit down, you order, the bill comes, and you have no way of knowing whether you were charged a normal price or a tourist one. Most guides answer this with ranges so wide they are useless — "expect ₩8,000–20,000 for a meal" tells you nothing.
+
+Korea happens to have a better answer, and almost nobody outside the country uses it.
+
+The **Korea Consumer Agency** runs a price portal called **참가격 (Chamgagyeok)**. Every month it publishes the average price of the *same eight restaurant dishes* in every province, alongside the price of a haircut, a bathhouse entry and a night in a budget inn. It is a government price survey, not a review site, and the underlying data comes from the national statistics office.
+
+Everything below is the **June 2026** release, read from the portal on 14 August 2026.
+
+## The eight dishes
+
+Prices in won, per portion, except gimbap (one roll) and samgyeopsal (converted to a standard 200g).
+
+| | Seoul | Cheapest region | Dearest region |
+|---|---|---|---|
+| **Samgyeopsal** (200g) | **21,321** | 15,305 · Chungbuk | 21,321 · Seoul |
+| **Samgyetang** | **18,154** | 15,600 · Ulsan | 18,154 · Seoul |
+| **Naengmyeon** | **12,615** | 9,667 · Jeonnam | 12,615 · Seoul |
+| **Bibimbap** | 11,769 | 9,154 · Gyeongnam | **12,100 · Jeonbuk** |
+| **Kalguksu** | 10,038 | 7,583 · Daegu | **10,375 · Jeju** |
+| **Kimchi jjigae set** | 8,654 | 8,278 · Jeonnam | **10,800 · Daejeon** |
+| **Jajangmyeon** | 7,654 | 6,769 · Gyeongbuk | **7,750 · Jeju** |
+| **Gimbap** (1 roll) | **3,838** | 2,889 · Jeonnam | 3,838 · Seoul |
+
+<ChartFoodPrices caption="Average restaurant prices by region, June 2026, from the Korea Consumer Agency's 참가격 portal (source data: 국가데이터처). Green marks the cheapest region, grey the dearest, red Seoul. Units: one portion, except gimbap (one roll) and samgyeopsal (converted to 200g)." />
+
+## Seoul is dearest — in half the cases
+
+The chart makes the useful point faster than a paragraph can. **Seoul tops the table in four dishes out of eight**, and the gaps are not small: naengmyeon costs **30% more** in Seoul than in South Jeolla, gimbap **33% more**.
+
+But look at the other four, because this is where the received wisdom breaks.
+
+**Bibimbap is more expensive in Jeonbuk (₩12,100) than in Seoul (₩11,769).** Jeonbuk contains Jeonju, and Jeonju bibimbap is the version the dish is named after. The home of the dish charges the most for it. That is not a rip-off; it is what happens when a regional speciality becomes a destination in itself.
+
+**A kimchi jjigae set costs ₩10,800 in Daejeon and ₩8,654 in Seoul** — 25% more in a city most visitors have never considered. Averages of small samples move easily, and this is the kind of number to hold loosely, but it is a useful corrective to "everything is cheaper outside Seoul."
+
+**Jajangmyeon barely moves at all.** ₩6,769 to ₩7,750 nationwide — a 14% spread, the tightest of the eight. Korean-Chinese restaurants price this dish almost identically everywhere, which makes it the closest thing Korea has to a fixed-price meal.
+
+<Figure src={stack} alt="Cooked mung bean pancakes stacked in tall piles beside the griddle at a market stall"
+        caption="Bindaetteok stacked at Gwangjang Market. Market food sits below every price in the table above — which is the point of eating there."
+        {...KTO} />
+
+## Reading the table as a budget
+
+Two anchors make these numbers usable.
+
+**The cheapest full sit-down meal in the survey is the kimchi jjigae set** — ₩8,278 in South Jeolla, ₩8,654 in Seoul. It comes with rice and side dishes. If you want one number for "a proper Korean lunch," this is it.
+
+**A roll of gimbap costs about two and a half subway rides.** Seoul's base subway fare is ₩1,550 with a transit card; gimbap is ₩3,838. That ratio is worth carrying because it tells you when something is expensive *in Korean terms* rather than in your home currency. (Fares are in [what Seoul transport actually costs](/en/now/seoul-transport-fares-subway-bus-taxi/).)
+
+And the ceiling: **grilled pork belly is the expensive meal**, ₩21,321 for 200g in Seoul. Samgyeopsal is a social dish ordered by the portion for a table, so a group dinner escalates quickly. It is the one item where the price will surprise you if you have been eating ₩9,000 lunches.
+
+## The rest of a Korean day
+
+The same portal surveys personal services. June 2026, Seoul, with the national range beside it:
+
+| | Seoul | Range across regions |
+|---|---|---|
+| **Public bathhouse**, one entry | 11,000 | 8,308 – 11,000 |
+| **Men's haircut** | 13,231 | 12,286 – 16,444 |
+| **Women's haircut** | 24,462 | 15,300 – 25,500 |
+| **Dry cleaning**, a suit | 11,538 | 8,800 – 13,500 |
+| **Budget inn** (여관), one night | 53,769 | 39,167 – 53,769 |
+
+Three things worth noticing.
+
+**The bathhouse is ₩11,000 in Seoul** — and Seoul is the most expensive in the country for it. For a first-time visitor this is the single cheapest way to spend two hours doing something unmistakably Korean, and the price is barely more than a bowl of noodles.
+
+**Men's haircuts are dearest in Gangwon (₩16,444), not Seoul.** Women's haircuts are dearest in Incheon (₩25,500), just ahead of Seoul. Neither follows the pattern you would guess.
+
+**The budget-inn figure is not a hotel price.** A 여관 is an older, plain guesthouse — private room with its own bathroom, no service. It is the floor of Korean accommodation, and at ₩53,769 in Seoul it sets the number below which a listing should make you suspicious.
+
+<Figure src={street} alt="A pedestrian street in Myeongdong lined with shops, food carts down the centre and N Seoul Tower on the hill behind"
+        caption="Myeongdong in the afternoon, carts already set up down the middle of the street. None of these are in the government survey — cart prices sit below every figure in the table above."
+        {...KTO_MD} />
+
+## What this article does not claim
+
+**These are averages, not prices you are entitled to.** The Consumer Agency surveys a sample of restaurants per region. A famous naengmyeon house in Seoul will charge well above ₩12,615, and a neighbourhood place will charge below it. The average tells you where the middle is, not what any one shop will ask.
+
+**Small samples move.** Some regions are surveyed at fewer establishments than others, and a single closure or new entrant can shift a provincial average by several hundred won month to month. Treat the *shape* — Seoul dearest, Jeolla cheapest, jajangmyeon flat — as solid, and any single figure as approximate.
+
+**The Consumer Agency itself warns against comparing across time periods**, because the surveyed establishments and product quality are not held constant between months. We have not built any trend claims here for that reason.
+
+**Street food is not in this survey at all.** Every price above is a sit-down restaurant. Market stalls and street vendors run lower, and what they contain is a separate question — [some of it is not what it looks like](/en/now/korean-street-food-hidden-pork-and-fish/) if you avoid pork or fish.
+
+**We have not converted anything to dollars or euros**, deliberately. Exchange rates move faster than this page does, and a converted figure that is six months stale is worse than no figure. Convert at today's rate yourself.
+
+**Re-check before you rely on it.** This is the June 2026 release, read on 14 August 2026. The portal updates monthly and the URL is in the sources above.
