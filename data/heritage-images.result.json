@@ -5,7 +5,7 @@
                      "alt 는 기본값이므로 기사 맥락에 맞게 고쳐 쓰는 편이 낫다.",
                      "출처 표기 의무: 국가유산청 궁능유적본부"
                  ],
-    "generatedAt":  "2026-08-14T06:56:03",
+    "generatedAt":  "2026-08-14T08:03:38",
     "stats":  {
                   "ok":  14,
                   "failed":  0
@@ -25,7 +25,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  5945562,
+                       "bytes":  726835,
+                       "originalBytes":  5945562,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -42,7 +44,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  2793062,
+                       "bytes":  250311,
+                       "originalBytes":  2793062,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -59,7 +63,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  3287282,
+                       "bytes":  349485,
+                       "originalBytes":  3287282,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -76,7 +82,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  2529766,
+                       "bytes":  260840,
+                       "originalBytes":  2529766,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -93,7 +101,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  2745475,
+                       "bytes":  267972,
+                       "originalBytes":  2745475,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -110,7 +120,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  1987342,
+                       "bytes":  271554,
+                       "originalBytes":  1987342,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -127,7 +139,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  5267802,
+                       "bytes":  671693,
+                       "originalBytes":  5267802,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -144,7 +158,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  2398203,
+                       "bytes":  243605,
+                       "originalBytes":  2398203,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -161,7 +177,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  4685748,
+                       "bytes":  587973,
+                       "originalBytes":  4685748,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -178,7 +196,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  2792931,
+                       "bytes":  269054,
+                       "originalBytes":  2792931,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -195,7 +215,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  3708965,
+                       "bytes":  432173,
+                       "originalBytes":  3708965,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -212,7 +234,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  5067184,
+                       "bytes":  635215,
+                       "originalBytes":  5067184,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -229,7 +253,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  3333692,
+                       "bytes":  342996,
+                       "originalBytes":  3333692,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    },
                    {
@@ -246,7 +272,9 @@
                                            "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
                                            "credit":  "국가유산청 궁능유적본부"
                                        },
-                       "bytes":  4777252,
+                       "bytes":  609900,
+                       "originalBytes":  4777252,
+                       "resized":  true,
                        "fetchedAt":  "2026-08-14"
                    }
                ]
