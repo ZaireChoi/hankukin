@@ -1,0 +1,77 @@
+---
+/**
+ * 다음 읽을 글.
+ *
+ * 왜 필요한가 (2026-08-14 채점에서 드러남):
+ *   12편 중 10편에 내부링크가 하나도 없었다. 독자가 한 편 읽고 나가는 구조였다.
+ *   본문 안의 자연스러운 링크는 사람이 넣어야 하지만, 하단 추천은 자동으로 붙일 수 있다.
+ *
+ * 고르는 방식:
+ *   ① 같은 컬렉션 (같은 관심사)
+ *   ② 같은 region 이면 가산 — 서울 글을 읽는 사람은 서울 글을 더 읽는다
+ *   ③ 제목·요약에 공통 단어가 있으면 가산
+ *   무작위로 채우지 않는다. 관련 없는 추천은 안 하느니만 못하다.
+ */
+import { getCollection } from 'astro:content';
+
+const { current, lang, limit = 3 } = Astro.props;
+
+const SECTION = { guides: 'Guides', decode: 'Decode', now: 'Korea Now', scenes: 'Scenes' };
+const STOP = new Set(['the','and','for','you','what','that','with','from','this','your',
+  'korean','korea','seoul','a','an','of','in','on','to','is','it','are','how','why','not','does','do']);
+
+function words(s) {
+  return new Set(String(s).toLowerCase().replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/).filter((w) => w.length > 3 && !STOP.has(w)));
+}
+
+const all = [];
+for (const name of Object.keys(SECTION)) {
+  const entries = await getCollection(name, (e) => !e.data.draft && e.data.lang === lang);
+  for (const e of entries) all.push({ ...e, _section: name });
+}
+
+const mine = words(`${current.data.title} ${current.data.summary}`);
+const scored = all
+  .filter((e) => e.id !== current.id || e._section !== current._section)
+  .filter((e) => !(e.id === current.id))
+  .map((e) => {
+    const theirs = words(`${e.data.title} ${e.data.summary}`);
+    let score = [...mine].filter((w) => theirs.has(w)).length * 3;
+    if (e._section === current._section) score += 2;
+    if (e.data.region && e.data.region === current.data.region) score += 1;
+    return { e, score };
+  })
+  .filter((x) => x.score > 0)          // 관련 없으면 추천하지 않는다
+  .sort((a, b) => b.score - a.score)
+  .slice(0, limit);
+---
+{scored.length > 0 && (
+  <section class="block readnext">
+    <h2>Read next</h2>
+    <ul>
+      {scored.map(({ e }) => (
+        <li>
+          <a href={`/${lang}/${e._section}/${e.id}/`}>
+            <span class="sec">{SECTION[e._section]}</span>
+            <span class="t">{e.data.title}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .readnext ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .55rem; }
+  .readnext a {
+    display: block; padding: .75rem .9rem; border: 1px solid var(--line);
+    border-radius: 9px; text-decoration: none; color: inherit; background: var(--paper);
+  }
+  .readnext a:hover { border-color: var(--accent); }
+  .sec {
+    display: block; font-size: .68rem; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: .2rem;
+  }
+  .t { font-weight: 600; line-height: 1.4; }
+</style>

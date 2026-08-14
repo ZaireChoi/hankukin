@@ -4,6 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ClaimBadge from '../../../components/ClaimBadge.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
 import SourceList from '../../../components/SourceList.astro';
+import ReadNext from '../../../components/ReadNext.astro';
 import Figure from '../../../components/Figure.astro';
 import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
@@ -145,6 +146,8 @@ const jsonLd = {
               note="Availability and shipping vary by country. Prices were checked on the dates shown on each merchant page." />
 
     <!-- 17·18. 출처·확인일 / 고지 -->
+    <ReadNext current={{ ...entry, _section: 'scenes' }} lang={lang} />
+
     <SourceList sources={d.sources} checkedAt={d.checkedAt} />
     <section class="block">
       <p class="notice">{NOTICES.aiAssisted}</p>

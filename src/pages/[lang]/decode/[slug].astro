@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import SourceList from '../../../components/SourceList.astro';
+import ReadNext from '../../../components/ReadNext.astro';
 import Figure from '../../../components/Figure.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { LOCALES } from '../../../config/brand.mjs';
@@ -53,6 +54,8 @@ const jsonLd = {
     <section class="block">
       <div class="prose"><Content /></div>
     </section>
+
+    <ReadNext current={{ ...entry, _section: 'decode' }} lang={lang} />
 
     <SourceList sources={d.sources} checkedAt={d.checkedAt} />
 
