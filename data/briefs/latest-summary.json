@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-13T04:53:44.652Z",
-  "radarCollectedAt": "2026-08-13T04:35:52.688Z",
+  "generatedAt": "2026-08-14T20:23:33.555Z",
+  "radarCollectedAt": "2026-08-14T20:23:07.789Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 6,
-    "needsSignal": 0,
+    "needsLocation": 4,
+    "needsSignal": 2,
     "skip": 0
   },
   "briefs": [
@@ -14,16 +14,7 @@
       "slug": "our-sticky-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.695,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Badly in Love",
-      "slug": "badly-in-love",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.668,
+      "radarScore": 0.622,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -32,7 +23,7 @@
       "slug": "spooky-in-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.656,
+      "radarScore": 0.579,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -41,17 +32,26 @@
       "slug": "the-east-palace",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.632,
+      "radarScore": 0.554,
       "independentSources": 2,
       "locationPotential": 1
     },
     {
+      "title": "Badly in Love",
+      "slug": "badly-in-love",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.5,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
       "title": "The Apartment Job",
       "slug": "the-apartment-job",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.464,
-      "independentSources": 2,
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.33,
+      "independentSources": 1,
       "locationPotential": 0.6
     },
     {
@@ -59,7 +59,7 @@
       "slug": "agent-kim-reactivated",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.408,
+      "radarScore": 0.286,
       "independentSources": 2,
       "locationPotential": 0.6
     }
