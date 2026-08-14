@@ -951,9 +951,291 @@
                                       }
                                   ],
                        "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "changdeokgung-injeongmun",
+                       "keyword":  "창덕궁",
+                       "title":  "창덕궁 인정문",
+                       "address":  "서울특별시 종로구 율곡로 99",
+                       "contentId":  "1604953",
+                       "images":  [
+                                      {
+                                          "file":  "changdeokgung-injeongmun-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-1.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "changdeokgung-injeongmun-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-2.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "changdeokgung-injeongmun-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-3.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "changdeokgung-injeongmun-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-4.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "changdeokgung-injeongmun-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-5.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "changdeokgung-injeongmun-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changdeokgung-injeongmun-6.jpg",
+                                                              "alt":  "창덕궁",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604953",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "changgyeonggung",
+                       "keyword":  "창경궁",
+                       "title":  "창경궁",
+                       "address":  "서울특별시 종로구 창경궁로 185 (와룡동)",
+                       "contentId":  "126511",
+                       "images":  [
+                                      {
+                                          "file":  "changgyeonggung-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-1.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "changgyeonggung-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-2.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "changgyeonggung-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-3.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "changgyeonggung-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-4.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "changgyeonggung-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-5.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "changgyeonggung-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/changgyeonggung-6.jpg",
+                                                              "alt":  "창경궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126511",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "jongmyo",
+                       "keyword":  "종묘",
+                       "title":  "종묘광장공원",
+                       "address":  "서울특별시 종로구 종로 157",
+                       "contentId":  "126492",
+                       "images":  [
+                                      {
+                                          "file":  "jongmyo-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-1.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jongmyo-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-2.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jongmyo-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-3.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jongmyo-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-4.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jongmyo-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-5.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jongmyo-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jongmyo-6.jpg",
+                                                              "alt":  "종묘",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126492",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "gyeonghuigung",
+                       "keyword":  "경희궁",
+                       "title":  "경희궁공원",
+                       "address":  "서울특별시 종로구 새문안로 55 (신문로2가)",
+                       "contentId":  "1604824",
+                       "images":  [
+                                      {
+                                          "file":  "gyeonghuigung-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/gyeonghuigung-1.jpg",
+                                                              "alt":  "경희궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604824",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "gyeonghuigung-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/gyeonghuigung-2.jpg",
+                                                              "alt":  "경희궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604824",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "gyeonghuigung-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/gyeonghuigung-3.jpg",
+                                                              "alt":  "경희궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604824",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "gyeonghuigung-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/gyeonghuigung-4.jpg",
+                                                              "alt":  "경희궁",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1604824",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
                    }
                ],
-    "generatedAt":  "2026-08-14T16:40:41",
+    "generatedAt":  "2026-08-14T17:31:03",
     "_comment":  [
                      "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
                      "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
