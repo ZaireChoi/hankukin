@@ -23,7 +23,14 @@
     "2026-08-14 2차 — '궁궐 사진이 아직 중복으로 보인다' 는 지적.",
     "  파일은 전부 달랐지만 14장이 **전부 경복궁**이었다. 5대궁 기사도,",
     "  단청도, 한복도 경복궁만 보여준다. 읽는 사람에게는 같은 곳이다.",
-    "  => 나머지 궁을 받는다. 창덕궁은 본궁이 검색되지 않아 등재명을 직접 지정한다."
+    "  => 나머지 궁을 받는다. 창덕궁은 본궁이 검색되지 않아 등재명을 직접 지정한다.",
+    "",
+    "2026-08-14 3차 — 로그가 알려준 것.",
+    "  TourAPI(KorService2)에는 궁궐 '본궁' 이 등재돼 있지 않다.",
+    "  덕수궁 → 대한문·돌담길만, 창덕궁 → 낙선재·인정문만 (그나마 등록 이미지 0장).",
+    "  기존 경복궁 14장은 TourAPI 가 아니라 **국가유산청 궁능유적본부**에서 받은 것이다",
+    "  (scripts/fetch-heritage-images.ps1). 나머지 궁도 그쪽에서 받아야 한다.",
+    "  여기서는 TourAPI 에 실제로 있는 것만 남긴다."
   ],
   "requests": [
     {
@@ -137,11 +144,6 @@
       "slug": "seoul-forest"
     },
     {
-      "keyword": "창덕궁",
-      "expectRegion": "서울",
-      "slug": "changdeokgung"
-    },
-    {
       "keyword": "청계광장",
       "expectRegion": "서울",
       "slug": "cheonggye-plaza"
@@ -152,47 +154,22 @@
       "slug": "seoul-station"
     },
     {
-      "keyword": "창덕궁과 후원",
-      "expectRegion": "서울",
-      "slug": "changdeokgung-huwon"
-    },
-    {
-      "keyword": "창덕궁",
-      "expectRegion": "서울",
-      "slug": "changdeokgung-injeongmun",
-      "exactTitle": "창덕궁 인정문"
-    },
-    {
-      "keyword": "창덕궁",
-      "expectRegion": "서울",
-      "slug": "changdeokgung-nakseonjae",
-      "exactTitle": "창덕궁 낙선재"
-    },
-    {
-      "keyword": "덕수궁",
-      "expectRegion": "서울",
-      "slug": "deoksugung"
-    },
-    {
-      "keyword": "창경궁",
-      "expectRegion": "서울",
-      "slug": "changgyeonggung"
-    },
-    {
-      "keyword": "종묘",
-      "expectRegion": "서울",
-      "slug": "jongmyo"
-    },
-    {
-      "keyword": "경희궁",
-      "expectRegion": "서울",
-      "slug": "gyeonghuigung"
-    },
-    {
       "keyword": "롯데월드",
       "expectRegion": "서울",
       "slug": "lotte-world-tower",
       "exactTitle": "롯데월드타워&롯데월드몰"
+    },
+    {
+      "keyword": "덕수궁",
+      "expectRegion": "서울",
+      "slug": "deoksugung-daehanmun",
+      "exactTitle": "덕수궁 대한문"
+    },
+    {
+      "keyword": "덕수궁",
+      "expectRegion": "서울",
+      "slug": "deoksugung-doldamgil",
+      "exactTitle": "덕수궁 돌담길"
     }
   ]
 }
