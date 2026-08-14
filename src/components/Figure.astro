@@ -17,7 +17,14 @@ const LICENSE_LABEL = {
   'own': 'Own work',
 };
 
-const { src, alt, credit, license, sourceUrl, caption, widths = [640, 960, 1280] } = Astro.props;
+const { src, alt, credit, license, sourceUrl, caption,
+        widths = [640, 960, 1280], priority = false } = Astro.props;
+
+/**
+ * 대표 이미지는 지연 로딩하면 안 된다 (2026-08-14 실측).
+ * 모바일에서 열어보니 제목 아래가 통째로 비어 있었고, 스크롤해야 사진이 나타났다.
+ * 첫 화면에 보여야 할 것을 나중에 불러오면 "사진이 없는 사이트" 로 보인다.
+ */
 
 /**
  * 변경금지 라이선스는 Astro 최적화를 태우지 않는다 (2026-08-14).
@@ -32,12 +39,15 @@ const { src, alt, credit, license, sourceUrl, caption, widths = [640, 960, 1280]
 const NO_MODIFY = new Set(['kogl-3']);
 const mustKeepOriginal = NO_MODIFY.has(license);
 ---
-<figure class="fig">
+<figure class={priority ? "fig hero" : "fig"}>
   {mustKeepOriginal
     ? <img src={src.src} alt={alt} width={src.width} height={src.height}
-           loading="lazy" decoding="async" />
+           loading={priority ? 'eager' : 'lazy'}
+           fetchpriority={priority ? 'high' : 'auto'} decoding="async" />
     : <Image src={src} alt={alt} widths={widths}
-             sizes="(min-width: 800px) 760px, 100vw" loading="lazy" decoding="async" />}
+             sizes="(min-width: 800px) 760px, 100vw"
+             loading={priority ? 'eager' : 'lazy'}
+             fetchpriority={priority ? 'high' : 'auto'} decoding="async" />}
   <figcaption>
     {caption && <span class="cap">{caption}</span>}
     <span class="credit">
@@ -51,6 +61,7 @@ const mustKeepOriginal = NO_MODIFY.has(license);
 
 <style>
   .fig { margin: 2rem 0; }
+  .fig.hero { margin: 1.2rem 0 1.6rem; }
   .fig :global(img) {
     width: 100%; height: auto; border-radius: 6px; display: block;
   }
