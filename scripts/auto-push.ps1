@@ -88,6 +88,24 @@ try {
     }
   }
 
+  # ── 0. 이미 커밋됐지만 올라가지 않은 것을 먼저 밀어낸다 ────────
+  #
+  # 2026-08-14: 이것이 없어서 커밋 3 건이 한 시간 넘게 로컬에 갇혀 있었다.
+  #   아래 '변경 없음' 검사는 **워킹트리만** 본다. 이미 커밋한 것은 변경이 아니므로
+  #   매 실행마다 "변경 없음" 을 찍고 조용히 끝냈고, 고쳐 놓은 내용이 사이트에
+  #   영영 반영되지 않았다. 운영자 화면에는 계속 옛 버전이 보였다.
+  #
+  #   '올릴 것이 없다' 와 '커밋할 것이 없다' 는 다른 말이다.
+  & $git fetch --quiet 2>&1 | Out-Null
+  $ahead = & $git rev-list --count '@{u}..HEAD' 2>$null
+  if ($LASTEXITCODE -eq 0 -and $ahead -and [int]$ahead -gt 0) {
+    Log "밀린 커밋 $ahead 건 — 푸시"
+    & $git pull --rebase --quiet 2>&1 | Out-Null
+    & $git push --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) { Log "  밀린 커밋 푸시 완료" }
+    else { Log "  밀린 커밋 푸시 실패 — 수동 확인 필요" }
+  }
+
   # ── 1. 변경이 없으면 조용히 끝낸다 ────────────────────────────
   $status = & $git status --porcelain
   if (-not $status) { Log "실행: 변경 없음"; exit 0 }

@@ -49,6 +49,27 @@ New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue
 $canResize = [bool]([System.Management.Automation.PSTypeName]'System.Drawing.Bitmap').Type
 
+# 응답 본문을 UTF-8 로 읽는다.
+#
+# 2026-08-14, 로그를 켜고 나서야 보인 것:
+#   [Text.Encoding]::UTF8.GetString($resp.Content) 는 19건 전부에서 터지고 있었다.
+#   PowerShell 5.1 의 Invoke-WebRequest 는 응답이 텍스트면 .Content 를 이미
+#   **문자열로** 준다. GetString 은 byte[] 를 요구하므로 형변환 오류가 난다.
+#   게다가 그 문자열은 charset 헤더가 없어 ISO-8859-1 로 디코딩된 상태라
+#   "청계광장" 이 "ì²­ê³ê´ì¥" 로 이미 깨져 있다 — 되살릴 수 없다.
+#
+#   원본 바이트는 RawContentStream 에만 남아 있다. 거기서 UTF-8 로 직접 읽는다.
+function Read-Utf8Body {
+  param($resp)
+  if ($resp.PSObject.Properties['RawContentStream'] -and $resp.RawContentStream) {
+    $ms = $resp.RawContentStream
+    $ms.Position = 0
+    return [Text.Encoding]::UTF8.GetString($ms.ToArray())
+  }
+  if ($resp.Content -is [byte[]]) { return [Text.Encoding]::UTF8.GetString($resp.Content) }
+  return [string]$resp.Content
+}
+
 $AREA = @{ '서울'=1;'인천'=2;'대전'=3;'대구'=4;'광주'=5;'부산'=6;'울산'=7;'세종'=8;
            '경기'=31;'강원'=32;'충북'=33;'충남'=34;'경북'=35;'경남'=36;'전북'=37;'전남'=38;'제주'=39 }
 $LICENSE = @{ 'Type1'=@{code='kogl-1';mod=$true}; 'Type3'=@{code='kogl-3';mod=$false} }
@@ -73,7 +94,7 @@ foreach ($r in $req.requests) {
   # 한글 제목이 깨져 저장됐다 (2026-08-14). 바이트를 받아 UTF-8 로 직접 디코딩한다.
   try {
     $raw = Invoke-WebRequest -Uri $searchUrl -TimeoutSec 25 -UseBasicParsing
-    $s = [Text.Encoding]::UTF8.GetString($raw.Content) | ConvertFrom-Json
+    $s = (Read-Utf8Body $raw) | ConvertFrom-Json
   }
   catch { Write-Host ("  [실패] {0}: {1}" -f $r.keyword, $_.Exception.Message); continue }
 
@@ -129,7 +150,7 @@ foreach ($r in $req.requests) {
   $imgUrl = "$base/detailImage2?serviceKey=$k&MobileOS=ETC&MobileApp=HANKUKIN&_type=json&contentId=$cid&imageYN=Y&numOfRows=20&pageNo=1"
   try {
     $rawi = Invoke-WebRequest -Uri $imgUrl -TimeoutSec 25 -UseBasicParsing
-    $ires = [Text.Encoding]::UTF8.GetString($rawi.Content) | ConvertFrom-Json
+    $ires = (Read-Utf8Body $rawi) | ConvertFrom-Json
   } catch { continue }
   $imgs = $ires.response.body.items.item
   if (-not $imgs) { Write-Host ("  [없음] {0}: 등록 이미지 없음" -f $r.keyword); continue }
@@ -146,8 +167,18 @@ foreach ($r in $req.requests) {
     $file = "$($r.slug)-$i.jpg"
     $dest = Join-Path $outDir $file
     try {
-      $bytes = (Invoke-WebRequest -Uri $src -TimeoutSec 30 -UseBasicParsing).Content
-      if ($bytes.Length -lt 20000 -or -not ($bytes[0] -eq 0xFF -and $bytes[1] -eq 0xD8)) { $i--; continue }
+      # 여기도 .Content 를 그냥 믿지 않는다. 위 JSON 에서 이미 당했다.
+      # 이미지가 문자열로 오면 아래 JPEG 시그니처 검사가 조용히 전부 탈락시킨다 —
+      # 실패가 아니라 '이미지 없음' 으로 보여서 원인을 못 찾는다.
+      $resp = Invoke-WebRequest -Uri $src -TimeoutSec 30 -UseBasicParsing
+      $bytes = if ($resp.PSObject.Properties['RawContentStream'] -and $resp.RawContentStream) {
+        $resp.RawContentStream.Position = 0; $resp.RawContentStream.ToArray()
+      } elseif ($resp.Content -is [byte[]]) { $resp.Content }
+      else { [Text.Encoding]::GetEncoding(28591).GetBytes([string]$resp.Content) }
+      if ($bytes.Length -lt 20000 -or -not ($bytes[0] -eq 0xFF -and $bytes[1] -eq 0xD8)) {
+        Write-Host ("  [건너뜀] {0}-{1}: JPEG 아님 또는 너무 작음 ({2} 바이트)" -f $r.slug, $i, $bytes.Length)
+        $i--; continue
+      }
       if ($canResize -and $lic.mod) {
         $ms = New-Object System.IO.MemoryStream(,$bytes); $img = [System.Drawing.Image]::FromStream($ms)
         if ($img.Width -gt $maxWidth) {
