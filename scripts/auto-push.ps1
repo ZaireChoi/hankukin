@@ -53,29 +53,24 @@ try {
   #
   #   한국 공공데이터는 GitHub Actions(미국)에서 접속이 안 된다.
   #   그래서 이 PC 에서 받는 것이 유일한 방법이다.
-  $stamp = Join-Path $repo '.last-media-fetch'
-  $due = $true
-  if (Test-Path $stamp) {
-    $last = (Get-Item $stamp).LastWriteTime
-    if ((Get-Date) - $last -lt [TimeSpan]::FromHours(12)) { $due = $false }
-  }
-  if ($due) {
-    Log "사진 수집 시작 (12시간 주기)"
-    $ps1 = Join-Path $PSScriptRoot 'fetch-heritage-images.ps1'
-    if (Test-Path $ps1) {
-      try { & $ps1 *> $null; Log "  궁궐 사진: 완료" }
-      catch { Log "  궁궐 사진 실패: $($_.Exception.Message)" }
-    }
-    $ps2 = Join-Path $PSScriptRoot 'fetch-tourapi-images.ps1'
-    if (Test-Path $ps2) {
-      if (Test-Path (Join-Path $repo '.env.local')) {
-        try { & $ps2 *> $null; Log "  촬영지 사진: 완료" }
-        catch { Log "  촬영지 사진 실패: $($_.Exception.Message)" }
-      } else {
-        Log "  촬영지 사진: 건너뜀 (.env.local 없음 — 인증키 미설정)"
+  # ── 0. 요청된 장소 사진만 받는다 ──────────────────────────────
+  #
+  # 이전 설계는 12시간마다 궁궐 사진을 다시 받았다. 잘못이었다 —
+  # 궁궐 기사는 이미 다 썼는데 같은 사진을 반복해서 받고 있었고,
+  # 정작 지금 쓰는 기사의 장소 사진은 받지 않았다.
+  #
+  # 이제는 기사가 data\photo-requests.json 에 적어둔 것만 받는다.
+  # 요청이 없으면 아무 일도 하지 않는다.
+  $reqFile = Join-Path $repo 'data\photo-requests.json'
+  if ((Test-Path $reqFile) -and (Test-Path (Join-Path $repo '.env.local'))) {
+    $raw = Get-Content $reqFile -Raw -Encoding UTF8
+    if ($raw -match '"requests"\s*:\s*\[\s*\{') {
+      $ps = Join-Path $PSScriptRoot 'fetch-requested-images.ps1'
+      if (Test-Path $ps) {
+        try { & $ps *> $null; Log "요청 사진 수집: 완료" }
+        catch { Log "요청 사진 수집 실패: $($_.Exception.Message)" }
       }
     }
-    Set-Content -Path $stamp -Value (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') -Encoding UTF8
   }
 
   # ── 1. 변경이 없으면 조용히 끝낸다 ────────────────────────────
