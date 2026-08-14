@@ -157,6 +157,9 @@ foreach ($r in $req.requests) {
   }
 
   if ($files.Count -gt 0) {
+    # 같은 slug 가 이미 있으면 덮어쓴다.
+    # 이전 버전은 그냥 append 해서 'Key already added: slug' 로 죽었다 (2026-08-14).
+    $records = @($records | Where-Object { $_.slug -ne $r.slug })
     $records += [ordered]@{
       slug = $r.slug; keyword = $r.keyword; title = $pick.title
       address = $pick.addr1; contentId = $cid

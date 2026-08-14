@@ -6,6 +6,12 @@ publishedAt: 2026-08-14
 checkedAt: 2026-08-14
 riskGrade: green
 contentScore: 84
+hero:
+  src: ../../assets/images/places/namdaemun-market-4.jpg
+  alt: Two trays of tteokbokki simmering beside a rack of fried snacks at a Namdaemun Market stall, with a handwritten price list in front
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=126493
+  credit: 한국관광공사 (Korea Tourism Organization)
 sources:
   - title: "순대 — 한국민족문화대백과사전 (한국학중앙연구원)"
     url: "https://encykorea.aks.ac.kr/Article/E0031878"
@@ -20,6 +26,15 @@ sources:
     type: public_institution
     checkedAt: 2026-08-14
 ---
+
+import Figure from '../../components/Figure.astro';
+import alley from '../../assets/images/places/namdaemun-market-1.jpg';
+
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126493',
+};
 
 Most guidance for travellers with dietary restrictions in Korea lists restaurants. This page does something different: it tells you what the **dishes themselves** are made of, so you can read a menu anywhere.
 
@@ -78,6 +93,10 @@ If you avoid alcohol entirely, this affects far more dishes than the drinks list
 **Variable:** the stock, the frying oil, the seasoning. One *tteokbokki* stall uses anchovy stock, another uses a commercial powder. One *hotteok* vendor fries in vegetable oil, another may not. We cannot verify individual stalls, and neither can any other website.
 
 So the honest structure is: **know what the dish is by definition, then ask about the parts that vary.**
+
+<Figure src={alley} alt="A crowded market alley at Namdaemun with stalls on both sides and shoppers moving through"
+        caption="Namdaemun Market at dusk. Stalls like these are where the questions below actually get asked — there is no menu to read and no allergen label to check."
+        {...KTO} />
 
 ## The questions to ask
 

@@ -1,0 +1,344 @@
+﻿{
+    "places":  [
+                   {
+                       "slug":  "cheonggyecheon",
+                       "keyword":  "청계천",
+                       "title":  "청계천",
+                       "contentId":  "264570",
+                       "images":  [
+                                      {
+                                          "file":  "cheonggyecheon-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cheonggyecheon-1.jpg",
+                                                              "alt":  "청계천",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=264570",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "cheonggyecheon-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cheonggyecheon-2.jpg",
+                                                              "alt":  "청계천",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=264570",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "cheonggyecheon-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cheonggyecheon-3.jpg",
+                                                              "alt":  "청계천",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=264570",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "cheonggyecheon-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cheonggyecheon-4.jpg",
+                                                              "alt":  "청계천",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=264570",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "namdaemun-market",
+                       "keyword":  "남대문시장",
+                       "title":  "남대문시장",
+                       "contentId":  "126493",
+                       "images":  [
+                                      {
+                                          "file":  "namdaemun-market-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-1.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "namdaemun-market-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-2.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "namdaemun-market-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-3.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "namdaemun-market-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-4.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "namdaemun-market-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-5.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "namdaemun-market-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/namdaemun-market-6.jpg",
+                                                              "alt":  "남대문시장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126493",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "ddp",
+                       "keyword":  "동대문디자인플라자",
+                       "title":  "ëëë¬¸ëìì¸íë¼ì(DDP)",
+                       "address":  "ìì¸í¹ë³ì ì¤êµ¬ ìì§ë¡ 281 (ìì§ë¡7ê°)",
+                       "contentId":  "2470006",
+                       "images":  [
+                                      {
+                                          "file":  "ddp-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-1.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ddp-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-2.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ddp-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-3.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ddp-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-4.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ddp-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-5.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ddp-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ddp-6.jpg",
+                                                              "alt":  "동대문디자인플라자",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2470006",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "seoul-station",
+                       "keyword":  "서울역",
+                       "title":  "ìì¸ì­ì¬ë°ë¬¼ê´",
+                       "address":  "ìì¸í¹ë³ì ì¢\u0085ë¡êµ¬ ìë¬¸ìë¡ 55 (ì ë¬¸ë¡2ê°)",
+                       "contentId":  "130361",
+                       "images":  [
+                                      {
+                                          "file":  "seoul-station-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-1.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoul-station-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-2.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "seoul-station-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-3.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "seoul-station-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-4.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "seoul-station-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-5.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "seoul-station-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-station-6.jpg",
+                                                              "alt":  "서울역",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=130361",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "incheon-airport",
+                       "keyword":  "인천국제공항",
+                       "title":  "ì¸ì²êµ­ì ê³µí­ ì 2ì¬ê°í°ë¯¸ë",
+                       "address":  "ì¸ì²ê´ì­ì ìì¢\u0085êµ¬ ì 2í°ë¯¸ëëë¡ 446",
+                       "contentId":  "2535506",
+                       "images":  [
+                                      {
+                                          "file":  "incheon-airport-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/incheon-airport-1.jpg",
+                                                              "alt":  "인천국제공항",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2535506",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "incheon-airport-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/incheon-airport-2.jpg",
+                                                              "alt":  "인천국제공항",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2535506",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "incheon-airport-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/incheon-airport-3.jpg",
+                                                              "alt":  "인천국제공항",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2535506",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "incheon-airport-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/incheon-airport-4.jpg",
+                                                              "alt":  "인천국제공항",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2535506",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   }
+               ],
+    "generatedAt":  "2026-08-14T12:59:44",
+    "_comment":  [
+                     "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
+                     "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
+                     "출처 표기 의무: 한국관광공사"
+                 ]
+}

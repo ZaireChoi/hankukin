@@ -52,6 +52,36 @@
       "keyword": "동대문디자인플라자",
       "expectRegion": "서울",
       "slug": "ddp"
+    },
+    {
+      "keyword": "경동시장",
+      "expectRegion": "서울",
+      "slug": "gyeongdong-market"
+    },
+    {
+      "keyword": "망원시장",
+      "expectRegion": "서울",
+      "slug": "mangwon-market"
+    },
+    {
+      "keyword": "신당동떡볶이골목",
+      "expectRegion": "서울",
+      "slug": "sindang-tteokbokki"
+    },
+    {
+      "keyword": "홍대걷고싶은거리",
+      "expectRegion": "서울",
+      "slug": "hongdae-street"
+    },
+    {
+      "keyword": "서울역",
+      "expectRegion": "서울",
+      "slug": "seoul-station"
+    },
+    {
+      "keyword": "인천국제공항",
+      "expectRegion": "인천",
+      "slug": "incheon-airport"
     }
   ]
 }
