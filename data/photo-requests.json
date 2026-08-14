@@ -9,6 +9,26 @@
   ],
   "requests": [
     {
+      "keyword": "서울빛초롱축제",
+      "expectRegion": "서울",
+      "slug": "seoul-lantern-festival"
+    },
+    {
+      "keyword": "광통교",
+      "expectRegion": "서울",
+      "slug": "gwangtonggyo"
+    },
+    {
+      "keyword": "청계천박물관",
+      "expectRegion": "서울",
+      "slug": "cheonggyecheon-museum"
+    },
+    {
+      "keyword": "청계광장",
+      "expectRegion": "서울",
+      "slug": "cheonggye-plaza"
+    },
+    {
       "keyword": "창덕궁",
       "expectRegion": "서울",
       "slug": "changdeokgung"
@@ -39,21 +59,6 @@
       "slug": "bamdokkaebi-night-market"
     },
     {
-      "keyword": "청계천",
-      "expectRegion": "서울",
-      "slug": "cheonggyecheon"
-    },
-    {
-      "keyword": "남대문시장",
-      "expectRegion": "서울",
-      "slug": "namdaemun-market"
-    },
-    {
-      "keyword": "동대문디자인플라자",
-      "expectRegion": "서울",
-      "slug": "ddp"
-    },
-    {
       "keyword": "경동시장",
       "expectRegion": "서울",
       "slug": "gyeongdong-market"
@@ -77,11 +82,6 @@
       "keyword": "서울역",
       "expectRegion": "서울",
       "slug": "seoul-station"
-    },
-    {
-      "keyword": "인천국제공항",
-      "expectRegion": "인천",
-      "slug": "incheon-airport"
     },
     {
       "keyword": "인사동",
