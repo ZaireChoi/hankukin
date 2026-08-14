@@ -113,12 +113,26 @@ foreach ($r in $req.requests) {
   #        (TourAPI 는 관련도순으로 준다)
   #     ③ 그것도 없으면 건너뛴다
   $kw = $r.keyword -replace '\s',''
-  $exact = @($items | Where-Object { ($_.title -replace '\s','') -eq $kw })
   $pick = $null
   $how = ''
-  if ($exact.Count -eq 1) { $pick = $exact[0]; $how = '제목 완전일치' }
-  elseif ($items.Count -eq 1) { $pick = $items[0]; $how = '결과 1건' }
-  else {
+
+  # 요청서가 등재명을 직접 지정했으면 그것만 쓴다.
+  # 사람이 후보 목록을 보고 고른 것이므로 추측할 이유가 없다.
+  if ($r.exactTitle) {
+    $want = $r.exactTitle -replace '\s',''
+    $pick = @($items | Where-Object { ($_.title -replace '\s','') -eq $want })[0]
+    if ($pick) { $how = '등재명 지정' }
+    else {
+      $names = ($items | Select-Object -First 6 | ForEach-Object { "$($_.title)" }) -join ' / '
+      Write-Host ("  [불일치] {0}: exactTitle '{1}' 이 결과에 없습니다 — {2}" -f $r.keyword, $r.exactTitle, $names)
+      continue
+    }
+  }
+
+  $exact = @($items | Where-Object { ($_.title -replace '\s','') -eq $kw })
+  if (-not $pick -and $exact.Count -eq 1) { $pick = $exact[0]; $how = '제목 완전일치' }
+  if (-not $pick -and $items.Count -eq 1) { $pick = $items[0]; $how = '결과 1건' }
+  if (-not $pick) {
     # "서울역" 이 "서울역사박물관" 에 매칭됐다 (2026-08-14 실측).
     # 접두사 포함만으로는 부족하다. 키워드 뒤에 다른 글자가 이어붙으면
     # 대개 다른 장소다 — 시장·거리·공항처럼 접미어가 붙는 경우만 허용한다.
@@ -140,7 +154,13 @@ foreach ($r in $req.requests) {
     if ($contains.Count -gt 0) { $pick = $contains[0]; $how = "제목 포함 + 지역 일치 ($($contains.Count)건 중 첫째)" }
   }
   if (-not $pick) {
-    Write-Host ("  [모호] {0}: 후보 {1}건 중 키워드를 제목에 포함한 것이 없습니다 — 건너뜁니다" -f $r.keyword, $items.Count)
+    # 후보 이름을 찍지 않으면 왜 버렸는지 알 수 없다 (2026-08-14).
+    #   "창덕궁: 후보 4건 중 없음" 만 보고는 손 쓸 방법이 없었다.
+    #   TourAPI 등재명은 '창덕궁과 후원' 처럼 우리가 부르는 이름과 다르다.
+    #   이름을 보여주면, 맞는 것을 골라 요청서의 exactTitle 에 적어 넣을 수 있다.
+    #   기계가 추측해서 엉뚱한 곳을 집는 것보다 사람이 고르는 편이 안전하다.
+    $names = ($items | Select-Object -First 6 | ForEach-Object { "$($_.title)" }) -join ' / '
+    Write-Host ("  [모호] {0}: 아래 중 맞는 것을 exactTitle 에 적으십시오 — {1}" -f $r.keyword, $names)
     continue
   }
   Write-Host ("  [선택] {0} → {1} ({2})" -f $r.keyword, $pick.title, $how)
