@@ -5,8 +5,15 @@ lang: en
 region: "Seoul"
 publishedAt: 2026-08-14
 checkedAt: 2026-08-14
+faresCheckedAt: 2026-08-14
 riskGrade: green
 contentScore: 85
+hero:
+  src: ../../assets/images/places/incheon-airport-1.jpg
+  alt: Escalators leading up inside Incheon International Airport Terminal 2, with signage and shops on both sides
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=2733967
+  credit: 한국관광공사 (Korea Tourism Organization)
 sources:
   - title: "교통 요금 안내 — 서울특별시 교통분야 누리집"
     url: "https://news.seoul.go.kr/traffic/traffic_price"
@@ -21,6 +28,15 @@ sources:
     type: public_institution
     checkedAt: 2026-08-14
 ---
+
+import Figure from '../../components/Figure.astro';
+import ddp from '../../assets/images/places/ddp-1.jpg';
+
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264303',
+};
 
 Every fare on this page comes from the City of Seoul's own published tables, **checked on 14 August 2026**. Subway fares are the schedule effective 28 June 2025; bus fares are effective 12 August 2023; the standard taxi meter is the schedule effective 1 February 2023.
 
@@ -53,6 +69,10 @@ Seoul runs several bus classes and they are not priced alike. The number and col
 | **Village / neighbourhood** (마을) | ₩1,200 | ₩1,200 |
 
 The trap is the **red bus at ₩3,000** — double a normal city bus. Red buses run to satellite cities outside Seoul. If one arrives first and you are travelling inside Seoul, you have paid twice the fare for no benefit.
+
+<Figure src={ddp} alt="Dongdaemun Design Plaza, a curved metal building lit at night, with the plaza in front"
+        caption="Dongdaemun. The wide-area red buses that cost ₩3,000 pass through hubs like this alongside ₩1,500 city buses — the stop looks identical."
+        {...KTO} />
 
 ## The distance surcharge nobody mentions
 

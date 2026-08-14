@@ -6,6 +6,12 @@ publishedAt: 2026-08-14
 checkedAt: 2026-08-14
 riskGrade: green
 contentScore: 79
+hero:
+  src: ../../assets/images/places/cheonggyecheon-2.jpg
+  alt: A crowd gathered at night around illuminated winter decorations along Cheonggyecheon in central Seoul
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=264570
+  credit: 한국관광공사 (Korea Tourism Organization)
 sources:
   - title: "'만 나이' 사용 6월 28일 시행 — 법제처 찾기쉬운 생활법령정보"
     url: "https://m.easylaw.go.kr/MOB/NtcInfoRetrieve.laf?ntcSeq=1442"
@@ -16,6 +22,15 @@ sources:
     type: public_institution
     checkedAt: 2026-08-14
 ---
+
+import Figure from '../../components/Figure.astro';
+import lights from '../../assets/images/places/cheonggyecheon-1.jpg';
+
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264570',
+};
 
 If you watch Korean drama with subtitles, you have probably hit this. A character says they are twenty-five. Later someone says they were born in 1999. The arithmetic does not work, and the subtitle does not explain.
 
@@ -57,6 +72,10 @@ This is the part most explanations skip.
 **Some statutes keep their own rule.** The amendment applies "unless there is a separate special provision." Certain laws continue to use year-of-birth counting for their own purposes.
 
 So if you hear two different ages for the same person, neither is necessarily wrong. One may be the legal figure and the other the conversational one.
+
+<Figure src={lights} alt="Illuminated winter figures behind a low white fence beside a Seoul street at night"
+        caption="Cheonggyecheon in winter. Everyone in a Korean crowd born in the same calendar year shared an age under the old system — which is why birth year, not birthday, is what people ask each other."
+        {...KTO} />
 
 ## Why the old system was so hard to drop
 

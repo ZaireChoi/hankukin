@@ -69,7 +69,12 @@ foreach ($r in $req.requests) {
   $areaParam = ''
   if ($r.expectRegion -and $AREA[$r.expectRegion]) { $areaParam = "&areaCode=$($AREA[$r.expectRegion])" }
   $searchUrl = "$base/searchKeyword2?serviceKey=$k&MobileOS=ETC&MobileApp=HANKUKIN&_type=json&keyword=$([uri]::EscapeDataString($r.keyword))&numOfRows=10&pageNo=1$areaParam"
-  try { $s = Invoke-RestMethod -Uri $searchUrl -TimeoutSec 25 }
+  # Invoke-RestMethod 가 charset 헤더 없는 응답을 ISO-8859-1 로 읽어
+  # 한글 제목이 깨져 저장됐다 (2026-08-14). 바이트를 받아 UTF-8 로 직접 디코딩한다.
+  try {
+    $raw = Invoke-WebRequest -Uri $searchUrl -TimeoutSec 25 -UseBasicParsing
+    $s = [Text.Encoding]::UTF8.GetString($raw.Content) | ConvertFrom-Json
+  }
   catch { Write-Host ("  [실패] {0}: {1}" -f $r.keyword, $_.Exception.Message); continue }
 
   $items = $s.response.body.items.item
@@ -93,7 +98,20 @@ foreach ($r in $req.requests) {
   if ($exact.Count -eq 1) { $pick = $exact[0]; $how = '제목 완전일치' }
   elseif ($items.Count -eq 1) { $pick = $items[0]; $how = '결과 1건' }
   else {
-    $contains = @($items | Where-Object { ($_.title -replace '\s','') -like "*$kw*" })
+    # "서울역" 이 "서울역사박물관" 에 매칭됐다 (2026-08-14 실측).
+    # 접두사 포함만으로는 부족하다. 키워드 뒤에 다른 글자가 이어붙으면
+    # 대개 다른 장소다 — 시장·거리·공항처럼 접미어가 붙는 경우만 허용한다.
+    $okSuffix = '^' + [regex]::Escape($kw) + '(역|점|관|장|거리|시장|공원|타워|공항|터미널|광장|마을|길|천|산|성|문|궁|사|원|리|동|가|
+                                                 관광특구|디자인플라자|국제공항)?$'
+    $okSuffix = $okSuffix -replace '\s',''
+    $contains = @($items | Where-Object { ($_.title -replace '\s','') -match $okSuffix })
+    if ($contains.Count -eq 0) {
+      # 그래도 없으면 '키워드로 시작하고 2글자 이내로 끝나는 것' 까지만 허용
+      $contains = @($items | Where-Object {
+        $t = ($_.title -replace '\s','')
+        $t.StartsWith($kw) -and ($t.Length - $kw.Length) -le 2
+      })
+    }
     if ($r.expectRegion) {
       $inRegion = @($contains | Where-Object { $_.addr1 -and $_.addr1.StartsWith($r.expectRegion) })
       if ($inRegion.Count -gt 0) { $contains = $inRegion }
@@ -109,7 +127,10 @@ foreach ($r in $req.requests) {
 
   # ② 이미지 + 저작권 유형
   $imgUrl = "$base/detailImage2?serviceKey=$k&MobileOS=ETC&MobileApp=HANKUKIN&_type=json&contentId=$cid&imageYN=Y&numOfRows=20&pageNo=1"
-  try { $ires = Invoke-RestMethod -Uri $imgUrl -TimeoutSec 25 } catch { continue }
+  try {
+    $rawi = Invoke-WebRequest -Uri $imgUrl -TimeoutSec 25 -UseBasicParsing
+    $ires = [Text.Encoding]::UTF8.GetString($rawi.Content) | ConvertFrom-Json
+  } catch { continue }
   $imgs = $ires.response.body.items.item
   if (-not $imgs) { Write-Host ("  [없음] {0}: 등록 이미지 없음" -f $r.keyword); continue }
   if ($imgs -isnot [array]) { $imgs = @($imgs) }
@@ -181,7 +202,8 @@ if ($fetched -gt 0) {
     )
     generatedAt = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss')
     places = $records
-  } | ConvertTo-Json -Depth 10 | Set-Content -Path $metaFile -Encoding UTF8
+  } | ConvertTo-Json -Depth 10 |
+    ForEach-Object { [IO.File]::WriteAllText($metaFile, $_, (New-Object Text.UTF8Encoding $false)) }
 }
 Write-Host ("  요청 {0}건 · 새로 받음 {1}곳 · 이미 있음 {2}곳" -f $req.requests.Count, $fetched, $skipped)
 exit 0

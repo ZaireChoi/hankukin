@@ -82,6 +82,26 @@
       "keyword": "인천국제공항",
       "expectRegion": "인천",
       "slug": "incheon-airport"
+    },
+    {
+      "keyword": "인사동",
+      "expectRegion": "서울",
+      "slug": "insadong"
+    },
+    {
+      "keyword": "북촌한옥마을",
+      "expectRegion": "서울",
+      "slug": "bukchon"
+    },
+    {
+      "keyword": "명동거리",
+      "expectRegion": "서울",
+      "slug": "myeongdong-street"
+    },
+    {
+      "keyword": "홍대거리",
+      "expectRegion": "서울",
+      "slug": "hongdae-street2"
     }
   ]
 }

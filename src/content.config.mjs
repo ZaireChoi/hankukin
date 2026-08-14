@@ -154,4 +154,22 @@ const decode = defineCollection({
   }),
 });
 
-export const collections = { scenes, guides, decode };
+/**
+ * Korea Now — "지금 한국이 실제로 이렇다".
+ *
+ * 원래 정의는 '주간 트렌드 리포트' 였다. 네이버 API 가 막혀 신호가 부족해서 Phase 2 로 미뤄져 있었다.
+ * 2026-08-14 재정의: 요금·교통·예약·에티켓. 출처가 확실하고 예약 전환에 가장 가깝다.
+ *
+ * 요금 정보는 바뀐다. faresCheckedAt 을 따로 두어 재확인 주기를 관리한다.
+ */
+const now = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/now' }),
+  schema: ({ image }) => z.object({
+    ...baseFields(image),
+    region: z.string().optional(),
+    // 요금·운임을 담은 글은 이 날짜를 본문에도 적고 3개월마다 재확인한다
+    faresCheckedAt: z.coerce.date().optional(),
+  }),
+});
+
+export const collections = { scenes, guides, decode, now };
