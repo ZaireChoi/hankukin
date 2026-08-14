@@ -8,3 +8,5 @@ dist/
 
 # 자동 푸시 로그 (로컬 전용)
 .auto-push.log
+자동푸시-등록.bat
+올리기.bat

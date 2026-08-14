@@ -1,0 +1,43 @@
+# 궁궐 사진 수집 — 국가유산청 궁능유적본부 (공공누리 제1유형).
+#
+# 인증키도 로그인도 필요 없다. 페이지에 라이선스가 명시돼 있고
+# 건물명↔이미지 짝은 사람이 확인해 data/heritage-images.json 에 넣어 둔 것만 쓴다.
+name: fetch-heritage-images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 21 * * 0'      # 매주 월요일 06:00 KST
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fetch-heritage-images
+  cancel-in-progress: false
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: sharp 설치
+        run: npm i sharp --no-save
+
+      - name: 사진 수집
+        run: node scripts/fetch-heritage-images.mjs
+
+      - name: 결과 커밋
+        run: |
+          git config user.name  "hankukin-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add src/assets/images/heritage data/heritage-images.result.json
+          if git diff --staged --quiet; then echo "변경 없음";
+          else
+            git commit -m "chore(images): 궁능유적본부 궁궐 사진 수집 (공공누리 1유형)"
+            git pull --rebase
+            git push
+          fi

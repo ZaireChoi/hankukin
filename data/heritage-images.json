@@ -1,0 +1,40 @@
+{
+  "_comment": [
+    "국가유산청 궁능유적본부 사진. 공공누리 제1유형 (출처표시 + 상업적 이용가능 + 변형가능).",
+    "출처 페이지에 라이선스가 명시돼 있고 로그인이 필요 없다.",
+    "",
+    "왜 이 경로인가 (2026-08-13):",
+    "  TourAPI 는 장애, 포토코리아는 다운로드에 로그인이 걸린다.",
+    "  여기는 둘 다 아니다. 그리고 궁궐 사진은 여기가 원본에 가깝다.",
+    "",
+    "id → https://royal.khs.go.kr/afile/previewThumbnail/<id> 로 2000px 급 원본을 받는다.",
+    "건물명과 id 의 짝은 실제 페이지 DOM 에서 확인한 것이다. 추정이 아니다.",
+    "",
+    "출처 표기 의무: 국가유산청 궁능유적본부"
+  ],
+  "license": "kogl-1",
+  "credit": "국가유산청 궁능유적본부",
+  "verifiedAt": "2026-08-13",
+  "sites": {
+    "경복궁": {
+      "sourceUrl": "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+      "en": "Gyeongbokgung",
+      "buildings": [
+        { "ko": "근정전", "en": "Geunjeongjeon Hall", "id": "23121340174Lmpv5" },
+        { "ko": "사정전", "en": "Sajeongjeon Hall", "id": "23121304563Ek5Ar" },
+        { "ko": "수정전", "en": "Sujeongjeon Hall", "id": "23121333831OgUjv" },
+        { "ko": "경회루", "en": "Gyeonghoeru Pavilion", "id": "23121351810EPWVA" },
+        { "ko": "강녕전", "en": "Gangnyeongjeon Hall", "id": "23121352494fKbpi" },
+        { "ko": "교태전", "en": "Gyotaejeon Hall", "id": "23121352290jX3Fb" },
+        { "ko": "동궁", "en": "Donggung (Crown Prince's quarters)", "id": "23121315081weCj4" },
+        { "ko": "소주방", "en": "Sojubang (royal kitchen)", "id": "23121300614f7RJr" },
+        { "ko": "자경전", "en": "Jagyeongjeon Hall", "id": "23121358610AnIVt" },
+        { "ko": "흥복전", "en": "Heungbokjeon Hall", "id": "23121318313CRCkR" },
+        { "ko": "향원정", "en": "Hyangwonjeong Pavilion", "id": "23121309222CtUl7" },
+        { "ko": "건청궁", "en": "Geoncheonggung", "id": "23121309504FKs4D" },
+        { "ko": "집옥재", "en": "Jibokjae", "id": "23121334419sSdJm" },
+        { "ko": "태원전", "en": "Taewonjeon Hall", "id": "23121341262qSWlp" }
+      ]
+    }
+  }
+}
