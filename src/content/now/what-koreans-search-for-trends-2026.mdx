@@ -1,0 +1,132 @@
+---
+title: "What Korea Is Actually Searching For in 2026 — and the Trends That Already Died"
+summary: "Most English-language guides to Korean trends are running two years behind. We pulled four years of Naver search data to find out what Koreans are really looking up: tanghulu is down 79%, Dubai chocolate is effectively gone, and the shop now out-searching Olive Young is not the one anyone recommends to visitors."
+lang: en
+region: "Korea"
+publishedAt: 2026-08-14
+checkedAt: 2026-08-14
+riskGrade: green
+contentScore: 84
+hero:
+  src: ../../assets/images/places/namdaemun-market-3.jpg
+  alt: Shoppers moving between stalls in the covered lanes of Namdaemun Market in central Seoul
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=126493
+  credit: 한국관광공사 (Korea Tourism Organization)
+sources:
+  - title: "검색어 트렌드 — 네이버 데이터랩 (Naver DataLab, search keyword trends)"
+    url: "https://datalab.naver.com/keyword/trendSearch.naver"
+    type: aggregate_data
+    checkedAt: 2026-08-14
+  - title: "쇼핑인사이트 — 네이버 데이터랩 (Naver DataLab, shopping insight by age)"
+    url: "https://datalab.naver.com/shoppingInsight/sCategory.naver"
+    type: aggregate_data
+    checkedAt: 2026-08-14
+  - title: "데이터랩 검색어 트렌드 API 명세 — 네이버 개발자센터 (method and ratio definition)"
+    url: "https://developers.naver.com/docs/serviceapi/datalab/search/search.md"
+    type: aggregate_data
+    checkedAt: 2026-08-14
+---
+
+import Figure from '../../components/Figure.astro';
+import ChartDaisoOliveYoung from '../../components/ChartDaisoOliveYoung.astro';
+import ChartFadDecay from '../../components/ChartFadDecay.astro';
+import market from '../../assets/images/places/namdaemun-market-1.jpg';
+import ddp from '../../assets/images/places/ddp-3.jpg';
+
+export const KTO_MARKET = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126493',
+};
+export const KTO_DDP = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2470006',
+};
+
+There is a specific kind of disappointment that happens to visitors in Seoul. You saw a video about a street snack, you flew here partly to try it, and when you arrive the shops selling it have thinned out and the queue you were promised is four people long on a Saturday.
+
+It is not that the video lied. It is that the video is old, and English-language coverage of Korean trends runs roughly two years behind what is happening on Korean phones.
+
+So rather than tell you what is popular, we went and looked. Naver is the search engine most Koreans use, and it publishes its own search-volume data. Below is what four years of it says.
+
+## How to read these numbers
+
+Naver DataLab does not release raw search counts. It gives a **relative index**: within whatever period and keyword set you request, the highest month becomes 100 and everything else is scaled against it.
+
+That has one consequence worth holding on to. **You cannot compare a number from one chart to a number from another chart.** What you *can* do — and what we have done — is track a single keyword against its own past, and track two keywords against each other inside the same query. Both of those are sound.
+
+Everything below was pulled on 14 August 2026, monthly.
+
+## The trends that are over
+
+Here is each keyword expressed as a percentage of its own August 2024 level.
+
+<ChartFadDecay caption="Naver search interest, monthly, indexed so that each keyword's own August 2024 level = 100%. Retrieved from Naver DataLab on 2026-08-14. Because each line is divided by its own baseline, the lines are directly comparable to each other even though the underlying index is relative." />
+
+**Tanghulu** — the sugar-glazed fruit skewer that took over Korean streets and then every food video on the internet — is at **21%** of its August 2024 level. And August 2024 was already well past its peak. If a video sent you here for tanghulu, you are chasing something that Korea finished with some time ago.
+
+**Dubai chocolate** is the sharpest fall we found: **1.2%**. In August 2024 it was one of the most-searched things in our whole set. It is now, statistically, gone.
+
+**Yoajeong** — the yoghurt ice cream chain whose name is a contraction of 요거트아이스크림의정석 — sits at **5.8%**. Its shops have not all closed, but the frenzy that made people queue has.
+
+### The one that came back from the dead, briefly
+
+Dubai chocolate did something we did not expect. Having fallen to about 3% of its peak by mid-2025, it climbed steadily through the autumn and **spiked again in January 2026**, to roughly a third of its original height. Then it collapsed a second time, faster than the first.
+
+We can see this happened. We cannot tell you why from search data alone, and we are not going to guess. It is a useful reminder that a fad's decline is not always a straight line.
+
+<Figure src={market} alt="Narrow lane of food and goods stalls at Namdaemun Market with shoppers and hanging signage"
+        caption="Namdaemun Market. Markets absorb whatever the current craze is and then quietly move on to the next one — which is exactly why a two-year-old video is a poor guide to what you will find."
+        {...KTO_MARKET} />
+
+## The things that did not die
+
+The same chart carries the more useful finding.
+
+**Malatang** is at **65%** of its August 2024 level — a decline, but a gentle one, and it was the largest food keyword in its group to begin with. Malatang did not behave like a fad. It behaved like a food that entered the everyday rotation and stayed there.
+
+**Coin karaoke** — the small unstaffed booths where you pay per song rather than per hour — is also at **65%**, and it has been oscillating in a narrow band for two full years. That is not a trend at all. That is infrastructure.
+
+The pattern worth taking away: **things that were novelties collapsed, and things that were cheap, repeatable and social did not.** If you want to do what Koreans actually do, that second category is where to look.
+
+## The finding we did not expect
+
+We ran one more comparison, over four years rather than two, between the two shops most likely to appear on a visitor's list.
+
+<ChartDaisoOliveYoung caption="Naver search interest for 다이소 (Daiso) and 올리브영 (Olive Young), monthly, August 2022 – July 2026. Both keywords were requested in a single query, so these two lines are directly comparable. The highest single month in the pair — Olive Young, September 2022 — is set to 100. Retrieved from Naver DataLab on 2026-08-14." />
+
+Over four years **Daiso rose 128%**, from an index of 36 to 82. Over the same four years **Olive Young fell 23%**, from 70 to 54.
+
+They first crossed in **January 2025**. Through 2026 Daiso has been ahead in **six of the seven months** so far.
+
+This matters for a practical reason. Nearly every guide for visitors sends you to Olive Young, and Olive Young is genuinely good. But the shop that Koreans themselves are increasingly looking up is the ₩1,000–5,000 variety store — and its cosmetics aisle in particular has become a serious destination rather than an afterthought.
+
+If your souvenir budget is finite, the arithmetic is not subtle. Do both. Do not skip the cheap one.
+
+<Figure src={ddp} alt="The curved metal exterior of Dongdaemun Design Plaza lit at night"
+        caption="Dongdaemun Design Plaza after dark. Search data tells you what people look up; it cannot tell you what is worth seeing. The two questions need different evidence."
+        {...KTO_DDP} />
+
+## What this article does not claim
+
+This is the section that most trend articles leave out, and in this case it is the section that decides how much weight the rest deserves.
+
+**These are relative figures, not volumes.** Nothing here tells you how many people searched anything. A keyword at index 80 is not "80,000 searches."
+
+**Naver is not all of Korea.** It is the dominant Korean-language search engine, but Google, YouTube and Instagram carry a large share of exactly the kind of discovery discussed here, and younger users skew further toward those. Read this as *Naver* search behaviour, which is a large and representative slice of Korean search behaviour, not the whole of it.
+
+**We could not break any of this down by age**, and we want to be direct about why, because the obvious question about youth trends deserves an honest answer rather than a convenient one.
+
+Naver's search-trend data carries no age dimension in the form we can access. Its *shopping* data does — so we tested it. Searching the lip tint category by age band for 2026 returns teenagers at an index of **3 to 7**, and people in their forties at **100**.
+
+Nobody who has walked past a Korean school believes teenagers care less about lip tint than their parents' generation. What that number actually measures is **who researches purchases online under their own account** — which tracks payment cards and household buying, not taste. Presenting it as a finding about youth culture would have produced a confident, quotable, and completely false sentence. So we left it out.
+
+**One spike we deliberately did not build a story around.** Searches for a well-known bagel chain jumped roughly fourfold in a single month in October 2025 and fell back just as fast. A single spike can be an opening, a controversy, a celebrity visit or a viral clip. Without knowing which, it is not a trend, and we have not treated it as one.
+
+**Trends move faster than this page.** Everything above was retrieved on 14 August 2026. Anything described here as current should be re-checked if you are reading this more than a few months later.
+
+## If you are planning a trip around this
+
+Two other pages carry the practical end of it: [what Korean street food actually costs and what is in it](/en/now/korean-street-food-hidden-pork-and-fish/), which matters more than usual if you avoid pork, and [what transport actually costs](/en/now/seoul-transport-fares-subway-bus-taxi/) before you build a day around any of it.

@@ -1,0 +1,34 @@
+---
+/**
+ * 네이버 데이터랩 검색어 트렌드를 직접 그린 도표.
+ *
+ * 사진이 아니라 우리가 만든 것이라 저작권 표시가 필요 없다.
+ * 대신 숫자의 출처와 조회 시점을 캡션에 반드시 남긴다 — 데이터랩 비율은
+ * 절대 검색량이 아니라 조회 구간 내 최댓값을 100 으로 둔 상대값이다.
+ * 이 사실을 적지 않으면 독자가 숫자를 오해한다.
+ */
+const { caption } = Astro.props;
+---
+
+<figure class="chart">
+<svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Naver search interest for Daiso and Olive Young, monthly, August 2022 to July 2026. Daiso rises from 36 to 82 while Olive Young falls from 70 to 54, with Daiso overtaking from late 2025.">
+<line x1="44" y1="266.0" x2="746" y2="266.0" stroke="#e5ddd3" stroke-width="1"/><text x="36" y="270.0" text-anchor="end" font-size="11" fill="#6b6560">0</text><line x1="44" y1="204.0" x2="746" y2="204.0" stroke="#e5ddd3" stroke-width="1"/><text x="36" y="208.0" text-anchor="end" font-size="11" fill="#6b6560">25</text><line x1="44" y1="142.0" x2="746" y2="142.0" stroke="#e5ddd3" stroke-width="1"/><text x="36" y="146.0" text-anchor="end" font-size="11" fill="#6b6560">50</text><line x1="44" y1="80.0" x2="746" y2="80.0" stroke="#e5ddd3" stroke-width="1"/><text x="36" y="84.0" text-anchor="end" font-size="11" fill="#6b6560">75</text><line x1="44" y1="18.0" x2="746" y2="18.0" stroke="#e5ddd3" stroke-width="1"/><text x="36" y="22.0" text-anchor="end" font-size="11" fill="#6b6560">100</text>
+<path d="M44.0,93.2 L58.9,18.0 L73.9,106.4 L88.8,89.3 L103.7,44.2 L118.7,84.2 L133.6,88.6 L148.6,21.9 L163.5,96.8 L178.4,76.9 L193.4,26.2 L208.3,91.3 L223.2,67.3 L238.2,46.8 L253.1,91.4 L268.0,66.1 L283.0,57.3 L297.9,95.4 L312.9,91.3 L327.8,44.6 L342.7,105.3 L357.7,82.1 L372.6,61.2 L387.5,97.3 L402.5,73.2 L417.4,64.5 L432.3,111.7 L447.3,91.1 L462.2,68.7 L477.1,109.3 L492.1,109.7 L507.0,73.7 L522.0,118.1 L536.9,97.4 L551.8,79.0 L566.8,79.6 L581.7,65.7 L596.6,92.4 L611.6,107.4 L626.5,79.3 L641.4,87.1 L656.4,120.5 L671.3,119.5 L686.3,83.3 L701.2,122.4 L716.1,99.5 L731.1,97.1 L746.0,132.2" fill="none" stroke="#6b6560" stroke-width="2"/>
+<path d="M44.0,177.2 L58.9,172.5 L73.9,174.7 L88.8,181.8 L103.7,167.8 L118.7,161.8 L133.6,179.0 L148.6,171.9 L163.5,180.1 L178.4,168.3 L193.4,175.9 L208.3,168.7 L223.2,167.5 L238.2,157.0 L253.1,163.0 L268.0,158.1 L283.0,133.1 L297.9,150.3 L312.9,137.1 L327.8,144.4 L342.7,160.5 L357.7,143.5 L372.6,143.3 L387.5,136.4 L402.5,130.1 L417.4,119.3 L432.3,136.3 L447.3,131.9 L462.2,123.2 L477.1,104.7 L492.1,126.2 L507.0,109.6 L522.0,133.2 L536.9,116.6 L551.8,117.3 L566.8,95.2 L581.7,95.7 L596.6,108.8 L611.6,83.3 L626.5,111.3 L641.4,103.7 L656.4,98.6 L671.3,86.1 L686.3,84.6 L701.2,100.9 L716.1,69.4 L731.1,80.3 L746.0,63.1" fill="none" stroke="#c8341f" stroke-width="2.5"/>
+<circle cx="477.1" cy="104.7" r="4" fill="#c8341f"/>
+<text x="471.1" y="94.7" text-anchor="end" font-size="11" font-weight="600" fill="#c8341f">first crossover, Jan 2025</text>
+<text x="742.0" y="53.1" text-anchor="end" font-size="12" font-weight="700" fill="#c8341f">Daiso</text>
+<text x="742.0" y="150.2" text-anchor="end" font-size="12" font-weight="700" fill="#6b6560">Olive Young</text>
+<text x="44.0" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2022</text><text x="118.7" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2023</text><text x="297.9" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2024</text><text x="477.1" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2025</text><text x="656.4" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2026</text><text x="746.0" y="286" text-anchor="middle" font-size="11" fill="#6b6560">2026</text>
+</svg>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart figcaption {
+    font-size: 0.85rem; line-height: 1.5; color: var(--suggested);
+    margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--line);
+  }
+</style>
