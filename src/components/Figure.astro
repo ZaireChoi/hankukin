@@ -1,0 +1,47 @@
+---
+/**
+ * 사진 + 출처 표시.
+ *
+ * 출처 표기는 선택이 아니다. 공공누리 제1유형·제3유형 모두 '출처표시' 가 조건이고,
+ * 표시하지 않으면 라이선스 위반이다. 그래서 credit 을 필수 prop 으로 둔다 —
+ * 빠뜨리면 빌드가 아니라 눈으로 바로 보인다.
+ */
+import { Image } from 'astro:assets';
+
+const LICENSE_LABEL = {
+  'kogl-1': 'KOGL Type 1',
+  'kogl-3': 'KOGL Type 3 (no modification)',
+  'cc0': 'CC0',
+  'cc-by': 'CC BY',
+  'cc-by-sa': 'CC BY-SA',
+  'own': 'Own work',
+};
+
+const { src, alt, credit, license, sourceUrl, caption, widths = [640, 960, 1280] } = Astro.props;
+---
+<figure class="fig">
+  <Image src={src} alt={alt} widths={widths}
+         sizes="(min-width: 800px) 760px, 100vw" loading="lazy" decoding="async" />
+  <figcaption>
+    {caption && <span class="cap">{caption}</span>}
+    <span class="credit">
+      {sourceUrl
+        ? <a href={sourceUrl} rel="noopener nofollow" target="_blank">{credit}</a>
+        : credit}
+      {license && <> · {LICENSE_LABEL[license] ?? license}</>}
+    </span>
+  </figcaption>
+</figure>
+
+<style>
+  .fig { margin: 2rem 0; }
+  .fig :global(img) {
+    width: 100%; height: auto; border-radius: 6px; display: block;
+  }
+  figcaption {
+    margin-top: .5rem; font-size: .82rem; line-height: 1.5;
+    color: var(--muted, #666);
+  }
+  .cap { display: block; color: var(--text, #222); margin-bottom: .15rem; }
+  .credit a { color: inherit; }
+</style>

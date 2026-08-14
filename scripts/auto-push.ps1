@@ -27,8 +27,11 @@ function Log($msg) {
 try {
   Set-Location $repo
 
-  # git / npm 이 PATH 에 없는 환경에서도 동작하도록 (작업 스케줄러는 환경이 최소다)
-  $git = (Get-Command git -ErrorAction SilentlyContinue)?.Source
+  # git / npm 이 PATH 에 없는 환경에서도 동작하도록.
+  # ?. 연산자는 PowerShell 7 이상 전용이다 — 이 PC 는 5.1 이라 파서 오류가 났다 (2026-08-13).
+  # 윈도우 기본 PowerShell 에서 도는 것이 중요하므로 5.1 문법만 쓴다.
+  $c = Get-Command git -ErrorAction SilentlyContinue
+  $git = if ($c) { $c.Source } else { $null }
   if (-not $git) {
     foreach ($p in @("$env:ProgramFiles\Git\cmd\git.exe", "${env:ProgramFiles(x86)}\Git\cmd\git.exe",
                      "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe")) {
@@ -37,8 +40,9 @@ try {
   }
   if (-not $git) { Log "중단: git 을 찾을 수 없습니다"; exit 1 }
 
-  $npm = (Get-Command npm.cmd -ErrorAction SilentlyContinue)?.Source
-  if (-not $npm) { $npm = (Get-Command npm -ErrorAction SilentlyContinue)?.Source }
+  $c = Get-Command npm.cmd -ErrorAction SilentlyContinue
+  if (-not $c) { $c = Get-Command npm -ErrorAction SilentlyContinue }
+  $npm = if ($c) { $c.Source } else { $null }
 
   # ── 1. 변경이 없으면 조용히 끝낸다 ────────────────────────────
   $status = & $git status --porcelain
@@ -48,7 +52,8 @@ try {
   Log "실행: 변경 $changed 건 — 검증 시작"
 
   # ── 2. 단위 테스트 ────────────────────────────────────────────
-  $node = (Get-Command node -ErrorAction SilentlyContinue)?.Source
+  $c = Get-Command node -ErrorAction SilentlyContinue
+  $node = if ($c) { $c.Source } else { $null }
   if ($node) {
     $failed = $false
     Get-ChildItem (Join-Path $repo 'scripts\__tests__\*.test.mjs') | ForEach-Object {

@@ -7,6 +7,12 @@ publishedAt: 2026-08-13
 checkedAt: 2026-08-13
 riskGrade: green
 contentScore: 84
+hero:
+  src: ../../assets/images/heritage/gyeongbokgung-gyeonghoeru-pavilion.jpg
+  alt: Gyeonghoeru Pavilion at Gyeongbokgung reflected in its pond at blue hour
+  license: kogl-1
+  sourceUrl: https://royal.khs.go.kr/ROYAL/contents/R701000000.do
+  credit: 국가유산청 궁능유적본부 (Korea Heritage Service)
 sources:
   - title: "한복무료관람 가이드라인 — 궁능유적본부, 국가유산청"
     url: "https://royal.khs.go.kr/ROYAL/contents/R705000000.do"
@@ -22,6 +28,17 @@ sources:
     checkedAt: 2026-08-13
 ---
 
+import Figure from '../../components/Figure.astro';
+import geunjeongjeon from '../../assets/images/heritage/gyeongbokgung-geunjeongjeon-hall.jpg';
+import hyangwonjeong from '../../assets/images/heritage/gyeongbokgung-hyangwonjeong-pavilion.jpg';
+import jagyeongjeon from '../../assets/images/heritage/gyeongbokgung-jagyeongjeon-hall.jpg';
+
+export const KHS = {
+  credit: '국가유산청 궁능유적본부 (Korea Heritage Service)',
+  license: 'kogl-1',
+  sourceUrl: 'https://royal.khs.go.kr/ROYAL/contents/R701000000.do',
+};
+
 There is a version of a day in Seoul that goes like this.
 
 You put on **hanbok** in the morning. You walk to the gate of a five-hundred-year-old palace, and you walk straight past the ticket window. Nobody charges you. You do it again at the next palace, and the next. At the last one — Deoksugung, which stays open until nine at night — you are still wearing it after dark, and the crowds have thinned, and the courtyard is quiet.
@@ -33,6 +50,10 @@ This is not a promotion or a seasonal event. It is written into the admission ru
 The question everyone asks next is whether it applies to foreign visitors. The Royal Palaces and Tombs Center answers that one directly on its own guideline page, and the reasoning is worth quoting because it explains the whole policy: the purpose of free admission for hanbok wearers is the popularisation and globalisation of hanbok, so it applies **regardless of nationality**.
 
 So yes. The rule was designed with you in mind.
+
+<Figure src={geunjeongjeon} alt="Geunjeongjeon, the throne hall of Gyeongbokgung, seen across its stone courtyard"
+        caption="Geunjeongjeon at Gyeongbokgung — the throne hall you walk past on the standard route."
+        {...KHS} />
 
 ## The part rental shops don't always explain
 
@@ -72,6 +93,10 @@ This is the encouraging half, and it is more generous than the failures suggest.
 
 There is one soft instruction attached to all of this: dress in a way that suits the dignity of a palace. Excessive exposure is discouraged. It is written as guidance rather than a measurable rule, which in practice means the staff at the gate exercise judgement.
 
+<Figure src={hyangwonjeong} alt="Hyangwonjeong Pavilion and its bridge reflected in the pond at sunset, Gyeongbokgung"
+        caption="Hyangwonjeong, at the northern end of Gyeongbokgung. Most hanbok routes end here."
+        {...KHS} />
+
 ## What it actually saves you
 
 Modest amounts, honestly. This is not the reason to do it.
@@ -87,6 +112,10 @@ Modest amounts, honestly. This is not the reason to do it.
 All five in one day comes to ₩9,000 — and there is a combined ticket covering the four palaces plus Jongmyo for ₩6,000, valid six months. So the saving is real but small, and hanbok rental will cost you considerably more than the tickets.
 
 Two notes worth having. **Changdeokgung's Huwon (Secret Garden) is a separate ₩5,000 ticket** and is excluded from the combined ticket; you also need the palace ticket on top. And the **last Wednesday of every month is Culture Day**, when the palaces are free for everyone, Huwon excepted.
+
+<Figure src={jagyeongjeon} alt="Jagyeongjeon Hall at Gyeongbokgung, the queen dowager's residence"
+        caption="Jagyeongjeon, built for the queen dowager. Its chimney wall is one of the quieter things worth stopping for."
+        {...KHS} />
 
 ## The mistake that ruins the day
 

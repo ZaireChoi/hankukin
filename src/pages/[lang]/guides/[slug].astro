@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import SourceList from '../../../components/SourceList.astro';
+import Figure from '../../../components/Figure.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { LOCALES } from '../../../config/brand.mjs';
 
@@ -42,6 +43,12 @@ const jsonLd = {
         <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
     </header>
+
+    {d.hero && (
+      <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}
+              license={d.hero.license} sourceUrl={d.hero.sourceUrl}
+              widths={[640, 960, 1280, 1600]} />
+    )}
 
     <section class="block">
       <div class="prose"><Content /></div>

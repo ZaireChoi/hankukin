@@ -37,9 +37,23 @@ const log = {
 
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+/**
+ * sharp 는 있으면 쓰고 없으면 원본을 그대로 저장한다.
+ *
+ * 왜 선택적인가 (2026-08-13):
+ *   이 스크립트는 운영자 PC(한국)에서 돌아야 한다. GitHub Actions(미국)에서는
+ *   .go.kr 사이트에 접속이 되지 않는다 — TourAPI 와 궁능유적본부 둘 다 같은 증상이었다.
+ *   로컬 환경은 통제할 수 없으므로, 없어도 되는 의존성은 없어도 되게 만든다.
+ *   리사이즈를 못 해도 Astro 가 빌드 때 최적화하므로 결과물은 같다.
+ */
+async function loadSharp() {
+  try { return (await import('sharp')).default; }
+  catch { log.info('sharp 없음 — 원본을 그대로 저장합니다 (빌드 때 Astro 가 최적화합니다)'); return null; }
+}
+
 export async function main() {
   const doc = JSON.parse(await readFile(DATA, 'utf8'));
-  const sharp = (await import('sharp')).default;
+  const sharp = await loadSharp();
   await mkdir(OUT_DIR, { recursive: true });
 
   const records = [];
@@ -57,17 +71,22 @@ export async function main() {
 
       // 오류 페이지를 사진으로 착각하지 않는다
       if (buf.length < MIN_BYTES) { failed++; log.warn(`${b.ko}: 응답이 너무 작다 (${buf.length}B) — 건너뜀`); continue; }
-      let meta;
-      try { meta = await sharp(buf).metadata(); }
-      catch { failed++; log.warn(`${b.ko}: 이미지로 해석되지 않음 — 건너뜀`); continue; }
-      if (!meta.width || meta.width < 600) { failed++; log.warn(`${b.ko}: 너무 작다 (${meta.width}px) — 건너뜀`); continue; }
+      // JPEG 시그니처 확인 — sharp 가 없어도 이건 할 수 있다
+      if (!(buf[0] === 0xFF && buf[1] === 0xD8)) {
+        failed++; log.warn(`${b.ko}: JPEG 이 아님 (오류 페이지로 보임) — 건너뜀`); continue;
+      }
 
       const file = `${slug(site.en)}-${slug(b.en)}.jpg`;
-      const img = sharp(buf).rotate();
-      const out = await (meta.width > MAX_WIDTH ? img.resize({ width: MAX_WIDTH }) : img)
-        .jpeg({ quality: QUALITY, mozjpeg: true }).toBuffer();
+      let out = buf, o = { width: null, height: null };
+      if (sharp) {
+        const meta = await sharp(buf).metadata();
+        if (!meta.width || meta.width < 600) { failed++; log.warn(`${b.ko}: 너무 작다 (${meta.width}px) — 건너뜀`); continue; }
+        const img = sharp(buf).rotate();
+        out = await (meta.width > MAX_WIDTH ? img.resize({ width: MAX_WIDTH }) : img)
+          .jpeg({ quality: QUALITY, mozjpeg: true }).toBuffer();
+        o = await sharp(out).metadata();
+      }
       await writeFile(path.join(OUT_DIR, file), out);
-      const o = await sharp(out).metadata();
       ok++;
 
       records.push({
@@ -79,10 +98,11 @@ export async function main() {
           sourceUrl: site.sourceUrl,
           credit: doc.credit,
         },
-        width: o.width, height: o.height, bytes: out.length,
+        width: o.width, height: o.height, bytes: out.length, resized: Boolean(sharp),
         fetchedAt: new Date().toISOString().slice(0, 10),
       });
-      log.info(`${b.ko} → ${file} (${o.width}×${o.height}, ${(out.length / 1024).toFixed(0)}KB)`);
+      const dim = o.width ? `${o.width}×${o.height}, ` : '';
+      log.info(`${b.ko} → ${file} (${dim}${(out.length / 1024).toFixed(0)}KB)`);
     }
   }
 

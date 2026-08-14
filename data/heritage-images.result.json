@@ -1,0 +1,253 @@
+﻿{
+    "_comment":  [
+                     "궁능유적본부 사진 수집 결과. 공공누리 제1유형 — 출처표시 시 상업적 이용·변형 가능.",
+                     "frontmatter 블록은 기사에 그대로 붙여 넣을 수 있다.",
+                     "alt 는 기본값이므로 기사 맥락에 맞게 고쳐 쓰는 편이 낫다.",
+                     "출처 표기 의무: 국가유산청 궁능유적본부"
+                 ],
+    "generatedAt":  "2026-08-14T06:56:03",
+    "stats":  {
+                  "ok":  14,
+                  "failed":  0
+              },
+    "images":  [
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "근정전",
+                       "buildingEn":  "Geunjeongjeon Hall",
+                       "id":  "23121340174Lmpv5",
+                       "file":  "gyeongbokgung-geunjeongjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-geunjeongjeon-hall.jpg",
+                                           "alt":  "Geunjeongjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  5945562,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "사정전",
+                       "buildingEn":  "Sajeongjeon Hall",
+                       "id":  "23121304563Ek5Ar",
+                       "file":  "gyeongbokgung-sajeongjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-sajeongjeon-hall.jpg",
+                                           "alt":  "Sajeongjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  2793062,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "수정전",
+                       "buildingEn":  "Sujeongjeon Hall",
+                       "id":  "23121333831OgUjv",
+                       "file":  "gyeongbokgung-sujeongjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-sujeongjeon-hall.jpg",
+                                           "alt":  "Sujeongjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  3287282,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "경회루",
+                       "buildingEn":  "Gyeonghoeru Pavilion",
+                       "id":  "23121351810EPWVA",
+                       "file":  "gyeongbokgung-gyeonghoeru-pavilion.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-gyeonghoeru-pavilion.jpg",
+                                           "alt":  "Gyeonghoeru Pavilion at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  2529766,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "강녕전",
+                       "buildingEn":  "Gangnyeongjeon Hall",
+                       "id":  "23121352494fKbpi",
+                       "file":  "gyeongbokgung-gangnyeongjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-gangnyeongjeon-hall.jpg",
+                                           "alt":  "Gangnyeongjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  2745475,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "교태전",
+                       "buildingEn":  "Gyotaejeon Hall",
+                       "id":  "23121352290jX3Fb",
+                       "file":  "gyeongbokgung-gyotaejeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-gyotaejeon-hall.jpg",
+                                           "alt":  "Gyotaejeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  1987342,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "동궁",
+                       "buildingEn":  "Donggung (Crown Prince\u0027s quarters)",
+                       "id":  "23121315081weCj4",
+                       "file":  "gyeongbokgung-donggung-crown-prince-s-quarters.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-donggung-crown-prince-s-quarters.jpg",
+                                           "alt":  "Donggung (Crown Prince\u0027s quarters) at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  5267802,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "소주방",
+                       "buildingEn":  "Sojubang (royal kitchen)",
+                       "id":  "23121300614f7RJr",
+                       "file":  "gyeongbokgung-sojubang-royal-kitchen.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-sojubang-royal-kitchen.jpg",
+                                           "alt":  "Sojubang (royal kitchen) at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  2398203,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "자경전",
+                       "buildingEn":  "Jagyeongjeon Hall",
+                       "id":  "23121358610AnIVt",
+                       "file":  "gyeongbokgung-jagyeongjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-jagyeongjeon-hall.jpg",
+                                           "alt":  "Jagyeongjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  4685748,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "흥복전",
+                       "buildingEn":  "Heungbokjeon Hall",
+                       "id":  "23121318313CRCkR",
+                       "file":  "gyeongbokgung-heungbokjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-heungbokjeon-hall.jpg",
+                                           "alt":  "Heungbokjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  2792931,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "향원정",
+                       "buildingEn":  "Hyangwonjeong Pavilion",
+                       "id":  "23121309222CtUl7",
+                       "file":  "gyeongbokgung-hyangwonjeong-pavilion.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-hyangwonjeong-pavilion.jpg",
+                                           "alt":  "Hyangwonjeong Pavilion at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  3708965,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "건청궁",
+                       "buildingEn":  "Geoncheonggung",
+                       "id":  "23121309504FKs4D",
+                       "file":  "gyeongbokgung-geoncheonggung.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-geoncheonggung.jpg",
+                                           "alt":  "Geoncheonggung at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  5067184,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "집옥재",
+                       "buildingEn":  "Jibokjae",
+                       "id":  "23121334419sSdJm",
+                       "file":  "gyeongbokgung-jibokjae.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-jibokjae.jpg",
+                                           "alt":  "Jibokjae at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  3333692,
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "site":  "경복궁",
+                       "siteEn":  "Gyeongbokgung",
+                       "buildingKo":  "태원전",
+                       "buildingEn":  "Taewonjeon Hall",
+                       "id":  "23121341262qSWlp",
+                       "file":  "gyeongbokgung-taewonjeon-hall.jpg",
+                       "frontmatter":  {
+                                           "src":  "../../assets/images/heritage/gyeongbokgung-taewonjeon-hall.jpg",
+                                           "alt":  "Taewonjeon Hall at Gyeongbokgung, Seoul",
+                                           "license":  "kogl-1",
+                                           "sourceUrl":  "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+                                           "credit":  "국가유산청 궁능유적본부"
+                                       },
+                       "bytes":  4777252,
+                       "fetchedAt":  "2026-08-14"
+                   }
+               ]
+}
