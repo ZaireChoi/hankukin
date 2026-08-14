@@ -702,9 +702,258 @@
                                       }
                                   ],
                        "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "seoul-fireworks",
+                       "keyword":  "서울세계불꽃축제",
+                       "title":  "한화와 함께하는 서울세계불꽃축제",
+                       "address":  "서울특별시 영등포구 여의동로 330 (여의도동)",
+                       "contentId":  "631268",
+                       "images":  [
+                                      {
+                                          "file":  "seoul-fireworks-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-fireworks-1.jpg",
+                                                              "alt":  "서울세계불꽃축제",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=631268",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoul-fireworks-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-fireworks-2.jpg",
+                                                              "alt":  "서울세계불꽃축제",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=631268",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoul-fireworks-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-fireworks-3.jpg",
+                                                              "alt":  "서울세계불꽃축제",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=631268",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoul-fireworks-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-fireworks-4.jpg",
+                                                              "alt":  "서울세계불꽃축제",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=631268",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoul-fireworks-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoul-fireworks-5.jpg",
+                                                              "alt":  "서울세계불꽃축제",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=631268",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "hangang-yeouido",
+                       "keyword":  "여의도한강공원",
+                       "title":  "여의도한강공원",
+                       "address":  "서울특별시 영등포구 여의동로 330 (여의도동)",
+                       "contentId":  "1059479",
+                       "images":  [
+                                      {
+                                          "file":  "hangang-yeouido-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/hangang-yeouido-1.jpg",
+                                                              "alt":  "여의도한강공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1059479",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "hangang-yeouido-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/hangang-yeouido-2.jpg",
+                                                              "alt":  "여의도한강공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1059479",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "hangang-yeouido-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/hangang-yeouido-3.jpg",
+                                                              "alt":  "여의도한강공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1059479",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "hangang-yeouido-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/hangang-yeouido-4.jpg",
+                                                              "alt":  "여의도한강공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1059479",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "itaewon",
+                       "keyword":  "이태원",
+                       "title":  "이태원시장",
+                       "address":  "서울특별시 용산구 이태원로14길 6 (이태원동)",
+                       "contentId":  "1253279",
+                       "images":  [
+                                      {
+                                          "file":  "itaewon-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/itaewon-1.jpg",
+                                                              "alt":  "이태원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1253279",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "itaewon-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/itaewon-2.jpg",
+                                                              "alt":  "이태원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1253279",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "itaewon-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/itaewon-3.jpg",
+                                                              "alt":  "이태원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1253279",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "itaewon-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/itaewon-4.jpg",
+                                                              "alt":  "이태원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1253279",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "itaewon-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/itaewon-5.jpg",
+                                                              "alt":  "이태원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1253279",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
+                   },
+                   {
+                       "slug":  "ikseondong",
+                       "keyword":  "익선동",
+                       "title":  "익선동 한옥거리",
+                       "address":  "",
+                       "contentId":  "2946228",
+                       "images":  [
+                                      {
+                                          "file":  "ikseondong-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ikseondong-1.jpg",
+                                                              "alt":  "익선동",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2946228",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ikseondong-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ikseondong-2.jpg",
+                                                              "alt":  "익선동",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2946228",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ikseondong-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ikseondong-3.jpg",
+                                                              "alt":  "익선동",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2946228",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ikseondong-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ikseondong-4.jpg",
+                                                              "alt":  "익선동",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2946228",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "ikseondong-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/ikseondong-5.jpg",
+                                                              "alt":  "익선동",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2946228",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-14"
                    }
                ],
-    "generatedAt":  "2026-08-14T16:30:59",
+    "generatedAt":  "2026-08-14T16:40:41",
     "_comment":  [
                      "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
                      "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
