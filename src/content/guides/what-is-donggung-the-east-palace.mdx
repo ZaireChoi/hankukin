@@ -8,6 +8,12 @@ publishedAt: 2026-08-13
 checkedAt: 2026-08-13
 riskGrade: green
 contentScore: 78
+hero:
+  src: ../../assets/images/heritage/gyeongbokgung-donggung-crown-prince-s-quarters.jpg
+  alt: Aerial view of the Donggung compound at Gyeongbokgung, showing several separate halls around walled courtyards
+  license: kogl-1
+  sourceUrl: https://royal.khs.go.kr/ROYAL/contents/R701000000.do
+  credit: 국가유산청 궁능유적본부 (Korea Heritage Service)
 sources:
   - title: "창덕궁 성정각 — 한국민족문화대백과사전 (한국학중앙연구원)"
     url: "https://encykorea.aks.ac.kr/Article/E0076896"
@@ -31,6 +37,17 @@ sources:
     checkedAt: 2026-08-13
 ---
 
+import Figure from '../../components/Figure.astro';
+import geunjeongjeon from '../../assets/images/heritage/gyeongbokgung-geunjeongjeon-hall.jpg';
+import gyotaejeon from '../../assets/images/heritage/gyeongbokgung-gyotaejeon-hall.jpg';
+import jibokjae from '../../assets/images/heritage/gyeongbokgung-jibokjae.jpg';
+
+export const KHS = {
+  credit: '국가유산청 궁능유적본부 (Korea Heritage Service)',
+  license: 'kogl-1',
+  sourceUrl: 'https://royal.khs.go.kr/ROYAL/contents/R701000000.do',
+};
+
 If you are watching the Netflix series *The East Palace*, the title is not a metaphor. **Donggung (동궁, 東宮)** was a real part of a real palace, and the word carried two meanings at once: the buildings where the crown prince lived and worked, and the crown prince himself.
 
 The logic behind the name is worth knowing, because it explains the layout of every Joseon palace you will ever visit. East is the direction of sunrise. In the cosmology the court used, east corresponded to spring — the season of beginnings, of what is coming next. The heir was what came next. So his quarters went east of the throne hall, and over time the place and the person became the same word.
@@ -40,6 +57,12 @@ The logic behind the name is worth knowing, because it explains the layout of ev
 Donggung is a district, not a house. The crown prince slept, studied, held audiences and conducted ritual in separate structures, and the arrangement differed between palaces.
 
 **At Gyeongbokgung**, the Donggung sits east of Geunjeongjeon, the main throne hall. Two buildings define it: **Jaseondang (자선당)** to the west, the living quarters of the prince and his wife, and **Biheongak (비현각)** to the east, where he worked. Both were destroyed during the Japanese colonial period and were rebuilt in 1999.
+
+The photograph at the top of this page makes the point better than a paragraph can. What you are looking at is not a building — it is several halls, each with its own walled courtyard, laid out as a compound within the larger palace.
+
+<Figure src={geunjeongjeon} alt="Geunjeongjeon, the throne hall of Gyeongbokgung"
+        caption="Geunjeongjeon, the throne hall. The Donggung sits east of it — the direction of sunrise, and of spring."
+        {...KHS} />
 
 **At Changdeokgung**, the picture is more complicated, and more interesting.
 
@@ -55,6 +78,10 @@ What does survive is **Seongjeonggak (성정각)**, southeast of Huijeongdang. T
 
 Architecturally it is modest by palace standards — six bays across, two deep, with a hipped-and-gabled roof, two bays of wooden floor to the west, two rooms beside them, and a raised pavilion floor of three bays running north to south on the east side.
 
+<Figure src={gyotaejeon} alt="Gyotaejeon Hall at Gyeongbokgung, the queen's residence"
+        caption="Gyotaejeon, the queen's quarters at Gyeongbokgung — a residence, in contrast to the Donggung's schoolroom function."
+        {...KHS} />
+
 ## Why a study hall is the point
 
 It is tempting to read Donggung as a residence. It functioned more like a school with a state attached.
@@ -62,6 +89,10 @@ It is tempting to read Donggung as a residence. It functioned more like a school
 A Joseon crown prince was not simply waiting. He was being formed, in public, on a schedule, under the eyes of officials whose job partly consisted of judging whether the formation was working. Three lectures a day, in a building named after sincerity and a rectified mind, is not decoration. It is the curriculum written into the architecture.
 
 That is the tension worth carrying into any drama set in this space. The Donggung is the most watched address in the kingdom and the least free.
+
+<Figure src={jibokjae} alt="Jibokjae at Gyeongbokgung, the royal library building"
+        caption="Jibokjae, King Gojong's library. Books and study were not incidental to palace life — they were its architecture."
+        {...KHS} />
 
 ## Visiting
 
