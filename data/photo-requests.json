@@ -64,9 +64,84 @@
     "     가을을 찾다가 겨울을 얻었다. 덕유산은 전북이라 '눈은 서·남서쪽' 주장을 뒷받침한다.",
     "",
     "  가을 단풍 사진은 여전히 0장. TourAPI 에는 '단풍이 든 상태' 의 사진이 드물다.",
-    "  등재 사진은 대개 성수기가 아닌 때 찍힌다. 다른 경로를 찾아야 한다."
+    "  등재 사진은 대개 성수기가 아닌 때 찍힌다. 다른 경로를 찾아야 한다.",
+    "",
+    "2026-08-15 리센느 축 — 운영자 전략.",
+    "  '팬덤을 입구로, 장소를 본체로.' 팬이 검색해서 들어오지만 읽는 것은 지역이다.",
+    "  리센느가 식어도 거제·경주 여행기는 살아남는다. 그것이 이 축을 하는 이유다.",
+    "  거제  — 원이(리더) 고향, 경남 거제시 옥포동. '거제 출신 최초의 아이돌' 을 자처.",
+    "         역주행 기폭제가 원이 유튜브의 거제 사투리('거제 야호') 숏폼이었다.",
+    "  경주  — 제나 고향. 그리고 한국 최대 역사도시인데 우리 사이트에 한 편도 없었다.",
+    "         팬덤 연결이 없어도 써야 했을 주제다. 그래서 안전하다.",
+    "  ⚠ 굿즈·화장품·광고 제품은 **공식 발표를 확인하기 전에는 쓰지 않는다.**",
+    "     실존 아이돌의 광고 계약을 추측으로 적는 것은 우리가 가장 하지 말아야 할 일이다."
   ],
   "requests": [
+    {
+      "slug": "geoje-oedo",
+      "keyword": "외도보타니아",
+      "dir": "places"
+    },
+    {
+      "slug": "geoje-windy-hill",
+      "keyword": "바람의 언덕",
+      "dir": "places"
+    },
+    {
+      "slug": "geoje-mongdol",
+      "keyword": "학동흑진주몽돌해변",
+      "dir": "places"
+    },
+    {
+      "slug": "geoje-pow-camp",
+      "keyword": "거제포로수용소유적공원",
+      "dir": "places"
+    },
+    {
+      "slug": "geoje-okpo",
+      "keyword": "옥포대첩기념공원",
+      "dir": "places"
+    },
+    {
+      "slug": "geoje-maemidong",
+      "keyword": "매미성",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-bulguksa",
+      "keyword": "불국사",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-seokguram",
+      "keyword": "석굴암",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-daereungwon",
+      "keyword": "대릉원",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-cheomseongdae",
+      "keyword": "첨성대",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-donggung",
+      "keyword": "동궁과 월지",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-hwangridan",
+      "keyword": "황리단길",
+      "dir": "places"
+    },
+    {
+      "slug": "gyeongju-woljeonggyo",
+      "keyword": "월정교",
+      "dir": "places"
+    },
     {
       "keyword": "서울세계불꽃축제",
       "expectRegion": "서울",

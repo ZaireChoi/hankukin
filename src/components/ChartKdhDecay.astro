@@ -1,0 +1,61 @@
+---
+/** 케데헌 검색량 붕괴 — 네이버 데이터랩, 2025년 5월 ~ 2026년 7월.\n * 2026년 8월은 절반밖에 지나지 않아 뺐다. 반쪽짜리 달을 선 끝에 두면 없는 절벽이 생긴다. */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 320, L = 46, R = 168, T = 18, B = 40;
+const series: Record<string, number[]> = {
+  "KPop Demon Hunters": [0.17, 28.64, 100, 85.80, 43.81, 26.82, 13.42, 8.14, 6.88, 4.14, 6.08, 3.14, 3.78, 3.44, 1.76],
+  "Squid Game": [3.12, 22.72, 10.45, 2.88, 2.38, 2.38, 2.41, 2.39, 1.95, 1.66, 1.83, 1.58, 1.72, 1.46, 1.66],
+};
+const colors: Record<string, string> = { "KPop Demon Hunters": "#c9622e", "Squid Game": "#5b8bc0" };
+const xlabels: [number, string][] = [[0, "May 2025"], [2, "Jul"], [7, "Dec"], [12, "May 2026"], [14, "Jul"]];
+
+const n = Object.values(series)[0].length;
+const pw = W - L - R, ph = H - T - B;
+const px = (i: number) => L + pw * i / (n - 1);
+const py = (v: number) => T + ph * (1 - v / 100);
+
+// 라벨이 겹치면 읽을 수 없는 단어가 된다 (2026-08-14). 최소 간격을 강제한다.
+const MINGAP = 16;
+const ideal = Object.entries(series).map(([k, d]) => [k, py(d[d.length - 1]) + 4] as [string, number])
+  .sort((a, b) => a[1] - b[1]);
+const ys = ideal.map((t) => t[1]);
+for (let i = 1; i < ys.length; i++) if (ys[i] - ys[i - 1] < MINGAP) ys[i] = ys[i - 1] + MINGAP;
+const over = ys[ys.length - 1] - (H - B);
+if (over > 0) for (let i = 0; i < ys.length; i++) ys[i] -= over;
+const labelY: Record<string, number> = Object.fromEntries(ideal.map((t, i) => [t[0], ys[i]]));
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Naver search interest for KPop Demon Hunters against Squid Game, monthly from May 2025 to July 2026. KPop Demon Hunters peaks at 100 in July 2025 and falls to 1.8 by July 2026. Squid Game peaks at 22.7 and settles onto a flat plateau near 2.">
+    {[0, 25, 50, 75, 100].map((v) => (
+      <>
+        <line x1={L} y1={py(v)} x2={W - R} y2={py(v)} stroke="#e5ddd3" stroke-width="1" />
+        <text x={L - 8} y={py(v) + 4} text-anchor="end" font-size="11.5" fill="#6b6560">{v}</text>
+      </>
+    ))}
+    {Object.entries(series).map(([k, d]) => (
+      <path d={`M${d.map((v, i) => `${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(' L')}`}
+            fill="none" stroke={colors[k]} stroke-width="2.4" stroke-linejoin="round" />
+    ))}
+    {Object.entries(series).map(([k, d]) => (
+      <>
+        <line x1={W - R + 1} y1={py(d[d.length - 1])} x2={W - R + 5} y2={labelY[k] - 4}
+              stroke={colors[k]} stroke-width="1" opacity="0.55" />
+        <text x={W - R + 7} y={labelY[k]} font-size="11.5" font-weight="700" fill={colors[k]}>{k}</text>
+      </>
+    ))}
+    {xlabels.map(([i, t]) => (
+      <text x={Math.min(Math.max(px(i), L + 16), W - R - 16)} y={H - 14} text-anchor="middle"
+            font-size="11" fill="#6b6560">{t}</text>
+    ))}
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
