@@ -7,7 +7,6 @@
     "항목을 추가할 때는 반드시 커밋 해시나 파일 경로로 근거를 댈 수 있어야 한다.",
     "'그런 일이 있었던 것 같다' 는 넣지 않는다."
   ],
-
   "rejected": [
     {
       "date": "2026-08-14",
@@ -71,9 +70,15 @@
       "got": "명동성당",
       "why": "Myeongdong Cathedral, not the shopping district. Caught while choosing a lead image for the doctor article.",
       "howCaught": "opened"
+    },
+    {
+      "date": "2026-08-16",
+      "asked": "안경점 (optician)",
+      "got": "인사동 한복 스카프 진열대",
+      "why": "This was the lead photograph on our glasses article, and its alt text said 'sunglasses'. Enlarged, the dark round objects are folded fans and the rest is hanbok fabric. There is no eyewear in it.",
+      "howCaught": "opened"
     }
   ],
-
   "corrected": [
     {
       "date": "2026-08-15",
@@ -120,9 +125,16 @@
       "right": "One address everywhere. Verified: zero mismatches across canonical, hreflang and sitemap.",
       "why": "A regular expression meant to add the slash was written to replace a slash that had already been stripped, so it did nothing at all.",
       "found": "outside review"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "/en/scenes/yeokjuhaeng-korean-chart-reverse-running/",
+      "wrong": "A photograph was imported under the name 'night' and captioned as a side street. It is a daytime photograph under a blue sky. A second one was described as a crowded shopping street; it is a shop on a corner.",
+      "right": "Both descriptions rewritten to match the photographs. One of the two moved to an article that actually needed it.",
+      "why": "We wrote the captions from the file names rather than from the pictures. That is the same mistake as trusting a registered place name, one step further downstream.",
+      "found": "ourselves"
     }
   ],
-
   "withheld": [
     {
       "article": "/en/scenes/gyeongju-at-night-silla-capital/",
@@ -150,12 +162,26 @@
       "did": "Kept the range, and said plainly in the article that it is the weakest number on the page."
     }
   ],
-
   "gates": [
-    { "name": "no-shared-images", "does": "Stops the build if two articles use the same photograph." },
-    { "name": "no-duplicate-files", "does": "Stops the build if two files are byte-identical under different names." },
-    { "name": "photo-sanity", "does": "Stops the build if a registered place name contains a word that changes what the place is, or if a photograph in use has no record of a human having opened it." },
-    { "name": "content-quality", "does": "Stops the build on a missing lead image, a missing caption, an over-length title, or too few internal links." },
-    { "name": "Original quote length", "does": "Stops the build if a quoted Korean sentence runs past 120 characters." }
+    {
+      "name": "no-shared-images",
+      "does": "Stops the build if two articles use the same photograph."
+    },
+    {
+      "name": "no-duplicate-files",
+      "does": "Stops the build if two files are byte-identical under different names."
+    },
+    {
+      "name": "photo-sanity",
+      "does": "Stops the build if a registered place name contains a word that changes what the place is, or if a photograph in use has no record of a human having opened it."
+    },
+    {
+      "name": "content-quality",
+      "does": "Stops the build on a missing lead image, a missing caption, an over-length title, or too few internal links."
+    },
+    {
+      "name": "Original quote length",
+      "does": "Stops the build if a quoted Korean sentence runs past 120 characters."
+    }
   ]
 }
