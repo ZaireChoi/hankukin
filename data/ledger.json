@@ -133,6 +133,21 @@
       "right": "Both descriptions rewritten to match the photographs. One of the two moved to an article that actually needed it.",
       "why": "We wrote the captions from the file names rather than from the pictures. That is the same mistake as trusting a registered place name, one step further downstream.",
       "found": "ourselves"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "site-wide",
+      "wrong": "The footer said \"Some links are affiliate links\" while the article modules said the opposite — that nothing here is an affiliate link and we earn nothing. Both could not be true, and the footer was the false one.",
+      "right": "The footer now reads its wording from the merchant registry. With no approved programme it states plainly that we carry no affiliate links and earn nothing; the day one is approved, the sentence changes by itself.",
+      "why": "We corrected exactly this false disclosure in an article on 13 August and did not check whether the same sentence lived anywhere else. It did. Fixing one place and not sweeping for the rest is now the fourth time this pattern has caught us in three days.",
+      "found": "outside review"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "site-wide",
+      "wrong": "Links to Korail booking, Incheon Airport, the Royal Palaces and other official bodies carried rel=\"nofollow\" — a signal meaning we do not vouch for the destination.",
+      "right": "Removed. These are the pages we send readers to. Approved affiliate links will still carry rel=\"sponsored\", which is a different statement.",
+      "found": "outside review"
     }
   ],
   "withheld": [

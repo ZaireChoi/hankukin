@@ -71,3 +71,21 @@ export function decorate(url, merchant) {
 export function anyAffiliate(links = []) {
   return links.some((l) => isAffiliate(l.merchant));
 }
+
+/**
+ * 승인된 제휴가 **하나라도** 있는가.
+ *
+ * 2026-08-16 외부 지적: 푸터는 "Some links are affiliate links" 라고 하는데
+ * 본문 모듈은 "제휴가 아니며 수익을 얻지 않는다" 고 한다. 둘이 어긋난다.
+ * 그리고 실제로 승인된 제휴가 하나도 없으므로 **푸터 쪽이 거짓이었다.**
+ *
+ * 이건 8월 13일에 잡았던 것과 **똑같은 종류의 거짓말이 다른 자리에 남아 있던 것**이다.
+ * 그때는 기사 본문의 고지를 고쳤고, 푸터는 안 봤다.
+ * 한 군데를 고쳤으면 같은 말이 또 어디 있는지 훑어야 한다 — 오늘 네 번째다.
+ *
+ * 사람이 기억해서 고치는 구조로 두면 반드시 또 어긋난다.
+ * **등록부를 보고 문구가 스스로 바뀌게 한다.**
+ */
+export function hasAnyAffiliate() {
+  return Object.keys(MERCHANTS).some(isAffiliate);
+}

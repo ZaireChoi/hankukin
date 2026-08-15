@@ -1,4 +1,5 @@
 ---
+import { hasAnyAffiliate } from '../config/merchants.mjs';
 import { BRAND } from '../config/brand.mjs';
 const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
@@ -17,8 +18,10 @@ const year = new Date().getFullYear();
     </div>
     <p class="fine">
       {BRAND.name} — {BRAND.tagline} We are an independent guide and are not affiliated with any
-      broadcaster, agency, artist or public body. Some links are affiliate links; see our
-      <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.
+      broadcaster, agency, artist or public body.
+      {hasAnyAffiliate()
+        ? <>Some links are affiliate links; see our <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.</>
+        : <>We currently carry no affiliate links and earn nothing from any link on this site. If that changes, this line changes with it — see our <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.</>}
     </p>
     <p class="fine">© {year} {BRAND.legalName || BRAND.name}. Contact: {BRAND.supportEmail}</p>
   </div>

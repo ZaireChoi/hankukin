@@ -26,8 +26,10 @@ const statusLabel = {
         <span class="l">Open in Maps</span><span class="arrow">→</span>
       </a>
     )}
+    {/* 장소의 **공식** 홈페이지다. 우리가 독자를 보내는 곳에 nofollow 를 붙이지 않는다
+        (2026-08-16 — SourceList·Figure·CtaBlock 에 이어 네 번째 자리). */}
     {place.officialUrl && (
-      <a class="cta" href={place.officialUrl} rel="nofollow noopener" target="_blank">
+      <a class="cta" href={place.officialUrl} rel="noopener" target="_blank">
         <span class="l">Official page — check hours before you go</span><span class="arrow">→</span>
       </a>
     )}

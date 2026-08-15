@@ -76,7 +76,7 @@ export const NOINDEX_PATHS = [];   // now 는 2026-08-14 발행 시작 (요금·
  */
 export const CATEGORIES = [
   { key: 'scenes',  path: 'scenes',  label: 'HANKUKIN Scenes',   blurb: 'Where to Go',
-    lead: 'Filming locations you can stand inside — how to get there, what it costs, and where to stand for the shot.' },
+    lead: 'K-drama, film, K-pop and performance — the places you can stand in, and the things themselves.' },
   { key: 'now',     path: 'now',     label: 'HANKUKIN Now',      blurb: "What's Hot",
     lead: 'What Korea costs and how it works right now — fares, prices and rules, each checked against the operator on a stated date.' },
   { key: 'decode',  path: 'decode',  label: 'HANKUKIN Decode',   blurb: 'What It Means',

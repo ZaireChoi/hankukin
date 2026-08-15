@@ -12,7 +12,14 @@ const rel = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', sugges
 const prepared = items.map((i) => ({
   ...i,
   href: decorate(i.url, i.merchant),
-  rel: isAffiliate(i.merchant) ? 'sponsored nofollow noopener' : 'nofollow noopener',
+  /*
+   * 제휴가 아닌 링크에서 nofollow 를 뺐다 (2026-08-16 외부 지적).
+   * 여기 걸리는 것은 코레일 예매·인천공항·궁능유적본부 같은 **공식 기관 페이지**다.
+   * 우리가 독자에게 '여기서 하십시오' 라고 보내는 곳인데
+   * nofollow 는 '이 링크를 보증하지 않는다' 는 뜻이다. 말과 신호가 어긋난다.
+   * 승인된 제휴에는 sponsored 를 계속 붙인다 — 그건 성격이 다르다.
+   */
+  rel: isAffiliate(i.merchant) ? 'sponsored noopener' : 'noopener',
 }));
 ---
 {prepared.length > 0 && (
