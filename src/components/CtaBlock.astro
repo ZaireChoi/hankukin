@@ -2,7 +2,24 @@
 /** Visit Korea / Bring Korea Home — 관련성이 있을 때만 렌더링한다 (문서 01 §4) */
 import { isAffiliate, decorate } from '../config/merchants.mjs';
 const { heading, items = [], note } = Astro.props;
-const rel = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', suggested: 'Suggested' };
+/**
+ * 링크 옆 꼬리표.
+ *
+ * 2026-08-16 외부 지적 — 그리고 이건 전환율이 아니라 **법**의 문제다.
+ *   제휴 링크에 'Klook · Suggested' 라고만 적혀 있었다.
+ *   글 맨 위에 고지가 있긴 하지만 3,000단어 위다.
+ *   FTC 는 제휴 관계를 **추천이나 링크에 가능한 한 가깝게** 밝히라고 한다.
+ *   'Suggested' 는 편집 추천인지 수익 링크인지 구분해 주지 않는다.
+ *
+ * 그래서 꼬리표를 relationship 이 아니라 **isAffiliate 로 정한다.**
+ *   제휴다      → 'Affiliate link — we may earn a commission'
+ *   제휴가 아니다 → 기존 관계 표시. 여기에 affiliate 라고 쓰면 그것도 거짓이다.
+ *
+ * 둘 다 틀리지 않는 것이 요점이다. 없는 관계를 있다고 하는 것과
+ * 있는 관계를 안 밝히는 것은 방향만 반대인 같은 잘못이다.
+ */
+const REL = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', suggested: 'Suggested' };
+const AFFILIATE_TAG = 'Affiliate link — we may earn a commission';
 
 /**
  * rel="sponsored" 는 '금전적 대가가 있는 링크' 를 뜻한다.
@@ -30,7 +47,7 @@ const prepared = items.map((i) => ({
         <a class="cta" href={i.href} rel={i.rel} target="_blank">
           <span>
             <span class="l">{i.label}</span><br />
-            <span class="m">{i.merchant} · <span class="rel">{rel[i.relationship] ?? i.relationship}</span></span>
+            <span class="m">{i.merchant} · <span class={isAffiliate(i.merchant) ? 'rel paid' : 'rel'}>{isAffiliate(i.merchant) ? AFFILIATE_TAG : (REL[i.relationship] ?? i.relationship)}</span></span>
           </span>
           <span class="arrow">→</span>
         </a>

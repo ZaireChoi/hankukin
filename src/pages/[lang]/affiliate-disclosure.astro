@@ -1,14 +1,42 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { BRAND, LOCALES } from '../../config/brand.mjs';
+import { MERCHANTS, isAffiliate } from '../../config/merchants.mjs';
 export async function getStaticPaths(){ return LOCALES.map((lang)=>({params:{lang}})); }
 const { lang } = Astro.params;
+
+/**
+ * 현재 제휴사 목록을 **등록부에서 읽는다** (2026-08-16 외부 지적).
+ *
+ * 이 페이지에 'Last updated 13 August' 이라고 손으로 적혀 있었는데
+ * Klook 제휴는 8월 16일에 시작됐다. 사람이 갱신하기로 한 날짜는 반드시 어긋난다.
+ *
+ * 그래서 목록도 날짜도 merchants.mjs 에서 가져온다.
+ * 새 제휴가 승인되면 이 페이지가 **저절로** 맞아진다.
+ * 푸터 문구를 등록부에 연동한 것과 같은 이유다.
+ */
+const live = Object.values(MERCHANTS).filter((m) => isAffiliate(m.name));
+const lastChange = live.map((m) => m.approvedAt).sort().at(-1) ?? '2026-08-13';
+const asDate = (d) => new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
 ---
 <BaseLayout lang={lang} path="affiliate-disclosure" title="Affiliate Disclosure"
   description="How HANKUKIN earns money, and what that does and does not change about what we publish.">
   <div class="wrap policy">
     <h1>Affiliate Disclosure</h1>
-    <p class="updated">Last updated 13 August 2026</p>
+    <p class="updated">Last updated {asDate(lastChange)}</p>
+
+    <h2>Who we currently earn from</h2>
+    {live.length === 0
+      ? <p><strong>Nobody.</strong> We have no approved affiliate programme at present and earn
+        nothing from any link on this site.</p>
+      : <>
+          <ul class="live">{live.map((m) => (
+            <li><strong>{m.name}</strong> — approved {asDate(m.approvedAt)}</li>
+          ))}</ul>
+          <p class="note">This list is generated from our own merchant registry rather than typed
+          by hand, so it cannot fall out of date. If a programme is added or ends, this page changes
+          with it — as does the notice in the site footer.</p>
+        </>}
 
     <p>HANKUKIN earns commission on some bookings and purchases made through links on this site. If
     you book a hotel, buy a tour ticket or order a product through one of those links, the merchant
