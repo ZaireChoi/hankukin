@@ -156,6 +156,14 @@
       "right": "Every commercial link on this site is now opened and loaded before it is published. Three are in place; each one was viewed as a live page first.",
       "why": "We guessed a URL from a pattern instead of retrieving it. That is the same error as trusting a registered place name for a photograph — one step further downstream, and this time it would have sent a reader to a dead page from a paid link.",
       "found": "ourselves"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "/en/decode/korea-esim-no-phone-number/",
+      "wrong": "We published an article whose entire premise was that a Korean tourist eSIM gives you data and no phone number. It gives you an 010 number. Even the cheapest data-only product does.",
+      "right": "Rewritten. The real boundary is not data versus number — it is number versus identity verification. You get a Korean number; you still cannot verify yourself to a bank or a government site, and no tourist product at any price changes that.",
+      "why": "We wrote the article from English guides that all repeat the same claim, and we said in the article itself that we had not checked a primary source. We published anyway. The carrier states the actual position plainly on its own English site; it took one page to find once we looked. Saying \"we did not verify this\" is not a substitute for verifying it.",
+      "found": "the site owner"
     }
   ],
   "withheld": [

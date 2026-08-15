@@ -1,69 +1,89 @@
 ---
 /**
- * 데이터만 있는 eSIM 으로 되는 것과 안 되는 것.
+ * 관광객 eSIM 세 단계 — 데이터만 / 수신만 / 발신까지, 그리고 어디서 벽이 오는가.
  *
- * 왜 그렸나 (2026-08-16).
- *   eSIM 은 사진으로 설명할 수 없다. 실물이 없기 때문이다.
- *   상품 사진은 QR 코드 그림이고 그건 아무것도 설명하지 않는다.
+ * 2026-08-16 **다시 그렸다.** 첫 판은 전제가 틀렸다.
+ *   처음에는 '관광객 eSIM = 데이터 전용, 번호 없음' 이라는 두 칸짜리 그림이었다.
+ *   그런데 LG U+ 공식 페이지를 열어 보니 **eSIM 에도 번호가 나온다.**
+ *   Data Only 도 수신은 되고, Data+Voice 는 발신까지 된다.
  *
- *   그런데 이 기사가 진짜로 말하려는 것은 **경계선**이다 —
- *   데이터가 있으면 되는 일과, 한국 번호가 있어야 되는 일 사이의 선.
- *   선을 그리는 데는 그림이 사진보다 낫다.
+ *   진짜 경계선은 '데이터냐 번호냐' 가 아니라 **'번호냐 본인인증이냐'** 였다.
+ *   번호를 받아도 은행·정부 인증은 안 된다 — 그게 통신사 자신의 고지다.
+ *   두 칸으로는 그릴 수 없는 그림이라 세 칸으로 다시 그렸다.
  *
- * 정직성.
- *   앱과 서비스의 정책은 바뀐다. 여기 적은 것은 2026-08-16 확인 시점의 상태이고
- *   1차 출처가 아니라 취합 자료에 근거한다. 캡션과 맺음말에 그렇게 밝힌다.
- *   확실한 것은 **구조**다 — 한국의 본인확인 제도가 국내 통신사 번호를 요구한다는 것.
+ * 근거.
+ *   LG U+ Korea eSIM 공식 영문 페이지 (2026-08-16 확인). 사업자 자신의 문서다.
+ *   요금과 조건은 그 페이지에 적힌 값을 그대로 옮겼다.
  */
 interface Props { caption: string }
 const { caption } = Astro.props;
 
-const rows = [
-  { t: 'Maps, translation, search',        ok: true,  note: 'Naver Map, Papago, Google' },
-  { t: 'Messaging and calls over data',    ok: true,  note: 'KakaoTalk, WhatsApp, FaceTime' },
-  { t: 'Hailing a taxi',                   ok: true,  note: 'Kakao T works on data with a foreign card', soft: true },
-  { t: 'Subway and bus apps',              ok: true,  note: 'Reading times and routes' },
-  { t: 'Restaurant and ticket bookings',   ok: false, note: 'Most ask for a Korean number to confirm' },
-  { t: 'Korean online shopping',           ok: false, note: 'Coupang and similar block sign-up' },
-  { t: 'Food delivery apps',               ok: false, note: 'Baemin, Coupang Eats' },
-  { t: 'Anything that sends an SMS code',  ok: false, note: 'A data-only eSIM cannot receive one' },
+const COLS = [
+  { k: 'none',  label: 'No Korean SIM',   sub: 'Roaming or wi-fi only' },
+  { k: 'data',  label: 'Data Only eSIM',  sub: 'Online or airport' },
+  { k: 'voice', label: 'Data + Voice',    sub: 'Airport counter only' },
 ];
 
-const W = 760, ROW = 46, TOP = 44, L = 34;
-const H = TOP + rows.length * ROW + 40;
-const GREEN = '#3d6b46', RED = '#b0453a';
+const ROWS = [
+  { t: 'Mobile data in Korea',            none: false, data: true,  voice: true },
+  { t: 'A Korean 010 number',             none: false, data: true,  voice: true },
+  { t: 'Receiving calls and texts',       none: false, data: true,  voice: true },
+  { t: 'Making calls, sending texts',     none: false, data: false, voice: true },
+  { t: 'SMS codes for restaurant / taxi', none: false, data: false, voice: true },
+  { t: 'Bank and government verification', none: false, data: false, voice: false, wall: true },
+];
+
+const W = 760, ROW = 44, TOP = 74, L = 20, LABW = 300;
+const H = TOP + ROWS.length * ROW + 46;
+const CW = (W - L - LABW - 16) / 3;
+const GREEN = '#3d6b46', GREY = '#b8b0a8', RED = '#b0453a';
 ---
 
 <figure class="chart">
   <svg viewBox={`0 0 ${W} ${H}`} role="img"
-       aria-label="What a data-only Korean eSIM lets you do and what it does not. Maps, translation, messaging over data, taxi hailing and transit apps all work. Restaurant and ticket bookings, Korean online shopping, food delivery apps and anything requiring an SMS code do not, because a data-only eSIM has no Korean phone number and cannot receive a text message.">
+       aria-label="Three levels of Korean mobile service for a visitor. With no Korean SIM you have none of these. A Data Only eSIM gives you data, a Korean 010 number and the ability to receive calls and texts, but not to send them and not to receive verification codes. A Data plus Voice eSIM, sold only at airport counters, adds outgoing calls and texts and SMS verification for restaurant and taxi apps. Bank and government identity verification works on none of them.">
 
-    <text x={L} y={22} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
-      DATA-ONLY eSIM · WHAT IT UNLOCKS
+    <text x={L} y={20} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      WHAT EACH LEVEL ACTUALLY UNLOCKS
     </text>
 
-    {rows.map((r, i) => {
-      const y = TOP + i * ROW;
-      const c = r.ok ? GREEN : RED;
+    {COLS.map((c, i) => {
+      const x = L + LABW + i * CW + CW / 2;
       return (
         <>
+          <text x={x} y={50} text-anchor="middle" font-size="12.5" font-weight="700" fill="#12100f">{c.label}</text>
+          <text x={x} y={65} text-anchor="middle" font-size="10.5" fill="#a09890">{c.sub}</text>
+        </>
+      );
+    })}
+
+    {ROWS.map((r, i) => {
+      const y = TOP + i * ROW;
+      return (
+        <>
+          {r.wall && (
+            <line x1={L} y1={y - 6} x2={W - 16} y2={y - 6}
+                  stroke={RED} stroke-width="1.6" stroke-dasharray="5 4" />
+          )}
           <rect x={L} y={y} width={W - L - 16} height={ROW - 8} rx="4"
-                fill={r.ok ? '#f2f6f2' : '#fbf1f0'} />
-          {/* 표시는 색만으로 구분하지 않는다 — 색을 못 보는 독자가 있다 */}
-          <text x={L + 16} y={y + 25} font-size="17" font-weight="700" fill={c}>
-            {r.ok ? '✓' : '✕'}
-          </text>
-          <text x={L + 44} y={y + 25} font-size="14.5" font-weight={r.ok ? '400' : '700'}
-                fill="#12100f">{r.t}</text>
-          <text x={W - 32} y={y + 25} text-anchor="end" font-size="12" fill="#8a827b">
-            {r.note}{r.soft ? ' *' : ''}
-          </text>
+                fill={r.wall ? '#fbf1f0' : (i % 2 ? '#faf8f5' : '#fff')} />
+          <text x={L + 14} y={y + 24} font-size="13.5"
+                font-weight={r.wall ? '700' : '400'} fill="#12100f">{r.t}</text>
+          {['none', 'data', 'voice'].map((k, j) => {
+            const on = r[k];
+            const x = L + LABW + j * CW + CW / 2;
+            return (
+              /* 색만으로 구분하지 않는다 — 기호를 함께 쓴다 */
+              <text x={x} y={y + 25} text-anchor="middle" font-size="16" font-weight="700"
+                    fill={on ? GREEN : (r.wall ? RED : GREY)}>{on ? '✓' : '✕'}</text>
+            );
+          })}
         </>
       );
     })}
 
     <text x={L} y={H - 14} font-size="11.5" fill="#6b6560">
-      * Policies change. Checked 16 August 2026. The line itself does not move: a data-only eSIM has no Korean number.
+      Per LG U+'s own English product notice, checked 16 August 2026. The last row is the one nobody warns you about.
     </text>
   </svg>
   <figcaption>{caption}</figcaption>
