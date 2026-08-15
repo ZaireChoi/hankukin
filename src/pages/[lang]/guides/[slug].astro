@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CtaBlock from '../../../components/CtaBlock.astro';
 import SourceList from '../../../components/SourceList.astro';
 import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
@@ -69,6 +70,8 @@ const jsonLd = {
 
     <ReadNext current={{ ...entry, _section: 'guides' }} lang={lang} />
 
+    <CtaBlock heading="Book it or find it" items={[...d.visitKorea, ...d.bringKoreaHome]}
+              note="Official operator and government pages. None of these are affiliate links and nobody pays us for a place here — where that changes, this notice will say so." />
     <SourceList sources={d.sources} checkedAt={d.checkedAt} />
     <Byline lang={lang} />
 

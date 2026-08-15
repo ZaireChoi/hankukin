@@ -214,6 +214,18 @@ const guides = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/guides' }),
   schema: ({ image }) => z.object({
     ...baseFields(image), region: z.string().optional(), era: z.string().optional(),
+    /**
+     * 실행 링크 (2026-08-16 에 now·guides 로 확대).
+     *
+     * 원래 scenes 에만 있었다. 그런데 **구매·예약 의도가 가장 높은 글은 now 축**이다 —
+     * 기차표, 공항 이동, 궁 입장권. 정작 그 글들에는 나갈 문이 없었다.
+     *
+     * 다만 모든 글에 넣지 않는다. 배열이 비면 블록이 통째로 렌더링되지 않는다.
+     * 한글 읽는 법이나 호칭 설명에 예약 버튼을 붙이면
+     * 그때부터 이 사이트는 다시 자동 생산물처럼 읽힌다.
+     */
+    visitKorea: z.array(affiliateLink).default([]),
+    bringKoreaHome: z.array(affiliateLink).default([]),
   }),
 });
 
@@ -252,6 +264,18 @@ const now = defineCollection({
   schema: ({ image }) => z.object({
     ...baseFields(image),
     region: z.string().optional(),
+    /**
+     * 실행 링크 (2026-08-16 에 now·guides 로 확대).
+     *
+     * 원래 scenes 에만 있었다. 그런데 **구매·예약 의도가 가장 높은 글은 now 축**이다 —
+     * 기차표, 공항 이동, 궁 입장권. 정작 그 글들에는 나갈 문이 없었다.
+     *
+     * 다만 모든 글에 넣지 않는다. 배열이 비면 블록이 통째로 렌더링되지 않는다.
+     * 한글 읽는 법이나 호칭 설명에 예약 버튼을 붙이면
+     * 그때부터 이 사이트는 다시 자동 생산물처럼 읽힌다.
+     */
+    visitKorea: z.array(affiliateLink).default([]),
+    bringKoreaHome: z.array(affiliateLink).default([]),
     // 요금·운임을 담은 글은 이 날짜를 본문에도 적고 3개월마다 재확인한다
     faresCheckedAt: z.coerce.date().optional(),
   }),
