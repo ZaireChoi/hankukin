@@ -20,10 +20,28 @@
 export const MERCHANTS = {
   Klook: {
     name: 'Klook',
+    /**
+     * 2026-08-16 신청. **아직 승인이 아니다.**
+     *
+     * 계정만 만들어졌고 활성화 메일이 발송된 상태다.
+     * appliedAt 은 기록이고 affiliate 는 여전히 false 다 —
+     * 이 둘을 헷갈리면 승인도 없이 제휴 고지가 켜진다.
+     * 그게 정확히 8월 13일에 걷어냈던 그 거짓말이다.
+     *
+     * 승인 통보를 **받은 뒤에** 다음 네 가지를 함께 고친다:
+     *   affiliate: true · approvedAt · tagParam · tagValue
+     * 그러면 링크 태그·rel="sponsored"·푸터 고지가 저절로 따라온다 (시험 완료).
+     *
+     * 신청서에 적은 것 — 나중에 문의가 오면 이것과 맞아야 한다:
+     *   Website Type      콘텐츠/블로그 (쿠폰·캐시백 아님)
+     *   Target Audience   United States
+     *   Traffic           최소 — 2026-08-14 발행 시작이라고 사실대로 적었다
+     *   Promotion         자사 기사 안의 문맥 링크만. 유료검색·쿠폰·리스트메일 없음
+     */
     affiliate: false,
-    appliedAt: null, approvedAt: null,
+    appliedAt: '2026-08-16', approvedAt: null,
     tagParam: null, tagValue: null,
-    note: '체험·투어. 여행 축 후보.',
+    note: '체험·투어 5~6.5%, eSIM 최대 20%. eSIM 이 가장 크고 우리에겐 아직 그 기사가 없다.',
   },
   Agoda: {
     name: 'Agoda',
