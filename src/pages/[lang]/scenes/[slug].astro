@@ -4,11 +4,13 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ClaimBadge from '../../../components/ClaimBadge.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
 import SourceList from '../../../components/SourceList.astro';
+import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
 import Figure from '../../../components/Figure.astro';
 import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { BRAND, LOCALES } from '../../../config/brand.mjs';
+import { AUTHOR } from '../../../config/author.mjs';
 import { anyAffiliate } from '../../../config/merchants.mjs';
 
 export async function getStaticPaths() {
@@ -54,7 +56,8 @@ const jsonLd = {
    * author 와 image 는 검색 결과 표시에 쓰인다 (2026-08-14 외부 지적으로 추가).
    * 개인 필명을 만들지 않고 발행 주체를 그대로 쓴다 — 없는 사람을 지어내지 않는다.
    */
-  author: { '@type': 'Organization', name: BRAND.name, url: `https://${BRAND.canonicalHost}/` },
+  // 조직이 아니라 **사람**이다 (2026-08-16). 조직명은 저자 신호로 일하지 않는다.
+  author: { '@type': 'Person', name: AUTHOR.name, url: `https://${BRAND.canonicalHost}/${lang}/author/` },
   publisher: { '@type': 'Organization', name: BRAND.name },
   ...(d.hero ? { image: [new URL(d.hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
       about: { '@type': 'CreativeWork', name: d.work },
@@ -161,6 +164,7 @@ const jsonLd = {
     <ReadNext current={{ ...entry, _section: 'scenes' }} lang={lang} />
 
     <SourceList sources={d.sources} checkedAt={d.checkedAt} />
+    <Byline lang={lang} />
     <section class="block">
       <p class="notice">{NOTICES.aiAssisted}</p>
       <p class="notice">Spotted something wrong or out of date?

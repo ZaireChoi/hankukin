@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LOCALES, BRAND } from '../../config/brand.mjs';
+import { AUTHOR } from '../../config/author.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
+const { lang } = Astro.params;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: AUTHOR.name,
+  description: AUTHOR.short,
+  url: new URL(`/${lang}/author/`, `https://${BRAND.canonicalHost}`).href,
+  knowsLanguage: ['ko', 'en'],
+};
+---
+
+<BaseLayout lang={lang} path="author" title={`${AUTHOR.name} — who writes this`}
+  seoTitle="Who Writes HANKUKIN"
+  description="One person writes this site. Korean, reads the Korean sources directly, has lived abroad. Here is what that means and how AI is used."
+  jsonLd={person}>
+
+  <div class="wrap">
+    <h1>Who writes this</h1>
+
+    <p class="lede">
+      One person. Not a team, not a content agency, and not a pile of generated articles with a
+      logo on top — though from the outside those are hard to tell apart, which is why this page
+      exists.
+    </p>
+
+    <p class="name">{AUTHOR.name}</p>
+    <p class="short">{AUTHOR.short}</p>
+
+    <h2>What that actually buys you</h2>
+    {AUTHOR.facts.map((f) => (
+      <div class="fact">
+        <h3>{f.claim}</h3>
+        <p>{f.why}</p>
+      </div>
+    ))}
+
+    <h2>How AI is used here</h2>
+    <p>
+      It is used, it is disclosed on every article, and pretending otherwise would be the
+      easiest thing on this page to catch. The line that matters is not whether a machine
+      helped write the sentences. It is <strong>who is answerable for whether they are
+      true.</strong>
+    </p>
+    <ul class="ai">{AUTHOR.ai.map((a) => <li>{a}</li>)}</ul>
+
+    <h2>What I am not</h2>
+    <p>
+      <strong>Not a travel professional.</strong> No agency, no tour operator, no tourism board.
+      Nobody pays for a mention here.
+    </p>
+    <p>
+      <strong>Not a doctor, a lawyer or a financial adviser</strong>, and the articles that touch
+      those subjects say so where it matters.
+    </p>
+    <p>
+      <strong>Not everywhere.</strong> A lot of what is on this site is researched from primary
+      Korean sources rather than visited last week. Where that is the case, the sources are
+      listed and dated so you can see exactly what the claim rests on.
+    </p>
+
+    <h2>If something here is wrong</h2>
+    <p>
+      <a href={`/${lang}/contact/`}>Tell me</a>. Corrections go on the public
+      <a href={`/${lang}/ledger/`}>record of what we got wrong</a>, along with who found it —
+      including the ones found by people outside this site, because pretending we caught
+      everything ourselves would be its own small lie.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .wrap { max-width: 42rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  h1 { font-size: 2.1rem; line-height: 1.2; margin: 0 0 1.1rem; }
+  h2 { font-size: 1.28rem; margin: 2.6rem 0 0.75rem; }
+  h3 { font-size: 1rem; margin: 0 0 0.35rem; color: #c9622e; }
+  p { line-height: 1.72; margin: 0 0 1rem; color: #2e2a27; }
+  .lede { font-size: 1.12rem; color: #12100f; }
+  .name { font-size: 1.5rem; font-weight: 700; margin: 1.8rem 0 0.3rem; }
+  .short { color: #6b6560; margin-bottom: 0; }
+  .fact { border-left: 2px solid #e0d8ce; padding-left: 1rem; margin-bottom: 1.4rem; }
+  .fact p { margin: 0; font-size: 0.95rem; }
+  ul.ai { padding-left: 1.1rem; margin: 0 0 1rem; }
+  ul.ai li { line-height: 1.68; margin-bottom: 0.55rem; font-size: 0.95rem; color: #2e2a27; }
+  a { color: #c9622e; }
+</style>
