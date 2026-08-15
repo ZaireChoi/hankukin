@@ -30,7 +30,13 @@
     "  덕수궁 → 대한문·돌담길만, 창덕궁 → 낙선재·인정문만 (그나마 등록 이미지 0장).",
     "  기존 경복궁 14장은 TourAPI 가 아니라 **국가유산청 궁능유적본부**에서 받은 것이다",
     "  (scripts/fetch-heritage-images.ps1). 나머지 궁도 그쪽에서 받아야 한다.",
-    "  여기서는 TourAPI 에 실제로 있는 것만 남긴다."
+    "  여기서는 TourAPI 에 실제로 있는 것만 남긴다.",
+    "",
+    "2026-08-14 4차 — '서울역' 요청을 제거했다.",
+    "  이 키워드가 '서울역사박물관' 에 매칭돼 기존 서울역 사진 6장을 덮어썼다.",
+    "  접미어 화이트리스트로 막았다고 생각했지만 다시 뚫렸다.",
+    "  이미 서울역 사진 6장을 갖고 있으므로 재요청할 이유가 없다.",
+    "  다시 필요하면 exactTitle 로 등재명을 직접 지정할 것."
   ],
   "requests": [
     {
@@ -149,9 +155,10 @@
       "slug": "cheonggye-plaza"
     },
     {
-      "keyword": "서울역",
+      "keyword": "문화역서울284",
       "expectRegion": "서울",
-      "slug": "seoul-station"
+      "slug": "culture-station-seoul-284",
+      "_note": "'서울역' 으로 요청했더니 서울역사박물관이 왔다 (2026-08-15). 역 건물은 '문화역서울284' 로 등재돼 있을 가능성이 높다."
     },
     {
       "keyword": "롯데월드",
@@ -170,6 +177,31 @@
       "expectRegion": "서울",
       "slug": "deoksugung-doldamgil",
       "exactTitle": "덕수궁 돌담길"
+    },
+    {
+      "keyword": "수서역",
+      "expectRegion": "서울",
+      "slug": "suseo-station"
+    },
+    {
+      "keyword": "부산역",
+      "expectRegion": "부산",
+      "slug": "busan-station"
+    },
+    {
+      "keyword": "서울고속버스터미널",
+      "expectRegion": "서울",
+      "slug": "seoul-express-bus-terminal"
+    },
+    {
+      "keyword": "해운대해수욕장",
+      "expectRegion": "부산",
+      "slug": "haeundae-beach"
+    },
+    {
+      "keyword": "부산 감천문화마을",
+      "expectRegion": "부산",
+      "slug": "gamcheon-culture-village"
     }
   ]
 }
