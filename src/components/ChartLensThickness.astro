@@ -1,0 +1,84 @@
+---
+/**
+ * 렌즈 굴절률별 두께 — '가볍다' 를 눈으로 증명한다.
+ *
+ * 왜 그렸나 (2026-08-15).
+ *   운영자가 '한국 안경은 가볍다' 를 기사에 넣으라고 했고, 근거를 두 갈래로 적었다:
+ *   테(TR-90·티타늄·무테)와 **렌즈 굴절률**. 그런데 글로만 적으면 안 와닿는다.
+ *
+ *   **사진으로도 안 된다.** 진열대 사진 열 장을 걸어도
+ *   '1.67 이 왜 가벼운가' 는 보이지 않는다. 두께 차이는 옆에서 봐야 보인다.
+ *
+ *   그래서 그린다. 이건 사진이 못 하는 일이다.
+ *
+ * 정직성.
+ *   실제 두께는 도수·렌즈 지름·테 모양으로 달라진다.
+ *   여기 그린 것은 **같은 도수에서 굴절률만 바꿨을 때의 상대적 차이**이고,
+ *   비율이지 실측이 아니라는 것을 캡션과 그림 안에 함께 적는다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+// 같은 도수에서 굴절률이 오를수록 얇아진다. 상대 비율이다.
+const lenses = [
+  { idx: '1.56', label: 'Standard',   thick: 1.00, won: '₩30–60k',   note: 'Mild prescriptions' },
+  { idx: '1.60', label: '',           thick: 0.82, won: '₩40–80k',   note: 'The common default' },
+  { idx: '1.67', label: 'High-index', thick: 0.64, won: '₩70–120k',  note: 'Where weight starts to change', star: true },
+  { idx: '1.74', label: 'Ultra',      thick: 0.50, won: '₩120–250k', note: 'Strong prescriptions' },
+];
+
+const W = 760, ROW = 66, TOP = 40, L = 96;
+const H = TOP + lenses.length * ROW + 34;
+const EDGE = 42;           // 1.56 일 때 가장자리 총두께(px). 굴절률이 오르면 얇아진다
+const CORE = 5;            // 중심 두께 — 근시 렌즈는 가운데가 얇다
+const CX = 300;            // 렌즈 단면 중심
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Lens cross-sections at four refractive indices for the same prescription. At 1.56 the lens is thickest; 1.60 is about four-fifths as thick; 1.67 about two-thirds; 1.74 about half. Higher index costs more and weighs less.">
+
+    <text x={L - 40} y={22} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      SAME PRESCRIPTION · DIFFERENT LENS
+    </text>
+
+    {lenses.map((l, i) => {
+      const y = TOP + i * ROW + 26;
+      const e = (EDGE * l.thick) / 2;   // 가장자리 반쪽
+      const c = CORE / 2;               // 중심 반쪽
+      const col = l.star ? '#c9622e' : '#8fa9c4';
+      return (
+        <>
+          <text x={L - 40} y={y + 5} font-size="17" font-weight="700"
+                fill={l.star ? '#c9622e' : '#12100f'}>{l.idx}</text>
+          <text x={L - 40} y={y + 22} font-size="10.5" fill="#a09890">{l.label}</text>
+
+          {/* 렌즈 단면 — 오목렌즈(근시)라 가장자리가 두껍다 */}
+          <path d={`M${CX - 115},${y - e} Q${CX},${y - c} ${CX + 115},${y - e}
+                    L${CX + 115},${y + e} Q${CX},${y + c} ${CX - 115},${y + e} Z`}
+                fill={col} fill-opacity={l.star ? 0.34 : 0.2} stroke={col} stroke-width="1.6" />
+
+          {/* 두께 표시 */}
+          <line x1={CX + 128} y1={y - e} x2={CX + 128} y2={y + e} stroke={col} stroke-width="1.4" />
+          <line x1={CX + 123} y1={y - e} x2={CX + 133} y2={y - e} stroke={col} stroke-width="1.4" />
+          <line x1={CX + 123} y1={y + e} x2={CX + 133} y2={y + e} stroke={col} stroke-width="1.4" />
+
+          <text x={CX + 148} y={y - 2} font-size="13" font-weight="700"
+                fill={l.star ? '#c9622e' : '#3c3733'}>{l.won}</text>
+          <text x={CX + 148} y={y + 16} font-size="11.5" fill="#8a827b">{l.note}</text>
+        </>
+      );
+    })}
+
+    <text x={L - 40} y={H - 10} font-size="11.5" fill="#6b6560">
+      Relative proportions at one prescription — not measured thicknesses. Your lens depends on your own numbers.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

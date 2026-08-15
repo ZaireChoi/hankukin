@@ -1,0 +1,76 @@
+---
+/**
+ * 한국 상가 건물 단면도 — 진료실은 위층에, 약국은 1층에.
+ *
+ * 왜 그렸나 (2026-08-15 운영자 요구).
+ *   '병원 몰린 건물 / 대기실 사진이 있으면 좋겠다.'
+ *   그런데 관광공사 API 에는 그런 사진이 없고, **대기실 사진은 구해져도 쓰지 않는다** —
+ *   의료기관 안의 식별 가능한 사람은 그 자체로 민감정보이고,
+ *   그 사람은 아파서 거기 있었다.
+ *
+ *   그래서 그린다. 그리고 이 경우 그림이 사진보다 낫다:
+ *   사진은 '한국 건물이 이렇게 생겼구나' 까지지만,
+ *   이 그림은 **'2층으로 올라가라' 까지** 말한다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const floors = [
+  { n: '5F', ko: '치과',   en: 'Dentist',            rom: 'chi-gwa',              tone: '#8a7fb5' },
+  { n: '4F', ko: '피부과', en: 'Dermatology',        rom: 'pi-bu-gwa',            tone: '#8a7fb5' },
+  { n: '3F', ko: '정형외과', en: 'Orthopaedics',     rom: 'jeong-hyeong-oe-gwa',  tone: '#8a7fb5' },
+  { n: '2F', ko: '내과',   en: 'Internal medicine',  rom: 'nae-gwa',              tone: '#c9622e', star: 'A cold? This one.' },
+  { n: '1F', ko: '약국',   en: 'Pharmacy',           rom: 'yak-guk',              tone: '#4f8a5b', star: 'Prescription goes here' },
+];
+
+const W = 760, ROW = 62, TOP = 34, L = 92, R = 262;
+const H = TOP + floors.length * ROW + 58;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="A cross-section of a typical Korean commercial building. Fifth floor dentist, fourth floor dermatology, third floor orthopaedics, second floor internal medicine which is where you go for a cold, and ground floor pharmacy where the prescription is filled. Street-level shops sit below.">
+
+    <text x={L} y={20} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      ONE ORDINARY KOREAN BUILDING
+    </text>
+
+    {floors.map((f, i) => {
+      const y = TOP + i * ROW;
+      return (
+        <>
+          <rect x={L} y={y} width={W - L - 16} height={ROW - 6} rx="4"
+                fill={f.star ? f.tone : '#efe9e1'} fill-opacity={f.star ? 0.14 : 1}
+                stroke={f.star ? f.tone : '#e0d8ce'} stroke-width={f.star ? 1.6 : 1} />
+          <text x={L - 14} y={y + 34} text-anchor="end" font-size="14"
+                font-weight="700" fill="#8a827b">{f.n}</text>
+          <text x={L + 18} y={y + 27} font-size="19" font-weight="700"
+                fill={f.star ? f.tone : '#12100f'}>{f.ko}</text>
+          <text x={L + 18} y={y + 45} font-size="11.5" fill="#8a827b">{f.rom}</text>
+          <text x={L + 128} y={y + 34} font-size="13.5" fill="#3c3733">{f.en}</text>
+          {f.star && (
+            <text x={W - R + 40} y={y + 34} font-size="12" font-weight="700"
+                  fill={f.tone}>← {f.star}</text>
+          )}
+        </>
+      );
+    })}
+
+    <rect x={L} y={TOP + floors.length * ROW} width={W - L - 16} height="26" rx="3"
+          fill="#f6f1ea" stroke="#e0d8ce" />
+    <text x={L + 18} y={TOP + floors.length * ROW + 18} font-size="12" fill="#a09890">
+      street level — coffee, convenience store, phone shop
+    </text>
+
+    <text x={L} y={H - 8} font-size="12" fill="#6b6560">
+      Names are stacked vertically down the outside wall. Look up, not ahead.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
