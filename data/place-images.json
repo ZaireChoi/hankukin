@@ -1690,9 +1690,334 @@
                                       }
                                   ],
                        "fetchedAt":  "2026-08-15"
+                   },
+                   {
+                       "slug":  "anyangcheon-cherry",
+                       "keyword":  "안양천",
+                       "title":  "안양천제방벚꽃길",
+                       "address":  "서울특별시 영등포구 양평동1가",
+                       "contentId":  "2774291",
+                       "images":  [
+                                      {
+                                          "file":  "anyangcheon-cherry-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/anyangcheon-cherry-1.jpg",
+                                                              "alt":  "안양천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "anyangcheon-cherry-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/anyangcheon-cherry-2.jpg",
+                                                              "alt":  "안양천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "anyangcheon-cherry-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/anyangcheon-cherry-3.jpg",
+                                                              "alt":  "안양천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "anyangcheon-cherry-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/anyangcheon-cherry-4.jpg",
+                                                              "alt":  "안양천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "anyangcheon-cherry-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/anyangcheon-cherry-5.jpg",
+                                                              "alt":  "안양천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-15"
+                   },
+                   {
+                       "slug":  "deogyusan-main",
+                       "keyword":  "덕유산국립공원",
+                       "title":  "덕유산국립공원(본소,적상분소)",
+                       "address":  "전북특별자치도 무주군 설천면 구천동1로 159",
+                       "contentId":  "126238",
+                       "images":  [
+                                      {
+                                          "file":  "deogyusan-main-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-1.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "deogyusan-main-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-2.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "deogyusan-main-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-3.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "deogyusan-main-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-4.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "deogyusan-main-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-5.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "deogyusan-main-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/deogyusan-main-6.jpg",
+                                                              "alt":  "덕유산국립공원",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=126238",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-15"
+                   },
+                   {
+                       "slug":  "seoraksan-2",
+                       "keyword":  "설악산",
+                       "title":  "설악산책",
+                       "address":  "강원특별자치도 속초시 관광로 439 (노학동)",
+                       "contentId":  "3041402",
+                       "images":  [
+                                      {
+                                          "file":  "seoraksan-2-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-1.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoraksan-2-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-2.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoraksan-2-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-3.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoraksan-2-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-4.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoraksan-2-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-5.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "seoraksan-2-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/seoraksan-2-6.jpg",
+                                                              "alt":  "설악산",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=3041402",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-15"
+                   },
+                   {
+                       "slug":  "cherry-blossom-seoul",
+                       "keyword":  "벚꽃",
+                       "title":  "안양천제방벚꽃길",
+                       "address":  "서울특별시 영등포구 양평동1가",
+                       "contentId":  "2774291",
+                       "images":  [
+                                      {
+                                          "file":  "cherry-blossom-seoul-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cherry-blossom-seoul-1.jpg",
+                                                              "alt":  "벚꽃",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "cherry-blossom-seoul-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cherry-blossom-seoul-2.jpg",
+                                                              "alt":  "벚꽃",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "cherry-blossom-seoul-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cherry-blossom-seoul-3.jpg",
+                                                              "alt":  "벚꽃",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "cherry-blossom-seoul-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cherry-blossom-seoul-4.jpg",
+                                                              "alt":  "벚꽃",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "cherry-blossom-seoul-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/cherry-blossom-seoul-5.jpg",
+                                                              "alt":  "벚꽃",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2774291",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-15"
+                   },
+                   {
+                       "slug":  "autumn-leaves-gangwon",
+                       "keyword":  "단풍",
+                       "title":  "단풍산",
+                       "address":  "강원특별자치도 영월군 산솔면 녹전리",
+                       "contentId":  "127305",
+                       "images":  [
+                                      {
+                                          "file":  "autumn-leaves-gangwon-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/autumn-leaves-gangwon-1.jpg",
+                                                              "alt":  "단풍",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=127305",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "autumn-leaves-gangwon-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/autumn-leaves-gangwon-2.jpg",
+                                                              "alt":  "단풍",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=127305",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "autumn-leaves-gangwon-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/autumn-leaves-gangwon-3.jpg",
+                                                              "alt":  "단풍",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=127305",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-15"
                    }
                ],
-    "generatedAt":  "2026-08-15T07:50:26",
+    "generatedAt":  "2026-08-15T08:01:18",
     "_comment":  [
                      "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
                      "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
