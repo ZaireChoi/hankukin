@@ -6,6 +6,7 @@ import '../styles/global.css';
 
 const {
   title,
+  seoTitle = null,   // 검색 결과 전용 짧은 제목. 없으면 title 을 쓴다
   description = BRAND.defaultMetaDescription,
   lang = DEFAULT_LOCALE,
   path = '',              // 언어 세그먼트를 뺀 경로. 예: 'scenes/goblin-jumunjin-breakwater'
@@ -42,7 +43,40 @@ const clean = path.replace(/^\/|\/$/g, '');
  * 리다이렉트가 있으니 사람은 도착하지만, 색인은 그 사이에서 링크 가치를 흘린다.
  */
 const canonical = new URL(clean ? `/${lang}/${clean}/` : `/${lang}/`, site).href;
-const fullTitle = title ? `${title} — ${BRAND.name}` : BRAND.defaultMetaTitle;
+/**
+ * 검색 결과에 실제로 **보이는 길이**로 맞춘다 (2026-08-16).
+ *
+ * 문제였던 것: description 중앙값이 294자였다. 41개 중 160자 이하는 11개뿐.
+ * 구글은 글자수 제한을 두지 않지만 결과 화면에서 잘라내고,
+ * 잘릴 바에는 **구글이 본문에서 아무 문장이나 골라 다시 쓴다.**
+ * 우리가 고른 문장이 잘리는 것보다 나쁜 건, 우리가 안 고른 문장이 대신 나가는 것이다.
+ *
+ * 다만 summary 자체를 줄이지는 않는다 — 그건 기사 첫머리에 그대로 실리는 글이고,
+ * 거기서는 길이가 미덕이다. **검색용 요약과 읽기용 요약을 분리한다.**
+ *
+ * 자르는 방법: 문장 경계에서만 자른다. 말이 끊긴 요약은 안 쓰느니만 못하다.
+ */
+function forSearch(text, max = 155) {
+  const t = (text ?? '').trim().replace(/\s+/g, ' ');
+  if (t.length <= max) return t;
+  const head = t.slice(0, max + 1);
+  const cut = Math.max(head.lastIndexOf('. '), head.lastIndexOf('? '), head.lastIndexOf('! '));
+  if (cut > 60) return head.slice(0, cut + 1);
+  // 문장이 하나뿐이라 자를 데가 없으면 낱말 경계에서 끊고 말줄임표를 붙인다.
+  const w = head.lastIndexOf(' ');
+  return `${head.slice(0, w > 60 ? w : max)}…`;
+}
+const metaDescription = forSearch(description);
+
+/**
+ * 제목도 같은 문제였다. 사이트명까지 붙여 중앙값 66자, 최대 95자.
+ * 62자를 넘으면 **사이트명을 뗀다** — 잘려서 사라질 바에는
+ * 검색어가 들어 있는 본제목을 온전히 보여주는 편이 낫다.
+ * 브랜드는 본문과 로고가 알려 준다. 검색 결과 한 줄을 브랜드에 쓰기엔 그 줄이 너무 비싸다.
+ */
+const searchTitle = seoTitle ?? title;
+const withBrand = searchTitle ? `${searchTitle} — ${BRAND.name}` : BRAND.defaultMetaTitle;
+const fullTitle = withBrand.length > 62 && searchTitle ? searchTitle : withBrand;
 
 /**
  * 공유 카드 이미지 URL 을 절대경로로 만든다.
@@ -83,22 +117,27 @@ const org = {
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{fullTitle}</title>
-  <meta name="description" content={description} />
+  <meta name="description" content={metaDescription} />
   <link rel="canonical" href={canonical} />
   {noindex && <meta name="robots" content="noindex, nofollow" />}
 
   {/* hreflang — Phase 1은 영어 단일이지만 구조를 미리 넣어둔다 (결정서 §4.2) */}
+  {/*
+    hreflang 에도 같은 버그가 있었다 (2026-08-16).
+    canonical 을 고치면서 이 두 줄이 **같은 잘못된 관용구**를 쓰고 있는 걸 발견했다.
+    한 군데를 고쳤으면 같은 모양이 또 어디 있는지 반드시 훑어야 한다.
+  */}
   {LOCALES.map((l) => (
     <link rel="alternate" hreflang={HREFLANG[l] ?? l}
-          href={new URL(`/${l}/${clean}`.replace(/\/+$/, '/'), site).href} />
+          href={new URL(clean ? `/${l}/${clean}/` : `/${l}/`, site).href} />
   ))}
   <link rel="alternate" hreflang="x-default"
-        href={new URL(`/${DEFAULT_LOCALE}/${clean}`.replace(/\/+$/, '/'), site).href} />
+        href={new URL(clean ? `/${DEFAULT_LOCALE}/${clean}/` : `/${DEFAULT_LOCALE}/`, site).href} />
 
   <meta property="og:type" content={ogType} />
   <meta property="og:site_name" content={BRAND.name} />
   <meta property="og:title" content={fullTitle} />
-  <meta property="og:description" content={description} />
+  <meta property="og:description" content={metaDescription} />
   <meta property="og:url" content={canonical} />
   {ogImageUrl && <>
     <meta property="og:image" content={ogImageUrl} />

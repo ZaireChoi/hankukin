@@ -4,6 +4,19 @@ import { glob } from 'astro/loaders';
 /** 출처 — 모든 사실 주장은 여기에 연결된다 (06 §1) */
 const source = z.object({
   title: z.string(),
+  /**
+   * 검색 결과 전용 제목 (선택).
+   *
+   * 2026-08-16. 제목이 62자를 넘으면 모바일 검색 결과에서 잘린다.
+   * 그렇다고 제목을 「Geoje Island Guide」 처럼 밋밋하게 깎으면
+   * **클릭할 이유가 사라진다** — 그건 정확히 AI 블로그가 하는 짓이다.
+   *
+   * 그래서 둘을 분리한다.
+   *   title    — 페이지에 실제로 걸리는 제목. 길어도 좋다. 여기가 필력이다.
+   *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
+   * seoTitle 이 없으면 title 을 쓴다.
+   */
+  seoTitle: z.string().max(62).optional(),
   url: z.string().url(),
   type: z.enum([
     'official_production', 'official_interview', 'official_social',
@@ -64,6 +77,19 @@ const affiliateLink = z.object({
 /** image() 는 스키마 컨텍스트에서만 얻을 수 있어 팩토리로 만든다 */
 const baseFields = (image) => ({
   title: z.string(),
+  /**
+   * 검색 결과 전용 제목 (선택).
+   *
+   * 2026-08-16. 제목이 62자를 넘으면 모바일 검색 결과에서 잘린다.
+   * 그렇다고 제목을 「Geoje Island Guide」 처럼 밋밋하게 깎으면
+   * **클릭할 이유가 사라진다** — 그건 정확히 AI 블로그가 하는 짓이다.
+   *
+   * 그래서 둘을 분리한다.
+   *   title    — 페이지에 실제로 걸리는 제목. 길어도 좋다. 여기가 필력이다.
+   *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
+   * seoTitle 이 없으면 title 을 쓴다.
+   */
+  seoTitle: z.string().max(62).optional(),
   summary: z.string().min(20).max(400),
   lang: z.string().default('en'),
   publishedAt: z.coerce.date(),
@@ -131,6 +157,19 @@ const scenes = defineCollection({
     itinerary: z.array(z.object({
       slot: z.enum(['morning', 'lunch', 'afternoon', 'evening', 'night']),
       title: z.string(),
+  /**
+   * 검색 결과 전용 제목 (선택).
+   *
+   * 2026-08-16. 제목이 62자를 넘으면 모바일 검색 결과에서 잘린다.
+   * 그렇다고 제목을 「Geoje Island Guide」 처럼 밋밋하게 깎으면
+   * **클릭할 이유가 사라진다** — 그건 정확히 AI 블로그가 하는 짓이다.
+   *
+   * 그래서 둘을 분리한다.
+   *   title    — 페이지에 실제로 걸리는 제목. 길어도 좋다. 여기가 필력이다.
+   *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
+   * seoTitle 이 없으면 title 을 쓴다.
+   */
+  seoTitle: z.string().max(62).optional(),
       detail: z.string(),
     })).default([]),
     visitKorea: z.array(affiliateLink).default([]),

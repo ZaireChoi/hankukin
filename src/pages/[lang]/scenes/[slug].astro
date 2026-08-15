@@ -71,7 +71,7 @@ const jsonLd = {
   ],
 };
 ---
-<BaseLayout title={d.title} description={d.summary} lang={lang}
+<BaseLayout title={d.title} seoTitle={d.seoTitle} description={d.summary} lang={lang}
             path={`scenes/${slug}`} jsonLd={jsonLd}
             ogType="article" ogImage={d.hero ?? null}
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
