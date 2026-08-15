@@ -1,0 +1,152 @@
+---
+/**
+ * 「무엇이 막혔나요」 — 홈 상단 문제 색인.
+ *
+ * 왜 검색창이 아닌가 (2026-08-16 운영자 제안 → 검토 후 이걸로).
+ *
+ *   검색창은 독자가 **우리 단어를 맞혀야** 작동한다.
+ *   한국에 처음 온 사람은 자기가 겪는 일을 뭐라고 부르는지 모른다.
+ *   "본인확인" 이라는 말을 모르니 검색할 수 없고, 그 글이 여기 있는 줄도 모른다.
+ *
+ *   그리고 32편에 검색창을 달면 Jeju·DMZ·hiking 이 전부 0건으로 나온다.
+ *   **지금은 사이트가 얇다는 게 안 보이는데, 검색창은 그걸 독자가 측정하게 만든다.**
+ *   메뉴로 둘러보면 꽉 차 보이고 검색하면 텅 비어 보이는데, 같은 사이트다.
+ *
+ *   → 우리가 먼저 보여준다. 검색은 80편쯤에서 Pagefind 로 넣는다.
+ *     그때 0건 화면을 '없습니다' 가 아니라 **가장 가까운 3편**으로 만든다.
+ *     그게 검색창보다 만들기 어렵고 검색창보다 중요하다.
+ *
+ * 답을 한 줄로 같이 준다.
+ *
+ *   목록만 있으면 목차고, 답이 붙으면 도움이다.
+ *   **클릭하지 않아도 도움이 되어야 한다.** 링크 낚시로 쓰는 순간 이 블록은 죽는다.
+ *   그래서 answer 는 결론을 그대로 적는다 — "개찰구가 없다" 까지 적고 만다.
+ *
+ * 빌드 게이트.
+ *
+ *   href 가 가리키는 기사가 없으면 **빌드를 세운다.**
+ *   이 블록은 홈 최상단에서 답을 약속한다. 약속한 곳에 글이 없는 것은
+ *   깨진 링크가 아니라 **거짓말**이다. 그래서 경고가 아니라 정지다.
+ */
+import { getCollection } from 'astro:content';
+import stuck from '../../data/stuck.json';
+
+interface Props { lang: string }
+const { lang } = Astro.props;
+
+const COLLECTIONS = ['now', 'guides', 'decode', 'hangul', 'scenes'];
+
+/** 실재하는 기사 id 를 컬렉션별로 모아 둔다. */
+const known = new Set(
+  (await Promise.all(COLLECTIONS.map(async (c) => {
+    const entries = await getCollection(c, (e) => !e.data.draft && e.data.lang === lang);
+    return entries.map((e) => `${c}/${e.id}`);
+  }))).flat(),
+);
+
+const groups = stuck.groups.map((g) => ({
+  label: g.label,
+  items: g.items.map((i) => {
+    if (!known.has(i.href)) {
+      throw new Error(
+        `\n\n「무엇이 막혔나요」 색인이 없는 기사를 가리킵니다.\n\n` +
+        `  문제 : "${i.when}"\n` +
+        `  기사 : ${i.href}  ← ${lang} 에 이 글이 없습니다\n\n` +
+        '이 블록은 홈 최상단에서 답을 약속합니다.\n' +
+        '약속한 자리에 글이 없는 것은 깨진 링크가 아니라 **거짓말**입니다.\n\n' +
+        '고치는 법: data/stuck.json 에서 이 항목을 지우거나, 기사를 먼저 쓰십시오.\n' +
+        '**쓰지 않은 문제는 이 목록에 올리지 않습니다.**\n',
+      );
+    }
+    return { ...i, url: `/${lang}/${i.href}/` };
+  }),
+}));
+
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+---
+
+<section class="stuck" aria-labelledby="stuck-h">
+  <div class="head">
+    <h2 id="stuck-h">Stuck on something?</h2>
+    <p>
+      Everything here started as a moment when a visitor did not know what to do.
+      <strong>The answer is on the line — you do not have to click.</strong>
+    </p>
+  </div>
+
+  {groups.map((g) => (
+    <div class="grp">
+      <h3>{g.label}</h3>
+      <ul>
+        {g.items.map((i) => (
+          <li>
+            <a href={i.url}>
+              <span class="when">{i.when}</span>
+              <span class="ans">{i.answer}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+
+  <p class="foot">
+    {total} of these so far, and the list is how we choose what to write next.
+    Got stuck on something that is not here? <a href={`/${lang}/contact/`}>Tell us</a> —
+    that is where the next one comes from.
+  </p>
+</section>
+
+<style>
+  .stuck {
+    margin: 0 0 3rem;
+    padding: 1.6rem 1.5rem 1.3rem;
+    background: #fbf7f1;
+    border: 1px solid #ece3d7;
+    border-radius: 8px;
+  }
+  .head h2 { font-size: 1.45rem; margin: 0 0 .45rem; letter-spacing: -0.01em; }
+  .head p { margin: 0 0 1.4rem; font-size: .95rem; line-height: 1.6; color: #4a453f; max-width: 42rem; }
+  .head strong { color: #12100f; }
+
+  .grp { margin-bottom: 1.35rem; }
+  .grp h3 {
+    font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: #a0968a; margin: 0 0 .45rem;
+  }
+  .grp ul { list-style: none; margin: 0; padding: 0; }
+  .grp li { border-top: 1px solid #ece3d7; }
+  .grp li:first-child { border-top: none; }
+
+  .grp a {
+    display: block; padding: .62rem .55rem .62rem 0;
+    text-decoration: none; color: inherit; border-radius: 4px;
+  }
+  .grp a:hover, .grp a:focus-visible { background: #f5eee3; padding-left: .55rem; }
+
+  /* 독자의 말이 먼저 눈에 들어와야 한다 — 제 순간을 알아보는 게 첫 단계다 */
+  .when {
+    display: block; font-size: .97rem; line-height: 1.45; font-weight: 600; color: #12100f;
+  }
+  .when::before { content: '“'; color: #c9622e; }
+  .when::after  { content: '”'; color: #c9622e; }
+  .ans {
+    display: block; margin-top: .2rem;
+    font-size: .89rem; line-height: 1.55; color: #56504a;
+  }
+
+  .foot {
+    margin: 0; padding-top: 1rem; border-top: 1px solid #ece3d7;
+    font-size: .85rem; line-height: 1.6; color: #6b6560;
+  }
+  .foot a { color: #c9622e; }
+
+  /* 넓은 화면에서는 두 칸. 목록이 길어져도 한 화면에 들어오게 한다 */
+  @media (min-width: 52rem) {
+    .stuck {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0 2.4rem;
+      padding: 1.8rem 1.8rem 1.4rem;
+    }
+    .head, .foot { grid-column: 1 / -1; }
+  }
+</style>
