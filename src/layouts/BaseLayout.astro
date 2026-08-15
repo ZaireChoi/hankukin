@@ -27,7 +27,21 @@ const {
 
 const site = Astro.site ?? new URL(`https://${BRAND.canonicalHost}`);
 const clean = path.replace(/^\/|\/$/g, '');
-const canonical = new URL(`/${lang}/${clean}`.replace(/\/+$/, '/'), site).href;
+/**
+ * 정규 주소에는 **반드시 끝 슬래시를 붙인다.**
+ *
+ * 2026-08-16 에 잡은 버그. 예전 코드는 이랬다:
+ *   `/${lang}/${clean}`.replace(/\/+$/, '/')
+ * clean 은 이미 끝 슬래시를 뗀 문자열이라 저 replace 는 **아무것도 하지 않았다.**
+ * 그래서 canonical 은 /en/now/foo 를 가리켰는데,
+ *   · 실제 페이지 주소는 /en/now/foo/ (Cloudflare 가 308 로 되돌린다)
+ *   · 바로 아래 breadcrumb 은 /en/now/foo/ 를 쓰고 있었다
+ * **한 페이지 안에서 두 신호가 다른 주소를 가리켰다.** 30편 전부.
+ *
+ * 정규 주소·사이트맵·내부 링크는 한 글자도 다르면 안 된다.
+ * 리다이렉트가 있으니 사람은 도착하지만, 색인은 그 사이에서 링크 가치를 흘린다.
+ */
+const canonical = new URL(clean ? `/${lang}/${clean}/` : `/${lang}/`, site).href;
 const fullTitle = title ? `${title} — ${BRAND.name}` : BRAND.defaultMetaTitle;
 
 /**

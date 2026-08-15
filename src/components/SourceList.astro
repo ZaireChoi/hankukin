@@ -14,7 +14,14 @@ const fmt = (d) => new Date(d).toISOString().slice(0, 10);
     {sources.map((s) => (
       <li>
         <span class="st">{label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}</span>
-        <a href={s.url} rel="nofollow noopener" target="_blank">{s.title}</a>
+        {/*
+          nofollow 를 뺐다 (2026-08-16).
+          여기 걸리는 것은 기상청·관광공사·건강보험공단 같은 **1차 출처**다.
+          nofollow 는 '이 링크를 보증하지 않는다' 는 뜻인데,
+          우리는 이 링크들을 근거로 글을 썼다. 보증하지 않을 거면 인용을 하지 말았어야 한다.
+          제휴 링크에는 CtaBlock 이 sponsored 를 계속 붙인다 — 그건 성격이 다르다.
+        */}
+        <a href={s.url} rel="noopener" target="_blank">{s.title}</a>
       </li>
     ))}
   </ul>

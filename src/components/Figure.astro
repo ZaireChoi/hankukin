@@ -52,7 +52,7 @@ const mustKeepOriginal = NO_MODIFY.has(license);
     {caption && <span class="cap">{caption}</span>}
     <span class="credit">
       {sourceUrl
-        ? <a href={sourceUrl} rel="noopener nofollow" target="_blank">{credit}</a>
+        ? <a href={sourceUrl} rel="noopener" target="_blank">{credit}</a>
         : credit}
       {license && <> · {LICENSE_LABEL[license] ?? license}</>}
     </span>

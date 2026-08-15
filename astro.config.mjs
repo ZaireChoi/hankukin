@@ -9,7 +9,10 @@ import { BRAND, LOCALES, DEFAULT_LOCALE, NOINDEX_PATHS } from './src/config/bran
 
 export default defineConfig({
   site: `https://${BRAND.canonicalHost}`,
-  trailingSlash: 'ignore',
+  // 'ignore' 는 두 주소를 다 받아들인다는 뜻이고, 그래서 두 주소가 다 돌아다녔다.
+  // 배포처(Cloudflare)는 끝 슬래시 쪽으로 308 을 보낸다 — 즉 최종 주소는 언제나 슬래시가 있다.
+  // 그러면 우리가 내보내는 모든 신호도 슬래시가 있어야 한다. 'always' 로 못을 박는다.
+  trailingSlash: 'always',
   i18n: {
     defaultLocale: DEFAULT_LOCALE,
     locales: [...LOCALES],
