@@ -164,6 +164,22 @@
       "right": "Rewritten. The real boundary is not data versus number — it is number versus identity verification. You get a Korean number; you still cannot verify yourself to a bank or a government site, and no tourist product at any price changes that.",
       "why": "We wrote the article from English guides that all repeat the same claim, and we said in the article itself that we had not checked a primary source. We published anyway. The carrier states the actual position plainly on its own English site; it took one page to find once we looked. Saying \"we did not verify this\" is not a substitute for verifying it.",
       "found": "the site owner"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "site-wide",
+      "wrong": "Two article templates printed \"None of these are affiliate links and nobody pays us for a place here\" directly beneath the links. Those same templates render the airport article and the hanbok article, both of which carry an approved affiliate link. The sentence was false at the exact place a reader would rely on it.",
+      "right": "The wording is no longer written by hand anywhere. It is now calculated from the links actually present in the block, so a paid link cannot appear under a sentence denying that paid links exist.",
+      "why": "This is the third time this specific false disclosure has been corrected: once in an article on 13 August, once in the footer on 16 August, and now here. Each time it was fixed in one place and the neighbouring copy was left alone. Removing the ability to write the sentence by hand is the only fix that has any chance of holding.",
+      "found": "ourselves"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "/en/decode/korea-esim-no-phone-number/",
+      "wrong": "The eSIM article declared a commercial link in its source file, and the link never appeared on the page. Two separate layers dropped it silently — the schema did not recognise the field for that section, and that section's template did not render the block at all. Nothing failed and nothing warned.",
+      "right": "Commercial links are now a field every section shares, and the build refuses to publish if any article template cannot display one. The link is on the page, labelled as an affiliate link.",
+      "why": "A link that vanishes without error is worse than a broken one, because there is nothing to notice. We found it only by comparing the published pages against what the source files claimed.",
+      "found": "ourselves"
     }
   ],
   "withheld": [
@@ -213,6 +229,10 @@
     {
       "name": "Original quote length",
       "does": "Stops the build if a quoted Korean sentence runs past 120 characters."
+    },
+    {
+      "name": "cta-renderable",
+      "does": "Stops the build if any article template cannot display a commercial link, so a declared link can never vanish without an error."
     }
   ]
 }
