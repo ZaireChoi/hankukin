@@ -36,7 +36,12 @@
     "  이 키워드가 '서울역사박물관' 에 매칭돼 기존 서울역 사진 6장을 덮어썼다.",
     "  접미어 화이트리스트로 막았다고 생각했지만 다시 뚫렸다.",
     "  이미 서울역 사진 6장을 갖고 있으므로 재요청할 이유가 없다.",
-    "  다시 필요하면 exactTitle 로 등재명을 직접 지정할 것."
+    "  다시 필요하면 exactTitle 로 등재명을 직접 지정할 것.",
+    "",
+    "2026-08-15 — 사계절 기사용. 운영자: '사진을 정말 많이 넣어라'.",
+    "  미사용 84장을 전부 확인했으나 단풍·눈·벚꽃이 한 장도 없었다. 전부 여름 초록이다.",
+    "  여름 사진으로 가을을 설명할 수는 없으므로 계절이 분명한 곳을 새로 요청한다.",
+    "  축제·명소는 촬영 시기가 계절에 고정돼 있어 사진 자체가 그 계절이다."
   ],
   "requests": [
     {
@@ -202,6 +207,56 @@
       "keyword": "부산 감천문화마을",
       "expectRegion": "부산",
       "slug": "gamcheon-culture-village"
+    },
+    {
+      "keyword": "영등포 여의도 봄꽃축제",
+      "expectRegion": "서울",
+      "slug": "yeouido-spring-flower"
+    },
+    {
+      "keyword": "석촌호수",
+      "expectRegion": "서울",
+      "slug": "seokchon-lake"
+    },
+    {
+      "keyword": "안양천",
+      "expectRegion": "서울",
+      "slug": "anyangcheon"
+    },
+    {
+      "keyword": "내장산국립공원",
+      "expectRegion": "전북",
+      "slug": "naejangsan"
+    },
+    {
+      "keyword": "설악산국립공원",
+      "expectRegion": "강원",
+      "slug": "seoraksan"
+    },
+    {
+      "keyword": "남산공원",
+      "expectRegion": "서울",
+      "slug": "namsan-park"
+    },
+    {
+      "keyword": "올림픽공원",
+      "expectRegion": "서울",
+      "slug": "olympic-park"
+    },
+    {
+      "keyword": "대관령눈꽃축제",
+      "expectRegion": "강원",
+      "slug": "daegwallyeong-snow"
+    },
+    {
+      "keyword": "태백산눈축제",
+      "expectRegion": "강원",
+      "slug": "taebaeksan-snow"
+    },
+    {
+      "keyword": "덕유산국립공원",
+      "expectRegion": "전북",
+      "slug": "deogyusan"
     }
   ]
 }
