@@ -165,6 +165,26 @@ try {
   & $git commit -m $msg *> $null
   if ($LASTEXITCODE -ne 0) { Log "중단: 커밋할 것이 없습니다"; exit 0 }
 
+  # ── 5-b. 검증하지 못했으면 **올리지 않는다** ────────────────────
+  #
+  # 2026-08-16 에 잡았다. 이 스크립트는 npm 을 못 찾으면 빌드를 건너뛰고,
+  # 'UNVERIFIED' 라고 정직하게 적은 뒤 — **그대로 푸시하고 있었다.**
+  #
+  # 그러는 동안 우리는 게이트를 다섯 개 만들었다.
+  #   no-shared-images · no-duplicate-files · photo-sanity
+  #   content-quality(반복 구조 포함) · 원문 인용 길이
+  # 전부 `astro build` 안에서만 돈다. **빌드를 건너뛰면 전부 우회된다.**
+  # 사진 오매칭을 막는 장치도, 대장 누락을 막는 장치도 그때는 없는 것과 같다.
+  #
+  # 커밋은 남긴다 — 작업을 잃으면 안 되니까.
+  # **푸시만 막는다.** 커밋은 되돌릴 수 있고 발행은 되돌리기 어렵다.
+  if (-not $verified) {
+    Log "중단: 검증하지 못해 올리지 않습니다 (커밋은 남아 있습니다)"
+    Log "  node/npm 을 PATH 에서 찾지 못했습니다. 설치 후 다시 실행하거나,"
+    Log "  직접 'npm run build' 로 게이트를 통과시킨 뒤 'git push' 하십시오."
+    exit 1
+  }
+
   & $git pull --rebase *> $null
   if ($LASTEXITCODE -ne 0) { Log "중단: rebase 충돌 — 사람이 확인해야 합니다"; exit 1 }
 
