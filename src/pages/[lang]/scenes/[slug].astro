@@ -8,7 +8,7 @@ import ReadNext from '../../../components/ReadNext.astro';
 import Figure from '../../../components/Figure.astro';
 import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
-import { LOCALES } from '../../../config/brand.mjs';
+import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { anyAffiliate } from '../../../config/merchants.mjs';
 
 export async function getStaticPaths() {
@@ -49,6 +49,13 @@ const jsonLd = {
       datePublished: d.publishedAt.toISOString(),
       dateModified: d.checkedAt.toISOString(),
       inLanguage: lang,
+  /**
+   * author 와 image 는 검색 결과 표시에 쓰인다 (2026-08-14 외부 지적으로 추가).
+   * 개인 필명을 만들지 않고 발행 주체를 그대로 쓴다 — 없는 사람을 지어내지 않는다.
+   */
+  author: { '@type': 'Organization', name: BRAND.name, url: `https://${BRAND.canonicalHost}/` },
+  publisher: { '@type': 'Organization', name: BRAND.name },
+  ...(d.hero ? { image: [new URL(d.hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
       about: { '@type': 'CreativeWork', name: d.work },
     },
     {
@@ -64,7 +71,9 @@ const jsonLd = {
 };
 ---
 <BaseLayout title={d.title} description={d.summary} lang={lang}
-            path={`scenes/${slug}`} jsonLd={jsonLd}>
+            path={`scenes/${slug}`} jsonLd={jsonLd}
+            ogType="article" ogImage={d.hero ?? null}
+            publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
   <article class="wrap">
 
     <!-- 1·2·3. 제목 / 요약 / 작품·스타 -->
