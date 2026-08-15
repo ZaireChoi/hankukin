@@ -6,16 +6,18 @@ const year = new Date().getFullYear();
 <footer class="site-footer">
   <div class="wrap wide">
     <div class="cols">
-      <a href={`/${lang}/about`}>About</a>
-      <a href={`/${lang}/editorial-policy`}>Editorial Policy</a>
-      <a href={`/${lang}/affiliate-disclosure`}>Affiliate Disclosure</a>
-      <a href={`/${lang}/privacy`}>Privacy Policy</a>
-      <a href={`/${lang}/contact`}>Contact &amp; Report an Error</a>
+      <a href={`/${lang}/about/`}>About</a>
+      <a href={`/${lang}/editorial-policy/`}>Editorial Policy</a>
+      {/* 검증 대장 — 이 사이트가 무엇을 버렸는지. 정책 옆이 제자리다. */}
+      <a href={`/${lang}/ledger/`}>What We Threw Away</a>
+      <a href={`/${lang}/affiliate-disclosure/`}>Affiliate Disclosure</a>
+      <a href={`/${lang}/privacy/`}>Privacy Policy</a>
+      <a href={`/${lang}/contact/`}>Contact &amp; Report an Error</a>
     </div>
     <p class="fine">
       {BRAND.name} — {BRAND.tagline} We are an independent guide and are not affiliated with any
       broadcaster, agency, artist or public body. Some links are affiliate links; see our
-      <a href={`/${lang}/affiliate-disclosure`}>disclosure</a>.
+      <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.
     </p>
     <p class="fine">© {year} {BRAND.legalName || BRAND.name}. Contact: {BRAND.supportEmail}</p>
   </div>

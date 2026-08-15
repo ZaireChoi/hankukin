@@ -1,0 +1,224 @@
+---
+/**
+ * 공개 검증 대장 — 우리가 버린 것, 틀렸던 것, 못 구한 것.
+ *
+ * 왜 만드나 (2026-08-16 운영자 지시: "장기 상업 사이트 95점을 넘어야 한다. 독창성").
+ *
+ *   체크리스트로는 85점이 천장이다. canonical·저자 페이지·구조화 데이터는
+ *   **남들도 다 하는 것**이고, 남들 하는 걸 다 해봐야 남들만큼 된다.
+ *
+ *   2026년의 문제는 AI 가 쓴 여행글이 넘친다는 것이다.
+ *   그 글들도 정확해 보이고, 출처를 달고, 표를 그린다. **완성품만 보면 구별이 안 된다.**
+ *   그래서 완성품으로는 경쟁이 안 된다.
+ *
+ *   구별되는 지점은 하나뿐이다. **우리가 무엇을 버렸는가.**
+ *   좋은 글은 기계도 쓴다. 버린 기록은 실제로 버려 본 자만 갖고 있다.
+ *
+ *   하루에 사진 오매칭을 아홉 번 걸렀고 그 아홉 번이 전부 사람이 열어 봤기 때문이었다면,
+ *   그것을 서랍에 넣어 둘 이유가 없다. **그게 이 사이트가 가진 유일한 증거다.**
+ *
+ * 이 페이지가 지켜야 할 것
+ *
+ *   ① 전부 사실일 것. 하나라도 꾸미면 정직함을 보이려던 페이지가 가장 큰 거짓말이 된다.
+ *   ② 변명하지 말 것. '최선을 다했지만' 같은 말을 붙이는 순간 사과문이 된다.
+ *      이건 사과문이 아니라 **기록**이다. 무엇을 했는지만 적는다.
+ *   ③ 자랑하지 말 것. 아홉 번 걸렀다는 건 아홉 번 잘못 받았다는 뜻이기도 하다.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LOCALES } from '../../config/brand.mjs';
+import ledger from '../../../data/ledger.json';
+import verified from '../../../data/photo-verified.json';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
+const { lang } = Astro.params;
+
+const { rejected, corrected, withheld, gates } = ledger;
+const verifiedCount = Object.keys(verified.verified ?? {}).length;
+
+const HOW = {
+  opened: 'Someone opened the file and looked at it',
+  hash: 'Caught automatically — identical file',
+};
+const FOUND = {
+  ourselves: 'We found it',
+  'outside review': 'Someone outside found it',
+};
+const fmt = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+---
+
+<BaseLayout lang={lang} path="ledger" title="What We Threw Away"
+  seoTitle="Our Verification Ledger: Corrections and Rejects"
+  description="Every photograph we rejected, every error we have corrected, and every number we could not verify and left out. Kept in public.">
+
+  <div class="wrap">
+    <h1>What We Threw Away</h1>
+
+    <p class="lede">
+      Most sites show you the finished thing. This page shows you the other side of it — the
+      photographs we discarded, the sentences we got wrong and rewrote, and the numbers we
+      could not stand behind and therefore left out.
+    </p>
+
+    <p>
+      There is a practical reason to publish this. A great deal of travel writing is now
+      generated rather than researched, and it looks fine. It cites sources. It builds tables.
+      <strong>You cannot tell from the finished article.</strong> What you can tell it from is
+      the record of what got refused, because that record only exists if somebody actually
+      refused something.
+    </p>
+
+    <p class="counts">
+      <span><b>{rejected.length}</b> photographs rejected</span>
+      <span><b>{corrected.length}</b> corrections made</span>
+      <span><b>{withheld.length}</b> figures withheld</span>
+      <span><b>{verifiedCount}</b> locations checked by eye</span>
+    </p>
+
+    <h2>Photographs we rejected</h2>
+    <p>
+      Our photographs come from Korea Tourism Organization's open data. You request a place by
+      name and you get files back. <strong>The registered name is not a guarantee of what is in
+      the picture</strong>, and this is the part that surprised us: the mismatches are not
+      random, they are plausible. A hotel branch named after a station. A noodle restaurant
+      named after a temple.
+    </p>
+
+    <table class="rej">
+      <thead><tr><th>Asked for</th><th>What came back</th><th>Why it was no good</th><th></th></tr></thead>
+      <tbody>
+        {rejected.map((r) => (
+          <tr>
+            <td class="ko" lang="ko">{r.asked}</td>
+            <td class="ko got" lang="ko">{r.got}</td>
+            <td>{r.why}</td>
+            <td class="how" title={HOW[r.howCaught]}>
+              {r.howCaught === 'hash' ? 'auto' : 'by eye'}<span class="d">{fmt(r.date)}</span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <p class="note">
+      Eight of these nine were caught by a person opening the file and looking at it. That does
+      not scale, so where the mistake was visible in the name alone we moved the check into
+      code — and where it was not, the build now refuses to publish a photograph that has no
+      record of having been looked at.
+    </p>
+
+    <h2>Things we published wrongly and have fixed</h2>
+    <p>
+      Every entry here was live on this site at some point. The date is when it was corrected.
+    </p>
+
+    <ol class="cor">
+      {corrected.map((c) => (
+        <li>
+          <div class="head">
+            <span class={`who ${c.found === 'ourselves' ? 'us' : 'them'}`}>{FOUND[c.found]}</span>
+            <span class="d">{fmt(c.date)}</span>
+          </div>
+          <p class="was"><b>We said:</b> {c.wrong}</p>
+          <p class="now"><b>Actually:</b> {c.right}</p>
+          {c.why && <p class="why">{c.why}</p>}
+          {c.article !== 'site-wide' && <a href={c.article}>Read the corrected article →</a>}
+        </li>
+      ))}
+    </ol>
+
+    <h2>Numbers we could not verify, and left out</h2>
+    <p>
+      A missing figure is visible and slightly annoying. An invented one is invisible and
+      costs you money at a ticket window. We take the first.
+    </p>
+
+    <dl class="wh">
+      {withheld.map((w) => (
+        <>
+          <dt>{w.missing}</dt>
+          <dd>{w.did} <a href={w.article}>→</a></dd>
+        </>
+      ))}
+    </dl>
+
+    <h2>What the build refuses to publish</h2>
+    <p>
+      These run every time the site is rebuilt. Any one of them failing stops publication
+      entirely — there is no override, which is the point.
+    </p>
+    <ul class="gates">
+      {gates.map((g) => <li><code>{g.name}</code><span>{g.does}</span></li>)}
+    </ul>
+
+    <h2>What this page does not claim</h2>
+    <p>
+      <strong>It is not complete.</strong> It records what we caught. Whatever is still wrong on
+      this site is, by definition, not on this page yet — and there will be something.
+      If you find it, <a href={`/${lang}/contact/`}>tell us</a> and it will appear here with
+      your finding credited to where it came from.
+    </p>
+    <p>
+      <strong>Being careful is not the same as being right.</strong> All of the above describes
+      process. It reduces mistakes; it does not eliminate them.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+  h1 { font-size: 2.1rem; line-height: 1.18; margin: 0 0 1.1rem; }
+  h2 { font-size: 1.32rem; margin: 3rem 0 0.8rem; }
+  p { line-height: 1.72; margin: 0 0 1rem; color: #2e2a27; }
+  .lede { font-size: 1.13rem; line-height: 1.68; color: #12100f; }
+
+  .counts {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1.6rem;
+    padding: 0.9rem 1.1rem; margin: 1.6rem 0 0;
+    background: #fbf7f1; border-left: 3px solid #c9622e; border-radius: 0 5px 5px 0;
+    font-size: 0.87rem; color: #6b6560;
+  }
+  .counts b { font-size: 1.15rem; color: #c9622e; margin-right: 0.25rem; }
+
+  table.rej { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin: 1.2rem 0; }
+  .rej th { text-align: left; font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase;
+            color: #a09890; border-bottom: 1px solid #e0d8ce; padding: 0 0.6rem 0.45rem 0; }
+  .rej td { border-bottom: 1px solid #efe9e1; padding: 0.7rem 0.6rem 0.7rem 0; vertical-align: top; }
+  /* 한국어는 영문 서체로 찍으면 무너진다 */
+  .ko { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', 'Noto Sans KR', sans-serif;
+        white-space: nowrap; word-break: keep-all; }
+  .got { color: #b0453a; font-weight: 600; }
+  .how { font-size: 0.72rem; color: #a09890; white-space: nowrap; }
+  .how .d { display: block; color: #c3bcb4; }
+
+  ol.cor { list-style: none; padding: 0; margin: 1.2rem 0; }
+  ol.cor > li { border-left: 2px solid #e0d8ce; padding: 0 0 0.2rem 1.05rem; margin-bottom: 1.8rem; }
+  .cor .head { display: flex; gap: 0.6rem; align-items: baseline; margin-bottom: 0.5rem; }
+  .cor .who { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+              padding: 0.16rem 0.44rem; border-radius: 3px; }
+  .cor .who.us   { background: #eaf1ea; color: #3d6b46; }
+  .cor .who.them { background: #f3ece2; color: #8a6a3a; }
+  .cor .d { font-size: 0.74rem; color: #a09890; }
+  .cor p { margin: 0 0 0.4rem; font-size: 0.92rem; }
+  .cor .was b { color: #b0453a; } .cor .now b { color: #3d6b46; }
+  .cor .why { color: #6b6560; font-size: 0.87rem; font-style: italic; }
+  .cor a { font-size: 0.83rem; color: #c9622e; text-decoration: none; }
+
+  dl.wh { margin: 1.2rem 0; }
+  .wh dt { font-weight: 700; font-size: 0.95rem; margin-top: 1.1rem; }
+  .wh dd { margin: 0.25rem 0 0; font-size: 0.9rem; line-height: 1.65; color: #4a443f; }
+  .wh dd a { color: #c9622e; text-decoration: none; }
+
+  ul.gates { list-style: none; padding: 0; margin: 1.1rem 0; }
+  .gates li { display: flex; gap: 0.9rem; align-items: baseline; flex-wrap: wrap;
+              padding: 0.55rem 0; border-bottom: 1px solid #efe9e1; font-size: 0.88rem; }
+  .gates code { font-size: 0.79rem; background: #f6f1ea; padding: 0.14rem 0.44rem;
+                border-radius: 3px; color: #8a6a3a; white-space: nowrap; }
+  .gates span { color: #4a443f; flex: 1 1 18rem; }
+
+  .note { font-size: 0.9rem; color: #6b6560; }
+
+  @media (max-width: 34rem) {
+    .rej th:nth-child(4), .rej td:nth-child(4) { display: none; }
+    .ko { white-space: normal; }
+  }
+</style>
