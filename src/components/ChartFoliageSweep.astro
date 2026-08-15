@@ -19,7 +19,7 @@ const peaks = [
   { name: 'Gayasan',    region: 'Gyeongnam · south-east', day: 42, label: '11 Nov' },
 ];
 
-const W = 760, H = 268, L = 132, R = 78, T = 46, B = 44;
+const W = 760, H = 268, L = 178, R = 86, T = 46, B = 44;
 const D0 = 8, D1 = 46;                       // 10월 8일 ~ 11월 15일
 const x = (d: number) => L + (W - L - R) * (d - D0) / (D1 - D0);
 const rowY = (i: number) => T + 16 + i * 44;
