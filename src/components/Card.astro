@@ -1,0 +1,68 @@
+---
+/**
+ * 기사 카드 — 사진 + 제목 + 한 줄.
+ *
+ * 왜 만들었나 (2026-08-15, 외부 검토 지적).
+ *   홈페이지에 큰 사진이 하나도 없고 기사도 한 편만 보였다. 16편을 써 두고
+ *   처음 온 사람에게는 "콘텐츠가 거의 없는 새 사이트" 로 보였다.
+ *
+ * 라이선스 주의.
+ *   공공누리 제3유형은 변경금지다. Astro 의 <Image> 는 리사이즈하고 WebP 로
+ *   바꾸므로 3유형에는 쓸 수 없다. 원본을 그대로 내보내고 CSS 로만 맞춘다.
+ *   (파일을 고치는 것과 화면에서 잘라 보여주는 것은 다른 일이다.)
+ */
+import { Image } from 'astro:assets';
+
+const { href, hero, kicker, title, summary, big = false, priority = false } = Astro.props;
+const mustKeepOriginal = hero?.license === 'kogl-3';
+---
+<a class={big ? 'card big' : 'card'} href={href}>
+  {hero && (
+    <div class="shot">
+      {mustKeepOriginal
+        ? <img src={hero.src.src} alt={hero.alt} width={hero.src.width} height={hero.src.height}
+               loading={priority ? 'eager' : 'lazy'}
+               fetchpriority={priority ? 'high' : 'auto'} decoding="async" />
+        : <Image src={hero.src} alt={hero.alt} widths={big ? [640, 960, 1280] : [320, 480, 640]}
+                 sizes={big ? '(min-width: 800px) 760px, 100vw' : '(min-width: 800px) 360px, 100vw'}
+                 loading={priority ? 'eager' : 'lazy'}
+                 fetchpriority={priority ? 'high' : 'auto'} decoding="async" />}
+    </div>
+  )}
+  <div class="txt">
+    {kicker && <p class="k">{kicker}</p>}
+    <h3>{title}</h3>
+    {big && summary && <p class="s">{summary}</p>}
+  </div>
+</a>
+
+<style>
+  .card {
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+    background: var(--paper); transition: border-color .15s ease;
+  }
+  .card:hover { border-color: var(--accent); }
+  .shot { background: #f2ede7; line-height: 0; }
+  .shot :global(img) {
+    width: 100%; height: 190px; object-fit: cover; display: block;
+  }
+  .big .shot :global(img) { height: 340px; }
+  .txt { padding: .85rem 1rem 1.1rem; }
+  .k {
+    font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--suggested); margin: 0 0 .35rem;
+  }
+  h3 {
+    font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.35;
+    margin: 0; font-weight: 600;
+  }
+  .big h3 { font-size: 1.55rem; }
+  .s {
+    margin: .6rem 0 0; font-size: .92rem; line-height: 1.55; color: #4a453f;
+  }
+  @media (max-width: 640px) {
+    .big .shot :global(img) { height: 220px; }
+    .big h3 { font-size: 1.25rem; }
+  }
+</style>

@@ -1,16 +1,67 @@
 ---
+/**
+ * 홈.
+ *
+ * 2026-08-15 개편. 외부 검토 지적: "홈페이지가 너무 비어 있다 — 큰 이미지가
+ * 전혀 없고 최신 기사도 사실상 한 개만 노출된다. 실제로는 16개가 있는데
+ * 홈에서 보이지 않는다."  맞는 말이었다. 이전 홈은 scenes 컬렉션만 나열했다.
+ *
+ * 쌓아 둔 글이 일하게 하려면 홈에서 보여야 한다.
+ */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Card from '../../components/Card.astro';
 import { BRAND, LOCALES, CATEGORIES } from '../../config/brand.mjs';
 
 export async function getStaticPaths() {
   return LOCALES.map((lang) => ({ params: { lang } }));
 }
 const { lang } = Astro.params;
-const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lang === lang))
-  .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
+
+/** 네 섹션을 한 줄로 모아 최신순으로 세운다. 섹션 이름은 카드의 머리말이 된다. */
+const SECTIONS = [
+  { path: 'scenes', coll: 'scenes', kicker: 'Filming location' },
+  { path: 'now',    coll: 'now',    kicker: 'Korea Now' },
+  { path: 'decode', coll: 'decode', kicker: 'Decode' },
+  { path: 'guides', coll: 'guides', kicker: 'Culture & History' },
+];
+
+const all = (await Promise.all(SECTIONS.map(async (s) => {
+  const entries = await getCollection(s.coll, (e) => !e.data.draft && e.data.lang === lang);
+  return entries.map((e) => ({
+    href: `/${lang}/${s.path}/${e.id}/`,
+    kicker: s.kicker,
+    title: e.data.title,
+    summary: e.data.summary,
+    hero: e.data.hero ?? null,
+    at: e.data.publishedAt,
+    path: s.path,
+  }));
+}))).flat().sort((a, b) => b.at - a.at);
+
+/** 대표 기사는 사진이 있는 것 중 가장 최신. 사진 없는 글을 첫 화면에 크게 걸 수 없다. */
+const featured = all.find((a) => a.hero) ?? all[0];
+const rest = all.filter((a) => a !== featured);
+const latest = rest.slice(0, 6);
+
+/** 섹션별 최신 3편 — 방문자가 무엇을 다루는 사이트인지 한 화면에서 알게 한다. */
+const bySection = SECTIONS.map((s) => ({
+  ...s,
+  label: CATEGORIES.find((c) => c.path === s.path)?.label ?? s.path,
+  lead: CATEGORIES.find((c) => c.path === s.path)?.lead ?? '',
+  items: all.filter((a) => a.path === s.path).slice(0, 3),
+})).filter((s) => s.items.length);
+
+const jsonLd = {
+  '@context': 'https://schema.org', '@type': 'ItemList', name: BRAND.name,
+  itemListElement: all.slice(0, 12).map((a, i) => ({
+    '@type': 'ListItem', position: i + 1, name: a.title,
+    url: new URL(a.href, Astro.site).href,
+  })),
+};
 ---
-<BaseLayout lang={lang} path="">
+<BaseLayout lang={lang} path="" jsonLd={jsonLd}
+            ogImage={featured?.hero ?? null}>
   <div class="wrap">
     <section class="hero">
       <p class="q">Who brought you to Korea?</p>
@@ -18,29 +69,58 @@ const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lan
       <p>{BRAND.defaultMetaDescription}</p>
     </section>
 
-    <div class="cards">
-      {CATEGORIES.map((c) => (
-        <a class="card" href={`/${lang}/${c.path}/`}>
-          <div class="k">{c.blurb}</div>
-          <div class="v">{c.label}</div>
-        </a>
-      ))}
-    </div>
+    {featured && (
+      <section class="block">
+        <Card href={featured.href} hero={featured.hero} kicker={featured.kicker}
+              title={featured.title} summary={featured.summary} big priority />
+      </section>
+    )}
+
+    {latest.length > 0 && (
+      <section class="block">
+        <h2>Latest</h2>
+        <div class="grid">
+          {latest.map((a) => (
+            <Card href={a.href} hero={a.hero} kicker={a.kicker} title={a.title} />
+          ))}
+        </div>
+      </section>
+    )}
 
     <section class="block">
-      <h2>Latest scenes</h2>
-      {scenes.length === 0 ? (
-        <p class="notice">No published articles yet.</p>
-      ) : (
+      <h2>What we cover</h2>
+      <div class="cards">
+        {CATEGORIES.map((c) => (
+          <a class="card" href={`/${lang}/${c.path}/`}>
+            <div class="k">{c.blurb}</div>
+            <div class="v">{c.label}</div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    {bySection.map((s) => (
+      <section class="block">
+        <h2><a class="plain" href={`/${lang}/${s.path}/`}>{s.label}</a></h2>
+        <p class="lead">{s.lead}</p>
         <ul class="sources">
-          {scenes.map((s) => (
-            <li>
-              <span class="st">{s.data.work}</span>
-              <a href={`/${lang}/scenes/${s.id}/`}>{s.data.title}</a>
-            </li>
+          {s.items.map((a) => (
+            <li><a href={a.href}>{a.title}</a></li>
           ))}
         </ul>
-      )}
-    </section>
+        <p class="more"><a href={`/${lang}/${s.path}/`}>All {s.label} articles →</a></p>
+      </section>
+    ))}
   </div>
 </BaseLayout>
+
+<style>
+  .grid {
+    display: grid; gap: 1.1rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+  .lead { margin: -.2rem 0 .8rem; color: #4a453f; font-size: .95rem; line-height: 1.6; }
+  .more { margin-top: .7rem; font-size: .9rem; }
+  h2 .plain { color: inherit; text-decoration: none; }
+  h2 .plain:hover { color: var(--accent); }
+</style>
