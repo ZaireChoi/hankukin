@@ -28,11 +28,17 @@ import Figure from '../../components/Figure.astro';
 import trees from '../../assets/images/places/olympic-park-3.jpg';
 import benches from '../../assets/images/places/olympic-park-1.jpg';
 import gold from '../../assets/images/places/olympic-park-5.jpg';
+import peak from '../../assets/images/places/deogyusan-main-2.jpg';
 
 export const KTO = {
   credit: '한국관광공사 (Korea Tourism Organization)',
   license: 'kogl-3',
   sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2761797',
+};
+export const KTO_MTN = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126238',
 };
 
 If you are picturing a Korean winter, you are probably picturing Seoul under snow — palace roofs white, someone in a long coat, breath in the air.
@@ -78,6 +84,10 @@ If you are choosing dates purely for snow, **January is the safer bet than Decem
 <Figure src={trees} alt="A grove of tall metasequoia trunks with fallen brown needles and patches of snow on the ground"
         caption="The metasequoia grove at Olympic Park, between seasons. Korean autumn colour and the first snow overlap by only a week or two — which is why photographs like this are harder to plan for than they look."
         {...KTO} />
+
+<Figure src={peak} alt="A frost-covered rocky summit catching sunrise light above a sea of cloud filling the valleys below"
+        caption="Deogyusan at dawn, the summit under 상고대 — rime ice formed when supercooled fog freezes onto branches. Deogyusan is in North Jeolla, in the south-west quarter of the country. That is not a coincidence: it is where the snow goes."
+        {...KTO_MTN} />
 
 ## Last winter was a thin one, and that is a pattern
 
