@@ -148,6 +148,14 @@
       "wrong": "Links to Korail booking, Incheon Airport, the Royal Palaces and other official bodies carried rel=\"nofollow\" — a signal meaning we do not vouch for the destination.",
       "right": "Removed. These are the pages we send readers to. Approved affiliate links will still carry rel=\"sponsored\", which is a different statement.",
       "found": "outside review"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "site-wide",
+      "wrong": "We built a Klook affiliate link for a Seoul city page and the page did not exist. The link generator accepted the address without checking it.",
+      "right": "Every commercial link on this site is now opened and loaded before it is published. Three are in place; each one was viewed as a live page first.",
+      "why": "We guessed a URL from a pattern instead of retrieving it. That is the same error as trusting a registered place name for a photograph — one step further downstream, and this time it would have sent a reader to a dead page from a paid link.",
+      "found": "ourselves"
     }
   ],
   "withheld": [
