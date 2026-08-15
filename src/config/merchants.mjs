@@ -38,9 +38,26 @@ export const MERCHANTS = {
      *   Traffic           최소 — 2026-08-14 발행 시작이라고 사실대로 적었다
      *   Promotion         자사 기사 안의 문맥 링크만. 유료검색·쿠폰·리스트메일 없음
      */
-    affiliate: false,
-    appliedAt: '2026-08-16', approvedAt: null,
-    tagParam: null, tagValue: null,
+    affiliate: true,
+    appliedAt: '2026-08-16', approvedAt: '2026-08-16',
+    /**
+     * 2026-08-16 승인. Klook 은 자동 승인이라 신청 당일 링크 도구가 열렸다.
+     *
+     * tagValue 는 **추측하지 않고 포털에서 실제로 링크를 만들어 확인했다.**
+     *   생성 결과: affiliate.klook.com/redirect?aid=131289&aff_adid=1386321&k_site=...
+     *   → aid=131289 가 우리 제휴 ID 다.
+     *
+     * 파라미터 이름을 추측했다면 링크는 멀쩡히 열리는데 수수료만 안 잡혔을 것이다.
+     * 클릭도 되고 페이지도 뜨니 **아무도 몇 달 동안 모른다.** 그런 종류의 실패다.
+     *
+     * 왜 redirect 형식이 아니라 ?aid= 를 쓰나:
+     *   포털 안내문에 '주소 뒤에 ?aid=xxxx 를 붙이기만 하면 된다' 고 적혀 있다.
+     *   redirect 형식은 aff_adid 로 **링크별** 실적을 나눠 볼 수 있는 대신
+     *   링크를 하나하나 포털에서 만들어야 한다.
+     *   지금은 링크가 몇 개뿐이라 단순한 쪽이 낫다.
+     *   기사별 전환을 나눠 봐야 할 만큼 트래픽이 붙으면 그때 바꾼다.
+     */
+    tagParam: 'aid', tagValue: '131289',
     note: '체험·투어 5~6.5%, eSIM 최대 20%. eSIM 이 가장 크고 우리에겐 아직 그 기사가 없다.',
   },
   Agoda: {
@@ -72,9 +89,22 @@ export function isAffiliate(merchant) {
   return Boolean(m?.affiliate && m.tagParam && m.tagValue);
 }
 
-/** 승인된 곳에만 추적 태그를 붙인다 */
+/**
+ * 승인된 곳에만 추적 태그를 붙인다.
+ *
+ * Klook 경고 (2026-08-16, 포털 안내문에서 확인):
+ *   **'s.klook.com' 형식은 추적되지 않는다.** 반드시 'www.klook.com' 이어야 한다.
+ *   짧은 주소가 편해 보여서 쓰면 링크는 잘 열리는데 수수료가 0 이 된다.
+ *   사람이 기억할 일이 아니므로 빌드가 막는다.
+ */
 export function decorate(url, merchant) {
   if (!isAffiliate(merchant)) return url;
+  if (merchant === 'Klook' && /\/\/s\.klook\.com/.test(url)) {
+    throw new Error(
+      `s.klook.com 주소는 제휴 추적이 되지 않습니다:\n  ${url}\n\n` +
+      'www.klook.com 형식으로 바꾸십시오. 링크는 열리지만 수수료가 잡히지 않습니다.\n',
+    );
+  }
   const { tagParam, tagValue } = MERCHANTS[merchant];
   try {
     const u = new URL(url);
