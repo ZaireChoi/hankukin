@@ -126,7 +126,18 @@ export default function photoSanity() {
           const inUse = files.filter((f) => used.has(f));
           if (inUse.length === 0) continue;          // 안 쓰는 사진은 따지지 않는다
 
-          const seen = Boolean(ledger.verified?.[pl.slug]);
+          // 대장에 '있다' 만으로는 부족하다. **무엇을 봤는지 적혀 있어야 한다.**
+          // 빈 note 나 형식적인 한 마디는 확인한 것이 아니다 —
+          // 대장을 요식행위로 만들면 이 검사 전체가 무의미해진다.
+          const rec = ledger.verified?.[pl.slug];
+          const note = (rec?.note ?? '').trim();
+          const LAZY = ['확인', '확인함', 'ok', 'OK', '맞음', '정상', '-', '.'];
+          const seen = Boolean(rec) && note.length >= 12 && !LAZY.includes(note);
+          if (rec && !seen) {
+            fails.push(`${pl.slug}: 확인 대장에 기록은 있으나 note 가 비었거나 너무 짧습니다 `
+              + `— 무엇이 찍혀 있는지 실제로 적으십시오 (현재: "${note}")`);
+            continue;
+          }
           const v = nameVerdict(pl.keyword, pl.title);
           if (v.level === 'fail') fails.push(`${pl.slug}: ${v.why}`);
           // 이미 사람이 열어 본 곳은 경고하지 않는다.
@@ -151,7 +162,10 @@ export default function photoSanity() {
           throw new Error(
             `아무도 열어 보지 않은 사진이 기사에 실려 있습니다 (${unseen.length}곳).\n\n` +
             unseen.map((u) => `  ${u}`).join('\n') +
-            '\n\n사진을 실제로 열어 본 뒤 data/photo-verified.json 에 기록하십시오:\n' +
+            '\n\n다음 한 줄이면 대조표와 지표가 함께 나옵니다:\n' +
+            '  python3 scripts/photo-audit.py <슬러그>\n' +
+            '그리고 출력된 /tmp/photo-audit.png 를 **실제로 열어 보십시오.**\n\n' +
+            '본 뒤 data/photo-verified.json 에 기록하십시오:\n' +
             '  "슬러그": { "verifiedAt": "YYYY-MM-DD", "note": "무엇이 찍혀 있는지 한 줄" }\n\n' +
             '이 검사가 있는 이유: 2026-08-15 하루에 오매칭을 여덟 번 걸렀고\n' +
             '여덟 번 모두 "열어 봤기 때문에" 걸렀습니다. 열어 보지 않으면 그대로 실립니다.\n',
