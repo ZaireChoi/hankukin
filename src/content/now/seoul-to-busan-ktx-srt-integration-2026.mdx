@@ -29,11 +29,13 @@ sources:
     url: "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000"
     type: public_institution
     checkedAt: 2026-08-15
+  - title: "사이버 스테이션 (역·노선 안내) — 서울교통공사"
+    url: "http://www.seoulmetro.co.kr/kr/cyberStation.do?menuIdx=546"
+    type: public_institution
+    checkedAt: 2026-08-15
 ---
 
-import Figure from '../../components/Figure.astro';
-
-Korea has been running two separate high-speed rail companies on two separate ticketing systems for a decade. On **1 September 2026** that ends, and three things change for anyone travelling Seoul to Busan.
+Korea has been running two separate high-speed rail companies on two separate ticketing systems. On **1 September 2026** that ends, and three things change for anyone travelling Seoul to Busan.
 
 The fare goes down. The trains change name. And the app you booked with last time may no longer be the app you can book with.
 
@@ -48,9 +50,9 @@ Korail's press release of 5 August 2026 gives two worked examples. These are the
 | **Seoul → Busan** | ₩59,800 | **₩54,400** | −₩5,400 |
 | Yongsan → Gwangju Songjeong | ₩46,800 | ₩42,000 | −₩4,800 |
 
-Fares checked **15 August 2026** against Korail's own announcement. Across the network the reduction averages **10%**: KTX fares are being brought down to the level SRT already charged, rather than SRT fares being brought up.
+Fares checked **15 August 2026** against Korail's own announcement. The **10% average** applies to **KTX fares**: they are being brought down to the level SRT already charged, rather than SRT fares being brought up. Fares on the former SRT services from Suseo are the reference level, so do not expect those to fall.
 
-If you are booking a trip that straddles the date, the cheaper fare applies to the **travel date**, not the booking date. Tickets for trains running from 1 September went on sale on **5 August at 10:00**.
+The lower fares attach to trains **running from 1 September**, and those trains went on sale on **5 August at 10:00** — so a ticket bought in August for a September journey is already a September-priced ticket. Korail states the sale date and the service date; it does not spell out a booking-date rule beyond that.
 
 ## What "integration" actually means, and what it does not
 
@@ -60,12 +62,14 @@ If you are booking a trip that straddles the date, the cheaper fare applies to t
 
 Korea's high-speed services to Busan run on two different lines from two different Seoul-area stations:
 
-| Departure station | Line | Where it is |
+| Departure station | High-speed line | Where it is, and what serves it |
 |---|---|---|
-| **서울역 Seoul Station** | Gyeongbu high-speed line | Central Seoul, on Subway Lines 1 and 4 |
-| **수서역 Suseo Station** | Suseo high-speed line | South-east Seoul, on Subway Line 3 and the Suin–Bundang Line |
+| **서울역 Seoul Station** | Gyeongbu high-speed line | Central Seoul. Subway Lines 1 and 4, the Airport Railroad, GTX-A (Gyeongui–Jungang is a separate adjacent station of the same name) |
+| **수서역 Suseo Station** | Suseo high-speed line | South-east Seoul. Subway Line 3, the Suin–Bundang Line, GTX-A |
 
-Getting between them is a subway journey across the city, not a walk. Budget for it — [the subway fare and how transfers are charged are here](/en/now/seoul-transport-fares-subway-bus-taxi/) — and if you are coming straight from the airport, note that the Airport Railroad terminates at Seoul Station, not Suseo ([airport routes and costs](/en/now/incheon-airport-to-seoul-train-bus-taxi/)).
+Station connections per Seoul Metro's own station index, checked 15 August 2026.
+
+Getting between the two is a journey across the city, not a walk — but note the one line that appears in both rows. **GTX-A serves Seoul Station and Suseo**, which makes it the connection to look at first if your ticket turns out to leave from the other station. Budget for the fare either way: [the subway fare and how transfers are charged are here](/en/now/seoul-transport-fares-subway-bus-taxi/). If you are coming straight from the airport, the Airport Railroad runs to Seoul Station, not to Suseo ([airport routes and costs](/en/now/incheon-airport-to-seoul-train-bus-taxi/)).
 
 The former SRT route from Suseo, as published by SR, calls at: 수서 – 동탄 – 평택지제 – 천안아산 – 오송 – 대전 – 김천(구미) – 서대구 – 동대구 – 신경주 – 울산(통도사) – 부산.
 
@@ -73,7 +77,7 @@ A ticket that says **수서** is not a ticket from Seoul Station. Merging the co
 
 ## The app is now a gate, not a convenience
 
-Since 3 August 2026 the combined app is **코레일+ (Korail+)**, replacing 코레일톡. To use it — and to get the reduced fares and the expanded benefits — you need to be on the **integrated railway membership**.
+Since 3 August 2026 the combined app is **코레일+ (Korail+)**, delivered as an update to 코레일톡 (Korail Talk) or as a new install. To use it — and to get the reduced fares and the expanded benefits — you need to be on the **integrated railway membership**.
 
 | If you had… | What you must do |
 |---|---|
@@ -87,9 +91,9 @@ If you have used SRT before on a previous trip to Korea, assume your account nee
 
 ## The Chuseok trap
 
-**Trains running 23–27 September 2026 are not sold through normal booking.** They are released through a separate holiday sale with its own calendar, its own web page, and a countdown timer.
+**Trains running 23–27 September 2026 are not sold through normal booking.** They are released through a separate holiday sale with its own calendar, its own dedicated web page, and a hard completion limit.
 
-This is the Chuseok travel period. If you arrive in Korea in mid-September and try to book a Seoul–Busan train for the 25th the way you would book any other day, you will find nothing — not because it is sold out in the ordinary sense, but because that date was never on general sale.
+This is the Chuseok travel period. If you arrive in Korea in mid-September expecting to book a Seoul–Busan train for the 25th the way you would book any other day, you are working from the wrong calendar: those seats are distributed through the holiday sale below, on the dates below, and the sale is finished before the holiday starts.
 
 **Priority sale** — 3–4 September, 09:00–15:00. For over-65s, registered disabled travellers, designated national-merit recipients, and (new this year) pregnant travellers. Gyeongbu-line tickets, which includes Seoul–Busan, are sold on **3 September**.
 
@@ -133,6 +137,11 @@ Previously several Korail discounts did not apply to SRT services. From 1 Septem
 | Age 13–24 | 10–30% off, depending on how full the train is |
 | Age 25–33 | 10–40% off, depending on how full the train is |
 | Anyone, online special | 10–30% off on lightly booked KTX services |
+| Repeat travellers (N-card) | 15–40% off KTX, 15–30% off conventional trains, on a named route |
+
+The **N카드 (N-card)** is worth a look if you are doing the same route more than once: you nominate the route, period and number of trips, and it deducts from a count. It is only available in Korail+.
+
+Two more changes on the former SRT routes: **free-seating carriages** are being introduced for commuters holding season or free-seating tickets, and **standing tickets** are being expanded — which is the difference between travelling and not travelling on a day when Suseo is full.
 
 Mileage is now earned on Suseo departures too, at **5% of what you actually paid** — usable on tickets, on penalty payments, at station shops and cafés, and to top up a Rail Plus transport card.
 
@@ -156,7 +165,7 @@ These are the parts nobody announces loudly and everybody needs eventually.
 
 You will see this claimed. Korail issued a specific rebuttal on 7 August 2026: **nothing has been decided about restoring fares or reducing mileage after three years.**
 
-The three-year figure is a **minimum obligation period** set by the Fair Trade Commission as a condition of approving the merger — a floor under the benefits, not an expiry date on them. Changing a rail fare in Korea requires consultation between agencies, a filing by Korail and acceptance by the Ministry of Land, Infrastructure and Transport under the Railroad Business Act. It is not something the operator can simply do.
+The three-year figure is a **minimum obligation period**, set during the Fair Trade Commission's merger review to secure the public benefit — a floor under the benefits, not an expiry date on them. The Commission and the Ministry signed an agreement to jointly monitor Korail's fares, seat supply and service against that commitment for those three years. Changing a rail fare in Korea requires consultation between agencies, a filing by Korail and acceptance by the Ministry of Land, Infrastructure and Transport under the Railroad Business Act. It is not something the operator can simply do.
 
 What the Ministry's integration plan does say is that after the three years, fares will be reviewed against demand, service levels, financial impact and public burden. Reviewed — not automatically raised.
 
@@ -169,5 +178,7 @@ What the Ministry's integration plan does say is that after the three years, far
 **The two fares above are as Korail published them.** The release does not specify seat class or passenger type for those figures; first-class (특실) fares are higher, and the discounts listed above change what you actually pay. Treat ₩54,400 as the standard adult reference fare, not as the number on every ticket.
 
 **We do not give express bus fares.** We intended to compare the coach from Seoul Express Bus Terminal. The operator's booking site did not respond when we checked on 15 August 2026, so there is no bus row in the tables above rather than a guessed one.
+
+**There are no photographs on this page yet, and that is a failure we are naming rather than papering over.** We hold no verified images of Seoul Station, Suseo Station or Busan. The six images we held under the filename "Seoul Station" turned out to be the Seoul Museum of History, which is a different building in a different district; we renamed them rather than use them here. Illustrating a rail article with a photograph of somewhere else is the exact thing this site exists to avoid. Images of Busan Station, Haeundae and Gamcheon Culture Village have been requested and will be added when they arrive.
 
 **Fares change.** Everything here was checked on **15 August 2026** against Korail, the Ministry of Land, Infrastructure and Transport and SR. Anything dated after that supersedes this page.
