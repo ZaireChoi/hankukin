@@ -58,6 +58,7 @@ export default function contentQuality() {
       'astro:build:start': ({ logger }) => {
         const fail = [];
         const warn = [];
+        const shapes = [];   // 절 구성 비교용 — 판정은 반복문이 끝난 뒤
 
         for (const file of walk(CONTENT_DIR)) {
           const text = readFileSync(file, 'utf8');
@@ -121,6 +122,75 @@ export default function contentQuality() {
           // 한 편만 읽고 떠나면 쌓인 글이 일하지 않는다.
           const links = (body.match(/\]\(\/en\//g) ?? []).length;
           if (links === 0) warn.push(`${slug}: 다른 기사로 가는 링크가 없습니다`);
+
+          // ── 6. 절 구성을 모아 둔다 (판정은 반복문이 끝난 뒤) ──────
+          shapes.push({
+            slug,
+            at: /^publishedAt:\s*(\S+)/m.exec(fm)?.[1] ?? '',
+            // **마지막 절 하나**를 본다.
+            //
+            // 처음에는 절 제목 전체를 이어붙여 비교했다. 만들어 놓고 시험해 보니
+            // **한 번도 안 걸렸다.** 글마다 절 제목이 조금씩 달라 문자열이 늘 달랐기 때문이다.
+            // 안 터지는 게이트는 게이트가 아니라 장식이다.
+            //
+            // 실제로 세어 보니 냄새는 제목이 아니라 **꼬리**에 있었다:
+            //   30편 중 **29편**이 'What this article does not claim' 으로 끝난다.
+            // 독자가 세 편째에 알아채는 것이 바로 이것이다. 그러면 이것을 겨눠야 한다.
+            shape: ((body.match(/^##\s+(.+)$/gm) ?? []).at(-1) ?? '')
+              .replace(/^##\s+/, '').trim().toLowerCase(),
+            words: body.split(/\s+/).length,
+          });
+        }
+
+        /*
+         * ── 7. 같은 틀로 찍어내지 않았는가 ──────────────────────────
+         *
+         * 2026-08-16 운영자 지시: "AI 자동화의 느낌과 냄새를 완전히 제거하자."
+         * 외부 평가도 같은 것을 지적했다 — 개별 항목은 훌륭한데 30편이 같은 순서,
+         * 같은 말투라 몇 편만 읽으면 자동 생산 시스템이라는 것이 느껴진다고.
+         *
+         * 이 규칙은 이미 _자동화-지시문.md 에 있었다.
+         *   "개념 설명 글에 고지할 게 없으면 절을 통째로 뺀다"
+         * 그런데 30/30 이 모든 절을 다 갖고 있다. **글로 적힌 규칙은 안 지켜졌다.**
+         * 안 지켜지는 규칙은 규칙이 아니라 희망이다. 그래서 코드로 내린다.
+         *
+         * 적용 시점을 나눈 이유.
+         *   오늘 기존 30편을 다시 쓸 수는 없다. 지금 전면 적용하면 빌드가 영영 안 선다.
+         *   그러면 이 게이트는 꺼지거나 우회될 것이고, 우회되는 게이트는 없는 것만 못하다.
+         *   **오늘 이후 쓰는 글부터 적용한다.** 기존 편은 경고로만 계속 보인다 —
+         *   잊지 않기 위해서다. 부채를 조용히 덮으면 갚지 않게 된다.
+         */
+        const SHAPE_RULE_FROM = '2026-08-16';
+        const RUN = 4;   // 연속 4편이 같은 구성이면 세운다 = '직전 3편과 같으면 안 된다'
+
+        const sorted = shapes.filter((s) => s.at).sort((a, b) => a.at.localeCompare(b.at));
+        for (let i = RUN - 1; i < sorted.length; i++) {
+          const run = sorted.slice(i - RUN + 1, i + 1);
+          if (run.some((r) => !r.shape)) continue;
+          if (new Set(run.map((r) => r.shape)).size !== 1) continue;
+
+          const line = run.map((r) => r.slug).join('\n    ');
+          if (run[run.length - 1].at >= SHAPE_RULE_FROM) {
+            fail.push(
+              `연속 ${RUN}편이 똑같은 절로 끝납니다 — "${run[0].shape}"\n    ${line}\n\n` +
+              '    같은 틀로 찍은 글은 몇 편만 읽어도 티가 납니다.\n' +
+              '    고지할 것이 없으면 고지 절을 **통째로 빼고**, 할 말이 끝났으면 거기서 끝내십시오.\n' +
+              '    절을 하나 더 채우려고 쓴 문단은 독자도 그렇게 읽습니다.',
+            );
+            break;
+          }
+        }
+
+        // 기존 편의 쏠림은 경고로 계속 보여준다 — 갚아야 할 부채다.
+        const old = shapes.filter((s) => s.at && s.at < SHAPE_RULE_FROM);
+        const byShape = new Map();
+        for (const s of old) byShape.set(s.shape, (byShape.get(s.shape) ?? 0) + 1);
+        const worst = [...byShape.entries()].sort((a, b) => b[1] - a[1])[0];
+        if (worst && worst[1] >= 3) {
+          warn.push(
+            `${SHAPE_RULE_FROM} 이전 기사 ${old.length}편 중 ${worst[1]}편이 절 구성이 동일합니다 ` +
+            '— 재확인 주기에 한 편씩 손보십시오',
+          );
         }
 
         for (const w of warn) logger.warn(w);
