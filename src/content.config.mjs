@@ -148,6 +148,29 @@ const scenes = defineCollection({
   }),
 });
 
+/**
+ * Hangul — 간판과 글자를 읽는 법.
+ *
+ * Decode 와 왜 나눴나 (2026-08-15 운영자 결정).
+ *   Decode = "저 사람이 왜 오빠라고 불렀지?"  — 보고 나서 생기는 호기심
+ *   Hangul = "이 간판이 무슨 가게지?"         — 지금 길에 서서 급한 문제
+ *   독자의 의도가 다르면 상자도 달라야 한다. 한 곳에 넣으면 둘 다 흐려진다.
+ */
+const hangul = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/hangul' }),
+  schema: ({ image }) => z.object({
+    ...baseFields(image),
+    // 이 글에서 다루는 글자·낱말. 검색과 색인에 쓴다.
+    letters: z.array(z.object({
+      ko: z.string(),
+      romanized: z.string().optional(),
+      note: z.string().optional(),
+    })).default([]),
+    seriesPart: z.number().int().min(1).optional(),
+    region: z.string().optional(),
+  }),
+});
+
 const guides = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/guides' }),
   schema: ({ image }) => z.object({
@@ -195,4 +218,5 @@ const now = defineCollection({
   }),
 });
 
-export const collections = { scenes, guides, decode, now };
+export const collections = {
+  hangul, scenes, guides, decode, now };

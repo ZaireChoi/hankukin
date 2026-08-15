@@ -1,0 +1,77 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SourceList from '../../../components/SourceList.astro';
+import ReadNext from '../../../components/ReadNext.astro';
+import Figure from '../../../components/Figure.astro';
+import { NOTICES } from '../../../lib/claims.mjs';
+import { BRAND, LOCALES } from '../../../config/brand.mjs';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('hangul', (e) => !e.data.draft);
+  return LOCALES.flatMap((lang) =>
+    entries.filter((e) => e.data.lang === lang).map((entry) => ({
+      params: { lang, slug: entry.id }, props: { entry },
+    }))
+  );
+}
+
+const { entry } = Astro.props;
+const { lang, slug } = Astro.params;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: d.title,
+  description: d.summary,
+  datePublished: d.publishedAt.toISOString(),
+  dateModified: d.checkedAt.toISOString(),
+  inLanguage: lang,
+  /**
+   * author 와 image 는 검색 결과 표시에 쓰인다 (2026-08-14 외부 지적으로 추가).
+   * 개인 필명을 만들지 않고 발행 주체를 그대로 쓴다 — 없는 사람을 지어내지 않는다.
+   */
+  author: { '@type': 'Organization', name: BRAND.name, url: `https://${BRAND.canonicalHost}/` },
+  publisher: { '@type': 'Organization', name: BRAND.name },
+  ...(d.hero ? { image: [new URL(d.hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
+  ...(d.region ? { contentLocation: { '@type': 'Place', name: d.region } } : {}),
+};
+---
+<BaseLayout title={d.title} description={d.summary} lang={lang}
+            path={`hangul/${slug}`} jsonLd={jsonLd}
+            ogType="article" ogImage={d.hero ?? null}
+            publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
+  <article class="wrap">
+    <header class="article-head">
+      <p class="kicker">Decode{d.era ? ` · ${d.era}` : ''}</p>
+      <h1>{d.title}</h1>
+      <p class="summary">{d.summary}</p>
+      <div class="meta">
+        {d.region && <span>{d.region}</span>}
+        <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
+      </div>
+    </header>
+
+    {d.hero && (
+      <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}
+              license={d.hero.license} sourceUrl={d.hero.sourceUrl}
+              widths={[640, 960, 1280, 1600]} priority />
+    )}
+
+    <section class="block">
+      <div class="prose"><Content /></div>
+    </section>
+
+    <ReadNext current={{ ...entry, _section: 'hangul' }} lang={lang} />
+
+    <SourceList sources={d.sources} checkedAt={d.checkedAt} />
+
+    <section class="block">
+      <p class="notice">{NOTICES.aiAssisted}</p>
+      <p class="notice">Spotted something wrong or out of date?
+        <a href={`/${lang}/contact`}>Report an error</a>.</p>
+    </section>
+  </article>
+</BaseLayout>

@@ -81,6 +81,8 @@ export const CATEGORIES = [
     lead: 'What Korea costs and how it works right now — fares, prices and rules, each checked against the operator on a stated date.' },
   { key: 'decode',  path: 'decode',  label: 'HANKUKIN Decode',   blurb: 'What It Means',
     lead: 'The words subtitles drop — what Korean speakers are actually saying to each other, and why it matters in the scene.' },
+  { key: 'hangul',  path: 'hangul',  label: 'HANKUKIN Hangul',   blurb: 'Read the Signs',
+    lead: 'How to read Korean writing well enough to use it — the letters, the signs on the street, and what each kind of shop calls itself.' },
   { key: 'guides',  path: 'guides',  label: 'Culture & History', blurb: 'Why It Matters',
     lead: 'The background behind the places you visit and the stories you watch — with sources you can check.' },
 ];
