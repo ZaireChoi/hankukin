@@ -126,11 +126,15 @@ export default function photoSanity() {
           const inUse = files.filter((f) => used.has(f));
           if (inUse.length === 0) continue;          // 안 쓰는 사진은 따지지 않는다
 
+          const seen = Boolean(ledger.verified?.[pl.slug]);
           const v = nameVerdict(pl.keyword, pl.title);
           if (v.level === 'fail') fails.push(`${pl.slug}: ${v.why}`);
-          else if (v.level === 'warn') warns.push(`${pl.slug}: ${v.why}`);
+          // 이미 사람이 열어 본 곳은 경고하지 않는다.
+          // 확인이 끝난 것까지 계속 떠들면 아무도 경고를 읽지 않게 된다 —
+          // 그러면 진짜 경보가 왔을 때도 지나친다.
+          else if (v.level === 'warn' && !seen) warns.push(`${pl.slug}: ${v.why}`);
 
-          if (!ledger.verified?.[pl.slug]) {
+          if (!seen) {
             unseen.push(`${pl.slug} — "${pl.title}" (${inUse.length}장 사용 중)`);
           }
         }
