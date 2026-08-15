@@ -38,7 +38,18 @@ export const MERCHANTS = {
      *   Traffic           최소 — 2026-08-14 발행 시작이라고 사실대로 적었다
      *   Promotion         자사 기사 안의 문맥 링크만. 유료검색·쿠폰·리스트메일 없음
      */
-    affiliate: true,
+    /**
+     * ⚠ 승인은 받았는데 **affiliate 를 아직 false 로 둔다.** 실수가 아니다.
+     *
+     * affiliate:true 로 켜는 순간 푸터가 'Some links are affiliate links' 로 바뀐다.
+     * 그런데 지금 기사에 걸린 Klook 링크가 **한 개도 없다.**
+     * 그러면 그 문장은 거짓이다 — 방향만 반대일 뿐, 8월 13일에 걷어낸 그 거짓말과 같다.
+     * 그때는 '없는데 있다고' 했고 지금은 '없는데 있다고' 할 뻔했다.
+     *
+     * **실제 상품 링크를 기사에 넣는 날 함께 켠다.** 그때 이 주석을 지운다.
+     * tagParam·tagValue 는 미리 채워 뒀으므로 한 글자만 바꾸면 된다.
+     */
+    affiliate: false,
     appliedAt: '2026-08-16', approvedAt: '2026-08-16',
     /**
      * 2026-08-16 승인. Klook 은 자동 승인이라 신청 당일 링크 도구가 열렸다.
