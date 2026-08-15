@@ -63,9 +63,31 @@ export const HREFLANG = {
  */
 export const NOINDEX_PATHS = [];   // now 는 2026-08-14 발행 시작 (요금·교통·예약)
 
+/**
+ * 섹션 정의는 여기 한 곳에만 둔다.
+ *
+ * 2026-08-14 운영자 지적: Now 와 Decode 목록 페이지가 둘 다
+ * "Why It Matters / Culture & History" 를 달고 있었다.
+ * guides/index.astro 를 복사해 링크 경로만 바꾸고 제목·설명·path·JSON-LD 를
+ * 그대로 둔 것이 원인이다. 눈으로 보기 전에는 아무도 몰랐다.
+ *
+ * 그래서 목록 페이지가 제목을 직접 적지 않고 여기서 가져가게 했다.
+ * 한 곳에만 있으면 어긋날 자리가 없다.
+ */
 export const CATEGORIES = [
-  { key: 'scenes',  path: 'scenes',  label: 'HANKUKIN Scenes', blurb: 'Where to Go' },
-  { key: 'now',     path: 'now',     label: 'HANKUKIN Now',    blurb: "What's Hot" },
-  { key: 'decode',  path: 'decode',  label: 'HANKUKIN Decode', blurb: 'What It Means' },
-  { key: 'guides',  path: 'guides',  label: 'Culture & History', blurb: 'Why It Matters' },
+  { key: 'scenes',  path: 'scenes',  label: 'HANKUKIN Scenes',   blurb: 'Where to Go',
+    lead: 'Filming locations you can stand inside — how to get there, what it costs, and where to stand for the shot.' },
+  { key: 'now',     path: 'now',     label: 'HANKUKIN Now',      blurb: "What's Hot",
+    lead: 'What Korea costs and how it works right now — fares, prices and rules, each checked against the operator on a stated date.' },
+  { key: 'decode',  path: 'decode',  label: 'HANKUKIN Decode',   blurb: 'What It Means',
+    lead: 'The words subtitles drop — what Korean speakers are actually saying to each other, and why it matters in the scene.' },
+  { key: 'guides',  path: 'guides',  label: 'Culture & History', blurb: 'Why It Matters',
+    lead: 'The background behind the places you visit and the stories you watch — with sources you can check.' },
 ];
+
+/** 경로로 섹션을 찾는다. 없으면 던진다 — 조용히 엉뚱한 제목이 붙는 것보다 낫다. */
+export function categoryByPath(path) {
+  const c = CATEGORIES.find((x) => x.path === path);
+  if (!c) throw new Error(`알 수 없는 섹션 경로: ${path}`);
+  return c;
+}

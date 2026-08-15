@@ -1,30 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { LOCALES } from '../../../config/brand.mjs';
+import { LOCALES, categoryByPath } from '../../../config/brand.mjs';
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
-const guides = (await getCollection('guides', (e) => !e.data.draft && e.data.lang === lang))
+
+// 제목·설명은 brand.mjs 한 곳에서 가져온다. 여기에 직접 적지 않는다 —
+// 그렇게 했다가 Now 와 Decode 가 둘 다 'Culture & History' 를 달고 있었다 (2026-08-14).
+const cat = categoryByPath('guides');
+
+const items = (await getCollection('guides', (e) => !e.data.draft && e.data.lang === lang))
   .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
 const jsonLd = {
-  '@context': 'https://schema.org', '@type': 'ItemList',
-  itemListElement: guides.map((g, i) => ({ '@type':'ListItem', position:i+1, name:g.data.title,
+  '@context': 'https://schema.org', '@type': 'ItemList', name: cat.label,
+  itemListElement: items.map((g, i) => ({ '@type':'ListItem', position:i+1, name:g.data.title,
     url: new URL(`/${lang}/guides/${g.id}/`, Astro.site).href })),
 };
 ---
-<BaseLayout lang={lang} path="guides" title="Culture &amp; History"
-  description="The history and culture behind the places, stories and words — sourced from public institutions."
+<BaseLayout lang={lang} path={cat.path} title={cat.label}
+  description={cat.lead}
   jsonLd={jsonLd}>
   <div class="wrap">
     <section class="hero">
-      <p class="q">Why It Matters</p>
-      <h1>Culture &amp; History</h1>
-      <p>The background behind the places you visit and the stories you watch — with sources you can check.</p>
+      <p class="q">{cat.blurb}</p>
+      <h1>{cat.label}</h1>
+      <p>{cat.lead}</p>
     </section>
     <section class="block">
       <h2>All articles</h2>
       <ul class="sources">
-        {guides.map((g) => (
+        {items.map((g) => (
           <li>
             <span class="st">{g.data.era ?? 'Korea'}{g.data.region ? ` · ${g.data.region}` : ''}</span>
             <a href={`/${lang}/guides/${g.id}/`}>{g.data.title}</a>
