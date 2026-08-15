@@ -117,7 +117,8 @@ export default function photoSanity() {
           : { verified: {} };
         const used = usedFiles();
 
-        const fails = [];
+        const fails = [];   // 장소가 다르다
+        const lazy  = [];   // 기록이 부실하다 — 원인이 다르니 메시지도 달라야 한다
         const warns = [];
         const unseen = [];
 
@@ -134,8 +135,7 @@ export default function photoSanity() {
           const LAZY = ['확인', '확인함', 'ok', 'OK', '맞음', '정상', '-', '.'];
           const seen = Boolean(rec) && note.length >= 12 && !LAZY.includes(note);
           if (rec && !seen) {
-            fails.push(`${pl.slug}: 확인 대장에 기록은 있으나 note 가 비었거나 너무 짧습니다 `
-              + `— 무엇이 찍혀 있는지 실제로 적으십시오 (현재: "${note}")`);
+            lazy.push(`${pl.slug} — 현재 note: "${note}"`);
             continue;
           }
           const v = nameVerdict(pl.keyword, pl.title);
@@ -150,6 +150,16 @@ export default function photoSanity() {
           }
         }
 
+        if (lazy.length) {
+          throw new Error(
+            `확인 대장 기록이 부실합니다 (${lazy.length}곳).\n\n` +
+            lazy.map((l) => `  ${l}`).join('\n') +
+            '\n\n"진짜" · "확인함" 은 봤다는 말이지 **무엇을 봤는지**가 아닙니다.\n' +
+            '여섯 달 뒤에 이 줄만 읽고도 그 사진이 무엇인지 알 수 있어야 합니다.\n\n' +
+            '  python3 scripts/photo-audit.py <슬러그>\n' +
+            '로 대조표를 만들고 /tmp/photo-audit.png 를 열어 본 뒤 다시 적으십시오.\n',
+          );
+        }
         if (fails.length) {
           throw new Error(
             `사진의 장소가 요청과 다릅니다 (${fails.length}건).\n\n` +
