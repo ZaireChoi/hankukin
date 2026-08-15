@@ -202,6 +202,33 @@ export default function contentQuality() {
           );
         }
 
+        /**
+         * ── 상업 링크가 조용히 사라지는 것을 막는다 ───────────────────
+         *
+         * 2026-08-16 밤에 찾았다. eSIM 편 frontmatter 에 Klook 제휴 링크가
+         * 적혀 있었는데 **화면에는 없었다.** decode 와 hangul 템플릿이
+         * CtaBlock 을 렌더링하지 않았기 때문이다.
+         * 스키마는 통과, 빌드도 통과, 링크만 사라진다. **아무 소리도 안 났다.**
+         *
+         * 이 사이트에서 다섯 번 반복된 모양이다 — 한 군데 고치고 옆을 안 본 것.
+         * 그래서 기억이 아니라 **파일을 읽어서** 확인한다.
+         * 새 축을 만들면 이 검사가 저절로 그 축을 포함한다.
+         */
+        const PAGE_DIR = 'src/pages/[lang]';
+        for (const sec of readdirSync(PAGE_DIR)) {
+          const tpl = join(PAGE_DIR, sec, '[slug].astro');
+          let src;
+          try { src = readFileSync(tpl, 'utf8'); } catch { continue; }
+          if (!/<CtaBlock/.test(src)) {
+            fail.push(
+              `${sec} — 기사 템플릿이 CtaBlock 을 렌더링하지 않습니다 (${tpl}).\n` +
+              '    이 축의 기사가 visitKorea / bringKoreaHome 링크를 적어도\n' +
+              '    화면에는 아무것도 나오지 않고, 오류도 나지 않습니다.\n' +
+              '    실제로 eSIM 편의 Klook 제휴 링크가 이렇게 사라져 있었습니다.',
+            );
+          }
+        }
+
         for (const w of warn) logger.warn(w);
 
         if (fail.length) {

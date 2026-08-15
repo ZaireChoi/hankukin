@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import SourceList from '../../../components/SourceList.astro';
+import CtaBlock from '../../../components/CtaBlock.astro';
 import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
 import Figure from '../../../components/Figure.astro';
@@ -69,6 +70,7 @@ const jsonLd = {
 
     <ReadNext current={{ ...entry, _section: 'decode' }} lang={lang} />
 
+    <CtaBlock heading="Book it or find it" items={[...(d.visitKorea ?? []), ...(d.bringKoreaHome ?? [])]} />
     <SourceList sources={d.sources} checkedAt={d.checkedAt} />
     <Byline lang={lang} />
 

@@ -99,6 +99,21 @@ const baseFields = (image) => ({
   hero: imageSchema(image).optional(),
   sources: z.array(source).min(1),
   draft: z.boolean().default(false),
+
+  /**
+   * 상업 링크는 **모든 축의 공통 필드다.** (2026-08-16 밤에 옮겼다)
+   *
+   * 전에는 scenes·guides·now 세 곳에만 선언돼 있었다.
+   * 그래서 eSIM 편(decode)이 frontmatter 에 Klook 제휴 링크를 적었을 때
+   * Zod 가 **모르는 키라고 조용히 버렸다.** 오류도 경고도 없었다.
+   * 스키마를 통과했고, 빌드가 성공했고, 링크만 없었다.
+   *
+   * 어느 축이 상업 링크를 가질 수 있는지는 **글이 정할 일이지 스키마가 정할 일이 아니다.**
+   * 한글 편에 한국어 교재를, decode 편에 eSIM 을 붙일 이유는 얼마든지 있다.
+   * 여기 두면 새 축을 만들어도 저절로 따라온다.
+   */
+  visitKorea: z.array(affiliateLink).default([]),
+  bringKoreaHome: z.array(affiliateLink).default([]),
 });
 
 const scenes = defineCollection({
@@ -157,23 +172,9 @@ const scenes = defineCollection({
     itinerary: z.array(z.object({
       slot: z.enum(['morning', 'lunch', 'afternoon', 'evening', 'night']),
       title: z.string(),
-  /**
-   * 검색 결과 전용 제목 (선택).
-   *
-   * 2026-08-16. 제목이 62자를 넘으면 모바일 검색 결과에서 잘린다.
-   * 그렇다고 제목을 「Geoje Island Guide」 처럼 밋밋하게 깎으면
-   * **클릭할 이유가 사라진다** — 그건 정확히 AI 블로그가 하는 짓이다.
-   *
-   * 그래서 둘을 분리한다.
-   *   title    — 페이지에 실제로 걸리는 제목. 길어도 좋다. 여기가 필력이다.
-   *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
-   * seoTitle 이 없으면 title 을 쓴다.
-   */
-  seoTitle: z.string().max(62).optional(),
+      // (일정 한 칸에는 seoTitle 이 없다. 예전 일괄치환이 여기까지 밀고 들어와 있었다 — 2026-08-16 제거)
       detail: z.string(),
     })).default([]),
-    visitKorea: z.array(affiliateLink).default([]),
-    bringKoreaHome: z.array(affiliateLink).default([]),
     nearbyCulture: z.string().optional(),
   }).superRefine((d, ctx) => {
     if (d.sceneKind !== 'location') return;
@@ -224,8 +225,6 @@ const guides = defineCollection({
      * 한글 읽는 법이나 호칭 설명에 예약 버튼을 붙이면
      * 그때부터 이 사이트는 다시 자동 생산물처럼 읽힌다.
      */
-    visitKorea: z.array(affiliateLink).default([]),
-    bringKoreaHome: z.array(affiliateLink).default([]),
   }),
 });
 
@@ -274,8 +273,6 @@ const now = defineCollection({
      * 한글 읽는 법이나 호칭 설명에 예약 버튼을 붙이면
      * 그때부터 이 사이트는 다시 자동 생산물처럼 읽힌다.
      */
-    visitKorea: z.array(affiliateLink).default([]),
-    bringKoreaHome: z.array(affiliateLink).default([]),
     // 요금·운임을 담은 글은 이 날짜를 본문에도 적고 3개월마다 재확인한다
     faresCheckedAt: z.coerce.date().optional(),
   }),
