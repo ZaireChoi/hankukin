@@ -1,0 +1,40 @@
+{
+  "_읽는이에게": [
+    "상업 링크는 **살아 있는 페이지로 눈으로 본 것만** 싣는다.",
+    "2026-08-16 에 klook.com/en-US/city/18-seoul/ 로 링크를 만들었다가 404 를 봤다.",
+    "포털 링크 생성기는 **없는 주소도 그대로 받아준다.**",
+    "사진에 쓰던 규율을 링크에도 옮긴다 — 열어 보지 않은 링크는 발행되지 않는다."
+  ],
+  "verified": {
+    "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/": {
+      "at": "2026-08-16",
+      "title": "Gyeongju Hanbok Experience",
+      "note": "열어서 확인. Klook's choice · 5.0/5 · 1K+ 예약. ?aid= 붙이면 utm_campaign=131289 자동 부착 확인. 상품 사진 배경이 월정교라 기사와 실제로 맞는다."
+    },
+    "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/": {
+      "at": "2026-08-16",
+      "title": "AREX Incheon Airport Express Train Ticket",
+      "note": "열어서 확인. 4.8(81,714) · 2M+ 예약 · $8.15. utm_campaign 부착 확인."
+    },
+    "https://www.klook.com/en-US/activity/20866-hanbok-rental-chagdeok-palace-dorothy-seoul/": {
+      "at": "2026-08-16",
+      "title": "Hanbok Rental near Changdeok Palace by Dorothy Hanbok",
+      "note": "열어서 확인. ⚠ 검색 카드에는 'near Gyeongbokgung' 으로 잘려 보였으나 실제는 **창덕궁** 상품이다. 라벨을 사실대로 고쳤다. utm_campaign 부착 확인."
+    },
+    "https://www.klook.com/en-US/activity/88260-geoje-tour-from-busan/": {
+      "at": "2026-08-16",
+      "title": "Hidden Gem Geoje & Tongyeong Island Tour from Busan",
+      "note": "열어서 확인. Klook's choice. 상품 대표사진에 바람의 언덕 풍차가 그대로 나온다."
+    }
+  },
+  "rejected": [
+    {
+      "url": "https://www.klook.com/en-US/city/18-seoul/",
+      "why": "404. 도시 ID 를 추측해 만든 주소였다. 링크 생성기는 받아줬다."
+    },
+    {
+      "url": "https://www.klook.com/en-US/rails-6/1010-south-korea/",
+      "why": "/transport/ 로 리디렉션되면서 **aid 파라미터가 사라진다.** 페이지는 열리는데 수수료가 안 잡힌다 — 가장 늦게 발견되는 실패라 아예 쓰지 않는다."
+    }
+  ]
+}

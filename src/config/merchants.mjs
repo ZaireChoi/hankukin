@@ -107,6 +107,20 @@ export function isAffiliate(merchant) {
  */
 export function decorate(url, merchant) {
   if (!isAffiliate(merchant)) return url;
+  /*
+   * Klook 은 activity 주소만 추적된다 (2026-08-16 실측).
+   *   /transport/ · /rails-6/ 는 열리기는 하는데 리디렉션 과정에서 aid 가 사라진다.
+   *   utm_campaign 이 안 붙는 것을 브라우저로 확인했다.
+   *   링크는 멀쩡히 작동하고 독자도 아무 이상을 못 느낀다. **수수료만 0 이 된다.**
+   *   몇 달 뒤 '왜 수익이 없지' 하고 들여다봐야 알게 되는 종류라서 여기서 막는다.
+   */
+  if (merchant === 'Klook' && /klook\.com/.test(url) && !/\/activity\//.test(url)) {
+    throw new Error(
+      `Klook 링크는 /activity/ 주소만 추적됩니다:\n  ${url}\n\n` +
+      '/transport/ · /rails-6/ 등은 리디렉션에서 aid 가 사라져 수수료가 잡히지 않습니다.\n' +
+      '해당 상품의 /activity/ 주소를 찾아 쓰거나, 없으면 링크를 넣지 마십시오.\n',
+    );
+  }
   if (merchant === 'Klook' && /\/\/s\.klook\.com/.test(url)) {
     throw new Error(
       `s.klook.com 주소는 제휴 추적이 되지 않습니다:\n  ${url}\n\n` +
