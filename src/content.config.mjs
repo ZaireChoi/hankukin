@@ -80,12 +80,26 @@ const scenes = defineCollection({
   schema: ({ image }) => z.object({
     ...baseFields(image),
     work: z.string(),
-    workType: z.enum(['drama', 'film', 'mv', 'variety']),
+    workType: z.enum(['drama', 'film', 'mv', 'variety', 'kpop', 'performance', 'animation']),
+    /**
+     * Scenes 의 두 종류 (2026-08-15 운영자 결정).
+     *
+     *   location — 촬영지·현장. 주소·사진 팁·교통이 **반드시** 있어야 한다.
+     *              이 강제가 이 컬렉션의 존재 이유다. 풀면 안 된다.
+     *   culture  — 작품·현상·인물 자체. 갈 곳이 없는 글이다.
+     *              K팝 차트, 애니메이션, 공연 문화가 여기 들어온다.
+     *
+     * 왜 나눴나. Scenes 를 K-드라마·K팝·K무비·K공연 전체의 입구로 삼기로 했는데,
+     * 기존 스키마는 '한 장소' 를 전제하고 있어서 차트 이야기가 들어갈 자리가 없었다.
+     * 그렇다고 주소 강제를 없애면 촬영지 기사가 부실해진다. 그래서 종류를 나누고,
+     * location 일 때만 강제한다 (아래 superRefine).
+     */
+    sceneKind: z.enum(['location', 'culture']).default('location'),
     stars: z.array(z.string()).default([]),
     claimWording: z.enum([
       'official_filming_location', 'confirmed_in_interview', 'official_social_appearance',
       'reported_by_media', 'inspired_by', 'suggested_nearby',
-    ]),
+    ]).optional(),
     place: z.object({
       name: z.string(),
       nameKo: z.string().optional(),
@@ -97,7 +111,7 @@ const scenes = defineCollection({
       publicAccess: z.boolean().default(true),
       officialUrl: z.string().url().optional(),
       safetyNotes: z.string().optional(),
-    }),
+    }).optional(),
     photoTips: z.object({
       whereToStand: z.string(),
       direction: z.string(),
@@ -106,14 +120,14 @@ const scenes = defineCollection({
       bestTime: z.string(),
       crowdTip: z.string().optional(),
       props: z.array(z.string()).default([]),
-    }),
+    }).optional(),
     visit: z.object({
       bestSeason: z.string(),
       gettingThere: z.string(),
       transportCost: z.string().optional(),
       admission: z.string().optional(),
       whatToBring: z.array(z.string()).default([]),
-    }),
+    }).optional(),
     itinerary: z.array(z.object({
       slot: z.enum(['morning', 'lunch', 'afternoon', 'evening', 'night']),
       title: z.string(),
@@ -122,6 +136,15 @@ const scenes = defineCollection({
     visitKorea: z.array(affiliateLink).default([]),
     bringKoreaHome: z.array(affiliateLink).default([]),
     nearbyCulture: z.string().optional(),
+  }).superRefine((d, ctx) => {
+    if (d.sceneKind !== 'location') return;
+    for (const f of ['place', 'photoTips', 'visit', 'claimWording']) {
+      if (!d[f]) ctx.addIssue({
+        code: z.ZodIssueCode.custom, path: [f],
+        message: `촬영지 기사(sceneKind: location)에는 ${f} 가 반드시 있어야 합니다. `
+               + `갈 곳이 없는 글이면 sceneKind 를 culture 로 두십시오.`,
+      });
+    }
   }),
 });
 

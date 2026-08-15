@@ -26,7 +26,8 @@ const d = entry.data;
 const { Content } = await render(entry);
 
 /** 영구폐업 시 예약·구매 CTA 자동 제거 (05 §4) */
-const closed = d.place.businessStatus === 'permanently_closed';
+const isPlace = Boolean(d.place);
+const closed = d.place?.businessStatus === 'permanently_closed';
 const visitLinks = closed ? [] : d.visitKorea;
 
 /**
@@ -58,7 +59,7 @@ const jsonLd = {
   ...(d.hero ? { image: [new URL(d.hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
       about: { '@type': 'CreativeWork', name: d.work },
     },
-    {
+    ...(d.place ? [{
       '@type': 'TouristAttraction',
       name: d.place.name,
       address: d.place.address,
@@ -66,7 +67,7 @@ const jsonLd = {
         ? { geo: { '@type': 'GeoCoordinates', latitude: d.place.lat, longitude: d.place.lng } }
         : {}),
       ...(d.place.officialUrl ? { url: d.place.officialUrl } : {}),
-    },
+    }] : []),
   ],
 };
 ---
@@ -82,7 +83,7 @@ const jsonLd = {
       <h1>{d.title}</h1>
       <p class="summary">{d.summary}</p>
       <div class="meta">
-        <ClaimBadge wording={d.claimWording} />
+        {d.claimWording && <ClaimBadge wording={d.claimWording} />}
         {d.stars.length > 0 && <span>{d.stars.join(' · ')}</span>}
         <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
@@ -109,7 +110,8 @@ const jsonLd = {
       <div class="prose"><Content /></div>
     </section>
 
-    <!-- 6·7·8. 사진 재현 정보 -->
+    <!-- 6·7·8. 사진 재현 정보 — 촬영지 기사에만 있다 -->
+    {d.photoTips && (
     <section class="block">
       <h2>How to get a similar photo</h2>
       <dl class="facts">
@@ -122,9 +124,10 @@ const jsonLd = {
       </dl>
       <p class="notice">{NOTICES.photoAngle}</p>
     </section>
+    )}
 
     <!-- 9·10·13. 장소·교통·비용 -->
-    <PlaceFacts place={d.place} visit={d.visit} />
+    {d.place && d.visit && <PlaceFacts place={d.place} visit={d.visit} />}
 
     <!-- 11·12. 시간대별 주변 일정 -->
     {d.itinerary.length > 0 && (
