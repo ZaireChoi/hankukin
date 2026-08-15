@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import noSharedImages from './src/integrations/no-shared-images.mjs';
 import contentQuality from './src/integrations/content-quality.mjs';
 import noDuplicateFiles from './src/integrations/no-duplicate-files.mjs';
+import photoSanity from './src/integrations/photo-sanity.mjs';
 import { BRAND, LOCALES, DEFAULT_LOCALE, NOINDEX_PATHS } from './src/config/brand.mjs';
 
 export default defineConfig({
@@ -24,6 +25,7 @@ export default defineConfig({
   integrations: [
     noSharedImages(),
     noDuplicateFiles(),
+    photoSanity(),
     contentQuality(),
     mdx(),
     sitemap({

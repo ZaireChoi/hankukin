@@ -1,0 +1,94 @@
+{
+  "_읽는 법": "여기 없는 장소의 사진이 기사에 실리면 빌드가 실패합니다. 실제로 열어 본 뒤에만 적으십시오.",
+  "_왜": "2026-08-15 하루에 사진 오매칭을 여덟 번 걸렀고 여덟 번 다 '열어 봤기 때문에' 걸렀습니다.",
+  "verified": {
+    "bukchon": {
+      "verifiedAt": "2026-08-15",
+      "note": "한옥 지붕·좁은 골목·대문. 남산타워가 배경에 보인다"
+    },
+    "ikseondong": {
+      "verifiedAt": "2026-08-15",
+      "note": "좁은 골목 상점가, 초록 타일 바닥"
+    },
+    "gyeonghuigung": {
+      "verifiedAt": "2026-08-15",
+      "note": "전각이 아니라 **공원 산책로**. 경희궁이 대부분 사라졌다는 사실과 일치"
+    },
+    "naejangsan-maple": {
+      "verifiedAt": "2026-08-15",
+      "note": "등재명은 맞으나 **초록 여름 공원**. 단풍 없음. 단풍잎 조형 파빌리온 1장"
+    },
+    "deogyusan-main": {
+      "verifiedAt": "2026-08-15",
+      "note": "운해 위 상고대 일출 2장(겨울), 적상산성 건물, 케이블카, 여름 능선"
+    },
+    "gyeongju-cheomseongdae": {
+      "verifiedAt": "2026-08-15",
+      "note": "첨성대 실물 + 유채밭·항공. 진짜"
+    },
+    "gyeongju-donggung": {
+      "verifiedAt": "2026-08-15",
+      "note": "동궁과 월지 야경 항공. 진짜"
+    },
+    "gyeongju-woljeonggyo": {
+      "verifiedAt": "2026-08-15",
+      "note": "월정교 주야. 진짜"
+    },
+    "geoje-windy-hill": {
+      "verifiedAt": "2026-08-15",
+      "note": "바람의 언덕 잔디·바다·해상 데크. 진짜"
+    },
+    "geoje-maemidong": {
+      "verifiedAt": "2026-08-15",
+      "note": "매미성 석축. 진짜"
+    },
+    "geoje-okpo": {
+      "verifiedAt": "2026-08-15",
+      "note": "**실내 전시실**이다. 야외 사진 아님 — 쓸 때 주의"
+    },
+    "cheonggyecheon": {
+      "verifiedAt": "2026-08-15",
+      "note": "청계광장 **겨울 등축제** 야경. 하천 자체가 아니다"
+    },
+    "namdaemun-market": {
+      "verifiedAt": "2026-08-15",
+      "note": "시장 골목·호떡·튀김·신발가게. 진짜"
+    },
+    "ddp": {
+      "verifiedAt": "2026-08-15",
+      "note": "DDP 실내 곡면과 외관. 1장은 크리스마스트리 실내"
+    },
+    "incheon-airport": {
+      "verifiedAt": "2026-08-15",
+      "note": "공항 터미널 실내 4장"
+    },
+    "gwangjang-market": {
+      "verifiedAt": "2026-08-15",
+      "note": "빈대떡 부치는 장면 2장"
+    },
+    "myeongdong": {
+      "verifiedAt": "2026-08-15",
+      "note": "명동 거리·올리브영·상점. 진짜"
+    },
+    "hangang-yeouido": {
+      "verifiedAt": "2026-08-15",
+      "note": "한강 수면, 대여 자전거"
+    },
+    "changdeokgung-injeongmun": {
+      "verifiedAt": "2026-08-15",
+      "note": "창덕궁 인정문. 진짜"
+    },
+    "namsan-park": {
+      "verifiedAt": "2026-08-15",
+      "note": "**숲길이 아니다.** 1·3은 사랑의 자물쇠, 5는 실내 전시장(파란 조명)"
+    },
+    "olympic-park": {
+      "verifiedAt": "2026-08-15",
+      "note": "설경 4장. 메타세쿼이아·조각·벤치. 진짜"
+    },
+    "anyangcheon-cherry": {
+      "verifiedAt": "2026-08-15",
+      "note": "5는 만개, 1·2·4는 잎이 난 뒤. 같은 길"
+    }
+  }
+}

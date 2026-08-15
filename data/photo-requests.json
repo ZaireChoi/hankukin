@@ -101,19 +101,35 @@
   ],
   "requests": [
     {
-      "slug": "seongsu",
+      "slug": "seongsu-forest",
+      "keyword": "서울숲",
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
+    },
+    {
+      "slug": "seongsu-cafe",
       "keyword": "성수동 카페거리",
       "dir": "places"
     },
     {
-      "slug": "seongsu-suyeon",
-      "keyword": "서울숲",
+      "slug": "seongsu-underground",
+      "keyword": "언더스탠드에비뉴",
+      "dir": "places"
+    },
+    {
+      "slug": "seongsu-handmade",
+      "keyword": "성수동 수제화거리",
       "dir": "places"
     },
     {
       "slug": "suwon-hwaseong",
       "keyword": "수원화성",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "suwon-haenggung",
@@ -123,24 +139,36 @@
     {
       "slug": "ilsan-lake-park",
       "keyword": "일산호수공원",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "gyeongju-bulguksa",
       "keyword": "불국사",
       "exactTitle": "불국사",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "gyeongju-daereungwon",
       "keyword": "대릉원",
       "exactTitle": "대릉원",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "geoje-oedo",
       "keyword": "외도보타니아",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "geoje-windy-hill",
@@ -150,7 +178,10 @@
     {
       "slug": "geoje-mongdol",
       "keyword": "학동흑진주몽돌해변",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "geoje-pow-camp",
@@ -175,7 +206,10 @@
     {
       "slug": "gyeongju-daereungwon",
       "keyword": "대릉원",
-      "dir": "places"
+      "dir": "places",
+      "expect": {
+        "outdoor": true
+      }
     },
     {
       "slug": "gyeongju-cheomseongdae",
