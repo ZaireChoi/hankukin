@@ -310,6 +310,57 @@ export default function contentQuality() {
           }
         }
 
+        /**
+         * ── 공개 대장이 없는 주소를 가리키는 것을 막는다 (여덟 번째) ──────
+         *
+         * 2026-08-17 외부 검토가 잡았다.
+         *   대장에 /en/guides/korean-street-food-hidden-pork-and-fish/ 라고 적혀 있었다.
+         *   실제 주소는 /en/now/... 다. 축을 옮기고 대장을 안 고친 것이다.
+         *
+         * 이게 왜 다른 깨진 링크보다 나쁜가.
+         *   대장은 **우리가 틀렸다고 인정한 기록**이다.
+         *   "여기서 틀렸습니다" 하고 가리킨 곳에 글이 없으면,
+         *   정정을 확인하려던 사람이 확인하지 못한다.
+         *   투명성 장치가 작동하지 않으면 투명성의 **주장만** 남는다.
+         *
+         * 「무엇이 막혔나요」 색인에는 이 검사가 있었는데 대장에는 없었다.
+         * 같은 모양을 또 한 군데만 고친 것이다.
+         */
+        const LEDGER_SCAN_DIR = 'src/content';
+        const liveUrls = new Set();
+        for (const sec of readdirSync(LEDGER_SCAN_DIR)) {
+          let files;
+          try { files = readdirSync(join(LEDGER_SCAN_DIR, sec)); } catch { continue; }
+          for (const f of files) {
+            if (!/\.mdx?$/.test(f)) continue;
+            const raw = readFileSync(join(LEDGER_SCAN_DIR, sec, f), 'utf8');
+            const lang = (raw.match(/^lang:\s*(\S+)/m) ?? [])[1] ?? 'en';
+            liveUrls.add(`/${lang}/${sec}/${f.replace(/\.mdx?$/, '')}/`);
+          }
+        }
+        let ledger;
+        try {
+          ledger = JSON.parse(readFileSync('data/ledger.json', 'utf8'));
+        } catch { ledger = null; }
+        if (ledger) {
+          const rows = Object.values(ledger)
+            .filter(Array.isArray)
+            .flat()
+            .filter((r) => r && typeof r.article === 'string');
+          for (const r of rows) {
+            // 사이트 밖(정책 페이지 등)을 가리키는 항목은 이 검사의 대상이 아니다.
+            if (!/^\/[a-z]{2}\/[a-z]+\//.test(r.article)) continue;
+            if (!liveUrls.has(r.article)) {
+              fail.push(
+                `공개 대장이 없는 기사를 가리킵니다 — ${r.article}\n` +
+                `    항목 : ${(r.wrong ?? r.title ?? '').slice(0, 70)}\n` +
+                '    대장은 우리가 틀렸다고 인정한 기록입니다.\n' +
+                '    가리킨 자리에 글이 없으면 정정을 확인할 방법이 없습니다.',
+              );
+            }
+          }
+        }
+
         for (const w of warn) logger.warn(w);
 
         if (fail.length) {

@@ -8,10 +8,26 @@ publishedAt: 2026-08-16
 checkedAt: 2026-08-16
 riskGrade: yellow
 contentScore: 86
+# 2026-08-17. 이 기사의 요지는 "번호는 나온다" 인데
+# 버튼 하나가 **번호가 안 나오는 상품**을 팔고 있었다. 외부 검토가 잡았고, 맞았다.
+# Klook 상품 페이지 원문: "This is a Data-only SIM card. Calls, texts, or topping up
+# additional credits will not be possible." (2026-08-17 확인)
+# → 링크를 빼지 않고 **무엇인지 라벨에 적는다.** 데이터만 필요한 독자에게는 이게 맞는 물건이다.
+#   번호가 필요한 독자는 통신사로 보낸다. 그쪽은 제휴가 없고, 없는 채로 링크한다.
 visitKorea:
-  - label: "Korea eSIM — buy before you fly, on Klook"
+  - label: "Korea eSIM, data only — no 010 number, no calls, no SMS"
     url: "https://www.klook.com/en-US/activity/100060-4g-esim-korea/"
     merchant: "Klook"
+    category: experience
+    relationship: suggested
+  - label: "LTE eSIM with Data, Call and SMS — buy online, verify passport by voucher (SK Telecom)"
+    url: "https://www.skroaming.com/esim/esim"
+    merchant: "SK Telecom"
+    category: experience
+    relationship: suggested
+  - label: "Voice eSIM — sold at the airport roaming centre only (KT)"
+    url: "https://roaming.kt.com/eng/esim"
+    merchant: "KT"
     category: experience
     relationship: suggested
 sources:
@@ -137,7 +153,11 @@ And note the sequencing quirk, because **the two carriers start the clock differ
 
 ## So which one
 
-**Sightseeing, restaurants you walk into, taxis, museums:** Data Only, bought online before you fly. You will have a number, you can be called back by a hotel or a tour, and you never queue.
+**Sightseeing, restaurants you walk into, taxis, museums:** Data Only, bought online before you fly, and it matters **who you buy it from.**
+
+A Data Only eSIM sold **by the Korean carrier itself** carries an 010 number — that is why LG U+ has a line on its data page explaining when the number appears. A Data Only eSIM sold through a travel platform is usually a reseller plan on the same networks, and those are sold as data and nothing else. Klook's Korea eSIM says so on its own product page: "This is a Data-only SIM card. Calls, texts, or topping up additional credits will not be possible."
+
+Both connect you to the same towers at the same speed. If all you want is maps, translation and messaging apps, the reseller plan is cheaper and arrives in minutes. If you want a hotel or a tour to be able to ring you back, buy from the carrier.
 
 **Booking things that text you, or staying long enough to need an account:** Data + Voice — **online in advance from SKT** (verify your passport through the emailed voucher, between 8am and 10pm Korean time), or at the airport counter with KT and LG U+, passport in hand.
 

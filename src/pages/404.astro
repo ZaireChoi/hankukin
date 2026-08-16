@@ -1,0 +1,50 @@
+---
+/**
+ * 404.
+ *
+ * 2026-08-17 외부 검토 지적. 이 파일이 아예 없었다.
+ *   없는 주소를 열면 404 가 아니라 홈으로 갔다.
+ *   구글은 이것을 soft 404 로 본다 — "없다" 고 말해야 할 자리에서
+ *   "여기 있다" 는 신호(200)를 보내는 것이라, 색인이 흐려진다.
+ *
+ * 실제로 우리 대장에 잘못된 주소가 하나 있었고, 그 주소를 눌러도
+ * 404 가 안 나서 **아무도 깨진 걸 몰랐다.** 404 는 오류 화면이 아니라
+ * 우리에게 오는 보고서다. 없애 두면 보고가 안 온다.
+ *
+ * Cloudflare Pages 는 정적 빌드의 404.html 을 404 상태 코드로 내보낸다.
+ *
+ * 그리고 이 페이지는 사과문이 아니라 **색인**이다.
+ * 여기 온 사람은 뭔가를 찾다가 못 찾은 사람이고,
+ * 우리 사이트에서 그 사람에게 가장 쓸모 있는 물건이 「무엇이 막혔나요」다.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StuckIndex from '../components/StuckIndex.astro';
+import { DEFAULT_LOCALE } from '../config/brand.mjs';
+
+const lang = DEFAULT_LOCALE;
+---
+<BaseLayout
+  title="That page is not here"
+  description="The page you asked for does not exist on this site. Here is the list of problems we do have answers for."
+  lang={lang}
+  path="404"
+  noindex={true}
+>
+  <h1>That page is not here</h1>
+  <p class="lede">
+    The address you followed does not exist on this site — either it never did, or we moved
+    the article and left a link behind. If a link on our own pages sent you here,
+    <a href={`/${lang}/contact/`}>tell us</a>: broken links of ours are our mistake, not yours.
+  </p>
+
+  <StuckIndex lang={lang} mode="full" />
+
+  <p class="lede">
+    Or start from <a href={`/${lang}/`}>the front page</a>.
+  </p>
+</BaseLayout>
+
+<style>
+  h1 { font-size: 1.9rem; letter-spacing: -0.015em; margin: 0 0 .8rem; }
+  .lede { font-size: 1rem; line-height: 1.7; color: #4a453f; max-width: 42rem; margin: 0 0 2rem; }
+</style>

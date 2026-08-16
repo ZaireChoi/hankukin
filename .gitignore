@@ -23,3 +23,9 @@ hankukin-src.tgz
 
 # 예약 작업이 node 를 못 찾을 때 알려 주는 로컬 힌트
 scripts/node-path.txt
+
+# 설치·빌드 실행 기록 (로컬 전용, 매번 덮어써진다)
+.setup-run.log
+
+# npm ci 가 rename 해 둔 옛 트리 — 윈도우에서 폴더째 지운다
+node_modules_old/
