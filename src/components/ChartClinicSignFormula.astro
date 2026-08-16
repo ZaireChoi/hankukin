@@ -1,0 +1,96 @@
+---
+/**
+ * 진료소 간판 해부도 — [이름] + [진료 과목] + [의원/병원].
+ *
+ * 왜 그렸나 (2026-08-16, Hangul 3편).
+ *   의료기관 간판 사진이 재고에 없다. 그리고 있어도 문제다 —
+ *   의료기관 앞·안의 식별 가능한 사람은 쓰지 않기로 했고,
+ *   그 사람은 아파서 거기 있었다.
+ *
+ *   병원편의 ChartClinicFloors 는 '어느 층으로 가라' 를 말한다.
+ *   이 그림은 다른 것을 말한다 — **간판 문자열 자체를 어떻게 쪼개 읽는가.**
+ *   같은 그림을 두 기사에 걸지 않기 위해 새로 그렸다.
+ *
+ *   '김내과의원' 은 실제 상호가 아니라 전형(김 = 가장 흔한 성)이다.
+ *   특정 업소를 가리키지 않도록 일부러 가장 흔한 조합을 골랐다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 430;
+
+// 간판 분해 — 세 칸
+const segs = [
+  { ko: '김', rom: 'Kim', en: 'a name — often the doctor’s surname', tone: '#8a827b', x: 92, w: 96 },
+  { ko: '내과', rom: 'nae-gwa', en: 'the specialty — internal medicine', tone: '#c9622e', x: 196, w: 190 },
+  { ko: '의원', rom: 'ui-won', en: 'the type — a local clinic', tone: '#4f8a5b', x: 394, w: 190 },
+];
+
+// 이비인후과 글자별 해부
+const ent = [
+  { ko: '이', hanja: '耳', en: 'ear' },
+  { ko: '비', hanja: '鼻', en: 'nose' },
+  { ko: '인후', hanja: '咽喉', en: 'throat' },
+  { ko: '과', hanja: '科', en: 'department' },
+];
+const ENT_X = 92, ENT_W = 128, ENT_Y = 246;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="How a Korean clinic sign is built. The example sign Kim naegwa uiwon splits into three slots: a name, the specialty, and the word for clinic. Below, the sign for an ear-nose-throat clinic, i-bi-in-hu-gwa, is taken apart character by character: ear, nose, throat, department.">
+
+    <text x="92" y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      EVERY CLINIC SIGN HAS THE SAME THREE SLOTS
+    </text>
+
+    {/* 간판 판 */}
+    <rect x="80" y="40" width="516" height="86" rx="6" fill="#12100f" />
+    <text x="104" y="100" font-size="46" font-weight="700" fill="#fffdfa" letter-spacing="0.04em">김내과의원</text>
+
+    {segs.map((s) => (
+      <>
+        <path d={`M ${s.x} 136 v 10 h ${s.w} v -10`} fill="none" stroke={s.tone} stroke-width="1.8" />
+        <text x={s.x + s.w / 2} y="166" text-anchor="middle" font-size="15" font-weight="700" fill={s.tone}>{s.rom}</text>
+        <text x={s.x + s.w / 2} y="184" text-anchor="middle" font-size="11.5" fill="#6b6560">{s.en}</text>
+      </>
+    ))}
+
+    <text x="92" y="222" font-size="12.5" fill="#3c3733">
+      Swap the middle slot and the same formula reads every door — 피부과 skin, 치과 teeth, 안과 eyes.
+    </text>
+
+    <text x="92" y={ENT_Y - 4} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      THE LONGEST ONE IS AN ANATOMY LIST — 이비인후과, EAR-NOSE-THROAT
+    </text>
+
+    {ent.map((c, i) => (
+      <>
+        <rect x={ENT_X + i * (ENT_W + 8)} y={ENT_Y + 8} width={ENT_W} height="98" rx="5"
+              fill={i === ent.length - 1 ? '#c9622e' : '#efe9e1'} fill-opacity={i === ent.length - 1 ? 0.14 : 1}
+              stroke={i === ent.length - 1 ? '#c9622e' : '#e0d8ce'} stroke-width={i === ent.length - 1 ? 1.6 : 1} />
+        <text x={ENT_X + i * (ENT_W + 8) + ENT_W / 2} y={ENT_Y + 52} text-anchor="middle"
+              font-size="30" font-weight="700" fill="#12100f">{c.ko}</text>
+        <text x={ENT_X + i * (ENT_W + 8) + ENT_W / 2} y={ENT_Y + 76} text-anchor="middle"
+              font-size="13" fill="#8a827b">{c.hanja}</text>
+        <text x={ENT_X + i * (ENT_W + 8) + ENT_W / 2} y={ENT_Y + 94} text-anchor="middle"
+              font-size="12" font-weight="700" fill={i === ent.length - 1 ? '#c9622e' : '#3c3733'}>{c.en}</text>
+      </>
+    ))}
+
+    <text x="92" y={ENT_Y + 132} font-size="12" fill="#6b6560">
+      Said i-bi-in-hu-gwa. The dictionary defines it organ by organ: ear, nose, throat, windpipe, gullet.
+    </text>
+
+    <text x="92" y={H - 12} font-size="11.5" fill="#a09890">
+      Our own illustration. 김내과의원 is a typical pattern, not a particular clinic.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
