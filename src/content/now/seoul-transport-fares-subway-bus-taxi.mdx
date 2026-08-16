@@ -19,6 +19,10 @@ sources:
     url: "https://news.seoul.go.kr/traffic/traffic_price"
     type: public_institution
     checkedAt: 2026-08-14
+  - title: "우대용 교통카드 (수정일 2026-07-14) — 서울특별시 교통분야 누리집"
+    url: "https://news.seoul.go.kr/traffic/archives/1791"
+    type: public_institution
+    checkedAt: 2026-08-16
   - title: "지하철 요금 안내 (조정일자 2025.6.28.) — 서울특별시"
     url: "https://news.seoul.go.kr/traffic/files/2025/06/68539b266d80b9.22572911.png"
     type: public_institution
@@ -30,6 +34,7 @@ sources:
 ---
 
 import Figure from '../../components/Figure.astro';
+import Original from '../../components/Original.astro';
 import arrivals from '../../assets/images/places/incheon-airport-3.jpg';
 import ddp from '../../assets/images/places/ddp-1.jpg';
 
@@ -136,9 +141,21 @@ On buses the free category is narrower — under-6s accompanied by an adult. **T
 
 This is the item visitors most often get wrong, so we are going to be exact about it.
 
-Free subway travel for over-65s runs on a **senior transit card (우대용 교통카드)**. It is **issued on application**, at a community service centre (주민센터) or a partner bank, to people who are **65 or over and registered as living in Korea** — Korean nationals, and also permanent residents and overseas Koreans, who have been eligible since 2015.
+Free subway travel for over-65s runs on a **senior transit card (우대용 교통카드)**. It is **issued on application**, and Seoul's own transport-card page — re-checked 16 August 2026, page last updated July 2026 — states the residence condition in one clause:
+
+<Original
+  ko="수도권 도시철도 무임승차 대상자(만 65세 이상 경로우대자, 장애인, 유공자) 중 주민등록 기준 서울시에 거주하는 자에 한함"
+  en="Limited to those eligible for free metropolitan urban-rail rides (seniors 65+, disabled persons, persons of national merit) who reside in Seoul per resident registration."
+  who="서울특별시 교통 누리집 「우대용 교통카드」"
+  whoEn="Seoul Metropolitan Government transport site, Senior transit card"
+  date="2026-07-14"
+  url="https://news.seoul.go.kr/traffic/archives/1791" />
+
+Residence per **resident registration** is the hinge: Korean nationals, and also registered permanent residents and overseas Koreans, can hold it — a tourist cannot. The simple free card is issued at any dong community centre *(주민센터)* in Seoul, the credit/check version at Shinhan Bank branches, and since 2026 there is a mobile version inside the T-money app. Other cities run their own equivalents for their own residents.
 
 **It is not granted at the gate on sight of a passport, and a short-term foreign visitor is not entitled to it.** If you are 68 and visiting for a fortnight, plan and budget for the ordinary adult fare.
+
+One quirk from the same page even locals trip on: the card is free **on the metro only**. Board a bus and the fare charges — and a free-ride metro trip followed by a bus gets **no transfer discount**, so the bus leg costs full price.
 
 This is separate from **palace and museum admission**, where over-65 foreign visitors genuinely do get in free on their passport. The two rules are different and it is easy to carry the second across to the first.
 
