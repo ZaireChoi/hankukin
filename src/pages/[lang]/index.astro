@@ -9,7 +9,7 @@
  * 쌓아 둔 글이 일하게 하려면 홈에서 보여야 한다.
  */
 import { publicSlug } from '../../config/slug.mjs';
-import { pageHref } from '../../config/links.mjs';
+import { pageHref, isForeign } from '../../config/links.mjs';
 import { t } from '../../config/ui.mjs';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -94,7 +94,7 @@ const jsonLd = {
       <p>{t(lang, 'home.metaDescription')}</p>
       {/* Arrival 동선 (2026-08-16 운영자 지시) — 한 줄 배너라 사진을 밀지 않는다 */}
       <p class="arrival-cta">
-        <a href={pageHref(lang, 'arrival')}>{t(lang, 'home.arrivalCta')} <strong>{t(lang, 'home.arrivalCtaStrong')}</strong></a>
+        <a href={pageHref(lang, 'arrival')}>{t(lang, 'home.arrivalCta')} <strong>{t(lang, 'home.arrivalCtaStrong')}</strong>{isForeign(lang, 'arrival') ? t(lang, 'footer.inEnglish') : ''}</a>
       </p>
     </section>
 
