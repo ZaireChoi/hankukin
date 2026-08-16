@@ -21,6 +21,15 @@
 
 export const UI = {
   en: {
+    notFound: {
+      h1: 'That page is not here',
+      ledeA: 'The address you followed does not exist on this site — either it never did, or we moved the article and left a link behind. If a link on our own pages sent you here, ',
+      tellUs: 'tell us',
+      ledeB: ': broken links of ours are our mistake, not yours.',
+      frontA: 'Or start from ',
+      frontLink: 'the front page',
+      frontB: '.',
+    },
     nav: {
       stuck: 'Stuck?',
       skipToContent: 'Skip to content',
@@ -152,6 +161,15 @@ export const UI = {
   },
 
   ja: {
+    notFound: {
+      h1: 'そのページはありません',
+      ledeA: 'たどられたアドレスは、このサイトには存在しません。もともと無かったか、記事を移したあとにリンクが残っていたかのどちらかです。当サイトのページからここへ来られた場合は、',
+      tellUs: 'お知らせください',
+      ledeB: '。当方のリンク切れは、こちらの落ち度です。',
+      frontA: 'または',
+      frontLink: 'トップページ',
+      frontB: 'からどうぞ。',
+    },
     nav: {
       stuck: '困っていること',
       skipToContent: '本文へ',
@@ -282,6 +300,15 @@ export const UI = {
     },
   },
   'zh-hans': {
+    notFound: {
+      h1: '这个页面不在这里',
+      ledeA: '你访问的地址在本站不存在——要么从来就没有，要么是我们移动了文章却留下了旧链接。如果是本站的某个链接把你带到这里的，',
+      tellUs: '请告诉我们',
+      ledeB: '：我们自己的死链是我们的问题，不是你的。',
+      frontA: '或者从',
+      frontLink: '首页',
+      frontB: '开始。',
+    },
     nav: {
       stuck: '卡住了？',
       skipToContent: '跳到正文',

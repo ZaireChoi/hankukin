@@ -19,9 +19,25 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import StuckIndex from '../components/StuckIndex.astro';
-import { DEFAULT_LOCALE } from '../config/brand.mjs';
+import { DEFAULT_LOCALE, LOCALES } from '../config/brand.mjs';
+import { t } from '../config/ui.mjs';
 
 const lang = DEFAULT_LOCALE;
+
+/*
+ * 404 를 3개 언어로 만든다 (2026-08-16).
+ *
+ * 운영자가 /ja/privacy/ 를 눌렀을 때 이 화면이 떴는데, **영어였다.**
+ * 일본어 주소로 들어온 사람에게 영어로 24줄짜리 목록을 보여준 것이다.
+ *
+ * 그런데 404.html 은 **파일 하나**다. 서버가 아무 주소에나 이 파일을 내주므로,
+ * 빌드 시점에는 어떤 언어로 들어올지 알 수 없다. 언어별 404 를 따로 만들 수도 없다 —
+ * 존재하지 않는 주소에는 /ja/ 든 /en/ 든 이 파일 하나가 나간다.
+ *
+ * 그래서 세 언어를 전부 담아 두고, 주소를 보고 고른다.
+ * 스크립트가 막히면 영어가 남는다 — 지금과 같은 상태이므로 나빠지지 않는다.
+ */
+
 ---
 <BaseLayout
   title="That page is not here"
@@ -38,18 +54,37 @@ const lang = DEFAULT_LOCALE;
   path=""
   noindex={true}
 >
-  <h1>That page is not here</h1>
-  <p class="lede">
-    The address you followed does not exist on this site — either it never did, or we moved
-    the article and left a link behind. If a link on our own pages sent you here,
-    <a href={`/${lang}/contact/`}>tell us</a>: broken links of ours are our mistake, not yours.
-  </p>
+  {LOCALES.map((l) => (
+    <div class="l10n" data-lang={l} hidden={l !== DEFAULT_LOCALE}>
+      <h1>{t(l, 'notFound.h1')}</h1>
+      <p class="lede">
+        {t(l, 'notFound.ledeA')}
+        <a href={`/${l}/contact/`}>{t(l, 'notFound.tellUs')}</a>
+        {t(l, 'notFound.ledeB')}
+      </p>
 
-  <StuckIndex lang={lang} mode="full" />
+      <StuckIndex lang={l} mode="full" />
 
-  <p class="lede">
-    Or start from <a href={`/${lang}/`}>the front page</a>.
-  </p>
+      <p class="lede">
+        {t(l, 'notFound.frontA')}<a href={`/${l}/`}>{t(l, 'notFound.frontLink')}</a>{t(l, 'notFound.frontB')}
+      </p>
+    </div>
+  ))}
+
+  <script is:inline define:vars={{ LOCALES, DEFAULT_LOCALE }}>
+    /* 주소의 첫 칸이 언어면 그 언어를 보여준다. 아니면 영어 그대로. */
+    const seg = location.pathname.split('/').filter(Boolean)[0];
+    const pick = LOCALES.includes(seg) ? seg : DEFAULT_LOCALE;
+    if (pick !== DEFAULT_LOCALE) {
+      document.documentElement.lang = pick;
+      for (const el of document.querySelectorAll('.l10n')) {
+        el.hidden = el.dataset.lang !== pick;
+      }
+      const ttl = { ja: 'そのページはありません', 'zh-hans': '这个页面不在这里' }[pick];
+      if (ttl) document.title = ttl + ' — HANKUKIN';
+    }
+  </script>
+
 </BaseLayout>
 
 <style>
