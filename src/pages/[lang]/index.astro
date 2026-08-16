@@ -11,7 +11,6 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
-import StuckIndex from '../../components/StuckIndex.astro';
 import { BRAND, LOCALES, CATEGORIES } from '../../config/brand.mjs';
 
 export async function getStaticPaths() {
@@ -97,13 +96,12 @@ const jsonLd = {
     </section>
 
     {/*
-      순서는 사진이 먼저다 (2026-08-16 운영자 지시).
+      문제 색인(StuckIndex)은 홈에서 뺐다 (2026-08-16 운영자 결정, 세 번째 조정).
 
-      어젯밤 문제 색인(StuckIndex)을 대표 사진 위에 올렸더니
-      "사진이 붙은 글들이 스크롤해야 보인다" — 운영자가 되돌리라고 했다.
-      2026-08-15 개편의 원칙("사진 있는 글이 첫 화면에 크게")이 우선이고,
-      문제 색인은 Latest 아래로 내려간다. 색인 자체는 유효하다 —
-      검색창 대신이라는 존재 이유가 사라진 게 아니라 자리가 틀렸던 것이다.
+      경위: 어젯밤 16개를 대문 위에 → 사진이 밀린다는 지적으로 Latest 아래 6개로 →
+      "없으면 더 좋겠다" 로 확정. 색인의 두 가치(문제 문장 = 검색어, 내부 동선)는
+      전용 페이지 /stuck/ 와 대문의 Arrival 버튼이 대신한다. 홈은 사진이 일하는 곳이다.
+      /stuck/ 의 실재-기사 게이트는 그대로 살아 있다.
     */}
     {featured && (
       <section class="block">
@@ -122,8 +120,6 @@ const jsonLd = {
         </div>
       </section>
     )}
-
-    <StuckIndex lang={lang} mode="compact" />
 
     <section class="block">
       <h2>What we cover</h2>
