@@ -20,10 +20,17 @@ const { caption } = Astro.props;
 const W = 760, H = 430;
 
 // 간판 분해 — 세 칸
+/**
+ * 간판 글자와 괄호를 정확히 맞추는 방법 (2026-08-16 브라우저 검수에서 잡음).
+ *   글꼴마다 글자 폭이 달라 괄호가 '내' 가 아니라 '과' 밑에서 시작했다.
+ *   textLength 로 다섯 글자의 총 진행폭을 330 으로 고정하면
+ *   글자 경계가 어느 글꼴에서든 104 + 66×n 에 온다. 괄호도 그 격자에 놓는다.
+ */
+const TX = 104, GLYPH = 66;
 const segs = [
-  { ko: '김', rom: 'Kim', en: 'a name — often the doctor’s surname', tone: '#8a827b', x: 92, w: 96 },
-  { ko: '내과', rom: 'nae-gwa', en: 'the specialty — internal medicine', tone: '#c9622e', x: 196, w: 190 },
-  { ko: '의원', rom: 'ui-won', en: 'the type — a local clinic', tone: '#4f8a5b', x: 394, w: 190 },
+  { rom: 'Kim', en: 'a name', tone: '#8a827b', x: TX, w: GLYPH },
+  { rom: 'nae-gwa', en: 'the specialty', tone: '#c9622e', x: TX + GLYPH, w: GLYPH * 2 },
+  { rom: 'ui-won', en: 'the type of place', tone: '#4f8a5b', x: TX + GLYPH * 3, w: GLYPH * 2 },
 ];
 
 // 이비인후과 글자별 해부
@@ -33,7 +40,7 @@ const ent = [
   { ko: '인후', hanja: '咽喉', en: 'throat' },
   { ko: '과', hanja: '科', en: 'department' },
 ];
-const ENT_X = 92, ENT_W = 128, ENT_Y = 246;
+const ENT_X = 92, ENT_W = 128, ENT_Y = 262;
 ---
 
 <figure class="chart">
@@ -45,8 +52,9 @@ const ENT_X = 92, ENT_W = 128, ENT_Y = 246;
     </text>
 
     {/* 간판 판 */}
-    <rect x="80" y="40" width="516" height="86" rx="6" fill="#12100f" />
-    <text x="104" y="100" font-size="46" font-weight="700" fill="#fffdfa" letter-spacing="0.04em">김내과의원</text>
+    <rect x="80" y="40" width="378" height="86" rx="6" fill="#12100f" />
+    <text x={TX} y="102" font-size="60" font-weight="700" fill="#fffdfa"
+          textLength={GLYPH * 5} lengthAdjust="spacing">김내과의원</text>
 
     {segs.map((s) => (
       <>
@@ -56,8 +64,11 @@ const ENT_X = 92, ENT_W = 128, ENT_Y = 246;
       </>
     ))}
 
-    <text x="92" y="222" font-size="12.5" fill="#3c3733">
-      Swap the middle slot and the same formula reads every door — 피부과 skin, 치과 teeth, 안과 eyes.
+    <text x="92" y="210" font-size="12.5" fill="#3c3733">
+      The name is often the doctor’s surname. Swap the middle slot and the same formula reads every door —
+    </text>
+    <text x="92" y="228" font-size="12.5" fill="#3c3733">
+      피부과 skin, 치과 teeth, 안과 eyes.
     </text>
 
     <text x="92" y={ENT_Y - 4} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
