@@ -148,6 +148,24 @@ export function decorate(url, merchant) {
    *   링크는 멀쩡히 작동하고 독자도 아무 이상을 못 느낀다. **수수료만 0 이 된다.**
    *   몇 달 뒤 '왜 수익이 없지' 하고 들여다봐야 알게 되는 종류라서 여기서 막는다.
    */
+  /*
+   * 언어별 주소도 추적된다 — **추측이 아니라 2026-08-17 실측이다.**
+   *
+   *   klook.com/ja/activity/100060-...?aid=131289
+   *   klook.com/zh-CN/activity/100060-...?aid=131289
+   *   klook.com/zh-TW/activity/100060-...?aid=131289
+   *
+   *   셋 다 최종 주소에 aid=131289 가 남고 utm_campaign=131289 가 붙었다.
+   *   영어판에서 확인한 것과 **같은 추적 서명**이다.
+   *
+   * 그러므로 다국어에서 지켜야 할 것은 언어 세그먼트가 아니라 여전히 /activity/ 다.
+   * 아래 검사는 언어와 무관하게 그대로 작동한다 — 손댈 필요가 없다.
+   *
+   * 다만 **로케일 코드는 Klook 쪽 표기를 쓴다.** 우리 URL 세그먼트와 다르다:
+   *   우리 zh-hans → Klook zh-CN
+   *   우리 zh-hant → Klook zh-TW
+   * 이 대응은 KLOOK_LOCALE 에 있다. 손으로 조합하면 언젠가 어긋난다.
+   */
   if (merchant === 'Klook' && /klook\.com/.test(url) && !/\/activity\//.test(url)) {
     throw new Error(
       `Klook 링크는 /activity/ 주소만 추적됩니다:\n  ${url}\n\n` +

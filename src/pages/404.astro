@@ -27,7 +27,15 @@ const lang = DEFAULT_LOCALE;
   title="That page is not here"
   description="The page you asked for does not exist on this site. Here is the list of problems we do have answers for."
   lang={lang}
-  path="404"
+  {/*
+   * path 를 비워 둔다 (2026-08-17).
+   *
+   * path="404" 로 뒀더니 canonical 과 hreflang 이 /en/404/ 를 가리켰다.
+   * **그런 주소는 존재하지 않는다** — 404.html 은 서버가 아무 주소에나 내주는 파일이다.
+   * scripts/check-i18n.mjs 가 첫 실행에서 이걸 잡았다.
+   * 없는 주소를 정규 주소라고 선언하는 것은, 404 페이지가 할 수 있는 최악의 일이다.
+   */}
+  path=""
   noindex={true}
 >
   <h1>That page is not here</h1>

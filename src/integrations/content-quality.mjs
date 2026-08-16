@@ -60,6 +60,13 @@ const HERO_EXEMPT = {
     '이 기사가 말하는 것은 **자격 심사의 순서**라 일정 도표가 사진보다 낫다 — ' +
     'eSIM 편·3D Secure 편과 같은 판단. KSPO돔·잠실실내체육관이 크게 찍힌 사진이 생기면 그때 채운다.',
 
+  'korea-atm-foreign-card-cash':
+    'ATM 화면·카드 슬롯 사진은 재고에 없고, 있어도 **한 대의 기계는 답이 아니다.** ' +
+    '이 기사의 요지는 특정 은행이 아니라 「기계에 찍힌 네트워크 마크를 보라」는 판별법이라, ' +
+    '어느 은행 ATM 한 대를 크게 찍어 놓으면 오히려 그 은행이 답이라는 오해를 만든다. ' +
+    '그리고 ATM 앞의 식별 가능한 사람은 찍지 않기로 했다 — 그 사람은 돈을 뽑는 중이었다. ' +
+    '3D Secure 편·eSIM 편과 같은 판단. 이 기사에는 앞으로도 채우지 않는다.',
+
   'korea-esim-no-phone-number':
     'eSIM 은 **사진으로 찍을 수 있는 물건이 아니다.** 실물이 없다. ' +
     '상품 페이지의 사진은 QR 코드 그림이고 그건 아무것도 설명하지 않는다. ' +
@@ -403,6 +410,70 @@ export default function contentQuality() {
                 '    고치려면 src/config/products.mjs 를 바꾸십시오 (거기가 유일한 자리입니다).',
               );
             }
+          }
+        }
+
+        /**
+         * ── 번역본이 낡은 채로 발행되는 것을 막는다 (열 번째) ────────
+         *
+         * 2026-08-17, 다국어 구조를 켜면서 **번역보다 먼저** 넣는다.
+         *
+         * 이틀 동안 eSIM 편을 네 번 고쳤다. 4개 언어였으면 열여섯 번이다.
+         * 그리고 그 이틀 동안 내가 「한 군데 고치고 옆을 안 보는」 실수를 여섯 번 했다.
+         * **원문이 바뀐 것을 사람이 기억해서 번역본을 따라 고칠 수는 없다.**
+         *
+         * 판정은 날짜 하나로 끝난다.
+         *   번역본의 translation.sourceCheckedAt  <  원문의 checkedAt   → 낡음
+         *
+         * 그리고 machine_translated 는 어떤 경우에도 발행되지 않는다.
+         * 기계번역을 그대로 내보내는 것이 정확히 scaled content abuse 이고,
+         * 우리가 파는 「확인한 것만 쓴다」는 약속이 언어 수만큼 깨진다.
+         */
+        const byId = new Map();          // 'now/slug' → { checkedAt, file }
+        const translations = [];
+        for (const file of walk(CONTENT_DIR)) {
+          const text = readFileSync(file, 'utf8');
+          const slug = basename(file).replace(/\.mdx?$/, '');
+          const sec = file.split(/[\\/]/).at(-2);
+          const fm = text.slice(0, text.indexOf('\n---', 4) + 4);
+          const checkedAt = /^checkedAt:\s*(\S+)/m.exec(fm)?.[1] ?? '';
+          const lang = /^lang:\s*(\S+)/m.exec(fm)?.[1] ?? 'en';
+          if (lang === 'en') byId.set(`${sec}/${slug}`, { checkedAt, slug });
+          if (/^translation:/m.test(fm)) {
+            translations.push({
+              slug, lang,
+              of: /^\s+of:\s*['"]?([^'"\n]+)/m.exec(fm)?.[1]?.trim() ?? '',
+              srcAt: /^\s+sourceCheckedAt:\s*(\S+)/m.exec(fm)?.[1] ?? '',
+              status: /^\s+status:\s*(\S+)/m.exec(fm)?.[1] ?? '',
+            });
+          }
+        }
+        for (const t of translations) {
+          if (t.status === 'machine_translated') {
+            fail.push(
+              `${t.slug} (${t.lang}): 기계번역 상태로는 발행할 수 없습니다.\n` +
+              '    사람이 읽고 status 를 reviewed 로 바꾸기 전에는 나가지 않습니다.\n' +
+              '    읽지 않은 번역을 내보내면 「확인한 것만 쓴다」가 언어 수만큼 거짓이 됩니다.',
+            );
+            continue;
+          }
+          const src = byId.get(t.of);
+          if (!src) {
+            fail.push(
+              `${t.slug} (${t.lang}): 번역 원문을 찾을 수 없습니다 — translation.of = "${t.of}"\n` +
+              '    원문이 없는 번역본은 갱신 여부를 영영 판정할 수 없습니다.',
+            );
+            continue;
+          }
+          if (src.checkedAt && t.srcAt && src.checkedAt > t.srcAt) {
+            fail.push(
+              `${t.slug} (${t.lang}): 번역본이 낡았습니다.\n` +
+              `    원문 확인일 : ${src.checkedAt}\n` +
+              `    번역 기준일 : ${t.srcAt}\n` +
+              '    원문이 그 뒤에 바뀌었습니다. 번역을 갱신하고 sourceCheckedAt 을 맞추거나,\n' +
+              '    당장 못 하면 이 번역본을 draft 로 내리십시오.\n' +
+              '    **틀린 채로 서 있는 번역이 없는 번역보다 나쁩니다.**',
+            );
           }
         }
 

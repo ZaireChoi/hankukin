@@ -99,6 +99,11 @@
           "home": true
         },
         {
+          "when": "I need cash and the machine will not take my card",
+          "answer": "It is not the English button that decides it — it is whether your card's network logo is on the machine. Check a locator before you fly.",
+          "href": "now/korea-atm-foreign-card-cash"
+        },
+        {
           "when": "I am ill and I do not have an appointment",
           "answer": "You do not book anything. Walk into a neighbourhood clinic, wait about twenty minutes, collect your medicine downstairs.",
           "href": "now/seeing-a-doctor-in-korea-cost-walk-in",

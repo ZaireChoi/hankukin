@@ -27,6 +27,20 @@ const source = z.object({
     'official_production', 'official_interview', 'official_social',
     'public_institution', 'reliable_media', 'aggregate_data',
     'merchant_official', 'editorial',
+    /*
+     * community_tally — 2026-08-17 신설.
+     *
+     * 커뮤니티 스레드는 **사실의 출처가 아니다.** 개별 댓글은 기기 하나·날짜 하나의
+     * 기록이고, 같은 스레드 안에서 정반대 증언이 나온다.
+     * 그래서 이 종류는 딱 두 가지에만 쓴다.
+     *   ① 우리가 **직접 센 빈도** — 몇 명이 같은 곳에서 막혔는가
+     *   ② **증언으로 인용한 문장** — 사실이 아니라 누가 그렇게 말했다는 사실
+     *
+     * 요금·절차·되고 안 됨의 판정을 이 종류의 출처로 쓰면 안 된다.
+     * 그건 반드시 public_institution 이나 merchant_official 로 다시 확인한다.
+     * 종류를 따로 만든 이유가 그것이다 — 섞이면 구별이 사라진다.
+     */
+    'community_tally',
   ]),
   checkedAt: z.coerce.date(),
 });
@@ -109,6 +123,34 @@ const baseFields = (image) => ({
   hero: imageSchema(image).optional(),
   sources: z.array(source).min(1),
   draft: z.boolean().default(false),
+
+  /**
+   * 번역 상태 (번역본에만 있다. 영어 원문에는 없다).
+   *
+   * 2026-08-17 운영자 결정: 일본어·중국어 확장. **구조 먼저, 번역은 검수자가 생긴 뒤.**
+   *
+   * 왜 이 필드가 번역보다 먼저 필요한가 —
+   *   이틀 동안 eSIM 편을 **네 번** 고쳤다. 4개 언어였으면 열여섯 번이다.
+   *   그리고 나는 그 이틀 동안 「한 군데 고치고 옆을 안 보는」 실수를 여섯 번 했다.
+   *   **원문이 바뀌었는데 번역본이 안 바뀐 것을 사람이 기억할 수는 없다.**
+   *
+   * sourceCheckedAt — 이 번역이 근거로 삼은 영어 원문의 checkedAt.
+   *   원문의 checkedAt 이 이보다 나중이면 이 번역본은 낡은 것이고,
+   *   게이트(열 번째)가 빌드를 세운다. 날짜 하나로 판정이 끝난다.
+   *
+   * status — machine_translated 는 **발행되지 않는다.**
+   *   기계번역을 그대로 내보내면 그게 정확히 scaled content abuse 다.
+   *   그리고 우리가 파는 것은 「확인한 것만 쓴다」인데,
+   *   아무도 읽어보지 않은 번역을 내보내면 그 약속이 언어 수만큼 깨진다.
+   */
+  translation: z.object({
+    of: z.string(),                       // 영어 원문 id (예: 'now/korea-atm-foreign-card-cash')
+    sourceCheckedAt: z.coerce.date(),     // 근거로 삼은 원문의 checkedAt
+    status: z.enum(['machine_translated', 'review_required', 'reviewed']),
+    translatedAt: z.coerce.date(),
+    reviewedAt: z.coerce.date().optional(),
+    reviewer: z.string().optional(),      // 실명. 익명 검수는 검수가 아니다
+  }).optional(),
 
   /**
    * 상업 링크는 **모든 축의 공통 필드다.** (2026-08-16 밤에 옮겼다)

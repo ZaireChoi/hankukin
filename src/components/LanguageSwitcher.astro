@@ -1,0 +1,70 @@
+---
+/**
+ * 언어 선택기.
+ *
+ * 2026-08-17. 규칙 셋만 지킨다. 나머지는 다 부수적이다.
+ *
+ * ① **없는 번역은 링크하지 않는다.**
+ *    번역본이 없는데 언어를 눌렀더니 그 언어 홈으로 튕기거나 영어로 조용히 돌아가는 것 —
+ *    독자에게는 「이 사이트가 고장났다」로 읽힌다. 없으면 없다고 적고 못 누르게 한다.
+ *
+ * ② **진짜 <a href> 다.** JavaScript 이벤트로만 움직이는 선택기는
+ *    크롤러가 못 따라간다. 다국어를 하는 이유의 절반이 검색인데 그걸 스스로 막는 셈이다.
+ *
+ * ③ **자동 리디렉션을 하지 않는다.** 브라우저 언어나 IP 로 멋대로 보내면,
+ *    한국어 브라우저를 쓰는 일본 거주자가 영원히 일본어판을 못 본다.
+ *    그리고 구글봇은 미국에서 오므로 다른 언어 페이지를 영영 못 본다.
+ *
+ * 언어가 하나뿐이면 아무것도 그리지 않는다 — 고를 게 없는 선택기는 장식이다.
+ */
+import { LOCALES, LOCALE_LABELS, HREFLANG, DEFAULT_LOCALE } from '../config/brand.mjs';
+
+interface Props {
+  lang: string;
+  /** 언어 세그먼트를 뺀 현재 경로. 예: 'now/korea-atm-foreign-card-cash' */
+  path?: string;
+  /** 이 글이 실제로 존재하는 언어 목록. 안 주면 현재 언어만 있는 것으로 본다. */
+  available?: string[];
+}
+const { lang, path = '', available = [lang] } = Astro.props;
+
+const clean = path.replace(/^\/+|\/+$/g, '');
+const has = new Set(available);
+---
+{LOCALES.length > 1 && (
+  <nav class="lang" aria-label="Language">
+    <ul>
+      {LOCALES.map((l) => {
+        const href = clean ? `/${l}/${clean}/` : `/${l}/`;
+        const label = LOCALE_LABELS[l] ?? l;
+        if (l === lang) {
+          return <li><span class="cur" aria-current="true" lang={HREFLANG[l]}>{label}</span></li>;
+        }
+        if (!has.has(l)) {
+          /*
+           * 없는 번역. 회색으로 두고, **왜 못 누르는지 말해 준다.**
+           * 비활성 항목에 이유가 없으면 독자는 자기 브라우저를 의심한다.
+           */
+          return (
+            <li>
+              <span class="off" lang={HREFLANG[l]}
+                    title="Not yet available in this language">{label}</span>
+            </li>
+          );
+        }
+        return <li><a href={href} lang={HREFLANG[l]} hreflang={HREFLANG[l]}>{label}</a></li>;
+      })}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .lang { font-size: .82rem; }
+  .lang ul { list-style: none; display: flex; flex-wrap: wrap; gap: .1rem .55rem; margin: 0; padding: 0; }
+  .lang a, .lang .cur, .lang .off { display: inline-block; padding: .2rem 0; }
+  .lang a { color: #6b6560; text-decoration: none; border-bottom: 1px solid transparent; }
+  .lang a:hover, .lang a:focus-visible { color: #c9622e; border-bottom-color: #c9622e; }
+  .lang .cur { color: #12100f; font-weight: 600; }
+  /* 비활성은 흐리게 하되 **읽을 수는 있게** 둔다. 안 읽히면 그 언어가 있다는 것도 모른다 */
+  .lang .off { color: #b8b0a6; cursor: not-allowed; }
+</style>

@@ -1,0 +1,111 @@
+---
+title: "Getting Cash in Korea: Which ATMs Take a Foreign Card"
+seoTitle: "Korea ATMs: Which Ones Take Foreign Cards"
+summary: "Korea is close to cashless, and then one day it is not — a market stall, a temple stay, a bus fare. Foreign cards work at some Korean ATMs and are refused at others, and the rule visitors pass around is the wrong rule. Here is the signal that actually decides it, and the two locators that let you find a working machine before you land."
+lang: en
+region: "Korea"
+publishedAt: 2026-08-17
+checkedAt: 2026-08-17
+riskGrade: yellow
+contentScore: 78
+visitKorea: []
+sources:
+  - title: "Visa Global ATM Locator — official Visa tool for finding Visa/PLUS ATMs worldwide"
+    url: "https://www.visa.com/locator/atm"
+    type: merchant_official
+    checkedAt: 2026-08-17
+  - title: "Mastercard ATM locator — official Mastercard tool for finding Mastercard/Cirrus ATMs"
+    url: "https://www.mastercard.com/us/en/personal/get-support/atm-near-me.html"
+    type: merchant_official
+    checkedAt: 2026-08-17
+  - title: "HANKUKIN comment tally — 107 comments across two Korean travel threads, counted 2026-08-17 (our own data)"
+    url: "https://www.milemoa.com/bbs/board/11626710"
+    type: community_tally
+    checkedAt: 2026-08-17
+---
+
+import Original from '../../components/Original.astro';
+
+Korea will let you go days without touching cash. Convenience stores, taxis, restaurants, department stores — a foreign card works in almost all of them. So most visitors stop thinking about cash entirely.
+
+Then something small stops you. A market stall with one old card terminal. A street food truck on a Myeong-dong evening. A transit card that will not take a foreign card at the top-up machine. And now you need won, on a Sunday, with no idea which machine will give it to you.
+
+**The problem is not that Korean ATMs refuse foreign cards. It is that some do and some do not, and the way visitors tell them apart is wrong.**
+
+## The rule you will be told, and why it fails
+
+Search around and you will find a neat heuristic, phrased almost identically every time:
+
+> Put your card in. If an English option comes up, it will probably work.
+
+We counted where that advice comes from. Across 107 comments in two long Korean-language threads written by people living in or visiting Korea on foreign cards, **eleven people described trying to get cash.** Exactly one of them offered the English-option rule. In the *same thread*, another person reported being refused at two major bank ATMs — Nonghyup and Woori — with two different American cards, one after the other. A third had to walk a whole street of machines before one paid out.
+
+<Original
+  ko="ATM에 카드 넣고 영어옵션이 나오면 거의 성공이더라구요."
+  en="If you put the card in the ATM and an English option comes up, it almost always worked."
+  who="마일모아 게시판 댓글, 2025-03-29"
+  whoEn="Comment on a Korean travel forum, 29 March 2025"
+  date="2026-08-17"
+  url="https://www.milemoa.com/bbs/board/11626710" />
+
+<Original
+  ko="작년에 농협은행과 우리은행 ATM에서 피델리티, 슈압 둘다 실패했습니다. 현금 ATM 인출만 믿고 갔다가는 큰일 날 거 같더라구요."
+  en="Last year I failed at both Nonghyup and Woori Bank ATMs, with both Fidelity and Schwab. Going in trusting ATM withdrawals alone could land you in real trouble."
+  who="같은 스레드의 다른 댓글, 2025-04-18"
+  whoEn="A different comment in the same thread, 18 April 2025"
+  date="2026-08-17"
+  url="https://www.milemoa.com/bbs/board/11626710" />
+
+Both people are telling the truth about what happened to them. The rule is not a lie — it is a **correlation mistaken for a cause.** Machines that serve foreign cards usually also offer English, so the English button *looks* like the deciding factor. It is a side effect of the real one.
+
+## The signal that actually decides it
+
+An ATM pays out on a foreign card only if it is connected to **your card's international network.** That is a property of the machine and the bank behind it, and it is printed on the machine, usually as a row of small logos near the card slot or on the screen surround:
+
+```
+Visa · PLUS            → a Visa card should work
+Mastercard · Cirrus    → a Mastercard should work
+Maestro                → a Maestro debit card should work
+UnionPay               → a UnionPay card should work
+Global / Global ATM    → the Korean label for the same thing
+```
+
+**Look for your own card's mark, not for English.** If the logo row does not include your network, an English menu will not conjure the connection; the machine will simply take you to the end and refuse. If the logo row does include it, the language of the interface is beside the point — the transaction is going to run through Visa or Mastercard either way.
+
+This is also why the failures cluster where they do. The small standalone machines inside convenience stores are often run by domestic ATM operators serving Korean cards, and carry a narrower set of network marks than the machines inside a bank branch. Reader reports line up with that pattern — the branch machines succeeded far more often than the small ones — though we cannot verify individual banks' current policies from here, and we are not going to publish a list we have not checked.
+
+## Do the finding before you fly
+
+You do not have to discover this standing in a subway underpass at 9pm. Both major networks publish an official ATM locator, and both are live right now:
+
+- **Visa Global ATM Locator** — [visa.com/locator/atm](https://www.visa.com/locator/atm)
+- **Mastercard ATM locator** — [mastercard.com — find an ATM](https://www.mastercard.com/us/en/personal/get-support/atm-near-me.html)
+
+Search your neighbourhood in Seoul or Busan before you leave home, and screenshot the two or three nearest results. It takes four minutes and removes the entire problem. The locators are also the only source on this subject that updates itself — anything written in an article, including ours, is a photograph of one day.
+
+**Incheon Airport is the safe default.** Arrivals halls carry machines built for exactly this, and a first withdrawal there means the question never becomes urgent. If your itinerary starts anywhere other than Seoul, do it at the airport rather than trusting the first machine you meet at the other end.
+
+## What it costs, and what we will not tell you
+
+A withdrawal in Korea on a foreign card can carry up to three separate charges: a fee from the Korean ATM operator, a fee from your own bank, and a currency conversion spread. Travellers in our sample reported the Korean-side fee as a few thousand won per withdrawal — meaningful if you take out small amounts repeatedly, trivial if you take out one larger amount.
+
+**We are not printing a number.** We could not reach a single Korean bank's own fee schedule to check it — Korean bank sites were unreachable from outside the country on the day we wrote this, which is its own small lesson about planning from abroad. A stale fee figure at a machine that is about to charge you is worse than no figure. Ask your own bank what *they* charge for a foreign ATM withdrawal, since that half is knowable before you go and is often the larger half.
+
+Two things are worth doing regardless:
+
+**Take out one larger amount, not four small ones.** Every fixed fee is charged per withdrawal.
+
+**Always decline the machine's offer to convert.** If a Korean ATM offers to bill you in your home currency instead of won, that is dynamic currency conversion, and the exchange rate is set by the machine's operator rather than by your card network. Choosing **KRW** hands the conversion back to Visa or Mastercard, which is almost always the better of the two rates.
+
+## The one thing to actually remember
+
+Cash in Korea is a small problem that becomes a large one only through timing — you need it on the day you had not planned for it.
+
+> **Carry enough won from the airport that you never have to solve this at speed, and check the network logo, not the language.**
+
+## Related
+
+- [Why your card works in shops but not on Korean websites](/en/now/korea-3d-secure-card-declined-online/) — the other card wall, and the one you can fix by phone before you fly
+- [What a tourist eSIM does and does not get you](/en/decode/korea-esim-no-phone-number/) — the identity wall behind most Korean apps
+- [What subway, bus and taxi rides actually cost](/en/now/seoul-transport-fares-subway-bus-taxi/) — how much cash a day of moving around really needs
+- [Every problem we cover, with one-line answers](/en/stuck/)

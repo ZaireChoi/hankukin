@@ -1,19 +1,54 @@
 ---
+import { isAffiliate, decorate, MERCHANTS } from '../config/merchants.mjs';
 const { sources = [], checkedAt } = Astro.props;
+
+/**
+ * 출처 링크가 **제휴처를 가리키는 경우**를 따로 다룬다 (2026-08-17).
+ *
+ * 새로 만든 scripts/check-i18n.mjs 가 첫 실행에서 이걸 잡았다.
+ *   eSIM 편의 출처 목록에 Klook 상품 페이지가 있는데,
+ *   그 링크에는 aid 도 없고 rel="sponsored" 도 없었다.
+ *
+ * 두 가지가 동시에 잘못돼 있었다.
+ *   ① **수수료가 샌다.** 독자가 그 링크로 사면 우리 것으로 안 잡힌다.
+ *      링크는 멀쩡히 열리고 아무도 몇 달 동안 모른다 — 이 사이트의 단골 실패 유형이다.
+ *   ② **신호가 틀렸다.** 우리는 Klook 과 금전 관계가 있다.
+ *      그 사실을 밝히지 않은 링크는, 관계를 과장하는 것과 방향만 반대인 같은 잘못이다.
+ *
+ * 그러나 여기는 CTA 가 아니라 **인용**이다. 그래서 라벨을 다르게 붙인다 —
+ * 「이건 우리가 근거로 읽은 페이지이고, 동시에 우리가 제휴한 곳이다」를 다 말한다.
+ * 숨기지 않는 쪽이 언제나 싸다.
+ */
+const prepared = sources.map((s) => {
+  const merchant = Object.keys(MERCHANTS).find(
+    (m) => MERCHANTS[m].host && s.url.includes(MERCHANTS[m].host),
+  ) ?? (/klook\.com/.test(s.url) ? 'Klook' : null);
+  const paid = merchant && isAffiliate(merchant);
+  return {
+    ...s,
+    href: paid ? decorate(s.url, merchant) : s.url,
+    rel: paid ? 'sponsored noopener' : 'noopener',
+    paid,
+  };
+});
 const label = {
   official_production:'Official — production', official_interview:'Official — interview',
   official_social:'Official — social account', public_institution:'Public institution',
   reliable_media:'Media', aggregate_data:'Aggregate data',
   merchant_official:'Merchant official site', editorial:'Editorial',
+  community_tally:'Community threads — we counted, we did not take facts from them',
 };
 const fmt = (d) => new Date(d).toISOString().slice(0, 10);
 ---
 <section class="block">
   <h2>Sources &amp; last checked</h2>
   <ul class="sources">
-    {sources.map((s) => (
+    {prepared.map((s) => (
       <li>
-        <span class="st">{label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}</span>
+        <span class="st">
+          {label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}
+          {s.paid && <> · <span class="paid">we earn a commission if you book here</span></>}
+        </span>
         {/*
           nofollow 를 뺐다 (2026-08-16).
           여기 걸리는 것은 기상청·관광공사·건강보험공단 같은 **1차 출처**다.
@@ -21,10 +56,15 @@ const fmt = (d) => new Date(d).toISOString().slice(0, 10);
           우리는 이 링크들을 근거로 글을 썼다. 보증하지 않을 거면 인용을 하지 말았어야 한다.
           제휴 링크에는 CtaBlock 이 sponsored 를 계속 붙인다 — 그건 성격이 다르다.
         */}
-        <a href={s.url} rel="noopener" target="_blank">{s.title}</a>
+        <a href={s.href} rel={s.rel} target="_blank">{s.title}</a>
       </li>
     ))}
   </ul>
   <p class="notice">This page was last verified on {fmt(checkedAt)}. Opening hours, prices and
   business status change often — please confirm on the official page before you travel.</p>
 </section>
+
+<style>
+  /* 제휴 관계 표시는 눈에 띄어야 한다. 안 보이는 고지는 고지가 아니다 */
+  .paid { color: #c9622e; }
+</style>
