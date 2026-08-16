@@ -79,6 +79,7 @@ export const UI = {
       reportError: 'Report an error',
     },
     home: {
+      kicker: 'Who brought you to Korea?',
       tagline: 'Read the signs. Know the fares.',
       sub: 'Korea, minus the moments that freeze visitors.',
       arrivalCta: 'Landing in Korea?',
@@ -155,6 +156,7 @@ export const UI = {
       reportError: '誤りを知らせる',
     },
     home: {
+      kicker: '韓国へ連れてきたのは、誰でしたか。',
       tagline: '看板を読む。運賃を知る。',
       sub: '旅行者が固まってしまう瞬間を、取り除いた韓国。',
       arrivalCta: '韓国に到着しますか？',
@@ -230,6 +232,7 @@ export const UI = {
       reportError: '告诉我们',
     },
     home: {
+      kicker: '是谁把你带到韩国的？',
       tagline: '看懂招牌，算清车费。',
       sub: '把让旅行者当场卡住的那些瞬间，从韩国里拿掉。',
       arrivalCta: '要落地韩国了吗？',
