@@ -87,17 +87,14 @@ const jsonLd = {
     </section>
 
     {/*
-      대표 사진보다 **먼저** 온다.
+      순서는 사진이 먼저다 (2026-08-16 운영자 지시).
 
-      2026-08-15 외부 지적은 "홈이 비어 보인다, 큰 이미지가 없다" 였고 그건 맞았다.
-      그런데 큰 사진은 이 사이트가 **무엇을 해결해 주는지**는 말하지 않는다.
-      실제로 일하는 9편의 공통점이 '당황할 순간을 미리 없애 준다' 라면,
-      그걸 첫 화면에서 말하지 않을 이유가 없다.
-
-      사진은 바로 아래에 그대로 있다. 순서만 바뀐다.
+      어젯밤 문제 색인(StuckIndex)을 대표 사진 위에 올렸더니
+      "사진이 붙은 글들이 스크롤해야 보인다" — 운영자가 되돌리라고 했다.
+      2026-08-15 개편의 원칙("사진 있는 글이 첫 화면에 크게")이 우선이고,
+      문제 색인은 Latest 아래로 내려간다. 색인 자체는 유효하다 —
+      검색창 대신이라는 존재 이유가 사라진 게 아니라 자리가 틀렸던 것이다.
     */}
-    <StuckIndex lang={lang} />
-
     {featured && (
       <section class="block">
         <Card href={featured.href} hero={featured.hero} kicker={featured.kicker}
@@ -115,6 +112,8 @@ const jsonLd = {
         </div>
       </section>
     )}
+
+    <StuckIndex lang={lang} />
 
     <section class="block">
       <h2>What we cover</h2>
