@@ -27,13 +27,33 @@
           "when": "I am at the airport and do not know how to get into the city",
           "answer": "Train, bus or taxi — which one is right depends on your luggage and the hour.",
           "href": "now/incheon-airport-to-seoul-train-bus-taxi",
-          "home": true
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "空港に着いたけれど、市内までどう行けばいいのか分からない",
+              "answer": "鉄道・バス・タクシー。荷物の量と時刻でどれが正解かが変わります。"
+            },
+            "zh-hans": {
+              "when": "到机场了，不知道怎么进市区",
+              "answer": "地铁、巴士、出租车。选哪个取决于你的行李和落地时间。"
+            }
+          }
         },
         {
           "when": "My phone has a Korean number but Korean apps still reject me",
           "answer": "You do get an 010 number. What you do not get is Korean identity verification, and no tourist product at any price changes that.",
           "href": "decode/korea-esim-no-phone-number",
-          "home": true
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "韓国の番号は出たのに、韓国のアプリに弾かれる",
+              "answer": "010番号はちゃんと出ます。出ないのは「本人確認」のほうで、観光客向けの商品はどれを買っても通りません。"
+            },
+            "zh-hans": {
+              "when": "拿到韩国号码了，韩国的 App 还是不让我用",
+              "answer": "010 号码是有的。没有的是「本人确认」，而且旅游用的产品买多贵都过不了这一关。"
+            }
+          }
         },
         {
           "when": "I bought a train ticket and there is no gate to scan it at",
@@ -46,7 +66,11 @@
           "answer": "A subway ride starts at ₩1,550 with a card and ₩1,650 without, and that gap repeats on every transfer.",
           "href": "now/seoul-transport-fares-subway-bus-taxi"
         }
-      ]
+      ],
+      "i18n": {
+        "ja": "着いたばかり",
+        "zh-hans": "刚落地"
+      }
     },
     {
       "label": "You cannot read what is in front of you",
@@ -55,12 +79,24 @@
           "when": "Every sign is in an alphabet I cannot read",
           "answer": "Hangul is not Chinese characters. Most people can sound out a sign after about ninety minutes.",
           "href": "hangul/learn-to-read-korean-signs-alphabet",
-          "home": true
+          "home": true,
+          "i18n": {
+            "zh-hans": {
+              "when": "满街的字我一个都不认识",
+              "answer": "韩文不是汉字。大多数人花大约九十分钟就能把招牌念出来。"
+            }
+          }
         },
         {
           "when": "I cannot tell what kind of restaurant this is from outside",
           "answer": "The last word on the sign tells you what they cook. Learn six words and you can read the street.",
-          "href": "hangul/korean-restaurant-signs-last-word"
+          "href": "hangul/korean-restaurant-signs-last-word",
+          "i18n": {
+            "ja": {
+              "when": "外から見ても、その店が何の店なのか分からない",
+              "answer": "看板の最後の一語が料理を決めます。六つ覚えれば通りが読めます。"
+            }
+          }
         },
         {
           "when": "I do not eat pork, and I cannot read the menu",
@@ -87,7 +123,11 @@
           "answer": "Oppa, hyung, unnie, noona say who is older and how close you are. Subtitles usually replace them with a name, which loses the whole point.",
           "href": "decode/oppa-hyung-unnie-noona"
         }
-      ]
+      ],
+      "i18n": {
+        "ja": "目の前の文字が読めない",
+        "zh-hans": "眼前的字看不懂"
+      }
     },
     {
       "label": "Something has gone wrong",
@@ -120,7 +160,11 @@
           "href": "now/korea-food-prices-what-meals-cost",
           "home": true
         }
-      ]
+      ],
+      "i18n": {
+        "ja": "何かがうまくいかない",
+        "zh-hans": "出问题了"
+      }
     },
     {
       "label": "You are about to do something that has a rule",
@@ -128,7 +172,13 @@
         {
           "when": "Can I get fined for walking down a street and taking a photograph",
           "answer": "In one lane of Bukchon, yes — ₩100,000, outside 10:00–17:00, and it applies to visitors exactly as to Koreans.",
-          "href": "guides/bukchon-hanok-village-visiting-hours-fine"
+          "href": "guides/bukchon-hanok-village-visiting-hours-fine",
+          "i18n": {
+            "zh-hans": {
+              "when": "只是走在路上拍张照，也会被罚款吗",
+              "answer": "在北村的一条巷子里会 —— 10 万韩元，10:00–17:00 之外，对外国人和韩国人一视同仁。"
+            }
+          }
         },
         {
           "when": "I heard hanbok gets you in free — what counts as hanbok",
@@ -154,7 +204,17 @@
           "when": "Am I paying for something that is free for me",
           "answer": "If you are 18 or under, or 65 or over, the royal palaces are free for foreign visitors too — and nobody tells you at the gate.",
           "href": "guides/seoul-palaces-free-admission-who-qualifies",
-          "home": true
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "本当は無料なのに、お金を払っているのではないか",
+              "answer": "18歳以下と65歳以上なら、外国人でも王宮は無料です。窓口では教えてくれません。"
+            },
+            "zh-hans": {
+              "when": "我是不是在为本来免费的东西付钱",
+              "answer": "18 岁以下和 65 岁以上，外国访客进王宫免费。售票口不会主动告诉你。"
+            }
+          }
         },
         {
           "when": "It is raining and I wanted to walk along the stream",
@@ -167,7 +227,11 @@
           "href": "scenes/kpop-concert-tickets-korea-foreigners",
           "home": true
         }
-      ]
+      ],
+      "i18n": {
+        "ja": "それには決まりがある",
+        "zh-hans": "这件事有规定"
+      }
     }
   ]
 }

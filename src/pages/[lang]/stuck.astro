@@ -8,30 +8,27 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StuckIndex from '../../components/StuckIndex.astro';
 import { DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
+import { t } from '../../config/ui.mjs';
+import { pageHref, isForeign } from '../../config/links.mjs';
 
 /*
- * 이 페이지는 **영어판만 생성한다** (2026-08-17).
- *
- * 산문 정책 페이지는 아직 번역이 없다. LOCALES 전체로 돌리면
- * /ja/about/ 에 영어 본문이 그대로 뜬다 — 그건 「일본어판이 있다」가 아니라
- * 「일본어판이 미완성이다」이고, 검색엔진에도 언어 신호가 어긋난 페이지가 된다.
- *
- * 푸터는 이 사실을 알고 영어판으로 보내면서 「（英語）」라고 적는다.
- * 번역이 생기면 여기를 LOCALES 로 되돌리고 Footer 의 TRANSLATED_PAGES 에 넣는다.
+ * 세 언어로 되돌렸다 (2026-08-17 저녁).
+ * 색인 자체가 언어별로 그려지므로, 이 페이지도 그 언어의 항목만 담는다.
+ * 항목이 0개인 언어는 애초에 이 목록에 링크되지 않는다.
  */
-export async function getStaticPaths() { return [{ params: { lang: DEFAULT_LOCALE } }]; }
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
 ---
-<BaseLayout lang={lang} path="stuck" title="Stuck in Korea? Every Problem We Cover, With the Answer"
-  description="Every moment that stumps visitors to Korea — airport, cards, signs, clinics, rules — with the answer on the line, and a link to the article where it was checked.">
+<BaseLayout availableLocales={LOCALES} lang={lang} path="stuck" title={t(lang, 'stuck.heading')}
+  description={t(lang, 'stuck.metaDescription')}>
   <div class="wrap">
     <section class="hero">
-      <h1>Stuck on something?</h1>
+      <h1>{t(lang, 'stuck.heading')}</h1>
       <p>
-        Every article on this site started as a moment when a visitor did not know what to do.
-        This is the full list, and <strong>the answer is on the line — you do not have to click.</strong>
-        Setting up before you land?
-        <a href={`/${lang}/arrival/`}>The arrival page puts the first-day items in order.</a>
+        {t(lang, 'stuck.pageLede')} <strong>{t(lang, 'stuck.pageLedeStrong')}</strong>{' '}
+        {t(lang, 'stuck.pageArrival')}{' '}
+        <a href={pageHref(lang, 'arrival')}>{t(lang, 'stuck.pageArrivalLink')}</a>
+        {isForeign(lang, 'arrival') ? t(lang, 'footer.inEnglish') : ''}
       </p>
     </section>
     <StuckIndex lang={lang} mode="full" showHead={false} />

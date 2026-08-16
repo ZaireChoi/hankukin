@@ -33,6 +33,7 @@ import stuck from '../../data/stuck.json';
 import { publicSlug } from '../config/slug.mjs';
 import { DEFAULT_LOCALE } from '../config/brand.mjs';
 import { pageHref } from '../config/links.mjs';
+import { t } from '../config/ui.mjs';
 
 /**
  * mode: 'full'    — 16개 전부, 그룹별 (전용 페이지 /stuck/ 용)
@@ -62,22 +63,25 @@ const known = new Set(
 );
 
 /*
- * 이 색인은 **영어로 쓰인 물건이다** (2026-08-17, 일본어 발행 시작).
+ * 색인을 언어별로 그린다 (2026-08-17 저녁).
  *
- *   when 은 독자의 말, answer 는 한 문장짜리 답 — 둘 다 영어로 쓰여 있다.
- *   일본어 페이지에 이 블록을 그대로 그리면 화면 절반이 영어가 된다.
- *   그건 「일본어판이 있다」가 아니라 「일본어판이 미완성이다」로 읽힌다.
+ * 아침에는 「영어에서만 그린다」로 막아 뒀다. 반쯤 영어인 화면을 피하려던 것이고
+ * 그 판단은 맞았지만, 결과적으로 **일본어·중국어 독자에게는 이 블록이 없는** 상태가 됐다.
+ * 「무엇이 막혔나요」는 이 사이트의 성격 그 자체다. 그게 없으면 그냥 여행 블로그다.
  *
- *   그래서 번역된 색인이 생기기 전까지, 이 블록은 **영어에서만** 그린다.
- *   빈 자리를 두는 쪽이 반쯤 번역된 화면보다 낫다.
+ * 그래서 조건을 둘로 나눈다. **둘 다 만족해야 그 언어에서 보인다.**
+ *   ① 그 기사가 그 언어에 실제로 있다
+ *   ② when·answer 가 그 언어로 적혀 있다 (data/stuck.json 의 i18n)
  *
- *   할 일: data/stuck.json 을 언어별로 나누고 이 조건을 지운다.
+ * 하나라도 없으면 **그 항목만 빠진다.** 블록 전체가 사라지지 않는다.
+ * 지금 일본어 4개, 간체 5개다. 적지만 전부 진짜다 —
+ * 그리고 이 목록은 「우리가 그 언어로 실제로 답한 것」의 정확한 개수이기도 하다.
  */
 const isSourceLang = lang === DEFAULT_LOCALE;
 
-const groups = !isSourceLang ? [] : stuck.groups.map((g) => ({
-  label: g.label,
-  items: g.items.map((i) => {
+const groups = stuck.groups.map((g) => ({
+  label: isSourceLang ? g.label : (g.i18n?.[lang] ?? g.label),
+  items: g.items.filter((i) => isSourceLang || (known.has(i.href) && i.i18n?.[lang])).map((i) => {
     if (!known.has(i.href)) {
       throw new Error(
         `\n\n「무엇이 막혔나요」 색인이 없는 기사를 가리킵니다.\n\n` +
@@ -89,27 +93,31 @@ const groups = !isSourceLang ? [] : stuck.groups.map((g) => ({
         '**쓰지 않은 문제는 이 목록에 올리지 않습니다.**\n',
       );
     }
-    return { ...i, url: `/${lang}/${i.href}/` };
+    const loc = isSourceLang ? i : { ...i, ...i.i18n[lang] };
+    return { ...loc, url: `/${lang}/${i.href}/` };
   }),
 }));
 
-const total = groups.reduce((n, g) => n + g.items.length, 0);
-const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
+const shown = groups.filter((g) => g.items.length);
+const total = shown.reduce((n, g) => n + g.items.length, 0);
+/* 홈에서는 home:true 만. 다만 번역판은 항목 수가 적으니 있는 것을 다 보여준다 */
+const all = shown.flatMap((g) => g.items);
+const compactItems = isSourceLang ? all.filter((i) => i.home) : all;
 ---
 
-{isSourceLang && (
+{total > 0 && (
 <section class="stuck" aria-labelledby="stuck-h">
   {showHead && (
     <div class="head">
-      <h2 id="stuck-h">Stuck on something?</h2>
+      <h2 id="stuck-h">{t(lang, 'stuck.heading')}</h2>
       <p>
-        Everything here started as a moment when a visitor did not know what to do.
-        <strong>The answer is on the line — you do not have to click.</strong>
+        {t(lang, 'stuck.lede')}{' '}
+        <strong>{t(lang, 'stuck.ledeStrong')}</strong>
       </p>
     </div>
   )}
 
-  {mode === 'full' ? groups.map((g) => (
+  {mode === 'full' ? shown.map((g) => (
     <div class="grp">
       <h3>{g.label}</h3>
       <ul>
@@ -140,13 +148,13 @@ const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
 
   {mode === 'full' ? (
     <p class="foot">
-      {total} of these so far, and the list is how we choose what to write next.
-      Got stuck on something that is not here? <a href={pageHref(lang, 'contact')}>Tell us</a> —
-      that is where the next one comes from.
+      {t(lang, 'stuck.foot')(total)}{' '}
+      <a href={pageHref(lang, 'contact')}>{t(lang, 'stuck.tellUs')}</a>{' '}
+      {t(lang, 'stuck.footTail')}
     </p>
   ) : (
     <p class="foot">
-      <a href={pageHref(lang, 'stuck')}>All {total} problems, with one-line answers →</a>
+      <a href={pageHref(lang, 'stuck')}>{t(lang, 'stuck.allLink')(total)}</a>
     </p>
   )}
 </section>

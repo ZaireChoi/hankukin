@@ -21,7 +21,7 @@ import { publicSlug } from './slug.mjs';
 export const ENGLISH_ONLY_PAGES = new Set([
   'about', 'author', 'editorial-policy', 'ledger',
   'affiliate-disclosure', 'privacy', 'contact',
-  'arrival', 'stuck',
+  // 'arrival' 과 'stuck' 은 2026-08-17 저녁에 3개 언어로 전환했다
 ]);
 
 /** 정책·안내 페이지 주소. 번역이 없으면 영어판으로 보낸다. */

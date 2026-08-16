@@ -19,124 +19,95 @@ import CtaBlock from '../../components/CtaBlock.astro';
 import AffiliateTopNote from '../../components/AffiliateTopNote.astro';
 import { DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
 import { product } from '../../config/products.mjs';
+import { getCollection } from 'astro:content';
+import { publicSlug } from '../../config/slug.mjs';
+import { pageHref, isForeign } from '../../config/links.mjs';
+import { t } from '../../config/ui.mjs';
 
 /*
- * 이 페이지는 **영어판만 생성한다** (2026-08-17).
+ * 세 언어로 되돌렸다 (2026-08-17 저녁, 운영자 지시 "4번은 고쳐야지").
  *
- * 산문 정책 페이지는 아직 번역이 없다. LOCALES 전체로 돌리면
- * /ja/about/ 에 영어 본문이 그대로 뜬다 — 그건 「일본어판이 있다」가 아니라
- * 「일본어판이 미완성이다」이고, 검색엔진에도 언어 신호가 어긋난 페이지가 된다.
+ * 이 페이지는 홈에서 **가장 큰 버튼**이 가리키는 곳이다.
+ * 그게 영어로만 있으면, 중국어 독자는 첫 클릭에서 영어를 만나고
+ * 거기서 언어 전환도 막혔었다 — 오늘 운영자가 「갇힌다」고 한 그 문제의 뿌리다.
  *
- * 푸터는 이 사실을 알고 영어판으로 보내면서 「（英語）」라고 적는다.
- * 번역이 생기면 여기를 LOCALES 로 되돌리고 Footer 의 TRANSLATED_PAGES 에 넣는다.
+ * 본문 문구는 ui.mjs 로 옮겼다. 각 단계가 가리키는 기사는
+ * 그 언어에 있으면 그 언어로, 없으면 영어로 보내면서 「（英語）」를 적는다.
  */
-export async function getStaticPaths() { return [{ params: { lang: DEFAULT_LOCALE } }]; }
+export async function getStaticPaths() {
+  const langs = await Promise.all(LOCALES.map(async (lang) => {
+    const have = new Set();
+    for (const c of ['now', 'guides', 'decode', 'hangul', 'scenes']) {
+      const es = await getCollection(c, (e) => !e.data.draft && e.data.lang === lang);
+      for (const e of es) have.add(`${c}/${publicSlug(e.id)}`);
+    }
+    return { params: { lang }, props: { have: [...have] } };
+  }));
+  return langs;
+}
 const { lang } = Astro.params;
+const { have } = Astro.props;
+const has = new Set(have);
+
+/** 그 언어에 기사가 있으면 그 언어로, 없으면 영어로 보내고 표시한다. */
+const art = (id) => has.has(id) ? `/${lang}/${id}/` : `/${DEFAULT_LOCALE}/${id}/`;
+const artMark = (id) => (has.has(id) || lang === DEFAULT_LOCALE) ? '' : t(lang, 'footer.inEnglish');
 
 const steps = [
-  {
-    n: 1,
-    title: 'Get your phone working',
-    /*
-     * 2026-08-17 정정. 여기 이렇게 적혀 있었다:
-     *   "A data-only Korean eSIM ... gives you a working 010 number."
-     * eSIM 편은 같은 시각에 「이 상품은 번호가 없다」고 말하고 있었다.
-     * 한 사이트가 두 말을 했고, 독자에게는 둘 다 우리 말이다.
-     * 라벨은 이제 products.mjs 에서 가져온다 — 손으로 다시 쓰지 않는다.
-     */
-    body: [
-      'Most tourist eSIMs sold through travel platforms are data-only: mobile data works, but there is no usable Korean 010 number, no calls and no SMS. Read the product page before you pay. ',
-      'A data eSIM bought from a Korean carrier does carry an 010 number, and if you need to *send* texts — some booking apps demand it — the voice plans differ by carrier: SKT sells and verifies online (8am–10pm Korean time), KT and LG U+ hand over the QR at the airport counter.',
-    ],
-    article: { href: `/${lang}/decode/korea-esim-no-phone-number/`, label: 'The eSIM article — what a tourist eSIM can and cannot do' },
-    cta: {
-      heading: 'Get an eSIM',
-      items: [product('klook-korea-esim', lang), product('skt-esim', lang), product('kt-esim', lang)],
-    },
-  },
-  {
-    n: 2,
-    title: 'Make your cards work before you need them',
-    body: [
-      'Your foreign card will work in most shops and restaurants. Korean *online* checkouts are a different story — many run 3D Secure, and a card that is not enrolled gets declined with no useful explanation. ',
-      'The fix is a phone call to your card issuer before you fly. Bring a second card from a different bank, and some cash.',
-    ],
-    article: { href: `/${lang}/now/korea-3d-secure-card-declined-online/`, label: 'The 3D Secure article — the call to make, and the three questions to ask' },
-  },
-  {
-    n: 3,
-    title: 'Pick up a transit card',
-    body: [
-      'T-money *(ti-meo-ni)* is the rechargeable card that works on subways and buses nationwide. Physical cards sell at airport convenience stores; some carrier eSIM bundles include one. ',
-      'We are still verifying the mobile T-money apps on foreign phones — until then, the physical card is the answer we can stand behind.',
-    ],
-    article: { href: `/${lang}/now/seoul-transport-fares-subway-bus-taxi/`, label: 'What subway, bus and taxi rides actually cost' },
-  },
-  {
-    n: 4,
-    title: 'Get from the airport into the city',
-    body: [
-      'From Incheon: the all-stop train is the cheapest, the Express is the fastest rail option, limousine buses go door-ish to door, and after the last train the N6701/N6703 night buses are the option nobody tells you about.',
-    ],
-    article: { href: `/${lang}/now/incheon-airport-to-seoul-train-bus-taxi/`, label: 'Incheon → Seoul, compared — fares, times, and the 1am problem' },
-    cta: {
-      heading: 'Book airport transport',
-      items: [
-        { label: 'AREX Express train ticket — book ahead on Klook', url: 'https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/', merchant: 'Klook', category: 'transport', relationship: 'suggested' },
-      ],
-    },
-  },
-  {
-    n: 5,
-    title: 'Know the quirks before they find you',
-    body: [
-      'Korean trains have no ticket gates — sit in your assigned seat and that is the whole procedure. Clinics take walk-ins. Glasses take about ten minutes. And the signs stop being wallpaper after one evening with the alphabet.',
-    ],
-    article: { href: `/${lang}/stuck/`, label: 'The full list: every moment that stumps visitors, with one-line answers' },
-  },
+  { n: 1, k: 's1', body: ['s1a', 's1b'], id: 'decode/korea-esim-no-phone-number', link: 's1link',
+    cta: { heading: 's1cta', items: [product('klook-korea-esim', lang), product('skt-esim', lang), product('kt-esim', lang)] } },
+  { n: 2, k: 's2', body: ['s2a', 's2b'], id: 'now/korea-3d-secure-card-declined-online', link: 's2link' },
+  { n: 3, k: 's3', body: ['s3a', 's3b'], id: 'now/seoul-transport-fares-subway-bus-taxi', link: 's3link' },
+  { n: 4, k: 's4', body: ['s4a'], id: 'now/incheon-airport-to-seoul-train-bus-taxi', link: 's4link',
+    cta: { heading: 's4cta', items: [product('klook-arex-express', lang)] } },
+  { n: 5, k: 's5', body: ['s5a'], id: null, link: 's5link' },
 ];
+
 ---
-<BaseLayout lang={lang} path="arrival" title="Korea Arrival Setup: Your First 24 Hours"
-  description="The five things to set up for landing in Korea — eSIM, cards and 3D Secure, T-money, airport transport, and the quirks — in order, with the checked details one click away.">
+<BaseLayout availableLocales={LOCALES} lang={lang} path="arrival"
+  title={t(lang, 'arrival.h1')}
+  description={t(lang, 'arrival.metaDescription')}>
   <div class="wrap">
     <section class="hero">
-      <p class="q">LANDING IN KOREA?</p>
-      <h1>Arrival setup — your first 24 hours, in order</h1>
-      <p>
-        Five things, most of them doable from your sofa before you fly.
-        Each step links to the full article where every number was checked against a Korean primary source.
-      </p>
+      <p class="q">{t(lang, 'arrival.kicker')}</p>
+      <h1>{t(lang, 'arrival.h1')}</h1>
+      <p>{t(lang, 'arrival.lede')}</p>
     </section>
 
     <AffiliateTopNote lang={lang} items={steps.flatMap((s) => s.cta?.items ?? [])} />
 
     <section class="preflight">
-      <h2>Before you fly</h2>
+      <h2>{t(lang, 'arrival.preflight')}</h2>
       <ul>
-        <li><a href={`/${lang}/now/korea-3d-secure-card-declined-online/`}>Call your card issuer about 3D Secure</a> — the one fix that only works from home.</li>
-        <li>Buying an SKT voice eSIM online? Its passport verification runs <strong>8am–10pm Korean time</strong> — do it before the flight, not after landing at 1am.</li>
-        <li><a href={`/${lang}/guides/changdeokgung-secret-garden-booking/`}>Secret Garden tickets</a> sell out ahead — if it is on your list, book it now.</li>
+        <li>
+          <a href={art('now/korea-3d-secure-card-declined-online')}>{t(lang, 'arrival.pre1')}</a>
+          {artMark('now/korea-3d-secure-card-declined-online')} {t(lang, 'arrival.pre1Tail')}
+        </li>
+        <li>
+          {t(lang, 'arrival.pre2')} <strong>{t(lang, 'arrival.pre2Strong')}</strong> {t(lang, 'arrival.pre2Tail')}
+        </li>
+        <li>
+          <a href={art('guides/changdeokgung-secret-garden-booking')}>{t(lang, 'arrival.pre3')}</a>
+          {artMark('guides/changdeokgung-secret-garden-booking')} {t(lang, 'arrival.pre3Tail')}
+        </li>
       </ul>
     </section>
 
     {steps.map((s) => (
       <section class="step">
-        <h2><span class="n">{s.n}</span>{s.title}</h2>
-        {s.body.map((p) => <p>{p}</p>)}
-        <p class="art"><a href={s.article.href}>{s.article.label} →</a></p>
-        {s.cta && <CtaBlock heading={s.cta.heading} items={s.cta.items} />}
+        <h2><span class="n">{s.n}</span>{t(lang, `arrival.${s.k}`)}</h2>
+        {s.body.map((b) => <p>{t(lang, `arrival.${b}`)}</p>)}
+        <p class="art">
+          <a href={s.id ? art(s.id) : pageHref(lang, 'stuck')}>{t(lang, `arrival.${s.link}`)} →</a>
+          {s.id ? artMark(s.id) : (isForeign(lang, 'stuck') ? t(lang, 'footer.inEnglish') : '')}
+        </p>
+        {s.cta && <CtaBlock lang={lang} heading={t(lang, `arrival.${s.cta.heading}`)} items={s.cta.items} />}
       </section>
     ))}
 
     <section class="step">
-      <h2><span class="n">＋</span>Where to sleep</h2>
-      <p>
-        The honest position: we do not have a Seoul neighbourhood guide yet, and we do not link
-        hotels we have not evaluated. Our lodging advice so far lives in the regional articles —
-        <a href={`/${lang}/scenes/gyeongju-at-night-silla-capital/`}> Gyeongju</a> and
-        <a href={`/${lang}/scenes/geoje-island-what-to-see/`}> Geoje</a> carry price ranges by
-        area type rather than named properties. A Seoul version is on the list.
-      </p>
+      <h2><span class="n">＋</span>{t(lang, 'arrival.sleep')}</h2>
+      <p>{t(lang, 'arrival.sleepBody')}</p>
     </section>
   </div>
 </BaseLayout>
