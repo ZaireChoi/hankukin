@@ -170,6 +170,12 @@
       "label": "You are about to do something that has a rule",
       "items": [
         {
+          "when": "Every guide says buy the 62,000-won Climate Card. Is that still right?",
+          "answer": "No — Seoul stops topping it up on 31 August 2026, the last ride is 29 September, and the scheme ends 1 October. The 1-to-7-day version survives.",
+          "href": "now/seoul-climate-card-ending-what-visitors-should-buy",
+          "home": true
+        },
+        {
           "when": "Can I get fined for walking down a street and taking a photograph",
           "answer": "In one lane of Bukchon, yes — ₩100,000, outside 10:00–17:00, and it applies to visitors exactly as to Koreans.",
           "href": "guides/bukchon-hanok-village-visiting-hours-fine",

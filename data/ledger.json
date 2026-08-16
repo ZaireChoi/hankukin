@@ -81,6 +81,14 @@
   ],
   "corrected": [
     {
+      "date": "2026-08-16",
+      "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
+      "wrong": "Seoul's own Climate Card FAQ still lists only the 62,000 and 65,000-won passes and an out-of-date list of subway sections.",
+      "right": "Seoul's usage page, revised 8 June 2026, carries the 1-to-7-day short passes, the Han River bus option and the payback event.",
+      "why": "This is not our error — it is a contradiction between two pages on the same government site. We recorded it here because we relied on the more recently revised page, and a reader checking our work against the other page would think we were wrong.",
+      "found": "our own check"
+    },
+    {
       "date": "2026-08-15",
       "article": "/en/guides/seoul-palaces-free-admission-who-qualifies/",
       "wrong": "We said free subway travel for over-65s applies automatically at the gate.",
@@ -191,6 +199,16 @@
     }
   ],
   "withheld": [
+    {
+      "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
+      "missing": "Whether a short-stay visitor can register for the replacement card (모두의 카드 / K-패스)",
+      "did": "Left it out and said why. korea-pass.kr would not load for us — the same block we hit on t-money.co.kr and lost112.go.kr. A search summary claimed a Korean alien registration number is required; we would not print that without reading the source ourselves. We printed the K-pass helpline number instead."
+    },
+    {
+      "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
+      "missing": "How to top up an ordinary T-money card at a convenience store",
+      "did": "Left it out. t-money.co.kr was unreachable, so we had no primary source for the payment methods accepted at the counter. One reader's testimony that cash worked is quoted as testimony, not stated as the rule."
+    },
     {
       "article": "/en/scenes/gyeongju-at-night-silla-capital/",
       "missing": "Bulguksa temple admission",
