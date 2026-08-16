@@ -222,6 +222,59 @@ export default function contentQuality() {
         }
 
         /**
+         * ── 「무엇이 막혔나요」 색인이 조용히 낡는 것을 막는다 ──────────
+         *
+         * 2026-08-17 실측: 기사 35편 중 색인에 든 것이 **16편**이었다.
+         * 3D Secure 편처럼 이번 주에 쓴 가장 좋은 글도 빠져 있었다.
+         * 아무도 뭘 잘못하지 않았다. **그냥 안 넣었고, 안 넣은 걸 아무도 몰랐다.**
+         *
+         * 그렇다고 전부 넣을 수는 없다 — 촬영지·계절 기사는 '막힌 순간' 이 아니다.
+         * 그래서 넣거나, **이유를 적고 빼거나** 둘 중 하나를 하게 만든다.
+         * 사진 예외 목록과 같은 방식이다. 이유를 적기 귀찮으면 넣게 된다.
+         */
+        const stuckExempt = {
+          // 갈 곳 이야기지 막힌 순간이 아니다. 독자가 '어떡하지' 하고 검색하지 않는다
+          'geoje-island-what-to-see': '촬영지·여행지 소개. 막힌 순간이 없다',
+          'goblin-jumunjin-breakwater': '촬영지 소개',
+          'gyeongju-at-night-silla-capital': '여행지 소개',
+          'kpop-demon-hunters-still-popular-korea': '현상 분석. 독자가 막혀서 찾는 글이 아니다',
+          'yeokjuhaeng-korean-chart-reverse-running': '현상 해설',
+          'what-koreans-search-for-trends-2026': '데이터 해설',
+          // 계획 단계의 글이다. 막힌 게 아니라 아직 안 떠났다
+          'best-time-to-visit-korea-calendar': '출발 전 계획. 현장에서 막히는 순간이 아니다',
+          'when-do-cherry-blossoms-bloom-korea': '출발 전 계획',
+          'korea-autumn-foliage-when-and-where': '출발 전 계획',
+          'when-does-it-snow-in-korea': '출발 전 계획',
+          'korea-summer-heat-humidity': '출발 전 계획. 현장 대처는 아직 안 썼다 — 쓰면 색인에 넣는다',
+          // 배경 지식. 몰라도 통과에 지장이 없다
+          'dancheong-why-palaces-are-painted': '배경 지식. 몰라도 막히지 않는다',
+          'what-is-donggung-the-east-palace': '배경 지식',
+        };
+        try {
+          const stuck = JSON.parse(readFileSync('data/stuck.json', 'utf8'));
+          const listed = new Set(stuck.groups.flatMap((g) => g.items.map((i) => i.href)));
+          const drifted = [];
+          for (const file of walk(CONTENT_DIR)) {
+            const slug = basename(file).replace(/\.mdx?$/, '');
+            const sec = basename(join(file, '..'));
+            if (listed.has(`${sec}/${slug}`) || stuckExempt[slug]) continue;
+            drifted.push(`${sec}/${slug}`);
+          }
+          if (drifted.length) {
+            fail.push(
+              `「무엇이 막혔나요」 색인에 없고 예외 사유도 없는 기사 ${drifted.length}건.\n` +
+              drifted.map((d) => `      · ${d}`).join('\n') + '\n\n' +
+              '    둘 중 하나를 하십시오.\n' +
+              '      ① data/stuck.json 에 넣는다 — 독자의 말로 된 문제 + 한 줄 답\n' +
+              '      ② stuckExempt 에 **이유를 적고** 뺀다 (막힌 순간이 아니라면)\n\n' +
+              '    2026-08-17 에 35편 중 19편이 이렇게 조용히 빠져 있었습니다.',
+            );
+          }
+        } catch (e) {
+          if (e.code !== 'ENOENT') throw e;
+        }
+
+        /**
          * ── 상업 링크가 조용히 사라지는 것을 막는다 ───────────────────
          *
          * 2026-08-16 밤에 찾았다. eSIM 편 frontmatter 에 Klook 제휴 링크가

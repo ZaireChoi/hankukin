@@ -241,6 +241,10 @@
     {
       "name": "cta-renderable",
       "does": "Stops the build if any article template cannot display a commercial link, so a declared link can never vanish without an error."
+    },
+    {
+      "name": "stuck-index-drift",
+      "does": "Stops the build if an article is neither listed on the problem index nor explicitly excluded with a written reason."
     }
   ]
 }
