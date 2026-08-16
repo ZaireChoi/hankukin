@@ -1,0 +1,94 @@
+---
+/**
+ * 방(房) 접미사 해부도 — [하는 일] + 방 = [업소].
+ *
+ * 왜 그렸나 (2026-08-16, Hangul 4편).
+ *   노래방·찜질방 간판 사진이 재고에 없다. 이태원 5장을 열어 봤지만
+ *   전부 이태원시장 옷가게 실내였다 — 이 주제의 사진이 아니다.
+ *   그리고 이 기사가 가르치는 것은 낱말의 조립 방식이라 도해가 사진보다 낫다.
+ *
+ *   병원편 ChartClinicSignFormula 는 간판 한 장을 세 칸으로 쪼갰다.
+ *   이 그림은 반대 방향이다 — **한 글자가 여러 간판을 만드는 것**을 보여준다.
+ *   같은 모양을 두 번 그리지 않기 위해 등식(=) 구도로 갔다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 366;
+
+// 등식 행 — 노래 + 방 = 노래방
+const EQ_Y = 44, EQ_H = 96;
+
+// 가족 행 — 같은 수를 네 번 더
+const fam = [
+  { pre: '찜질', rom: 'jjim-jil-bang', en: 'sweat-bathing room' },
+  { pre: '피시', rom: 'pi-si-bang', en: 'PC room' },
+  { pre: '빨래', rom: 'ppal-lae-bang', en: 'laundry room' },
+  { pre: '만화', rom: 'man-hwa-bang', en: 'comics room' },
+];
+const F_X = 40, F_W = 166, F_GAP = 8, F_Y = 232;
+const ACCENT = '#c9622e';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="How Korean names a business with the word bang, meaning room. The word norae, song, plus bang, room, equals noraebang, a singing room. The same pattern builds jjimjilbang, a sweat-bathing room; PC bang, a computer room; ppallaebang, a laundry room; and manhwabang, a comics room.">
+
+    <text x="40" y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      TAKE AN ACTIVITY, ADD 방 — YOU HAVE NAMED THE BUSINESS
+    </text>
+
+    {/* 노래 */}
+    <rect x="40" y={EQ_Y} width="150" height={EQ_H} rx="5" fill="#efe9e1" stroke="#e0d8ce" />
+    <text x="115" y={EQ_Y + 56} text-anchor="middle" font-size="40" font-weight="700" fill="#12100f">노래</text>
+    <text x="115" y={EQ_Y + 82} text-anchor="middle" font-size="12" fill="#6b6560">no-rae · song</text>
+
+    <text x="214" y={EQ_Y + 62} text-anchor="middle" font-size="30" fill="#8a827b">+</text>
+
+    {/* 방 */}
+    <rect x="238" y={EQ_Y} width="110" height={EQ_H} rx="5" fill={ACCENT} fill-opacity="0.14" stroke={ACCENT} stroke-width="1.6" />
+    <text x="293" y={EQ_Y + 56} text-anchor="middle" font-size="40" font-weight="700" fill={ACCENT}>방</text>
+    <text x="293" y={EQ_Y + 82} text-anchor="middle" font-size="12" font-weight="700" fill={ACCENT}>bang · room</text>
+
+    <text x="374" y={EQ_Y + 62} text-anchor="middle" font-size="30" fill="#8a827b">=</text>
+
+    {/* 간판 */}
+    <rect x="400" y={EQ_Y} width="320" height={EQ_H} rx="6" fill="#12100f" />
+    <text x="560" y={EQ_Y + 66} text-anchor="middle" font-size="52" font-weight="700" fill="#fffdfa"
+          textLength="200" lengthAdjust="spacing">노래방</text>
+
+    <text x="40" y="176" font-size="12.5" fill="#3c3733">
+      no-rae-bang — the dictionary’s definition: a soundproofed room where you sing along to an
+    </text>
+    <text x="40" y="193" font-size="12.5" fill="#3c3733">
+      accompaniment machine that shows the lyrics on a screen.
+    </text>
+
+    <text x="40" y={F_Y - 8} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      THE SAME MOVE, FOUR MORE TIMES
+    </text>
+
+    {fam.map((f, i) => (
+      <>
+        <rect x={F_X + i * (F_W + F_GAP)} y={F_Y} width={F_W} height="96" rx="5" fill="#fffdfa" stroke="#e0d8ce" />
+        <text x={F_X + i * (F_W + F_GAP) + F_W / 2} y={F_Y + 44} text-anchor="middle"
+              font-size="30" font-weight="700" fill="#12100f">{f.pre}<tspan fill={ACCENT}>방</tspan></text>
+        <text x={F_X + i * (F_W + F_GAP) + F_W / 2} y={F_Y + 66} text-anchor="middle"
+              font-size="11.5" fill="#8a827b">{f.rom}</text>
+        <text x={F_X + i * (F_W + F_GAP) + F_W / 2} y={F_Y + 84} text-anchor="middle"
+              font-size="12" font-weight="700" fill="#3c3733">{f.en}</text>
+      </>
+    ))}
+
+    <text x="40" y={H - 12} font-size="11.5" fill="#a09890">
+      Our own illustration. Word meanings from the Standard Korean Dictionary, National Institute of Korean Language.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
