@@ -15,6 +15,7 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
+import { LABEL_BY_URL } from '../config/products.mjs';
 
 const CONTENT_DIR = 'src/content';
 
@@ -50,6 +51,14 @@ const HERO_EXEMPT = {
     '결제 실패 화면은 남의 결제 정보라 찍을 수 없고, 찍어도 특정 카드사·특정 가맹점의 ' +
     '한 사례일 뿐이라 오히려 오해를 만든다. 이 기사의 값은 증상으로 벽을 구분하는 ' +
     '진단이라 도해가 사진보다 낫다 — eSIM 편과 같은 판단. 이 기사에는 앞으로도 채우지 않는다.',
+
+  'kpop-concert-tickets-korea-foreigners':
+    '서울 공연장 사진이 재고에 없다. 미사용분인 올림픽공원 2·6번을 대조표로 열어 봤으나 ' +
+    '6장 전부 **올림픽공원피크닉장** (등재명도 그렇다) — 눈 덮인 잔디와 벤치, 앙상한 나무이고 ' +
+    'KSPO돔은 어느 프레임에도 없다. 겨울편이 이미 같은 묶음에서 4장을 쓰고 있다. ' +
+    '공원 사진을 붙이면 주제와 무관한 「그냥 한국」 사진이 되고, 그건 우리가 안 쓰기로 한 것이다. ' +
+    '이 기사가 말하는 것은 **자격 심사의 순서**라 일정 도표가 사진보다 낫다 — ' +
+    'eSIM 편·3D Secure 편과 같은 판단. KSPO돔·잠실실내체육관이 크게 찍힌 사진이 생기면 그때 채운다.',
 
   'korea-esim-no-phone-number':
     'eSIM 은 **사진으로 찍을 수 있는 물건이 아니다.** 실물이 없다. ' +
@@ -356,6 +365,42 @@ export default function contentQuality() {
                 `    항목 : ${(r.wrong ?? r.title ?? '').slice(0, 70)}\n` +
                 '    대장은 우리가 틀렸다고 인정한 기록입니다.\n' +
                 '    가리킨 자리에 글이 없으면 정정을 확인할 방법이 없습니다.',
+              );
+            }
+          }
+        }
+
+        /**
+         * ── 상품 하나에 이름 하나 (아홉 번째) ────────────────────────
+         *
+         * 2026-08-17. 같은 Klook 상품이 두 곳에 붙어 있었는데
+         * eSIM 편에서는 "data only — no 010 number" 로 고쳤고
+         * Arrival 페이지에서는 "buy before you fly" 로 남아 있었다.
+         * 게다가 Arrival 본문은 "gives you a working 010 number" 라고 썼다.
+         *
+         * **한 사이트가 같은 물건을 두고 두 말을 했다.**
+         * 독자에게는 둘 다 우리 말이라, 어느 쪽을 믿어도 우리가 틀린 것이 된다.
+         *
+         * 정식 라벨은 src/config/products.mjs 한 곳에만 있다.
+         * frontmatter 가 같은 URL 에 다른 라벨을 쓰면 여기서 세운다.
+         */
+        for (const file of walk(CONTENT_DIR)) {
+          const text = readFileSync(file, 'utf8');
+          const slug = basename(file).replace(/\.mdx?$/, '');
+          for (const [url, canonical] of Object.entries(LABEL_BY_URL)) {
+            const i = text.indexOf(url);
+            if (i === -1) continue;
+            // 같은 항목 안의 label 을 찾는다 (URL 바로 앞 몇 줄).
+            const near = text.slice(Math.max(0, i - 400), i);
+            const label = [...near.matchAll(/label:\s*"([^"]+)"/g)].at(-1)?.[1];
+            if (label && label !== canonical) {
+              fail.push(
+                `${slug}: 상품 라벨이 정식 이름과 다릅니다.\n` +
+                `    상품 : ${url}\n` +
+                `    정식 : "${canonical}"\n` +
+                `    기사 : "${label}"\n` +
+                '    같은 물건을 두 이름으로 부르면 둘 중 하나는 독자를 속입니다.\n' +
+                '    고치려면 src/config/products.mjs 를 바꾸십시오 (거기가 유일한 자리입니다).',
               );
             }
           }

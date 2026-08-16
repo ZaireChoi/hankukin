@@ -155,6 +155,12 @@
           "when": "It is raining and I wanted to walk along the stream",
           "answer": "Cheonggyecheon runs below street level and closes on a published rainfall schedule. The spot your instinct picks — under a bridge — is where the sluice gates open.",
           "href": "guides/cheonggyecheon-seoul-entrances-rain-closure"
+        },
+        {
+          "when": "I want to see my favourite group in Seoul but I cannot get near a ticket",
+          "answer": "Speed is not the wall. The presale is a fanclub membership list, and the joining deadline can fall on the day the show is announced.",
+          "href": "scenes/kpop-concert-tickets-korea-foreigners",
+          "home": true
         }
       ]
     }

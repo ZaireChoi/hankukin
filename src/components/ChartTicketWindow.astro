@@ -1,0 +1,128 @@
+---
+/**
+ * 한 공연의 예매 일정 전체 — 팬클럽 마감이 발표일과 같은 날이었다는 것을 보이는 그림.
+ *
+ * 왜 이 그림인가 (2026-08-16).
+ *   해외 팬이 K팝 티켓에서 막히는 지점을 설명할 때 보통 '경쟁이 치열하다' 로 끝난다.
+ *   그건 설명이 아니다. 실제 벽은 **일정의 순서**다 —
+ *   공연이 발표된 날에 이미 선예매 자격의 문이 닫혀 있었다.
+ *
+ *   근거: YES24 티켓 공지 18023 (2026 ONG SEONGWU FANMEETING, 공지일 2026-06-18).
+ *   공지에 적힌 시각을 그대로 옮겼다. 추정한 시각은 없다.
+ *
+ * 왜 세로인가.
+ *   처음에는 가로 타임라인으로 그렸다. 6월 18일에 두 사건이 겹치고
+ *   25일·26일 라벨이 붙어서 **글자가 서로 먹었다.**
+ *   가로축의 '눈금이 예쁜 것' 과 '읽히는 것' 은 다른 문제다. 읽히는 쪽을 골랐다.
+ *   (도표 라벨 겹침은 이 사이트에서 이미 한 번 낸 사고다.)
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const ROWS = [
+  {
+    when: 'Before 18 Jun',
+    time: '',
+    what: 'You must already be a paying fanclub member',
+    note: 'Membership closed at 14:59 KST on 18 June',
+    kind: 'shut',
+  },
+  {
+    when: '18 Jun',
+    time: '',
+    what: 'The show is announced',
+    note: 'Notice posted on the ticketing site — the same day the door above closed',
+    kind: 'mark',
+  },
+  {
+    when: '24 Jun',
+    time: '15:00',
+    what: 'Fanclub verification opens',
+    note: 'Membership code plus the last four digits of the phone number you gave the fanclub',
+    kind: 'step',
+  },
+  {
+    when: '25 Jun',
+    time: '20:00',
+    what: 'Fanclub presale — 1 ticket per person, per show',
+    note: 'Web and mobile only. No phone booking.',
+    kind: 'step',
+  },
+  {
+    when: '26 Jun',
+    time: '20:00',
+    what: 'General sale — whatever is left',
+    note: 'Limit 2 per person per show, presale tickets counted in',
+    kind: 'last',
+  },
+];
+
+const W = 760;
+const TOP = 68;
+const ROW = 92;
+const H = TOP + ROWS.length * ROW + 40;
+const RAIL = 148;          /* 세로줄의 x */
+const TEXT = RAIL + 30;
+
+const RED = '#b0453a', INK = '#12100f', MUTE = '#6b6560', RULE = '#d8d0c6';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="The booking timeline for one Korean fanmeeting, taken from the ticketing site's own notice. To join the fanclub presale you had to already be a paying fanclub member before 14:59 on 18 June. The show itself was announced on 18 June, the same day. Fanclub verification opened on 24 June at 15:00, using a membership code and the last four digits of the phone number registered with the fanclub. The fanclub presale ran from 20:00 on 25 June, limited to one ticket per person per show, web and mobile only. General sale opened at 20:00 on 26 June for whatever seats remained, limited to two per person including any presale ticket.">
+
+    <text x="20" y="22" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      ONE SHOW, THE WHOLE BOOKING WINDOW
+    </text>
+    <text x="20" y="42" font-size="12.5" fill={MUTE}>
+      2026 Ong Seong-wu fanmeeting, Seoul — dates and times as published by the ticketing site
+    </text>
+
+    {ROWS.map((r, i) => {
+      const y = TOP + i * ROW;
+      const cy = y + 26;
+      const shut = r.kind === 'shut';
+      return (
+        <>
+          {i > 0 && (
+            <line x1={RAIL} y1={y - ROW + 26} x2={RAIL} y2={cy}
+                  stroke={RULE} stroke-width="2" />
+          )}
+
+          {shut && (
+            <rect x="20" y={y} width={W - 40} height={ROW - 18} rx="5" fill="#fbf1f0" />
+          )}
+
+          <text x={RAIL - 22} y={cy + 5} text-anchor="end" font-size="13.5"
+                font-weight="700" fill={shut ? RED : INK}>{r.when}</text>
+          {r.time && (
+            <text x={RAIL - 22} y={cy + 23} text-anchor="end" font-size="12" fill={MUTE}>
+              {r.time} KST
+            </text>
+          )}
+
+          <circle cx={RAIL} cy={cy} r={shut ? 8 : 6}
+                  fill={shut ? RED : (r.kind === 'mark' ? '#c9622e' : '#fff')}
+                  stroke={shut ? RED : (r.kind === 'mark' ? '#c9622e' : '#8a827b')}
+                  stroke-width="2" />
+
+          <text x={TEXT} y={cy + 5} font-size="14"
+                font-weight={shut || r.kind === 'last' ? '700' : '500'}
+                fill={shut ? RED : INK}>{r.what}</text>
+          <text x={TEXT} y={cy + 26} font-size="12" fill={MUTE}>{r.note}</text>
+        </>
+      );
+    })}
+
+    <text x="20" y={H - 14} font-size="11.5" fill={MUTE}>
+      From the ticketing site's own notice for this show, read 16 August 2026. Other shows publish different dates — the order is what repeats.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

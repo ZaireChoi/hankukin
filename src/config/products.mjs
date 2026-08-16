@@ -1,0 +1,75 @@
+/**
+ * 상품 하나에 이름 하나.
+ *
+ * 왜 만들었나 (2026-08-17, 같은 실수의 **여섯 번째**).
+ *
+ *   eSIM 편의 Klook 버튼이 「데이터 전용」임을 숨기고 있었다. 그건 고쳤다.
+ *   그런데 **똑같은 상품이 Arrival 페이지에도 붙어 있었고**, 거기는 안 고쳤다.
+ *   더 나쁜 것은 Arrival 본문이 이렇게 쓰여 있었다는 것이다:
+ *     "A data-only Korean eSIM ... gives you a working 010 number."
+ *   같은 사이트 안에서, 한 페이지는 「번호 없음」이라 하고
+ *   다른 페이지는 「번호 나옴」이라고 했다. 독자에게는 둘 다 우리 말이다.
+ *
+ *   이 사이트에서 이 모양이 여섯 번 반복됐다:
+ *     canonical → hreflang → 내부링크 → 제휴고지 3자리 → CTA note → 그리고 이것.
+ *   매번 **한 군데를 고치고 옆을 안 봤다.** 주의력으로 고칠 문제가 아니다.
+ *
+ * → 상품의 이름과 제약은 **여기에만 적는다.**
+ *   페이지는 여기서 가져다 쓰고, 기사 frontmatter 는 게이트가 대조한다
+ *   (content-quality.mjs 아홉 번째 게이트).
+ *   라벨을 손으로 다시 쓰면 빌드가 선다.
+ *
+ * 규칙 하나만 지킨다.
+ *   **label 은 상품이 못 하는 것을 먼저 적는다.**
+ *   독자가 버튼을 누르기 전에 알아야 하는 것은 장점이 아니라 한계다.
+ */
+
+export const PRODUCTS = {
+  /*
+   * 2026-08-17 Klook 상품 페이지에서 직접 확인한 문장:
+   *   "This is a Data-only SIM card. Calls, texts, or topping up additional
+   *    credits will not be possible."
+   *   "Service type  Data only"
+   * 통신사 직판 데이터 상품과 다르다 — 그쪽은 010 번호가 나온다.
+   * 이것은 재판매 회선이고, 번호가 없다.
+   */
+  'klook-korea-esim': {
+    url: 'https://www.klook.com/en-US/activity/100060-4g-esim-korea/',
+    merchant: 'Klook',
+    category: 'experience',
+    relationship: 'suggested',
+    label: 'Korea eSIM, data only — no 010 number, no calls, no SMS',
+    checkedAt: '2026-08-17',
+  },
+
+  'skt-esim': {
+    url: 'https://www.skroaming.com/esim/esim',
+    merchant: 'SK Telecom',
+    category: 'experience',
+    relationship: 'suggested',
+    label: 'LTE eSIM with Data, Call and SMS — buy online, verify passport by voucher (SK Telecom)',
+    checkedAt: '2026-08-16',
+  },
+
+  'kt-esim': {
+    url: 'https://roaming.kt.com/eng/esim',
+    merchant: 'KT',
+    category: 'experience',
+    relationship: 'suggested',
+    label: 'Voice eSIM — sold at the airport roaming centre only (KT)',
+    checkedAt: '2026-08-16',
+  },
+};
+
+/** URL → 정식 라벨. 게이트가 기사 frontmatter 를 대조할 때 쓴다. */
+export const LABEL_BY_URL = Object.fromEntries(
+  Object.values(PRODUCTS).map((p) => [p.url, p.label]),
+);
+
+/** 페이지에서 쓰는 형태로 꺼낸다. */
+export const product = (key) => {
+  const p = PRODUCTS[key];
+  if (!p) throw new Error(`알 수 없는 상품 키: ${key} — src/config/products.mjs 를 보십시오.`);
+  const { checkedAt, ...item } = p;
+  return item;
+};

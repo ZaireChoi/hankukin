@@ -39,8 +39,14 @@ import stuck from '../../data/stuck.json';
  * Arrival 동선이 밀린다. 상위만 보여주고 전체는 전용 페이지로.
  * 검증 게이트(없는 기사를 가리키면 빌드 정지)는 모드와 무관하게 16개 전부에 돈다.
  */
-interface Props { lang: string; mode?: 'full' | 'compact' }
-const { lang, mode = 'full' } = Astro.props;
+/*
+ * showHead — 2026-08-17 외부 검토.
+ *   /stuck/ 페이지에 「Stuck on something?」 이 h1 과 h2 로 **두 번** 나왔다.
+ *   같은 제목이 연달아 두 번 나오면 독자는 뭔가 잘못 렌더링됐다고 읽는다.
+ *   페이지가 이미 제 제목을 갖고 있으면 이 컴포넌트는 목록만 그린다.
+ */
+interface Props { lang: string; mode?: 'full' | 'compact'; showHead?: boolean }
+const { lang, mode = 'full', showHead = true } = Astro.props;
 
 const COLLECTIONS = ['now', 'guides', 'decode', 'hangul', 'scenes'];
 
@@ -75,13 +81,15 @@ const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
 ---
 
 <section class="stuck" aria-labelledby="stuck-h">
-  <div class="head">
-    <h2 id="stuck-h">Stuck on something?</h2>
-    <p>
-      Everything here started as a moment when a visitor did not know what to do.
-      <strong>The answer is on the line — you do not have to click.</strong>
-    </p>
-  </div>
+  {showHead && (
+    <div class="head">
+      <h2 id="stuck-h">Stuck on something?</h2>
+      <p>
+        Everything here started as a moment when a visitor did not know what to do.
+        <strong>The answer is on the line — you do not have to click.</strong>
+      </p>
+    </div>
+  )}
 
   {mode === 'full' ? groups.map((g) => (
     <div class="grp">

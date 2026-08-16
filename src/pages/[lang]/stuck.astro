@@ -19,10 +19,11 @@ const { lang } = Astro.params;
       <h1>Stuck on something?</h1>
       <p>
         Every article on this site started as a moment when a visitor did not know what to do.
-        This is the full list. Setting up before you land?
+        This is the full list, and <strong>the answer is on the line — you do not have to click.</strong>
+        Setting up before you land?
         <a href={`/${lang}/arrival/`}>The arrival page puts the first-day items in order.</a>
       </p>
     </section>
-    <StuckIndex lang={lang} mode="full" />
+    <StuckIndex lang={lang} mode="full" showHead={false} />
   </div>
 </BaseLayout>

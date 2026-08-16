@@ -18,6 +18,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBlock from '../../components/CtaBlock.astro';
 import AffiliateTopNote from '../../components/AffiliateTopNote.astro';
 import { LOCALES } from '../../config/brand.mjs';
+import { product } from '../../config/products.mjs';
 
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
@@ -26,17 +27,21 @@ const steps = [
   {
     n: 1,
     title: 'Get your phone working',
+    /*
+     * 2026-08-17 정정. 여기 이렇게 적혀 있었다:
+     *   "A data-only Korean eSIM ... gives you a working 010 number."
+     * eSIM 편은 같은 시각에 「이 상품은 번호가 없다」고 말하고 있었다.
+     * 한 사이트가 두 말을 했고, 독자에게는 둘 다 우리 말이다.
+     * 라벨은 이제 products.mjs 에서 가져온다 — 손으로 다시 쓰지 않는다.
+     */
     body: [
-      'A data-only Korean eSIM can be bought online before you fly and gives you a working 010 number. ',
-      'If you need to send texts — some booking apps demand it — the voice-capable plans differ by carrier: SKT sells and verifies online (8am–10pm Korean time), KT and LG U+ hand over the QR at the airport counter.',
+      'Most tourist eSIMs sold through travel platforms are data-only: mobile data works, but there is no usable Korean 010 number, no calls and no SMS. Read the product page before you pay. ',
+      'A data eSIM bought from a Korean carrier does carry an 010 number, and if you need to *send* texts — some booking apps demand it — the voice plans differ by carrier: SKT sells and verifies online (8am–10pm Korean time), KT and LG U+ hand over the QR at the airport counter.',
     ],
     article: { href: `/${lang}/decode/korea-esim-no-phone-number/`, label: 'The eSIM article — what a tourist eSIM can and cannot do' },
     cta: {
       heading: 'Get an eSIM',
-      items: [
-        { label: 'Korea eSIM — buy before you fly, on Klook', url: 'https://www.klook.com/en-US/activity/100060-4g-esim-korea/', merchant: 'Klook', category: 'experience', relationship: 'suggested' },
-        { label: 'SK Telecom official eSIM store — online purchase and passport verification', url: 'https://www.skroaming.com/esim/esim', merchant: 'SK Telecom', category: 'official', relationship: 'official' },
-      ],
+      items: [product('klook-korea-esim'), product('skt-esim'), product('kt-esim')],
     },
   },
   {
