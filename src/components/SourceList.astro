@@ -1,6 +1,7 @@
 ---
 import { isAffiliate, decorate, MERCHANTS } from '../config/merchants.mjs';
-const { sources = [], checkedAt } = Astro.props;
+import { t } from '../config/ui.mjs';
+const { sources = [], checkedAt, lang = 'en' } = Astro.props;
 
 /**
  * 출처 링크가 **제휴처를 가리키는 경우**를 따로 다룬다 (2026-08-17).
@@ -41,13 +42,13 @@ const label = {
 const fmt = (d) => new Date(d).toISOString().slice(0, 10);
 ---
 <section class="block">
-  <h2>Sources &amp; last checked</h2>
+  <h2>{t(lang, 'article.sources')}</h2>
   <ul class="sources">
     {prepared.map((s) => (
       <li>
         <span class="st">
           {label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}
-          {s.paid && <> · <span class="paid">we earn a commission if you book here</span></>}
+          {s.paid && <> · <span class="paid">{t(lang, 'affiliate.sourceTag')}</span></>}
         </span>
         {/*
           nofollow 를 뺐다 (2026-08-16).
@@ -60,8 +61,7 @@ const fmt = (d) => new Date(d).toISOString().slice(0, 10);
       </li>
     ))}
   </ul>
-  <p class="notice">This page was last verified on {fmt(checkedAt)}. Opening hours, prices and
-  business status change often — please confirm on the official page before you travel.</p>
+  <p class="notice">{t(lang, 'article.verifyNotice')(fmt(checkedAt))}</p>
 </section>
 
 <style>

@@ -1,11 +1,12 @@
 ---
 /** Visit Korea / Bring Korea Home — 관련성이 있을 때만 렌더링한다 (문서 01 §4) */
 import { isAffiliate, decorate } from '../config/merchants.mjs';
+import { t } from '../config/ui.mjs';
 /**
  * extra — 배송·재고처럼 **고지가 아닌 사실**만 받는다.
  * 제휴 여부를 여기에 적으면 안 된다. 그건 아래에서 링크로부터 계산된다.
  */
-const { heading, items = [], extra } = Astro.props;
+const { heading, items = [], extra, lang = 'en' } = Astro.props;
 
 /**
  * 꼬리말은 **더 이상 호출하는 쪽에서 받지 않는다.** (2026-08-16 밤, 다섯 번째 재발)
@@ -27,11 +28,9 @@ const anyPaid = items.some((i) => isAffiliate(i.merchant));
 const allPaid = items.length > 0 && items.every((i) => isAffiliate(i.merchant));
 
 const note = !items.length ? null
-  : allPaid
-    ? 'Every link above is an affiliate link: if you book through one we may earn a commission, at no extra cost to you. We were not paid to write any of this and nobody reviewed it before publication but us.'
-  : anyPaid
-    ? 'Links marked as affiliate links earn us a commission if you book through them, at no extra cost to you. The rest are official operator and government pages that pay us nothing. We were not paid to write any of this.'
-    : 'Official operator and government pages. None of these are affiliate links and nobody pays us for a place here.';
+  : allPaid ? t(lang, 'affiliate.allPaid')
+  : anyPaid ? t(lang, 'affiliate.somePaid')
+  : t(lang, 'affiliate.nonePaid');
 /**
  * 링크 옆 꼬리표.
  *
@@ -48,8 +47,8 @@ const note = !items.length ? null
  * 둘 다 틀리지 않는 것이 요점이다. 없는 관계를 있다고 하는 것과
  * 있는 관계를 안 밝히는 것은 방향만 반대인 같은 잘못이다.
  */
-const REL = { confirmed_use: 'Confirmed use', inspired_by: 'Inspired by', suggested: 'Suggested' };
-const AFFILIATE_TAG = 'Affiliate link — we may earn a commission';
+const REL = t(lang, 'affiliate.rel');
+const AFFILIATE_TAG = t(lang, 'affiliate.tag');
 
 /**
  * rel="sponsored" 는 '금전적 대가가 있는 링크' 를 뜻한다.

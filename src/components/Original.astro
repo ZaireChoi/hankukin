@@ -1,4 +1,5 @@
 ---
+import { t } from '../config/ui.mjs';
 /**
  * 원문 병기 — 우리가 읽은 한국어 문장을 그대로 보여준다.
  *
@@ -50,7 +51,13 @@ interface Props {
   /** 원문 주소 */
   url: string;
 }
-const { ko, en, who, whoEn, date, url } = Astro.props;
+const { ko, en, who, whoEn, date, url, lang = 'en' } = Astro.props;
+/*
+ * 2026-08-17. en 은 **읽는 사람의 언어로 옮긴 것**이지 영어라는 뜻이 아니다.
+ * 일본어판에서 이 자리에 영어가 나오면, 한국어를 못 읽는 사람에게
+ * 또 하나의 못 읽는 언어를 보여주는 셈이 된다.
+ * 이름은 en 그대로 두되(모든 기사가 이미 쓰고 있다), 뜻은 「독자의 언어」다.
+ */
 
 /**
  * 인용 길이 상한. 한국어 120자.
@@ -76,7 +83,7 @@ const dateLabel = new Date(date).toLocaleDateString('en-GB', {
 ---
 
 <figure class="original">
-  <figcaption class="label">The Korean sentence this comes from</figcaption>
+  <figcaption class="label">{t(lang, 'article.originalLabel')}</figcaption>
 
   {/*
     한국어를 먼저 놓는다. 번역을 위에 놓으면 원문이 각주처럼 보이는데,

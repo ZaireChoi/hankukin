@@ -15,7 +15,7 @@
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
-import { LABEL_BY_URL } from '../config/products.mjs';
+import { ALLOWED_LABELS } from '../config/products.mjs';
 import { UI, flatKeys } from '../config/ui.mjs';
 import { LOCALES } from '../config/brand.mjs';
 
@@ -416,17 +416,17 @@ export default function contentQuality() {
         for (const file of walk(CONTENT_DIR)) {
           const text = readFileSync(file, 'utf8');
           const slug = basename(file).replace(/\.mdx?$/, '');
-          for (const [url, canonical] of Object.entries(LABEL_BY_URL)) {
+          for (const [url, allowed] of Object.entries(ALLOWED_LABELS)) {
             const i = text.indexOf(url);
             if (i === -1) continue;
             // 같은 항목 안의 label 을 찾는다 (URL 바로 앞 몇 줄).
             const near = text.slice(Math.max(0, i - 400), i);
             const label = [...near.matchAll(/label:\s*"([^"]+)"/g)].at(-1)?.[1];
-            if (label && label !== canonical) {
+            if (label && !allowed.has(label)) {
               fail.push(
                 `${slug}: 상품 라벨이 정식 이름과 다릅니다.\n` +
                 `    상품 : ${url}\n` +
-                `    정식 : "${canonical}"\n` +
+                `    정식 : ${[...allowed].map((l) => `"${l}"`).join(' / ')}\n` +
                 `    기사 : "${label}"\n` +
                 '    같은 물건을 두 이름으로 부르면 둘 중 하나는 독자를 속입니다.\n' +
                 '    고치려면 src/config/products.mjs 를 바꾸십시오 (거기가 유일한 자리입니다).',

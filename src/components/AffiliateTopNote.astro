@@ -11,6 +11,7 @@
  */
 import { isAffiliate } from '../config/merchants.mjs';
 import { pageHref } from '../config/links.mjs';
+import { t } from '../config/ui.mjs';
 
 interface Props { items?: { merchant?: string }[]; lang: string }
 const { items = [], lang } = Astro.props;
@@ -18,9 +19,8 @@ const anyPaid = items.some((i) => isAffiliate(i.merchant));
 ---
 {anyPaid && (
   <p class="aff-note">
-    This article contains affiliate links, marked where they appear.
-    If you book through one we may earn a commission at no extra cost to you —
-    <a href={pageHref(lang, 'affiliate-disclosure')}>how this works</a>.
+    {t(lang, 'affiliate.topNote')}{' '}
+    <a href={pageHref(lang, 'affiliate-disclosure')}>{t(lang, 'affiliate.topNoteLink')}</a>.
   </p>
 )}
 

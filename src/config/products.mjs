@@ -39,6 +39,7 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'Korea eSIM, data only — no 010 number, no calls, no SMS',
+    labels: { ja: '韓国eSIM（データ専用）— 010番号・通話・SMSなし' },
     checkedAt: '2026-08-17',
   },
 
@@ -48,6 +49,7 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'LTE eSIM with Data, Call and SMS — buy online, verify passport by voucher (SK Telecom)',
+    labels: { ja: 'データ・通話・SMS付きLTE eSIM — オンライン購入、バウチャーで旅券認証（SKテレコム）' },
     checkedAt: '2026-08-16',
   },
 
@@ -57,19 +59,34 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'Voice eSIM — sold at the airport roaming centre only (KT)',
+    labels: { ja: '音声eSIM — 空港のローミングセンターのみで販売（KT）' },
     checkedAt: '2026-08-16',
   },
 };
 
-/** URL → 정식 라벨. 게이트가 기사 frontmatter 를 대조할 때 쓴다. */
+/**
+ * URL → 정식 라벨. 게이트가 기사 frontmatter 를 대조할 때 쓴다.
+ *
+ * 2026-08-17: **언어별로 갖는다.** 일본어 기사에 영어 상품명이 뜨면
+ * 「데이터 전용」이라는 제일 중요한 제약이 그 독자에게 안 읽힌다.
+ * 제약이 안 읽히는 라벨은 라벨이 아니다.
+ */
 export const LABEL_BY_URL = Object.fromEntries(
-  Object.values(PRODUCTS).map((p) => [p.url, p.label]),
+  Object.values(PRODUCTS).flatMap((p) => [
+    [p.url, p.label],
+    ...Object.values(p.labels ?? {}).map((l) => [`${p.url}::${l}`, l]),
+  ]),
+);
+
+/** 해당 URL 이 어떤 언어에서 쓸 수 있는 라벨들인가 (게이트용). */
+export const ALLOWED_LABELS = Object.fromEntries(
+  Object.values(PRODUCTS).map((p) => [p.url, new Set([p.label, ...Object.values(p.labels ?? {})])]),
 );
 
 /** 페이지에서 쓰는 형태로 꺼낸다. */
-export const product = (key) => {
+export const product = (key, lang = 'en') => {
   const p = PRODUCTS[key];
   if (!p) throw new Error(`알 수 없는 상품 키: ${key} — src/config/products.mjs 를 보십시오.`);
-  const { checkedAt, ...item } = p;
-  return item;
+  const { checkedAt, labels, ...item } = p;
+  return { ...item, label: labels?.[lang] ?? p.label };
 };

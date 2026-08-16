@@ -15,6 +15,7 @@ import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { AUTHOR } from '../../../config/author.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
 import { pageHref } from '../../../config/links.mjs';
+import { t } from '../../../config/ui.mjs';
 import { anyAffiliate } from '../../../config/merchants.mjs';
 
 export async function getStaticPaths() {
@@ -104,7 +105,7 @@ const jsonLd = {
       <div class="meta">
         {d.claimWording && <ClaimBadge wording={d.claimWording} />}
         {d.stars.length > 0 && <span>{d.stars.join(' · ')}</span>}
-        <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
+        <span>{t(lang, 'article.lastChecked')} {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
     </header>
 
@@ -127,7 +128,7 @@ const jsonLd = {
 
     <!-- 4·5. 장면이 중요한 이유 / 근거 (본문) -->
     <section class="block">
-      <h2>Why this scene matters</h2>
+      <h2>{t(lang, 'article.sceneMatters')}</h2>
       <div class="prose"><Content /></div>
     </section>
 
@@ -174,19 +175,19 @@ const jsonLd = {
     )}
 
     <!-- 15·16. 두 전환경로 -->
-    <CtaBlock heading="Visit Korea" items={visitLinks} />
-    <CtaBlock heading="Bring Korea Home" items={d.bringKoreaHome}
+    <CtaBlock lang={lang} heading="Visit Korea" items={visitLinks} />
+    <CtaBlock lang={lang} heading="Bring Korea Home" items={d.bringKoreaHome}
               extra="Availability and shipping vary by country. Prices were checked on the dates shown on each merchant page." />
 
     <!-- 17·18. 출처·확인일 / 고지 -->
     <ReadNext current={{ ...entry, _section: 'scenes' }} lang={lang} />
 
-    <SourceList sources={d.sources} checkedAt={d.checkedAt} />
+    <SourceList lang={lang} sources={d.sources} checkedAt={d.checkedAt} />
     <Byline lang={lang} />
     <section class="block">
-      <p class="notice">{NOTICES.aiAssisted}</p>
+      <p class="notice">{t(lang, 'byline.policyNote')}</p>
       <p class="notice">Spotted something wrong or out of date?
-        <a href={pageHref(lang, 'contact')}>Report an error</a> — we take pages down while we re-check them.</p>
+        <a href={pageHref(lang, 'contact')}>{t(lang, 'byline.policyNote')}</a> — we take pages down while we re-check them.</p>
     </section>
 
   </article>

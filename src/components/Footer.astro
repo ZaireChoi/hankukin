@@ -36,11 +36,10 @@ const mark = (path) => (isForeign(lang, path) ? t(lang, 'footer.inEnglish') : ''
       <a href={p('contact')}>{t(lang, 'footer.contact')}{mark('contact')}</a>
     </div>
     <p class="fine">
-      {BRAND.name} — {BRAND.tagline} We are an independent guide and are not affiliated with any
-      broadcaster, agency, artist or public body.
+      {BRAND.name} — {t(lang, 'footer2.independent')}
       {hasAnyAffiliate()
-        ? <>Some links are affiliate links; see our <a href={p('affiliate-disclosure')}>disclosure</a>.</>
-        : <>We currently carry no affiliate links and earn nothing from any link on this site. If that changes, this line changes with it — see our <a href={p('affiliate-disclosure')}>disclosure</a>.</>}
+        ? <>{t(lang, 'footer2.someAffiliate')} <a href={p('affiliate-disclosure')}>{t(lang, 'footer2.disclosureWord')}</a>.</>
+        : <>{t(lang, 'footer2.noAffiliate')} <a href={p('affiliate-disclosure')}>{t(lang, 'footer2.disclosureWord')}</a>.</>}
     </p>
     <p class="fine">© {year} {BRAND.legalName || BRAND.name}. Contact: {BRAND.supportEmail}</p>
   </div>

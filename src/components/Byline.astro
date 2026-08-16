@@ -10,14 +10,15 @@ import { pageHref } from '../config/links.mjs';
  * 이 블록이 일하는 순간이고, 첫머리에 두면 자기소개가 기사를 가린다.
  */
 import { AUTHOR } from '../config/author.mjs';
+import { t } from '../config/ui.mjs';
 const { lang = 'en' } = Astro.props;
 ---
 <aside class="byline">
-  <p class="by">Written by <a href={pageHref(lang, 'author')} rel="author">{AUTHOR.name}</a></p>
-  <p class="what">{AUTHOR.short}</p>
+  <p class="by">{t(lang, 'byline.writtenBy')} <a href={pageHref(lang, 'author')} rel="author">{AUTHOR.name}</a></p>
+  {lang === 'en' && <p class="what">{AUTHOR.short}</p>}
   <p class="how">
-    Drafted with AI assistance; sources read, figures checked and photographs opened by a person.
-    Mistakes we have found are on the <a href={pageHref(lang, 'ledger')}>public record</a>.
+    {t(lang, 'byline.aiNote')}{' '}
+    <a href={pageHref(lang, 'ledger')}>{t(lang, 'byline.ledger')}</a>
   </p>
 </aside>
 <style>

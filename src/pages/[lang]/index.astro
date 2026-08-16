@@ -10,6 +10,7 @@
  */
 import { publicSlug } from '../../config/slug.mjs';
 import { pageHref } from '../../config/links.mjs';
+import { t } from '../../config/ui.mjs';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
@@ -34,21 +35,21 @@ const SECTIONS = [
    * **틀린 것은 분류가 아니라 라벨이다.** 분류를 바꿔 라벨을 맞추는 것은 거꾸로다.
    */
   { path: 'scenes', coll: 'scenes',
-    kicker: (e) => (e.data.sceneKind === 'location' ? 'Filming location' : 'K-culture') },
-  { path: 'now',    coll: 'now',    kicker: () => 'Korea Now' },
-  { path: 'decode', coll: 'decode', kicker: () => 'Decode' },
+    kicker: (e, lang) => t(lang, e.data.sceneKind === 'location' ? 'home.kickers.filming' : 'home.kickers.kculture') },
+  { path: 'now',    coll: 'now',    kicker: (e, lang) => t(lang, 'home.kickers.now') },
+  { path: 'decode', coll: 'decode', kicker: (e, lang) => t(lang, 'home.kickers.decode') },
   // 한글 축이 홈에 아예 없었다. 상단 메뉴에는 있는데 목록에는 안 나왔다 —
   // 새 축을 만들면서 이 배열에 추가하는 것을 빠뜨렸다.
   // 읽히지 않는 축은 없는 축이다.
-  { path: 'hangul', coll: 'hangul', kicker: () => 'Read the signs' },
-  { path: 'guides', coll: 'guides', kicker: () => 'Culture & History' },
+  { path: 'hangul', coll: 'hangul', kicker: (e, lang) => t(lang, 'home.kickers.hangul') },
+  { path: 'guides', coll: 'guides', kicker: (e, lang) => t(lang, 'home.kickers.guides') },
 ];
 
 const all = (await Promise.all(SECTIONS.map(async (s) => {
   const entries = await getCollection(s.coll, (e) => !e.data.draft && e.data.lang === lang);
   return entries.map((e) => ({
     href: `/${lang}/${s.path}/${publicSlug(e.id)}/`,
-    kicker: s.kicker(e),
+    kicker: s.kicker(e, lang),
     title: e.data.title,
     summary: e.data.summary,
     hero: e.data.hero ?? null,
@@ -65,8 +66,8 @@ const latest = rest.slice(0, 6);
 /** 섹션별 최신 3편 — 방문자가 무엇을 다루는 사이트인지 한 화면에서 알게 한다. */
 const bySection = SECTIONS.map((s) => ({
   ...s,
-  label: CATEGORIES.find((c) => c.path === s.path)?.label ?? s.path,
-  lead: CATEGORIES.find((c) => c.path === s.path)?.lead ?? '',
+  label: t(lang, `sections.${CATEGORIES.find((c) => c.path === s.path)?.key ?? 'now'}.label`),
+  lead: t(lang, `sections.${CATEGORIES.find((c) => c.path === s.path)?.key ?? 'now'}.lead`),
   items: all.filter((a) => a.path === s.path).slice(0, 3),
 })).filter((s) => s.items.length);
 
@@ -89,11 +90,11 @@ const jsonLd = {
         · "Follow the story" — Scenes 5/33 으로 상대적으로 약하다.
         실전형으로 확정(운영자 선택). 상품 축이 생기면 그때 다시 논의한다.
       */}
-      <h1>Read the signs. Know the fares.<br />Korea, minus the moments that freeze visitors.</h1>
-      <p>{BRAND.defaultMetaDescription}</p>
+      <h1>{t(lang, 'home.tagline')}<br />{t(lang, 'home.sub')}</h1>
+      <p>{t(lang, 'home.metaDescription')}</p>
       {/* Arrival 동선 (2026-08-16 운영자 지시) — 한 줄 배너라 사진을 밀지 않는다 */}
       <p class="arrival-cta">
-        <a href={pageHref(lang, 'arrival')}>Landing in Korea? <strong>Set up your first 24 hours →</strong></a>
+        <a href={pageHref(lang, 'arrival')}>{t(lang, 'home.arrivalCta')} <strong>{t(lang, 'home.arrivalCtaStrong')}</strong></a>
       </p>
     </section>
 
@@ -128,8 +129,8 @@ const jsonLd = {
       <div class="cards">
         {CATEGORIES.map((c) => (
           <a class="card" href={`/${lang}/${c.path}/`}>
-            <div class="k">{c.blurb}</div>
-            <div class="v">{c.label}</div>
+            <div class="k">{t(lang, `sections.${c.key}.blurb`)}</div>
+            <div class="v">{t(lang, `sections.${c.key}.label`)}</div>
           </a>
         ))}
       </div>

@@ -13,6 +13,7 @@ import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { AUTHOR } from '../../../config/author.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
 import { pageHref } from '../../../config/links.mjs';
+import { t } from '../../../config/ui.mjs';
 
 export async function getStaticPaths() {
   const entries = await getCollection('now', (e) => !e.data.draft);
@@ -70,7 +71,7 @@ const jsonLd = {
       <p class="summary">{d.summary}</p>
       <div class="meta">
         {d.region && <span>{d.region}</span>}
-        <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
+        <span>{t(lang, 'article.lastChecked')} {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
     </header>
 
@@ -88,14 +89,14 @@ const jsonLd = {
 
     <ReadNext current={{ ...entry, _section: 'now' }} lang={lang} />
 
-    <CtaBlock heading="Book it or find it" items={[...d.visitKorea, ...d.bringKoreaHome]} />
-    <SourceList sources={d.sources} checkedAt={d.checkedAt} />
+    <CtaBlock lang={lang} heading={t(lang, 'article.ctaHeading')} items={[...d.visitKorea, ...d.bringKoreaHome]} />
+    <SourceList lang={lang} sources={d.sources} checkedAt={d.checkedAt} />
     <Byline lang={lang} />
 
     <section class="block">
-      <p class="notice">{NOTICES.aiAssisted}</p>
-      <p class="notice">Spotted something wrong or out of date?
-        <a href={pageHref(lang, 'contact')}>Report an error</a>.</p>
+      <p class="notice">{t(lang, 'byline.policyNote')}</p>
+      <p class="notice">{t(lang, 'byline.spotted')}{' '}
+        <a href={pageHref(lang, 'contact')}>{t(lang, 'byline.reportError')}</a>.</p>
     </section>
   </article>
 </BaseLayout>
