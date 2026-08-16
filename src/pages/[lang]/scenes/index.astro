@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { LOCALES } from '../../../config/brand.mjs';
+import { t } from '../../../config/ui.mjs';
+import { publicSlug } from '../../../config/slug.mjs';
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
 const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lang === lang))
@@ -9,7 +11,7 @@ const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lan
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'ItemList',
   itemListElement: scenes.map((s, i) => ({ '@type':'ListItem', position:i+1, name:s.data.title,
-    url: new URL(`/${lang}/scenes/${s.id}/`, Astro.site).href })),
+    url: new URL(`/${lang}/scenes/${publicSlug(s.id)}/`, Astro.site).href })),
 };
 ---
 <BaseLayout lang={lang} path="scenes" title="HANKUKIN Scenes"
@@ -29,7 +31,7 @@ const jsonLd = {
       <ul class="sources">
         {scenes.map((s) => (
           <li><span class="st">{s.data.work}</span>
-            <a href={`/${lang}/scenes/${s.id}/`}>{s.data.title}</a></li>
+            <a href={`/${lang}/scenes/${publicSlug(s.id)}/`}>{s.data.title}</a></li>
         ))}
       </ul>
     </section>

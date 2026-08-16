@@ -7,9 +7,19 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import StuckIndex from '../../components/StuckIndex.astro';
-import { LOCALES } from '../../config/brand.mjs';
+import { DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
 
-export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
+/*
+ * 이 페이지는 **영어판만 생성한다** (2026-08-17).
+ *
+ * 산문 정책 페이지는 아직 번역이 없다. LOCALES 전체로 돌리면
+ * /ja/about/ 에 영어 본문이 그대로 뜬다 — 그건 「일본어판이 있다」가 아니라
+ * 「일본어판이 미완성이다」이고, 검색엔진에도 언어 신호가 어긋난 페이지가 된다.
+ *
+ * 푸터는 이 사실을 알고 영어판으로 보내면서 「（英語）」라고 적는다.
+ * 번역이 생기면 여기를 LOCALES 로 되돌리고 Footer 의 TRANSLATED_PAGES 에 넣는다.
+ */
+export async function getStaticPaths() { return [{ params: { lang: DEFAULT_LOCALE } }]; }
 const { lang } = Astro.params;
 ---
 <BaseLayout lang={lang} path="stuck" title="Stuck in Korea? Every Problem We Cover, With the Answer"

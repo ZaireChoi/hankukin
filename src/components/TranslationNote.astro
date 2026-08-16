@@ -1,0 +1,67 @@
+---
+/**
+ * 번역본 고지 — 기사 상단 한 줄.
+ *
+ * 2026-08-17. 운영자가 분명히 했다: **앞으로도 원어민 검수자는 없다.**
+ *
+ * 그러면 선택지는 둘뿐이다.
+ *   ① 검수 안 된 번역을 검수된 척 내보낸다
+ *   ② 검수 안 됐다고 적고 내보낸다
+ *
+ * ①은 이 사이트가 이미 두 번 걷어낸 거짓 고지와 같은 종류다.
+ * 그래서 ②를 한다. **약점을 적는 것이 우리가 파는 물건이다.**
+ *
+ * 그리고 이건 방어가 아니라 공격이기도 하다 —
+ * 자동번역으로 도배한 여행 사이트는 널렸지만
+ * **자기가 자동번역이라고 말하는 사이트는 없다.**
+ *
+ * 문구는 손으로 쓰지 않는다. status 에서 계산한다.
+ * 제휴 고지에서 배운 것과 같은 규칙 — 손으로 쓴 고지는 세 번 거짓이 됐다.
+ */
+import { HREFLANG } from '../config/brand.mjs';
+import { pageHref } from '../config/links.mjs';
+
+interface Props { translation?: { status?: string; factsVerifiedAt?: Date }; lang: string }
+const { translation, lang } = Astro.props;
+
+const fmt = (d) => (d ? new Date(d).toISOString().slice(0, 10) : null);
+
+/**
+ * 언어별 문구. **번역이 아니라 각 언어로 쓴 것이다.**
+ * 이 문장만큼은 어색하면 안 되므로 짧고 단순하게 유지한다.
+ */
+const TEXT = {
+  ja: {
+    ai: (d) =>
+      `この記事は英語の原文からAIが翻訳したものです。数字・条件・引用は${d ? d + 'に' : ''}一次資料で再確認しましたが、日本語ネイティブによる校正は受けていません。表現に不自然な点があるかもしれません。`,
+    fix: '誤りを見つけたら教えてください',
+  },
+  'zh-hans': {
+    ai: (d) =>
+      `本文由 AI 从英文原稿翻译。数字、条件与引文已${d ? '于' + d : ''}对照一手资料复核，但未经中文母语者润色，行文可能不够自然。`,
+    fix: '发现错误请告诉我们',
+  },
+  'zh-hant': {
+    ai: (d) =>
+      `本文由 AI 從英文原稿翻譯。數字、條件與引文已${d ? '於' + d : ''}對照一手資料複核，但未經中文母語者潤稿，行文可能不夠自然。`,
+    fix: '發現錯誤請告訴我們',
+  },
+};
+const t = TEXT[lang];
+const show = translation?.status === 'ai_translated_facts_verified' && t;
+---
+{show && (
+  <p class="tr-note" lang={HREFLANG[lang] ?? lang}>
+    {t.ai(fmt(translation.factsVerifiedAt))}
+    {' '}<a href={pageHref(lang, 'contact')}>{t.fix}</a>
+  </p>
+)}
+
+<style>
+  .tr-note {
+    margin: 0 0 1.4rem; padding: .55rem .9rem;
+    background: #fbf7f1; border: 1px solid #ece3d7; border-radius: 6px;
+    font-size: .84rem; line-height: 1.7; color: #6b6560;
+  }
+  .tr-note a { color: #c9622e; }
+</style>

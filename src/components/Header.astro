@@ -1,5 +1,7 @@
 ---
-import { BRAND, CATEGORIES } from '../config/brand.mjs';
+import { BRAND, CATEGORIES, DEFAULT_LOCALE } from '../config/brand.mjs';
+import { t } from '../config/ui.mjs';
+import { pageHref, isForeign } from '../config/links.mjs';
 const { lang = 'en' } = Astro.props;
 const here = Astro.url.pathname;
 ---
@@ -9,7 +11,7 @@ const here = Astro.url.pathname;
     <nav class="nav" aria-label="Primary">
       {CATEGORIES.map((c) => (
         <a href={`/${lang}/${c.path}/`}
-           aria-current={here.includes(`/${c.path}`) ? 'page' : undefined}>{c.blurb}</a>
+           aria-current={here.includes(`/${c.path}`) ? 'page' : undefined}>{t(lang, `sections.${c.key}.blurb`)}</a>
       ))}
       {/*
         「Stuck?」 는 축이 아니라 **다른 종류의 입구**라서 모양을 달리한다.
@@ -27,8 +29,13 @@ const here = Astro.url.pathname;
           다섯 축은 "무엇에 관한 글인가" 로 나뉜다. Stuck 은 "지금 뭐가 막혔나" 다.
           독자의 상태가 다르므로 같은 줄에 같은 모양으로 두면 둘 다 흐려진다.
       */}
-      <a class="stuck" href={`/${lang}/stuck/`}
-         aria-current={here.includes('/stuck') ? 'page' : undefined}>Stuck?</a>
+      {/*
+        /stuck/ 은 아직 영어판만 있다 (2026-08-17).
+        번역 안 된 언어에서는 **영어판으로 보내고 영어라고 적는다** —
+        푸터와 같은 규칙이다. 조용히 영어로 보내면 「사이트가 고장났다」로 읽힌다.
+      */}
+      <a class="stuck" href={pageHref(lang, 'stuck')}
+         aria-current={here.includes('/stuck') ? 'page' : undefined}>{t(lang, 'nav.stuck')}{isForeign(lang, 'stuck') ? t(lang, 'footer.inEnglish') : ''}</a>
     </nav>
   </div>
 </header>

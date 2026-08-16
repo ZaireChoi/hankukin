@@ -8,6 +8,8 @@
  *
  * 쌓아 둔 글이 일하게 하려면 홈에서 보여야 한다.
  */
+import { publicSlug } from '../../config/slug.mjs';
+import { pageHref } from '../../config/links.mjs';
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Card from '../../components/Card.astro';
@@ -45,7 +47,7 @@ const SECTIONS = [
 const all = (await Promise.all(SECTIONS.map(async (s) => {
   const entries = await getCollection(s.coll, (e) => !e.data.draft && e.data.lang === lang);
   return entries.map((e) => ({
-    href: `/${lang}/${s.path}/${e.id}/`,
+    href: `/${lang}/${s.path}/${publicSlug(e.id)}/`,
     kicker: s.kicker(e),
     title: e.data.title,
     summary: e.data.summary,
@@ -91,7 +93,7 @@ const jsonLd = {
       <p>{BRAND.defaultMetaDescription}</p>
       {/* Arrival 동선 (2026-08-16 운영자 지시) — 한 줄 배너라 사진을 밀지 않는다 */}
       <p class="arrival-cta">
-        <a href={`/${lang}/arrival/`}>Landing in Korea? <strong>Set up your first 24 hours →</strong></a>
+        <a href={pageHref(lang, 'arrival')}>Landing in Korea? <strong>Set up your first 24 hours →</strong></a>
       </p>
     </section>
 

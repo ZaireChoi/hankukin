@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { LOCALES, categoryByPath } from '../../../config/brand.mjs';
+import { t } from '../../../config/ui.mjs';
+import { publicSlug } from '../../../config/slug.mjs';
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
 
@@ -14,17 +16,17 @@ const items = (await getCollection('guides', (e) => !e.data.draft && e.data.lang
 const jsonLd = {
   '@context': 'https://schema.org', '@type': 'ItemList', name: cat.label,
   itemListElement: items.map((g, i) => ({ '@type':'ListItem', position:i+1, name:g.data.title,
-    url: new URL(`/${lang}/guides/${g.id}/`, Astro.site).href })),
+    url: new URL(`/${lang}/guides/${publicSlug(g.id)}/`, Astro.site).href })),
 };
 ---
-<BaseLayout lang={lang} path={cat.path} title={cat.label}
-  description={cat.lead}
+<BaseLayout lang={lang} path={cat.path} title={t(lang, `sections.${cat.key}.label`)}
+  description={t(lang, `sections.${cat.key}.lead`)}
   jsonLd={jsonLd}>
   <div class="wrap">
     <section class="hero">
-      <p class="q">{cat.blurb}</p>
-      <h1>{cat.label}</h1>
-      <p>{cat.lead}</p>
+      <p class="q">{t(lang, `sections.${cat.key}.blurb`)}</p>
+      <h1>{t(lang, `sections.${cat.key}.label`)}</h1>
+      <p>{t(lang, `sections.${cat.key}.lead`)}</p>
     </section>
     <section class="block">
       <h2>All articles</h2>
@@ -41,7 +43,7 @@ const jsonLd = {
               const parts = [...new Set([g.data.era, g.data.region].filter(Boolean))];
               return parts.length ? <span class="st">{parts.join(' · ')}</span> : null;
             })()}
-            <a href={`/${lang}/guides/${g.id}/`}>{g.data.title}</a>
+            <a href={`/${lang}/guides/${publicSlug(g.id)}/`}>{g.data.title}</a>
           </li>
         ))}
       </ul>

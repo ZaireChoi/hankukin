@@ -1,4 +1,5 @@
 ---
+import { pageHref } from '../config/links.mjs';
 /**
  * 기사 하단 저자 표시.
  *
@@ -12,11 +13,11 @@ import { AUTHOR } from '../config/author.mjs';
 const { lang = 'en' } = Astro.props;
 ---
 <aside class="byline">
-  <p class="by">Written by <a href={`/${lang}/author/`} rel="author">{AUTHOR.name}</a></p>
+  <p class="by">Written by <a href={pageHref(lang, 'author')} rel="author">{AUTHOR.name}</a></p>
   <p class="what">{AUTHOR.short}</p>
   <p class="how">
     Drafted with AI assistance; sources read, figures checked and photographs opened by a person.
-    Mistakes we have found are on the <a href={`/${lang}/ledger/`}>public record</a>.
+    Mistakes we have found are on the <a href={pageHref(lang, 'ledger')}>public record</a>.
   </p>
 </aside>
 <style>

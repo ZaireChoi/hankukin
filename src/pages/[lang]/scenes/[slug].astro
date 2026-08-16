@@ -4,6 +4,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ClaimBadge from '../../../components/ClaimBadge.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
 import AffiliateTopNote from '../../../components/AffiliateTopNote.astro';
+import TranslationNote from '../../../components/TranslationNote.astro';
 import SourceList from '../../../components/SourceList.astro';
 import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
@@ -12,18 +13,32 @@ import PlaceFacts from '../../../components/PlaceFacts.astro';
 import { NOTICES } from '../../../lib/claims.mjs';
 import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { AUTHOR } from '../../../config/author.mjs';
+import { publicSlug } from '../../../config/slug.mjs';
+import { pageHref } from '../../../config/links.mjs';
 import { anyAffiliate } from '../../../config/merchants.mjs';
 
 export async function getStaticPaths() {
   const entries = await getCollection('scenes', (e) => !e.data.draft);
+  /*
+   * 같은 slug 가 어떤 언어에 존재하는지 미리 센다 (2026-08-17).
+   * hreflang 은 **실재하는 번역만** 선언해야 한다 —
+   * 없는 언어를 선언하면 크롤러가 404 를 받고, 그건 「자기 사이트를 모른다」는 신호다.
+   */
+  const bySlug = new Map();
+  for (const e of entries) {
+    const k = publicSlug(e.id);
+    if (!bySlug.has(k)) bySlug.set(k, []);
+    bySlug.get(k).push(e.data.lang);
+  }
   return LOCALES.flatMap((lang) =>
     entries.filter((e) => e.data.lang === lang).map((entry) => ({
-      params: { lang, slug: entry.id }, props: { entry },
+      params: { lang, slug: publicSlug(entry.id) },
+      props: { entry, availableLocales: bySlug.get(publicSlug(entry.id)) ?? [lang] },
     }))
   );
 }
 
-const { entry } = Astro.props;
+const { entry, availableLocales } = Astro.props;
 const { lang, slug } = Astro.params;
 const d = entry.data;
 const { Content } = await render(entry);
@@ -75,7 +90,7 @@ const jsonLd = {
   ],
 };
 ---
-<BaseLayout title={d.title} seoTitle={d.seoTitle} description={d.summary} lang={lang}
+<BaseLayout availableLocales={availableLocales} title={d.title} seoTitle={d.seoTitle} description={d.summary} lang={lang}
             path={`scenes/${slug}`} jsonLd={jsonLd}
             ogType="article" ogImage={d.hero ?? null}
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
@@ -171,7 +186,7 @@ const jsonLd = {
     <section class="block">
       <p class="notice">{NOTICES.aiAssisted}</p>
       <p class="notice">Spotted something wrong or out of date?
-        <a href={`/${lang}/contact/`}>Report an error</a> — we take pages down while we re-check them.</p>
+        <a href={pageHref(lang, 'contact')}>Report an error</a> — we take pages down while we re-check them.</p>
     </section>
 
   </article>

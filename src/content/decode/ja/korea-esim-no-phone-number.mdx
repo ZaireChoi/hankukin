@@ -1,0 +1,121 @@
+---
+title: "韓国の観光用eSIMでも010番号はもらえる — それでも銀行には入れない"
+seoTitle: "韓国eSIM：010番号とSMS、できないこと"
+summary: "韓国の観光用eSIMは、多くのガイドが書いているのとは違って、韓国の010番号がちゃんと付いてきます。付いてこないのは「本人確認」のほうです。飲食店や配車アプリはSMSを送ってくれますが、銀行と行政サイトはそもそも受け付けません。高い商品を買っても、そこは変わりません。"
+lang: ja
+region: "Korea"
+publishedAt: 2026-08-17
+checkedAt: 2026-08-17
+riskGrade: yellow
+contentScore: 82
+translation:
+  of: "decode/korea-esim-no-phone-number"
+  sourceCheckedAt: 2026-08-16
+  status: ai_translated_facts_verified
+  translatedAt: 2026-08-17
+  factsVerifiedAt: 2026-08-17
+visitKorea:
+  - label: "Korea eSIM, data only — no 010 number, no calls, no SMS"
+    url: "https://www.klook.com/en-US/activity/100060-4g-esim-korea/"
+    merchant: "Klook"
+    category: experience
+    relationship: suggested
+  - label: "LTE eSIM with Data, Call and SMS — buy online, verify passport by voucher (SK Telecom)"
+    url: "https://www.skroaming.com/esim/esim"
+    merchant: "SK Telecom"
+    category: experience
+    relationship: suggested
+sources:
+  - title: "韓国eSIM — 商品案内・料金・本人確認の制限（LG U+ 公式英語サイト）"
+    url: "https://www.lguplus.com/korea-sim/eng/pc/product/esim?tab=data-voice"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "한국 eSIM 상품 페이지 유의사항 — 번호 표시 시점・본인인증 불가 원문（LG U+ 韓国語サイト）"
+    url: "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "LTE eSIM (Data, Call, SMS) — オンライン購入・パスポート認証8〜22時・通話料（SK Telecom 公式ローミングサイト）"
+    url: "https://www.skroaming.com/esim/esim"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "eSIM Plans — 音声eSIMは空港ローミングセンターのみ、010番号、購入上限（KT 公式ローミングサイト）"
+    url: "https://roaming.kt.com/eng/esim"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "South Korea 4G/5G eSIM — 商品ページ（Klook）"
+    url: "https://www.klook.com/en-US/activity/100060-4g-esim-korea/"
+    type: merchant_official
+    checkedAt: 2026-08-17
+---
+
+import Original from '../../../components/Original.astro';
+
+韓国のeSIMについて、英語のガイドはだいたい同じことを書いています。買えばデータは使える、ただし韓国の電話番号はもらえないと思っておけ、と。
+
+**それは間違いです。** 韓国の通信会社が売る観光用eSIMには、韓国の **010** 番号が付いてきます。KTは自社のeSIMページの冒頭でこう書いています — "All mobile phone numbers are provided with the 010."
+
+番号が「いつ見えるか」は会社によって違います。LG U+は韓国語の商品ページで、海外では番号が表示されず、韓国に入国してから端末の設定に出ると明記しています。多くの人が「番号なんて無い」と結論づけるのは、たぶんこれが理由です。
+
+<Original
+  ko="eSIM 전화번호는 한국 도착 후 단말기 설정에서 확인할 수 있습니다. 해외에서는 전화번호가 표시되지 않고, 한국 입국 후 번호 표시 됩니다."
+  en="The eSIM phone number can be checked in your device settings after arriving in Korea. Overseas, the number is not displayed; it is shown after entering Korea."
+  who="LG유플러스 한국 eSIM 상품 페이지 유의사항"
+  whoEn="LG U+ Korea eSIM product page, terms of use"
+  date="2026-08-16"
+  url="https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data" />
+
+## 本当の壁は番号ではなく「本人確認」
+
+韓国のサービスの多くは、電話番号そのものではなく **본인확인（ポニン・ファギン、本人確認）** を求めます。韓国の通信会社が契約者の身元を保証する仕組みで、住民登録番号か外国人登録番号に紐づいています。
+
+観光用eSIMはここを通りません。**LG U+は自社の商品ページに、この商品では本人確認ができないと書いています。** SK Telecomも英語ページで "Personal authentication services and text message receipt for payments are unavailable" と明記しています。つまり、隠された制限ではなく、売る側が最初から言っていることです。
+
+```
+番号があればできる      飲食店の予約、配車アプリの認証SMS、宿からの折り返し電話
+番号があってもできない   銀行口座、証券、政府サイト、一部のペイ系サービス
+```
+
+**高い商品を買っても後者は変わりません。** そこは商品の問題ではなく制度の問題だからです。
+
+## 「データ専用」には二種類あります
+
+ここが一番間違えやすいところなので、分けて書きます。
+
+**通信会社が直接売るデータ専用eSIM**には010番号が付きます。だからこそLG U+は、番号がいつ表示されるかをわざわざ書いているわけです。
+
+**旅行プラットフォームが売るデータ専用eSIM**は、同じ回線を使う再販プランで、多くは「データだけ」です。Klookの韓国eSIM商品ページには、こう書かれています — "This is a Data-only SIM card. Calls, texts, or topping up additional credits will not be possible."
+
+電波も速度も同じです。地図と翻訳とメッセージアプリだけでいいなら、再販プランのほうが安くてすぐ届きます。**宿やツアーから電話を受けたいなら、通信会社から買ってください。**
+
+## 発信までしたい場合、会社ごとに手順が違います
+
+```
+SK Telecom   オンラインで購入・パスポート認証もオンライン
+             ただし認証受付は韓国時間の 8:00〜22:00
+KT           音声eSIMは「空港のローミングセンターのみ」
+LG U+        Data+Voice は空港カウンターでパスポートを見せてQRを受け取る
+```
+
+**深夜着の便なら、この差が効きます。** 午前1時に着いてから認証しようとしても、SKTのオンライン認証は動いていません。出発前に済ませておくのが唯一の対処です。
+
+購入上限も会社ごとに違います。LG U+はパスポート1冊につき3点まで、KTは1人あたり音声1＋データ4、SKTは**パスポート1冊につき認証できる商品は1点だけ**です。
+
+## 買う前に確認すること
+
+**端末のSIMロックが解除されていること。** ロックされたままでは何も始まりません。
+
+**Wi-Fiがあるうちにインストールすること。** 開通には通信が必要です。韓国のデータも使えず自国の回線も動かない空港で作業するのが、唯一まったく避けられるミスです。
+
+**間違って削除しないこと。** eSIMは一度インストールすると再発行できません。2日目にうっかり消したら、買ったものが消えます。
+
+**日数の数え方が会社で違います。** LG U+は最初にデータを使った時点から、SKTは**QRコードを読み取った時点から**24時間単位で数えます。買うのは早くてもかまいませんが、SKTでは**読み取るのが早いとその分損をします。**
+
+## 結局どれを選ぶか
+
+**観光だけ（地図・飲食店・タクシー・美術館）** — データ専用で十分です。再販プランなら安く済みます。ただし電話は受けられません。
+
+**SMS認証が要る予約をする、または長めに滞在する** — 通信会社のData + Voiceを。SKTなら出発前にオンラインで、KT・LG U+なら空港カウンターでパスポートを見せて。
+
+**韓国の銀行が絡むこと** — どれを買っても無理です。それはこの商品が売っているものではありません。
+
+料金は毎週のように変わるので、通話料以外の数字はここに書いていません。**決済画面で古い数字を見せられるほうが、数字が無いより悪いからです。**

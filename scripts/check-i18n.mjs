@@ -94,6 +94,34 @@ for (const file of walk(DIST)) {
   }
 }
 
+// ── 5. 내부 링크가 실제로 존재하는가 ────────────────────────────
+//
+// 2026-08-17. 일본어를 켠 직후 내부 링크가 **27건** 깨져 있었다.
+//   /ja/hangul/**ja/**korean-restaurant-signs-last-word/   ← 언어 폴더를 안 벗김
+//   /ja/about/  /ja/contact/  /ja/ledger/                  ← 영어판만 있는 페이지
+// 빌드는 통과했다. 게이트도 통과했다. **화면을 열어야만 보이는 종류였다.**
+//
+// 그래서 출력물에서 직접 센다. 새 언어를 켤 때마다 같은 실수가 나올 것이고,
+// 사람이 기억할 일이 아니다.
+for (const file of walk(DIST)) {
+  const html = readFileSync(file, 'utf8');
+  const rel = relative(DIST, file).replace(/\\/g, '/');
+  const from = rel === '404.html' ? '/404.html' : `/${rel.replace(/index\.html$/, '')}`;
+  for (const m of html.matchAll(/href="(\/[^"#?]*)"/g)) {
+    const href = m[1];
+    if (href.startsWith('/_astro') || /\.(xml|png|svg|ico|txt|json|webp|jpg)$/.test(href)) continue;
+    const target = join(DIST, href.replace(/^\/|\/$/g, ''), 'index.html');
+    if (!existsSync(target)) {
+      fail.push(
+        `${from} — 내부 링크가 없는 페이지를 가리킵니다\n` +
+        `      ${href}\n` +
+        '      언어 폴더를 안 벗겼거나(publicSlug), 그 언어판이 아직 없는 페이지입니다.\n' +
+        '      src/config/links.mjs 의 pageHref / articleHref 를 쓰십시오.',
+      );
+    }
+  }
+}
+
 console.log(`검사한 페이지 ${seen.length}개`);
 if (fail.length) {
   console.error(`\n실패 ${fail.length}건:\n`);

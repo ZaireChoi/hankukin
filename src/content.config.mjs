@@ -138,16 +138,47 @@ const baseFields = (image) => ({
    *   원문의 checkedAt 이 이보다 나중이면 이 번역본은 낡은 것이고,
    *   게이트(열 번째)가 빌드를 세운다. 날짜 하나로 판정이 끝난다.
    *
-   * status — machine_translated 는 **발행되지 않는다.**
-   *   기계번역을 그대로 내보내면 그게 정확히 scaled content abuse 다.
-   *   그리고 우리가 파는 것은 「확인한 것만 쓴다」인데,
-   *   아무도 읽어보지 않은 번역을 내보내면 그 약속이 언어 수만큼 깨진다.
+   * status — 2026-08-17 운영자 결정으로 **다시 짰다.**
+   *
+   *   원래는 machine_translated / review_required / reviewed 셋이었고,
+   *   reviewed 는 「원어민이 읽었다」는 뜻이었다.
+   *   그런데 운영자가 분명히 했다 — **앞으로도 원어민 검수자는 없다.**
+   *
+   *   그러면 reviewed 를 쓰는 순간 그건 거짓말이 된다.
+   *   아무도 안 읽었는데 읽었다고 적는 것이고,
+   *   이 사이트가 이미 두 번 걷어낸 거짓 고지와 **정확히 같은 종류**다.
+   *
+   *   그래서 있는 그대로 이름을 붙였다.
+   *
+   *     ai_translated_facts_verified
+   *       = AI 가 번역했고, **사실은 1차 출처로 다시 확인했으며,
+   *         원어민은 읽지 않았다.**
+   *
+   *   이 상태는 발행된다. 대신 **그 사실을 독자에게 화면에 적는다.**
+   *   숨기고 발행하는 것과 적고 발행하는 것은 전혀 다른 일이다.
+   *   그리고 이렇게 적는 여행 사이트는 없다 — 약점을 적는 것이 우리 방식이다.
+   *
+   *   machine_translated 는 여전히 발행되지 않는다.
+   *   그건 사실 확인조차 안 한 것이고, scaled content abuse 그 자체다.
+   *
+   * 나눠서 보는 이유.
+   *   번역에서 위험한 것은 문법이 아니라 **사실이 변하는 것**이다.
+   *   「데이터 전용」이 「통화 가능」이 되거나, 과태료 액수가 바뀌거나,
+   *   원문이 조심스럽게 쓴 문장이 번역에서 단정적으로 변하는 것.
+   *   그건 내가 통제할 수 있다. 어색함은 통제할 수 없다.
+   *   **통제할 수 있는 것을 게이트로 막고, 못 하는 것은 고지한다.**
    */
   translation: z.object({
     of: z.string(),                       // 영어 원문 id (예: 'now/korea-atm-foreign-card-cash')
     sourceCheckedAt: z.coerce.date(),     // 근거로 삼은 원문의 checkedAt
-    status: z.enum(['machine_translated', 'review_required', 'reviewed']),
+    status: z.enum([
+      'machine_translated',               // 발행 안 됨 — 사실 확인 전
+      'ai_translated_facts_verified',     // 발행됨 + 화면에 고지
+      'native_reviewed',                  // 원어민이 읽은 경우에만. 지금은 쓰지 않는다
+    ]),
     translatedAt: z.coerce.date(),
+    /** 사실을 1차 출처로 다시 확인한 날. ai_translated_facts_verified 는 필수다 */
+    factsVerifiedAt: z.coerce.date().optional(),
     reviewedAt: z.coerce.date().optional(),
     reviewer: z.string().optional(),      // 실명. 익명 검수는 검수가 아니다
   }).optional(),

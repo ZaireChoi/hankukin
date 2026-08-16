@@ -16,6 +16,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
 import { LABEL_BY_URL } from '../config/products.mjs';
+import { UI, flatKeys } from '../config/ui.mjs';
+import { LOCALES } from '../config/brand.mjs';
 
 const CONTENT_DIR = 'src/content';
 
@@ -111,7 +113,17 @@ export default function contentQuality() {
           const body = text.slice(fm.length);
 
           // ── 1. 대표사진 ─────────────────────────────────────────
-          if (!/^hero:/m.test(fm) && !HERO_EXEMPT[slug]) {
+          /*
+           * 번역본은 대표사진 검사를 하지 않는다 (2026-08-17).
+           *
+           * 번역본은 **같은 기사의 다른 언어판**이지 새 기사가 아니다.
+           * 원문이 이미 이 검사를 통과했고, 사진을 frontmatter 에 복사해 두면
+           * 원문에서 사진을 바꿀 때 번역본만 옛 사진을 가리키게 된다 —
+           * 이 사이트가 오늘 하루에 여섯 번 반복한 바로 그 모양이다.
+           * 사진은 한 곳에만 적는다.
+           */
+          const isTranslation = /^translation:/m.test(fm);
+          if (!isTranslation && !/^hero:/m.test(fm) && !HERO_EXEMPT[slug]) {
             fail.push(
               `${slug}: 대표사진이 없습니다.\n` +
               '      사진을 넣거나, 넣을 수 없다면 그 이유를 ' +
@@ -272,7 +284,17 @@ export default function contentQuality() {
           const drifted = [];
           for (const file of walk(CONTENT_DIR)) {
             const slug = basename(file).replace(/\.mdx?$/, '');
-            const sec = basename(join(file, '..'));
+            let sec = basename(join(file, '..'));
+            /*
+             * 번역본은 이 검사의 대상이 아니다 (2026-08-17).
+             *
+             * 「무엇이 막혔나요」 색인은 **영어로 쓰인 물건**이고,
+             * 항목의 answer 도 영어다. 번역본이 색인에 없다고 표시하면
+             * 영어 색인에 일본어 기사를 넣으라는 뜻이 되는데, 그건 틀렸다.
+             * 색인 자체를 언어별로 만들 때 이 검사도 언어별로 돈다.
+             */
+            const fm = readFileSync(file, 'utf8').slice(0, 800);
+            if (/^translation:/m.test(fm)) continue;
             if (listed.has(`${sec}/${slug}`) || stuckExempt[slug]) continue;
             drifted.push(`${sec}/${slug}`);
           }
@@ -445,10 +467,39 @@ export default function contentQuality() {
               of: /^\s+of:\s*['"]?([^'"\n]+)/m.exec(fm)?.[1]?.trim() ?? '',
               srcAt: /^\s+sourceCheckedAt:\s*(\S+)/m.exec(fm)?.[1] ?? '',
               status: /^\s+status:\s*(\S+)/m.exec(fm)?.[1] ?? '',
+              factsAt: /^\s+factsVerifiedAt:\s*(\S+)/m.exec(fm)?.[1] ?? '',
+              reviewer: /^\s+reviewer:\s*(\S+)/m.exec(fm)?.[1] ?? '',
             });
           }
         }
         for (const t of translations) {
+          /*
+           * 2026-08-17. 원어민 검수자가 없다는 것이 **영구 조건**이 됐다.
+           * 그러면 native_reviewed 는 실수로든 습관으로든 켜지면 안 된다.
+           * 켜려면 읽은 사람의 실명이 있어야 한다. 이름 없는 검수는 검수가 아니다.
+           */
+          if (t.status === 'native_reviewed' && !t.reviewer) {
+            fail.push(
+              `${t.slug} (${t.lang}): native_reviewed 인데 reviewer 가 없습니다.\n` +
+              '    누가 읽었는지 적을 수 없다면 읽지 않은 것입니다.\n' +
+              '    원어민 검수가 없는 것이 현재 운영 조건입니다 —\n' +
+              '    ai_translated_facts_verified 를 쓰고 화면에 그대로 고지하십시오.',
+            );
+            continue;
+          }
+          /*
+           * 사실 확인 날짜가 없으면 「사실은 확인했다」고 말할 수 없다.
+           * 이 상태값의 이름 자체가 약속이므로, 약속의 근거를 강제한다.
+           */
+          if (t.status === 'ai_translated_facts_verified' && !t.factsAt) {
+            fail.push(
+              `${t.slug} (${t.lang}): factsVerifiedAt 이 없습니다.\n` +
+              '    이 상태는 「사실을 1차 출처로 다시 확인했다」는 뜻입니다.\n' +
+              '    확인한 날을 적을 수 없다면 확인하지 않은 것이고,\n' +
+              '    그러면 machine_translated 이지 이 상태가 아닙니다.',
+            );
+            continue;
+          }
           if (t.status === 'machine_translated') {
             fail.push(
               `${t.slug} (${t.lang}): 기계번역 상태로는 발행할 수 없습니다.\n` +
@@ -474,6 +525,38 @@ export default function contentQuality() {
               '    당장 못 하면 이 번역본을 draft 로 내리십시오.\n' +
               '    **틀린 채로 서 있는 번역이 없는 번역보다 나쁩니다.**',
             );
+          }
+        }
+
+        /**
+         * ── 껍데기가 반쯤 영어인 채로 나가는 것을 막는다 (열한 번째) ──
+         *
+         * 2026-08-17. 일본어 기사 5편을 쓰고 빌드했더니 **기사만** 일본어였다.
+         * 헤더·푸터·목록 페이지가 전부 영어로 남아 있었고, 빌드는 통과했다.
+         * 화면을 열어 보기 전에는 아무도 몰랐다 — 이 사이트의 단골 실패 유형이다.
+         *
+         * 운영자 판단이 분명했다: 「들어가면 껍데기까지 그 언어로 보여야 한다.」
+         *
+         * 그래서 **발행 중인 모든 언어가 영어와 같은 키를 다 갖고 있어야** 통과한다.
+         * 없는 문구를 영어로 대체하는 방식은 쓰지 않는다 —
+         * 대체는 문제를 숨기는 것이지 푸는 것이 아니다.
+         */
+        {
+          const base = flatKeys(UI.en);
+          for (const lang of LOCALES) {
+            if (lang === 'en') continue;
+            const have = new Set(flatKeys(UI[lang] ?? {}));
+            const missing = base.filter((k) => !have.has(k));
+            if (missing.length) {
+              fail.push(
+                `화면 문구가 ${missing.length}개 빠졌습니다 — ${lang}\n` +
+                missing.slice(0, 12).map((k) => `      · ${k}`).join('\n') +
+                (missing.length > 12 ? `\n      … 외 ${missing.length - 12}개` : '') + '\n' +
+                '    src/config/ui.mjs 에 추가하거나, 준비될 때까지 brand.mjs 의\n' +
+                '    LOCALES 에서 이 언어를 빼십시오.\n' +
+                '    **반쯤 번역된 화면은 「번역이 있다」가 아니라 「미완성이다」로 읽힙니다.**',
+              );
+            }
           }
         }
 

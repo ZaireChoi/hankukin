@@ -30,6 +30,9 @@
  */
 import { getCollection } from 'astro:content';
 import stuck from '../../data/stuck.json';
+import { publicSlug } from '../config/slug.mjs';
+import { DEFAULT_LOCALE } from '../config/brand.mjs';
+import { pageHref } from '../config/links.mjs';
 
 /**
  * mode: 'full'    — 16개 전부, 그룹별 (전용 페이지 /stuck/ 용)
@@ -54,11 +57,25 @@ const COLLECTIONS = ['now', 'guides', 'decode', 'hangul', 'scenes'];
 const known = new Set(
   (await Promise.all(COLLECTIONS.map(async (c) => {
     const entries = await getCollection(c, (e) => !e.data.draft && e.data.lang === lang);
-    return entries.map((e) => `${c}/${e.id}`);
+    return entries.map((e) => `${c}/${publicSlug(e.id)}`);
   }))).flat(),
 );
 
-const groups = stuck.groups.map((g) => ({
+/*
+ * 이 색인은 **영어로 쓰인 물건이다** (2026-08-17, 일본어 발행 시작).
+ *
+ *   when 은 독자의 말, answer 는 한 문장짜리 답 — 둘 다 영어로 쓰여 있다.
+ *   일본어 페이지에 이 블록을 그대로 그리면 화면 절반이 영어가 된다.
+ *   그건 「일본어판이 있다」가 아니라 「일본어판이 미완성이다」로 읽힌다.
+ *
+ *   그래서 번역된 색인이 생기기 전까지, 이 블록은 **영어에서만** 그린다.
+ *   빈 자리를 두는 쪽이 반쯤 번역된 화면보다 낫다.
+ *
+ *   할 일: data/stuck.json 을 언어별로 나누고 이 조건을 지운다.
+ */
+const isSourceLang = lang === DEFAULT_LOCALE;
+
+const groups = !isSourceLang ? [] : stuck.groups.map((g) => ({
   label: g.label,
   items: g.items.map((i) => {
     if (!known.has(i.href)) {
@@ -80,6 +97,7 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
 const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
 ---
 
+{isSourceLang && (
 <section class="stuck" aria-labelledby="stuck-h">
   {showHead && (
     <div class="head">
@@ -123,15 +141,16 @@ const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
   {mode === 'full' ? (
     <p class="foot">
       {total} of these so far, and the list is how we choose what to write next.
-      Got stuck on something that is not here? <a href={`/${lang}/contact/`}>Tell us</a> —
+      Got stuck on something that is not here? <a href={pageHref(lang, 'contact')}>Tell us</a> —
       that is where the next one comes from.
     </p>
   ) : (
     <p class="foot">
-      <a href={`/${lang}/stuck/`}>All {total} problems, with one-line answers →</a>
+      <a href={pageHref(lang, 'stuck')}>All {total} problems, with one-line answers →</a>
     </p>
   )}
 </section>
+)}
 
 <style>
   .stuck {

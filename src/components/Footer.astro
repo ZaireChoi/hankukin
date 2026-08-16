@@ -1,29 +1,46 @@
 ---
 import { hasAnyAffiliate } from '../config/merchants.mjs';
-import { BRAND } from '../config/brand.mjs';
+import { BRAND, DEFAULT_LOCALE } from '../config/brand.mjs';
+import { t } from '../config/ui.mjs';
+import { pageHref, isForeign } from '../config/links.mjs';
 const { lang = 'en' } = Astro.props;
 const year = new Date().getFullYear();
+
+/**
+ * 정책·안내 페이지는 아직 영어판만 있다 (2026-08-17).
+ *
+ * 기사는 번역했지만 About·Editorial Policy·Privacy 같은 산문 페이지는 아직이다.
+ * 그래서 이 링크들은 **영어판으로 보내고, 영어라고 적는다.**
+ *
+ * 조용히 영어로 보내지 않는 이유 —
+ * 일본어를 읽던 사람이 클릭 한 번에 영어 화면을 만나면
+ * 「사이트가 고장났다」로 읽힌다. 미리 말해 두면 그냥 사실이 된다.
+ *
+ * 해당 언어판이 생기면 이 함수가 저절로 그쪽을 가리킨다.
+ */
+const p = (path) => pageHref(lang, path);
+const mark = (path) => (isForeign(lang, path) ? t(lang, 'footer.inEnglish') : '');
 ---
 <footer class="site-footer">
   <div class="wrap wide">
     <div class="cols">
-      <a href={`/${lang}/stuck/`}>Stuck on Something?</a>
-      <a href={`/${lang}/arrival/`}>Arrival Setup</a>
-      <a href={`/${lang}/about/`}>About</a>
-      <a href={`/${lang}/author/`}>Who Writes This</a>
-      <a href={`/${lang}/editorial-policy/`}>Editorial Policy</a>
+      <a href={p('stuck')}>{t(lang, 'footer.stuck')}{mark('stuck')}</a>
+      <a href={p('arrival')}>{t(lang, 'footer.arrival')}{mark('arrival')}</a>
+      <a href={p('about')}>{t(lang, 'footer.about')}{mark('about')}</a>
+      <a href={p('author')}>{t(lang, 'footer.author')}{mark('author')}</a>
+      <a href={p('editorial-policy')}>{t(lang, 'footer.editorial')}{mark('editorial-policy')}</a>
       {/* 검증 대장 — 이 사이트가 무엇을 버렸는지. 정책 옆이 제자리다. */}
-      <a href={`/${lang}/ledger/`}>What We Threw Away</a>
-      <a href={`/${lang}/affiliate-disclosure/`}>Affiliate Disclosure</a>
-      <a href={`/${lang}/privacy/`}>Privacy Policy</a>
-      <a href={`/${lang}/contact/`}>Contact &amp; Report an Error</a>
+      <a href={p('ledger')}>{t(lang, 'footer.ledger')}{mark('ledger')}</a>
+      <a href={p('affiliate-disclosure')}>{t(lang, 'footer.affiliate')}{mark('affiliate-disclosure')}</a>
+      <a href={p('privacy')}>{t(lang, 'footer.privacy')}{mark('privacy')}</a>
+      <a href={p('contact')}>{t(lang, 'footer.contact')}{mark('contact')}</a>
     </div>
     <p class="fine">
       {BRAND.name} — {BRAND.tagline} We are an independent guide and are not affiliated with any
       broadcaster, agency, artist or public body.
       {hasAnyAffiliate()
-        ? <>Some links are affiliate links; see our <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.</>
-        : <>We currently carry no affiliate links and earn nothing from any link on this site. If that changes, this line changes with it — see our <a href={`/${lang}/affiliate-disclosure/`}>disclosure</a>.</>}
+        ? <>Some links are affiliate links; see our <a href={p('affiliate-disclosure')}>disclosure</a>.</>
+        : <>We currently carry no affiliate links and earn nothing from any link on this site. If that changes, this line changes with it — see our <a href={p('affiliate-disclosure')}>disclosure</a>.</>}
     </p>
     <p class="fine">© {year} {BRAND.legalName || BRAND.name}. Contact: {BRAND.supportEmail}</p>
   </div>

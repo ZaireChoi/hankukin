@@ -1,7 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { LOCALES } from '../../config/brand.mjs';
-export async function getStaticPaths(){ return LOCALES.map((lang)=>({params:{lang}})); }
+import { DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
+/* 영어판만 생성한다 (2026-08-17). 산문 정책 페이지는 아직 번역이 없고,
+   LOCALES 전체로 돌리면 /ja/ 에 영어 본문이 그대로 뜬다.
+   푸터가 영어판으로 보내면서 「（英語）」라고 적는다. */
+export async function getStaticPaths(){ return [{ params: { lang: DEFAULT_LOCALE } }]; }
 const { lang } = Astro.params;
 ---
 <BaseLayout lang={lang} path="editorial-policy" title="Editorial Policy"

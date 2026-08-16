@@ -1,4 +1,5 @@
 ---
+import { publicSlug } from '../config/slug.mjs';
 /**
  * 다음 읽을 글.
  *
@@ -52,7 +53,7 @@ const scored = all
     <ul>
       {scored.map(({ e }) => (
         <li>
-          <a href={`/${lang}/${e._section}/${e.id}/`}>
+          <a href={`/${lang}/${e._section}/${publicSlug(e.id)}/`}>
             <span class="sec">{SECTION[e._section]}</span>
             <span class="t">{e.data.title}</span>
           </a>
