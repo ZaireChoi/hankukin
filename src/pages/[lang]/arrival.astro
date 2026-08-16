@@ -16,6 +16,7 @@
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import CtaBlock from '../../components/CtaBlock.astro';
+import AffiliateTopNote from '../../components/AffiliateTopNote.astro';
 import { LOCALES } from '../../config/brand.mjs';
 
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
@@ -91,6 +92,8 @@ const steps = [
         Each step links to the full article where every number was checked against a Korean primary source.
       </p>
     </section>
+
+    <AffiliateTopNote lang={lang} items={steps.flatMap((s) => s.cta?.items ?? [])} />
 
     <section class="preflight">
       <h2>Before you fly</h2>

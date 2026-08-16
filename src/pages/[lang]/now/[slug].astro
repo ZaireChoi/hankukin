@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
+import AffiliateTopNote from '../../../components/AffiliateTopNote.astro';
 import SourceList from '../../../components/SourceList.astro';
 import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
@@ -57,6 +58,8 @@ const jsonLd = {
         <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
     </header>
+
+    <AffiliateTopNote lang={lang} items={[...d.visitKorea, ...d.bringKoreaHome]} />
 
     {d.hero && (
       <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}

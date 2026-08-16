@@ -246,6 +246,15 @@ export default function contentQuality() {
               '    실제로 eSIM 편의 Klook 제휴 링크가 이렇게 사라져 있었습니다.',
             );
           }
+          // 상단 고지도 같은 방식으로 지킨다 (2026-08-16 외부 검토 수용).
+          // 고지는 손으로 쓰지 않고 링크 배열에서 계산되므로,
+          // 템플릿이 컴포넌트를 빼먹는 것이 이 고지가 사라지는 유일한 경로다.
+          if (!/<AffiliateTopNote/.test(src)) {
+            fail.push(
+              `${sec} — 기사 템플릿이 AffiliateTopNote 를 렌더링하지 않습니다 (${tpl}).\n` +
+              '    제휴 링크가 있는 기사의 상단 고지가 이 축에서만 조용히 빠집니다.',
+            );
+          }
         }
 
         for (const w of warn) logger.warn(w);

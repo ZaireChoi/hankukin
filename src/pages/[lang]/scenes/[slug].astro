@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ClaimBadge from '../../../components/ClaimBadge.astro';
 import CtaBlock from '../../../components/CtaBlock.astro';
+import AffiliateTopNote from '../../../components/AffiliateTopNote.astro';
 import SourceList from '../../../components/SourceList.astro';
 import Byline from '../../../components/Byline.astro';
 import ReadNext from '../../../components/ReadNext.astro';
@@ -91,6 +92,8 @@ const jsonLd = {
         <span>Last checked {d.checkedAt.toISOString().slice(0,10)}</span>
       </div>
     </header>
+
+    <AffiliateTopNote lang={lang} items={[...(visitLinks ?? []), ...(d.bringKoreaHome ?? [])]} />
 
     {closed && (
       <p class="notice warn">This location has permanently closed. We keep the page as a record of

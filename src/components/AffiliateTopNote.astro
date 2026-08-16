@@ -1,0 +1,33 @@
+---
+/**
+ * 제휴 기사 상단 고지 — 한 줄.
+ *
+ * 2026-08-16 외부 검토 수용 (운영자 지시): "제휴 고지를 모든 제휴 글 상단에 통일."
+ *
+ * 규칙은 CtaBlock 과 같다: **문구를 손으로 쓰지 않는다.**
+ * 이 사이트는 손으로 쓴 제휴 고지가 세 번 거짓이 됐다 (8/13 기사 → 8/16 푸터 → 8/16 CTA).
+ * 그래서 이 컴포넌트는 기사의 링크 배열을 받아서 제휴 링크가 **실제로 있을 때만** 그린다.
+ * 링크가 없거나 전부 공식 링크면 아무것도 그리지 않는다 — 빈 고지도 거짓 고지다.
+ */
+import { isAffiliate } from '../config/merchants.mjs';
+
+interface Props { items?: { merchant?: string }[]; lang: string }
+const { items = [], lang } = Astro.props;
+const anyPaid = items.some((i) => isAffiliate(i.merchant));
+---
+{anyPaid && (
+  <p class="aff-note">
+    This article contains affiliate links, marked where they appear.
+    If you book through one we may earn a commission at no extra cost to you —
+    <a href={`/${lang}/affiliate-disclosure/`}>how this works</a>.
+  </p>
+)}
+
+<style>
+  .aff-note {
+    margin: 0 0 1.4rem; padding: .55rem .9rem;
+    background: #fbf7f1; border: 1px solid #ece3d7; border-radius: 6px;
+    font-size: .85rem; line-height: 1.55; color: #6b6560;
+  }
+  .aff-note a { color: inherit; }
+</style>
