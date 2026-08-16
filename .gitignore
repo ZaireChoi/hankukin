@@ -16,3 +16,10 @@ dist/
 .env.local
 사진받기-촬영지.bat
 .photo-fetch.log
+
+# 샌드박스에서 지울 수 없어 옮겨 둔 것 (윈도우에서 폴더째 삭제)
+_to_delete/
+hankukin-src.tgz
+
+# 예약 작업이 node 를 못 찾을 때 알려 주는 로컬 힌트
+scripts/node-path.txt

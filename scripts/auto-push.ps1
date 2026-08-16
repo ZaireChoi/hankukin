@@ -96,22 +96,28 @@ try {
   #   영영 반영되지 않았다. 운영자 화면에는 계속 옛 버전이 보였다.
   #
   #   '올릴 것이 없다' 와 '커밋할 것이 없다' 는 다른 말이다.
+  #
+  #   2026-08-16 밤: 이 자리가 5-b 를 정확히 무효로 만들고 있었다.
+  #   5-b 는 검증 못한 커밋을 푸시하지 않고 남겨 둔다. 그런데 10분 뒤 이 문단이
+  #   그것을 '밀린 커밋' 으로 보고 **그대로 올렸다.** 로그가 그것을 그대로 적어 두었다.
+  #       07:10  중단: 검증하지 못해 올리지 않습니다
+  #       07:20  밀린 커밋 2 건 — 푸시 → 밀린 커밋 푸시 완료
+  #
+  #   8/14 에 고친 것이 8/16 에 고친 것을 되돌렸다. 한 군데를 고치고 옆을 안 봤다.
+  #
+  #   그래서 여기서는 **세기만 한다.** 푸시는 검증을 통과한 뒤 한 자리에서만 일어난다.
   & $git fetch --quiet 2>&1 | Out-Null
+  $backlog = 0
   $ahead = & $git rev-list --count '@{u}..HEAD' 2>$null
-  if ($LASTEXITCODE -eq 0 -and $ahead -and [int]$ahead -gt 0) {
-    Log "밀린 커밋 $ahead 건 — 푸시"
-    & $git pull --rebase --quiet 2>&1 | Out-Null
-    & $git push --quiet 2>&1 | Out-Null
-    if ($LASTEXITCODE -eq 0) { Log "  밀린 커밋 푸시 완료" }
-    else { Log "  밀린 커밋 푸시 실패 — 수동 확인 필요" }
-  }
+  if ($LASTEXITCODE -eq 0 -and $ahead) { $backlog = [int]$ahead }
+  if ($backlog -gt 0) { Log "밀린 커밋 $backlog 건 — 검증 후에 함께 올린다" }
 
   # ── 1. 변경이 없으면 조용히 끝낸다 ────────────────────────────
   $status = & $git status --porcelain
-  if (-not $status) { Log "실행: 변경 없음"; exit 0 }
-
-  $changed = ($status | Measure-Object -Line).Lines
-  Log "실행: 변경 $changed 건 — 검증 시작"
+  $changed = if ($status) { ($status | Measure-Object -Line).Lines } else { 0 }
+  if ($changed -eq 0 -and $backlog -eq 0) { Log "실행: 변경 없음"; exit 0 }
+  if ($changed -gt 0) { Log "실행: 변경 $changed 건 — 검증 시작" }
+  else { Log "실행: 새 변경은 없고 밀린 커밋만 있다 — 그것을 검증한다" }
 
   # ── 2. 단위 테스트 ────────────────────────────────────────────
   # node.exe 는 PATH 에 없을 수 있다 (이 PC 가 그랬다). 흔한 설치 경로도 뒤진다.
@@ -123,6 +129,30 @@ try {
                      "$env:ProgramFiles\nodejs\node_modules\npm\bin\node.exe")) {
       if (Test-Path $p) { $node = $p; break }
     }
+  }
+  # nvm-for-windows 는 버전마다 폴더가 다르다. 가장 최근 것을 쓴다.
+  if (-not $node -and (Test-Path "$env:APPDATA\nvm")) {
+    $cand = Get-ChildItem "$env:APPDATA\nvm\v*\node.exe" -ErrorAction SilentlyContinue |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    if ($cand) { $node = $cand.FullName }
+  }
+  #
+  # 마지막 수단 — 저장소 안의 한 줄짜리 파일로 직접 알려 준다.
+  #
+  #   scripts\node-path.txt  ->  C:\Program Files\nodejs\node.exe
+  #
+  # 예약 작업의 PATH 는 로그인 셸의 PATH 와 다르다. 명령창에서는 node 가 되는데
+  # 예약 작업에서만 안 되는 일이 실제로 있었고, 그것 때문에 게이트 여섯 개가
+  # 열흘 가까이 우회됐다. PATH 를 고치는 것이 정답이지만, 고치기 전까지
+  # **사이트가 멈춰 있는 것보다는 이 파일 한 줄이 낫다.** (.gitignore 에 넣어 둔다)
+  $hint = Join-Path $PSScriptRoot 'node-path.txt'
+  if (-not $node -and (Test-Path $hint)) {
+    $h = (Get-Content $hint -Raw).Trim()
+    if ($h -and (Test-Path $h)) { $node = $h }
+  }
+  if ($node -and -not $npm) {
+    $guess = Join-Path (Split-Path -Parent $node) 'npm.cmd'
+    if (Test-Path $guess) { $npm = $guess }
   }
   $verified = $true      # 검증을 실제로 했는가. 건너뛰면 false 로 내려간다.
   if ($node) {
@@ -161,9 +191,11 @@ try {
   $msg = "auto($area): $changed files - $tag"
 
   # ── 5. 올린다 ─────────────────────────────────────────────────
-  & $git add -A
-  & $git commit -m $msg *> $null
-  if ($LASTEXITCODE -ne 0) { Log "중단: 커밋할 것이 없습니다"; exit 0 }
+  if ($changed -gt 0) {
+    & $git add -A
+    & $git commit -m $msg *> $null
+    if ($LASTEXITCODE -ne 0 -and $backlog -eq 0) { Log "중단: 커밋할 것이 없습니다"; exit 0 }
+  }
 
   # ── 5-b. 검증하지 못했으면 **올리지 않는다** ────────────────────
   #
@@ -179,7 +211,8 @@ try {
   # 커밋은 남긴다 — 작업을 잃으면 안 되니까.
   # **푸시만 막는다.** 커밋은 되돌릴 수 있고 발행은 되돌리기 어렵다.
   if (-not $verified) {
-    Log "중단: 검증하지 못해 올리지 않습니다 (커밋은 남아 있습니다)"
+    $held = $backlog + $(if ($changed -gt 0) { 1 } else { 0 })
+    Log "중단: 검증하지 못해 올리지 않습니다 (커밋 $held 건이 남아 있습니다)"
     Log "  node/npm 을 PATH 에서 찾지 못했습니다. 설치 후 다시 실행하거나,"
     Log "  직접 'npm run build' 로 게이트를 통과시킨 뒤 'git push' 하십시오."
     exit 1
