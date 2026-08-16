@@ -17,8 +17,10 @@ export const BRAND = {
   supportEmail: 'hello@hankuk-in.com',
 
   defaultMetaTitle: 'HANKUKIN — Get Into Korea.',
+  // 2026-08-16 운영자 지적으로 교체 — 'products you can buy worldwide' 는
+  // 해당 기사가 0편인 약속이었다. 실전형 대문과 같은 방향으로 맞춘다.
   defaultMetaDescription:
-    'Discover K-pop and K-drama locations, Korean trends, slang, travel routes and products you can experience in Korea or buy worldwide.',
+    'K-drama brought you to Korea. We cover the ground game — reading signs, fares, tickets, food, clinics — checked against Korean primary sources.',
 
   socialHandles: {
     youtube: '@hankukin',
