@@ -39,7 +39,8 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'Korea eSIM, data only — no 010 number, no calls, no SMS',
-    labels: { ja: '韓国eSIM（データ専用）— 010番号・通話・SMSなし' },
+    labels: { ja: '韓国eSIM（データ専用）— 010番号・通話・SMSなし',
+              'zh-hans': '韩国 eSIM（纯流量）—— 无 010 号码、不能通话、不能收发短信' },
     checkedAt: '2026-08-17',
   },
 
@@ -49,7 +50,8 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'LTE eSIM with Data, Call and SMS — buy online, verify passport by voucher (SK Telecom)',
-    labels: { ja: 'データ・通話・SMS付きLTE eSIM — オンライン購入、バウチャーで旅券認証（SKテレコム）' },
+    labels: { ja: 'データ・通話・SMS付きLTE eSIM — オンライン購入、バウチャーで旅券認証（SKテレコム）',
+              'zh-hans': '含流量、通话与短信的 LTE eSIM —— 线上购买，用邮件凭证完成护照认证（SK 电讯）' },
     checkedAt: '2026-08-16',
   },
 
@@ -59,7 +61,8 @@ export const PRODUCTS = {
     category: 'experience',
     relationship: 'suggested',
     label: 'Voice eSIM — sold at the airport roaming centre only (KT)',
-    labels: { ja: '音声eSIM — 空港のローミングセンターのみで販売（KT）' },
+    labels: { ja: '音声eSIM — 空港のローミングセンターのみで販売（KT）',
+              'zh-hans': '语音 eSIM —— 仅在机场漫游中心发售（KT）' },
     checkedAt: '2026-08-16',
   },
 };

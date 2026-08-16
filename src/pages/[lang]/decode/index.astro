@@ -19,7 +19,7 @@ const jsonLd = {
     url: new URL(`/${lang}/decode/${publicSlug(g.id)}/`, Astro.site).href })),
 };
 ---
-<BaseLayout lang={lang} path={cat.path} title={t(lang, `sections.${cat.key}.label`)}
+<BaseLayout availableLocales={LOCALES} lang={lang} path={cat.path} title={t(lang, `sections.${cat.key}.label`)}
   description={t(lang, `sections.${cat.key}.lead`)}
   jsonLd={jsonLd}>
   <div class="wrap">

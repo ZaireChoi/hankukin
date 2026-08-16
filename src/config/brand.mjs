@@ -53,7 +53,7 @@ export const BRAND = {
  *   hreflang 값도 어차피 zh-Hans / zh-Hant (문자 기준)라 URL 과 신호가 어긋났다.
  *   아직 발행 전이라 지금 바꾸는 비용이 0 이다. 발행 후엔 리디렉션 부채가 된다.
  */
-export const LOCALES = ['en', 'ja'];              // 발행 중인 언어. 글이 생기면 그때 추가한다
+export const LOCALES = ['en', 'ja', 'zh-hans'];              // 발행 중인 언어. 글이 생기면 그때 추가한다
 export const PLANNED_LOCALES = ['en', 'ja', 'zh-hans', 'zh-hant'];
 export const DEFAULT_LOCALE = 'en';
 

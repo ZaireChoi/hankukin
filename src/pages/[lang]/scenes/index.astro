@@ -14,7 +14,7 @@ const jsonLd = {
     url: new URL(`/${lang}/scenes/${publicSlug(s.id)}/`, Astro.site).href })),
 };
 ---
-<BaseLayout lang={lang} path="scenes" title="HANKUKIN Scenes"
+<BaseLayout availableLocales={LOCALES} lang={lang} path="scenes" title="HANKUKIN Scenes"
   description="K-drama, film and music video locations you can actually visit, with routes, costs and photo tips."
   jsonLd={jsonLd}>
   <div class="wrap">
