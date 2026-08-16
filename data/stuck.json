@@ -173,7 +173,17 @@
           "when": "Every guide says buy the 62,000-won Climate Card. Is that still right?",
           "answer": "No — Seoul stops topping it up on 31 August 2026, the last ride is 29 September, and the scheme ends 1 October. The 1-to-7-day version survives.",
           "href": "now/seoul-climate-card-ending-what-visitors-should-buy",
-          "home": true
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "どのガイドも62,000ウォンの気候同行カードを勧めるけれど、まだ正しいの？",
+              "answer": "いいえ。2026年8月31日でチャージ終了、9月29日が最終利用日、10月1日に廃止です。1〜7日券は残ります。"
+            },
+            "zh-hans": {
+              "when": "所有攻略都说买 62,000 韩元的气候同行卡，现在还对吗？",
+              "answer": "不对了。2026年8月31日停止充值，9月29日最后可用，10月1日退出。1至7日券保留。"
+            }
+          }
         },
         {
           "when": "Can I get fined for walking down a street and taking a photograph",

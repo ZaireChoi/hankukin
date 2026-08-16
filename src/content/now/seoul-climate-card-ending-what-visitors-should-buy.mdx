@@ -37,6 +37,7 @@ sources:
 ---
 
 import Original from '../../components/Original.astro';
+import ChartClimateCardEnd from '../../components/ChartClimateCardEnd.astro';
 
 If you have read anything in English about getting around Seoul in the last two years, you have been told to buy the Climate Card — 62,000 won, thirty days, unlimited subway and buses. It is good advice. It is about to become wrong advice.
 
@@ -56,15 +57,8 @@ That is not a rumour or a proposal. It is a table on Seoul Metropolitan Governme
   date="2026-08-16"
   url="https://news.seoul.go.kr/traffic/public/climatecard-faq/faq-stop" />
 
-The full schedule Seoul publishes:
-
-| Date | What happens |
-| --- | --- |
-| until 31 Aug 2026 | Last day to top up a prepaid 30-day pass |
-| 1 Sep 2026 | 30-day top-ups stop |
-| 29 Sep 2026 | Last day a prepaid pass can be used |
-| 30 Sep 2026 | Last day a post-paid Climate Card gets the discount |
-| 1 Oct 2026 | 30-day passes, prepaid and post-paid, are withdrawn — **short passes continue** |
+<ChartClimateCardEnd lang="en"
+  caption="Seoul's published closure schedule. The 30-day pass stops; the 1-to-7-day short passes are kept. Most coverage of this collapses the two, which is how a visitor ends up believing the whole scheme has gone." />
 
 Seoul's stated reason is consolidation, not failure: the national government launched its own unlimited-fare product in January 2026 at the same price point, and running two identical schemes side by side confused people.
 

@@ -1,0 +1,153 @@
+---
+/**
+ * 기후동행카드가 끝나는 순서 — 그리고 **끝나지 않는 것**.
+ *
+ * 왜 이 그림인가 (2026-08-16).
+ *   이 기사가 전달하는 것은 날짜다. 표로도 적었지만, 표는
+ *   「무엇이 끝나는가」와 「무엇이 남는가」를 나란히 보여주지 못한다.
+ *   독자가 실제로 잘못 읽는 지점이 바로 거기다 —
+ *   「기후동행카드가 없어진다」고 듣고 단기권까지 없어지는 줄 안다.
+ *   여행자에게 필요한 건 남는 쪽인데.
+ *
+ *   그래서 위쪽 줄기는 끊기고, 아래쪽 띠는 이어진다. 그게 이 그림의 전부다.
+ *
+ *   근거: 서울특별시 「기후동행카드 운영종료 FAQ」 Q3 의 일정 표.
+ *   FAQ 에 적힌 날짜를 그대로 옮겼다. 추정한 날짜는 없다.
+ *
+ * 왜 세로인가.
+ *   8/31 과 9/1 이 하루 차이, 9/29 와 9/30 과 10/1 이 이틀 안에 몰려 있다.
+ *   가로 타임라인으로 그리면 라벨 네 개가 서로 먹는다 —
+ *   이 사이트에서 이미 한 번 낸 사고다. 읽히는 쪽을 골랐다.
+ *
+ * 왜 언어를 받는가.
+ *   도표 안의 글자가 영어로 남으면, 일본어 기사 한가운데에 영어 그림이 박힌다.
+ *   기사만 번역하고 그림을 그대로 두는 건 이 사이트에서 하지 않기로 한 일이다.
+ */
+interface Props { lang?: string; caption: string }
+const { lang = 'en', caption } = Astro.props;
+
+const T = {
+  en: {
+    kicker: 'WHAT ENDS, AND WHAT DOES NOT',
+    sub: "Seoul's published closure schedule for the Climate Card",
+    rows: [
+      { when: '31 Aug 2026', what: 'Last day to top up a 30-day pass', note: 'A pass bought on this day cannot defer its start date', kind: 'shut' },
+      { when: '1 Sep 2026', what: '30-day top-ups stop', note: 'The replacement national card launches the same day', kind: 'mark' },
+      { when: '29 Sep 2026', what: 'Last day to ride a prepaid 30-day pass', kind: 'step' },
+      { when: '30 Sep 2026', what: 'Last day a post-paid card gets the discount', kind: 'step' },
+      { when: '1 Oct 2026', what: '30-day passes withdrawn', kind: 'last' },
+    ],
+    keepTitle: 'Short passes carry on',
+    keepBody: '1, 2, 3, 5 and 7 days — 5,000 to 20,000 won. Seoul says these are kept as they are.',
+    foot1: "From Seoul Metropolitan Government's Climate Card closure FAQ, read 16 August 2026.",
+    foot2: 'Dates are as published. We have not estimated any of them.',
+  },
+  ja: {
+    kicker: '終わるもの、終わらないもの',
+    sub: 'ソウル市が公表した기후동행카드（気候同行カード）の終了日程',
+    rows: [
+      { when: '2026年8月31日', what: '30日券をチャージできる最後の日', note: 'この日に買った券は、使用開始日を先送りできません', kind: 'shut' },
+      { when: '2026年9月1日', what: '30日券のチャージが停止', note: '同じ日に、代わりとなる国の新カードが始まります', kind: 'mark' },
+      { when: '2026年9月29日', what: '先払い30日券が使える最後の日', kind: 'step' },
+      { when: '2026年9月30日', what: '後払いカードの割引が受けられる最後の日', kind: 'step' },
+      { when: '2026年10月1日', what: '30日券の運用終了', kind: 'last' },
+    ],
+    keepTitle: '短期券は続きます',
+    keepBody: '1・2・3・5・7日券——5,000〜20,000ウォン。ソウル市は「従来どおり維持する」と明記しています。',
+    foot1: 'ソウル特別市「기후동행카드 운영종료 FAQ」より。2026年8月16日に確認。',
+    foot2: '日付はすべて公表されたものです。推定した日付はありません。',
+  },
+  'zh-hans': {
+    kicker: '什么会结束，什么不会',
+    sub: '首尔市公布的气候同行卡（기후동행카드）终止时间表',
+    rows: [
+      { when: '2026年8月31日', what: '30日券最后一天可以充值', note: '当天买的券无法把启用日往后推', kind: 'shut' },
+      { when: '2026年9月1日', what: '30日券停止充值', note: '同一天，接替它的全国新卡开始启用', kind: 'mark' },
+      { when: '2026年9月29日', what: '预付30日券最后一天可用', kind: 'step' },
+      { when: '2026年9月30日', what: '后付卡最后一天享有折扣', kind: 'step' },
+      { when: '2026年10月1日', what: '30日券停止运营', kind: 'last' },
+    ],
+    keepTitle: '短期券继续',
+    keepBody: '1、2、3、5、7 日券——5,000 至 20,000 韩元。首尔市写明「维持原样」。',
+    foot1: '来自首尔特别市「기후동행카드 운영종료 FAQ」，2026年8月16日核实。',
+    foot2: '所有日期均为官方公布，没有一个是我们推测的。',
+  },
+};
+const t = T[lang] ?? T.en;
+
+const W = 760;
+const TOP = 70;
+const ROW = 76;
+const KEEP = 96;                                   /* 아래 「계속되는 것」 띠 */
+const H = TOP + t.rows.length * ROW + KEEP + 38;
+const RAIL = 176;
+const TEXT = RAIL + 30;
+
+const RED = '#b0453a', INK = '#12100f', MUTE = '#6b6560', RULE = '#d8d0c6';
+const GREEN = '#3f6b4a', GREENBG = '#f0f5f0';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={caption}>
+
+    <text x="20" y="22" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      {t.kicker}
+    </text>
+    <text x="20" y="44" font-size="12.5" fill={MUTE}>{t.sub}</text>
+
+    {t.rows.map((r, i) => {
+      const y = TOP + i * ROW;
+      const cy = y + 22;
+      const shut = r.kind === 'shut';
+      const last = r.kind === 'last';
+      return (
+        <>
+          {i > 0 && (
+            <line x1={RAIL} y1={y - ROW + 22} x2={RAIL} y2={cy}
+                  stroke={RULE} stroke-width="2" />
+          )}
+
+          {shut && <rect x="20" y={y - 8} width={W - 40} height={ROW - 10} rx="5" fill="#fbf1f0" />}
+
+          <text x={RAIL - 22} y={cy + 5} text-anchor="end" font-size="13"
+                font-weight="700" fill={shut || last ? RED : INK}>{r.when}</text>
+
+          <circle cx={RAIL} cy={cy} r={shut || last ? 8 : 6}
+                  fill={shut || last ? RED : (r.kind === 'mark' ? '#c9622e' : '#fff')}
+                  stroke={shut || last ? RED : (r.kind === 'mark' ? '#c9622e' : '#8a827b')}
+                  stroke-width="2" />
+
+          <text x={TEXT} y={cy + 5} font-size="14"
+                font-weight={shut || last ? '700' : '500'}
+                fill={shut || last ? RED : INK}>{r.what}</text>
+          {r.note && <text x={TEXT} y={cy + 25} font-size="12" fill={MUTE}>{r.note}</text>}
+        </>
+      );
+    })}
+
+    {/* 줄기가 여기서 끊긴다 — 30일권의 끝 */}
+    <line x1={RAIL - 14} y1={TOP + t.rows.length * ROW - 42} x2={RAIL + 14}
+          y2={TOP + t.rows.length * ROW - 42} stroke={RED} stroke-width="3" />
+
+    {/* 그리고 아래 띠는 이어진다 — 여행자에게 남는 것 */}
+    <rect x="20" y={TOP + t.rows.length * ROW - 18} width={W - 40} height={KEEP - 30}
+          rx="6" fill={GREENBG} stroke={GREEN} stroke-width="1.5" />
+    <text x="42" y={TOP + t.rows.length * ROW + 8} font-size="14" font-weight="700" fill={GREEN}>
+      {t.keepTitle}
+    </text>
+    <text x="42" y={TOP + t.rows.length * ROW + 32} font-size="12.5" fill={INK}>
+      {t.keepBody}
+    </text>
+
+    <text x="20" y={H - 26} font-size="11.5" fill={MUTE}>{t.foot1}</text>
+    <text x="20" y={H - 9} font-size="11.5" fill={MUTE}>{t.foot2}</text>
+  </svg>
+
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; background: #fffdfa; border: 1px solid #ece3d7; border-radius: 8px; }
+  figcaption { margin-top: .6rem; font-size: .85rem; line-height: 1.6; color: #6b6560; }
+</style>
