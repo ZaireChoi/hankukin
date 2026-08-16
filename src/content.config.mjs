@@ -16,7 +16,12 @@ const source = z.object({
    *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
    * seoTitle 이 없으면 title 을 쓴다.
    */
-  seoTitle: z.string().max(62).optional(),
+  /*
+   * 60 으로 내렸다 (2026-08-17). 62 는 내가 고른 느슨한 기준이었다 — BaseLayout 주석 참조.
+   * 49(= 60 − " — HANKUKIN") 로 더 조이지 않는 이유: 60 을 넘으면 BaseLayout 이
+   * 브랜드를 떼므로 55자짜리 제목도 결과적으로 55자로 나온다. 막을 이유가 없다.
+   */
+  seoTitle: z.string().max(60).optional(),
   url: z.string().url(),
   type: z.enum([
     'official_production', 'official_interview', 'official_social',
@@ -89,7 +94,12 @@ const baseFields = (image) => ({
    *   seoTitle — 검색 결과에만 쓰는 짧은 제목. 검색어가 앞에 온다.
    * seoTitle 이 없으면 title 을 쓴다.
    */
-  seoTitle: z.string().max(62).optional(),
+  /*
+   * 60 으로 내렸다 (2026-08-17). 62 는 내가 고른 느슨한 기준이었다 — BaseLayout 주석 참조.
+   * 49(= 60 − " — HANKUKIN") 로 더 조이지 않는 이유: 60 을 넘으면 BaseLayout 이
+   * 브랜드를 떼므로 55자짜리 제목도 결과적으로 55자로 나온다. 막을 이유가 없다.
+   */
+  seoTitle: z.string().max(60).optional(),
   summary: z.string().min(20).max(400),
   lang: z.string().default('en'),
   publishedAt: z.coerce.date(),
