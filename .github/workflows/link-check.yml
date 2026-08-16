@@ -1,15 +1,79 @@
-# Phase 2 자리표시 — 링크·장소 상태 자동 점검 (05 §4)
-# 활성화 전 필요: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CLOUDFLARE_DEPLOY_HOOK_URL
+# 링크·장소 자동 점검 (05 §4) — 이제 자리표시가 아니라 실제로 연다.
+#
+# 오프라인 규칙은 verify 에서 이미 돈다. 여기서는 **실제 접속**이 목적이다.
+#   · 죽은 주소 (404/410)        → 실패
+#   · 제휴 링크의 추적 파라미터 소실 → 실패. 열리는데 수수료가 0인 가장 늦게 발견되는 실패다
+#   · 봇 차단 (403 등)            → 경고. 사람이 한 번 열어 본다
+#
+# 결과는 저장소에 커밋된다. 그 자체가 기록이자 백업이다.
 name: link-check
+
 on:
   schedule:
     - cron: '0 18 * * *'   # 매일 03:00 KST
   workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: link-check
+  cancel-in-progress: false
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: echo "Phase 2에서 구현. 현재는 수동 실행만 가능한 자리표시."
+        with: { node-version: 22 }
+
+      - name: 실접속 점검
+        id: check
+        continue-on-error: true
+        run: node scripts/link-check.mjs
+
+      - name: 결과 기록
+        run: |
+          git config user.name  'hankukin-bot'
+          git config user.email 'bot@users.noreply.github.com'
+          git add data/link-check.result.json
+          git diff --staged --quiet || git commit -m "chore(link-check): $(date -u +%Y-%m-%d) 실접속 점검 결과"
+          git push
+
+      - name: 실패하면 이슈로 올린다
+        if: steps.check.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const r = JSON.parse(fs.readFileSync('data/link-check.result.json', 'utf8'));
+            const body = [
+              `${r.ranAt} 실접속 점검에서 **실패 ${r.fails.length}건**.`,
+              '',
+              '고치기 전에는 새 글을 쓰지 않는다. 죽은 링크와 추적이 끊긴 제휴 링크는',
+              '읽는 사람에게도 손해이고 우리에게도 손해다.',
+              '',
+              ...r.fails.map((f) => `- \`${f.rule}\` ${f.file}\n  ${f.msg}`),
+            ].join('\n');
+            const title = `링크 점검 실패 — ${r.ranAt}`;
+            const open = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'link-check',
+            });
+            if (open.data.length) {
+              await github.rest.issues.update({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: open.data[0].number, title, body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo,
+                title, body, labels: ['link-check'],
+              });
+            }
+
+      - name: 실패했으면 이 실행도 실패로 남긴다
+        if: steps.check.outcome == 'failure'
+        run: exit 1

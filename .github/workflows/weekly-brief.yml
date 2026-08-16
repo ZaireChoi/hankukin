@@ -1,0 +1,39 @@
+# 주간 운영자 브리핑 — 주 1회, 이슈 하나.
+#
+# 운영자는 주 1회 30~60분이다. 그래서 대시보드를 새로 만들지 않고
+# **이미 매주 열어 보는 곳**(GitHub 알림 메일)으로 보낸다.
+# 화면을 하나 더 만들면 그 화면을 여는 일이 또 하나 늘어난다.
+name: weekly-brief
+
+on:
+  schedule:
+    - cron: '0 22 * * 0'   # 매주 월요일 07:00 KST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+
+      - name: 브리핑 생성
+        run: node scripts/weekly-brief.mjs > /tmp/brief.md
+
+      - name: 이슈로 올린다
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('/tmp/brief.md', 'utf8');
+            const today = new Date().toISOString().slice(0, 10);
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: `주간 브리핑 — ${today}`,
+              body, labels: ['weekly'],
+            });
