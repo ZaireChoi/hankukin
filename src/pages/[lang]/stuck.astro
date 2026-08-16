@@ -1,0 +1,28 @@
+---
+/**
+ * 「무엇이 막혔나요」 전체 목록 페이지.
+ *
+ * 2026-08-16: 홈에는 6개만 남기고(외부 검토 수용, 운영자 지시)
+ * 16개 전체는 이 페이지가 담는다. 색인의 검증 게이트는 컴포넌트 안에 있다.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StuckIndex from '../../components/StuckIndex.astro';
+import { LOCALES } from '../../config/brand.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
+const { lang } = Astro.params;
+---
+<BaseLayout lang={lang} path="stuck" title="Stuck in Korea? Every Problem We Cover, With the Answer"
+  description="Every moment that stumps visitors to Korea — airport, cards, signs, clinics, rules — with the answer on the line, and a link to the article where it was checked.">
+  <div class="wrap">
+    <section class="hero">
+      <h1>Stuck on something?</h1>
+      <p>
+        Every article on this site started as a moment when a visitor did not know what to do.
+        This is the full list. Setting up before you land?
+        <a href={`/${lang}/arrival/`}>The arrival page puts the first-day items in order.</a>
+      </p>
+    </section>
+    <StuckIndex lang={lang} mode="full" />
+  </div>
+</BaseLayout>

@@ -26,17 +26,20 @@
         {
           "when": "I am at the airport and do not know how to get into the city",
           "answer": "Train, bus or taxi — which one is right depends on your luggage and the hour.",
-          "href": "now/incheon-airport-to-seoul-train-bus-taxi"
+          "href": "now/incheon-airport-to-seoul-train-bus-taxi",
+          "home": true
         },
         {
           "when": "My phone has a Korean number but Korean apps still reject me",
           "answer": "You do get an 010 number. What you do not get is Korean identity verification, and no tourist product at any price changes that.",
-          "href": "decode/korea-esim-no-phone-number"
+          "href": "decode/korea-esim-no-phone-number",
+          "home": true
         },
         {
           "when": "I bought a train ticket and there is no gate to scan it at",
           "answer": "There is no gate. Walk to the platform and sit in your seat — that is the whole procedure.",
-          "href": "now/seoul-to-busan-ktx-srt-integration-2026"
+          "href": "now/seoul-to-busan-ktx-srt-integration-2026",
+          "home": true
         },
         {
           "when": "I do not know what a subway ride or a taxi should cost",
@@ -51,7 +54,8 @@
         {
           "when": "Every sign is in an alphabet I cannot read",
           "answer": "Hangul is not Chinese characters. Most people can sound out a sign after about ninety minutes.",
-          "href": "hangul/learn-to-read-korean-signs-alphabet"
+          "href": "hangul/learn-to-read-korean-signs-alphabet",
+          "home": true
         },
         {
           "when": "I cannot tell what kind of restaurant this is from outside",
@@ -76,7 +80,8 @@
         {
           "when": "I am ill and I do not have an appointment",
           "answer": "You do not book anything. Walk into a neighbourhood clinic, wait about twenty minutes, collect your medicine downstairs.",
-          "href": "now/seeing-a-doctor-in-korea-cost-walk-in"
+          "href": "now/seeing-a-doctor-in-korea-cost-walk-in",
+          "home": true
         },
         {
           "when": "I have broken my glasses",
@@ -86,7 +91,8 @@
         {
           "when": "I am worried I am being overcharged",
           "answer": "Here is what ordinary meals actually cost, so you can tell.",
-          "href": "now/korea-food-prices-what-meals-cost"
+          "href": "now/korea-food-prices-what-meals-cost",
+          "home": true
         }
       ]
     },

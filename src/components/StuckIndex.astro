@@ -31,8 +31,16 @@
 import { getCollection } from 'astro:content';
 import stuck from '../../data/stuck.json';
 
-interface Props { lang: string }
-const { lang } = Astro.props;
+/**
+ * mode: 'full'    — 16개 전부, 그룹별 (전용 페이지 /stuck/ 용)
+ *       'compact' — home: true 로 표시한 6개만 한 줄 목록 (홈 용)
+ *
+ * 2026-08-16 운영자 수용(외부 검토): 홈에서 16개를 다 펼치면 최신 글과
+ * Arrival 동선이 밀린다. 상위만 보여주고 전체는 전용 페이지로.
+ * 검증 게이트(없는 기사를 가리키면 빌드 정지)는 모드와 무관하게 16개 전부에 돈다.
+ */
+interface Props { lang: string; mode?: 'full' | 'compact' }
+const { lang, mode = 'full' } = Astro.props;
 
 const COLLECTIONS = ['now', 'guides', 'decode', 'hangul', 'scenes'];
 
@@ -63,6 +71,7 @@ const groups = stuck.groups.map((g) => ({
 }));
 
 const total = groups.reduce((n, g) => n + g.items.length, 0);
+const compactItems = groups.flatMap((g) => g.items).filter((i) => i.home);
 ---
 
 <section class="stuck" aria-labelledby="stuck-h">
@@ -74,7 +83,7 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
     </p>
   </div>
 
-  {groups.map((g) => (
+  {mode === 'full' ? groups.map((g) => (
     <div class="grp">
       <h3>{g.label}</h3>
       <ul>
@@ -88,13 +97,32 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
         ))}
       </ul>
     </div>
-  ))}
+  )) : (
+    <div class="grp">
+      <ul>
+        {compactItems.map((i) => (
+          <li>
+            <a href={i.url}>
+              <span class="when">{i.when}</span>
+              <span class="ans">{i.answer}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
 
-  <p class="foot">
-    {total} of these so far, and the list is how we choose what to write next.
-    Got stuck on something that is not here? <a href={`/${lang}/contact/`}>Tell us</a> —
-    that is where the next one comes from.
-  </p>
+  {mode === 'full' ? (
+    <p class="foot">
+      {total} of these so far, and the list is how we choose what to write next.
+      Got stuck on something that is not here? <a href={`/${lang}/contact/`}>Tell us</a> —
+      that is where the next one comes from.
+    </p>
+  ) : (
+    <p class="foot">
+      <a href={`/${lang}/stuck/`}>All {total} problems, with one-line answers →</a>
+    </p>
+  )}
 </section>
 
 <style>
