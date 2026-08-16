@@ -1,20 +1,21 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { DEFAULT_LOCALE, LOCALES, BRAND } from '../../config/brand.mjs';
-import { AUTHOR } from '../../config/author.mjs';
+import { AUTHOR, AUTHOR_I18N } from '../../config/author.mjs';
+import PolicyNote from '../../components/PolicyNote.astro';
+import { pageHref, isForeign } from '../../config/links.mjs';
+import { t as ui } from '../../config/ui.mjs';
 
 /*
- * 이 페이지는 **영어판만 생성한다** (2026-08-17).
+ * 3개 언어로 전환했다 (2026-08-16).
  *
- * 산문 정책 페이지는 아직 번역이 없다. LOCALES 전체로 돌리면
- * /ja/about/ 에 영어 본문이 그대로 뜬다 — 그건 「일본어판이 있다」가 아니라
- * 「일본어판이 미완성이다」이고, 검색엔진에도 언어 신호가 어긋난 페이지가 된다.
- *
- * 푸터는 이 사실을 알고 영어판으로 보내면서 「（英語）」라고 적는다.
- * 번역이 생기면 여기를 LOCALES 로 되돌리고 Footer 의 TRANSLATED_PAGES 에 넣는다.
+ * 이 페이지는 「누가 책임지는가」를 말하는 자리다.
+ * 일·중 독자에게 그 답이 영어로만 있으면, 답하지 않은 것과 같다.
+ * 문안은 config/author.mjs 의 AUTHOR_I18N 에 한 벌로 있다.
  */
-export async function getStaticPaths() { return [{ params: { lang: DEFAULT_LOCALE } }]; }
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+const a = AUTHOR_I18N[lang] ?? AUTHOR_I18N.en;
 
 const person = {
   '@context': 'https://schema.org',
@@ -26,62 +27,44 @@ const person = {
 };
 ---
 
-<BaseLayout lang={lang} path="author" title={`${AUTHOR.name} — who writes this`}
-  seoTitle="Who Writes HANKUKIN"
-  description="One person writes this site. Korean, reads the Korean sources directly, has lived abroad. Here is what that means and how AI is used."
+<BaseLayout availableLocales={LOCALES} lang={lang} path="author"
+  title={`${AUTHOR.name} — ${a.title}`}
+  seoTitle={a.h1}
+  description={a.short}
   jsonLd={person}>
 
   <div class="wrap">
-    <h1>Who writes this</h1>
+    <h1>{a.h1}</h1>
 
-    <p class="lede">
-      One person. Not a team, not a content agency, and not a pile of generated articles with a
-      logo on top — though from the outside those are hard to tell apart, which is why this page
-      exists.
-    </p>
+    <p class="lede">{a.lede}</p>
 
     <p class="name">{AUTHOR.name}</p>
-    <p class="short">{AUTHOR.short}</p>
+    <p class="short">{a.short}</p>
 
-    <h2>What that actually buys you</h2>
-    {AUTHOR.facts.map((f) => (
+    <h2>{a.factsHeading}</h2>
+    {a.facts.map((f) => (
       <div class="fact">
         <h3>{f.claim}</h3>
         <p>{f.why}</p>
       </div>
     ))}
 
-    <h2>How AI is used here</h2>
-    <p>
-      It is used, it is disclosed on every article, and pretending otherwise would be the
-      easiest thing on this page to catch. The line that matters is not whether a machine
-      helped write the sentences. It is <strong>who is answerable for whether they are
-      true.</strong>
-    </p>
-    <ul class="ai">{AUTHOR.ai.map((a) => <li>{a}</li>)}</ul>
+    <h2>{a.aiHeading}</h2>
+    <p>{a.aiLeadA}<strong>{a.aiLeadStrong}</strong></p>
+    <ul class="ai">{a.ai.map((x) => <li>{x}</li>)}</ul>
 
-    <h2>What I am not</h2>
+    <h2>{a.notHeading}</h2>
+    {a.not.map(([k, v]) => <p><strong>{k}</strong>{v}</p>)}
+
+    <h2>{a.wrongHeading}</h2>
     <p>
-      <strong>Not a travel professional.</strong> No agency, no tour operator, no tourism board.
-      Nobody pays for a mention here.
-    </p>
-    <p>
-      <strong>Not a doctor, a lawyer or a financial adviser</strong>, and the articles that touch
-      those subjects say so where it matters.
-    </p>
-    <p>
-      <strong>Not everywhere.</strong> A lot of what is on this site is researched from primary
-      Korean sources rather than visited last week. Where that is the case, the sources are
-      listed and dated so you can see exactly what the claim rests on.
+      <a href={pageHref(lang, 'contact')}>{ui(lang, 'byline.tellMe')}</a>{ui(lang, 'byline.wrongMid')}
+      <a href={pageHref(lang, 'ledger')}>{ui(lang, 'byline.ledgerLink')}</a>
+      {isForeign(lang, 'ledger') ? ui(lang, 'footer.inEnglish') : ''}
+      {ui(lang, 'byline.wrongTail')}
     </p>
 
-    <h2>If something here is wrong</h2>
-    <p>
-      <a href={`/${lang}/contact/`}>Tell me</a>. Corrections go on the public
-      <a href={`/${lang}/ledger/`}>record of what we got wrong</a>, along with who found it —
-      including the ones found by people outside this site, because pretending we caught
-      everything ourselves would be its own small lie.
-    </p>
+    <PolicyNote lang={lang} />
   </div>
 </BaseLayout>
 

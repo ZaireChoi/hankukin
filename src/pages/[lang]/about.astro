@@ -1,54 +1,41 @@
 ---
+/**
+ * About — 3개 언어.
+ *
+ * 2026-08-16. 「껍데기까지 그 언어로」의 마지막 구멍을 막는다.
+ * 본문은 src/config/policy.mjs 한 곳에 있다 — 영어도 거기 있다.
+ * 영어만 .astro 에 두면 영어를 고칠 때 번역이 남는다.
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { BRAND, DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
-/* 영어판만 생성한다 (2026-08-17). 산문 정책 페이지는 아직 번역이 없고,
-   LOCALES 전체로 돌리면 /ja/ 에 영어 본문이 그대로 뜬다.
-   푸터가 영어판으로 보내면서 「（英語）」라고 적는다. */
-export async function getStaticPaths(){ return [{ params: { lang: DEFAULT_LOCALE } }]; }
+import PolicyNote from '../../components/PolicyNote.astro';
+import { BRAND, LOCALES } from '../../config/brand.mjs';
+import { POLICY } from '../../config/policy.mjs';
+import { pageHref } from '../../config/links.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+const t = POLICY.about[lang] ?? POLICY.about.en;
 ---
-<BaseLayout lang={lang} path="about" title="About"
-  description="What HANKUKIN is, who makes it, and how it is researched and written.">
+<BaseLayout availableLocales={LOCALES} lang={lang} path="about" title={t.title} description={t.description}>
   <div class="wrap policy">
-    <h1>About HANKUKIN</h1>
-    <p class="updated">Last updated 13 August 2026</p>
+    <h1>{t.h1}</h1>
+    <p class="updated">{t.updated}</p>
 
-    <p>HANKUKIN is an independent guide for people who found Korea through a drama, a film, a music
-    video or a song, and want to know what is actually there. We start from the story — a scene, a
-    place, a phrase — and follow it through to the practical end: how to get there, what it costs,
-    what the words meant, and what you can buy from home if you cannot travel.</p>
+    {t.blocks.map((b) => (
+      b.h2 ? <h2>{b.h2}</h2>
+      : b.ul ? <ul>{b.ul.map(([k, v]) => <li><strong>{k}</strong> — {v}</li>)}</ul>
+      : b.raw === 'madeWith' ? (
+          <p>{t.madeWithA}<a href={pageHref(lang, 'editorial-policy')}>{t.madeWithLink}</a>{t.madeWithB}</p>
+        )
+      : b.raw === 'independence' ? (
+          <p>{t.independenceA}<a href={pageHref(lang, 'affiliate-disclosure')}>{t.independenceLink}</a>{t.independenceB}</p>
+        )
+      : b.raw === 'contact' ? (
+          <p>{BRAND.supportEmail}{t.contactA}<a href={pageHref(lang, 'contact')}>{t.contactLink}</a>{t.contactB}</p>
+        )
+      : <p>{b.p}</p>
+    ))}
 
-    <h2>What we publish</h2>
-    <ul>
-      <li><strong>Scenes</strong> — filming locations and the places around them, with routes, costs and photo guidance.</li>
-      <li><strong>Now</strong> — what is currently gaining attention in Korea, based on public data rather than guesswork.</li>
-      <li><strong>Decode</strong> — Korean expressions and the tone, politeness and humour that subtitles cannot carry.</li>
-      <li><strong>Culture &amp; History</strong> — the longer background behind the places and stories.</li>
-    </ul>
-
-    <h2>How this site is made</h2>
-    <p>HANKUKIN is run by one person. Research, drafting, translation, link checking and fact
-    verification are carried out with AI assistance under a written
-    <a href={`/${lang}/editorial-policy/`}>editorial policy</a>. That policy decides what may be
-    stated as fact, what must be softened, and what is discarded outright — and it is applied by the
-    system before anything is published, not afterwards.</p>
-    <p>We think you should be told this plainly rather than discover it. Every article carries its
-    sources and the date it was last verified. If something is wrong, we would rather take the page
-    down and re-check it than leave it up.</p>
-
-    <h2>What we will not do</h2>
-    <p>We do not publish where artists live, who they are seeing, where they were spotted, or which
-    restaurant they supposedly frequent. We do not reproduce drama stills or celebrity photographs
-    whose rights are unclear. We do not claim an artist uses a product unless there is an official
-    source saying so. These are not editorial preferences — they are rules the publishing system
-    enforces.</p>
-
-    <h2>Independence</h2>
-    <p>HANKUKIN is not affiliated with any broadcaster, production company, agency, artist, tourism
-    authority or local government. Where we earn commission, we say so on the page. See our
-    <a href={`/${lang}/affiliate-disclosure/`}>affiliate disclosure</a>.</p>
-
-    <h2>Contact</h2>
-    <p>{BRAND.supportEmail} — or use the <a href={`/${lang}/contact/`}>contact page</a>.</p>
+    <PolicyNote lang={lang} />
   </div>
 </BaseLayout>

@@ -71,6 +71,10 @@ export const UI = {
       nonePaid: 'Official operator and government pages. None of these are affiliate links and nobody pays us for a place here.',
     },
     byline: {
+      tellMe: 'Tell me',
+      wrongMid: '. Corrections go on the public ',
+      ledgerLink: 'record of what we got wrong',
+      wrongTail: ', along with who found it — including the ones found by people outside this site, because pretending we caught everything ourselves would be its own small lie.',
       writtenBy: 'Written by',
       aiNote: 'Drafted with AI assistance; sources read, figures checked and photographs opened by a person before publication.',
       ledger: 'Mistakes we have found are on the public record.',
@@ -198,6 +202,10 @@ export const UI = {
       nonePaid: '事業者・行政の公式ページです。アフィリエイトリンクは一つもなく、掲載の対価も受け取っていません。',
     },
     byline: {
+      tellMe: '教えてください',
+      wrongMid: '。訂正は公開の',
+      ledgerLink: '「間違えたことの記録」',
+      wrongTail: 'に、誰が見つけたかと一緒に残します。外部の方に指摘されたものも含めます——全部自分で気づいたふりをするのは、それ自体が小さな嘘だからです。',
       writtenBy: '執筆',
       aiNote: 'AIの支援を受けて執筆しています。出典の確認、数字の照合、写真の確認は公開前に人が行っています。',
       ledger: '見つかった誤りは公開の記録に残しています。',
@@ -324,6 +332,10 @@ export const UI = {
       nonePaid: '以上均为运营方与政府的官方页面。其中没有任何联盟链接，也没有人为出现在这里付费。',
     },
     byline: {
+      tellMe: '请告诉我',
+      wrongMid: '。更正会记入公开的',
+      ledgerLink: '「我们错在哪里」的记录',
+      wrongTail: '，并注明是谁发现的——包括由站外读者指出的那些，因为假装全是自己发现的，本身就是一个小谎。',
       writtenBy: '撰写',
       aiNote: '本文在 AI 协助下撰写；出处、数字与照片在发布前均由人工核对。',
       ledger: '我们发现的错误都公开记录在案。',

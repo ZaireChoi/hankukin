@@ -1,78 +1,64 @@
 ---
+/**
+ * Affiliate Disclosure — 3개 언어 (2026-08-16).
+ *
+ * 이 페이지를 영어로만 두는 것은 「고지했다」가 아니다.
+ * 돈을 받는다는 사실은 읽는 사람의 언어로 적혀야 고지다.
+ * 본문은 src/config/policy.mjs, 제휴사 목록은 merchants.mjs 에서 온다.
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { BRAND, DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
+import PolicyNote from '../../components/PolicyNote.astro';
+import { BRAND, LOCALES } from '../../config/brand.mjs';
 import { MERCHANTS, isAffiliate } from '../../config/merchants.mjs';
-/* 영어판만 생성한다 (2026-08-17). 산문 정책 페이지는 아직 번역이 없고,
-   LOCALES 전체로 돌리면 /ja/ 에 영어 본문이 그대로 뜬다.
-   푸터가 영어판으로 보내면서 「（英語）」라고 적는다. */
-export async function getStaticPaths(){ return [{ params: { lang: DEFAULT_LOCALE } }]; }
+import { POLICY } from '../../config/policy.mjs';
+import { pageHref } from '../../config/links.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+const t = POLICY['affiliate-disclosure'][lang] ?? POLICY['affiliate-disclosure'].en;
 
 /**
  * 현재 제휴사 목록을 **등록부에서 읽는다** (2026-08-16 외부 지적).
  *
  * 이 페이지에 'Last updated 13 August' 이라고 손으로 적혀 있었는데
  * Klook 제휴는 8월 16일에 시작됐다. 사람이 갱신하기로 한 날짜는 반드시 어긋난다.
- *
  * 그래서 목록도 날짜도 merchants.mjs 에서 가져온다.
- * 새 제휴가 승인되면 이 페이지가 **저절로** 맞아진다.
- * 푸터 문구를 등록부에 연동한 것과 같은 이유다.
  */
 const live = Object.values(MERCHANTS).filter((m) => isAffiliate(m.name));
 const lastChange = live.map((m) => m.approvedAt).sort().at(-1) ?? '2026-08-13';
-const asDate = (d) => new Date(d).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
----
-<BaseLayout lang={lang} path="affiliate-disclosure" title="Affiliate Disclosure"
-  description="How HANKUKIN earns money, and what that does and does not change about what we publish.">
-  <div class="wrap policy">
-    <h1>Affiliate Disclosure</h1>
-    <p class="updated">Last updated {asDate(lastChange)}</p>
 
-    <h2>Who we currently earn from</h2>
+/* 날짜도 그 언어의 표기로 쓴다 — 영어 날짜 형식이 남으면 그게 티가 난다 */
+const DATE_LOCALE = { en: 'en-GB', ja: 'ja-JP', 'zh-hans': 'zh-CN', 'zh-hant': 'zh-TW' };
+const asDate = (d) => new Date(d).toLocaleDateString(DATE_LOCALE[lang] ?? 'en-GB',
+  { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<BaseLayout availableLocales={LOCALES} lang={lang} path="affiliate-disclosure"
+  title={t.title} description={t.description}>
+  <div class="wrap policy">
+    <h1>{t.h1}</h1>
+    <p class="updated">{t.updatedPrefix}{asDate(lastChange)}</p>
+
+    <h2>{t.liveHeading}</h2>
     {live.length === 0
-      ? <p><strong>Nobody.</strong> We have no approved affiliate programme at present and earn
-        nothing from any link on this site.</p>
+      ? <p><strong>{t.noneA}</strong>{t.noneB}</p>
       : <>
           <ul class="live">{live.map((m) => (
-            <li><strong>{m.name}</strong> — approved {asDate(m.approvedAt)}</li>
+            <li><strong>{m.name}</strong> — {t.approved} {asDate(m.approvedAt)}</li>
           ))}</ul>
-          <p class="note">This list is generated from our own merchant registry rather than typed
-          by hand, so it cannot fall out of date. If a programme is added or ends, this page changes
-          with it — as does the notice in the site footer.</p>
+          <p class="note">{t.generated}</p>
         </>}
 
-    <p>HANKUKIN earns commission on some bookings and purchases made through links on this site. If
-    you book a hotel, buy a tour ticket or order a product through one of those links, the merchant
-    may pay us a percentage of the sale. <strong>You pay the same price either way.</strong></p>
+    <p>{t.leadA}<strong>{t.leadStrong}</strong></p>
 
-    <h2>How to tell</h2>
-    <p>Every article containing commission links carries a notice near the top. Links to merchants
-    are marked as sponsored links in the page's HTML, which is how search engines are told about
-    them as well.</p>
+    {t.blocks.map((b) => (
+      b.h2 ? <h2>{b.h2}</h2>
+      : b.raw === 'ads' ? (
+          <p>{t.adsA}<a href={pageHref(lang, 'privacy')}>{t.adsLink}</a>{t.adsB}</p>
+        )
+      : b.raw === 'email' ? <p>{BRAND.supportEmail}</p>
+      : <p>{b.p}</p>
+    ))}
 
-    <h2>What the money does not buy</h2>
-    <p>Merchants do not choose which places we write about, do not review articles before
-    publication, and cannot pay to be described as somewhere an artist visited. Whether a place is a
-    confirmed filming location is decided by its sources, and that decision is made before any
-    commercial link is attached.</p>
-    <p>Our trend reporting and our product recommendations are produced by separate processes on
-    purpose. We do not decide that something is trending because we can sell it.</p>
-
-    <h2>Sponsored content</h2>
-    <p>If we ever publish content paid for by a partner, it will be labelled <em>Sponsored</em> at the
-    top of the page, in the language you are reading. We have no sponsored content at present.</p>
-
-    <h2>Advertising</h2>
-    <p>We may display advertising from third-party networks. Advertising is separate from our
-    affiliate links and is not chosen by us article by article. See our
-    <a href={`/${lang}/privacy/`}>privacy policy</a> for how advertising cookies work.</p>
-
-    <h2>Prices and availability</h2>
-    <p>Prices, availability and shipping destinations change without notice, and vary by country.
-    Where we quote a figure, we show the date it was checked. Always confirm the current price on the
-    merchant's own page before booking or buying.</p>
-
-    <h2>Questions</h2>
-    <p>{BRAND.supportEmail}</p>
+    <PolicyNote lang={lang} />
   </div>
 </BaseLayout>

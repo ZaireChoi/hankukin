@@ -1,34 +1,23 @@
 ---
+/** Contact — 3개 언어. 본문은 src/config/policy.mjs 에 있다. */
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { BRAND, DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
-/* 영어판만 생성한다 (2026-08-17). 산문 정책 페이지는 아직 번역이 없고,
-   LOCALES 전체로 돌리면 /ja/ 에 영어 본문이 그대로 뜬다.
-   푸터가 영어판으로 보내면서 「（英語）」라고 적는다. */
-export async function getStaticPaths(){ return [{ params: { lang: DEFAULT_LOCALE } }]; }
+import PolicyNote from '../../components/PolicyNote.astro';
+import { BRAND, LOCALES } from '../../config/brand.mjs';
+import { POLICY } from '../../config/policy.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+const t = POLICY.contact[lang] ?? POLICY.contact.en;
 ---
-<BaseLayout lang={lang} path="contact" title="Contact & Report an Error"
-  description="Tell us about an out-of-date price, a closed venue, a wrong location or a translation that misses the point.">
+<BaseLayout availableLocales={LOCALES} lang={lang} path="contact" title={t.title} description={t.description}>
   <div class="wrap policy">
-    <h1>Contact &amp; Report an Error</h1>
-    <p class="updated">Last updated 13 August 2026</p>
+    <h1>{t.h1}</h1>
+    <p class="updated">{t.updated}</p>
 
-    <p>Email <strong>{BRAND.supportEmail}</strong>. We read everything, though we cannot promise an
-    individual reply to every message.</p>
+    <p>{t.lead[0]}<strong>{BRAND.supportEmail}</strong>{t.lead[1]}</p>
 
-    <h2>Reporting something wrong</h2>
-    <p>This is the most useful thing you can send us. Please include the page address and what you
-    found — a venue that has closed, a price that has changed, a route that no longer runs, a
-    location that is wrong, or a translation that misses the meaning.</p>
-    <p>Where reports point to a substantive error, we withdraw the page from public view while we
-    re-check it rather than leaving it up with a correction note.</p>
+    {t.blocks.map((b) => (b.h2 ? <h2>{b.h2}</h2> : <p>{b.p}</p>))}
 
-    <h2>Partnerships</h2>
-    <p>If you run a venue, tour, studio or shop and want to work with us, write to the same address
-    with what you do and where you are. We will tell you honestly whether our readers are a fit.</p>
-
-    <h2>Rights holders</h2>
-    <p>If you believe material on this site infringes your rights, contact us with the page address
-    and a description of the material. We remove first and discuss afterwards.</p>
+    <PolicyNote lang={lang} />
   </div>
 </BaseLayout>

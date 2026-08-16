@@ -19,9 +19,22 @@ import { publicSlug } from './slug.mjs';
  * 번역이 생기면 여기서 지운다 — 그러면 링크가 저절로 그 언어를 가리킨다.
  */
 export const ENGLISH_ONLY_PAGES = new Set([
-  'about', 'author', 'editorial-policy', 'ledger',
-  'affiliate-disclosure', 'privacy', 'contact',
-  // 'arrival' 과 'stuck' 은 2026-08-17 저녁에 3개 언어로 전환했다
+  /*
+   * 2026-08-16 기준 영어판만 남은 페이지는 **대장 하나**다.
+   *
+   * 일부러 남겼다. 대장은 산문이 아니라 **기록**이다 —
+   * 「무엇을 버렸는가」의 항목 하나하나가 영어 기사 제목과
+   * 우리가 실제로 쓴 영어 문장을 인용하고 있다.
+   * 껍데기만 일본어로 칠하고 항목 30여 개를 영어로 두면,
+   * 그건 번역이 아니라 **번역한 척**이다. 그게 이 페이지에서 제일 하면 안 되는 일이다.
+   *
+   * 푸터와 저자 페이지는 이 사실을 알고 「（英語）」라고 적는다.
+   * 항목까지 전부 옮길 수 있게 되면 여기서 지운다.
+   */
+  'ledger',
+  // about·author·contact·affiliate-disclosure·privacy·editorial-policy
+  //   → 2026-08-16 에 3개 언어로 전환
+  // arrival·stuck → 2026-08-17 저녁에 전환
 ]);
 
 /** 정책·안내 페이지 주소. 번역이 없으면 영어판으로 보낸다. */

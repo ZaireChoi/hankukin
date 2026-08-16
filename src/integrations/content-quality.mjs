@@ -177,15 +177,34 @@ export default function contentQuality() {
           }
 
           // ── 4. 제목 길이 ────────────────────────────────────────
+          /*
+           * 2026-08-16 수정. 이 게이트는 title 만 보고 있었다.
+           * 그런데 검색 결과와 <title> 에 실제로 나가는 것은 **seoTitle 이 있으면 seoTitle** 이다.
+           * 그래서 제목을 길게 쓰고 seoTitle 을 짧게 단 기사까지 경고가 났다 —
+           * 게이트가 틀렸고, 틀린 경고는 진짜 경고를 묻는다.
+           */
           const title = /^title:\s*"(.+?)"\s*$/m.exec(fm)?.[1];
-          if (title && title.length > TITLE_MAX) {
-            warn.push(`${slug}: 제목 ${title.length}자 — 검색 결과에서 잘립니다 (${TITLE_MAX}자 권장)`);
+          const seoTitle = /^seoTitle:\s*"(.+?)"\s*$/m.exec(fm)?.[1];
+          const shown = seoTitle ?? title;
+          if (shown && shown.length > TITLE_MAX) {
+            warn.push(
+              `${slug}: 검색에 나가는 제목 ${shown.length}자 — 잘립니다 (${TITLE_MAX}자 권장)` +
+              (seoTitle ? '' : '  ← seoTitle 을 달면 본문 제목은 길게 둘 수 있습니다'),
+            );
           }
 
           // ── 5. 내부 링크 ────────────────────────────────────────
           // 한 편만 읽고 떠나면 쌓인 글이 일하지 않는다.
-          const links = (body.match(/\]\(\/en\//g) ?? []).length;
-          if (links === 0) warn.push(`${slug}: 다른 기사로 가는 링크가 없습니다`);
+          /*
+           * 2026-08-16 수정. 이 게이트는 `/en/` 로 시작하는 링크만 셌다.
+           * 번역본은 당연히 `/ja/`, `/zh-hans/` 로 링크한다 — 그게 맞는 동작인데
+           * 게이트가 전부 「링크 없음」으로 잡아서, **일·중 기사 10편이 전부 거짓 경고**였다.
+           * 거짓 경고가 10건이면 진짜 2건이 안 보인다. 그래서 언어를 보고 센다.
+           */
+          const lang = /^lang:\s*([\w-]+)/m.exec(fm)?.[1] ?? 'en';
+          const linkRe = new RegExp(`\\]\\(/${lang}/`, 'g');
+          const links = (body.match(linkRe) ?? []).length;
+          if (links === 0) warn.push(`${slug} (${lang}): 다른 기사로 가는 링크가 없습니다`);
 
           // ── 6. 절 구성을 모아 둔다 (판정은 반복문이 끝난 뒤) ──────
           shapes.push({

@@ -1,87 +1,39 @@
 ---
+/**
+ * Editorial Policy — 3개 언어 (2026-08-16).
+ *
+ * about 과 privacy 가 이 페이지를 직접 링크한다.
+ * 그 두 페이지를 일본어로 읽던 사람이 「編集方針」을 눌렀는데 영어가 나오면,
+ * 방금 읽은 「AIの支援を受けて行っています」의 근거를 확인할 길이 사라진다.
+ * 이 사이트에서 신뢰를 주장하는 문서가 바로 여기라서, 번역 우선순위가 높았다.
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { DEFAULT_LOCALE, LOCALES } from '../../config/brand.mjs';
-/* 영어판만 생성한다 (2026-08-17). 산문 정책 페이지는 아직 번역이 없고,
-   LOCALES 전체로 돌리면 /ja/ 에 영어 본문이 그대로 뜬다.
-   푸터가 영어판으로 보내면서 「（英語）」라고 적는다. */
-export async function getStaticPaths(){ return [{ params: { lang: DEFAULT_LOCALE } }]; }
+import PolicyNote from '../../components/PolicyNote.astro';
+import { LOCALES } from '../../config/brand.mjs';
+import { POLICY } from '../../config/policy.mjs';
+
+export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+const t = POLICY['editorial-policy'][lang] ?? POLICY['editorial-policy'].en;
 ---
-<BaseLayout lang={lang} path="editorial-policy" title="Editorial Policy"
-  description="Which sources we accept, how claims are worded, and what we refuse to publish.">
+<BaseLayout availableLocales={LOCALES} lang={lang} path="editorial-policy"
+  title={t.title} description={t.description}>
   <div class="wrap policy">
-    <h1>Editorial Policy</h1>
-    <p class="updated">Last updated 13 August 2026</p>
+    <h1>{t.h1}</h1>
+    <p class="updated">{t.updated}</p>
+    <p>{t.lead}</p>
 
-    <p>This page describes how information on HANKUKIN is sourced, graded and worded. It is written
-    for readers, but it is also the specification the publishing system runs on.</p>
+    {t.blocks.map((b) => (
+      b.h2 ? <h2>{b.h2}</h2>
+      : b.ol ? <ol>{b.ol.map((i) => <li>{i}</li>)}</ol>
+      : <p>{b.p}</p>
+    ))}
 
-    <h2>Sources we accept</h2>
-    <ul>
-      <li>Broadcasters, production companies and agencies</li>
-      <li>Official artist and cast channels</li>
-      <li>Korea Tourism Organization, local governments and cultural institutions</li>
-      <li>Official restaurant, hotel and brand websites</li>
-      <li>Map and booking platforms</li>
-      <li>Named aggregate data such as Naver DataLab</li>
-      <li>Official interviews and established news media</li>
-    </ul>
-
-    <h2>Sources we do not treat as fact</h2>
-    <ul>
-      <li>Anonymous community posts</li>
-      <li>Fan blogs without their own sourcing</li>
-      <li>Sighting reports</li>
-      <li>Private accounts</li>
-      <li>Re-uploaded video whose only sourcing is its own description</li>
-    </ul>
-
-    <h2>How claims are worded</h2>
-    <p>The strength of a statement is determined by its sources, not by an editor's confidence. Every
-    location claim on this site carries one of the following labels, and the label is assigned
-    automatically:</p>
-    <ul>
-      <li><strong>Official filming location</strong> — confirmed by the production or a public body</li>
-      <li><strong>Confirmed in an official interview</strong> — a linked interview says so</li>
-      <li><strong>Official social media appearance</strong> — posted by an official account</li>
-      <li><strong>Reported by reliable media</strong> — at least two established outlets</li>
-      <li><strong>Inspired by the scene/look</strong> — a resemblance, not a confirmed fact</li>
-      <li><strong>Suggested nearby experience</strong> — our own recommendation, unrelated to any artist</li>
-    </ul>
-    <p>If the evidence for a stronger label is missing, the statement is automatically demoted to a
-    weaker one. It is never promoted.</p>
-
-    <h2>What is discarded outright</h2>
-    <p>The following are removed before drafting and are never escalated to a human for a decision:
-    current or former home addresses; family, friends or schools; real-time movements or sightings;
-    unverified claims about places an artist frequents; private relationships or health; medical or
-    cosmetic-procedure claims attached to a named person; routes that could enable stalking; any
-    personal information about a minor; and images whose rights are unclear.</p>
-
-    <h2>Photographs and images</h2>
-    <p>We do not copy drama screencaps or celebrity photographs. Images on this site are either
-    openly licensed location photography, self-made maps and diagrams, merchant-supplied product
-    images, or clearly labelled illustrations. Every image stores its licence, source and credit —
-    an image missing any of the three cannot be published.</p>
-
-    <h2>Photo guidance</h2>
-    <p>Where we suggest how to frame a shot, we are describing a vantage point that visitors can
-    reach. We are not stating where the production placed its camera, and we say so on every page
-    that carries photo guidance.</p>
-
-    <h2>Keeping pages current</h2>
-    <p>Addresses, business status and outbound links are checked automatically on a schedule. Prices
-    carry the date they were checked. When a place closes permanently, booking and purchase links are
-    removed and the page is kept only as a record of the filming site. Every article shows its last
-    verification date.</p>
-
-    <h2>Corrections</h2>
-    <p>Report an error from any page. Where reports indicate a substantive problem, the page is
-    withdrawn from public view while it is re-checked, rather than left up with a note.</p>
-
-    <h2>AI assistance</h2>
-    <p>Research, drafting, translation and verification are carried out with AI assistance under this
-    policy. Sources are recorded and linked. AI assistance does not relax any rule on this page — the
-    rules exist precisely because the volume is automated.</p>
+    <PolicyNote lang={lang} />
   </div>
 </BaseLayout>
+
+<style>
+  .policy ol { padding-left: 1.2rem; }
+  .policy ol li { margin: .35rem 0; line-height: 1.6; }
+</style>
