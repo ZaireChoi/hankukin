@@ -11,6 +11,24 @@ const here = Astro.url.pathname;
         <a href={`/${lang}/${c.path}/`}
            aria-current={here.includes(`/${c.path}`) ? 'page' : undefined}>{c.blurb}</a>
       ))}
+      {/*
+        「Stuck?」 는 축이 아니라 **다른 종류의 입구**라서 모양을 달리한다.
+
+        왜 넣나 (2026-08-17 실측).
+          /en/stuck/ 로 들어오는 본문 링크가 **1개**뿐이었다 (푸터 제외).
+          같은 시점에 /ledger/ 는 36개, /author/ 는 35개였다.
+          문제 16개에 한 줄 답을 붙인 그 페이지가 사이트에서 제일 안 보이는 페이지였다.
+
+          홈에서 뺀 것은 옳은 판단이었다 — 최신 글과 Arrival 동선이 밀렸다.
+          그런데 **홈에서 빼면서 갈 길을 안 만들어 줬다.**
+          만들고 나서 조용히 사라진 것이 이번 주에만 두 번째다 (앞은 eSIM 제휴 링크).
+
+        왜 축 목록에 섞지 않나.
+          다섯 축은 "무엇에 관한 글인가" 로 나뉜다. Stuck 은 "지금 뭐가 막혔나" 다.
+          독자의 상태가 다르므로 같은 줄에 같은 모양으로 두면 둘 다 흐려진다.
+      */}
+      <a class="stuck" href={`/${lang}/stuck/`}
+         aria-current={here.includes('/stuck') ? 'page' : undefined}>Stuck?</a>
     </nav>
   </div>
 </header>
