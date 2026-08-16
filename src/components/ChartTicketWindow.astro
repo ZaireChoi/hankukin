@@ -60,7 +60,7 @@ const ROWS = [
 const W = 760;
 const TOP = 68;
 const ROW = 92;
-const H = TOP + ROWS.length * ROW + 40;
+const H = TOP + ROWS.length * ROW + 58;   /* 아래 두 줄짜리 각주 자리 */
 const RAIL = 148;          /* 세로줄의 x */
 const TEXT = RAIL + 30;
 
@@ -114,8 +114,15 @@ const RED = '#b0453a', INK = '#12100f', MUTE = '#6b6560', RULE = '#d8d0c6';
       );
     })}
 
+    {/*
+      한 줄로 뒀더니 viewBox 오른쪽에서 **글자가 잘렸다** (2026-08-16, PNG 로 뽑아 보고 잡음).
+      빌드는 통과했다. 도표는 눈으로 봐야 안다.
+    */}
+    <text x="20" y={H - 32} font-size="11.5" fill={MUTE}>
+      From this show's own ticket-open notice, read 16 August 2026.
+    </text>
     <text x="20" y={H - 14} font-size="11.5" fill={MUTE}>
-      From the ticketing site's own notice for this show, read 16 August 2026. Other shows publish different dates — the order is what repeats.
+      Other shows publish different dates. The order is what repeats.
     </text>
   </svg>
   <figcaption>{caption}</figcaption>
