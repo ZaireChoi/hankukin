@@ -180,6 +180,14 @@
       "right": "Commercial links are now a field every section shares, and the build refuses to publish if any article template cannot display one. The link is on the page, labelled as an affiliate link.",
       "why": "A link that vanishes without error is worse than a broken one, because there is nothing to notice. We found it only by comparing the published pages against what the source files claimed.",
       "found": "ourselves"
+    },
+    {
+      "date": "2026-08-16",
+      "article": "/en/decode/korea-esim-no-phone-number/",
+      "wrong": "\"Data + Voice can only be bought at an airport counter … you cannot sort it out from home\" — under a heading built around that claim. We also stated that the 010 number never appears until you arrive in Korea.",
+      "right": "True at KT and LG U+, false at SKT, which sells its voice eSIM online and verifies passports online between 8am and 10pm KST, with the airport counter as the fallback. The section is now a three-carrier table. The arrival-only number display is LG U+'s documented behaviour, quoted from its Korean product page — not a fact about all tourist eSIMs.",
+      "why": "We read one carrier's page and wrote up the market. The strongest sentence in the article was the least verified one. A Korean travellers' forum thread contradicted it; we then opened all three carriers' own pages, and the thread was right.",
+      "found": "the site owner brought the thread; we verified against the carriers"
     }
   ],
   "withheld": [

@@ -19,6 +19,18 @@ sources:
     url: "https://www.lguplus.com/korea-sim/eng/pc/product/esim?tab=data-voice"
     type: merchant_official
     checkedAt: 2026-08-16
+  - title: "한국 eSIM 상품 페이지 유의사항 — 번호 표시 시점·본인인증 불가 원문 (LG U+ Korean site)"
+    url: "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "LTE eSIM (Data, Call, SMS) — online purchase, online passport verification 8am–10pm, rates (SK Telecom official roaming site)"
+    url: "https://www.skroaming.com/esim/esim"
+    type: merchant_official
+    checkedAt: 2026-08-16
+  - title: "eSIM Plans — voice eSIM sold at airport roaming centre only, 010 numbers, purchase caps (KT official roaming site)"
+    url: "https://roaming.kt.com/eng/esim"
+    type: merchant_official
+    checkedAt: 2026-08-16
   - title: "Korea SIM Card — Data Only vs Data + Voice comparison (LG U+ official English site)"
     url: "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice"
     type: merchant_official
@@ -30,10 +42,23 @@ sources:
 ---
 
 import ChartEsimUnlocks from '../../components/ChartEsimUnlocks.astro';
+import Original from '../../components/Original.astro';
 
 Most English guides to Korean eSIMs tell you the same thing: buy one, get data, and accept that you will not have a Korean phone number.
 
-**That is wrong.** A tourist eSIM from a Korean carrier does come with a Korean **010** number. You will not see it before you arrive — the number only appears in your phone's settings once you are in Korea, which is probably why so many people conclude it does not exist.
+**That is wrong.** A tourist eSIM from a Korean carrier does come with a Korean **010** number — KT's eSIM page opens by saying so: "All mobile phone numbers are provided with the 010."
+
+When you first *see* that number depends on the carrier. LG U+ states outright, on its Korean product page, that the number is not displayed overseas and appears in your settings only after you enter Korea — which is probably why so many people conclude it does not exist:
+
+<Original
+  ko="eSIM 전화번호는 한국 도착 후 단말기 설정에서 확인할 수 있습니다. 해외에서는 전화번호가 표시되지 않고, 한국 입국 후 번호 표시 됩니다."
+  en="The eSIM phone number can be checked in your device settings after arriving in Korea. Overseas, the number is not displayed; it is shown after entering Korea."
+  who="LG유플러스 한국 eSIM 상품 페이지 유의사항"
+  whoEn="LG U+ Korea eSIM product page, terms of use"
+  date="2026-08-16"
+  url="https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data" />
+
+That is LG U+'s documented behaviour, not a universal law — SKT's online eSIM arrives as a QR code by email, on your phone wherever you happen to scan it. In an earlier version of this article we stated the arrival-only display as a fact of all tourist eSIMs. It is not, and the correction is [in our ledger](/en/ledger/).
 
 What is true is stranger and more useful to know. **You get a number. You still cannot verify your identity.** Those are two different things in Korea, and the gap between them is where visitors get stuck.
 
@@ -48,6 +73,8 @@ This is not our inference. It is printed in the product notice on LG U+'s Englis
 > When using Voice/SMS services, SMS verification for restaurant and taxi reservation apps is available, but **Identity Verification for banking or government services is not supported.** If you use Data-only services, SMS verification is not available.
 
 Two sentences, and they draw the whole map. Voice/SMS gets you into the everyday apps. **Nothing gets you into a bank.**
+
+SKT says the same thing in its own considerations list — with one clause that goes further: "Personal authentication services **and text message receipt for payments** are unavailable." Two carriers, independently, drawing the same wall in their own product documents.
 
 ## Why the wall exists
 
@@ -67,13 +94,19 @@ So the failure is not a technical one you can pay your way around. **Buying the 
 
 **Banking, PASS, government sites: no.** Not with any tourist product, at any price.
 
-## The catch nobody mentions until you are at the airport
+## Where you buy the plan that sends texts — the carriers part ways here
 
-Look again at the middle and right columns of that chart.
+An earlier version of this article said Data + Voice "can only be bought at an airport counter" and that "you cannot sort it out from home." **That was one carrier's rule, written up as the market's.** We checked all three carriers' own pages on 16 August 2026, and they differ exactly where it matters:
 
-**Data + Voice can only be bought at an airport counter.** Data Only can be bought online in advance; the plan that actually sends texts cannot.
+| Carrier | Voice-capable eSIM | Passport verification |
+|---|---|---|
+| **SKT** | **Sold online** at skroaming.com, or at the airport roaming centre | **Online**, through a QR code in your emailed voucher — but only between **8am and 10pm Korean time** — or at the airport counter |
+| **KT** | **Airport roaming centre only** ("available on site only"); data-only sells online | At the KT counter, as an entry check |
+| **LG U+** | Order online if you like, but the **QR code itself is handed over at the airport counter** against your passport | At the counter |
 
-That single fact reorders the whole decision. If you want the SMS codes, **you cannot sort it out from home** — you have to stop at a carrier desk at Incheon, Gimpo or Gimhae with your passport. If you are landing at 1am, or transferring straight to a domestic flight, plan for it.
+So the old warning survives at KT and LG U+, and fails at SKT — where you genuinely can sort it out from home: buy online, install the QR from the email, verify your passport online, and land connected. Two caveats keep the airport counter in the story. SKT's online verification window closes overnight, precisely when long-haul flights land; and SKT's own page lists the counter as the alternative route when online verification does not go through. **Data works either way** — SKT states that mobile data runs regardless of verification status; what verification unlocks is calls and texts.
+
+If you are landing at 1am at Incheon, Gimpo or Gimhae and you chose KT or LG U+, the counter with your passport is still the only route to a texting plan. Plan for it.
 
 ## What it costs to send things
 
@@ -86,7 +119,7 @@ Data + Voice charges outgoing use against a balance rather than including it:
 | Domestic MMS | ₩1,100 per message |
 | Incoming calls and texts | **Free** |
 
-Rates from LG U+'s published table, checked 16 August 2026; other carriers differ. The practical read: **a verification code costs you ₩55.** You are not buying a phone plan, you are buying the ability to receive one text at a time when an app demands it.
+Rates from LG U+'s published table, checked 16 August 2026; carriers differ — SKT's own table lists the same per-second call rate but **₩33 per SMS**, and its top-ups start at ₩5,500. The practical read either way: incoming is free, and **a verification code costs you nothing to receive.** You are not buying a phone plan, you are buying the ability to be reached when an app demands it.
 
 ## Before you buy anything
 
@@ -98,15 +131,15 @@ Rates from LG U+'s published table, checked 16 August 2026; other carriers diffe
 
 **Do not delete it.** An eSIM cannot be reissued once installed. Delete it by accident on day two and you have bought nothing.
 
-**Three per passport, maximum.**
+**Purchase caps differ by carrier.** LG U+ allows up to three items per passport; KT allows one voice SIM plus four data SIMs per person; SKT ties passport verification to **a single product per passport** — a second voice eSIM on the same passport cannot be verified.
 
-And note the sequencing quirk: your plan's clock starts **when you first use data**, not when you buy. Buying a week early costs you nothing.
+And note the sequencing quirk, because **the two carriers start the clock differently.** At LG U+ your plan's days begin **when you first use data**. At SKT they begin **when you scan the QR code** — the days count in 24-hour blocks from the scan itself. Buying a week early costs you nothing at either carrier; at SKT, *scanning* a week early costs you the week. Buy whenever, scan when you are ready to start.
 
 ## So which one
 
 **Sightseeing, restaurants you walk into, taxis, museums:** Data Only, bought online before you fly. You will have a number, you can be called back by a hotel or a tour, and you never queue.
 
-**Booking things that text you, or staying long enough to need an account:** Data + Voice, at the airport counter, passport in hand.
+**Booking things that text you, or staying long enough to need an account:** Data + Voice — **online in advance from SKT** (verify your passport through the emailed voucher, between 8am and 10pm Korean time), or at the airport counter with KT and LG U+, passport in hand.
 
 **Anything involving a Korean bank:** neither. That is not what these products are.
 

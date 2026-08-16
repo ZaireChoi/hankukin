@@ -21,7 +21,7 @@ const { caption } = Astro.props;
 const COLS = [
   { k: 'none',  label: 'No Korean SIM',   sub: 'Roaming or wi-fi only' },
   { k: 'data',  label: 'Data Only eSIM',  sub: 'Online or airport' },
-  { k: 'voice', label: 'Data + Voice',    sub: 'Airport counter only' },
+  { k: 'voice', label: 'Data + Voice',    sub: 'Airport counter (SKT: also online)' },
 ];
 
 const ROWS = [
@@ -41,7 +41,7 @@ const GREEN = '#3d6b46', GREY = '#b8b0a8', RED = '#b0453a';
 
 <figure class="chart">
   <svg viewBox={`0 0 ${W} ${H}`} role="img"
-       aria-label="Three levels of Korean mobile service for a visitor. With no Korean SIM you have none of these. A Data Only eSIM gives you data, a Korean 010 number and the ability to receive calls and texts, but not to send them and not to receive verification codes. A Data plus Voice eSIM, sold only at airport counters, adds outgoing calls and texts and SMS verification for restaurant and taxi apps. Bank and government identity verification works on none of them.">
+       aria-label="Three levels of Korean mobile service for a visitor. With no Korean SIM you have none of these. A Data Only eSIM gives you data, a Korean 010 number and the ability to receive calls and texts, but not to send them and not to receive verification codes. A Data plus Voice eSIM, sold at airport counters and, at SKT, also online, adds outgoing calls and texts and SMS verification for restaurant and taxi apps. Bank and government identity verification works on none of them.">
 
     <text x={L} y={20} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
       WHAT EACH LEVEL ACTUALLY UNLOCKS
