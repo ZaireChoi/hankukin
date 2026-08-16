@@ -65,6 +65,42 @@ export const PRODUCTS = {
               'zh-hans': '语音 eSIM —— 仅在机场漫游中心发售（KT）' },
     checkedAt: '2026-08-16',
   },
+
+  /*
+   * 2026-08-17 실측. 언어별 경로에서 상품명까지 그 언어로 나오고 aid 가 유지된다.
+   *   ja  仁川国際空港鉄道A'REX 直通列車チケットの予約（ソウル）
+   *   zh  仁川机场 - 首尔快线直达列车
+   */
+  'klook-arex-express': {
+    url: 'https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/',
+    merchant: 'Klook',
+    category: 'transport',
+    relationship: 'suggested',
+    label: 'AREX Express train ticket — book ahead on Klook',
+    labels: {
+      ja: 'A\'REX直通列車のチケット — 出発前にKlookで予約',
+      'zh-hans': 'AREX 机场快线直达车票 —— 出发前在 Klook 预订',
+    },
+    checkedAt: '2026-08-17',
+  },
+
+  /*
+   * 2026-08-17 실측.
+   *   ja  韓服レンタル（慶尚北道）
+   *   zh  庆州韩服体验
+   */
+  'klook-gyeongju-hanbok': {
+    url: 'https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/',
+    merchant: 'Klook',
+    category: 'experience',
+    relationship: 'suggested',
+    label: 'Hanbok rental in Gyeongju — book ahead on Klook',
+    labels: {
+      ja: '慶州の韓服レンタル — 出発前にKlookで予約',
+      'zh-hans': '庆州韩服租借 —— 出发前在 Klook 预订',
+    },
+    checkedAt: '2026-08-17',
+  },
 };
 
 /**

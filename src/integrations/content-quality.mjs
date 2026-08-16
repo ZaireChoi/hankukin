@@ -560,6 +560,67 @@ export default function contentQuality() {
           }
         }
 
+        /**
+         * ── 번역본에서 상업 링크가 조용히 사라지는 것을 막는다 (열두 번째) ──
+         *
+         * 2026-08-17 운영자 지적: *"일본어와 중국어 버전은 제휴가 없네"*
+         *
+         * 세어 보니 사실이었다.
+         *   en  6페이지 · ja 1페이지 · zh-hans 1페이지
+         * 원문에는 붙어 있는 링크를 **번역할 때 frontmatter 에서 빠뜨렸다.**
+         *
+         * 이게 왜 다른 누락보다 나쁜가.
+         *   번역본이 원문보다 **많으면** 게이트가 잡는다 (라벨 대조).
+         *   그런데 **적은 것**은 아무도 안 잡는다. 오류도 경고도 안 난다.
+         *   이 사이트에서 제일 비쌌던 실패가 전부 이 모양이었다 —
+         *   **오류 없이 사라지는 것.**
+         *
+         * 일부러 빼는 경우는 있다. 그 상품이 그 시장에 없거나,
+         * 그 독자에게는 다른 상품이 맞을 때. 그러면 **이유를 적어야 통과한다.**
+         * 대표사진 예외와 같은 방식이다 — 이유를 적기 귀찮으면 링크를 넣게 된다.
+         */
+        const CTA_DROP_EXEMPT = {
+          // 'ja/scenes/some-article': '그 상품은 일본에서 안 팔린다. 확인일 2026-08-17',
+        };
+        {
+          const byId = new Map();     // 영어 원문 id → 상업 링크 URL 집합
+          const trans = [];
+          for (const file of walk(CONTENT_DIR)) {
+            const text = readFileSync(file, 'utf8');
+            const fm = text.slice(0, text.indexOf('\n---', 4) + 4);
+            const slug = basename(file).replace(/\.mdx?$/, '');
+            /*
+             * 번역본은 src/content/<섹션>/<언어>/<slug>.mdx 라서
+             * 한 단계 위가 언어 폴더다. 섹션은 그 위에 있다.
+             * 이걸 놓치면 예외 키가 'ja/ja/...' 로 나오고, 적어 둔 예외가 영영 안 걸린다.
+             */
+            const parent = basename(join(file, '..'));
+            const lang = /^lang:\s*(\S+)/m.exec(fm)?.[1] ?? 'en';
+            const sec = parent === lang ? basename(join(file, '..', '..')) : parent;
+            const urls = new Set([...fm.matchAll(/^\s+url:\s*"(https:\/\/www\.klook\.com[^"]+)"/gm)].map((m) => m[1]));
+            if (lang === 'en') byId.set(`${sec}/${slug}`, urls);
+            else if (/^translation:/m.test(fm)) {
+              trans.push({ key: `${lang}/${sec}/${slug}`, lang, slug,
+                of: /^\s+of:\s*['"]?([^'"\n]+)/m.exec(fm)?.[1]?.trim() ?? '', urls });
+            }
+          }
+          for (const t of trans) {
+            const src = byId.get(t.of);
+            if (!src) continue;                      // 원문 없음은 열 번째 게이트가 잡는다
+            const missing = [...src].filter((u) => !t.urls.has(u));
+            if (missing.length && !CTA_DROP_EXEMPT[t.key]) {
+              fail.push(
+                `${t.slug} (${t.lang}): 원문에 있는 상업 링크가 번역본에 없습니다 ${missing.length}건.\n` +
+                missing.map((u) => `      · ${u}`).join('\n') + '\n' +
+                '    번역하면서 frontmatter 의 visitKorea 를 빠뜨린 것입니다.\n' +
+                '    일부러 뺀 것이라면 content-quality.mjs 의 CTA_DROP_EXEMPT 에\n' +
+                `    '${t.key}' 키로 **이유를 적으십시오.**\n` +
+                '    번역본이 원문보다 적은 것은 오류 없이 사라집니다 — 그래서 여기서 셉니다.',
+              );
+            }
+          }
+        }
+
         for (const w of warn) logger.warn(w);
 
         if (fail.length) {
