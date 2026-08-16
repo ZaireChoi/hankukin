@@ -122,6 +122,32 @@ for (const file of walk(DIST)) {
   }
 }
 
+// ── 6. 캐시 규칙이 있는가 ────────────────────────────────────────
+//
+// 2026-08-17. 운영자가 스타일이 통째로 빠진 화면을 만났다.
+// 원인은 **예전 HTML 이 캐시돼 있고 그 HTML 이 가리키는 CSS 는 사라진 것**이었다.
+// Astro 는 빌드마다 자산 이름에 새 해시를 붙이므로, 배포를 자주 하면 반드시 겪는다.
+//
+// public/_headers 가 없으면 이 상태가 다시 온다. 그래서 존재를 강제한다.
+{
+  const headers = join(DIST, '_headers');
+  if (!existsSync(headers)) {
+    fail.push(
+      'public/_headers 가 없습니다 — 캐시 규칙이 배포되지 않습니다.\n' +
+      '      HTML 을 캐시하면 사라진 CSS 를 가리키게 되고, 화면이 통째로 깨집니다.\n' +
+      '      HTML 은 must-revalidate, /_astro/* 는 immutable 로 두십시오.',
+    );
+  } else {
+    const h = readFileSync(headers, 'utf8');
+    if (!/must-revalidate/.test(h) || !/immutable/.test(h)) {
+      fail.push(
+        'public/_headers 에 캐시 규칙이 불완전합니다.\n' +
+        '      HTML: must-revalidate · /_astro/*: immutable — 둘 다 있어야 합니다.',
+      );
+    }
+  }
+}
+
 console.log(`검사한 페이지 ${seen.length}개`);
 if (fail.length) {
   console.error(`\n실패 ${fail.length}건:\n`);
