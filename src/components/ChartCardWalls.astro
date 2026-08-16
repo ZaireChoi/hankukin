@@ -1,0 +1,98 @@
+---
+/**
+ * 카드가 안 될 때 — 증상으로 벽을 구분하는 진단표.
+ *
+ * 왜 그렸나 (2026-08-16, 3D Secure 편).
+ *   실패 화면은 찍을 수 있는 사진이 아니고(남의 결제 화면), 이 기사의 값은
+ *   "지금 부딪힌 벽이 셋 중 어느 것인지" 를 30초 안에 판별하게 하는 것이다.
+ *   eSIM 편 도표가 '층위'를 그렸다면 이건 '증상→원인→처방' 진단 흐름이다.
+ *
+ *   셋째 줄(앱스토어 국가)은 아직 전용 기사가 없다 — 처방 칸에 그렇게 적었다.
+ *   기사가 생기면 캡션에서 링크한다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const rows = [
+  {
+    sym: ['The site demands a Korean phone', 'number before you can start'],
+    wall: 'Identity verification',
+    wallKo: '본인확인',
+    fix: ['No tourist product fixes this.', 'Plan around it.'],
+    fixable: false,
+  },
+  {
+    sym: ['You reach card entry — then a bank', 'screen fails, or an instant decline'],
+    wall: '3D Secure',
+    wallKo: '해외카드 인증',
+    fix: ['Fixable from home:', 'call your card issuer', 'before you fly.'],
+    fixable: true,
+  },
+  {
+    sym: ['You cannot even install', 'the Korean app'],
+    wall: 'App-store country',
+    wallKo: '스토어 국가',
+    fix: ['A store-account matter,', 'not a card matter.', 'Its own article, later.'],
+    fixable: false,
+  },
+];
+
+const W = 760, TOP = 64, RH = 96, GAP = 10, H = TOP + rows.length * (RH + GAP) + 30;
+const C1 = 40, C1W = 268, C2 = 328, C2W = 168, C3 = 516, C3W = 204;
+const ACCENT = '#c9622e', GREEN = '#3d6b46', INK = '#12100f';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="A diagnostic for card failures in Korea. If a site demands a Korean phone number before you start, the wall is identity verification and no tourist product fixes it. If you reach the card entry step and then a bank screen fails or the payment is instantly declined, the wall is 3D Secure — fixable by calling your card issuer before you fly. If you cannot even install the Korean app, the wall is your app store country, which is not a card problem at all.">
+
+    <text x={C1} y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      THREE WALLS LOOK LIKE ONE — READ THE SYMPTOM
+    </text>
+
+    <text x={C1} y="50" font-size="11" font-weight="700" fill="#a09890" letter-spacing="0.06em">WHAT YOU SEE</text>
+    <text x={C2} y="50" font-size="11" font-weight="700" fill="#a09890" letter-spacing="0.06em">THE WALL</text>
+    <text x={C3} y="50" font-size="11" font-weight="700" fill="#a09890" letter-spacing="0.06em">WHAT HELPS</text>
+
+    {rows.map((r, i) => {
+      const y = TOP + i * (RH + GAP);
+      return (
+        <>
+          <rect x={C1} y={y} width={C1W} height={RH} rx="5" fill="#efe9e1" stroke="#e0d8ce" />
+          {r.sym.map((line, j) => (
+            <text x={C1 + 14} y={y + 42 + j * 18} font-size="12.5" fill={INK}>{line}</text>
+          ))}
+
+          <path d={`M ${C1 + C1W + 4} ${y + RH / 2} h 16`} stroke="#b8b0a8" stroke-width="1.6" fill="none" />
+
+          <rect x={C2} y={y} width={C2W} height={RH} rx="5"
+                fill={r.fixable ? ACCENT : '#fffdfa'} fill-opacity={r.fixable ? 0.14 : 1}
+                stroke={r.fixable ? ACCENT : '#e0d8ce'} stroke-width={r.fixable ? 1.6 : 1} />
+          <text x={C2 + C2W / 2} y={y + 44} text-anchor="middle" font-size="14" font-weight="700"
+                fill={r.fixable ? ACCENT : INK}>{r.wall}</text>
+          <text x={C2 + C2W / 2} y={y + 64} text-anchor="middle" font-size="11.5" fill="#8a827b">{r.wallKo}</text>
+
+          <path d={`M ${C2 + C2W + 4} ${y + RH / 2} h 16`} stroke="#b8b0a8" stroke-width="1.6" fill="none" />
+
+          <rect x={C3} y={y} width={C3W} height={RH} rx="5" fill="#fffdfa" stroke="#e0d8ce" />
+          {r.fix.map((line, j) => (
+            <text x={C3 + 14} y={y + (r.fix.length === 3 ? 32 : 42) + j * 18} font-size="12.5"
+                  font-weight={r.fixable ? 700 : 400}
+                  fill={r.fixable ? GREEN : '#3c3733'}>{line}</text>
+          ))}
+        </>
+      );
+    })}
+
+    <text x={C1} y={H - 10} font-size="11.5" fill="#a09890">
+      Our own illustration. The middle wall is this article; the first wall has an article of its own.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

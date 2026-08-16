@@ -164,29 +164,47 @@ async function probe(url) {
   } finally { clearTimeout(t); }
 }
 
+const AID = '131289';
+
+/**
+ * 제휴 링크는 **독자가 실제로 누르는 형태**로 열어야 한다.
+ *
+ * frontmatter 에 적힌 주소에는 aid 가 없다. 붙이는 것은 템플릿이다.
+ * 그래서 맨 주소를 열어 놓고 '추적이 없다' 고 판정하면 매번 거짓 실패가 난다.
+ * 독자가 누르는 주소를 그대로 만들어서 연다.
+ */
+const asClicked = (url, block) => {
+  if (block !== 'visitKorea' && block !== 'bringKoreaHome') return url;
+  if (!/klook\.com/i.test(url) || /[?&]aid=/.test(url)) return url;
+  return url + (url.includes('?') ? '&' : '?') + `aid=${AID}`;
+};
+
 async function checkOnline(entries) {
   const results = {};
   const queue = [...entries];
   const workers = Array.from({ length: 4 }, async () => {
     while (queue.length) {
       const { url, files, block } = queue.shift();
-      let r = await probe(url);
-      if (r.status === 0 || r.status >= 500) { await sleep(2000); r = await probe(url); }
-      results[url] = r;
+      const target = asClicked(url, block);
+      let r = await probe(target);
+      if (r.status === 0 || r.status >= 500) { await sleep(2000); r = await probe(target); }
+      results[url] = { ...r, probed: target };
 
       const where = files[0];
       if (r.status === 0) {
-        warn(where, 'unreachable', `${url} — 접속 실패 (${r.error}). 일시적일 수 있어 경고로 둔다.`);
+        warn(where, 'unreachable', `${url} — 접속 실패 (${r.error}). 일시적인 수 있어 경고로 둔다.`);
       } else if (r.status === 404 || r.status === 410) {
         fail(where, 'dead-link', `${url} — ${r.status}. 죽은 주소다.`);
       } else if (r.status >= 400) {
         warn(where, 'blocked', `${url} — ${r.status}. 봇 차단일 수 있다. 사람이 한 번 열어 본다.`);
       }
       // 수수료가 걸린 링크는 '열린다' 로 부족하다. 최종 주소까지 aid 가 살아 있어야 한다.
-      if ((block === 'visitKorea' || block === 'bringKoreaHome') && /klook\.com/i.test(url) && r.finalUrl) {
-        if (!/(aid=|utm_campaign=)131289/.test(r.finalUrl)) {
+      // /transport/ 로 리디렉션되면 여기서 파라미터가 사라진다 — 페이지는 열리고 수수료만 0이 된다.
+      // 다만 봇 차단(403 등)으로 최종 주소를 못 본 경우는 판정하지 않는다. 모르는 것과 틀린 것은 다르다.
+      if (target !== url && r.finalUrl && r.status > 0 && r.status < 400) {
+        if (!new RegExp(`(aid=|utm_campaign=)${AID}`).test(r.finalUrl)) {
           fail(where, 'affiliate-tracking-lost',
-            `${url} → ${r.finalUrl} — 최종 주소에 추적 파라미터가 없다. 열리지만 수수료가 0이다.`);
+            `${target} → ${r.finalUrl} — 최종 주소에 추적 파라미터가 없다. 열리지만 수수료가 0이다.`);
         }
       }
       await sleep(400); // 상대 서버에 대한 예의이자, 차단당하지 않기 위한 것
@@ -198,7 +216,7 @@ async function checkOnline(entries) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/* ── 실행 ──────────────────────────────────────────────────────── */
+/* ── 실행 ─────────────────────────────────────────────────────── */
 
 const verified = JSON.parse(readFileSync(VERIFIED_PATH, 'utf8'));
 const files = walk(CONTENT);
