@@ -149,6 +149,23 @@ try {
   if (-not $node -and (Test-Path $hint)) {
     $h = (Get-Content $hint -Raw).Trim()
     if ($h -and (Test-Path $h)) { $node = $h }
+    elseif ($h) { Log "  경고: node-path.txt 에 적힌 경로가 실제로 없습니다 -> $h" }
+  }
+  # 여기까지 못 찾았으면 **디스크를 직접 뒤진다.** (2026-08-17 추가)
+  #
+  # 왜. 8/16 밤에 이 스크립트가 검증 실패로 푸시를 막았고 — 막은 것 자체는 맞다 —
+  # 그 상태로 커밋 15개가 로컬에만 쌓여 있었다. **막혔다는 걸 아무도 안 봤다.**
+  # 알림이 없으면 '안전하게 멈춤' 은 '조용히 멈춤' 과 구별되지 않는다.
+  # 흔한 설치처를 넓게 뒤지고, 그래도 없으면 **무엇을 뒤졌는지 로그에 남긴다.**
+  if (-not $node) {
+    $roots = @("$env:LOCALAPPDATA\nvs", "$env:LOCALAPPDATA\fnm_multishells", "$env:LOCALAPPDATA\Volta",
+               "$env:USERPROFILE\scoop\apps\nodejs", "$env:ProgramData\chocolatey\lib\nodejs",
+               "$env:LOCALAPPDATA\Microsoft\WinGet\Packages") | Where-Object { Test-Path $_ }
+    foreach ($r in $roots) {
+      $cand = Get-ChildItem $r -Filter node.exe -Recurse -Depth 4 -ErrorAction SilentlyContinue |
+              Sort-Object LastWriteTime -Descending | Select-Object -First 1
+      if ($cand) { $node = $cand.FullName; Log "  node 를 찾았습니다: $node"; break }
+    }
   }
   if ($node -and -not $npm) {
     $guess = Join-Path (Split-Path -Parent $node) 'npm.cmd'
@@ -212,9 +229,41 @@ try {
   # **푸시만 막는다.** 커밋은 되돌릴 수 있고 발행은 되돌리기 어렵다.
   if (-not $verified) {
     $held = $backlog + $(if ($changed -gt 0) { 1 } else { 0 })
-    Log "중단: 검증하지 못해 올리지 않습니다 (커밋 $held 건이 남아 있습니다)"
-    Log "  node/npm 을 PATH 에서 찾지 못했습니다. 설치 후 다시 실행하거나,"
-    Log "  직접 'npm run build' 로 게이트를 통과시킨 뒤 'git push' 하십시오."
+    #
+    # 여기서 그냥 멈추면 **아무도 모른다** (2026-08-17 에 실제로 그랬다).
+    # 커밋 15건이 로컬에만 쌓여 있었고, 외부 평가가 지적할 때까지 몰랐다.
+    # 그래서 ① 눈에 띄게 적고 ② 고치는 명령을 그대로 찍고
+    # ③ 밀린 건수가 쌓이면 **화면에 창을 띄운다.** 조용한 정지는 정지가 아니다.
+    #
+    Log ""
+    Log "════════════════════════════════════════════════════════════"
+    Log " 올리지 못했습니다. 커밋 $held 건이 이 PC 에만 있습니다."
+    Log "════════════════════════════════════════════════════════════"
+    if (-not $node) { Log "  · node.exe 를 못 찾았습니다" }
+    if (-not $npm)  { Log "  · npm.cmd 를 못 찾았습니다" }
+    Log ""
+    Log "  고치는 법 — PowerShell 에서 아래 한 줄:"
+    Log ""
+    Log "    where.exe node | Select-Object -First 1 | Set-Content `"$hint`""
+    Log ""
+    Log "  node 가 설치돼 있지 않다면 https://nodejs.org 에서 LTS 를 받으십시오."
+    Log "  그 뒤 이 스크립트를 다시 실행하면 밀린 $held 건이 한 번에 올라갑니다."
+    Log "════════════════════════════════════════════════════════════"
+
+    # 조용히 쌓이는 것을 막는다. 3건을 넘으면 사람을 부른다.
+    if ($held -ge 3) {
+      try {
+        Add-Type -AssemblyName System.Windows.Forms -ErrorAction Stop
+        [System.Windows.Forms.MessageBox]::Show(
+          "HANKUKIN: 커밋 $held 건이 올라가지 못하고 이 PC 에만 있습니다.`n`n" +
+          "원인: node/npm 을 찾지 못해 발행 전 검증을 못 했습니다.`n" +
+          "게이트를 통과 못 한 것을 올리지 않는 것은 의도된 동작입니다.`n`n" +
+          "PowerShell 에서:`n" +
+          "  where.exe node | Select-Object -First 1 | Set-Content `"$hint`"`n`n" +
+          "로그: $logFile",
+          'HANKUKIN — 발행이 멈춰 있습니다', 'OK', 'Warning') | Out-Null
+      } catch { Log "  (알림 창을 띄우지 못했습니다 — 로그만 남깁니다)" }
+    }
     exit 1
   }
 
