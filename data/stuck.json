@@ -1,286 +1,291 @@
 {
- "_읽는이에게": [
-  "홈 상단 「무엇이 막혔나요」 색인.",
-  "",
-  "검색창 대신 이걸 만든 이유 (2026-08-16 운영자 제안 → 검토):",
-  "  검색창은 **독자가 우리 단어를 맞혀야** 작동한다.",
-  "  그리고 32편에서 검색창을 달면 Jeju·DMZ·hiking 이 전부 0건으로 나온다.",
-  "  지금은 얇다는 게 안 보이는데, 검색창은 그걸 독자가 측정하게 만든다.",
-  "  → 우리가 먼저 보여준다. 80편쯤에서 Pagefind 로 검색을 넣는다.",
-  "",
-  "규칙 셋.",
-  "  ① when 은 **독자의 말**로 적는다. 우리 제목을 줄인 게 아니라",
-  "     그 사람이 그 순간에 머릿속으로 하는 말이어야 한다.",
-  "  ② answer 는 **한 문장으로 실제 답을 준다.** 미끼가 아니다.",
-  "     클릭 안 해도 도움이 되어야 한다. 그게 검색창이 못 하는 일이다.",
-  "  ③ answer 는 반드시 그 기사 안에 있는 사실이어야 한다.",
-  "     확정 못 한 숫자는 여기 쓰지 않는다 (진료비가 그래서 범위 없이 적혀 있다).",
-  "",
-  "href 가 실제 기사와 맞지 않으면 **빌드가 선다.** StuckIndex.astro 가 막는다.",
-  "쓰지 않은 문제는 여기 올리지 않는다 — 없는 답을 약속하는 목록이 된다."
- ],
- "groups": [
-  {
-   "label": "You have just landed",
-   "items": [
+  "_읽는이에게": [
+    "홈 상단 「무엇이 막혔나요」 색인.",
+    "",
+    "검색창 대신 이걸 만든 이유 (2026-08-16 운영자 제안 → 검토):",
+    "  검색창은 **독자가 우리 단어를 맞혀야** 작동한다.",
+    "  그리고 32편에서 검색창을 달면 Jeju·DMZ·hiking 이 전부 0건으로 나온다.",
+    "  지금은 얇다는 게 안 보이는데, 검색창은 그걸 독자가 측정하게 만든다.",
+    "  → 우리가 먼저 보여준다. 80편쯤에서 Pagefind 로 검색을 넣는다.",
+    "",
+    "규칙 셋.",
+    "  ① when 은 **독자의 말**로 적는다. 우리 제목을 줄인 게 아니라",
+    "     그 사람이 그 순간에 머릿속으로 하는 말이어야 한다.",
+    "  ② answer 는 **한 문장으로 실제 답을 준다.** 미끼가 아니다.",
+    "     클릭 안 해도 도움이 되어야 한다. 그게 검색창이 못 하는 일이다.",
+    "  ③ answer 는 반드시 그 기사 안에 있는 사실이어야 한다.",
+    "     확정 못 한 숫자는 여기 쓰지 않는다 (진료비가 그래서 범위 없이 적혀 있다).",
+    "",
+    "href 가 실제 기사와 맞지 않으면 **빌드가 선다.** StuckIndex.astro 가 막는다.",
+    "쓰지 않은 문제는 여기 올리지 않는다 — 없는 답을 약속하는 목록이 된다."
+  ],
+  "groups": [
     {
-     "when": "I am at the airport and do not know how to get into the city",
-     "answer": "Train, bus or taxi — which one is right depends on your luggage and the hour.",
-     "href": "now/incheon-airport-to-seoul-train-bus-taxi",
-     "home": true,
-     "i18n": {
-      "ja": {
-       "when": "空港に着いたけれど、市内までどう行けばいいのか分からない",
-       "answer": "鉄道・バス・タクシー。荷物の量と時刻でどれが正解かが変わります。"
-      },
-      "zh-hans": {
-       "when": "到机场了，不知道怎么进市区",
-       "answer": "地铁、巴士、出租车。选哪个取决于你的行李和落地时间。"
+      "label": "You have just landed",
+      "items": [
+        {
+          "when": "I am at the airport and do not know how to get into the city",
+          "answer": "Train, bus or taxi — which one is right depends on your luggage and the hour.",
+          "href": "now/incheon-airport-to-seoul-train-bus-taxi",
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "空港に着いたけれど、市内までどう行けばいいのか分からない",
+              "answer": "鉄道・バス・タクシー。荷物の量と時刻でどれが正解かが変わります。"
+            },
+            "zh-hans": {
+              "when": "到机场了，不知道怎么进市区",
+              "answer": "地铁、巴士、出租车。选哪个取决于你的行李和落地时间。"
+            }
+          }
+        },
+        {
+          "when": "My phone has a Korean number but Korean apps still reject me",
+          "answer": "You do get an 010 number. What you do not get is Korean identity verification, and no tourist product at any price changes that.",
+          "href": "decode/korea-esim-no-phone-number",
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "韓国の番号は出たのに、韓国のアプリに弾かれる",
+              "answer": "010番号はちゃんと出ます。出ないのは「本人確認」のほうで、観光客向けの商品はどれを買っても通りません。"
+            },
+            "zh-hans": {
+              "when": "拿到韩国号码了，韩国的 App 还是不让我用",
+              "answer": "010 号码是有的。没有的是「本人确认」，而且旅游用的产品买多贵都过不了这一关。"
+            }
+          }
+        },
+        {
+          "when": "I bought a train ticket and there is no gate to scan it at",
+          "answer": "There is no gate. Walk to the platform and sit in your seat — that is the whole procedure.",
+          "href": "now/seoul-to-busan-ktx-srt-integration-2026",
+          "home": true
+        },
+        {
+          "when": "I do not know what a subway ride or a taxi should cost",
+          "answer": "A subway ride starts at ₩1,550 with a card and ₩1,650 without, and that gap repeats on every transfer.",
+          "href": "now/seoul-transport-fares-subway-bus-taxi"
+        }
+      ],
+      "i18n": {
+        "ja": "着いたばかり",
+        "zh-hans": "刚落地"
       }
-     }
     },
     {
-     "when": "My phone has a Korean number but Korean apps still reject me",
-     "answer": "You do get an 010 number. What you do not get is Korean identity verification, and no tourist product at any price changes that.",
-     "href": "decode/korea-esim-no-phone-number",
-     "home": true,
-     "i18n": {
-      "ja": {
-       "when": "韓国の番号は出たのに、韓国のアプリに弾かれる",
-       "answer": "010番号はちゃんと出ます。出ないのは「本人確認」のほうで、観光客向けの商品はどれを買っても通りません。"
-      },
-      "zh-hans": {
-       "when": "拿到韩国号码了，韩国的 App 还是不让我用",
-       "answer": "010 号码是有的。没有的是「本人确认」，而且旅游用的产品买多贵都过不了这一关。"
+      "label": "You cannot read what is in front of you",
+      "items": [
+        {
+          "when": "Every sign is in an alphabet I cannot read",
+          "answer": "Hangul is not Chinese characters. Most people can sound out a sign after about ninety minutes.",
+          "href": "hangul/learn-to-read-korean-signs-alphabet",
+          "home": true,
+          "i18n": {
+            "zh-hans": {
+              "when": "满街的字我一个都不认识",
+              "answer": "韩文不是汉字。大多数人花大约九十分钟就能把招牌念出来。"
+            }
+          }
+        },
+        {
+          "when": "I cannot tell what kind of restaurant this is from outside",
+          "answer": "The last word on the sign tells you what they cook. Learn six words and you can read the street.",
+          "href": "hangul/korean-restaurant-signs-last-word",
+          "i18n": {
+            "ja": {
+              "when": "外から見ても、その店が何の店なのか分からない",
+              "answer": "看板の最後の一語が料理を決めます。六つ覚えれば通りが読めます。"
+            }
+          }
+        },
+        {
+          "when": "I do not eat pork, and I cannot read the menu",
+          "answer": "Pork and fish stock hide in things that do not look like they contain either. There is also an official list of restaurants that do not use them.",
+          "href": "now/korean-street-food-hidden-pork-and-fish"
+        },
+        {
+          "when": "I do not know what to say when I walk into a shop",
+          "answer": "About eight sentences cover almost everything, and one of them is just pointing.",
+          "href": "decode/korean-phrases-shops-restaurants"
+        },
+        {
+          "when": "I need a pharmacy and every door looks like an office",
+          "answer": "Clinic signs run to a fixed formula — name, specialty, then 의원 or 병원. Korean law bars anyone who is not a licensed medical institution from using those words at all.",
+          "href": "hangul/korean-clinic-pharmacy-signs"
+        },
+        {
+          "when": "Half the signs end in the same syllable and I do not know why",
+          "answer": "방 just means room. Korea names a business after the room you do the thing in — singing room, sauna room, PC room.",
+          "href": "hangul/korean-bang-suffix-noraebang-jjimjilbang"
+        },
+        {
+          "when": "Everyone is calling each other names the subtitles do not translate",
+          "answer": "Oppa, hyung, unnie, noona say who is older and how close you are. Subtitles usually replace them with a name, which loses the whole point.",
+          "href": "decode/oppa-hyung-unnie-noona"
+        },
+        {
+          "when": "I found the English page and it told me the wrong price",
+          "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
+          "href": "now/english-pages-korea-out-of-date",
+          "home": true
+        }
+      ],
+      "i18n": {
+        "ja": "目の前の文字が読めない",
+        "zh-hans": "眼前的字看不懂"
       }
-     }
     },
     {
-     "when": "I bought a train ticket and there is no gate to scan it at",
-     "answer": "There is no gate. Walk to the platform and sit in your seat — that is the whole procedure.",
-     "href": "now/seoul-to-busan-ktx-srt-integration-2026",
-     "home": true
+      "label": "Something has gone wrong",
+      "items": [
+        {
+          "when": "I left my bag on the subway",
+          "answer": "Tell a station attendant and hand over the transit card you tapped with — it tells them which train you were on.",
+          "href": "now/lost-something-in-korea-what-to-do",
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "地下鉄にカバンを置き忘れた",
+              "answer": "駅員に伝えて、タッチした交通カードを渡してください。どの列車に乗っていたかが分かります。"
+            },
+            "zh-hans": {
+              "when": "包落在地铁上了",
+              "answer": "找站务员，把刷过的交通卡交给他——卡能告诉他你坐的是哪一班车。"
+            }
+          }
+        },
+        {
+          "when": "My card paid for dinner but the booking site declined it",
+          "answer": "Shop terminals do not run 3D Secure; Korean online checkouts do, and a card that is not enrolled gets refused. One call to your issuer before you fly usually fixes it.",
+          "href": "now/korea-3d-secure-card-declined-online",
+          "home": true
+        },
+        {
+          "when": "I need cash and the machine will not take my card",
+          "answer": "It is not the English button that decides it — it is whether your card's network logo is on the machine. Check a locator before you fly.",
+          "href": "now/korea-atm-foreign-card-cash"
+        },
+        {
+          "when": "I am ill and I do not have an appointment",
+          "answer": "You do not book anything. Walk into a neighbourhood clinic, wait about twenty minutes, collect your medicine downstairs.",
+          "href": "now/seeing-a-doctor-in-korea-cost-walk-in",
+          "home": true
+        },
+        {
+          "when": "I have broken my glasses",
+          "answer": "Walk into an optician. About ten minutes, no appointment, and no eye doctor needed — the optician does the test.",
+          "href": "now/buy-glasses-in-korea-price-time"
+        },
+        {
+          "when": "I am worried I am being overcharged",
+          "answer": "Here is what ordinary meals actually cost, so you can tell.",
+          "href": "now/korea-food-prices-what-meals-cost",
+          "home": true
+        }
+      ],
+      "i18n": {
+        "ja": "何かがうまくいかない",
+        "zh-hans": "出问题了"
+      }
     },
     {
-     "when": "I do not know what a subway ride or a taxi should cost",
-     "answer": "A subway ride starts at ₩1,550 with a card and ₩1,650 without, and that gap repeats on every transfer.",
-     "href": "now/seoul-transport-fares-subway-bus-taxi"
+      "label": "You are about to do something that has a rule",
+      "items": [
+        {
+          "when": "Every guide says buy the 62,000-won Climate Card. Is that still right?",
+          "answer": "No — Seoul stops topping it up on 31 August 2026, the last ride is 29 September, and the scheme ends 1 October. The 1-to-7-day version survives.",
+          "href": "now/seoul-climate-card-ending-what-visitors-should-buy",
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "どのガイドも62,000ウォンの気候同行カードを勧めるけれど、まだ正しいの？",
+              "answer": "いいえ。2026年8月31日でチャージ終了、9月29日が最終利用日、10月1日に廃止です。1〜7日券は残ります。"
+            },
+            "zh-hans": {
+              "when": "所有攻略都说买 62,000 韩元的气候同行卡，现在还对吗？",
+              "answer": "不对了。2026年8月31日停止充值，9月29日最后可用，10月1日退出。1至7日券保留。"
+            }
+          }
+        },
+        {
+          "when": "Can I get fined for walking down a street and taking a photograph",
+          "answer": "In one lane of Bukchon, yes — ₩100,000, outside 10:00–17:00, and it applies to visitors exactly as to Koreans.",
+          "href": "guides/bukchon-hanok-village-visiting-hours-fine",
+          "i18n": {
+            "zh-hans": {
+              "when": "只是走在路上拍张照，也会被罚款吗",
+              "answer": "在北村的一条巷子里会 —— 10 万韩元，10:00–17:00 之外，对外国人和韩国人一视同仁。"
+            }
+          }
+        },
+        {
+          "when": "I heard hanbok gets you in free — what counts as hanbok",
+          "answer": "It does, at every palace. There are rules about what counts, and rental shops do not always tell you them.",
+          "href": "guides/hanbok-free-palace-entry-what-counts"
+        },
+        {
+          "when": "I came for the Secret Garden and could not get in",
+          "answer": "It is a separate ticket and a separate booking, and in spring and autumn it sells out in minutes.",
+          "href": "guides/changdeokgung-secret-garden-booking"
+        },
+        {
+          "when": "There are five palaces and I have one day",
+          "answer": "They are not interchangeable. One of the five things on most lists is not a palace at all.",
+          "href": "guides/five-palaces-seoul-which-one"
+        },
+        {
+          "when": "Someone asked how old I am in Korean age",
+          "answer": "Korea changed to international age in June 2023. The answer is now just your age.",
+          "href": "guides/korean-age-what-changed-in-2023"
+        },
+        {
+          "when": "Am I paying for something that is free for me",
+          "answer": "If you are 18 or under, or 65 or over, the royal palaces are free for foreign visitors too — and nobody tells you at the gate.",
+          "href": "guides/seoul-palaces-free-admission-who-qualifies",
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "本当は無料なのに、お金を払っているのではないか",
+              "answer": "18歳以下と65歳以上なら、外国人でも王宮は無料です。窓口では教えてくれません。"
+            },
+            "zh-hans": {
+              "when": "我是不是在为本来免费的东西付钱",
+              "answer": "18 岁以下和 65 岁以上，外国访客进王宫免费。售票口不会主动告诉你。"
+            }
+          }
+        },
+        {
+          "when": "It is raining and I wanted to walk along the stream",
+          "answer": "Cheonggyecheon runs below street level and closes on a published rainfall schedule. The spot your instinct picks — under a bridge — is where the sluice gates open.",
+          "href": "guides/cheonggyecheon-seoul-entrances-rain-closure"
+        },
+        {
+          "when": "I want to see my favourite group in Seoul but I cannot get near a ticket",
+          "answer": "Speed is not the wall. The presale is a fanclub membership list, and the joining deadline can fall on the day the show is announced.",
+          "href": "scenes/kpop-concert-tickets-korea-foreigners",
+          "home": true
+        },
+        {
+          "when": "Everyone tells me to go to Seongsu and I do not know which station that means",
+          "answer": "Seongsu Station for the shoe street, two minutes away. Seoul Forest Station for the park and the cafe strip — from Seongsu Station the park is a 38-minute walk.",
+          "href": "scenes/seongsu-dong-seoul-popups-and-what-stays"
+        },
+        {
+          "when": "I want to go up N Seoul Tower tonight — how late can I turn up?",
+          "answer": "Last admission is 30 minutes before closing: 22:00 on a weekday, 22:30 at weekends. The tower stays lit and busy after that, which is why people miss it.",
+          "href": "guides/n-seoul-tower-ticket-price-hours",
+          "home": true
+        },
+        {
+          "when": "I found the Lovely Runner spots in Suwon but cannot tell what needs a ticket",
+          "answer": "The fortress wall is free and never closes; only the palace inside it charges — ₩2,000, with last entry at 17:00, an hour before it shuts.",
+          "href": "scenes/lovely-runner-suwon-hwaseong-filming-spots"
+        }
+      ],
+      "i18n": {
+        "ja": "それには決まりがある",
+        "zh-hans": "这件事有规定"
+      }
     }
-   ],
-   "i18n": {
-    "ja": "着いたばかり",
-    "zh-hans": "刚落地"
-   }
-  },
-  {
-   "label": "You cannot read what is in front of you",
-   "items": [
-    {
-     "when": "Every sign is in an alphabet I cannot read",
-     "answer": "Hangul is not Chinese characters. Most people can sound out a sign after about ninety minutes.",
-     "href": "hangul/learn-to-read-korean-signs-alphabet",
-     "home": true,
-     "i18n": {
-      "zh-hans": {
-       "when": "满街的字我一个都不认识",
-       "answer": "韩文不是汉字。大多数人花大约九十分钟就能把招牌念出来。"
-      }
-     }
-    },
-    {
-     "when": "I cannot tell what kind of restaurant this is from outside",
-     "answer": "The last word on the sign tells you what they cook. Learn six words and you can read the street.",
-     "href": "hangul/korean-restaurant-signs-last-word",
-     "i18n": {
-      "ja": {
-       "when": "外から見ても、その店が何の店なのか分からない",
-       "answer": "看板の最後の一語が料理を決めます。六つ覚えれば通りが読めます。"
-      }
-     }
-    },
-    {
-     "when": "I do not eat pork, and I cannot read the menu",
-     "answer": "Pork and fish stock hide in things that do not look like they contain either. There is also an official list of restaurants that do not use them.",
-     "href": "now/korean-street-food-hidden-pork-and-fish"
-    },
-    {
-     "when": "I do not know what to say when I walk into a shop",
-     "answer": "About eight sentences cover almost everything, and one of them is just pointing.",
-     "href": "decode/korean-phrases-shops-restaurants"
-    },
-    {
-     "when": "I need a pharmacy and every door looks like an office",
-     "answer": "Clinic signs run to a fixed formula — name, specialty, then 의원 or 병원. Korean law bars anyone who is not a licensed medical institution from using those words at all.",
-     "href": "hangul/korean-clinic-pharmacy-signs"
-    },
-    {
-     "when": "Half the signs end in the same syllable and I do not know why",
-     "answer": "방 just means room. Korea names a business after the room you do the thing in — singing room, sauna room, PC room.",
-     "href": "hangul/korean-bang-suffix-noraebang-jjimjilbang"
-    },
-    {
-     "when": "Everyone is calling each other names the subtitles do not translate",
-     "answer": "Oppa, hyung, unnie, noona say who is older and how close you are. Subtitles usually replace them with a name, which loses the whole point.",
-     "href": "decode/oppa-hyung-unnie-noona"
-    },
-    {
-     "when": "I found the English page and it told me the wrong price",
-     "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
-     "href": "now/english-pages-korea-out-of-date",
-     "home": true
-    }
-   ],
-   "i18n": {
-    "ja": "目の前の文字が読めない",
-    "zh-hans": "眼前的字看不懂"
-   }
-  },
-  {
-   "label": "Something has gone wrong",
-   "items": [
-    {
-     "when": "I left my bag on the subway",
-     "answer": "Tell a station attendant and hand over the transit card you tapped with — it tells them which train you were on.",
-     "href": "now/lost-something-in-korea-what-to-do",
-     "home": true,
-     "i18n": {
-      "ja": {
-       "when": "地下鉄にカバンを置き忘れた",
-       "answer": "駅員に伝えて、タッチした交通カードを渡してください。どの列車に乗っていたかが分かります。"
-      },
-      "zh-hans": {
-       "when": "包落在地铁上了",
-       "answer": "找站务员，把刷过的交通卡交给他——卡能告诉他你坐的是哪一班车。"
-      }
-     }
-    },
-    {
-     "when": "My card paid for dinner but the booking site declined it",
-     "answer": "Shop terminals do not run 3D Secure; Korean online checkouts do, and a card that is not enrolled gets refused. One call to your issuer before you fly usually fixes it.",
-     "href": "now/korea-3d-secure-card-declined-online",
-     "home": true
-    },
-    {
-     "when": "I need cash and the machine will not take my card",
-     "answer": "It is not the English button that decides it — it is whether your card's network logo is on the machine. Check a locator before you fly.",
-     "href": "now/korea-atm-foreign-card-cash"
-    },
-    {
-     "when": "I am ill and I do not have an appointment",
-     "answer": "You do not book anything. Walk into a neighbourhood clinic, wait about twenty minutes, collect your medicine downstairs.",
-     "href": "now/seeing-a-doctor-in-korea-cost-walk-in",
-     "home": true
-    },
-    {
-     "when": "I have broken my glasses",
-     "answer": "Walk into an optician. About ten minutes, no appointment, and no eye doctor needed — the optician does the test.",
-     "href": "now/buy-glasses-in-korea-price-time"
-    },
-    {
-     "when": "I am worried I am being overcharged",
-     "answer": "Here is what ordinary meals actually cost, so you can tell.",
-     "href": "now/korea-food-prices-what-meals-cost",
-     "home": true
-    }
-   ],
-   "i18n": {
-    "ja": "何かがうまくいかない",
-    "zh-hans": "出问题了"
-   }
-  },
-  {
-   "label": "You are about to do something that has a rule",
-   "items": [
-    {
-     "when": "Every guide says buy the 62,000-won Climate Card. Is that still right?",
-     "answer": "No — Seoul stops topping it up on 31 August 2026, the last ride is 29 September, and the scheme ends 1 October. The 1-to-7-day version survives.",
-     "href": "now/seoul-climate-card-ending-what-visitors-should-buy",
-     "home": true,
-     "i18n": {
-      "ja": {
-       "when": "どのガイドも62,000ウォンの気候同行カードを勧めるけれど、まだ正しいの？",
-       "answer": "いいえ。2026年8月31日でチャージ終了、9月29日が最終利用日、10月1日に廃止です。1〜7日券は残ります。"
-      },
-      "zh-hans": {
-       "when": "所有攻略都说买 62,000 韩元的气候同行卡，现在还对吗？",
-       "answer": "不对了。2026年8月31日停止充值，9月29日最后可用，10月1日退出。1至7日券保留。"
-      }
-     }
-    },
-    {
-     "when": "Can I get fined for walking down a street and taking a photograph",
-     "answer": "In one lane of Bukchon, yes — ₩100,000, outside 10:00–17:00, and it applies to visitors exactly as to Koreans.",
-     "href": "guides/bukchon-hanok-village-visiting-hours-fine",
-     "i18n": {
-      "zh-hans": {
-       "when": "只是走在路上拍张照，也会被罚款吗",
-       "answer": "在北村的一条巷子里会 —— 10 万韩元，10:00–17:00 之外，对外国人和韩国人一视同仁。"
-      }
-     }
-    },
-    {
-     "when": "I heard hanbok gets you in free — what counts as hanbok",
-     "answer": "It does, at every palace. There are rules about what counts, and rental shops do not always tell you them.",
-     "href": "guides/hanbok-free-palace-entry-what-counts"
-    },
-    {
-     "when": "I came for the Secret Garden and could not get in",
-     "answer": "It is a separate ticket and a separate booking, and in spring and autumn it sells out in minutes.",
-     "href": "guides/changdeokgung-secret-garden-booking"
-    },
-    {
-     "when": "There are five palaces and I have one day",
-     "answer": "They are not interchangeable. One of the five things on most lists is not a palace at all.",
-     "href": "guides/five-palaces-seoul-which-one"
-    },
-    {
-     "when": "Someone asked how old I am in Korean age",
-     "answer": "Korea changed to international age in June 2023. The answer is now just your age.",
-     "href": "guides/korean-age-what-changed-in-2023"
-    },
-    {
-     "when": "Am I paying for something that is free for me",
-     "answer": "If you are 18 or under, or 65 or over, the royal palaces are free for foreign visitors too — and nobody tells you at the gate.",
-     "href": "guides/seoul-palaces-free-admission-who-qualifies",
-     "home": true,
-     "i18n": {
-      "ja": {
-       "when": "本当は無料なのに、お金を払っているのではないか",
-       "answer": "18歳以下と65歳以上なら、外国人でも王宮は無料です。窓口では教えてくれません。"
-      },
-      "zh-hans": {
-       "when": "我是不是在为本来免费的东西付钱",
-       "answer": "18 岁以下和 65 岁以上，外国访客进王宫免费。售票口不会主动告诉你。"
-      }
-     }
-    },
-    {
-     "when": "It is raining and I wanted to walk along the stream",
-     "answer": "Cheonggyecheon runs below street level and closes on a published rainfall schedule. The spot your instinct picks — under a bridge — is where the sluice gates open.",
-     "href": "guides/cheonggyecheon-seoul-entrances-rain-closure"
-    },
-    {
-     "when": "I want to see my favourite group in Seoul but I cannot get near a ticket",
-     "answer": "Speed is not the wall. The presale is a fanclub membership list, and the joining deadline can fall on the day the show is announced.",
-     "href": "scenes/kpop-concert-tickets-korea-foreigners",
-     "home": true
-    },
-    {
-     "when": "Everyone tells me to go to Seongsu and I do not know which station that means",
-     "answer": "Seongsu Station for the shoe street, two minutes away. Seoul Forest Station for the park and the cafe strip — from Seongsu Station the park is a 38-minute walk.",
-     "href": "scenes/seongsu-dong-seoul-popups-and-what-stays"
-    },
-    {
-     "when": "I want to go up N Seoul Tower tonight — how late can I turn up?",
-     "answer": "Last admission is 30 minutes before closing: 22:00 on a weekday, 22:30 at weekends. The tower stays lit and busy after that, which is why people miss it.",
-     "href": "guides/n-seoul-tower-ticket-price-hours",
-     "home": true
-    }
-   ],
-   "i18n": {
-    "ja": "それには決まりがある",
-    "zh-hans": "这件事有规定"
-   }
-  }
- ]
+  ]
 }
