@@ -32,13 +32,11 @@ const prepared = sources.map((s) => {
     paid,
   };
 });
-const label = {
-  official_production:'Official — production', official_interview:'Official — interview',
-  official_social:'Official — social account', public_institution:'Public institution',
-  reliable_media:'Media', aggregate_data:'Aggregate data',
-  merchant_official:'Merchant official site', editorial:'Editorial',
-  community_tally:'Community threads — we counted, we did not take facts from them',
-};
+/*
+ * 2026-08-17. 이 표는 영어로만 있었다. 일본어·중국어 기사 아래에도
+ * "Public institution · checked 2026-08-15" 가 그대로 찍혔다.
+ * 출처 표기는 이 사이트가 파는 것 자체다 — 그게 읽히지 않으면 없는 것과 같다.
+ */
 const fmt = (d) => new Date(d).toISOString().slice(0, 10);
 ---
 <section class="block">
@@ -47,7 +45,7 @@ const fmt = (d) => new Date(d).toISOString().slice(0, 10);
     {prepared.map((s) => (
       <li>
         <span class="st">
-          {label[s.type] ?? s.type} · checked {fmt(s.checkedAt)}
+          {t(lang, 'sourceType')[s.type] ?? s.type} · {t(lang, 'sourceChecked')} {fmt(s.checkedAt)}
           {s.paid && <> · <span class="paid">{t(lang, 'affiliate.sourceTag')}</span></>}
         </span>
         {/*

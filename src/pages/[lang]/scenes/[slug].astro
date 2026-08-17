@@ -57,7 +57,13 @@ const visitLinks = closed ? [] : d.visitKorea;
 const allLinks = [...visitLinks, ...d.bringKoreaHome];
 const hasLinks = allLinks.length > 0;
 const hasAffiliate = anyAffiliate(allLinks);
-const slotLabel = { morning:'Morning', lunch:'Lunch', afternoon:'Afternoon', evening:'Evening', night:'Night' };
+/*
+ * 2026-08-17. 시간대 이름을 여기서 영어로 굳혀 두면 일본어판에도 Morning 이 나온다.
+ * 실제로 나왔다 — 이 템플릿은 열여덟 절 중 여덟 절이 영어로 하드코딩돼 있었고,
+ * 번역된 촬영지 기사(경주 야경) 두 쪽이 반쯤 영어인 채로 나가 있었다.
+ * 화면 문구는 ui.mjs 로 옮긴다. 여기서는 키만 만든다.
+ */
+const slotLabel = t(lang, 'scene.slots');
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -112,13 +118,12 @@ const jsonLd = {
     <AffiliateTopNote lang={lang} items={[...(visitLinks ?? []), ...(d.bringKoreaHome ?? [])]} />
 
     {closed && (
-      <p class="notice warn">This location has permanently closed. We keep the page as a record of
-      the filming site, but booking and purchase links have been removed.</p>
+      <p class="notice warn">{t(lang, 'scene.closed')}</p>
     )}
 
     {hasAffiliate
-      ? <p class="notice">{NOTICES.affiliate}</p>
-      : hasLinks && <p class="notice">{NOTICES.noAffiliate}</p>}
+      ? <p class="notice">{t(lang, 'notices.affiliate')}</p>
+      : hasLinks && <p class="notice">{t(lang, 'notices.noAffiliate')}</p>}
 
     {d.hero && (
       <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}
@@ -135,16 +140,16 @@ const jsonLd = {
     <!-- 6·7·8. 사진 재현 정보 — 촬영지 기사에만 있다 -->
     {d.photoTips && (
     <section class="block">
-      <h2>How to get a similar photo</h2>
+      <h2>{t(lang, 'scene.photoHeading')}</h2>
       <dl class="facts">
-        <dt>Where to stand</dt><dd>{d.photoTips.whereToStand}</dd>
-        <dt>Which way to face</dt><dd>{d.photoTips.direction}</dd>
-        <dt>Framing</dt><dd>{d.photoTips.orientation}{d.photoTips.zoom && <> · {d.photoTips.zoom}</>}</dd>
-        <dt>Best time</dt><dd>{d.photoTips.bestTime}</dd>
-        {d.photoTips.crowdTip && (<><dt>Avoiding crowds</dt><dd>{d.photoTips.crowdTip}</dd></>)}
-        {d.photoTips.props.length > 0 && (<><dt>Simple props</dt><dd>{d.photoTips.props.join(', ')}</dd></>)}
+        <dt>{t(lang, 'scene.whereToStand')}</dt><dd>{d.photoTips.whereToStand}</dd>
+        <dt>{t(lang, 'scene.direction')}</dt><dd>{d.photoTips.direction}</dd>
+        <dt>{t(lang, 'scene.framing')}</dt><dd>{d.photoTips.orientation}{d.photoTips.zoom && <> · {d.photoTips.zoom}</>}</dd>
+        <dt>{t(lang, 'scene.bestTime')}</dt><dd>{d.photoTips.bestTime}</dd>
+        {d.photoTips.crowdTip && (<><dt>{t(lang, 'scene.crowdTip')}</dt><dd>{d.photoTips.crowdTip}</dd></>)}
+        {d.photoTips.props.length > 0 && (<><dt>{t(lang, 'scene.props')}</dt><dd>{d.photoTips.props.join(', ')}</dd></>)}
       </dl>
-      <p class="notice">{NOTICES.photoAngle}</p>
+      <p class="notice">{t(lang, 'notices.photoAngle')}</p>
     </section>
     )}
 
@@ -154,7 +159,7 @@ const jsonLd = {
     <!-- 11·12. 시간대별 주변 일정 -->
     {d.itinerary.length > 0 && (
       <section class="block">
-        <h2>Fit it into your day</h2>
+        <h2>{t(lang, 'scene.itinerary')}</h2>
         <ol class="itin">
           {d.itinerary.map((s) => (
             <li>
@@ -169,15 +174,15 @@ const jsonLd = {
     <!-- 14. 주변 문화·역사 -->
     {d.nearbyCulture && (
       <section class="block">
-        <h2>Korean culture &amp; history nearby</h2>
+        <h2>{t(lang, 'scene.nearby')}</h2>
         <div class="prose"><p>{d.nearbyCulture}</p></div>
       </section>
     )}
 
     <!-- 15·16. 두 전환경로 -->
-    <CtaBlock lang={lang} heading="Visit Korea" items={visitLinks} />
-    <CtaBlock lang={lang} heading="Bring Korea Home" items={d.bringKoreaHome}
-              extra="Availability and shipping vary by country. Prices were checked on the dates shown on each merchant page." />
+    <CtaBlock lang={lang} heading={t(lang, 'article.ctaVisit')} items={visitLinks} />
+    <CtaBlock lang={lang} heading={t(lang, 'article.ctaBring')} items={d.bringKoreaHome}
+              extra={t(lang, 'article.ctaShipNote')} />
 
     <!-- 17·18. 출처·확인일 / 고지 -->
     <ReadNext current={{ ...entry, _section: 'scenes' }} lang={lang} />
@@ -186,8 +191,8 @@ const jsonLd = {
     <Byline lang={lang} />
     <section class="block">
       <p class="notice">{t(lang, 'byline.policyNote')}</p>
-      <p class="notice">Spotted something wrong or out of date?
-        <a href={pageHref(lang, 'contact')}>{t(lang, 'byline.policyNote')}</a> — we take pages down while we re-check them.</p>
+      <p class="notice">{t(lang, 'byline.spotted')}{' '}
+        <a href={pageHref(lang, 'contact')}>{t(lang, 'byline.reportError')}</a>.</p>
     </section>
 
   </article>

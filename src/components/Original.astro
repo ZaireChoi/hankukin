@@ -1,5 +1,6 @@
 ---
 import { t } from '../config/ui.mjs';
+import { LOCALES, DEFAULT_LOCALE } from '../config/brand.mjs';
 /**
  * 원문 병기 — 우리가 읽은 한국어 문장을 그대로 보여준다.
  *
@@ -51,13 +52,24 @@ interface Props {
   /** 원문 주소 */
   url: string;
 }
-const { ko, en, who, whoEn, date, url, lang = 'en' } = Astro.props;
+const { ko, en, who, whoEn, date, url, lang: langProp } = Astro.props;
 /*
  * 2026-08-17. en 은 **읽는 사람의 언어로 옮긴 것**이지 영어라는 뜻이 아니다.
  * 일본어판에서 이 자리에 영어가 나오면, 한국어를 못 읽는 사람에게
  * 또 하나의 못 읽는 언어를 보여주는 셈이 된다.
  * 이름은 en 그대로 두되(모든 기사가 이미 쓰고 있다), 뜻은 「독자의 언어」다.
+ *
+ * 2026-08-17 저녁, 같은 날 두 번째. 위 주석을 써 놓고 `lang = 'en'` 로 기본값을 뒀다.
+ * 이 컴포넌트는 **MDX 안에서** 불린다. 기사 34곳에서 쓰는데 lang 을 넘긴 곳은 0곳이었고,
+ * 그래서 일본어·중국어 기사 10편의 인용 블록마다
+ * "The Korean sentence this comes from" 이 영어로 박혀 있었다.
+ * ui.mjs 에 일본어·중국어 번역은 처음부터 있었다. **아무도 안 넘겼을 뿐이다.**
+ *
+ * → 기본값을 지운다. **주소에서 읽는다.** 필자가 잊을 수 있는 것은 잊게 되어 있다.
+ *   prop 은 남겨 둔다(레이아웃에서 강제해야 할 때가 있다). 다만 이제 안 넘겨도 맞는다.
  */
+const seg = Astro.url.pathname.split('/').filter(Boolean)[0];
+const lang = langProp ?? (LOCALES.includes(seg) ? seg : DEFAULT_LOCALE);
 
 /**
  * 인용 길이 상한. 한국어 120자.

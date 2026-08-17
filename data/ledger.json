@@ -204,6 +204,22 @@
       "right": "True at KT and LG U+, false at SKT, which sells its voice eSIM online and verifies passports online between 8am and 10pm KST, with the airport counter as the fallback. The section is now a three-carrier table. The arrival-only number display is LG U+'s documented behaviour, quoted from its Korean product page — not a fact about all tourist eSIMs.",
       "why": "We read one carrier's page and wrote up the market. The strongest sentence in the article was the least verified one. A Korean travellers' forum thread contradicted it; we then opened all three carriers' own pages, and the thread was right.",
       "found": "the site owner brought the thread; we verified against the carriers"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
+      "wrong": "\"The Climate Card covers Seoul's subway, some suburban sections, and Seoul-licensed city and neighbourhood buses\" — one sentence covering both pass types, in an article whose entire recommendation is the short pass.",
+      "right": "The suburban sections belong to the 30-day pass. Seoul prints the short pass's scope in a parenthesis under its own closure table — 이용범위:서울시, Seoul city. The seven Gyeonggi cities the 30-day pass reached (Gimpo, Goyang, Gwacheon, Seongnam, Hanam, Namyangju, Guri) are not included. All three languages now say so.",
+      "why": "We opened the closure FAQ for its dates, took the dates, and stopped. The footnote that narrows the scope sits one line under the same table. So we recommended one pass and described the other one's map.",
+      "found": "re-reading a source we had already cited and credited, a day later"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "/ja/ · /zh-hans/ — 인용 블록 10편과 촬영지 템플릿 전체",
+      "wrong": "Japanese and Chinese pages carried English furniture. Every quotation block was headed \"The Korean sentence this comes from\". The scenes template printed its section headings, the photo table, the place table, the affiliate disclosure and every source label in English under Japanese and Chinese articles.",
+      "right": "All of it now comes from ui.mjs in the reader's language. Components called from inside articles read the language from the URL instead of a prop, because the prop is the thing a writer forgets.",
+      "why": "The translations existed in ui.mjs from the start. Nothing was missing — the components simply defaulted to English and nobody passed the language. The eleventh gate checks for missing translations, which is the opposite failure, so it reported all clear.",
+      "found": "our own output check, while verifying an unrelated correction to the climate-card article"
     }
   ],
   "withheld": [
@@ -296,6 +312,10 @@
     {
       "name": "stuck-index-drift",
       "does": "Stops the build if an article is neither listed on the problem index nor explicitly excluded with a written reason."
+    },
+    {
+      "name": "english-on-translated-pages",
+      "does": "Reads the built pages and stops the build if a Japanese or Chinese page contains an English UI string that has a translation. Watches 100 strings per language. Written after a first version that compared paths wrongly and passed even with the bug deliberately put back — a gate that cannot fail is worse than no gate, so this one was tested by breaking the code on purpose."
     }
   ]
 }

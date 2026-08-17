@@ -17,7 +17,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
 import { ALLOWED_LABELS } from '../config/products.mjs';
 import { UI, flatKeys } from '../config/ui.mjs';
-import { LOCALES } from '../config/brand.mjs';
+import { LOCALES, DEFAULT_LOCALE } from '../config/brand.mjs';
 
 const CONTENT_DIR = 'src/content';
 
@@ -182,7 +182,67 @@ export default function contentQuality() {
         );
         throw new Error('화면에 마크다운 기호가 노출됐습니다 — 위 목록을 고치십시오.');
       }
-      logger.info(`출력 점검: ${pages.length}쪽에 노출된 마크다운 기호 없음`);
+      /*
+       * ── 열네 번째 게이트: 번역 페이지에 남은 영어 화면문구 ──────────────
+       *
+       * 2026-08-17. 열한 번째 게이트는 「ui.mjs 에 번역이 **빠졌는가**」를 본다.
+       * 오늘 걸린 것은 그 반대였다. **번역은 처음부터 다 있었다.**
+       * Original.astro 가 `lang = 'en'` 을 기본값으로 두었고,
+       * 그 컴포넌트를 부르는 MDX 34곳 중 lang 을 넘긴 곳이 0곳이었다.
+       * 그래서 일본어·중국어 기사 10편의 인용 블록마다
+       * "The Korean sentence this comes from" 이 영어로 찍혀 나갔다.
+       *
+       * 원본(ui.mjs)을 봐도, 컴포넌트를 봐도, 기사를 봐도 잘못된 곳이 없다.
+       * **출력에서만 보인다.** 그래서 여기서 본다.
+       *
+       * 판정: /ja/, /zh-hans/ … 페이지의 보이는 글자 안에
+       *       그 언어에서 다르게 번역돼 있는 영어 원문이 통째로 들어 있으면 세운다.
+       * 12자 미만은 보지 않는다 — 'Stuck?' 같은 짧은 말은 본문에 우연히 섞인다.
+       */
+      const flatten = (obj, prefix = '', out = {}) => {
+        for (const [k, v] of Object.entries(obj ?? {})) {
+          const key = prefix ? `${prefix}.${k}` : k;
+          if (v && typeof v === 'object' && !Array.isArray(v)) flatten(v, key, out);
+          else out[key] = v;
+        }
+        return out;
+      };
+      const enFlat = flatten(UI[DEFAULT_LOCALE]);
+      const leaks = [];
+      for (const lang of LOCALES.filter((l) => l !== DEFAULT_LOCALE)) {
+        const other = flatten(UI[lang]);
+        const suspects = Object.entries(enFlat)
+          .filter(([k, v]) => typeof v === 'string' && v.length >= 12 && other[k] !== v);
+        for (const f of pages) {
+          /*
+           * root 는 끝에 '/' 가 붙어 온다 (dir.pathname). 그래서 slice 결과는
+           * '/ja/…' 가 아니라 'ja/…' 다. 2026-08-17 이 게이트를 처음 쓸 때
+           * `/${lang}/` 로 비교했고, **버그를 일부러 되살려도 게이트가 안 울었다.**
+           * 안 우는 게이트는 없는 게이트보다 나쁘다 — 통과했다고 말하기 때문이다.
+           */
+          const rel = '/' + f.slice(root.length).replace(/\\/g, '/').replace(/^\//, '');
+          if (!rel.startsWith(`/${lang}/`)) continue;
+          const text = readFileSync(f, 'utf8')
+            .replace(/<(script|style)[\s\S]*?<\/\1>/g, '')
+            .replace(/<[^>]+>/g, ' ');
+          for (const [k, v] of suspects) {
+            if (text.includes(v)) leaks.push(`${rel} — ui.${k}\n        영어 그대로: "${v}"\n        있어야 할 말: "${other[k]}"`);
+          }
+        }
+      }
+      if (leaks.length) {
+        logger.error(
+          '\n\n번역 페이지에 영어 화면문구가 그대로 나갔습니다.\n\n  ' +
+          leaks.slice(0, 12).join('\n  ') +
+          (leaks.length > 12 ? `\n  … 외 ${leaks.length - 12}곳` : '') +
+          '\n\nui.mjs 에는 번역이 **있습니다.** 화면까지 전달되지 않은 것입니다.\n' +
+          'MDX 안에서 쓰는 컴포넌트라면 lang 을 prop 으로 받지 말고\n' +
+          'Astro.url.pathname 에서 읽으십시오 — 필자는 언젠가 반드시 잊습니다.\n',
+        );
+        throw new Error('번역 페이지에 영어 화면문구가 남았습니다 — 위 목록을 고치십시오.');
+      }
+
+      logger.info(`출력 점검: ${pages.length}쪽 — 노출된 마크다운 기호 없음 · 번역면에 남은 영어 화면문구 없음`);
     },
 
     'astro:build:start': ({ logger }) => {
