@@ -129,12 +129,35 @@ function ruleMapQuery(file, link, raw) {
     return;
   }
   const korean = decoded.match(/[가-힣]{2,}/g) || [];
-  const body = raw.replace(/https?:\/\/[^\s"')]+/g, ' '); // 주소 자신은 근거가 못 된다
-  for (const word of new Set(korean)) {
-    if (!body.includes(word)) {
-      fail(file, 'map-name-mismatch',
-        `링크가 「${word}」 을 검색하는데 본문에 그 말이 없다. 인코딩이 한 글자 어긋났을 수 있다 (2026-08-15 주문진 → 죫문진).`);
+  const text = raw.replace(/https?:\/\/[^\s"')]+/g, ' '); // 주소 자신은 근거가 못 된다
+
+  /**
+   * 길찾기 링크는 판정을 달리한다 (2026-08-17).
+   *
+   * 처음 만들었을 때는 「링크 속 한국어가 글에 없으면 실패」였다.
+   * 그런데 성수동 편에서 네 번 걸렸고 **네 번 다 정상이었다** —
+   * `sn=성수역 2호선` 같은 출발·도착지 이름은 링크에만 있는 것이 당연하다.
+   * 본문은 영어로 "Seongsu Station" 이라고 쓴다.
+   *
+   * 틀린 경보는 게이트를 무력화한다. 몇 번 겪으면 사람이 그냥 통과시키기 때문이다.
+   * 그래서 **검색 링크는 실패, 길찾기 링크는 경고**로 나눈다.
+   * 검색어는 글이 정한 이름이고, 경유지는 지도가 아는 이름이다.
+   */
+  const isRoute = /[?&](sn|en|sp|ep)=/.test(url);
+  const near = (w) => {
+    // 두 글자 이상 앞머리가 같은 한국어가 글에 있으면 같은 곳을 가리키는 것으로 본다.
+    // 「죫문진」은 「주문진」과 앞 두 글자가 다르므로 이 그물에 걸린다.
+    for (const t of text.match(/[가-힣]{2,}/g) || []) {
+      if (t.slice(0, 2) === w.slice(0, 2)) return true;
     }
+    return false;
+  };
+
+  for (const word of new Set(korean)) {
+    if (text.includes(word) || near(word)) continue;
+    const msg = `링크가 「${word}」 을 가리키는데 글에 그 말이 없다. 인코딩이 한 글자 어긋났을 수 있다 (2026-08-15 주문진 → 죫문진).`;
+    if (isRoute) warn(file, 'map-route-name', `${msg} 길찾기 경유지라 정상일 수 있다 — 한 번 열어 본다.`);
+    else fail(file, 'map-name-mismatch', msg);
   }
 }
 

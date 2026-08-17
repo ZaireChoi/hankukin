@@ -17,13 +17,50 @@
  *
  * 실행: node scripts/fetch-images.mjs
  */
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { assertTourApiKey, fetchImages } from './lib/tourapi.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const IMG_DIR = path.join(ROOT, 'src', 'assets', 'images');
+/**
+ * 2026-08-17: 루트가 아니라 scenes/ 에 저장한다. 이름도 슬러그로 짓는다.
+ *
+ * 왜 바꿨나 — 같은 사진을 두 벌 받고 있었다.
+ *   이 스크립트(GitHub Actions, 매주 월)  src/assets/images/131271-1.jpg
+ *   fetch-tourapi-images.ps1 (로컬)        src/assets/images/scenes/jumunjin-breakwater-1.jpg
+ * 같은 TourAPI 이미지인데 폴더도 이름도 달랐다. no-duplicate-files 게이트가
+ * 13쌍을 잡아 **빌드를 세웠고, 그 상태로는 아무것도 발행되지 않았다.**
+ *
+ * 이름 규칙을 맞추는 것만으로는 부족하다 — 같은 장소를 다른 이름으로 부르면 또 어긋난다.
+ * 그래서 **내용 해시로도 막는다.** 이름이 무엇이든 같은 바이트는 두 번 받지 않는다.
+ */
+const IMG_DIR = path.join(ROOT, 'src', 'assets', 'images', 'scenes');
+const IMG_ROOT = path.join(ROOT, 'src', 'assets', 'images');
+
+/** fetch-tourapi-images.ps1 의 Slug() 와 같은 규칙이어야 한다. 다르면 다시 두 벌이 된다. */
+const slugify = (v) => String(v).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+/** 이미 저장소에 있는 사진의 내용 해시. 이름이 달라도 같은 사진이면 건너뛴다. */
+async function loadKnownHashes(dir) {
+  const seen = new Map();
+  async function walk(d) {
+    let entries;
+    try { entries = await readdir(d, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      const full = path.join(d, e.name);
+      if (e.isDirectory()) { await walk(full); continue; }
+      if (!/[.](jpe?g|png|webp)$/i.test(e.name)) continue;
+      try {
+        const buf = await readFile(full);
+        seen.set(createHash('sha256').update(buf).digest('hex'), path.relative(ROOT, full).split(path.sep).join('/'));
+      } catch { /* 읽을 수 없는 파일은 없는 것으로 본다 */ }
+    }
+  }
+  await walk(dir);
+  return seen;
+}
 const META = path.join(ROOT, 'data', 'images.json');
 const MAX_WIDTH = 1600;          // 반응형 생성은 Astro 가 한다. 원본만 과하지 않게.
 const JPEG_QUALITY = 82;
@@ -79,7 +116,8 @@ export async function main() {
   log.info(`대상 장소 ${targets.length}곳`);
 
   const records = [];
-  let apiFailures = 0, saved = 0, rejected = 0;
+  const knownHashes = await loadKnownHashes(IMG_ROOT);
+  let apiFailures = 0, saved = 0, rejected = 0, skippedDup = 0;
 
   for (const t of targets) {
     const res = await fetchImages(t.contentId, { log });
@@ -97,9 +135,18 @@ export async function main() {
         buf = Buffer.from(await r.arrayBuffer());
       } catch (e) { log.warn(`내려받기 실패 ${im.src}: ${e.message}`); continue; }
 
-      const file = `${t.contentId}-${i + 1}.jpg`;
-      const rel = path.join('src', 'assets', 'images', file);
+      /* 내용이 같은 사진이 이미 있으면 받지 않는다. 이름이 달라도 마찬가지다. */
+      const hash = createHash('sha256').update(buf).digest('hex');
+      if (knownHashes.has(hash)) {
+        log.info(`건너뜀 — 같은 사진이 이미 있다: ${knownHashes.get(hash)}`);
+        skippedDup++;
+        continue;
+      }
+
+      const file = `${slugify(t.name)}-${i + 1}.jpg`;
+      const rel = path.join('src', 'assets', 'images', 'scenes', file);
       const info = await saveImage(buf, path.join(IMG_DIR, file), { canModify: im.canModify });
+      knownHashes.set(hash, rel.split(path.sep).join('/'));
       saved++;
 
       records.push({
@@ -107,7 +154,7 @@ export async function main() {
         file, path: rel.replace(/\\/g, '/'),
         // 기사 frontmatter 에 그대로 옮겨 쓸 수 있는 형태로 만들어 둔다
         frontmatter: {
-          src: `../../assets/images/${file}`,
+          src: `../../assets/images/scenes/${file}`,
           alt: `${t.name}${t.nameKo ? ` (${t.nameKo})` : ''} — 한국관광공사 제공 사진`,
           license: code,
           sourceUrl: im.sourceUrl,
@@ -125,7 +172,8 @@ export async function main() {
   }
 
   // 오늘의 원칙: 전부 실패했으면 조용히 성공하지 않는다
-  if (saved === 0) {
+  if (skippedDup) log.info(`중복으로 건너뛴 사진 ${skippedDup}장 — 이미 저장소에 있는 것들이다.`);
+  if (saved === 0 && skippedDup === 0) {
     throw new Error(
       `이미지를 한 장도 저장하지 못했습니다 (API 실패 ${apiFailures} · 저작권 미확인 ${rejected}).\n` +
       `  TourAPI 접속 상태를 먼저 확인하세요.`);
@@ -143,7 +191,7 @@ export async function main() {
       '출처 표기 의무: 한국관광공사',
     ],
     generatedAt: new Date().toISOString(),
-    stats: { targets: targets.length, saved, rejected, apiFailures },
+    stats: { targets: targets.length, saved, rejected, apiFailures, skippedDup },
     images: records,
   }, null, 2) + '\n', 'utf8');
 
