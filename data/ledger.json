@@ -276,6 +276,14 @@
       "right": "Each of those now has its own card carrying its title, its section and the date we checked it. Twenty-eight cards across three languages, drawn once and committed rather than rendered at build time, because we cannot see what fonts the build host has and a card full of empty boxes would ship without anyone noticing.",
       "why": "We had treated the shared image as a fallback and stopped thinking about it. It is not a fallback — for anything shared in a message, it is the article.",
       "found": "an outside review of the site"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "site-wide",
+      "wrong": "On the author page, two separate outside reviews said the same thing: a name and one line, with no background a reader can weigh. Both were right, and for a month we left it that way.",
+      "right": "The page now carries the actual reason this site exists — sixteen years on overseas construction projects across Africa and Asia from 2007, and coming back to Korea in 2023 after four years away and struggling with it as a Korean. In three languages.",
+      "why": "This was the one gap on the site that could not be closed by working harder. Inventing a background would have been the single most damaging sentence we could publish — every other claim on the site rests on being believed about where our facts come from. So it stayed empty until the person who has that history wrote it down.",
+      "found": "an outside review, twice; filled by the site owner"
     }
   ],
   "withheld": [

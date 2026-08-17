@@ -24,7 +24,7 @@ export const AUTHOR = {
   name: 'Suyol',
 
   /** 한 줄 소개 — 기사 하단 byline 에 쓴다. */
-  short: 'Korean, reads the Korean sources this site is built on, and has lived and worked outside Korea.',
+  short: 'Korean. Sixteen years working on construction projects across Africa and Asia, which is where the foreigner\u2019s side of this was learned. Reads the Korean sources this site is built on.',
 
   /**
    * 검증된 사실만. 각 줄은 운영자가 직접 말한 것에 근거한다.
@@ -36,8 +36,8 @@ export const AUTHOR = {
       why: 'Almost everything on this site comes from Korean government pages, agency notices and press releases that have no English version. Where a figure matters, the Korean sentence it came from is printed on the page next to it, so you can check the translation rather than take it on trust.',
     },
     {
-      claim: 'Has lived and worked outside Korea',
-      why: 'Which is where the angle of this site comes from. Most Korean travel information is written for people who already know how things work here. The gaps this site tries to fill are the ones that are only visible if you have been the foreigner somewhere.',
+      claim: 'Sixteen years abroad, as the foreigner rather than the visitor',
+      why: 'From 2007, on overseas construction projects across Africa and Asia. Most Korean travel information is written for people who already know how things work here \u2014 which is invisible until you have stood on the other side of it. The gaps this site tries to fill are the ones you only notice after years of being the person who cannot read the sign.',
     },
   ],
 
@@ -62,6 +62,14 @@ export const AUTHOR_I18N = {
     title: 'who writes this', h1: 'Who writes this',
     lede: 'One person. Not a team, not a content agency, and not a pile of generated articles with a logo on top — though from the outside those are hard to tell apart, which is why this page exists.',
     short: AUTHOR.short,
+    storyHeading: 'Why this site exists',
+    story: [
+      'From 2007 I worked on overseas construction projects as a technical engineer, across Africa and Asia, for about sixteen years. For most of that time I was the foreigner \u2014 the one who could not read the sign, did not know which queue was mine, and could not tell whether the rule I had just been given was the actual rule or one person\u2019s version of it. That is not an abstract feeling. It is a specific kind of tiredness, and it arrives on the days you have the least room for it.',
+      'I came back to Korea in 2023, after four years away. I am Korean, I grew up here, and I still found it hard. Payment had moved. Transport had moved. The way you book, queue and check in had moved. I stood in front of things I used to know how to do and did not know how to do them.',
+      'That is where this site started, as one thought: if it was that hard for me, what is it like for someone arriving for nine days who cannot read the alphabet?',
+      'I love this country and I want to show it properly. Not the version where everything is effortless \u2014 the version where you know what the sign says, what the ticket costs, and which door is yours. Once that is handled, there is room left for the part you actually came for.',
+      'That is the whole aim: that you spend your days here enjoying Korea rather than solving it, and go home with the memories you came to make.',
+    ],
     factsHeading: 'What that actually buys you',
     facts: AUTHOR.facts,
     aiHeading: 'How AI is used here',
@@ -79,13 +87,21 @@ export const AUTHOR_I18N = {
   ja: {
     title: 'これを書いている人', h1: 'これを書いている人',
     lede: '一人です。チームでもなく、コンテンツ制作会社でもなく、生成した記事の山にロゴを載せたものでもありません。とはいえ外から見ると見分けがつきにくい——だからこのページがあります。',
-    short: '韓国人。このサイトの土台になっている韓国語の資料を直接読み、韓国の外で暮らし、働いた経験があります。',
+    short: '韓国人。2007年から約16年、アフリカとアジアの海外建設プロジェクトで働いてきました。「外国人の側」を学んだのはそこです。このサイトの土台になっている韓国語の資料は直接読んでいます。',
+    storyHeading: 'このサイトを始めた理由',
+    story: [
+      '2007年から約16年間、海外建設プロジェクトの技術者としてアフリカとアジアで働いてきました。その間のほとんど、私は「外国人」の側にいました。看板が読めない。どの列が自分の列なのか分からない。いま言われた決まりが本当の決まりなのか、その人の言い方なのかも判断できない。これは抽象的な感覚ではありません。特有の疲れ方があり、しかもいちばん余裕のない日にやってきます。',
+      '2023年、4年ぶりに韓国へ戻りました。韓国人で、ここで育ったのに、それでも戸惑いました。支払いの仕組みが変わり、交通が変わり、予約の仕方も、並び方も、受付の作法も変わっていました。かつて当たり前にできたことの前に立って、やり方が分からなくなっていました。',
+      'このサイトはそこから始まりました。ひとつの問いです。自分がこれだけ手こずったのなら、文字も読めない状態で9日間だけ来る人はどうなるのか。',
+      'この国が好きで、きちんと紹介したいと思っています。何もかもが簡単だという話ではありません。看板に何と書いてあるか、切符がいくらか、どの扉が自分の扉かが分かっている状態のことです。そこが片付いていれば、本当に来た目的のための時間が残ります。',
+      '望んでいるのはそれだけです。韓国を「攻略」するのではなく楽しんで過ごし、つくりに来たはずの思い出を持って帰っていただくこと。',
+    ],
     factsHeading: 'それで何が変わるのか',
     facts: [
       { claim: '韓国人で、韓国語の資料を直接読んでいます',
         why: 'このサイトのほとんどは、英語版のない韓国の官公庁ページ、事業者の告知、報道資料から来ています。数字が重要な箇所では、その元になった韓国語の一文をすぐ隣に載せています。訳を信じてもらうのではなく、確かめてもらうためです。' },
-      { claim: '韓国の外で暮らし、働いた経験があります',
-        why: 'このサイトの視点はそこから来ています。韓国の旅行情報の多くは、こちらの仕組みをすでに知っている人向けに書かれています。このサイトが埋めようとしている穴は、どこかで「外国人の側」に立ったことがある人にしか見えない種類のものです。' },
+      { claim: '16年間、旅行者ではなく「外国人」として国外にいました',
+        why: '2007年から、アフリカとアジアの海外建設プロジェクトで。韓国の旅行情報の多くは、こちらの仕組みをすでに知っている人向けに書かれています——それは反対側に立ってみるまで見えません。このサイトが埋めようとしている穴は、看板を読めない側で何年か過ごしてはじめて気づく種類のものです。' },
     ],
     aiHeading: 'AIをどう使っているか',
     aiLeadA: '使っています。すべての記事に明記しています。隠したところで、このページでいちばん簡単に見破られることです。問題は、機械が文章を書くのを手伝ったかどうかではありません。',
@@ -107,13 +123,21 @@ export const AUTHOR_I18N = {
   'zh-hans': {
     title: '谁在写这个网站', h1: '谁在写这个网站',
     lede: '一个人。不是团队，不是内容代理公司，也不是一堆生成的文章上面盖个标志——不过从外面看这几样很难分辨，所以才有了这一页。',
-    short: '韩国人，直接阅读本站赖以成立的韩语资料，并有在韩国以外生活和工作的经历。',
+    short: '韩国人。从 2007 年起，在非洲与亚洲的海外建设项目上工作约十六年——「外国人那一侧」是在那里学会的。本站赖以成立的韩语资料由我直接阅读。',
+    storyHeading: '为什么会有这个网站',
+    story: [
+      '从 2007 年起，我作为技术工程师在海外建设项目上工作，走过非洲和亚洲，前后约十六年。那些年里的大部分时间，我都是「外国人」那一方——看不懂招牌，不知道哪一队才是我该排的，也分不清刚被告知的规矩是真的规矩，还是某个人的说法。这不是一种抽象的感受。它是一种很具体的疲惫，而且总在你最没有余裕的那天找上门。',
+      '2023 年，离开四年后我回到韩国。我是韩国人，在这里长大，却依然觉得吃力。支付变了，交通变了，预约、排队、办入住的方式都变了。我站在那些自己本来会做的事情面前，不知道该怎么做了。',
+      '这个网站就是从那里开始的，起点是一个念头：如果连我都这么费劲，那么一个连字母都读不了、只待九天的人会是什么处境？',
+      '我爱这个国家，也想把它介绍得像样一点。不是那种「一切都毫不费力」的版本，而是你知道招牌写了什么、票价是多少、哪扇门是你的那种版本。这些一旦落地，你才有余裕去做真正来做的事。',
+      '想要的就是这些：让你在这里的日子是在享受韩国，而不是在破解韩国，然后带着你本来想留下的回忆回家。',
+    ],
     factsHeading: '这到底带来什么',
     facts: [
       { claim: '韩国人，直接读韩语原始资料',
         why: '本站的内容几乎全部来自没有英文版的韩国政府页面、企业公告和新闻稿。凡是数字重要的地方，我们都会把它出自的那句韩语原文放在旁边——不是让你相信翻译，而是让你自己核对。' },
-      { claim: '有在韩国以外生活和工作的经历',
-        why: '本站的视角就来自这里。韩国的旅行信息大多是写给已经懂这里怎么运作的人看的。本站想填的那些空缺，只有当过一次"外国人"的人才看得见。' },
+      { claim: '十六年在国外，身份是「外国人」而不是游客',
+        why: '从 2007 年起，在非洲与亚洲的海外建设项目上。韩国的旅行信息大多是写给已经懂这里怎么运作的人看的——这一点，要站到另一侧才看得见。本站想填的那些空缺，是在看不懂招牌的那一侧待过几年之后才会注意到的那种。' },
     ],
     aiHeading: '这里怎么使用 AI',
     aiLeadA: '用了，每篇文章都写明了，而且假装没用是这一页上最容易被戳破的事。真正的分界不在于机器有没有帮忙写句子，而在于',

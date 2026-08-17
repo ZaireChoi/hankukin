@@ -41,6 +41,18 @@ const person = {
     <p class="name">{AUTHOR.name}</p>
     <p class="short">{a.short}</p>
 
+    {/*
+      2026-08-17. 이 자리는 오래 비어 있었다.
+      외부 평가가 두 번 「이름과 한 줄뿐, 확인할 수 있는 경력이 없다」고 지적했고,
+      맞는 말이었다 — 그런데 그건 제가 채울 수 있는 종류의 빈칸이 아니었다.
+      **없는 경력을 지어내면 이 사이트가 파는 것 전부가 무너진다.**
+      운영자가 직접 말한 것만, 부풀리지 않고 그대로 옮긴다.
+    */}
+    <section class="story">
+      <h2>{a.storyHeading}</h2>
+      {a.story.map((p) => <p>{p}</p>)}
+    </section>
+
     <h2>{a.factsHeading}</h2>
     {a.facts.map((f) => (
       <div class="fact">
