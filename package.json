@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "check:i18n": "node scripts/check-i18n.mjs",
-    "verify": "npm run build && node scripts/check-i18n.mjs && node scripts/link-check.mjs --offline"
+    "og": "node scripts/make-og.mjs",
+    "verify": "npm run og && npm run build && node scripts/check-i18n.mjs && node scripts/link-check.mjs --offline"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.0.0",

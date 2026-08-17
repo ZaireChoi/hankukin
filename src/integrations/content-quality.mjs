@@ -253,7 +253,38 @@ export default function contentQuality() {
         throw new Error('번역 페이지에 영어 화면문구가 남았습니다 — 위 목록을 고치십시오.');
       }
 
-      logger.info(`출력 점검: ${pages.length}쪽 — 노출된 마크다운 기호 없음 · 번역면에 남은 영어 화면문구 없음`);
+      /*
+       * ── 열다섯 번째 게이트: 공유 카드가 실제로 존재하는가 ────────────────
+       *
+       * 2026-08-17. 대표사진이 없는 기사는 og:image 가 /og/<…>.png 로 간다.
+       * 그 파일은 scripts/make-og.mjs 가 미리 그려 커밋해 둔 것이다.
+       * **제목을 고치고 스크립트를 다시 안 돌리면, 링크만 살아 있고 그림이 없다.**
+       * 공유 카드가 404 면 카카오톡·X 에는 아무 그림도 안 뜨는데,
+       * 우리 화면에서는 아무 표시도 나지 않는다 — 이 저장소의 단골 실패 유형이다.
+       */
+      const missingCards = [];
+      for (const f of pages) {
+        const html = readFileSync(f, 'utf8');
+        const m = /<meta property="og:image" content="[^"]*?(\/og\/[^"]+\.png)"/.exec(html);
+        if (!m) continue;
+        const card = join(root, m[1].replace(/^\//, ''));
+        let ok = false;
+        try { ok = statSync(card).size > 1000; } catch { ok = false; }
+        if (!ok) missingCards.push(`${f.slice(root.length).replace(/\\/g, '/')} → ${m[1]}`);
+      }
+      if (missingCards.length) {
+        logger.error(
+          '\n\n공유 카드(og:image)가 가리키는 파일이 없습니다.\n\n  ' +
+          [...new Set(missingCards)].slice(0, 10).join('\n  ') +
+          (missingCards.length > 10 ? `\n  … 외 ${missingCards.length - 10}건` : '') +
+          '\n\n`node scripts/make-og.mjs` 를 돌리십시오.\n' +
+          '제목이나 확인일을 고치면 카드도 다시 그려야 합니다.\n' +
+          '카드가 없으면 공유했을 때 그림이 안 뜨는데, 우리 화면에서는 아무 표시도 안 납니다.\n',
+        );
+        throw new Error('공유 카드 파일이 없습니다 — node scripts/make-og.mjs');
+      }
+
+      logger.info(`출력 점검: ${pages.length}쪽 — 노출된 마크다운 기호 없음 · 번역면에 남은 영어 화면문구 없음 · 공유 카드 전부 존재`);
     },
 
     'astro:build:start': ({ logger }) => {

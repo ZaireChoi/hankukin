@@ -268,6 +268,14 @@
       "right": "Ten now carry one, including every article about a place you travel to: Seoul, Busan, Gangneung, Gyeongju, Geoje. The restraint was misapplied. A Trip.com city link is a search, not a recommendation — 'look here' rather than 'this hotel is good' — so the objection we were making never applied to it. The rule is now written down as: articles about a place you go to get a stay link, articles about a task you perform do not.",
       "why": "The honest reason those articles had no link was not judgement. We had created three city entries in the product registry and never made the ones the articles needed, so when we wrote the Busan piece and the Gangneung piece there was nothing to attach and we moved on. Calling that editorial discipline afterwards was a story we told ourselves.",
       "found": "the site owner, asking why the Trip.com links were missing from articles that plainly warranted them"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "site-wide",
+      "wrong": "Eleven articles — every one that carries diagrams instead of photographs — shared a single generic image when anyone posted them to a chat or a feed. Pasted into a group chat, our ATM piece and our lost-property piece were indistinguishable.",
+      "right": "Each of those now has its own card carrying its title, its section and the date we checked it. Twenty-eight cards across three languages, drawn once and committed rather than rendered at build time, because we cannot see what fonts the build host has and a card full of empty boxes would ship without anyone noticing.",
+      "why": "We had treated the shared image as a fallback and stopped thinking about it. It is not a fallback — for anything shared in a message, it is the article.",
+      "found": "an outside review of the site"
     }
   ],
   "withheld": [
@@ -364,6 +372,10 @@
     {
       "name": "english-on-translated-pages",
       "does": "Reads the built pages and stops the build if a Japanese or Chinese page contains an English UI string that has a translation. Watches 100 strings per language. Written after a first version that compared paths wrongly and passed even with the bug deliberately put back — a gate that cannot fail is worse than no gate, so this one was tested by breaking the code on purpose."
+    },
+    {
+      "name": "share-card-exists",
+      "does": "Stops the build if a page's og:image points at a card file that is missing or empty. Rewriting a title without redrawing the card would otherwise leave a live link to a 404 that shows up nowhere on our own screens — only in someone else's chat window."
     }
   ]
 }
