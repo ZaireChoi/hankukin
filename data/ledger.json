@@ -260,6 +260,14 @@
       "right": "The apex domain now redirects to www with a 301. A favicon, apple touch icon and manifest are in place. The email address is a mailto link in all three languages.",
       "why": "None of these is a fact we got wrong — they are things we never did, which is why no check caught them. Our gates read what we wrote; they cannot see what is absent from the head of every page.",
       "found": "an outside review of the site"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "site-wide",
+      "wrong": "Only six of our twenty-eight English articles carried any commercial link. We had told ourselves this was editorial restraint — that we do not link to accommodation we have not assessed.",
+      "right": "Ten now carry one, including every article about a place you travel to: Seoul, Busan, Gangneung, Gyeongju, Geoje. The restraint was misapplied. A Trip.com city link is a search, not a recommendation — 'look here' rather than 'this hotel is good' — so the objection we were making never applied to it. The rule is now written down as: articles about a place you go to get a stay link, articles about a task you perform do not.",
+      "why": "The honest reason those articles had no link was not judgement. We had created three city entries in the product registry and never made the ones the articles needed, so when we wrote the Busan piece and the Gangneung piece there was nothing to attach and we moved on. Calling that editorial discipline afterwards was a story we told ourselves.",
+      "found": "the site owner, asking why the Trip.com links were missing from articles that plainly warranted them"
     }
   ],
   "withheld": [

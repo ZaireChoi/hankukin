@@ -50,6 +50,16 @@
       "at": "2026-08-17",
       "title": "10 Best Geoje-si Hotels, South Korea (from US$40)",
       "note": "web_fetch 는 빈 응답이라 **브라우저로 열어서 확인했다.** 455곳·리뷰 2,361건, 평일 평균 US$116. 도구가 막힌 것은 서비스에 대한 사실이 아니다 — 8월 17일에 같은 착각을 한 번 했고, 이번엔 열어 보고 적었다."
+    },
+    "https://www.trip.com/hotels/busan-hotels-list-253/": {
+      "at": "2026-08-17",
+      "title": "10 Best Busan Hotels, South Korea (from US$35)",
+      "note": "열어서 확인. 「1036 Best Hotels in Busan」. 주소는 Trip.com 국가 페이지에서 회사가 스스로 건 링크를 읽어 왔다 — 짐작한 주소로 404 를 두 번 본 뒤의 방식이다."
+    },
+    "https://www.trip.com/hotels/gangneung-si-hotels-list-61325/": {
+      "at": "2026-08-17",
+      "title": "10 Best Gangneung-si Hotels, South Korea (from US$43)",
+      "note": "열어서 확인. 「607 Best Hotels in Gangneung-si」. 도깨비 촬영지 편이 강릉이라 여기에 붙는다."
     }
   },
   "rejected": [

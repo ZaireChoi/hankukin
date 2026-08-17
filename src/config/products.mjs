@@ -161,6 +161,43 @@ export const PRODUCTS = {
     checkedAt: '2026-08-17',
   },
 
+  /*
+   * 2026-08-17 저녁 추가 — 운영자 지적: "제휴를 넣을 수 있는 글이 꽤 있는데 왜 안 넣었나."
+   *
+   * 세어 보니 맞는 말이었다. **도시 항목을 세 개만 만들어 두고,**
+   * 부산·강릉 기사를 쓰면서 「붙일 상품이 없다」고 넘어갔다.
+   * 없었던 게 아니라 **만들지 않았던 것**이다. 그건 판단이 아니라 게으름이다.
+   *
+   * 주소는 Trip.com 의 국가 페이지(/hotels/country/south-korea.html)에서
+   * **회사가 스스로 건 링크를 읽어 왔다.** 8월 16·17일에 주소를 짐작했다가
+   * 404 를 두 번 봤기 때문에, 이번에는 생성기도 짐작도 쓰지 않았다.
+   * 부산·강릉은 열어서 목록이 뜨는 것까지 확인했다 (1,036곳 · 607곳).
+   */
+  'tripcom-busan-hotels': {
+    url: 'https://www.trip.com/hotels/busan-hotels-list-253/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Busan stays on Trip.com — by district, not by name',
+    labels: {
+      ja: '釜山の宿をTrip.comで探す — エリアから絞る',
+      'zh-hans': '在 Trip.com 搜釜山住宿 —— 按区域筛，不按名字',
+    },
+    checkedAt: '2026-08-17',
+  },
+  'tripcom-gangneung-hotels': {
+    url: 'https://www.trip.com/hotels/gangneung-si-hotels-list-61325/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Gangneung stays on Trip.com — the coast is the deciding factor',
+    labels: {
+      ja: '江陵の宿をTrip.comで探す — 海側かどうかで決まる',
+      'zh-hans': '在 Trip.com 搜江陵住宿 —— 靠不靠海是关键',
+    },
+    checkedAt: '2026-08-17',
+  },
+
   'klook-gyeongju-hanbok': {
     url: 'https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/',
     merchant: 'Klook',
