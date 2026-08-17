@@ -16,6 +16,10 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
 import { ALLOWED_LABELS } from '../config/products.mjs';
+import { MERCHANTS } from '../config/merchants.mjs';
+
+/** 제휴 상점의 host 목록 — 게이트가 상점 이름을 하드코딩하지 않도록 한 곳에서 읽는다. */
+const MERCHANT_HOSTS = Object.values(MERCHANTS).map((m) => m.host).filter(Boolean);
 import { UI, flatKeys } from '../config/ui.mjs';
 import { LOCALES, DEFAULT_LOCALE } from '../config/brand.mjs';
 
@@ -767,7 +771,18 @@ export default function contentQuality() {
             const parent = basename(join(file, '..'));
             const lang = /^lang:\s*(\S+)/m.exec(fm)?.[1] ?? 'en';
             const sec = parent === lang ? basename(join(file, '..', '..')) : parent;
-            const urls = new Set([...fm.matchAll(/^\s+url:\s*"(https:\/\/www\.klook\.com[^"]+)"/gm)].map((m) => m[1]));
+            /*
+             * 2026-08-17 저녁. 이 줄은 원래 klook.com 만 찾았다.
+             * 그날 아침 Trip.com 을 붙였고, **경주 일본어·중국어판에서 Trip.com 링크가
+             * 조용히 사라졌는데 이 게이트가 통과 판정을 냈다.**
+             * 이 게이트는 정확히 그 사고를 막으려고 쓴 것이다 — 한 상점 뒤에 무력해졌다.
+             * → 상점 목록에서 host 를 읽는다. 새 제휴가 붙으면 저절로 따라온다.
+             */
+            const urls = new Set(
+              [...fm.matchAll(/^\s+url:\s*"(https?:\/\/[^"]+)"/gm)]
+                .map((m) => m[1])
+                .filter((u) => MERCHANT_HOSTS.some((h) => u.includes(h))),
+            );
             if (lang === 'en') byId.set(`${sec}/${slug}`, urls);
             else if (/^translation:/m.test(fm)) {
               trans.push({ key: `${lang}/${sec}/${slug}`, lang, slug,

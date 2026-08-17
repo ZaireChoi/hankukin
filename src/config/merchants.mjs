@@ -17,9 +17,17 @@
  *   그 순간부터 링크에 자동으로 태그가 붙고 고지 문구가 바뀐다. 기사는 손댈 필요가 없다.
  */
 
+/*
+ * host 는 2026-08-17 저녁에 추가했다. 그 전에는 없었는데,
+ * SourceList.astro 와 게이트 두 곳이 **이미 MERCHANTS[m].host 를 읽고 있었다.**
+ * 언제나 undefined 였고, 그래서 조용히 klook 전용 정규식으로 넘어가고 있었다.
+ * 그 결과 경주 일본어·중국어판에서 Trip.com 링크가 사라진 것을 아무도 못 잡았다.
+ * 상점을 늘리면 이 줄도 함께 늘린다 — 안 늘리면 그 상점만 검사에서 빠진다.
+ */
 export const MERCHANTS = {
   Klook: {
     name: 'Klook',
+    host: 'klook.com',
     /**
      * 2026-08-16 신청. **아직 승인이 아니다.**
      *
@@ -70,6 +78,7 @@ export const MERCHANTS = {
   },
   Agoda: {
     name: 'Agoda',
+    host: 'agoda.com',
     affiliate: false,
     /*
      * 2026-08-16 저녁에 신청을 끝냈는데 **여기에 안 적었다.**
@@ -102,6 +111,7 @@ export const MERCHANTS = {
    */
   'Trip.com': {
     name: 'Trip.com',
+    host: 'trip.com',
     /*
      * 승인은 났지만 **아직 false 다.** 대시보드에서 Allianceid·SID 를 읽어
      * 아래 tagParams 를 채우는 순간 저절로 켜진다 — 기사는 손댈 필요가 없다.
@@ -142,6 +152,7 @@ export const MERCHANTS = {
   },
   'Gmarket Global': {
     name: 'Gmarket Global',
+    host: 'global.gmarket.co.kr',
     affiliate: false,
     appliedAt: null, approvedAt: null,
     tagParam: null, tagValue: null,
@@ -149,6 +160,7 @@ export const MERCHANTS = {
   },
   Amazon: {
     name: 'Amazon',
+    host: 'amazon.com',
     affiliate: false,
     appliedAt: null, approvedAt: null,
     tagParam: 'tag', tagValue: null,

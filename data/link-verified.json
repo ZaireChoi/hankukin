@@ -35,6 +35,21 @@
       "at": "2026-08-17",
       "title": "N Seoul Tower Observatory Ticket",
       "note": "열어서 확인. 4.6(34.3K) · 800K+ 예약 · Klook's choice. 전망대 단품 US$14.19(정가표시 US$20.50), 케이블카 패키지 US$26.75, 패스트트랙 US$38.89. **취소·환불·날짜변경 불가**는 이 셋에만 해당하고, 같은 페이지의 축제 패키지는 24시간 전 무료취소다 — 라벨과 본문을 그 범위로 적었다. 케이블카 패키지는 명동에서 실물 티켓 수령. aid 부착 확인."
+    },
+    "https://www.trip.com/hotels/seoul-hotels-list-274/": {
+      "at": "2026-08-17",
+      "title": "Hotels in Seoul — 1685 Best Hotels in Seoul",
+      "note": "열어서 확인. 목록·필터(명동·강남·동대문)·가격 표시가 실제로 뜬다. **도시 검색이지 특정 호텔이 아니다** — 우리가 평가한 숙소가 없기 때문에 의도한 형태다. Allianceid+SID 두 개가 최종 주소까지 남는 것을 확인."
+    },
+    "https://www.trip.com/hotels/gyeongju-hotels-list-3675/": {
+      "at": "2026-08-17",
+      "title": "Hotels in Gyeongju",
+      "note": "열어서 확인. 리뷰·FAQ·지역 안내가 실제로 뜬다. 페이지가 스스로 「보문호수 일대가 가장 인기」라고 적어 두어 기사의 「지역으로 고르라」와 어긋나지 않는다. 평균가는 페이지가 계속 바꾸므로 기사에 옮기지 않는다."
+    },
+    "https://www.trip.com/hotels/geoje-si-hotels-list-61331/": {
+      "at": "2026-08-17",
+      "title": "10 Best Geoje-si Hotels, South Korea (from US$40)",
+      "note": "web_fetch 는 빈 응답이라 **브라우저로 열어서 확인했다.** 455곳·리뷰 2,361건, 평일 평균 US$116. 도구가 막힌 것은 서비스에 대한 사실이 아니다 — 8월 17일에 같은 착각을 한 번 했고, 이번엔 열어 보고 적었다."
     }
   },
   "rejected": [

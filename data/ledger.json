@@ -236,6 +236,14 @@
       "right": "The Klook URL is now in data/link-verified.json with what we saw on it: rating, booking count, all four package prices, and the fact that the cancellation terms differ between packages. The check passes.",
       "why": "We ran the build gates and the translation check and called that verified. The link check is a separate script that only the repository was running, so our local 'verify' and GitHub's 'verify' were counting different things — and the one we trusted was the smaller one. npm run verify now runs all three.",
       "found": "GitHub Actions, on the push"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "site-wide",
+      "wrong": "Our Trip.com hotel link was missing from the Japanese and Chinese versions of the Gyeongju article, and the three Trip.com pages we link to had never been registered as opened. Neither showed up as an error anywhere.",
+      "right": "Both translations carry the link again, and all three Trip.com pages are on the record with what we saw on them — including one we had to open in a browser because the fetching tool returned nothing.",
+      "why": "Three separate checks were written with the word 'klook.com' typed into them: the gate that counts commercial links in translations, the link checker, and the source list. We added a second merchant that morning and every one of those checks went quietly blind to it. The affiliate registry also lacked a host field that two of them were already reading — so it was always undefined, and they had been falling back to the Klook-only path all along. Merchant identity now comes from the registry, and the link checker reads the product registry directly, because the Seoul hotel link lives in a page template by key and no amount of scanning articles would ever have found it.",
+      "found": "the site owner asked whether the affiliate side was actually finished"
     }
   ],
   "withheld": [

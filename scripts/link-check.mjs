@@ -19,6 +19,8 @@
  */
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { MERCHANTS } from '../src/config/merchants.mjs';
+import { PRODUCTS } from '../src/config/products.mjs';
 import { join, relative } from 'node:path';
 
 const ROOT = process.cwd();
@@ -31,12 +33,12 @@ const STALE_DAYS = 90;
 
 /* ── 파일 모으기 ───────────────────────────────────────────────── */
 
-function walk(dir) {
+function walk(dir, exts = ['.mdx', '.md']) {
   const out = [];
   for (const name of readdirSync(dir)) {
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) out.push(...walk(p));
-    else if (name.endsWith('.mdx') || name.endsWith('.md')) out.push(p);
+    if (statSync(p).isDirectory()) out.push(...walk(p, exts));
+    else if (exts.some((e) => name.endsWith(e))) out.push(p);
   }
   return out;
 }
@@ -91,14 +93,25 @@ const warns = [];
 const fail = (file, rule, msg) => fails.push({ file, rule, msg });
 const warn = (file, rule, msg) => warns.push({ file, rule, msg });
 
-/** 제휴 링크 — 눈으로 본 것만, 그리고 추적되는 형태로만 */
+/**
+ * 제휴 링크 — 눈으로 본 것만, 그리고 추적되는 형태로만.
+ *
+ * 2026-08-17 저녁. 이 함수는 klook.com 만 봤다.
+ * 그날 아침 Trip.com 을 붙였고, Trip.com 주소 셋은
+ * **이 검사를 통과한 것이 아니라 검사 대상이 아니었다.**
+ * 같은 날 게이트 12 에서도, SourceList 에서도 같은 모양의 버그가 나왔다 —
+ * 상점 이름을 코드에 박으면, 상점이 늘 때 검사만 안 늘어난다.
+ * → 상점 목록에서 읽는다.
+ */
 function ruleAffiliate(file, link, verified) {
   const { url, block } = link;
-  if (!/klook\.com/i.test(url)) return;
+  const merchant = Object.values(MERCHANTS).find((m) => m.host && url.includes(m.host));
+  if (!merchant?.affiliate) return;
   if (block !== 'visitKorea' && block !== 'bringKoreaHome') return;
 
   const bare = url.split('?')[0];
-  if (!/\/activity\//.test(bare)) {
+  // /activity/ 규칙은 Klook 고유다 — /transport/ 는 리디렉션에서 aid 가 날아간다.
+  if (/klook\.com/i.test(url) && !/\/activity\//.test(bare)) {
     fail(file, 'affiliate-path',
       `${bare} — /activity/ 가 아니다. /transport/ · /rails-*/ 는 리디렉션에서 aid 가 사라져 수수료가 0이 된다.`);
     return;
@@ -243,6 +256,29 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 const verified = JSON.parse(readFileSync(VERIFIED_PATH, 'utf8'));
 const files = walk(CONTENT);
+
+/*
+ * ── 상품 등록부 자체를 검사한다 (2026-08-17) ─────────────────────────
+ *
+ * 기사만 훑고 있었다. 그런데 Trip.com 서울 숙소 링크는 기사에 없다 —
+ * src/pages/[lang]/arrival.astro 가 products.mjs 의 **키**로 부른다.
+ * 그래서 세 언어로 나가고 있는데 이 검사의 사각지대였다.
+ * 템플릿을 문자열로 훑어도 못 잡는다. 거기엔 주소가 아니라 키만 있다.
+ *
+ * → 주소가 사는 곳에서 잡는다. 제휴 상점의 상품은 전부 등재돼 있어야 한다.
+ *   어느 페이지가 쓰든, 앞으로 어떻게 쓰든 따라온다.
+ */
+for (const [key, prod] of Object.entries(PRODUCTS)) {
+  const m = Object.values(MERCHANTS).find((x) => x.host && prod.url.includes(x.host));
+  if (!m?.affiliate) continue;
+  const bare = prod.url.split('?')[0];
+  const known = Object.keys(verified.verified || {}).some((v) => v.split('?')[0] === bare);
+  if (!known) {
+    fail('src/config/products.mjs', 'affiliate-unverified',
+      `${bare} — 상품 '${key}' 의 주소가 data/link-verified.json 에 없다. ` +
+      '기사에 안 붙어 있어도 페이지가 키로 불러 쓰고 있다. 열어 보고 등재한다.');
+  }
+}
 const today = new Date();
 const byUrl = new Map();
 
