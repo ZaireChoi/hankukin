@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { makeT, makeTf, type Lang } from "../i18n";
-import { cityLabel } from "../data/places";
+import { cityLabelFor, namePair } from "../lib/naming";
 import { AffiliateSlot } from "./AffiliateSlot";
 import { whatFitsNow, minutesNow, MOODS, type Mood, type Suggestion } from "../lib/right-now";
 import { clockText } from "../lib/day-chain";
@@ -76,7 +76,7 @@ export function RightNow({
     <article className="panel right-now">
       <div className="panel-head">
         <div>
-          <span>{t("right_now")} · {clockText(clock)} · {cityLabel(city)}</span>
+          <span>{t("right_now")} · {clockText(clock)} · {cityLabelFor(lang, city)}</span>
           <h2>{t("too_early_to_turn_in")}</h2>
           <p>{t("the_plan_is_not_a_contract")}</p>
         </div>
@@ -105,8 +105,8 @@ export function RightNow({
         {results.map(({ option: o, minutes, openNow }) => (
           <li key={o.id} className={`now-item ${openNow === true ? "is-open" : ""}`}>
             <div className="now-item-name">
-              <strong>{o.ko}</strong>
-              <small>{o.en}{o.rm ? ` · ${o.rm}` : ""}</small>
+              <strong>{namePair(lang, o).lead}</strong>
+              <small>{namePair(lang, o).companion}</small>
               <em>{o.zoneKo === o.zoneEn ? o.zoneEn : `${o.zoneKo} ${o.zoneEn}`}</em>
             </div>
             <div className="now-item-meta">
@@ -125,7 +125,7 @@ export function RightNow({
         <p className="now-added">
           {t("added_places_show_in_the_chain")}
           <br />
-          {added.map((a) => `${a.ko} ${a.en}`).join(" · ")}
+          {added.map((a) => namePair(lang, a).lead).join(" · ")}
         </p>
       )}
 

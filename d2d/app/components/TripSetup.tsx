@@ -2,8 +2,10 @@
 
 import { makeT, makeTf, type Lang } from "../i18n";
 import { destinationRegions } from "../data/journey";
-import { cityLabel } from "../data/places";
-import { formatWon } from "../lib/format";
+import { cityLabelFor } from "../lib/naming";
+import { CURRENCIES, filterFor, formatMoney, toWon, type CurrencyCode, type Rates } from "../lib/currency";
+import { OriginPicker } from "./OriginPicker";
+import type { OriginCountry } from "../data/journey";
 
 /**
  * Five questions, in the order a traveler actually answers them.
@@ -68,23 +70,33 @@ export const citiesThatFit = (nights: number): number => (nights <= 0 ? 0 : Math
 export function TripSetup({
   lang,
   origin, onOrigin,
+  originCountry, originCity, originArea,
+  onOriginCountry, onOriginCity, onOriginArea,
   destinations, onToggleDestination,
   departDate, onDepartDate,
   returnDate, onReturnDate,
   party, onParty,
   ages, onAge,
   budget, onBudget,
+  currency, onCurrency, homeCurrency, rates, onRate,
   themes, onToggleTheme,
   onDone,
 }: {
   lang: Lang;
   origin: string; onOrigin: (v: string) => void;
+  originCountry: OriginCountry; originCity: string; originArea: string;
+  onOriginCountry: (c: OriginCountry) => void;
+  onOriginCity: (id: string) => void;
+  onOriginArea: (a: string) => void;
   destinations: string[]; onToggleDestination: (city: string) => void;
   departDate: string; onDepartDate: (v: string) => void;
   returnDate: string; onReturnDate: (v: string) => void;
   party: number; onParty: (n: number) => void;
   ages: Record<AgeBand, number>; onAge: (band: AgeBand, n: number) => void;
   budget: number | null; onBudget: (n: number | null) => void;
+  currency: CurrencyCode; onCurrency: (c: CurrencyCode) => void;
+  homeCurrency: CurrencyCode;
+  rates: Rates; onRate: (c: CurrencyCode, krwPerUnit: number | null) => void;
   themes: Theme[]; onToggleTheme: (t: Theme) => void;
   onDone: () => void;
 }) {
@@ -117,14 +129,13 @@ export function TripSetup({
         </div>
       </div>
 
+      {/* Country · city · neighbourhood — never a street. See OriginPicker. */}
       {step(1, t("where_do_you_start"), t("your_own_city_not_an_airport"), (
-        <input
-          className="setup-input"
-          value={origin}
-          onChange={(e) => onOrigin(e.target.value)}
-          placeholder={t("eg_your_city_and_country")}
-        />
-      ), Boolean(origin.trim()))}
+        <OriginPicker lang={lang}
+          country={originCountry} city={originCity} area={originArea}
+          onCountry={onOriginCountry} onCity={onOriginCity} onArea={onOriginArea}
+          freeText={origin} onFreeText={onOrigin} />
+      ), Boolean(originArea))}
 
       {step(3, t("when_do_you_travel"), t("arrival_in_korea_and_the_flight_home"), (
         <div className="setup-dates">
@@ -147,7 +158,7 @@ export function TripSetup({
                   return (
                     <button key={city} type="button" className={on ? "active" : ""}
                       onClick={() => onToggleDestination(city)}>
-                      {on ? "✓" : "+"} {cityLabel(city)}
+                      {on ? "✓" : "+"} {cityLabelFor(lang, city)}
                     </button>
                   );
                 })}
@@ -192,12 +203,50 @@ export function TripSetup({
 
       {step(6, t("what_is_your_budget"), t("total_for_everyone_leave_blank_if_unsure"), (
         <div className="setup-budget">
-          <input type="number" min={0} step={100000} inputMode="numeric"
-            value={budget ?? ""} placeholder={t("amount_in_won")}
+          {/* Their money first, then ₩ because that is what price tags say,
+              then $ because booking sites quote it. See lib/currency.ts. */}
+          <div className="currency-filter">
+            <span>{t("currency")}</span>
+            {filterFor(homeCurrency).map((c) => (
+              <button key={c} type="button" className={currency === c ? "active" : ""} onClick={() => onCurrency(c)}>
+                {CURRENCIES[c].symbol} {c}
+              </button>
+            ))}
+          </div>
+
+          <input type="number" min={0} inputMode="numeric"
+            value={budget ?? ""} placeholder={tf("amount_in_0", currency)}
             onChange={(e) => { const v = e.target.value.trim(); onBudget(v === "" ? null : Number(v)); }} />
-          {budget !== null && budget > 0 && nights > 0 && party > 0 && (
-            <p className="setup-note">{tf("0_per_person_per_night", formatWon(Math.round(budget / party / Math.max(1, nights))))}</p>
+
+          {/* No rate source is connected, and we will not invent one. */}
+          {currency !== "KRW" && (
+            <div className="rate-ask">
+              <label>
+                <span>{tf("what_rate_did_you_get", currency)}</span>
+                <input type="number" min={0} step="0.01" inputMode="decimal"
+                  value={rates[currency] ?? ""} placeholder="₩"
+                  onChange={(e) => { const v = e.target.value.trim(); onRate(currency, v === "" ? null : Number(v)); }} />
+              </label>
+              <small>{t("your_bank_rate_is_the_real_one")}</small>
+            </div>
           )}
+
+          {budget !== null && budget > 0 && nights > 0 && party > 0 && (() => {
+            const each = budget / party / Math.max(1, nights);
+            const won = toWon(budget, currency, rates);
+            return (
+              <>
+                <p className="setup-note">{tf("0_per_person_per_night", formatMoney(each, currency))}</p>
+                {currency !== "KRW" && (
+                  <p className="setup-note">
+                    {won === null
+                      ? tf("enter_a_rate_to_see_this_in_0", "KRW")
+                      : `${formatMoney(won, "KRW")} · ${t("at_your_own_rate")}`}
+                  </p>
+                )}
+              </>
+            );
+          })()}
         </div>
       ), budget !== null)}
 

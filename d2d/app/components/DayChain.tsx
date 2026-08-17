@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { makeT, makeTf, type Lang } from "../i18n";
-import { cityLabel } from "../data/places";
+import { cityLabelFor, namePair } from "../lib/naming";
+import { storyFor } from "../lib/story";
 import { AffiliateSlot } from "./AffiliateSlot";
 import { buildChain, clockText, openDecisions, type ChainDay, type ChainNode, type MoveMode } from "../lib/day-chain";
 import type { GeneratedPlan } from "../lib/plan-generator";
@@ -118,15 +119,24 @@ function Move({
 function Node({ lang, node, open, onToggle }: { lang: Lang; node: ChainNode; open: boolean; onToggle: () => void }) {
   const t = makeT(lang);
   const o = node.option;
+  // Nodes without a place behind them (home, an airport, a hotel) carry their
+  // own pair already, built in the chain.
+  const name = o
+    ? namePair(lang, o)
+    : lang === "ko"
+      ? { lead: node.ko, companion: node.en }
+      : { lead: node.en, companion: node.ko === node.en ? "" : node.ko };
 
   return (
     <div className={`chain-node kind-${node.kind} ${node.carried ? "is-carried" : ""} ${open ? "is-open" : ""}`}>
       <button type="button" className="chain-node-head" onClick={onToggle} aria-expanded={open}>
         <b className="chain-node-clock">{clockText(node.clock)}</b>
         <i className="chain-node-mark" aria-hidden>{KIND_MARK[node.kind]}</i>
+        {/* The reader's language leads; the Korean rides underneath so it can
+            still be pointed at. See lib/naming.ts. */}
         <span className="chain-node-name">
-          <strong>{node.ko}</strong>
-          <small>{o?.en ?? node.en}</small>
+          <strong>{name.lead}</strong>
+          {name.companion && <small>{name.companion}</small>}
         </span>
         {node.carried && <span className="chain-node-tag">{t("carried_from_yesterday")}</span>}
       </button>
@@ -146,6 +156,36 @@ function Node({ lang, node, open, onToggle }: { lang: Lang; node: ChainNode; ope
         </div>
       )}
       {open && node.kind === "stay" && <AffiliateSlot lang={lang} lineId="stays" surface="plan" />}
+    </div>
+  );
+}
+
+/**
+ * The paragraph above each day.
+ *
+ * Every sentence carries what it was computed from, and the traveler can open
+ * that list. A story you cannot inspect is indistinguishable from one that was
+ * made up, and this app has spent its whole life refusing to be that.
+ */
+function DayStory({ lang, day, themes }: { lang: Lang; day: ChainDay; themes: Theme[] }) {
+  const t = makeT(lang);
+  const [why, setWhy] = useState(false);
+  const story = storyFor(day, themes, lang);
+  if (!story.lines.length) return null;
+
+  return (
+    <div className="day-story">
+      <span className="day-story-label">{t("what_today_is")}</span>
+      {story.lines.map((l, i) => <p key={i}>{l.text}</p>)}
+      <button type="button" className="day-story-why" onClick={() => setWhy((v) => !v)}>
+        {t("where_this_came_from")}
+      </button>
+      {why && (
+        <div className="day-story-basis">
+          <ul>{story.lines.map((l, i) => <li key={i}>{l.basis}</li>)}</ul>
+          <p>{t("story_is_about_the_day_not_the_places")}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -195,8 +235,12 @@ export function DayChain({
           <header className="chain-day-head">
             <b>{tf("day_0", day.n)}</b>
             <span>{day.date}</span>
-            <em>{cityLabel(day.city)}</em>
+            <em>{cityLabelFor(lang, day.city)}</em>
           </header>
+
+          {/* The day's own paragraph. Derived from this chain, never a claim
+              about Korea — see lib/story.ts. */}
+          <DayStory lang={lang} day={day} themes={themes} />
 
           {day.nodes.map((node, i) => (
             <div key={node.id + i}>

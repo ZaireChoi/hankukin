@@ -2,7 +2,7 @@
 
 import { makeT, makeTf, type Lang } from "../i18n";
 import { AffiliateSlot } from "./AffiliateSlot";
-import { cityLabel } from "../data/places";
+import { cityLabelFor } from "../lib/naming";
 import type { GeneratedPlan } from "../lib/plan-generator";
 
 /**
@@ -99,7 +99,7 @@ export function RouteTransport({
         <section key={`${m.from}-${m.to}-${i}`} className="movement">
           <header>
             <b>{String(i + 1).padStart(2, "0")}</b>
-            <strong>{cityLabel(m.from)} → {cityLabel(m.to)}</strong>
+            <strong>{cityLabelFor(lang, m.from)} → {cityLabelFor(lang, m.to)}</strong>
           </header>
           <div className="movement-modes">
             {MODES.map((mode) => (

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { makeT, makeTf, type Lang } from "../i18n";
 import { destinationRegions } from "../data/journey";
-import { cityLabel } from "../data/places";
+import { cityLabelFor } from "../lib/naming";
 
 /**
  * The line at the top of the LIVE tab: where this trip actually goes.
@@ -41,7 +41,7 @@ export function TripHeading({
   const [open, setOpen] = useState(false);
 
   const label = destinations.length
-    ? [origin, ...destinations.map(cityLabel)].filter(Boolean).join(" → ")
+    ? [origin, ...destinations.map((c) => cityLabelFor(lang, c))].filter(Boolean).join(" → ")
     : t("where_are_you_going");
 
   return (
@@ -73,7 +73,7 @@ export function TripHeading({
                       className={on ? "active" : ""}
                       onClick={() => onToggleDestination(city)}
                     >
-                      {on ? "✓" : "+"} {cityLabel(city)}
+                      {on ? "✓" : "+"} {cityLabelFor(lang, city)}
                     </button>
                   );
                 })}
