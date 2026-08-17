@@ -198,6 +198,39 @@ export const PRODUCTS = {
     checkedAt: '2026-08-17',
   },
 
+  /*
+   * 2026-08-17 저녁 — 운영자 지적: "도깨비 강릉편은 제휴를 넣어야 한다."
+   *
+   * 맞는 말이었는데, 자리가 숙소가 아니었다. 그 기사는 이미 Trip.com 강릉을 달고 있다.
+   * 비어 있던 것은 **가는 법**이다. 본문이 「KTX 약 27,000원, 2시간」이라고 적어 놓고
+   * 그걸 살 방법을 주지 않았다. 값을 적어 두고 행동할 길을 안 준 셈이다.
+   *
+   * 왜 KR PASS 가 아니라 개별 승차권인가.
+   *   KORAIL PASS 2일권이 US$94.65 다. 강릉 왕복 한 번(약 54,000원)에는
+   *   **두 배 넘게 비싸다.** Klook 자기 페이지도 「적게 타면 개별 티켓으로」라고 안내한다.
+   *   비싼 쪽을 걸면 수수료는 크지만 그 독자에게는 틀린 상품이다.
+   *
+   * 주소 확인 (2026-08-17).
+   *   먼저 짐작한 1290 번은 **양곤 야시장 투어**였다. 열어 봤기에 안 나갔다.
+   *   201665 는 /activity/ 로 시작하지만 리디렉션되어 /korea-rail/ 로 간다.
+   *   (이 줄에 굵게 표시를 쓰면 `*` 와 `/` 가 붙어 주석이 거기서 닫힌다 — 실제로 겪었다.)
+   *   그래서 브라우저로 aid 를 붙여 열어 확인했다 —
+   *   최종 주소에 aid=131289 가 남고 utm_campaign=131289 가 자동으로 붙으며
+   *   쿠키에도 기록된다. **추적이 끊기지 않는다.**
+   */
+  'klook-korea-train-ticket': {
+    url: 'https://www.klook.com/en-US/activity/201665-korea-train-ticket/',
+    merchant: 'Klook',
+    category: 'transport',
+    relationship: 'suggested',
+    label: 'Korea train tickets — single journeys, not a rail pass',
+    labels: {
+      ja: '韓国の鉄道チケット — 乗り放題パスではなく片道ずつ',
+      'zh-hans': '韩国火车票 —— 单程票，不是通票',
+    },
+    checkedAt: '2026-08-17',
+  },
+
   'klook-gyeongju-hanbok': {
     url: 'https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/',
     merchant: 'Klook',

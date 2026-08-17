@@ -60,6 +60,11 @@
       "at": "2026-08-17",
       "title": "10 Best Gangneung-si Hotels, South Korea (from US$43)",
       "note": "열어서 확인. 「607 Best Hotels in Gangneung-si」. 도깨비 촬영지 편이 강릉이라 여기에 붙는다."
+    },
+    "https://www.klook.com/en-US/activity/201665-korea-train-ticket/": {
+      "at": "2026-08-17",
+      "title": "Korea rail tickets and schedule (개별 승차권)",
+      "note": "브라우저로 확인. 4.8/5 · 100K+ 예약. **/activity/ 로 시작하지만 /korea-rail/ 로 리디렉션된다** — 그래서 aid 를 붙여 직접 열어 봤고, 최종 주소에 aid=131289 유지 + utm_campaign=131289 자동 부착 + 쿠키 기록까지 확인했다. 추적이 끊기지 않는다. KR PASS(2847)는 2일권 US$94.65 라 강릉 당일치기에는 두 배 넘게 비싸서 쓰지 않는다."
     }
   },
   "rejected": [
