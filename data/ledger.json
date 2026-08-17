@@ -208,6 +208,16 @@
   ],
   "withheld": [
     {
+      "article": "/en/now/lost-something-in-korea-what-to-do/",
+      "missing": "What lost112 offers in English — its interface, search fields and app",
+      "did": "Left it out. lost112.go.kr would not open from outside Korea, the same block we hit on t-money.co.kr and korea-pass.kr. We linked it, said plainly that we could not open it, and gave phone numbers that work regardless of what the site does. This is the gap most likely to matter to a visitor, so we named it in the article rather than only here."
+    },
+    {
+      "article": "/en/now/lost-something-in-korea-what-to-do/",
+      "missing": "Current opening hours for the four subway lost-property centres",
+      "did": "Published locations, floors and phone numbers as Seoul lists them, and told readers to call before crossing the city. We did not invent hours."
+    },
+    {
       "article": "/en/now/english-pages-korea-out-of-date/",
       "missing": "Whether the tourism organisation's Korean pages carry the same stale fare",
       "did": "Left it out. The language parameter on discoverseoulpass.com did not switch the page for us, so we could not compare the Korean and English versions. Without that comparison we cannot say the English page is worse than the Korean one — only that it disagrees with the City of Seoul."

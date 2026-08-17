@@ -139,6 +139,12 @@
       "label": "Something has gone wrong",
       "items": [
         {
+          "when": "I left my bag on the subway",
+          "answer": "Tell a station attendant and hand over the transit card you tapped with — it tells them which train you were on.",
+          "href": "now/lost-something-in-korea-what-to-do",
+          "home": true
+        },
+        {
           "when": "My card paid for dinner but the booking site declined it",
           "answer": "Shop terminals do not run 3D Secure; Korean online checkouts do, and a card that is not enrolled gets refused. One call to your issuer before you fly usually fixes it.",
           "href": "now/korea-3d-secure-card-declined-online",
