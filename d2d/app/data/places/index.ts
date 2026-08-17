@@ -76,7 +76,7 @@ export const cityEntry = (city: CityId) => CITIES.find((c) => c.id === city);
  * This table is the picker's cities, not a general gazetteer. A name that is
  * not here simply has no data, which is what `citiesWithoutData` reports.
  */
-const CITY_ROMAN: Record<string, string> = {
+export const CITY_ROMAN: Record<string, string> = {
   서울: "Seoul", 인천: "Incheon", 수원: "Suwon", 용인: "Yongin", 가평: "Gapyeong", 파주: "Paju",
   강릉: "Gangneung", 속초: "Sokcho", 춘천: "Chuncheon", 평창: "Pyeongchang", 원주: "Wonju", 동해: "Donghae",
   대전: "Daejeon", 공주: "Gongju", 부여: "Buyeo", 단양: "Danyang", 제천: "Jecheon", 천안: "Cheonan",
@@ -103,12 +103,43 @@ function optionsByAddress(korean: string): JourneyOption[] {
  * throw away 200 real places; taking only the second would throw away the
  * verified ones.
  */
+/**
+ * Places to sleep are not places to go.
+ *
+ * TourAPI's foreign-language catalogue includes contentTypeId 80 — lodging —
+ * and 146 hotels, motels, guesthouses and pensions came in tagged `family`,
+ * indistinguishable from a museum. So a day plan came out reading
+ *
+ *     09:30  Aank Air Hotel Gaebong
+ *     10:45  Aank Hotel & Spa Jongno Unni Branch
+ *     12:00  Aank Hotel Yeongdeungpo
+ *
+ * which is not an itinerary, it is a list of buildings a traveler will never
+ * enter. The stay is already its own node in the chain; a hotel appearing as
+ * a sightseeing stop is the same class of error as the clinics we filtered
+ * out earlier — a category the source has and the product does not.
+ *
+ * Filtered at read time rather than re-ingesting: the records are real and may
+ * matter later (a stay picker has an obvious use for them), so they stay in
+ * the files and stay out of the plan.
+ */
+/*
+ * Both scripts, because either field can be the one that says "hotel".
+ * `resort` and `inn` are deliberately absent: they appear inside the names of
+ * real attractions often enough that including them would delete places the
+ * traveler wanted. A filter that removes too much is not safer than one that
+ * removes too little — it is just wrong in the direction nobody notices.
+ */
+const LODGING = /호텔|모텔|게스트\s?하우스|펜션|리조트|콘도|한옥\s?스테이|유스\s?호스텔|민박|여관|ホテル|hotel|motel|hostel|guest\s?house|pension|residence/i;
+export const isLodging = (o: JourneyOption): boolean => LODGING.test(o.ko) || LODGING.test(o.en);
+
 export function optionsForCities(koreanCityNames: readonly string[]): JourneyOption[] {
   const seen = new Set<string>();
   return koreanCityNames.flatMap((name) => {
     const id = cityIdFromKorean(name);
     const direct = id ? (cityEntry(id)?.options ?? []) : [];
     return [...direct, ...optionsByAddress(name)].filter((o) => {
+      if (isLodging(o)) return false;
       if (seen.has(o.id)) return false;
       seen.add(o.id);
       return true;
