@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleList from '../../../components/ArticleList.astro';
 import { LOCALES } from '../../../config/brand.mjs';
 import { t } from '../../../config/ui.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
@@ -25,12 +26,7 @@ const jsonLd = {
     </section>
     <section class="block">
       <h2>All scenes</h2>
-      <ul class="sources">
-        {scenes.map((s) => (
-          <li><span class="st">{s.data.work}</span>
-            <a href={`/${lang}/scenes/${publicSlug(s.id)}/`}>{s.data.title}</a></li>
-        ))}
-      </ul>
+      <ArticleList items={scenes} section="scenes" lang={lang} />
     </section>
   </div>
 </BaseLayout>

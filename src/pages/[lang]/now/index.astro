@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleList from '../../../components/ArticleList.astro';
 import { LOCALES, categoryByPath } from '../../../config/brand.mjs';
 import { t } from '../../../config/ui.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
@@ -30,23 +31,7 @@ const jsonLd = {
     </section>
     <section class="block">
       <h2>All articles</h2>
-      <ul class="sources">
-        {items.map((g) => (
-          <li>
-            {/*
-              2026-08-17 외부 검토: 목록에 「Korea · Korea」 가 반복되고 있었다.
-              era 가 없으면 'Korea' 로 채우고, region 도 대개 'Korea' 라 같은 말이 두 번 나왔다.
-              같은 말을 두 번 하면 정보가 아니라 **미완성으로 읽힌다.**
-              → 중복은 지우고, 둘 다 없으면 아무것도 안 그린다. 빈 자리가 거짓 라벨보다 낫다.
-            */}
-            {(() => {
-              const parts = [...new Set([g.data.era, g.data.region].filter(Boolean))];
-              return parts.length ? <span class="st">{parts.join(' · ')}</span> : null;
-            })()}
-            <a href={`/${lang}/now/${publicSlug(g.id)}/`}>{g.data.title}</a>
-          </li>
-        ))}
-      </ul>
+      <ArticleList items={items} section="now" lang={lang} />
     </section>
   </div>
 </BaseLayout>

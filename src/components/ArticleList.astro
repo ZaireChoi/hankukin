@@ -1,0 +1,120 @@
+---
+/**
+ * 섹션 목록 — 제목만 세로로 쌓지 않는다.
+ *
+ * 왜 고쳤나 (2026-08-17 외부 평가).
+ *   「Now 목록은 18편이 제목만 세로로 나열된다. 글이 늘수록 읽기 어려워진다.」
+ *   맞는 지적이었고, 더 나쁜 점이 있었다 — **목록에서는 아무것도 알 수 없다.**
+ *   제목을 눌러 봐야 그 글이 내 문제를 다루는지 알 수 있으니,
+ *   목록이 하는 일이 「고르게 해 주기」가 아니라 「일단 눌러 보게 하기」가 된다.
+ *
+ * 무엇을 더 보여주나.
+ *   ① **한 줄 답** — data/stuck.json 에 이미 있다. 「무엇이 막혔나요」 색인이
+ *      쓰는 그 문장이고, 규칙상 **클릭 안 해도 도움이 되어야** 한다.
+ *      같은 문장을 목록에서도 쓴다. 새로 쓰지 않는다 — 두 곳이 갈라지면 안 되니까.
+ *   ② **마지막 확인일** — 이 사이트가 파는 것이 그것이다. 목록에서 안 보이면
+ *      기사를 열어야만 보이는데, 그건 고를 때 필요한 정보다.
+ *
+ * 왜 썸네일은 안 넣었나.
+ *   사진이 있는 기사와 없는 기사가 섞여 있다 (도표로 지탱하는 실용 기사들).
+ *   절반만 그림이 붙은 목록은 정돈된 것이 아니라 **고장 난 것으로 보인다.**
+ *   공유 카드(1200×630)를 줄여 쓰는 방법도 있지만 비율이 목록에 안 맞는다.
+ *   사진이 고르게 채워지면 그때 넣는다.
+ *
+ * 왜 컴포넌트인가.
+ *   목록 페이지가 다섯이다. 한 곳만 고치면 나머지 넷이 옛 모양으로 남고,
+ *   그건 이 저장소에서 이미 여러 번 낸 사고다.
+ */
+import { publicSlug } from '../config/slug.mjs';
+import { t } from '../config/ui.mjs';
+import stuck from '../../data/stuck.json';
+
+interface Props { items: any[]; section: string; lang: string }
+const { items, section, lang } = Astro.props;
+
+/*
+ * stuck.json 에서 그 기사의 한 줄 답을 찾는다.
+ * href 는 'now/incheon-airport-to-seoul-train-bus-taxi' 형태이고,
+ * 언어별 문장은 i18n 아래에 있다. 없으면 아무것도 안 그린다 —
+ * 영어 문장을 일본어 목록에 끼워 넣지 않는다.
+ */
+const answers = new Map<string, string>();
+for (const group of stuck.groups ?? []) {
+  for (const it of group.items ?? []) {
+    const a = lang === 'en' ? it.answer : it.i18n?.[lang]?.answer;
+    if (a) answers.set(it.href, a);
+  }
+}
+
+const fmt = (d: Date) => new Date(d).toISOString().slice(0, 10);
+---
+
+<ul class="list">
+  {items.map((g) => {
+    const slug = publicSlug(g.id);
+    const answer = answers.get(`${section}/${slug}`);
+    /*
+     * 2026-08-17 외부 검토: 목록에 「Korea · Korea」 가 반복되고 있었다.
+     * 같은 말을 두 번 하면 정보가 아니라 미완성으로 읽힌다.
+     * 중복은 지우고, 둘 다 없으면 아무것도 안 그린다.
+     */
+    const tags = [...new Set([g.data.era, g.data.region].filter(Boolean))];
+    return (
+      <li>
+        <a href={`/${lang}/${section}/${slug}/`}>
+          <div class="meta">
+            {tags.length > 0 && <span class="tag">{tags.join(' · ')}</span>}
+            {g.data.checkedAt && (
+              <span class="when">{t(lang, 'article.lastChecked')} {fmt(g.data.checkedAt)}</span>
+            )}
+          </div>
+          <h3>{g.data.title}</h3>
+          {answer && <p class="answer">{answer}</p>}
+        </a>
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { border-top: 1px solid #ece6dd; }
+  .list li:last-child { border-bottom: 1px solid #ece6dd; }
+
+  /* 줄 전체가 누르는 자리다 — 제목만 누르게 하면 손가락으로 쓰기 나쁘다. */
+  .list a {
+    display: block;
+    padding: 1.05rem 0.2rem 1.15rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .list a:hover { background: #fbf7f1; }
+
+  .meta {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    gap: 0.55rem; margin-bottom: 0.3rem;
+  }
+  .tag {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; color: #a3714f;
+  }
+  /* 확인일은 눈에 띄되 제목을 이기지 않는다 — 이 사이트가 파는 것이지만 제목이 먼저다. */
+  .when { font-size: 0.72rem; color: #8f857b; }
+
+  .list h3 {
+    margin: 0; font-size: 1.06rem; line-height: 1.42;
+    font-weight: 700; color: #12100f;
+    word-break: keep-all;
+  }
+  .list a:hover h3 { color: #a8431a; }
+
+  .answer {
+    margin: 0.34rem 0 0; font-size: 0.9rem; line-height: 1.6;
+    color: #4a443f; max-width: 62ch;
+  }
+
+  @media (max-width: 560px) {
+    .list h3 { font-size: 1rem; }
+    .answer { font-size: 0.86rem; }
+  }
+</style>
