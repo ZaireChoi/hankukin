@@ -107,10 +107,38 @@ export const MERCHANTS = {
      * 아래 tagParams 를 채우는 순간 저절로 켜진다 — 기사는 손댈 필요가 없다.
      * 그때 제휴 고지가 3개 언어에서 함께 바뀐다 (policy.mjs 가 등록부를 읽는다).
      */
-    affiliate: false,
+    affiliate: true,
     appliedAt: '2026-08-17', approvedAt: '2026-08-17',
-    tagParams: { Allianceid: null, SID: null },
-    note: '숙박·항공·철도. 2026-08-17 승인. Allianceid·SID 입력 대기 — 채우면 자동으로 켜진다.',
+    /*
+     * 값의 출처 — **둘 다 추측이 아니다.**
+     *   Allianceid 10114476 : Trip.com 승인 메일 원문
+     *                          (noreplypartnership@trip.com, 2026-08-17)
+     *                          "Your Alliance ID (AID): 10114476"
+     *   SID       328673514 : 운영자가 같은 날 affiliation@trip.com 에 보낸
+     *                          문의 메일에 적힌 Site ID. Trip.com 안내는
+     *                          SID 를 "Site ID — 계정 안에서 사이트·언어·유입원을
+     *                          구분하는 값" 이라고 설명한다.
+     *
+     * 표기가 두 가지로 돌아다닌다 — Allianceid 와 AID.
+     *   Trip.com 자기 페이지가 ?Allianceid=...&SID=... 을 쓰고 있어 그쪽을 골랐다.
+     *   그리고 **실제로 열어서 확인했다** (2026-08-17):
+     *     trip.com/hotels/seoul-hotels-list-274/?Allianceid=10114476&SID=328673514
+     *     → 리디렉션 뒤에도 두 파라미터가 최종 주소에 그대로 남았다.
+     *   Klook 때 쓴 것과 같은 판정 기준이다. 쿠키는 브라우저 정책상 읽지 못했으므로
+     *   **"파라미터가 살아남는다" 까지만 확인했고, 수수료 귀속 자체는 확인하지 못했다.**
+     *   첫 클릭이 대시보드에 잡히는지 반드시 눈으로 보십시오.
+     *
+     * ⚠ 열린 문제 — 계약 3.2.5(a).
+     *   운영자가 2026-08-17 Trip.com 에 서면 질의를 보냈다.
+     *   그 조항은 서면 승인 없는 "SEO" 를 금지하고, 정의절이 SEO 를
+     *   "organic or otherwise" 로 넓게 잡고 있다. 이 사이트의 유입은 전부
+     *   자사 기사에 대한 자연 검색이다. Trip.com 이 "안 된다" 고 답하면
+     *   **여기 affiliate 를 false 로 되돌리고 링크를 걷어낸다.**
+     *   운영자가 문의 메일에서 스스로 못 박은 것은 소셜 게시뿐이지만,
+     *   답이 오기 전까지 이 줄은 임시로 본다.
+     */
+    tagParams: { Allianceid: '10114476', SID: '328673514' },
+    note: '숙박·항공·철도. 2026-08-17 승인·가동. 계약 3.2.5(a)(자연검색 SEO) 서면 회신 대기 중 — 부정 회신 시 즉시 끈다.',
   },
   'Gmarket Global': {
     name: 'Gmarket Global',
