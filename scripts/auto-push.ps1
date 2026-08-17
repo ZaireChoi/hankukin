@@ -76,14 +76,50 @@ try {
         #   그것을 그대로 Out-File 해서 .photo-fetch.log 가 매번 빈 파일이 됐다.
         #   스크립트는 정상 동작하며 출력하고 있었는데 우리가 못 보고 있었다.
         #   *>&1 은 모든 스트림을 받는다.
-        $outLog = Join-Path $repo '.photo-fetch.log'
-        try {
-          $result = & $ps *>&1
-          $result | Out-File -FilePath $outLog -Encoding UTF8
-          $summary = ($result | Where-Object { $_ -match '요청 \d+건' } | Select-Object -Last 1)
-          Log ("요청 사진 수집: " + $(if ($summary) { $summary } else { '완료' }))
+        #
+        # 2026-08-17: 10분마다 71건씩 두드리다 TourAPI 에 막혔다.
+        #
+        #   [실패] 석촌호수: (429) Too Many Requests
+        #   [실패] 안양천: (429) Too Many Requests   ... 71건 전부
+        #
+        # 로그에는 「새로 받음 0곳」 으로 찍혔다. 받을 게 없어서가 아니라
+        # **차단당해서 0곳**이었는데, 요약 한 줄로는 둘이 구별되지 않았다.
+        # 하루 144번 두드릴 이유가 없다 — 사진 요청은 그렇게 자주 바뀌지 않는다.
+        #
+        # 그래서 쿨다운을 둔다. 다음에 돌 시각을 파일에 적어 두고 그 전에는 건너뛴다.
+        # 429 를 보면 쿨다운을 12시간으로 늘린다. 막힌 문을 계속 두드리면 더 오래 막힌다.
+        $outLog   = Join-Path $repo '.photo-fetch.log'
+        $nextFile = Join-Path $repo '.photo-fetch.next'
+        $now      = Get-Date
+        $nextAt   = $null
+        if (Test-Path $nextFile) {
+          try { $nextAt = [datetime]::Parse((Get-Content $nextFile -Raw).Trim()) } catch { $nextAt = $null }
         }
-        catch { Log "요청 사진 수집 실패: $($_.Exception.Message)" }
+
+        if ($nextAt -and $now -lt $nextAt) {
+          # 조용히 건너뛴다. 매 실행마다 로그를 한 줄씩 남기면 로그가 이걸로 가득 찬다.
+        }
+        else {
+          try {
+            $result = & $ps *>&1
+            $result | Out-File -FilePath $outLog -Encoding UTF8
+            $summary = ($result | Where-Object { $_ -match '요청 \d+건' } | Select-Object -Last 1)
+
+            $throttled = @($result | Where-Object { $_ -match '429|Too Many Requests' }).Count
+            if ($throttled -gt 0) {
+              $cool = 12
+              Log "요청 사진 수집: **429 차단 $throttled 건** — 12시간 쉰다. 새로 받은 것이 없는 이유는 차단이다"
+            } else {
+              $cool = 6
+              Log ("요청 사진 수집: " + $(if ($summary) { $summary } else { '완료' }))
+            }
+            $now.AddHours($cool).ToString('o') | Set-Content -Path $nextFile -Encoding UTF8
+          }
+          catch {
+            Log "요청 사진 수집 실패: $($_.Exception.Message)"
+            (Get-Date).AddHours(1).ToString('o') | Set-Content -Path $nextFile -Encoding UTF8
+          }
+        }
       }
     }
   }
@@ -186,8 +222,26 @@ try {
 
   # ── 3. 빌드 (스키마 위반·이미지 누락이 여기서 걸린다) ─────────
   if ($npm) {
-    & $npm run build *> $null
-    if ($LASTEXITCODE -ne 0) { Log "중단: 빌드 실패 — 올리지 않습니다"; exit 1 }
+    #
+    # 2026-08-17: 여기서 출력을 $null 로 버리고 있었다.
+    #
+    # 그래서 로그에는 「중단: 빌드 실패」 한 줄만 남았고,
+    # **어느 게이트가 왜 세웠는지는 아무 데도 안 남았다.**
+    # 게이트를 열세 개 만들어 놓고 어느 게 걸렸는지 못 보는 건 절반만 만든 것이다.
+    #
+    # 전체 출력은 .build-fail.log 에, 사람이 읽을 첫 줄은 .auto-push.log 에 적는다.
+    $buildLog = Join-Path $repo '.build-fail.log'
+    $out = & $npm run build *>&1
+    if ($LASTEXITCODE -ne 0) {
+      $out | Out-File -FilePath $buildLog -Encoding UTF8
+      # 게이트는 Error 로 던진다. 그 문장을 찾아 첫 줄만 옮긴다.
+      $why = ($out | Where-Object { $_ -match '\[ERROR\]|Error:|있습니다|없습니다|실패' } | Select-Object -First 1)
+      if ($why) { Log ("중단: 빌드 실패 — " + ($why -replace '\s+', ' ').Trim()) }
+      else      { Log "중단: 빌드 실패 (이유를 못 찾음 — .build-fail.log 를 여십시오)" }
+      Log "  전체 출력: .build-fail.log"
+      exit 1
+    }
+    if (Test-Path $buildLog) { Remove-Item $buildLog -ErrorAction SilentlyContinue }
   } else {
     Log "  경고: npm 을 찾지 못해 빌드를 건너뜁니다"
     $verified = $false

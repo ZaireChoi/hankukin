@@ -29,3 +29,7 @@ scripts/node-path.txt
 
 # npm ci 가 rename 해 둔 옛 트리 — 윈도우에서 폴더째 지운다
 node_modules_old/
+
+# 사진 수집 쿨다운 표시 · 빌드 실패 전체 출력 (로컬 전용)
+.photo-fetch.next
+.build-fail.log

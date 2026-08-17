@@ -81,6 +81,14 @@
   ],
   "corrected": [
     {
+      "date": "2026-08-17",
+      "article": "/en/now/english-pages-korea-out-of-date/",
+      "wrong": "We were about to treat an access-denied page at etk.srail.kr as evidence that SRT's English booking is hostile to foreign users.",
+      "right": "The page loads normally in an ordinary browser. The denial was aimed at our automated one.",
+      "why": "A tool being blocked is not a fact about the service. That site has a macro-detection history, which is exactly why we opened it once and did not retry — and why we wrote nothing until a human opened it.",
+      "found": "our own rule, before publication"
+    },
+    {
       "date": "2026-08-16",
       "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
       "wrong": "Seoul's own Climate Card FAQ still lists only the 62,000 and 65,000-won passes and an out-of-date list of subway sections.",
@@ -206,8 +214,8 @@
     },
     {
       "article": "/en/now/english-pages-korea-out-of-date/",
-      "missing": "What SRT's English booking screen currently shows",
-      "did": "Left it out. etk.srail.kr returned an access-denied page to us. That site has a macro-detection history, so we opened it once and did not retry. It may well have blocked our automated browser rather than foreign users, and we will not write a claim about SRT from a block we caused."
+      "missing": "What SRT's nationality dropdown lists, and what its final Ticketing step does",
+      "did": "Left both out. The operator walked the whole English flow on an ordinary browser and sent us the screens, so we wrote up what is visible: class-not-seat, the numeric password, the no-edit warning, the five-year retention notice, and the Domestic Card default. We did not open the nationality dropdown and did not complete a purchase, so we said nothing about either. A reported problem with the country list is going around; we are not repeating it, because we have not seen it."
     },
     {
       "article": "/en/now/english-pages-korea-out-of-date/",

@@ -10,6 +10,10 @@ riskGrade: yellow
 contentScore: 86
 visitKorea: []
 sources:
+  - title: "SRT English booking flow — SR Corporation (Inquiry, results, consent and payment form, seen 2026-08-17)"
+    url: "https://etk.srail.kr/main.do?language=en"
+    type: merchant_official
+    checkedAt: 2026-08-17
   - title: "교통 요금 안내 — Seoul Metropolitan Government fare page (page revised 2025-07-11; subway table dated 2025-06-28)"
     url: "https://news.seoul.go.kr/traffic/traffic_price"
     type: public_institution
@@ -99,6 +103,35 @@ Buy the mobile version because it is convenient, expecting the transit card ever
 
 What the page does **not** say is whether that eSIM carries a phone number or only data. We looked and could not find it stated. So we are not going to tell you either way. If the difference matters to you — and [it matters more than most people expect](/en/decode/korea-esim-no-phone-number/) — assume data only until someone official tells you otherwise.
 
+## SRT, all the way to the payment button
+
+We went through the English booking flow for SRT, the operator that runs Seoul–Busan out of Suseo. Four steps: Inquiry, Booking, Payment, Ticketing. **It works.** English station names, a real timetable with sold-out and available trains, a form that accepts a foreign card. Nobody is locked out.
+
+What it has instead is a set of edges, and they are worth knowing before you are standing in one.
+
+**You choose a class, not a seat.** The results table offers First and Standard. There is no seat map, no window-or-aisle. If you have a preference, the English flow does not ask for it.
+
+**The password is a number.** The form wants one to hold your booking, and states the rule plainly:
+
+> Password ※ 6~13 digit number.
+
+Not a password in the sense you are used to. Digits only. Pick something you will still have at the station, because this is what identifies the booking.
+
+**Typos are close to permanent.** Three lines sit above the form:
+
+> If your information is incorrect, ticket exchange may be denied.
+> Once saved, it cannot be edited. Please verify your details.
+
+Your name must be in English and contain no spaces — the same rule applies to the email field. Given that an incorrect entry can block an exchange and cannot be corrected afterwards, this is the one screen on the trip worth reading twice.
+
+**And the trap.** Once you are on the page headed **Foreigner**, the payment section offers two tabs — **Domestic Card** and **Overseas Card** — and the one already selected is **Domestic Card**.
+
+That is the pattern of this whole article in a single default. The page knows you are a foreign customer; it says so in its own heading. The tab underneath is still set to the card you almost certainly do not have.
+
+**One thing to decide before you start.** The consent screen states what SR collects for a foreign booking — name, email address, credit card — and that it keeps them for **five years**, citing the E-Commerce Consumer Protection Act. Consent is required; the page notes that reservation and payment for non-registered customers may be restricted without it. That may be entirely reasonable to you. It should not be a surprise at step two.
+
+**What we did not see.** The nationality field is a required dropdown and we did not open it, so we cannot confirm what it does or does not list. We did not complete a purchase, so the final Ticketing step is unverified. And we have not compared this with the Korean-language flow, so we are not claiming the Korean side offers seat selection — only that the English side does not.
+
 ## What this costs, concretely
 
 A wrong fare of 300 won is not the damage. The damage is what you build on top of it.
@@ -111,8 +144,12 @@ Each is small. Each happens at the exact moment you have no slack — arrival, a
 
 Every article on this site carries the date its facts were checked and links the Korean page they came from, so you can see the original sentence rather than trust our reading of it. Where a number matters, we print the Korean line next to the English one. That is not a stylistic choice — it exists because of the pattern this article is about.
 
-And when we cannot verify something, we say so instead of filling the gap. There are three such holes in this piece alone: whether the Discover Seoul Pass eSIM carries a number, what SRT's English booking screen currently looks like, and whether the tourism organisation's Korean-language pages carry the same stale fare. We could not confirm any of the three today.
+And when we cannot verify something, we say so instead of filling the gap. There are four such holes in this piece: whether the Discover Seoul Pass eSIM carries a phone number, what SRT's nationality dropdown lists, what its final Ticketing step does, and whether the tourism organisation's Korean-language pages carry the same stale fare. None is confirmed, and none is guessed at above.
 
 ---
 
-**The one line to keep.** If a Korean page and its English page disagree, **the Korean one is current.** Not because it is more official — because it is the one somebody has a reason to update.
+**Two lines to keep.**
+
+If a Korean page and its English page disagree, **the Korean one is current.** Not because it is more official — because it is the one somebody has a reason to update.
+
+And when a Korean service does build you a foreigner path, **check its defaults before you trust them.** The page can know exactly who you are and still be pre-set for somebody else.
