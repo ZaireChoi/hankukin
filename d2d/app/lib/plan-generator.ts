@@ -182,9 +182,27 @@ const ROTATE = <T,>(arr: readonly T[], by: number): T[] => arr.map((_, i) => arr
  * Order places for a day: what this strategy favours first, then the rest.
  * Rotating by the day number stops every plan from opening on the same place.
  */
+const VAGUE = /need|varies|check|n\/a/i;
+/**
+ * How much we can actually tell the traveler about this place.
+ *
+ * Every record carries the same 60-minute stay and 15-minute transfer, so
+ * ordering ties almost everywhere and the tie broke alphabetically — which is
+ * why a day came out as Achasan, Africa Museum, Ahn Junggeun, Aimeigroup.
+ * Four entries starting with A is the alphabet showing through a sort that
+ * had nothing else to say.
+ *
+ * Same fix as the live list: prefer the rows whose hours and fee are filled
+ * in. It ranks our own knowledge and claims nothing about the place.
+ */
+const tellsYouMore = (o: JourneyOption): number =>
+  (o.hoursEn && !VAGUE.test(o.hoursEn) ? 1 : 0) + (o.costEn && !VAGUE.test(o.costEn) ? 1 : 0);
+
+const byUsefulness = (a: JourneyOption, b: JourneyOption) => tellsYouMore(b) - tellsYouMore(a);
+
 function pickForDay(pool: JourneyOption[], favours: JourneyOption["category"][], dayIndex: number, want: number) {
-  const preferred = pool.filter((o) => favours.includes(o.category));
-  const others = pool.filter((o) => !favours.includes(o.category));
+  const preferred = pool.filter((o) => favours.includes(o.category)).sort(byUsefulness);
+  const others = pool.filter((o) => !favours.includes(o.category)).sort(byUsefulness);
   const ordered = [...ROTATE(preferred, dayIndex * want), ...ROTATE(others, dayIndex)];
   return ordered.slice(0, want);
 }

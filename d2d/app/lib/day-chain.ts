@@ -214,7 +214,12 @@ export function buildChain(opts: {
   // Home is the only node in the trip with nothing before it.
   const first = plan.days[0];
   const d1: ChainNode[] = [
-    { id: "home", kind: "home", ko: "집", en: "Home", clock: null, via: null, carried: false, reason: "fixed" },
+    /**
+     * The one node that is the traveler's own. It reads 집 / Financial
+     * District, Hyderabad, India — neighbourhood, city, country, and nothing
+     * finer. See OriginPicker for why the street is missing on purpose.
+     */
+    { id: "home", kind: "home", ko: "집", en: origin || "Home", clock: null, via: null, carried: false, reason: "fixed" },
     {
       id: "home-airport",
       kind: "home-airport",
