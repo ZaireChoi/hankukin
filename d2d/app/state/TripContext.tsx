@@ -10,6 +10,7 @@ import { coverageOf, cityIdFromKorean } from "../data/places";
 import { buildCostLines, totals, type CostLineId } from "../lib/cost-model";
 import { generatePlans, type GeneratedPlan } from "../lib/plan-generator";
 import { nightsBetween, type AgeBand, type Theme } from "../components/TripSetup";
+import { currencyForCountry, type CurrencyCode, type Rates } from "../lib/currency";
 import { defaultItinerary, type HomeAirportMode, type JourneyLeg } from "../data/journey-legs";
 import type { TransferMode } from "../data/airport-transfer";
 import { routeCoordinates, getRouteCoordinate, getLegMinutes, type RouteCoordinate } from "../data/route-coordinates";
@@ -73,6 +74,21 @@ function useTripState() {
   const [party,setParty]=useState(2);
   const [ages,setAges]=useState<Record<AgeBand,number>>({child:0,teen:0,adult:2,senior:0});
   const [budget,setBudget]=useState<number|null>(null);
+  /**
+   * The budget's currency, and the rate the traveler themselves got.
+   *
+   * `currency` starts from where they said they live, because that is the
+   * only number they can judge — asking someone in Hyderabad to think in won
+   * before they have been to Korea is asking them to do arithmetic to answer
+   * "how much do you want to spend".
+   *
+   * `rates` is theirs, not the market's. See lib/currency.ts for why we refuse
+   * to hardcode one.
+   */
+  const [currency,setCurrency]=useState<CurrencyCode>("INR");
+  const [rates,setRates]=useState<Rates>({});
+  const setRate=(code:CurrencyCode,krwPerUnit:number|null)=>
+    setRates(prev=>{const next={...prev}; if(krwPerUnit&&krwPerUnit>0) next[code]=krwPerUnit; else delete next[code]; return next;});
   const [themes,setThemes]=useState<Theme[]>([]);
   const toggleTheme=(th:Theme)=>setThemes(prev=>prev.includes(th)?prev.filter(x=>x!==th):[...prev,th]);
   const [setupDone,setSetupDone]=useState(false);
@@ -252,6 +268,9 @@ function useTripState() {
     return [detail.trim(),area,loc(lang, cityData),loc(lang, countryData)].filter(Boolean).join(", ");
   };
   const changeOriginCountry=(country:OriginCountry)=>{
+    // Moving the origin moves the money with it — nobody changes country and
+    // still wants to budget in the old one.
+    setCurrency(currencyForCountry(country));
     const city=originLocations[country].cities[0];
     const area=city.areas[0];
     setOriginCountry(country);setOriginCity(city.id);setOriginArea(area);setDetailAddress("");
@@ -412,6 +431,7 @@ function useTripState() {
     arrivalTime,setArrivalTime,
     departureTime,setDepartureTime,
     chainMoves,setChainMove,
+    currency,setCurrency,rates,setRate,
     addedByDay,addToToday,todayIndex,
     setParty,
     setReturnDate,
