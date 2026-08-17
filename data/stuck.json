@@ -242,6 +242,11 @@
           "answer": "Speed is not the wall. The presale is a fanclub membership list, and the joining deadline can fall on the day the show is announced.",
           "href": "scenes/kpop-concert-tickets-korea-foreigners",
           "home": true
+        },
+        {
+          "when": "Everyone tells me to go to Seongsu and I do not know which station that means",
+          "answer": "Seongsu Station for the shoe street, two minutes away. Seoul Forest Station for the park and the cafe strip — from Seongsu Station the park is a 38-minute walk.",
+          "href": "scenes/seongsu-dong-seoul-popups-and-what-stays"
         }
       ],
       "i18n": {

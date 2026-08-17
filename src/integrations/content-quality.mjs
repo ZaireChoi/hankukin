@@ -109,7 +109,69 @@ export default function contentQuality() {
   return {
     name: 'hankukin:content-quality',
     hooks: {
-      'astro:build:start': ({ logger }) => {
+  
+    /*
+     * ── 열세 번째 게이트: 화면에 마크다운 기호가 그대로 나온 곳 ──────────
+     *
+     * 2026-08-16. 운영자가 배포된 일본어 기사를 읽다가 찾았다.
+     * 본문 한가운데에 `**` 가 글자 그대로 찍혀 있었다.
+     *
+     * 원인이 둘이었고, 둘 다 **소스만 봐서는 안 보인다.**
+     *   ① ui.mjs 같은 평문 문자열에 마크다운을 썼다.
+     *      그 문자열은 그냥 텍스트로 출력되므로 `**` 는 영원히 `**` 다.
+     *   ② MDX 에서 CJK 문장에 `**` 를 썼다.
+     *      CommonMark 는 여는 `**` 뒤가 구두점이면 앞이 공백/구두점일 때만
+     *      강조로 인정한다. 「として**「…」**と」 처럼 일본어·중국어에서는
+     *      이 조건이 자주 깨진다. **영어에서는 거의 안 깨진다** —
+     *      그래서 영어만 보고 있으면 평생 모른다. 실제로 영어 페이지는 0건이었다.
+     *
+     * 소스는 맞고 출력이 틀린 부류라서, 빌드가 끝난 뒤 dist 를 읽어야 잡힌다.
+     * 이 사이트에서 제일 비쌌던 버그 두 개가 전부 이 부류였다.
+     */
+    'astro:build:done': async ({ dir, logger }) => {
+      const { readdirSync, readFileSync, statSync } = await import('node:fs');
+      const { join } = await import('node:path');
+      const root = dir.pathname.replace(/^\/([A-Za-z]:)/, '$1');
+
+      const pages = [];
+      const walk = (d) => {
+        for (const e of readdirSync(d)) {
+          const f = join(d, e);
+          if (statSync(f).isDirectory()) walk(f);
+          else if (e.endsWith('.html')) pages.push(f);
+        }
+      };
+      try { walk(root); } catch { return; }
+
+      const bad = [];
+      for (const f of pages) {
+        const html = readFileSync(f, 'utf8')
+          .replace(/<(script|style)[\s\S]*?<\/\1>/g, '');
+        const text = html.replace(/<[^>]+>/g, ' ');
+        const n = (text.match(/\*\*/g) ?? []).length;
+        if (n) {
+          const m = /(.{0,28})\*\*(.{0,28})/s.exec(text);
+          bad.push(`${f.slice(root.length).replace(/\\/g, '/')} — ${n}곳\n` +
+                   `        …${(m?.[1] ?? '').trim()}**${(m?.[2] ?? '').trim()}…`);
+        }
+      }
+
+      if (bad.length) {
+        logger.error(
+          '\n\n화면에 마크다운 기호(**)가 그대로 나옵니다.\n\n  ' +
+          bad.join('\n  ') +
+          '\n\n원인은 보통 둘 중 하나입니다.\n' +
+          '  ① 평문 문자열(ui.mjs·policy.mjs 등)에 마크다운을 썼다 — 거기서는 강조가 되지 않습니다.\n' +
+          '  ② CJK 문장에서 `**` 앞뒤가 모두 구두점이다 — CommonMark 가 강조로 인정하지 않습니다.\n' +
+          '     그 경우 <strong>…</strong> 을 쓰십시오.\n\n' +
+          '**영어 페이지에서는 거의 재현되지 않습니다.** 영어만 보고 있으면 모릅니다.\n',
+        );
+        throw new Error('화면에 마크다운 기호가 노출됐습니다 — 위 목록을 고치십시오.');
+      }
+      logger.info(`출력 점검: ${pages.length}쪽에 노출된 마크다운 기호 없음`);
+    },
+
+    'astro:build:start': ({ logger }) => {
         const fail = [];
         const warn = [];
         const shapes = [];   // 절 구성 비교용 — 판정은 반복문이 끝난 뒤
