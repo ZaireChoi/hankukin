@@ -228,6 +228,14 @@
       "right": "The terms are now stated per package rather than per page, with the combo exception named. The height sentence gives the operator's 135.7 m for the tower body and refuses to reconcile 400 with 506.7 — which is the thing the article criticises other people for doing. Six smaller overstatements went with them: a generic weather caveat we had turned into wind, a Klook-only 'no package includes it' we had globalised, four routes we had called three, a transport section sourced from a reseller but attributed to the operator, an operator identity inferred from an address on an error page, and an implied price comparison in an article that says it does not convert currency.",
       "why": "A verification pass we asked for before publishing, deliberately told to be adversarial. It found fifteen things. The two worst were sentences that were accurate about what we had read and wrong about what we said they covered — scope errors, not reading errors. Those do not feel like mistakes while you write them.",
       "found": "our own pre-publication check, run against the draft rather than the live page"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "/en/guides/n-seoul-tower-ticket-price-hours/",
+      "wrong": "We published a commercial link without registering it as opened. GitHub's check failed on the push and the article went live for the time it took to notice.",
+      "right": "The Klook URL is now in data/link-verified.json with what we saw on it: rating, booking count, all four package prices, and the fact that the cancellation terms differ between packages. The check passes.",
+      "why": "We ran the build gates and the translation check and called that verified. The link check is a separate script that only the repository was running, so our local 'verify' and GitHub's 'verify' were counting different things — and the one we trusted was the smaller one. npm run verify now runs all three.",
+      "found": "GitHub Actions, on the push"
     }
   ],
   "withheld": [
