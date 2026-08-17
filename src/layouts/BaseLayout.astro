@@ -167,6 +167,22 @@ const org = {
   <link rel="manifest" href="/site.webmanifest" />
   <meta name="theme-color" content="#12100f" />
 
+  {/*
+    애드센스 코드 — 2026-08-17. 계정 pub-1813638396654570 의 사이트 연결용.
+    구글이 발급한 문장을 **그대로** 넣는다. 옮겨 적지 않고 화면에서 읽어 왔다.
+
+    왜 여기인가: 구글의 지시가 "각 페이지의 <head></head> 사이"다.
+    레이아웃 한 곳에 두면 102쪽 전부에 들어가고, 빠진 페이지가 생기지 않는다.
+
+    **이 줄이 이 사이트의 첫 제3자 스크립트다.** 그 전까지 우리가 넣은 스크립트는
+    JSON-LD 두 덩어리뿐이었고 쿠키를 심는 코드가 하나도 없었다.
+    개인정보 페이지에는 광고 쿠키 조항이 2026-08-13 부터 들어가 있다.
+    EEA·영국 독자에게 광고를 실제로 **게재**하려면 인증 CMP 가 별도로 필요하다 —
+    지금은 심사용으로 태그만 올라가 있는 상태이고, 광고 게재는 아직 켜지 않았다.
+  */}
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1813638396654570"
+     crossorigin="anonymous"></script>
+
   {/* hreflang — Phase 1은 영어 단일이지만 구조를 미리 넣어둔다 (결정서 §4.2) */}
   {/*
     hreflang 에도 같은 버그가 있었다 (2026-08-16).
