@@ -142,7 +142,17 @@
           "when": "I left my bag on the subway",
           "answer": "Tell a station attendant and hand over the transit card you tapped with — it tells them which train you were on.",
           "href": "now/lost-something-in-korea-what-to-do",
-          "home": true
+          "home": true,
+          "i18n": {
+            "ja": {
+              "when": "地下鉄にカバンを置き忘れた",
+              "answer": "駅員に伝えて、タッチした交通カードを渡してください。どの列車に乗っていたかが分かります。"
+            },
+            "zh-hans": {
+              "when": "包落在地铁上了",
+              "answer": "找站务员，把刷过的交通卡交给他——卡能告诉他你坐的是哪一班车。"
+            }
+          }
         },
         {
           "when": "My card paid for dinner but the booking site declined it",
