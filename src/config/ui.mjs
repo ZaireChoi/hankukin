@@ -150,7 +150,7 @@ export const UI = {
       s5a: 'Korean trains have no ticket gates — sit in your assigned seat and that is the whole procedure. Clinics take walk-ins. Glasses take about ten minutes. And the signs stop being wallpaper after one evening with the alphabet.',
       s5link: 'The full list: every moment that stumps visitors, with one-line answers',
       sleep: 'Where to sleep',
-      sleepBody: 'The honest position: we do not have a Seoul neighbourhood guide yet, and we do not link hotels we have not evaluated. Our lodging advice so far lives in the regional articles, which carry price ranges by area type rather than named properties. A Seoul version is on the list.',
+      sleepBody: 'The honest position has not changed: we do not have a Seoul neighbourhood guide yet, and we do not recommend hotels we have not evaluated. What we can do is hand you the search rather than an answer — the link below opens Seoul on Trip.com, where you filter by area yourself. Myeongdong, Hongdae and Gangnam are three different trips. A guide to choosing between them is still on the list.',
     },
     footer2: {
       independent: 'We are an independent guide and are not affiliated with any broadcaster, agency, artist or public body.',
@@ -290,7 +290,7 @@ export const UI = {
       s5a: '韓国の列車に改札はありません — 指定された席に座る、それで手続きは終わりです。病院は予約なしで行けます。眼鏡は10分ほどでできます。そして看板は、アルファベットに一晩使えば壁紙ではなくなります。',
       s5link: '全一覧：旅行者が固まる瞬間と、一行の答え',
       sleep: '泊まる場所について',
-      sleepBody: '正直に書きます。ソウルのエリア選びガイドはまだありません。そして、評価していないホテルにはリンクしません。宿泊の話は今のところ地方の記事の中にあり、そこでも施設名ではなくエリア別の価格帯を書いています。ソウル版は予定に入っています。',
+      sleepBody: '立場は変えていません。ソウルのエリア選びガイドはまだなく、自分たちで見ていないホテルを勧めることはしません。できるのは、答えではなく検索そのものをお渡しすることです。下のリンクはTrip.comのソウル一覧を開きます——エリアはご自身で絞ってください。明洞・弘大・江南は、それぞれ別の旅になります。選び方のガイドは引き続き予定に入っています。',
     },
     footer2: {
       independent: '当サイトは独立した案内であり、放送局・事務所・アーティスト・公的機関のいずれとも関係がありません。',
@@ -429,7 +429,7 @@ export const UI = {
       s5a: '韩国的列车没有检票闸机 —— 坐到你的对号座位上，流程就结束了。诊所可以直接走进去。配眼镜大约十分钟。而招牌，在你用一个晚上认完字母之后，就不再只是背景了。',
       s5link: '完整清单：让旅行者卡住的每个瞬间，以及一行答案',
       sleep: '住哪里',
-      sleepBody: '说实话：我们还没有首尔的区域选择指南，也不会链接自己没有评估过的酒店。目前关于住宿的建议在各地区文章里，而且写的是按区域类型的价格区间，不是具体酒店名。首尔版在计划中。',
+      sleepBody: '立场没有变：我们还没有首尔的区域选择指南，也不会推荐自己没有评估过的酒店。我们能做的是把搜索交给你，而不是给你一个答案——下面的链接会打开 Trip.com 的首尔列表，区域由你自己筛。明洞、弘大、江南是三种完全不同的旅行。怎么选，那份指南仍在计划中。',
     },
     footer2: {
       independent: '本站是独立的指南，与任何电视台、经纪公司、艺人或公共机构均无关联。',

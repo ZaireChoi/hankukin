@@ -89,6 +89,59 @@ export const PRODUCTS = {
    *   ja  韓服レンタル（慶尚北道）
    *   zh  庆州韩服体验
    */
+  /*
+   * Trip.com 숙소 — 도시 검색 세 개 (2026-08-17).
+   *
+   * **특정 호텔이 아니라 도시 검색이다.** 이유는 우리가 이미 쓴 문장 때문이다:
+   * 경주·거제 편은 숙소를 「지역별 가격대」로만 적고 이름을 대지 않았고,
+   * Arrival 페이지에는 「평가하지 않은 호텔은 링크하지 않는다」고 써 두었다.
+   * 특정 호텔을 걸면 그 문장들이 전부 거짓이 된다.
+   * 「이 호텔이 좋다」가 아니라 「여기서 찾아보라」 — 그게 우리가 할 수 있는 말이다.
+   *
+   * 주소는 **셋 다 열어서 확인했다** (2026-08-17).
+   *   같은 날 trip.com/hotels/gyeongju-hotels-list-49/ 를 추측했다가 404 를 봤다.
+   *   숫자 하나가 다르면 404 다. 생성기도, 짐작도 믿지 않는다.
+   *
+   * Agoda 승인이 나면 같은 자리에 둘을 나란히 세운다 — 그때 비로소 가격 비교가 된다.
+   * 지금은 하나뿐이라 「비교해 보라」고 쓸 수 없다.
+   */
+  'tripcom-seoul-hotels': {
+    url: 'https://www.trip.com/hotels/seoul-hotels-list-274/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Seoul hotels on Trip.com — by neighbourhood, not by name',
+    labels: {
+      ja: 'ソウルの宿をTrip.comで探す — エリアから絞る',
+      'zh-hans': '在 Trip.com 搜首尔住宿 —— 按区域筛，不按名字',
+    },
+    checkedAt: '2026-08-17',
+  },
+  'tripcom-gyeongju-hotels': {
+    url: 'https://www.trip.com/hotels/gyeongju-hotels-list-3675/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Gyeongju stays on Trip.com',
+    labels: {
+      ja: '慶州の宿をTrip.comで探す',
+      'zh-hans': '在 Trip.com 搜庆州住宿',
+    },
+    checkedAt: '2026-08-17',
+  },
+  'tripcom-geoje-hotels': {
+    url: 'https://www.trip.com/hotels/geoje-si-hotels-list-61331/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Geoje stays on Trip.com',
+    labels: {
+      ja: '巨済の宿をTrip.comで探す',
+      'zh-hans': '在 Trip.com 搜巨济住宿',
+    },
+    checkedAt: '2026-08-17',
+  },
+
   'klook-gyeongju-hanbok': {
     url: 'https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/',
     merchant: 'Klook',

@@ -74,7 +74,7 @@ const steps = [
       <p>{t(lang, 'arrival.lede')}</p>
     </section>
 
-    <AffiliateTopNote lang={lang} items={steps.flatMap((s) => s.cta?.items ?? [])} />
+    <AffiliateTopNote lang={lang} items={[...steps.flatMap((s) => s.cta?.items ?? []), product('tripcom-seoul-hotels', lang)]} />
 
     <section class="preflight">
       <h2>{t(lang, 'arrival.preflight')}</h2>
@@ -108,6 +108,14 @@ const steps = [
     <section class="step">
       <h2><span class="n">＋</span>{t(lang, 'arrival.sleep')}</h2>
       <p>{t(lang, 'arrival.sleepBody')}</p>
+      {/*
+        2026-08-17. 이 자리는 8월 16일에 **링크 없이** 만든 자리다.
+        그때 적은 문장이 「평가하지 않은 호텔은 링크하지 않는다」였고, 그 문장은 지금도 맞다.
+        그래서 붙이는 것도 특정 호텔이 아니라 **도시 검색**이다 — 「여기가 좋다」가 아니라
+        「여기서 찾아보라」. 그 차이가 위 문단을 참으로 유지시킨다.
+      */}
+      <CtaBlock lang={lang} heading={t(lang, 'arrival.sleep')}
+                items={[product('tripcom-seoul-hotels', lang)]} />
     </section>
   </div>
 </BaseLayout>

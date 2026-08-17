@@ -82,32 +82,35 @@ export const MERCHANTS = {
     note: '숙박. 도메인 수동 심사 대기 (최대 1주). 승인되면 링크를 먼저 넣고 스위치를 켠다.',
   },
   /*
-   * Trip.com — **신청하지 않았다.** 2026-08-16 밤 운영자 문의로 후보에 올렸다.
+   * Trip.com — **2026-08-17 승인.** 운영자 통보.
    *
-   * 왜 지금 안 하나.
-   *   이미 Klook(체험·교통) 승인, Agoda(숙박) 심사 중이다. Trip.com 은 둘 다와 겹친다.
-   *   **제휴처가 하나 더 늘어도 노출이 하루 11회인 것은 변하지 않는다.**
-   *   지금 부족한 것은 파는 곳이 아니라 읽는 사람이다.
+   * 어제 이 자리에 적어 둔 판단은 「기사를 먼저 쓰고, 그 기사에 링크가 필요하면
+   * 그때 신청한다」였다. 순서가 지켜졌는지 정직하게 적어 둔다 —
+   * 신청은 운영자가 먼저 했고, 기사는 이미 있었다. 경주·거제 편은 8월 중순부터
+   * **숙소를 지역별 가격대로만** 쓰고 특정 호텔 이름을 대지 않았다.
+   * 그 문장은 「우리가 안 가 본 곳을 좋다고 하지 않는다」는 뜻이었고,
+   * 그래서 지금 붙이는 링크도 **특정 호텔이 아니라 도시 검색**이다.
+   * 「이 호텔이 좋다」가 아니라 「여기서 찾아보라」다.
    *
-   * 그런데 겹치지 않는 게 하나 있을 수 있다 — **항공·철도.**
-   *   우리 최대 기사가 KTX 이고, 이번 주 축이 "영어 예매가 축소판이다" 이다.
-   *   한국 철도 영어 예매가 실제로 불편하다면, **대신 사 주는 곳**이 답이 된다.
-   *   그게 사실이면 Trip.com 은 겹치는 제휴가 아니라 기사의 결론이 된다.
+   * 파라미터가 둘이다 — Allianceid 와 SID.
+   *   **하나만 붙으면 링크는 열리는데 실적이 안 잡힌다.**
+   *   그래서 isAffiliate 가 둘 다 차 있을 때만 true 를 돌려준다.
+   *   반쯤 켜진 상태로 「제휴 링크입니다」 고지가 뜨는 것을 막기 위해서다.
    *
-   * □ 확인할 것 (신청 전에)
-   *   · Trip.com 이 한국 KTX·SRT 승차권을 외국인에게 실제로 파는가
-   *   · Klook 도 같은 걸 파는가 (판다면 새 제휴처가 필요 없다 — aid 하나로 끝난다)
-   *   · 파트너 프로그램이 개인 사이트를 받는가, 최소 트래픽 요건이 있는가
-   *
-   * **판단 순서: 기사를 먼저 쓰고, 그 기사에 링크가 필요하면 그때 신청한다.**
-   * 반대로 하면 링크를 정당화하려고 기사를 쓰게 된다.
+   * ⚠ 값은 **대시보드에서 실제로 읽은 것만** 넣는다. 추측한 파라미터 이름은
+   *   8월 16일에 이미 한 번 사고를 냈고, 오늘도 상품 주소를 추측했다가 404 를 봤다.
    */
   'Trip.com': {
     name: 'Trip.com',
+    /*
+     * 승인은 났지만 **아직 false 다.** 대시보드에서 Allianceid·SID 를 읽어
+     * 아래 tagParams 를 채우는 순간 저절로 켜진다 — 기사는 손댈 필요가 없다.
+     * 그때 제휴 고지가 3개 언어에서 함께 바뀐다 (policy.mjs 가 등록부를 읽는다).
+     */
     affiliate: false,
-    appliedAt: null, approvedAt: null,
-    tagParam: null, tagValue: null,
-    note: '항공·철도·숙박. 미신청. Klook·Agoda 와 겹치지 않는 부분(철도 예매)이 있는지 확인 후 판단.',
+    appliedAt: '2026-08-17', approvedAt: '2026-08-17',
+    tagParams: { Allianceid: null, SID: null },
+    note: '숙박·항공·철도. 2026-08-17 승인. Allianceid·SID 입력 대기 — 채우면 자동으로 켜진다.',
   },
   'Gmarket Global': {
     name: 'Gmarket Global',
@@ -128,7 +131,23 @@ export const MERCHANTS = {
 /** 등록되지 않은 상점은 제휴가 아닌 것으로 본다 — 모르면 아니라고 말한다 */
 export function isAffiliate(merchant) {
   const m = MERCHANTS[merchant];
-  return Boolean(m?.affiliate && m.tagParam && m.tagValue);
+  if (!m?.affiliate) return false;
+  /*
+   * 파라미터가 둘 이상인 제휴처가 생겼다 (2026-08-17, Trip.com).
+   *
+   * Klook 은 ?aid= 하나면 끝나서 tagParam/tagValue 한 쌍으로 충분했다.
+   * Trip.com 은 Allianceid 와 SID 를 함께 요구한다 — 하나만 붙이면
+   * **링크는 멀쩡히 열리는데 실적이 우리 것으로 안 잡힌다.**
+   * 이 사이트에서 이미 두 번 만난 실패 모양이라, 아예 여러 개를 받게 고쳤다.
+   *
+   * tagParams 가 있으면 그쪽을 쓰고, 없으면 예전 한 쌍을 쓴다.
+   * **값이 하나라도 비어 있으면 제휴로 치지 않는다** — 반쯤 켜진 상태를 만들지 않는다.
+   */
+  if (m.tagParams) {
+    const vals = Object.values(m.tagParams);
+    return vals.length > 0 && vals.every((v) => v !== null && v !== undefined && v !== '');
+  }
+  return Boolean(m.tagParam && m.tagValue);
 }
 
 /**
@@ -179,10 +198,14 @@ export function decorate(url, merchant) {
       'www.klook.com 형식으로 바꾸십시오. 링크는 열리지만 수수료가 잡히지 않습니다.\n',
     );
   }
-  const { tagParam, tagValue } = MERCHANTS[merchant];
+  const m = MERCHANTS[merchant];
   try {
     const u = new URL(url);
-    u.searchParams.set(tagParam, tagValue);
+    if (m.tagParams) {
+      for (const [k, v] of Object.entries(m.tagParams)) u.searchParams.set(k, v);
+    } else {
+      u.searchParams.set(m.tagParam, m.tagValue);
+    }
     return u.toString();
   } catch {
     return url;
