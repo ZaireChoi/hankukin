@@ -200,6 +200,21 @@
   ],
   "withheld": [
     {
+      "article": "/en/now/english-pages-korea-out-of-date/",
+      "missing": "Whether the tourism organisation's Korean pages carry the same stale fare",
+      "did": "Left it out. The language parameter on discoverseoulpass.com did not switch the page for us, so we could not compare the Korean and English versions. Without that comparison we cannot say the English page is worse than the Korean one — only that it disagrees with the City of Seoul."
+    },
+    {
+      "article": "/en/now/english-pages-korea-out-of-date/",
+      "missing": "What SRT's English booking screen currently shows",
+      "did": "Left it out. etk.srail.kr returned an access-denied page to us. That site has a macro-detection history, so we opened it once and did not retry. It may well have blocked our automated browser rather than foreign users, and we will not write a claim about SRT from a block we caused."
+    },
+    {
+      "article": "/en/now/english-pages-korea-out-of-date/",
+      "missing": "Whether the Discover Seoul Pass eSIM carries a phone number or is data only",
+      "did": "Left it out. Seoul Tourism Organization's English eSIM page states duration, activation and refund rules but not this. We told readers to assume data only and said that is an assumption, not a finding."
+    },
+    {
       "article": "/en/now/seoul-climate-card-ending-what-visitors-should-buy/",
       "missing": "Whether a short-stay visitor can register for the replacement card (모두의 카드 / K-패스)",
       "did": "Left it out and said why. korea-pass.kr would not load for us — the same block we hit on t-money.co.kr and lost112.go.kr. A search summary claimed a Korean alien registration number is required; we would not print that without reading the source ourselves. We printed the K-pass helpline number instead."

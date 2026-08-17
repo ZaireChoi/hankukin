@@ -122,6 +122,12 @@
           "when": "Everyone is calling each other names the subtitles do not translate",
           "answer": "Oppa, hyung, unnie, noona say who is older and how close you are. Subtitles usually replace them with a name, which loses the whole point.",
           "href": "decode/oppa-hyung-unnie-noona"
+        },
+        {
+          "when": "I found the English page and it told me the wrong price",
+          "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
+          "href": "now/english-pages-korea-out-of-date",
+          "home": true
         }
       ],
       "i18n": {
