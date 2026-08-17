@@ -11,6 +11,7 @@ import { ItineraryEditor } from "../components/ItineraryEditor";
 import { TripSetup } from "../components/TripSetup";
 import { RouteTransport } from "../components/RouteTransport";
 import { DayChain } from "../components/DayChain";
+import { currencyForCountry } from "../lib/currency";
 import { ModePalette } from "./Chrome";
 
 export default function BuildView() {
@@ -62,6 +63,7 @@ export default function BuildView() {
     themes,
     toggleTheme,
     setupDone,
+    currency,setCurrency,rates,setRate,
     arrivalTime,setArrivalTime,departureTime,setDepartureTime,chainMoves,setChainMove,addedByDay,
     homeAirportMode,
     inputAnalyzed,
@@ -180,12 +182,17 @@ export default function BuildView() {
       <div className="builder-main">
         <TripSetup lang={lang}
           origin={origin} onOrigin={setOrigin}
+          originCountry={originCountry} originCity={originCity} originArea={originArea}
+          onOriginCountry={changeOriginCountry} onOriginCity={changeOriginCity} onOriginArea={changeOriginArea}
           destinations={destinations} onToggleDestination={toggleDestination}
           departDate={departDate} onDepartDate={setDepartDate}
           returnDate={returnDate} onReturnDate={setReturnDate}
           party={party} onParty={setParty}
           ages={ages} onAge={setAge}
           budget={budget} onBudget={setBudget}
+          currency={currency} onCurrency={setCurrency}
+          homeCurrency={currencyForCountry(originCountry)}
+          rates={rates} onRate={setRate}
           themes={themes} onToggleTheme={toggleTheme}
           onDone={()=>setSetupDone(true)}/>
         {/* The trip itself, before any of the machinery for editing it. */}
