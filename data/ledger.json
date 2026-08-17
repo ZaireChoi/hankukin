@@ -244,6 +244,22 @@
       "right": "Both translations carry the link again, and all three Trip.com pages are on the record with what we saw on them — including one we had to open in a browser because the fetching tool returned nothing.",
       "why": "Three separate checks were written with the word 'klook.com' typed into them: the gate that counts commercial links in translations, the link checker, and the source list. We added a second merchant that morning and every one of those checks went quietly blind to it. The affiliate registry also lacked a host field that two of them were already reading — so it was always undefined, and they had been falling back to the Klook-only path all along. Merchant identity now comes from the registry, and the link checker reads the product registry directly, because the Seoul hotel link lives in a page template by key and no amount of scanning articles would ever have found it.",
       "found": "the site owner asked whether the affiliate side was actually finished"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "/en/now/korea-atm-foreign-card-cash/",
+      "wrong": "\"If the logo row does include it, the language of the interface is beside the point — the transaction is going to run through Visa or Mastercard either way.\" And a headline, \"Which ATMs Take a Foreign Card\", promising a list of banks the article never gives.",
+      "right": "The logo is now described as the strongest thing you can check while standing at the machine, and explicitly not a guarantee: your bank may block the country, the operator may not support cash advances on your card type, there may be no cash PIN, the daily limit may be spent. The headline is now \"How to Find an ATM in Korea That Takes Your Foreign Card\", which is what the article actually teaches.",
+      "why": "We wrote a diagnostic and then let one sentence promise an outcome. On the page it reads as 'check the logo and you are fine' — and the reader who follows that and gets refused has been told wrong by us, at a cash machine, abroad.",
+      "found": "an outside review of the site"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "site-wide",
+      "wrong": "hankuk-in.com and www.hankuk-in.com both returned 200. Our canonical tags and sitemap say www, so we were publishing every page at two addresses without telling anyone which was the real one. There was also no favicon of any kind, and the contact page printed our email address as bold text rather than a link you could press.",
+      "right": "The apex domain now redirects to www with a 301. A favicon, apple touch icon and manifest are in place. The email address is a mailto link in all three languages.",
+      "why": "None of these is a fact we got wrong — they are things we never did, which is why no check caught them. Our gates read what we wrote; they cannot see what is absent from the head of every page.",
+      "found": "an outside review of the site"
     }
   ],
   "withheld": [

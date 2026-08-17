@@ -14,10 +14,29 @@ const t = POLICY.contact[lang] ?? POLICY.contact.en;
     <h1>{t.h1}</h1>
     <p class="updated">{t.updated}</p>
 
-    <p>{t.lead[0]}<strong>{BRAND.supportEmail}</strong>{t.lead[1]}</p>
+    {/*
+      2026-08-17. 주소를 <strong> 으로만 찍고 있었다 — 외부 평가에서 잡혔다.
+      「연락하라」고 써 놓고 **누를 수 없는 주소**를 놓아둔 것은,
+      휴대전화로 읽는 사람에게는 사실상 연락 경로가 없는 것과 같다.
+      오류 신고는 이 사이트가 제일 받고 싶어 하는 편지다. 문턱을 우리가 만들면 안 된다.
+    */}
+    <p>{t.lead[0]}<a class="mail" href={`mailto:${BRAND.supportEmail}`}>{BRAND.supportEmail}</a>{t.lead[1]}</p>
 
     {t.blocks.map((b) => (b.h2 ? <h2>{b.h2}</h2> : <p>{b.p}</p>))}
 
     <PolicyNote lang={lang} />
   </div>
 </BaseLayout>
+
+<style>
+  /* 주소를 눌러서 메일을 열 수 있게 한 뒤, 눌러도 되는 것처럼 보이게 한다. */
+  .mail {
+    font-weight: 700;
+    color: #12100f;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #c9622e;
+  }
+  .mail:hover { color: #c9622e; }
+</style>

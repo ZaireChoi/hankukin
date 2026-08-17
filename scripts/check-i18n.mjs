@@ -109,7 +109,14 @@ for (const file of walk(DIST)) {
   const from = rel === '404.html' ? '/404.html' : `/${rel.replace(/index\.html$/, '')}`;
   for (const m of html.matchAll(/href="(\/[^"#?]*)"/g)) {
     const href = m[1];
-    if (href.startsWith('/_astro') || /\.(xml|png|svg|ico|txt|json|webp|jpg)$/.test(href)) continue;
+    /*
+     * 2026-08-17. 확장자 목록에 webmanifest 가 없어서, 파비콘을 넣자마자
+     * /site.webmanifest 가 「없는 페이지를 가리킨다」로 102쪽에서 잡혔다.
+     * 오탐이 이만큼 쏟아지면 **진짜 한 건이 그 속에 묻힌다.**
+     * 그래서 목록을 늘리는 대신, 확장자가 있는 주소는 페이지가 아니라고 본다.
+     * 우리 페이지 주소는 전부 끝이 / 다 (trailingSlash: always).
+     */
+    if (href.startsWith('/_astro') || /\.[a-z0-9]+$/i.test(href)) continue;
     const target = join(DIST, href.replace(/^\/|\/$/g, ''), 'index.html');
     if (!existsSync(target)) {
       fail.push(

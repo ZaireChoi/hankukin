@@ -155,6 +155,18 @@ const org = {
   <link rel="canonical" href={canonical} />
   {noindex && <meta name="robots" content="noindex, nofollow" />}
 
+  {/*
+    파비콘 — 2026-08-17. 외부 평가에서 「아예 없다」로 잡혔다.
+    브라우저 탭에서 이 사이트만 빈 종이 아이콘이었고, 그건
+    「아직 안 만들어진 사이트」로 읽힌다. 우리가 제일 피하고 싶은 인상이다.
+    SVG 를 먼저 두고 PNG 를 뒤에 둔다 — 구형 브라우저는 SVG 를 무시하고 PNG 로 간다.
+  */}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#12100f" />
+
   {/* hreflang — Phase 1은 영어 단일이지만 구조를 미리 넣어둔다 (결정서 §4.2) */}
   {/*
     hreflang 에도 같은 버그가 있었다 (2026-08-16).

@@ -2,3 +2,10 @@
 # 루트를 기본 언어로 보낸다. Astro 의 정적 리디렉션은 HTML 페이지를 생성해
 # "Redirecting from / to /en/" 이 잠깐 노출되므로, 엣지에서 처리한다.
 /    /en/    302
+
+# ── www 정규화 (2026-08-17) ─────────────────────────────────────
+# 외부 평가에서 잡혔다. hankuk-in.com 과 www.hankuk-in.com 이 **둘 다 200** 이었다.
+# canonical 도 사이트맵도 www 를 쓰는데, 크롤러 입장에서는 같은 글이 두 주소에 있는 것이다.
+# 링크가 나뉘고, 어느 쪽이 본체인지 우리가 말해 주지 않은 상태였다.
+https://hankuk-in.com/*    https://www.hankuk-in.com/:splat    301
+http://hankuk-in.com/*     https://www.hankuk-in.com/:splat    301
