@@ -220,6 +220,14 @@
       "right": "All of it now comes from ui.mjs in the reader's language. Components called from inside articles read the language from the URL instead of a prop, because the prop is the thing a writer forgets.",
       "why": "The translations existed in ui.mjs from the start. Nothing was missing — the components simply defaulted to English and nobody passed the language. The eleventh gate checks for missing translations, which is the opposite failure, so it reported all clear.",
       "found": "our own output check, while verifying an unrelated correction to the climate-card article"
+    },
+    {
+      "date": "2026-08-17",
+      "article": "/en/guides/n-seoul-tower-ticket-price-hours/",
+      "wrong": "Caught before publication, not after. The draft said the Klook listing was \"no cancellation, no refund, no date change, for any reason\" and \"valid until 31 December 2026\". Both are true of the three tickets we priced and false of the two combo packages beside them — one of those offers free cancellation with 24 hours' notice. The draft also wrote that the tower is \"the last 130 metres\" of the climb, two paragraphs after a caption promising we had calculated nothing: 130 is 400 minus 270, our arithmetic across two of the operator's pages.",
+      "right": "The terms are now stated per package rather than per page, with the combo exception named. The height sentence gives the operator's 135.7 m for the tower body and refuses to reconcile 400 with 506.7 — which is the thing the article criticises other people for doing. Six smaller overstatements went with them: a generic weather caveat we had turned into wind, a Klook-only 'no package includes it' we had globalised, four routes we had called three, a transport section sourced from a reseller but attributed to the operator, an operator identity inferred from an address on an error page, and an implied price comparison in an article that says it does not convert currency.",
+      "why": "A verification pass we asked for before publishing, deliberately told to be adversarial. It found fifteen things. The two worst were sentences that were accurate about what we had read and wrong about what we said they covered — scope errors, not reading errors. Those do not feel like mistakes while you write them.",
+      "found": "our own pre-publication check, run against the draft rather than the live page"
     }
   ],
   "withheld": [
