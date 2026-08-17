@@ -142,6 +142,25 @@ export const PRODUCTS = {
     checkedAt: '2026-08-17',
   },
 
+  /*
+   * 2026-08-17. 주소를 열어서 확인했다 (Klook 영문 상품 페이지, 4.6/5 · 34.3K 리뷰).
+   * 라벨에 「취소 불가」를 먼저 적는 이유: 이 상품의 진짜 조건이 거기이기 때문이다.
+   * 게이트 가격은 공식 페이지 기준 대인 ₩29,000 — 싼 것이 요점이 아니라
+   * **무를 수 없다는 것**이 요점이고, 독자가 버튼 전에 알아야 할 것은 그쪽이다.
+   */
+  'klook-n-seoul-tower': {
+    url: 'https://www.klook.com/en-US/activity/412-n-seoul-tower-seoul/',
+    merchant: 'Klook',
+    category: 'ticket',
+    relationship: 'suggested',
+    label: 'N Seoul Tower observatory — no cancellation, no refund, no date change',
+    labels: {
+      ja: 'Nソウルタワー展望台 — 取消・返金・日付変更いずれも不可',
+      'zh-hans': 'N首尔塔观景台 —— 不可取消、不退款、不能改期',
+    },
+    checkedAt: '2026-08-17',
+  },
+
   'klook-gyeongju-hanbok': {
     url: 'https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/',
     merchant: 'Klook',

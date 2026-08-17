@@ -1,0 +1,162 @@
+---
+/**
+ * 남산서울타워 — 「500m」과 실제로 서는 높이.
+ *
+ * 왜 이 그림인가 (2026-08-17).
+ *   판매 페이지들은 「거의 500m」라고 쓴다. 타워 운영사(CJ)의 영문 사이트
+ *   Tower data 는 해발 506.7m 라고 적는데, **그건 첨탑 끝이다.**
+ *   같은 사이트의 Observation Deck 페이지는 전망대가 해발 400m 라고 쓴다.
+ *   두 숫자 다 이 회사가 쓴 것이고, 둘 다 맞다 — 가리키는 지점이 다를 뿐이다.
+ *
+ *   숫자를 나열하면 독자는 어느 쪽이 자기 발밑인지 알 수 없다.
+ *   **높이는 세로로 그려야 읽힌다.** 그래서 막대 하나에 세 지점을 찍는다.
+ *
+ *   추정하지 않는다. 270.0 / 236.7 / 506.7 은 Tower data 의 값이고,
+ *   400 은 Observation Deck 페이지의 값이다. 우리가 계산한 값은 없다.
+ *
+ * 왜 언어를 받는가.
+ *   그림 안 글자가 영어로 남으면 일본어 기사 한가운데에 영어 그림이 박힌다.
+ *   2026-08-17 에 이 사이트 번역면의 껍데기가 통째로 영어였던 일이 있었다.
+ */
+interface Props { lang?: string; caption: string }
+const { lang = 'en', caption } = Astro.props;
+
+const T = {
+  en: {
+    kicker: 'WHERE YOU ACTUALLY STAND',
+    sub: 'Namsan Seoul Tower, from the operator’s own two pages',
+    top: 'Top of the mast — 506.7 m above sea level',
+    topNote: 'This is the number the marketing rounds to “nearly 500 m”. Nobody goes up here.',
+    deck: 'Observation deck — about 400 m above sea level',
+    deckNote: 'The operator’s Observation Deck page says 400 m. This is the floor you buy a ticket for.',
+    hill: 'Namsan summit — 270.0 m above sea level',
+    hillNote: 'The mountain does most of the work. The tower body above it is 135.7 m.',
+    sea: 'Sea level',
+    footTitle: 'Both numbers are the operator’s',
+    footBody: 'Tower data gives 506.7 m to the top of the mast (Namsan 270.0 m + tower 236.7 m, of which 101 m is steel mast). The Observation Deck page gives 400 m for the deck. We did not calculate either.',
+  },
+  ja: {
+    kicker: '実際に立つ高さ',
+    sub: '南山ソウルタワー — 運営会社の二つのページから',
+    top: '鉄塔の先端 — 海抜506.7m',
+    topNote: '宣伝文の「約500m」はこの数字です。ここには誰も上がりません。',
+    deck: '展望台 — 海抜およそ400m',
+    deckNote: '運営会社の展望台ページに400mと書かれています。切符を買って立つのはこの床です。',
+    hill: '南山の頂上 — 海抜270.0m',
+    hillNote: '高さの大半は山が稼いでいます。その上のタワー本体は135.7mです。',
+    sea: '海抜0m',
+    footTitle: 'どちらも運営会社の数字です',
+    footBody: 'Tower data は鉄塔の先端まで506.7m（南山270.0m＋タワー236.7m、うち鉄塔101m）。展望台ページは展望台を400mとしています。こちらで計算した数字はありません。',
+  },
+  'zh-hans': {
+    kicker: '你实际站的高度',
+    sub: '南山首尔塔 —— 出自运营方自己的两个页面',
+    top: '铁塔顶端 —— 海拔 506.7 米',
+    topNote: '宣传里的「将近 500 米」说的是这个数字。这里没有人上得去。',
+    deck: '观景台 —— 海拔约 400 米',
+    deckNote: '运营方的观景台页面写的是 400 米。你买票站上去的，是这一层。',
+    hill: '南山山顶 —— 海拔 270.0 米',
+    hillNote: '高度大半是山给的。山上的塔身是 135.7 米。',
+    sea: '海平面',
+    footTitle: '两个数字都是运营方写的',
+    footBody: 'Tower data 写到铁塔顶端为 506.7 米（南山 270.0 米＋塔 236.7 米，其中铁塔 101 米）。观景台页面写观景台为 400 米。我们没有自己算过任何一个。',
+  },
+};
+const c = T[lang] ?? T.en;
+
+/* 세로 눈금 — 해발 0 을 바닥, 520m 를 천장으로 둔다. 값은 그대로, 위치만 비례. */
+const H = 520;
+const y = (m) => (1 - m / H) * 100;
+---
+
+<figure class="th">
+  <p class="kicker">{c.kicker}</p>
+  <p class="sub">{c.sub}</p>
+
+  <div class="plot">
+    <div class="col">
+      <div class="mast" style={`top:${y(506.7)}%;height:${y(400) - y(506.7)}%`}></div>
+      <div class="body" style={`top:${y(400)}%;height:${y(270) - y(400)}%`}></div>
+      <div class="hill" style={`top:${y(270)}%;height:${y(0) - y(270)}%`}></div>
+
+      <span class="tick faint" style={`top:${y(506.7)}%`}></span>
+      <span class="tick strong" style={`top:${y(400)}%`}></span>
+      <span class="tick faint" style={`top:${y(270)}%`}></span>
+    </div>
+
+    <div class="labels">
+      <div class="lab faint" style={`top:${y(506.7)}%`}>
+        <b>{c.top}</b><span>{c.topNote}</span>
+      </div>
+      <div class="lab here" style={`top:${y(400)}%`}>
+        <b>{c.deck}</b><span>{c.deckNote}</span>
+      </div>
+      <div class="lab faint" style={`top:${y(270)}%`}>
+        <b>{c.hill}</b><span>{c.hillNote}</span>
+      </div>
+      <div class="lab base" style={`top:${y(0)}%`}><b>{c.sea}</b></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>{c.footTitle}</b>
+    <p>{c.footBody}</p>
+  </div>
+
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .th {
+    margin: 2rem 0;
+    padding: 1.2rem 1.35rem 1rem;
+    border: 1px solid #e3ddd4;
+    border-radius: 6px;
+    background: #fdfbf8;
+  }
+  .kicker {
+    margin: 0; font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase; color: #a3714f;
+  }
+  .sub { margin: 0.25rem 0 1.3rem; font-size: 0.9rem; color: #6b635c; }
+
+  .plot { position: relative; display: flex; gap: 1rem; height: 340px; }
+  .col { position: relative; width: 26px; flex: none; }
+  .col > div { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 2px; }
+  /* 첨탑 — 사람이 못 가는 구간이라 가늘고 흐리게 */
+  .mast { width: 5px; background: #d8cfc3; }
+  /* 전망대가 있는 타워 본체 — 이 기사가 말하는 구간 */
+  .body { width: 17px; background: #c9622e; }
+  /* 산 — 높이의 절반을 산이 만든다는 것이 이 그림의 두 번째 요점 */
+  .hill { width: 26px; background: #8a9a7b; border-radius: 2px 2px 0 0; }
+
+  .tick { position: absolute; left: 0; width: 26px; height: 0; }
+  .tick.strong { border-top: 2px solid #12100f; }
+  .tick.faint  { border-top: 1px dashed #b3a99c; }
+
+  .labels { position: relative; flex: 1; }
+  .lab { position: absolute; transform: translateY(-50%); padding-left: 0.2rem; }
+  .lab b { display: block; font-size: 0.86rem; line-height: 1.35; color: #12100f; }
+  .lab span { display: block; font-size: 0.76rem; line-height: 1.5; color: #6b635c; margin-top: 0.15rem; }
+  .lab.faint b { color: #6b635c; font-weight: 600; }
+  .lab.here b { color: #a8431a; }
+  .lab.base { transform: translateY(-100%); }
+  .lab.base b { font-size: 0.76rem; color: #8a827b; font-weight: 500; }
+
+  .foot {
+    margin-top: 1.1rem; padding-top: 0.85rem; border-top: 1px solid #ece6dd;
+  }
+  .foot b { font-size: 0.8rem; color: #12100f; }
+  .foot p { margin: 0.3rem 0 0; font-size: 0.78rem; line-height: 1.6; color: #6b635c; }
+
+  figcaption {
+    margin-top: 0.9rem; font-size: 0.78rem; line-height: 1.55; color: #8a827b;
+  }
+
+  /* 좁은 화면에서는 라벨이 막대를 덮는다. 막대를 줄이고 글을 살린다. */
+  @media (max-width: 560px) {
+    .plot { height: 380px; gap: 0.7rem; }
+    .lab b { font-size: 0.8rem; }
+    .lab span { font-size: 0.72rem; }
+  }
+</style>

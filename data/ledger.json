@@ -215,8 +215,8 @@
     },
     {
       "date": "2026-08-17",
-      "article": "/ja/ · /zh-hans/ — 인용 블록 10편과 촬영지 템플릿 전체",
-      "wrong": "Japanese and Chinese pages carried English furniture. Every quotation block was headed \"The Korean sentence this comes from\". The scenes template printed its section headings, the photo table, the place table, the affiliate disclosure and every source label in English under Japanese and Chinese articles.",
+      "article": "site-wide",
+      "wrong": "Every Japanese and Chinese page carried English furniture. All ten translated articles headed their quotation blocks \"The Korean sentence this comes from\". The filming-location template printed its section headings, the photo table, the place table, the affiliate disclosure and every source label in English under Japanese and Chinese text.",
       "right": "All of it now comes from ui.mjs in the reader's language. Components called from inside articles read the language from the URL instead of a prop, because the prop is the thing a writer forgets.",
       "why": "The translations existed in ui.mjs from the start. Nothing was missing — the components simply defaulted to English and nobody passed the language. The eleventh gate checks for missing translations, which is the opposite failure, so it reported all clear.",
       "found": "our own output check, while verifying an unrelated correction to the climate-card article"
