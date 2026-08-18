@@ -271,6 +271,21 @@
           "home": true
         },
         {
+          "when": "I want to be in the audience at a K-pop music show and cannot tell if I qualify",
+          "answer": "Music Bank books two seats at once and both people must arrive; Inkigayo's rules are locked inside an image.",
+          "href": "scenes/music-show-audience-korea-what-the-rules-say",
+          "i18n": {
+            "ja": {
+              "when": "音楽番組の観覧に行きたいが、自分が条件を満たすのか分からない",
+              "answer": "ミュージックバンクは2席単位で、当日は2人とも来ないと入れません。人気歌謡の案内は画像の中にあります。"
+            },
+            "zh-hans": {
+              "when": "想去现场看打歌舞台，却不知道自己符不符合条件",
+              "answer": "音乐银行一次订两个座位，当天两人都要到场才能进；人气歌谣的规则写在一张图片里。"
+            }
+          }
+        },
+        {
           "when": "Everyone tells me to go to Seongsu and I do not know which station that means",
           "answer": "Seongsu Station for the shoe street, two minutes away. Seoul Forest Station for the park and the cafe strip — from Seongsu Station the park is a 38-minute walk.",
           "href": "scenes/seongsu-dong-seoul-popups-and-what-stays"

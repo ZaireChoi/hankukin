@@ -1,0 +1,144 @@
+---
+/**
+ * 두 방송사의 방청 안내 페이지 — 무엇이 기계에 읽히는가.
+ *
+ * 왜 이 그림인가 (2026-08-18).
+ *   이 사이트는 「영어 페이지는 한국어의 축소판이다」를 여러 번 써 왔다.
+ *   그런데 음악방송 방청을 확인하다 **한 단계 아래**를 봤다.
+ *   SBS 인기가요의 방청신청 안내는 영어판이 없는 게 아니라,
+ *   **한국어조차 글자가 아니다.** 페이지 전체가 그림 한 장이다.
+ *   번역할 것이 없다. 색인할 것도, 낭독할 것도 없다.
+ *
+ *   처음에는 페이지가 비어 있는 줄 알았다. 텍스트 추출이 0을 돌려줬으니까.
+ *   **화면을 찍어 보고서야** 분홍색 안내 그림이 거기 있다는 것을 알았다.
+ *   그 착각 자체가 이 그림이 말하려는 것이다 —
+ *   기계는 비어 있다고 본다.
+ *
+ * 무엇을 재지 않았나.
+ *   번역기를 실제로 돌려 보지 않았다. 잰 것은 **페이지에 선택 가능한 글자가
+ *   있는가** 하나뿐이다. 글자가 없으면 브라우저 번역이 옮길 대상이 없다 —
+ *   이건 측정이 아니라 정의다. 그래서 이 그림은 그 선까지만 말한다.
+ *   (그림 판독 도구로 읽는 길은 따로 있다. 그건 브라우저 번역이 아니다.)
+ *
+ * 왜 표가 아니라 도표인가.
+ *   마크다운 표로도 같은 정보가 들어간다. 그런데 이 기사의 주장은
+ *   「둘이 다르다」가 아니라 **「한쪽이 통째로 비어 보인다」** 이고,
+ *   빈 칸이 줄줄이 늘어선 모양은 글로 읽는 것보다 보는 쪽이 빠르다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+/**
+ * 2026-08-18 에 두 페이지를 열어서 직접 확인한 것만 적는다.
+ *   KBS  program.kbs.co.kr/2tv/enter/musicbank/pc/board.html?smenu=3b7ca1&m_seq=9
+ *   SBS  programs.sbs.co.kr/enter/gayo/basicinfo/83552
+ */
+const ROWS = [
+  {
+    q: 'The instructions are published as',
+    kbs: 'Text on the page',
+    sbs: 'One image',
+    kbsOk: true,
+    sbsOk: false,
+  },
+  {
+    q: 'Selectable text in the instructions',
+    kbs: 'Yes — the whole notice',
+    sbs: 'None',
+    kbsOk: true,
+    sbsOk: false,
+  },
+  {
+    q: 'Applying needs the broadcaster’s app',
+    kbs: 'No — a web page works',
+    sbs: 'Yes — SBS play',
+    kbsOk: true,
+    sbsOk: false,
+  },
+  {
+    q: 'An English notice from the broadcaster',
+    kbs: 'Yes — on resale',
+    sbs: 'None we found',
+    kbsOk: true,
+    sbsOk: false,
+  },
+  {
+    q: 'Newest date shown in the instructions',
+    kbs: 'A worked example, undated year',
+    sbs: 'November 2024',
+    kbsOk: null,
+    sbsOk: null,
+  },
+];
+
+const W = 760;
+const TOP = 96;
+const ROW = 62;
+const H = TOP + ROWS.length * ROW + 54;
+
+const LEFT = 22;          /* 질문 열 */
+const COL1 = 336;         /* KBS 열 */
+const COL2 = 560;         /* SBS 열 */
+
+const INK = '#12100f', MUTE = '#6b6560', RULE = '#e0d8ce';
+const OK = '#3f7d58', NO = '#b0453a', FLAT = '#8a827b';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="A comparison of the audience application pages of two Korean music shows, read on 18 August 2026. KBS Music Bank publishes its instructions as text on the page, with selectable text throughout, applying through a web page rather than an app, and an English notice about ticket resale. SBS Inkigayo publishes its instructions as a single image with no selectable text at all, applying requires the SBS play app, and we found no English notice. The worked example in the KBS instructions carries no year; the newest date visible inside the SBS image is November 2024.">
+
+    <text x={LEFT} y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      TWO AUDIENCE PAGES, READ 18 AUGUST 2026
+    </text>
+    <text x={LEFT} y="44" font-size="12.5" fill={MUTE}>
+      What a browser, a search engine or a screen reader finds on each page
+    </text>
+
+    {/* 열 머리 */}
+    <text x={COL1} y="76" font-size="13.5" font-weight="700" fill={INK}>KBS Music Bank</text>
+    <text x={COL2} y="76" font-size="13.5" font-weight="700" fill={INK}>SBS Inkigayo</text>
+    <line x1={LEFT} y1="84" x2={W - 22} y2="84" stroke={RULE} stroke-width="1" />
+
+    {ROWS.map((r, i) => {
+      const y = TOP + i * ROW;
+      const dot = (ok) => (ok === null ? FLAT : ok ? OK : NO);
+      return (
+        <g>
+          <text x={LEFT} y={y + 4} font-size="13" fill={INK}>{r.q}</text>
+
+          <circle cx={COL1 - 14} cy={y} r="4" fill={dot(r.kbsOk)} />
+          <text x={COL1} y={y + 4} font-size="12.5" fill={r.kbsOk === false ? NO : MUTE}>{r.kbs}</text>
+
+          <circle cx={COL2 - 14} cy={y} r="4" fill={dot(r.sbsOk)} />
+          <text x={COL2} y={y + 4} font-size="12.5" fill={r.sbsOk === false ? NO : MUTE}>{r.sbs}</text>
+
+          {i < ROWS.length - 1 && (
+            <line x1={LEFT} y1={y + 26} x2={W - 22} y2={y + 26}
+                  stroke={RULE} stroke-width="1" stroke-dasharray="2 4" />
+          )}
+        </g>
+      );
+    })}
+
+    <line x1={LEFT} y1={TOP + ROWS.length * ROW - 22} x2={W - 22}
+          y2={TOP + ROWS.length * ROW - 22} stroke={RULE} stroke-width="1" />
+    <text x={LEFT} y={TOP + ROWS.length * ROW + 4} font-size="11.5" fill={FLAT}>
+      We did not run a translation tool. We checked one thing: whether the page has text at all.
+    </text>
+    <text x={LEFT} y={TOP + ROWS.length * ROW + 22} font-size="11.5" fill={FLAT}>
+      Where there is none, browser translation has nothing to translate.
+    </text>
+  </svg>
+
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption {
+    margin-top: 0.7rem; font-size: 0.85rem; line-height: 1.65;
+    color: #6b6560; max-width: 60ch;
+  }
+</style>
