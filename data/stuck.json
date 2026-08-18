@@ -124,6 +124,11 @@
           "href": "decode/oppa-hyung-unnie-noona"
         },
         {
+          "when": "Someone is speaking to me casually in Korean and I cannot tell if it is friendly or rude",
+          "answer": "The national dictionary gives banmal two meanings — closeness, and talking down — so read their age and whether they switched mid-conversation; keep putting 요 on the end of your own sentences either way.",
+          "href": "decode/banmal-jondaemal-when-casual-korean-is-rude"
+        },
+        {
           "when": "I found the English page and it told me the wrong price",
           "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
           "href": "now/english-pages-korea-out-of-date",
