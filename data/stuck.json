@@ -129,6 +129,11 @@
           "href": "decode/banmal-jondaemal-when-casual-korean-is-rude"
         },
         {
+          "when": "I typed the street name off the sign into a map and got nothing",
+          "answer": "You spelled the letters. Korean signs spell the sound — 종로 is Jongno, never Jongro, and the map only knows the sound.",
+          "href": "hangul/korean-romanization-jongno-not-jongro"
+        },
+        {
           "when": "I found the English page and it told me the wrong price",
           "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
           "href": "now/english-pages-korea-out-of-date",

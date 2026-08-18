@@ -1,0 +1,95 @@
+---
+/**
+ * 종로 → Jongno 대조도 — 글자대로 읽은 것과 간판에 적힌 것이 갈라지는 자리.
+ *
+ * 왜 그렸나 (2026-08-18, Hangul 5편).
+ *   이 기사가 다루는 것은 **두 경로가 다른 답을 낸다**는 사실이다.
+ *   글자 → 로마자 (독자가 하는 일)  vs  글자 → 소리 → 로마자 (법이 하는 일).
+ *   표로 쓰면 결과만 보이고 갈라지는 지점이 안 보인다. 그 지점이 요점이라 두 줄로 그린다.
+ *
+ *   방(房)편 ChartBangFamily 는 등식(=) 구도였고,
+ *   병원편 ChartClinicSignFormula 는 간판 한 장을 쪼갰다.
+ *   이 그림은 **같은 입력에서 나온 두 출력**이라 2행 대조 구도로 간다.
+ *
+ * 예시는 전부 「국어의 로마자 표기법」 제3장 제1항에 실제로 실린 것만 쓴다.
+ * 우리가 만든 예를 섞으면 이 그림이 증거가 아니라 주장이 된다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 348;
+
+const LX = 30, LW = 150;          // 행 이름
+const C1 = 196, C2 = 376, C3 = 556;
+const CW = 150, C3W = 174;
+const RA = 66, RB = 198, RH = 92; // 두 행
+
+const RED = '#b0442e';
+const GREEN = '#2f6b4f';
+const ACCENT = '#c9622e';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="The same Korean word, 종로, produces two different roman spellings. Reading the letters one by one gives Jong plus ro, which is Jongro, and no map finds it. The official rule pronounces the word first, giving the spoken form 종노, and spells that, giving Jongno, which is what the sign says.">
+
+    <text x={LX} y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      ONE WORD ON A SIGN, TWO WAYS TO PUT IT IN ROMAN LETTERS
+    </text>
+
+    {/* ── 행 A: 글자대로 ── */}
+    <text x={LX} y={RA + 34} font-size="12.5" font-weight="700" fill="#8a827b">WHAT YOU DO</text>
+    <text x={LX} y={RA + 52} font-size="12" fill="#8a827b">letter by letter</text>
+
+    <rect x={C1} y={RA} width={CW} height={RH} rx="5" fill="#efe9e1" stroke="#e0d8ce" />
+    <text x={C1 + CW / 2} y={RA + 50} text-anchor="middle" font-size="38" font-weight="700" fill="#12100f">종로</text>
+    <text x={C1 + CW / 2} y={RA + 74} text-anchor="middle" font-size="12" fill="#6b6560">the letters on the sign</text>
+
+    <text x={(C1 + CW + C2) / 2} y={RA + 52} text-anchor="middle" font-size="22" fill="#a09890">→</text>
+
+    <rect x={C2} y={RA} width={CW} height={RH} rx="5" fill="#fffdfa" stroke="#e0d8ce" />
+    <text x={C2 + CW / 2} y={RA + 46} text-anchor="middle" font-size="24" font-weight="700" fill="#3c3733">jong + ro</text>
+    <text x={C2 + CW / 2} y={RA + 70} text-anchor="middle" font-size="11.5" fill="#6b6560">two blocks, sounded out</text>
+
+    <text x={(C2 + CW + C3) / 2} y={RA + 52} text-anchor="middle" font-size="22" fill="#a09890">→</text>
+
+    <rect x={C3} y={RA} width={C3W} height={RH} rx="5" fill="#fffdfa" stroke={RED} stroke-width="1.6" />
+    <text x={C3 + C3W / 2} y={RA + 46} text-anchor="middle" font-size="27" font-weight="700" fill={RED}>Jongro</text>
+    <text x={C3 + C3W / 2} y={RA + 70} text-anchor="middle" font-size="12" font-weight="700" fill={RED}>no sign says this</text>
+
+    {/* ── 행 B: 소리를 거쳐서 ── */}
+    <text x={LX} y={RB + 34} font-size="12.5" font-weight="700" fill={ACCENT}>WHAT THE RULE DOES</text>
+    <text x={LX} y={RB + 52} font-size="12" fill="#8a827b">pronounce first,</text>
+    <text x={LX} y={RB + 68} font-size="12" fill="#8a827b">then spell</text>
+
+    <rect x={C1} y={RB} width={CW} height={RH} rx="5" fill="#efe9e1" stroke="#e0d8ce" />
+    <text x={C1 + CW / 2} y={RB + 50} text-anchor="middle" font-size="38" font-weight="700" fill="#12100f">종로</text>
+    <text x={C1 + CW / 2} y={RB + 74} text-anchor="middle" font-size="12" fill="#6b6560">the same two blocks</text>
+
+    <text x={(C1 + CW + C2) / 2} y={RB + 52} text-anchor="middle" font-size="22" fill={ACCENT}>→</text>
+
+    <rect x={C2} y={RB} width={CW} height={RH} rx="5" fill={ACCENT} fill-opacity="0.13" stroke={ACCENT} stroke-width="1.6" />
+    <text x={C2 + CW / 2} y={RB + 48} text-anchor="middle" font-size="32" font-weight="700" fill={ACCENT}>[종노]</text>
+    <text x={C2 + CW / 2} y={RB + 72} text-anchor="middle" font-size="12" font-weight="700" fill={ACCENT}>how it is said aloud</text>
+
+    <text x={(C2 + CW + C3) / 2} y={RB + 52} text-anchor="middle" font-size="22" fill={ACCENT}>→</text>
+
+    <rect x={C3} y={RB} width={C3W} height={RH} rx="6" fill="#12100f" />
+    <text x={C3 + C3W / 2} y={RB + 46} text-anchor="middle" font-size="27" font-weight="700" fill="#fffdfa">Jongno</text>
+    <text x={C3 + C3W / 2} y={RB + 70} text-anchor="middle" font-size="12" font-weight="700" fill="#9fc7ae">this is on the sign</text>
+
+    <text x={LX} y={H - 30} font-size="12.5" fill="#3c3733">
+      The ㄹ in the second block turns into an n sound after the ㅇ that ends the first one. The letters
+    </text>
+    <text x={LX} y={H - 13} font-size="12.5" fill="#3c3733">
+      never change; only the mouth does — and the roman line follows the mouth.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
