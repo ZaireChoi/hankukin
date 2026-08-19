@@ -138,6 +138,11 @@
           "answer": "Korean pages carry a revision date; English ones often do not. Where the two disagree, the Korean one is the live copy.",
           "href": "now/english-pages-korea-out-of-date",
           "home": true
+        },
+        {
+          "when": "The price has one too many zeros and I cannot say it out loud",
+          "answer": "Korean cuts numbers every four digits, not three — cover the last four and read what is left as 만 (man).",
+          "href": "decode/korean-numbers-two-counting-systems"
         }
       ],
       "i18n": {
