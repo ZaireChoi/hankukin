@@ -143,6 +143,22 @@
           "when": "The price has one too many zeros and I cannot say it out loud",
           "answer": "Korean cuts numbers every four digits, not three — cover the last four and read what is left as 만 (man).",
           "href": "decode/korean-numbers-two-counting-systems"
+        },
+        {
+          "when": "I bought a ticket to a Korean film and there are no subtitles at all",
+          "answer": "That is normal — Korean cinemas subtitle foreign films, not Korean ones. The archive cinema in Sangam marks its English-subtitled screenings with an E, and admission is free.",
+          "href": "scenes/korean-films-english-subtitles-seoul-kofa",
+          "home": false,
+          "i18n": {
+            "ja": {
+              "when": "韓国映画のチケットを買ったら、字幕が一切出ない",
+              "answer": "それが普通です。韓国の劇場が字幕を付けるのは外国映画のほうで、韓国映画には付きません。上岩のフィルムアーカイブは英語字幕付き上映に「E」を付けており、入場は無料です。"
+            },
+            "zh-hans": {
+              "when": "买了韩国电影的票，结果一点字幕都没有",
+              "answer": "这是正常的。韩国影院给外国电影配字幕，本国电影不配。上岩的韩国电影资料院会用「E」标出带英文字幕的场次，而且免费入场。"
+            }
+          }
         }
       ],
       "i18n": {
