@@ -33,6 +33,17 @@ const CONTENT_DIR = 'src/content';
  * 사진이 도착하면 이 줄을 지우는 것이 할 일 목록이 된다.
  */
 const HERO_EXEMPT = {
+  'itaewon-alone-what-to-eat-buy-and-when-to-go':
+    '이태원 사진이 재고에 **5장 있다.** 그런데 다섯 장을 전부 열어 보니 ' +
+    '**모두 이태원시장 옷가게 실내**였다 (한국관광공사 자료). ' +
+    '거리도, 서울중앙성원도, 가구거리도, 우사단로도 한 장이 없다. ' +
+    '이 기사의 요점은 **언덕을 걸어 올라가는 동선**(역 3번 출구 → 우사단로 → 성원)과 ' +
+    '**동네가 무엇으로 만들어졌는가**인데, 옷가게 복도 사진은 그것을 말하지 않는다. ' +
+    '대표사진 자리에 놓으면 한눈에 「이태원」이 안 보이고, 그건 「그냥 어느 상가」를 붙이는 것과 같다 ' +
+    '— 병원 간판편·방(房)편과 같은 판단. ' +
+    '※ 이 다섯 장은 방(房) 편을 쓸 때도 한 번 열어 보고 같은 이유로 뺐다. **두 번 확인했다.** ' +
+    '우사단로·성원 외관·가구거리 사진이 exactTitle 로 들어오면 채우고 이 줄을 지운다.',
+
   'korean-films-english-subtitles-seoul-kofa':
     '상암·DMC·한국영상자료원 사진이 재고에 242장 중 한 장도 없다 (슬러그 목록을 전부 확인했다). ' +
     '그리고 이 경우는 「아직 못 구했다」에 그치지 않는다 — **상영관 안은 촬영이 금지돼 있고, ' +
@@ -518,6 +529,9 @@ export default function contentQuality() {
           'goblin-jumunjin-breakwater': '촬영지 소개',
           'gyeongju-at-night-silla-capital': '여행지 소개',
           'jeju-when-life-gives-you-tangerines': '섬 자체를 설명하는 글. 막힌 순간이 아니라 「왜 가나」에 답한다',
+          'itaewon-alone-what-to-eat-buy-and-when-to-go':
+            '동네를 설명하는 글. 「무엇이 막혔나」가 아니라 「혼자 가도 되나」에 답한다 — '
+            + '막힌 순간이 아니라 망설이는 순간이다',
           'kpop-demon-hunters-still-popular-korea': '현상 분석. 독자가 막혀서 찾는 글이 아니다',
           'yeokjuhaeng-korean-chart-reverse-running': '현상 해설',
           'what-koreans-search-for-trends-2026': '데이터 해설',
