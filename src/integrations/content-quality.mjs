@@ -33,6 +33,15 @@ const CONTENT_DIR = 'src/content';
  * 사진이 도착하면 이 줄을 지우는 것이 할 일 목록이 된다.
  */
 const HERO_EXEMPT = {
+  'jeju-when-life-gives-you-tangerines':
+    '재고 242장에 **제주 사진이 한 장도 없다** (슬러그 목록 전부 확인 — 제주·우도·한라·성산 어느 것도 없다). ' +
+    '계획표 2026-08-20 §5 D그룹에 이미 「제주·부산·전주 → 지금 0장」으로 적혀 있다. ' +
+    '다른 섬·바다 사진을 붙이면 주제와 무관한 「그냥 한국」 사진이 되고, 드라마 스틸은 남의 저작물이라 쓰지 않는다. ' +
+    '게다가 이 기사의 요점은 풍경이 아니라 **삼다(바람·돌·여자)가 각각 무엇을 만들었는가**라는 인과이고, ' +
+    '그건 한 장의 사진으로는 전달되지 않는다 — 가을편이 산림청 도표로 지탱한 것과 같은 판단. ' +
+    'ChartJejuSamda 가 사진보다 정확하다. ' +
+    '제주 돌담·초가·정낭·해녀 사진이 exactTitle 로 들어오면 그때 채우고 이 줄을 지운다.',
+
   'korean-films-english-subtitles-seoul-kofa':
     '상암·DMC·한국영상자료원 사진이 재고에 242장 중 한 장도 없다 (슬러그 목록을 전부 확인했다). ' +
     '그리고 이 경우는 「아직 못 구했다」에 그치지 않는다 — **상영관 안은 촬영이 금지돼 있고, ' +
@@ -517,6 +526,7 @@ export default function contentQuality() {
           'geoje-island-what-to-see': '촬영지·여행지 소개. 막힌 순간이 없다',
           'goblin-jumunjin-breakwater': '촬영지 소개',
           'gyeongju-at-night-silla-capital': '여행지 소개',
+          'jeju-when-life-gives-you-tangerines': '섬 자체를 설명하는 글. 막힌 순간이 아니라 「왜 가나」에 답한다',
           'kpop-demon-hunters-still-popular-korea': '현상 분석. 독자가 막혀서 찾는 글이 아니다',
           'yeokjuhaeng-korean-chart-reverse-running': '현상 해설',
           'what-koreans-search-for-trends-2026': '데이터 해설',
