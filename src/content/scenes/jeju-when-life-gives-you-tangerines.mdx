@@ -10,6 +10,12 @@ region: "Jeju"
 stars: ["IU", "Park Bo-gum", "Moon So-ri"]
 publishedAt: 2026-08-20
 checkedAt: 2026-08-20
+hero:
+  src: ../../assets/images/places/jeju-haenyeo-show-5.jpg
+  alt: Turquoise shallow water over dark volcanic rock at Seongsanpo on Jeju, with a steep tuff headland rising across the bay and a few swimmers in the water
+  license: kogl-1
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=770036
+  credit: 한국관광공사 (Korea Tourism Organization)
 riskGrade: green
 contentScore: 86
 sources:
@@ -40,7 +46,22 @@ sources:
 ---
 
 import Original from '../../components/Original.astro';
+import Figure from '../../components/Figure.astro';
 import ChartJejuSamda from '../../components/ChartJejuSamda.astro';
+
+import thatch from '../../assets/images/places/jeju-seongeup-folk-2.jpg';
+import lane from '../../assets/images/places/jeju-seongeup-folk-5.jpg';
+import cow from '../../assets/images/places/jeju-udo-2.jpg';
+import turbines from '../../assets/images/places/jeju-sinchang-windmill-4.jpg';
+import boardwalk from '../../assets/images/places/jeju-sinchang-windmill-2.jpg';
+import grass from '../../assets/images/places/jeju-sangumburi-6.jpg';
+import cave from '../../assets/images/places/jeju-udo-5.jpg';
+
+export const KTO = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1' };
+export const SEONGEUP = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126471' };
+export const UDO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=127336' };
+export const SINCHANG = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
+export const SANGUMBURI = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
 
 Start with the title, because the title is already the argument.
 
@@ -70,9 +91,17 @@ The island's nickname is **삼다도** *(sam-da-do)*, "the island of three abund
 
 The Rural Development Administration puts a number on it that no travel guide bothers with: on Jeju the wind blows at 10 m/s for roughly **117 days of the year**. That is a gale-adjacent wind for a third of every year, on farmland, on an island in the path of typhoons.
 
+<Figure src={turbines} alt="A line of white wind turbines standing in shallow water along the Sinchang coast of Jeju, with a coastal road, black volcanic reefs and clear blue sea"
+        caption="The Sinchang windmill coast road, on the west side. VisitJeju's own page on the wind ends by noting that Jeju's wind is now being gathered and turned into electricity — this is what that sentence looks like."
+        {...SINCHANG} />
+
 Everything domestic on Jeju is a reply to that.
 
 The traditional house is not entered from the road. You come in along an **올레** *(ol-le)* — a private stone-walled lane that bends. VisitJeju is explicit that the bend is engineering, not landscaping: rough wind that comes down a curved, loosely stacked lane arrives at the house with the fight taken out of it, and the curve means nobody on the road can see in. (If the word looks familiar, it is: the island's long-distance walking route, the Jeju Olle Trail, is named after it.)
+
+<Figure src={lane} alt="A lane at Seongeup Folk Village on Jeju running between loosely stacked black basalt walls, curving toward a tiled gateway with trees behind"
+        caption="Seongeup Folk Village, Seogwipo. The walls are stacked dry — no mortar — and the lane bends rather than running straight at the house. Stand at the far end and you cannot see the yard, which was the second purpose."
+        {...SEONGEUP} />
 
 At the mouth of the lane there is no gate. There are **three logs** — **정낭** *(jeong-nang)* — resting in a pair of stone posts. They were there to stop the free-ranging horses and cattle wandering in, and they are logs rather than a door for the obvious local reason: wind goes through them, so a typhoon cannot take them off their hinges. They are also a message.
 
@@ -84,7 +113,15 @@ At the mouth of the lane there is no gate. There are **three logs** — **정낭
 
 A sign with no writing on it. You can still stand in front of one and read it.
 
+<Figure src={cow} alt="A brown cow grazing on rough green pasture on Udo island off Jeju, with a small pavilion and the sea behind"
+        caption="Udo, off the east coast. This is what the three logs were for: cattle and horses were grazed loose, and a wandering cow in a field of barley was a ruined year. Nothing about the gate was about people."
+        {...UDO} />
+
 The roof finishes the argument. Reed thatch, then thick rope thrown over the top in a grid — VisitJeju's word for the pattern is 바둑판 *(ba-duk-pan)*, a Go board — and lashed down. Stone wall outside, mud packed into it, rope net over the whole thing. Nothing about it is decorative.
+
+<Figure src={thatch} alt="A thatched Jeju house at Seongeup Folk Village, its reed roof bound down under a grid of thick rope, with wooden doors, a low stone base and a stone mortar standing in the swept yard"
+        caption="The rope grid, which is the whole argument in one photograph. Reed thatch alone would leave in a Jeju gale, so it is netted down in squares and tied at the eaves. The stone bowl in the yard is a grain mortar."
+        {...SEONGEUP} />
 
 **And one more thing, which is where the drama comes back in.** A Jeju house has two dwellings around one yard: the **안거리** *(an-geo-ri)*, the inner one, and the **밖거리** *(bak-geo-ri)*, the outer one. When a son married, the parents kept the inner house and the couple took the outer one — each with **its own kitchen**, its own crocks, its own privy. Then, after a set period, they swapped. One family by address, two households by economy.
 
@@ -108,6 +145,10 @@ The clearest surviving version is the **해녀** *(hae-nyeo)*, the diving women,
 
 Episode five of the series is called *A Midsummer Night's Full Nets*. It is not a metaphor.
 
+<Figure src={cave} alt="The mouth of a sea cave on Udo island seen from inside, dark basalt walls framing bright water and a small boat outside"
+        caption="A sea cave on Udo, reached by boat. We should say plainly what we could not show you: the tourism authority's registered photographs of the diving site show the water and the spectators, not the divers at work. We are not going to caption a crowd as haenyeo."
+        {...UDO} />
+
 ## There was never a paddy field
 
 Here is the fact that reorganises Jeju food for you: **the island has no rice paddies.** Volcanic ground will not hold standing water, so Jeju farmed dry fields, and the Rural Development Administration's list of what grew instead reads like a different country's pantry — barley, wheat, buckwheat, foxtail and proso millet, soy and adzuki beans, and a dryland rice grown without flooding.
@@ -123,6 +164,10 @@ Almost everything on Jeju arrives by boat, and it shows up in the price of lunch
 The second one is the tell. Jajangmyeon is the flattest-priced dish in the country: ₩6,769 to ₩7,750 nationwide, a 14% spread, the closest thing Korea has to a fixed price. Even that dish is at its ceiling on Jeju. Budget for it.
 
 ## When to go
+
+<Figure src={grass} alt="A field of silver grass on Jeju filling the frame, seed heads turned gold and bending in one direction"
+        caption="Sangumburi in autumn, the silver grass gone gold. Note which way it is leaning — every stem in the frame agrees. That is the 117 days again."
+        {...SANGUMBURI} />
 
 The series names its episodes for the seasons — *Spring in a Heartbeat*, *The Blazing Summer Sunshine*, *A Fruitful Fall* — and the island earns that structure. Two notes on top of our [month-by-month calendar](/en/now/best-time-to-visit-korea-calendar/). VisitJeju describes the island as sitting in the path of the typhoons; that is the same wind that shaped the houses, and late summer is when it is most likely to cost you a ferry or a flight. And the tangerines the English title borrows are a late-autumn and winter crop, not a summer one — if you came for the fruit in the picture, you came in the wrong month.
 
