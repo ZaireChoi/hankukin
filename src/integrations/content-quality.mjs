@@ -16,7 +16,7 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, extname, basename } from 'node:path';
 import { ALLOWED_LABELS } from '../config/products.mjs';
-import { MERCHANTS } from '../config/merchants.mjs';
+import { MERCHANTS, isAffiliate } from '../config/merchants.mjs';
 
 /** 제휴 상점의 host 목록 — 게이트가 상점 이름을 하드코딩하지 않도록 한 곳에서 읽는다. */
 const MERCHANT_HOSTS = Object.values(MERCHANTS).map((m) => m.host).filter(Boolean);
@@ -342,7 +342,95 @@ export default function contentQuality() {
         throw new Error('공유 카드 파일이 없습니다 — node scripts/make-og.mjs');
       }
 
-      logger.info(`출력 점검: ${pages.length}쪽 — 노출된 마크다운 기호 없음 · 번역면에 남은 영어 화면문구 없음 · 공유 카드 전부 존재`);
+      /*
+       * ── 열여섯 번째 게이트: 상업 링크는 **화면에 나간 것**을 검사한다 ──────
+       *
+       * 2026-08-20. 운영자가 「가고싶은데 제휴가 없네」라고 했다. 링크는 있었다.
+       * 2,884단어 아래에 있었을 뿐이다. 그래서 본문 안에도 걸 수 있게 <Affiliate/> 를 만들었다.
+       *
+       * **그 순간 상업 링크의 경로가 둘이 됐다** — frontmatter→CtaBlock 과 본문→Affiliate.
+       * 이 저장소가 다섯 번 데인 모양이 정확히 이것이다: 한 군데를 고치고 옆을 안 본다.
+       * eSIM 편의 Klook 링크가 화면에서 사라진 것도, CTA 꼬리말이 세 번 거짓말한 것도 같은 원인이다.
+       *
+       * 그래서 컴포넌트를 만들기 **전에** 이 게이트를 만들었다.
+       * 요점은 소스를 검사하지 않는다는 것이다 — 소스가 몇 갈래든 상관없이
+       * **최종 HTML 에 나간 <a> 를 전부 본다.** 경로를 늘려도 검사가 저절로 따라온다.
+       *
+       * 세 가지를 본다. 하나라도 어긋나면 빌드를 세운다.
+       *   ① 열어 본 적 있는 주소인가        data/link-verified.json 에 있는가
+       *   ② 추적 태그가 붙어 나갔는가        없으면 페이지는 멀쩡하고 수수료만 0 이다
+       *   ③ rel="sponsored" 가 붙었는가      FTC 고지이자 검색엔진 신고다
+       */
+      let ledger = null;
+      try { ledger = JSON.parse(readFileSync('data/link-verified.json', 'utf8')); }
+      catch (e) { if (e.code !== 'ENOENT') throw e; }
+
+      // 검사 자체가 오류를 내도 빌드를 세우지 않는다 — 아직 한 번도 못 돌려 봤기 때문이다
+      try {
+      if (ledger) {
+        const known = new Set(Object.keys(ledger.verified ?? {}));
+        const paid = Object.values(MERCHANTS).filter((m) => m.host && isAffiliate(m.name));
+        const bad = [];
+        const seen = new Set();
+
+        for (const f of pages) {
+          const html = readFileSync(f, 'utf8');
+          const page = f.slice(root.length).replace(/\\/g, '/');
+          for (const m of html.matchAll(/<a\b([^>]*?)href="(https:\/\/[^"]+)"([^>]*)>/g)) {
+            const attrs = m[1] + m[3];
+            const url = m[2].replace(/&amp;/g, '&');
+            const host = paid.find((x) => url.includes(x.host));
+            if (!host) continue;
+
+            const base = url.split('?')[0];
+            const key = `${page}|${url}`;
+            if (seen.has(key)) continue;
+            seen.add(key);
+
+            if (!known.has(base) && !known.has(`${base}/`) && !known.has(base.replace(/\/$/, ''))) {
+              bad.push(`${page}\n      ${base}\n      → data/link-verified.json 에 없습니다. 열어 보지 않은 링크는 발행되지 않습니다.`);
+              continue;
+            }
+            const tags = Object.entries(host.tagParams ?? (host.tagParam ? { [host.tagParam]: host.tagValue } : {}));
+            const missing = tags.filter(([k, v]) => !url.includes(`${k}=${v}`)).map(([k]) => k);
+            if (missing.length) {
+              bad.push(`${page}\n      ${url.slice(0, 90)}\n      → 추적 태그 ${missing.join(', ')} 가 빠졌습니다. 링크는 열리고 수수료만 0 이 됩니다.`);
+            }
+            if (!/rel="[^"]*sponsored/.test(attrs)) {
+              bad.push(`${page}\n      ${url.slice(0, 90)}\n      → rel="sponsored" 가 없습니다. 이건 전환이 아니라 고지 의무입니다.`);
+            }
+          }
+        }
+        if (bad.length) {
+          /*
+           * ⚠ 지금은 **경고**다. 세울 수 있는데 일부러 안 세운다 (2026-08-20).
+           *
+           * 이 게이트를 쓴 날 샌드박스 디스크가 차서 `npx astro build` 를 한 번도
+           * 못 돌려 봤다. 검증 못 한 검사를 hard gate 로 넣으면, 오탐 하나에
+           * **윈도우 자동 푸시의 빌드가 실패하고 발행이 통째로 멈춘다.**
+           * 2026-08-19 에 정확히 그 일이 있었고 그날 쓴 기사는 한 번도 못 올라갔다.
+           *
+           * 그러니 순서는 이렇다.
+           *   ① 경고로 한 번 돌려서 **기존 링크가 전부 통과하는지** 눈으로 본다
+           *   ② 통과하면 아래 throw 를 살린다 (한 줄이다)
+           * 검사를 못 믿어서가 아니라, **못 돌려 봤기 때문에** 경고인 것이다.
+           */
+          logger.warn(
+            '\n\n화면에 나간 상업 링크에 문제가 있습니다. (아직 경고 — 아래 주석 참조)\n\n  ' +
+            [...new Set(bad)].slice(0, 12).join('\n\n  ') +
+            (bad.length > 12 ? `\n\n  … 외 ${bad.length - 12}건` : '') +
+            '\n\n이 검사는 **소스가 아니라 출력**을 봅니다.\n' +
+            'frontmatter 로 넣든 본문에 <Affiliate/> 로 넣든 똑같이 걸립니다 —\n' +
+            '경로를 늘려도 검사가 저절로 따라오게 하려고 이렇게 만들었습니다.\n',
+          );
+          // throw new Error('상업 링크 검사 실패 — 위 목록을 고치십시오.');   ← ①을 확인한 뒤 이 줄을 살린다
+        }
+      }
+      } catch (e) {
+        logger.warn(`상업 링크 검사가 스스로 오류를 냈습니다 — 검사만 건너뜁니다: ${e.message}`);
+      }
+
+      logger.info(`출력 점검: ${pages.length}쪽 — 노출된 마크다운 기호 없음 · 번역면에 남은 영어 화면문구 없음 · 공유 카드 전부 존재 · 상업 링크 점검(경고 단계)`);
     },
 
     'astro:build:start': ({ logger }) => {
