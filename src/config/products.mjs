@@ -71,6 +71,35 @@ export const PRODUCTS = {
    *   ja  仁川国際空港鉄道A'REX 直通列車チケットの予約（ソウル）
    *   zh  仁川机场 - 首尔快线直达列车
    */
+  /*
+   * 제주 기사 딸린 차량 (2026-08-20 확인).
+   *
+   *   운영자 지시: "차량렌탈 제휴도 붙여".
+   *   Klook 공개검색에서 «jeju car rental» 을 치면 나오는 제주 상품은 **전부 기사 딸린 차량**이다.
+   *   자가운전 렌터카가 아니다. 그래서 그 사실을 라벨에 그대로 적었다 —
+   *   「rental」 이라고만 적으면 독자가 직접 운전하는 것으로 읽는다.
+   *
+   *   그리고 이 자리는 편집상으로도 맞다. 기사가 말하는 것은
+   *   「국제운전면허가 되면 직접 몰아라, 안 되면 이 방법이 있다」이고,
+   *   이 상품은 **두 번째 문장의 답**이다. 자격이 안 되는 사람에게 파는 것이 아니라
+   *   자격이 안 되는 사람이 실제로 쓰는 수단이다.
+   *
+   *   ?aid=131289 를 붙여 열었더니 최종 주소에 utm_campaign=131289 가 붙었다.
+   *   4.6/5 · 리뷰 231 · 2K+ 예약 · 롯데렌터카(허츠 공식 파트너) · 공항 내 데스크 ·
+   *   영어·중국어 가능 기사. 전부 상품 페이지에서 읽은 것이다.
+   */
+  'klook-jeju-car-charter': {
+    url: 'https://www.klook.com/en-US/activity/132698-jeju-car-charter/',
+    merchant: 'Klook',
+    category: 'transport',
+    relationship: 'suggested',
+    label: 'Jeju private car charter with a driver — LOTTE rent-a-car, on Klook',
+    labels: {
+      ja: '済州のドライバー付きチャーター — ロッテレンタカー（Klook）',
+      'zh-hans': '济州包车（含司机）—— 乐天租车，Klook',
+    },
+    checkedAt: '2026-08-20',
+  },
   'klook-arex-express': {
     url: 'https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/',
     merchant: 'Klook',
@@ -116,6 +145,29 @@ export const PRODUCTS = {
       'zh-hans': '在 Trip.com 搜首尔住宿 —— 按区域筛，不按名字',
     },
     checkedAt: '2026-08-17',
+  },
+  /*
+   * 제주 (2026-08-20 확인).
+   *   운영자 지시로 붙였다. 제주 편은 «가는 곳» 글이므로 표준순서 §3 의 기준에 맞는다.
+   *
+   *   ⚠ 주소를 두 번 시도했다. jeju-hotels-list-696 은 **트립닷컴 홈으로 튕겼다** —
+   *     도시 ID 를 짐작한 결과이고, 경주(3675)에서 이미 한 번 낸 사고와 같은 종류다.
+   *     737 은 검색으로 찾아 브라우저로 열어 확인했다.
+   *
+   *   ⚠ 페이지 제목이 «Jeju City Hotels» 다. 다만 본문 구역에 성산·애월·한라산이 들어 있어
+   *     섬 전체를 덮는다. 라벨을 «Jeju» 로 두되 이 사실을 link-verified.json 에 적어 두었다.
+   */
+  'tripcom-jeju-hotels': {
+    url: 'https://www.trip.com/hotels/jeju-hotels-list-737/',
+    merchant: 'Trip.com',
+    category: 'stay',
+    relationship: 'suggested',
+    label: 'Search Jeju stays on Trip.com',
+    labels: {
+      ja: '済州の宿をTrip.comで探す',
+      'zh-hans': '在 Trip.com 搜济州住宿',
+    },
+    checkedAt: '2026-08-20',
   },
   'tripcom-gyeongju-hotels': {
     url: 'https://www.trip.com/hotels/gyeongju-hotels-list-3675/',

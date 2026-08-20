@@ -65,6 +65,16 @@
       "at": "2026-08-17",
       "title": "Korea rail tickets and schedule (개별 승차권)",
       "note": "브라우저로 확인. 4.8/5 · 100K+ 예약. **/activity/ 로 시작하지만 /korea-rail/ 로 리디렉션된다** — 그래서 aid 를 붙여 직접 열어 봤고, 최종 주소에 aid=131289 유지 + utm_campaign=131289 자동 부착 + 쿠키 기록까지 확인했다. 추적이 끊기지 않는다. KR PASS(2847)는 2일권 US$94.65 라 강릉 당일치기에는 두 배 넘게 비싸서 쓰지 않는다."
+    },
+    "https://www.trip.com/hotels/jeju-hotels-list-737/": {
+      "at": "2026-08-20",
+      "title": "10 Best Jeju City Hotels, South Korea (from US$32)",
+      "note": "열어서 확인. **먼저 jeju-hotels-list-696 을 짐작했다가 트립닷컴 홈으로 튕겼다** — 경주 때와 같은 사고다. 737 은 검색으로 찾았다. 최종 주소에 Allianceid=10114476 · SID=328673514 둘 다 남는 것을 확인. ⚠ 제목은 「Jeju City」이지만 본문 구역에 성산일출봉/표선·애월·한라산국립공원이 들어 있어 섬 전체를 덮는다. 특정 호텔이 아니라 도시 검색이다 — 우리가 평가한 숙소가 없기 때문이다."
+    },
+    "https://www.klook.com/en-US/activity/132698-jeju-car-charter/": {
+      "at": "2026-08-20",
+      "title": "Jeju Private Car Charter by LOTTE rent-a-car (Hertz Official Partner)",
+      "note": "열어서 확인. 4.6/5 · 리뷰 231 · 2K+ 예약. ?aid=131289 를 붙이니 최종 주소에 utm_campaign=131289 부착 확인. **자가운전 렌터카가 아니라 기사 딸린 차량이다** — Klook 의 제주 «car rental» 검색 결과가 전부 이 형태였다. 라벨에 with a driver 를 명시했다. 상품 페이지가 스스로 적은 것: 제주국제공항 내 데스크, 영어·중국어 가능 기사."
     }
   },
   "rejected": [
