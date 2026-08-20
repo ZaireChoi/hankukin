@@ -1,0 +1,131 @@
+---
+/**
+ * 삼다(三多) 해부도 — 바람·돌·여자가 실제로 무엇을 만들었는가.
+ *
+ * 왜 그렸나 (2026-08-20, 제주 1편).
+ *   재고 242장에 제주 사진이 **한 장도 없다**. 그런데 이 도표는 사진의 대타가 아니다.
+ *   '삼다도' 는 영어권에 「바람·돌·여자가 많은 섬」이라는 표어로만 건너가 있고,
+ *   그 표어는 특히 세 번째에서 오해를 만든다 — 인구 성비 이야기로 읽힌다.
+ *   제주관광공사 원문은 그게 아니라고 적고 있다. **표어를 결과로 바꿔 보여주는 것**이
+ *   이 도표의 일이고, 그건 사진으로는 안 된다.
+ *
+ *   숫자 셋의 출처가 각각 다르다. 한 칸에 모아 놓으면 그 사실이 안 보이므로
+ *   칸마다 출처를 적었다.
+ *     117일·10m/s        농촌진흥청 웹진 「국가중요농업유산 제2호 제주밭담」
+ *     22,108km           같은 글 (연구 추정치라고 원문이 밝히고 있다)
+ *     10m·7시간·90일     UNESCO 인류무형문화유산 등재문 (2016)
+ *
+ *   한국어 낱말은 도표 안에서 로마자로 적는다 — 한글을 못 읽는 독자가 보는 그림이다.
+ *   본문에서는 한글과 발음을 함께 적는다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 476;
+
+const X0 = 50, COL_W = 215, GAP = 22;
+const CARD_Y = 74, CARD_H = 330;
+
+/*
+ * 불릿 문구는 30자 안쪽으로 유지한다. 처음엔 32~33자였고,
+ * 렌더해서 열어 보니 1·3번 칸에서 글자가 카드 오른쪽 밖으로 나갔다.
+ * 폭 = COL_W(215) - 들여쓰기(32) - 여백(18) = 165px, 10.5px 글꼴 기준 약 30자다.
+ */
+const cols = [
+  {
+    ko: '바람', rom: 'ba-ram', gloss: 'Wind',
+    tone: '#4a6fa5', bg: '#e6ecf4',
+    fig: '117 days', figNote: 'a year at 10 m/s',
+    built: [
+      'Curved lanes, never straight',
+      'Roofs lashed in a rope grid',
+      'Gates of loose logs, no door',
+    ],
+    src: 'Rural Development Administration',
+  },
+  {
+    ko: '돌', rom: 'dol', gloss: 'Stone',
+    tone: '#6b6560', bg: '#ece8e2',
+    fig: '22,108 km', figNote: 'of walls round the fields',
+    built: [
+      'Batdam — a wall per field',
+      'A FAO agricultural heritage',
+      'Half the way round the earth',
+    ],
+    src: 'Rural Development Administration',
+  },
+  {
+    ko: '여자', rom: 'yeo-ja', gloss: 'Women — not a headcount',
+    tone: '#c9622e', bg: '#f6e2d5',
+    fig: '10 m down', figNote: 'on one held breath',
+    built: [
+      'Haenyeo — 7 hours a day',
+      '90 days a year, no air',
+      'A pantheon that is female',
+    ],
+    src: 'UNESCO, inscribed 2016',
+  },
+];
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="What Jeju's three abundances actually produced. Wind: on average 117 days a year at 10 metres per second, which produced curving lanes, roofs lashed down in a rope grid, and gates made of loose logs instead of doors. Stone: 22,108 kilometres of walls around the fields, a FAO agricultural heritage site, half the circumference of the earth. Women: not a headcount but the haenyeo divers, who go 10 metres down on one held breath, up to seven hours a day, 90 days a year, inscribed by UNESCO in 2016, and an island pantheon that is largely female.">
+
+    <text x={X0} y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      SAMDA — THE THREE THINGS JEJU IS SAID TO HAVE TOO MANY OF
+    </text>
+    <text x={X0} y="48" font-size="12.5" fill="#3c3733">
+      Jeju's own tourism board still uses the phrase. This is what each one actually built.
+    </text>
+
+    {cols.map((c, i) => {
+      const x = X0 + i * (COL_W + GAP);
+      return (
+        <>
+          <rect x={x} y={CARD_Y} width={COL_W} height={CARD_H} rx="6" fill={c.bg} />
+          <rect x={x} y={CARD_Y} width={COL_W} height="4" rx="2" fill={c.tone} />
+
+          <text x={x + COL_W / 2} y={CARD_Y + 52} text-anchor="middle" font-size="32"
+                font-weight="700" fill="#12100f">{c.ko}</text>
+          <text x={x + COL_W / 2} y={CARD_Y + 72} text-anchor="middle" font-size="12" fill="#8a827b">{c.rom}</text>
+          <text x={x + COL_W / 2} y={CARD_Y + 94} text-anchor="middle" font-size="12.5"
+                font-weight="700" fill={c.tone}>{c.gloss}</text>
+
+          <text x={x + COL_W / 2} y={CARD_Y + 140} text-anchor="middle" font-size="24"
+                font-weight="700" fill={c.tone}>{c.fig}</text>
+          <text x={x + COL_W / 2} y={CARD_Y + 160} text-anchor="middle" font-size="11.5" fill="#6b6560">{c.figNote}</text>
+
+          <line x1={x + 18} y1={CARD_Y + 180} x2={x + COL_W - 18} y2={CARD_Y + 180}
+                stroke={c.tone} stroke-width="1" stroke-opacity="0.45" />
+
+          <text x={x + 18} y={CARD_Y + 202} font-size="10.5" font-weight="700"
+                fill="#8a827b" letter-spacing="0.08em">SO THE ISLAND HAS</text>
+
+          {c.built.map((b, j) => (
+            <>
+              <circle cx={x + 22} cy={CARD_Y + 222 + j * 26} r="2.4" fill={c.tone} />
+              <text x={x + 32} y={CARD_Y + 226 + j * 26} font-size="10.5" fill="#3c3733">{b}</text>
+            </>
+          ))}
+
+          <text x={x + 18} y={CARD_Y + CARD_H - 14} font-size="10" fill="#a09890">{c.src}</text>
+        </>
+      );
+    })}
+
+    <text x={X0} y={CARD_Y + CARD_H + 32} font-size="12" fill="#6b6560">
+      The third one is the one that travels badly. It never meant that Jeju had more women than men.
+    </text>
+    <text x={X0} y={H - 14} font-size="11.5" fill="#a09890">
+      Our own illustration. Figures read from the three sources named in each column, 20 August 2026.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

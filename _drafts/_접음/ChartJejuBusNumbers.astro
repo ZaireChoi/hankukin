@@ -1,0 +1,125 @@
+---
+/**
+ * 제주 버스 번호 첫 자리 해독도.
+ *
+ * 왜 그렸나 (2026-08-20, 제주 1편).
+ *   재고 242장에 제주 사진이 **한 장도 없다** (슬러그 목록을 전부 확인했다).
+ *   그리고 이 기사의 요점은 풍경이 아니라 **번호와 요금이 묶여 있다**는 구조다 —
+ *   1로 시작하면 거리비례, 나머지는 1,150원 단일요금.
+ *   그건 사진으로는 전달되지 않는다. 버스 전면 LED 를 그린 도해가 사진보다 정확하다.
+ *   내장산 가을편이 사진 대신 산림청 도표로 지탱한 것과 같은 판단이다.
+ *
+ *   숫자는 전부 제주버스정보시스템 「제주버스 요금체계」·「제주버스 노선」에서
+ *   2026-08-20 에 읽은 값이다. 우리가 추정한 값은 하나도 없다.
+ *
+ *   '111' 을 예로 고른 이유 — 제주공항에서 성산포항까지 가는 급행이고,
+ *   같은 페이지가 환승 규칙 예시로도 이 번호를 쓴다(111 ↔ 112).
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 540;
+
+const RAPID = '#c9622e';
+const FLAT = '#4f8a5b';
+/*
+ * 칩 배경은 fill-opacity 가 아니라 **불투명한 색**으로 준다 (2026-08-20).
+ *   처음엔 tone + fill-opacity 0.14 로 그렸고, 렌더해서 열어 보니
+ *   칩이 통째로 진한 색으로 나오면서 **같은 색으로 쓴 숫자가 사라졌다.**
+ *   브라우저에서는 보일 값이지만, 렌더러 하나에서 안 보인다는 것은
+ *   대비가 렌더러에 기대고 있다는 뜻이다. 기대지 않게 고정한다.
+ */
+const RAPID_BG = '#f6e2d5';
+const FLAT_BG = '#dfeade';
+
+const rows = [
+  /* 1행 영문은 짧게 — 렌더해서 보니 긴 문구가 오른쪽 요금과 맞닿았다 (₩2,000–3,000 이 가장 넓다) */
+  { key: '1', ko: '급행버스', rom: 'geup-haeng', en: 'Rapid — town to town by highway', fare: '₩2,000–3,000', tone: RAPID, bg: RAPID_BG },
+  { key: '2', ko: '일반간선', rom: 'il-ban gan-seon', en: 'Trunk, island-wide (coast roads)', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '3', ko: '제주간선', rom: 'Jeju gan-seon', en: 'Trunk, inside Jeju City', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '4', ko: '제주지선', rom: 'Jeju ji-seon', en: 'Branch, inside Jeju City', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '5', ko: '서귀포간선', rom: 'Seogwipo gan-seon', en: 'Trunk, inside Seogwipo', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '6', ko: '서귀포지선', rom: 'Seogwipo ji-seon', en: 'Branch, inside Seogwipo', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '7', ko: '읍면지선', rom: 'eup-myeon ji-seon', en: 'Branch, out in the villages', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+  { key: '810·820', ko: '관광지순환', rom: 'gwan-gwang-ji sun-hwan', en: 'Tourist circular, from a transfer stop', fare: '₩1,150', tone: FLAT, bg: FLAT_BG },
+];
+
+const ROW_Y = 168, ROW_H = 36;
+const X_CHIP = 60, X_KO = 168, X_EN = 330, X_FARE = 700;
+/* 표 아래 세 줄은 좌표를 계산해서 놓는다. 손으로 적었더니 두 줄이 겹치고 한 줄은 화면 밖으로 나갔다. */
+const TABLE_END = ROW_Y + rows.length * ROW_H;   // 456
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="How Jeju bus numbers work. A bus showing 111 is a rapid bus, because the number starts with 1. Numbers starting 1 are rapid buses priced by distance, 2,000 to 3,000 won. Numbers starting 2 through 7, and the 810 and 820 tourist circular routes, are all a flat 1,150 won: 2 is an island-wide trunk route, 3 and 4 run inside Jeju City, 5 and 6 inside Seogwipo, 7 out in the villages.">
+
+    <text x={X_CHIP} y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      THE FIRST DIGIT IS THE FARE
+    </text>
+
+    {/* 전면 LED */}
+    <rect x={X_CHIP} y="38" width="188" height="70" rx="6" fill="#12100f" />
+    <text x={X_CHIP + 94} y="88" text-anchor="middle" font-size="42" font-weight="700"
+          fill="#f0a24a" letter-spacing="0.06em" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">111</text>
+
+    <path d={`M ${X_CHIP + 12} 116 v 9 h 30 v -9`} fill="none" stroke={RAPID} stroke-width="1.8" />
+    <text x={X_CHIP + 52} y="130" font-size="12.5" fill="#3c3733">
+      starts with 1 → a rapid bus → you pay by distance
+    </text>
+
+    <text x="278" y="62" font-size="12.5" fill="#3c3733">
+      Jeju's route numbers are grouped by the job the
+    </text>
+    <text x="278" y="80" font-size="12.5" fill="#3c3733">
+      route does. Read the front of the bus and you know
+    </text>
+    <text x="278" y="98" font-size="12.5" fill="#3c3733">
+      what kind of route it is — and what it will cost.
+    </text>
+
+    <line x1={X_CHIP} y1={ROW_Y - 22} x2={X_FARE} y2={ROW_Y - 22} stroke="#e0d8ce" stroke-width="1" />
+    <text x={X_CHIP} y={ROW_Y - 6} font-size="11" font-weight="700" fill="#a09890" letter-spacing="0.08em">STARTS WITH</text>
+    <text x={X_FARE} y={ROW_Y - 6} text-anchor="end" font-size="11" font-weight="700" fill="#a09890" letter-spacing="0.08em">ADULT, CARD</text>
+
+    {rows.map((r, i) => (
+      <>
+        <rect x={X_CHIP} y={ROW_Y + i * ROW_H - 2} width={X_FARE - X_CHIP} height={ROW_H - 4} rx="4"
+              fill={i % 2 === 0 ? '#f7f2ea' : '#fffdfa'} />
+        <rect x={X_CHIP + 4} y={ROW_Y + i * ROW_H + 2} width="86" height="24" rx="4"
+              fill={r.bg} stroke={r.tone} stroke-width="1.2" />
+        <text x={X_CHIP + 47} y={ROW_Y + i * ROW_H + 19} text-anchor="middle"
+              font-size={r.key.length > 2 ? 12 : 15} font-weight="700" fill={r.tone}>{r.key}</text>
+
+        <text x={X_KO} y={ROW_Y + i * ROW_H + 14} font-size="14" font-weight="700" fill="#12100f">{r.ko}</text>
+        <text x={X_KO} y={ROW_Y + i * ROW_H + 28} font-size="10.5" fill="#8a827b">{r.rom}</text>
+
+        <text x={X_EN} y={ROW_Y + i * ROW_H + 22} font-size="12.5" fill="#3c3733">{r.en}</text>
+
+        <text x={X_FARE} y={ROW_Y + i * ROW_H + 22} text-anchor="end" font-size="13.5"
+              font-weight="700" fill={r.tone}>{r.fare}</text>
+      </>
+    ))}
+
+    <line x1={X_CHIP} y1={TABLE_END + 6} x2={X_FARE} y2={TABLE_END + 6}
+          stroke="#e0d8ce" stroke-width="1" />
+
+    <text x={X_CHIP} y={TABLE_END + 30} font-size="12.5" fill="#3c3733">
+      600 · 601 · 800 · 801 are airport limousines, priced by distance too, starting at ₩1,300.
+    </text>
+    <text x={X_CHIP} y={TABLE_END + 50} font-size="12.5" fill={RAPID} font-weight="700">
+      Pay cash on a rapid bus and the maximum fare applies, whatever the distance.
+    </text>
+
+    <text x={X_CHIP} y={TABLE_END + 78} font-size="11.5" fill="#a09890">
+      Our own illustration. Fares and route classes read from the Jeju Bus Information System, 20 August 2026.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
