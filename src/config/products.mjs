@@ -88,6 +88,33 @@ export const PRODUCTS = {
    *   4.6/5 · 리뷰 231 · 2K+ 예약 · 롯데렌터카(허츠 공식 파트너) · 공항 내 데스크 ·
    *   영어·중국어 가능 기사. 전부 상품 페이지에서 읽은 것이다.
    */
+  /*
+   * 제주 관광지 예매 (2026-08-20 확인). 운영자: "제주의 관광지 klook표 예매 제휴도 없고".
+   *
+   *   후보를 넷 열어 보고 골랐다. 고른 기준은 노출이 아니라 **독자가 실제로 쓸 수 있는가**다.
+   *     220302 성산일출봉+우도 종일투어  4.8 · **리뷰 4개** · 50+ 예약 → 우리 사진과 딱 맞지만 너무 얇다
+   *     87580  제주 주요관광지 1일투어   4.7 · 리뷰 32 · 200+   → **중국어 가이드**다. 영어 독자용이 아니다
+   *     19902  유네스코 소그룹 데이투어  4.8 · **리뷰 367 · 3K+ 예약 · English-only, 최대 15명** ← 이것
+   *
+   *   기사와도 맞는다. 대표사진이 성산일출봉(유네스코 세계자연유산)이고
+   *   기사 전체가 이 섬의 화산 지질을 설명한다. 그리고 **운전 절의 두 번째 답**이기도 하다 —
+   *   국제운전면허가 안 되는 사람이 성산일출봉·주상절리·천지연을 하루에 도는 방법.
+   *
+   *   ⚠ 이건 «입장권» 이 아니라 «투어» 다. 라벨에 day tour 를 명시했다 —
+   *      ticket 이라고 적으면 독자가 매표소 대체재로 읽는다.
+   */
+  'klook-jeju-unesco-tour': {
+    url: 'https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/',
+    merchant: 'Klook',
+    category: 'tour',
+    relationship: 'suggested',
+    label: 'Jeju UNESCO sites day tour, English-only small group — on Klook',
+    labels: {
+      ja: '済州ユネスコ地区の日帰りツアー（英語・少人数）— Klook',
+      'zh-hans': '济州世界自然遗产一日游（英文小团）—— Klook',
+    },
+    checkedAt: '2026-08-20',
+  },
   'klook-jeju-car-charter': {
     url: 'https://www.klook.com/en-US/activity/132698-jeju-car-charter/',
     merchant: 'Klook',
