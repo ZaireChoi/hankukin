@@ -10,6 +10,12 @@ publishedAt: 2026-08-20
 checkedAt: 2026-08-20
 riskGrade: yellow
 contentScore: 86
+hero:
+  src: ../../../assets/images/places/itaewon-2.jpg
+  alt: 一个人独自走过梨泰院室内服装市场的通道，两侧是挂满衬衫和外套的衣架
+  license: kogl-1
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=1253279
+  credit: 한국관광공사 (Korea Tourism Organization)
 translation:
   of: "scenes/itaewon-alone-what-to-eat-buy-and-when-to-go"
   sourceCheckedAt: 2026-08-20
@@ -37,6 +43,13 @@ sources:
 ---
 
 import Original from '../../../components/Original.astro';
+import Figure from '../../../components/Figure.astro';
+import market from '../../../assets/images/places/itaewon-5.jpg';
+
+export const KTO_MARKET = {
+  credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=1253279',
+};
 
 在韩国一个人待着是件难事，而且规则写得明明白白。
 
@@ -123,6 +136,10 @@ import Original from '../../../components/Original.astro';
 **我们不给你店铺数量。** 2026年8月20日，协会自己的网站两个地址都打不开。从我们没核对过的地方借来的数字，我们不印。
 
 另一种购物更普通，也更容易：车站附近的室内服装市场，一个个卖衬衫、外套和包的小摊。谈不上光鲜。但便宜、在室内，天气不好也开着。
+
+<Figure src={market} alt="室内服装市场的通道，一间间编号的小店，挂着外套和牛仔裤的衣架，木台上摆着包"
+        caption="梨泰院市场，梨泰院路14街。店铺不用店名，用编号——门头上写着2호、3호。离古董街只有几分钟，却是完全不同的两个世界。这里是梨泰院购物普通的那一半。"
+        {...KTO_MARKET} />
 
 ## 什么时候有节庆气氛——诚实的答案
 

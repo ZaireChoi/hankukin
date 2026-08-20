@@ -10,6 +10,12 @@ publishedAt: 2026-08-20
 checkedAt: 2026-08-20
 riskGrade: yellow
 contentScore: 86
+hero:
+  src: ../../assets/images/places/itaewon-2.jpg
+  alt: One person walking alone down the aisle of a covered clothing market in Itaewon, racks of shirts and jackets on both sides
+  license: kogl-1
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=1253279
+  credit: 한국관광공사 (Korea Tourism Organization)
 sources:
   - title: "Itaewon Class — Netflix official title page (logline, cast, genre tags, episode synopses)"
     url: "https://www.netflix.com/title/81193309"
@@ -30,6 +36,13 @@ sources:
 ---
 
 import Original from '../../components/Original.astro';
+import Figure from '../../components/Figure.astro';
+import market from '../../assets/images/places/itaewon-5.jpg';
+
+export const KTO_MARKET = {
+  credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=1253279',
+};
 
 Korea is hard to be alone in, and the rules say so out loud.
 
@@ -114,6 +127,10 @@ Its origin is the whole argument of this article compressed into one fact. In th
 We are not going to give you a shop count. The association's own website would not load for us on 20 August 2026, at either address we tried, so any number we printed would be borrowed from somewhere we had not checked.
 
 The other shopping is more ordinary and easier: the covered clothing market near the station, small stalls of shirts, coats and bags. It is not glamorous. It is cheap, it is indoors, and it is open when the weather is not.
+
+<Figure src={market} alt="Aisle of a covered clothing market with small numbered shops, rails of jackets and jeans, and a wooden table of bags"
+        caption="Itaewon Market, on Itaewon-ro 14-gil. Shops are numbered rather than named — the signs above the doors read 2호, 3호. This is the ordinary half of shopping here, a few minutes from the antique street and a world away from it."
+        {...KTO_MARKET} />
 
 ## When it feels like a festival — the honest answer
 
