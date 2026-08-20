@@ -135,7 +135,18 @@
     "  ② 간판이 층층이 쌓인 상업 거리 사진 (종로·강남역 요청 중)에서",
     "     '안경' 간판을 찾을 수 있으면 그걸 캡션으로 지목한다.",
     "",
-    "  ⚠ 안경점 내부의 손님 얼굴이 나오는 사진은 쓰지 않는다 — 병원편과 같은 원칙."
+    "  ⚠ 안경점 내부의 손님 얼굴이 나오는 사진은 쓰지 않는다 — 병원편과 같은 원칙.",
+    "",
+    "2026-08-20 — 운영자: '제주도 정말 아름답다. 사진도 많이 올려'.",
+    "  제주 편(Scenes)을 발행했는데 재고 242장에 제주 사진이 0장이라 도표로만 지탱했다.",
+    "  아래 10곳을 요청한다. 고른 기준은 '예쁜 곳' 이 아니라 **기사가 설명한 것을 보여주는 곳** 이다.",
+    "    성읍민속마을  초가·올레·정낭·돌담이 한자리에 있다. 기사의 건축 절이 통째로 여기에 있다",
+    "    제주밭담      22,108km 절의 주인공",
+    "    해녀박물관    삼다의 셋째 칸",
+    "    성산일출봉    대표사진 후보",
+    "  주의 — 아래 셋은 등재명이 어긋날 위험이 크다. 로그의 [모호] 후보를 보고 exactTitle 로 못박을 것.",
+    "  그리고 받은 뒤에는 **전부 열어 볼 것.** 이름이 맞아도 사진이 맞다는 뜻이 아니다",
+    "  ('내장산 단풍생태공원' 은 이름이 정확했고 사진은 초록 여름 공원이었다)."
   ],
   "requests": [
     {
@@ -536,6 +547,88 @@
       "keyword": "윤중로",
       "expectRegion": "서울",
       "slug": "yunjungno"
+    },
+    {
+      "keyword": "성읍민속마을",
+      "expectRegion": "제주",
+      "slug": "jeju-seongeup-folk",
+      "exactTitle": "성읍민속마을"
+    },
+    {
+      "keyword": "성산포 해녀물질공연장",
+      "expectRegion": "제주",
+      "slug": "jeju-haenyeo-show",
+      "exactTitle": "성산포 해녀물질공연장"
+    },
+    {
+      "keyword": "신창풍차해안도로",
+      "expectRegion": "제주",
+      "slug": "jeju-sinchang-windmill",
+      "exactTitle": "신창풍차해안도로"
+    },
+    {
+      "keyword": "용눈이오름",
+      "expectRegion": "제주",
+      "slug": "jeju-yongnuni-oreum",
+      "exactTitle": "용눈이오름"
+    },
+    {
+      "keyword": "거문오름 [유네스코 세계자연유산]",
+      "expectRegion": "제주",
+      "slug": "jeju-geomunoreum",
+      "exactTitle": "거문오름 [유네스코 세계자연유산]"
+    },
+    {
+      "keyword": "한라산",
+      "expectRegion": "제주",
+      "slug": "jeju-hallasan",
+      "exactTitle": "한라산"
+    },
+    {
+      "keyword": "비자림",
+      "expectRegion": "제주",
+      "slug": "jeju-bijarim",
+      "exactTitle": "비자림"
+    },
+    {
+      "keyword": "감귤박물관",
+      "expectRegion": "제주",
+      "slug": "jeju-citrus-museum",
+      "exactTitle": "감귤박물관"
+    },
+    {
+      "keyword": "광치기해변",
+      "expectRegion": "제주",
+      "slug": "jeju-gwangchigi-beach",
+      "exactTitle": "광치기해변"
+    },
+    {
+      "keyword": "산굼부리",
+      "expectRegion": "제주",
+      "slug": "jeju-sangumburi",
+      "exactTitle": "산굼부리"
+    },
+    {
+      "keyword": "돌하르방미술관",
+      "expectRegion": "제주",
+      "slug": "jeju-dolhareubang",
+      "exactTitle": "돌하르방미술관"
+    },
+    {
+      "keyword": "정방폭포",
+      "expectRegion": "제주",
+      "slug": "jeju-jeongbang-falls",
+      "exactTitle": "정방폭포"
+    },
+    {
+      "keyword": "성산일출봉",
+      "expectRegion": "제주",
+      "slug": "jeju-seongsan-ilchulbong"
+    },
+    {
+      "keyword": "우도",
+      "expectRegion": "제주",
+      "slug": "jeju-udo"
     }
   ]
 }
