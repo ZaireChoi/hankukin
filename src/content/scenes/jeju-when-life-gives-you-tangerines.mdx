@@ -11,10 +11,10 @@ stars: ["IU", "Park Bo-gum", "Moon So-ri"]
 publishedAt: 2026-08-20
 checkedAt: 2026-08-20
 hero:
-  src: ../../assets/images/places/jeju-haenyeo-show-5.jpg
-  alt: Turquoise shallow water over dark volcanic rock at Seongsanpo on Jeju, with a steep tuff headland rising across the bay and a few swimmers in the water
+  src: ../../assets/images/places/jeju-seongsan-ilchulbong-3.jpg
+  alt: Sunrise over the sea at Seongsan on Jeju, the flat-topped Ilchulbong tuff cone in silhouette across gold water, with white crinum lilies flowering in the green foreground
   license: kogl-1
-  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=770036
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=126435
   credit: 한국관광공사 (Korea Tourism Organization)
 riskGrade: green
 contentScore: 86
@@ -53,15 +53,17 @@ import thatch from '../../assets/images/places/jeju-seongeup-folk-2.jpg';
 import lane from '../../assets/images/places/jeju-seongeup-folk-5.jpg';
 import cow from '../../assets/images/places/jeju-udo-2.jpg';
 import turbines from '../../assets/images/places/jeju-sinchang-windmill-4.jpg';
-import boardwalk from '../../assets/images/places/jeju-sinchang-windmill-2.jpg';
 import grass from '../../assets/images/places/jeju-sangumburi-6.jpg';
-import cave from '../../assets/images/places/jeju-udo-5.jpg';
+import crater from '../../assets/images/places/jeju-hallasan-1.jpg';
+import seongsanpo from '../../assets/images/places/jeju-haenyeo-show-5.jpg';
 
 export const KTO = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1' };
 export const SEONGEUP = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126471' };
 export const UDO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=127336' };
 export const SINCHANG = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
 export const SANGUMBURI = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
+export const HALLASAN = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264590' };
+export const SEONGSANPO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
 
 Start with the title, because the title is already the argument.
 
@@ -129,6 +131,10 @@ Now read Netflix's summary of episode four: *"Summer brings joy as the newlyweds
 
 ## Twenty-two thousand kilometres of wall
 
+<Figure src={crater} alt="The Baengnokdam crater lake at the summit of Hallasan on Jeju, a shallow pool of water inside a wide green bowl of volcanic rock, cloud lying below the rim"
+        caption="Baengnokdam, the crater lake at the top of Hallasan. Everything in this article comes out of this hole — the stone in the fields, the walls, the soil that will not hold a paddy, and the mountain that splits the island's weather in two."
+        {...HALLASAN} />
+
 The second abundance is under your feet before you notice it. Jeju is basalt: the fields produce stones the way other fields produce weeds, and clearing them was endless. Carrying them away was pointless, so they were stacked at the edge — which also, conveniently, broke the wind and kept the cattle out. In 1234 a Jeju magistrate ordered boundary walls built so that the strong could not quietly take the land of the weak, and the practice spread across the island.
 
 The total is the fact worth carrying: research quoted by the Rural Development Administration puts the length of Jeju's field walls at **22,108 km**. The earth is about 40,000 km around. Jeju calls them **흑룡만리** — said *heung-nyong-mal-li*, not *heuk-ryong-man-ri*, for [the reason Jongno is not Jongro](/en/hangul/korean-romanization-jongno-not-jongro/) — the black dragon, ten thousand *ri*, because from a distance the basalt runs and coils. They are dry-stacked, no mortar, and that is deliberate too: when the wind takes a section out, the rest stays up and you rebuild only the gap.
@@ -145,9 +151,9 @@ The clearest surviving version is the **해녀** *(hae-nyeo)*, the diving women,
 
 Episode five of the series is called *A Midsummer Night's Full Nets*. It is not a metaphor.
 
-<Figure src={cave} alt="The mouth of a sea cave on Udo island seen from inside, dark basalt walls framing bright water and a small boat outside"
-        caption="A sea cave on Udo, reached by boat. We should say plainly what we could not show you: the tourism authority's registered photographs of the diving site show the water and the spectators, not the divers at work. We are not going to caption a crowd as haenyeo."
-        {...UDO} />
+<Figure src={seongsanpo} alt="Clear shallow water over dark volcanic reef at Seongsanpo on Jeju, with a steep headland rising across the bay and a few people in the water"
+        caption="The water at Seongsanpo where the diving demonstrations are held. We should say plainly what we cannot show you: the tourism authority's registered photographs of this site are of the sea and the spectators, not of the divers at work. We are not going to caption a crowd as haenyeo."
+        {...SEONGSANPO} />
 
 ## There was never a paddy field
 
@@ -170,6 +176,8 @@ The second one is the tell. Jajangmyeon is the flattest-priced dish in the count
         {...SANGUMBURI} />
 
 The series names its episodes for the seasons — *Spring in a Heartbeat*, *The Blazing Summer Sunshine*, *A Fruitful Fall* — and the island earns that structure. Two notes on top of our [month-by-month calendar](/en/now/best-time-to-visit-korea-calendar/). VisitJeju describes the island as sitting in the path of the typhoons; that is the same wind that shaped the houses, and late summer is when it is most likely to cost you a ferry or a flight. And the tangerines the English title borrows are a late-autumn and winter crop, not a summer one — if you came for the fruit in the picture, you came in the wrong month.
+
+One correction we owe you, because a reader would otherwise take the wrong impression from our own back catalogue. **Jeju is not a warm-winter escape, and Hallasan gets serious snow.** Our piece on [where snow actually falls in Korea](/en/now/when-does-it-snow-in-korea/) is built on the meteorological agency's station figures for Mokpo, Seoul and Pohang — and it does not mention Jeju at all. That is a hole in it, not a verdict on the island. We have not yet opened the agency's Jeju figures, so we are not going to put a number here; when we have them, that article gets Jeju and this line gets a link.
 
 ## Three things we did not do
 
