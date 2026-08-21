@@ -159,6 +159,11 @@
               "answer": "这是正常的。韩国影院给外国电影配字幕，本国电影不配。上岩的韩国电影资料院会用「E」标出带英文字幕的场次，而且免费入场。"
             }
           }
+        },
+        {
+          "when": "The map dropped me on the right road but I cannot find the building number",
+          "answer": "The number is a distance, not a serial — multiply it by ten for metres from the start of the road, and odd numbers run down the left-hand side as you walk from that start, even down the right.",
+          "href": "hangul/korean-address-road-name-building-number"
         }
       ],
       "i18n": {
