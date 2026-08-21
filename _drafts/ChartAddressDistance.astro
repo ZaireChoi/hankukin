@@ -1,0 +1,118 @@
+---
+/**
+ * 도로명주소 해부도 — 건물번호는 순번이 아니라 거리다.
+ *
+ * 왜 그렸나 (2026-08-21, Hangul 6편).
+ *   도로명판·건물번호판 사진이 재고 242장에 한 장도 없다.
+ *   그리고 있어도 부족하다 — 판 하나를 크게 찍으면 '이런 표지판이 있다' 는
+ *   전달되지만, 이 기사가 가르치려는 것은 **번호와 거리 사이의 관계**다.
+ *   그건 눈금자 위에서만 보인다.
+ *
+ *   숫자는 지어내지 않았다.
+ *     · 왼쪽 홀수 / 오른쪽 짝수, 시작지점 → 끝지점  = 시행령 제7조제4항
+ *     · 기초간격 20미터                              = 시행규칙 제3조
+ *     · 152 → 약 1.52km                              = 위 둘의 결과
+ *     · 대정로23번길 → 약 230m 지점에서 왼쪽 분기      = 주소정보누리집 도해
+ *
+ *   '대정로23번길' 은 행정안전부 안내 도해에 실린 예시를 그대로 쓴 것이고
+ *   특정 실재 주소를 가리키려는 것이 아니다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 470;
+
+/* 도로 막대 — 왼쪽이 시작지점(서쪽 또는 남쪽) */
+const RX = 78, RW = 604, RY = 132, RH = 42;
+
+/* 눈금 다섯 칸. 한 칸 = 20미터 = 기초번호 두 개 */
+const TICKS = [
+  { odd: '1', even: '2', m: '0 m' },
+  { odd: '3', even: '4', m: '20 m' },
+  { odd: '5', even: '6', m: '40 m' },
+  { odd: '7', even: '8', m: '60 m' },
+  { odd: '9', even: '10', m: '80 m' },
+];
+const T0 = RX + 46, TGAP = 118;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="A diagram of how Korean building numbers work. A road runs from left to right from its start point. Odd numbers sit on the left-hand side, even numbers on the right, and the numbers step up by two every twenty metres. The ministry reads the plate on Gangnam-daero, marked 1 to 699, as 6.99 kilometres of road. Below, the side street named Daejeong-ro 23 beon-gil is the one that leaves Daejeong-ro about 230 metres along, on the left.">
+
+    <text x={RX} y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      TWENTY METRES, TWO NUMBERS — ONE TO EACH SIDE OF THE ROAD
+    </text>
+
+    {/* 시작지점 표시 */}
+    <text x={RX} y="52" font-size="12.5" fill="#3c3733">
+      Every road has a start point. East–west roads start at the west end; south–north roads start at the south end.
+    </text>
+
+    <text x={RX} y="88" font-size="12" font-weight="700" fill="#c9622e" letter-spacing="0.06em">
+      START
+    </text>
+    <path d={`M ${RX} 94 v ${RY + RH + 6 - 94}`} stroke="#c9622e" stroke-width="1.6" />
+
+    {/* 홀수 — 왼쪽 */}
+    <text x={RX} y="116" font-size="11.5" font-weight="700" fill="#4f8a5b">ODD — your left</text>
+    {TICKS.map((t, i) => (
+      <text x={T0 + i * TGAP} y="116" text-anchor="middle" font-size="17" font-weight="700" fill="#4f8a5b">{t.odd}</text>
+    ))}
+
+    {/* 도로 */}
+    <rect x={RX} y={RY} width={RW} height={RH} rx="4" fill="#efe9e1" stroke="#e0d8ce" />
+    <path d={`M ${RX + 8} ${RY + RH / 2} H ${RX + RW - 8}`} stroke="#c9c0b5" stroke-width="1.4" stroke-dasharray="12 10" />
+    <path d={`M ${RX + RW - 26} ${RY + RH / 2 - 7} l 14 7 l -14 7`} fill="none" stroke="#8a827b" stroke-width="1.8" />
+
+    {/* 짝수 — 오른쪽 */}
+    <text x={RX} y={RY + RH + 22} font-size="11.5" font-weight="700" fill="#c9622e">EVEN — your right</text>
+    {TICKS.map((t, i) => (
+      <text x={T0 + i * TGAP} y={RY + RH + 22} text-anchor="middle" font-size="17" font-weight="700" fill="#c9622e">{t.even}</text>
+    ))}
+
+    {/* 거리 눈금 */}
+    {TICKS.map((t, i) => (
+      <>
+        <path d={`M ${T0 + i * TGAP} ${RY + RH + 32} v 7`} stroke="#c9c0b5" stroke-width="1.2" />
+        <text x={T0 + i * TGAP} y={RY + RH + 55} text-anchor="middle" font-size="12" fill="#8a827b">{t.m}</text>
+      </>
+    ))}
+    <text x={RX + RW} y={RY + RH + 55} text-anchor="end" font-size="12" fill="#8a827b">and so on</text>
+
+    {/* 계산 상자 */}
+    <rect x={RX} y="272" width={RW} height="66" rx="6" fill="#fbf7f1" stroke="#e6ddd2" />
+    <text x={RX + 20} y="299" font-size="15" font-weight="700" fill="#12100f">
+      강남대로 1 → 699
+    </text>
+    <text x={RX + 168} y="299" font-size="14" fill="#3c3733">
+      The ministry reads its own sign as 6.99 km of road.
+    </text>
+    <text x={RX + 20} y="323" font-size="14" fill="#3c3733">
+      Two numbers every 20 m is one number every 10 m — so 699 is 6,990 metres, and 152 would be about 1.5 km.
+    </text>
+
+    {/* 번길 */}
+    <text x={RX} y="372" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      AND THE SAME NUMBER NAMES THE SIDE STREETS
+    </text>
+    <text x={RX} y="398" font-size="15" font-weight="700" fill="#12100f">대정로23번길</text>
+    <text x={RX + 132} y="398" font-size="14" fill="#3c3733">
+      — the side street that leaves 대정로 about 230 m along, on the left.
+    </text>
+    <text x={RX} y="422" font-size="14" fill="#3c3733">
+      A plain 3길 with no 번 is a different system: it counts branches, and tells you no distance at all.
+    </text>
+
+    <text x={RX} y={H - 12} font-size="11.5" fill="#a09890">
+      Our own illustration, drawn from the Enforcement Decree (Art. 7(4)) and Enforcement Rule (Art. 3) of the Road Name Address Act.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

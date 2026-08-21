@@ -1,0 +1,169 @@
+---
+title: "How to Read a Korean Address: Every Number Is a Distance in Metres"
+seoTitle: "How to Read a Korean Address: Numbers Are Distances"
+summary: "A Korean building number is not a serial number. It is how far that door stands from the start of the road — ten metres per number, odd on your left and even on your right. Where the start of a road is, why 3길 and 3번길 mean entirely different things, what the arrows on a corner plate are counting, and the ten-metre grid that covers the parts of Korea with no roads at all."
+lang: en
+seriesPart: 6
+publishedAt: 2026-08-21
+checkedAt: 2026-08-21
+riskGrade: green
+contentScore: 85
+letters:
+  - { ko: "대로", romanized: "dae-ro", note: "boulevard — 40 m wide or 8+ lanes" }
+  - { ko: "로", romanized: "ro", note: "road — 12 to 40 m, or 2 to 7 lanes" }
+  - { ko: "길", romanized: "gil", note: "street — anything narrower" }
+  - { ko: "번길", romanized: "beon-gil", note: "numbered side street — the number is a distance" }
+  - { ko: "도로명", romanized: "do-ro-myeong", note: "road name" }
+  - { ko: "건물번호", romanized: "geon-mul-beon-ho", note: "building number" }
+  - { ko: "기초번호", romanized: "gi-cho-beon-ho", note: "basic number — one every 20 m along a road" }
+  - { ko: "도로명판", romanized: "do-ro-myeong-pan", note: "the road-name plate on a corner" }
+  - { ko: "건물번호판", romanized: "geon-mul-beon-ho-pan", note: "the number plate on a building" }
+  - { ko: "지하", romanized: "ji-ha", note: "underground — printed before the number for basement arcades" }
+  - { ko: "층", romanized: "cheung", note: "floor" }
+  - { ko: "호", romanized: "ho", note: "unit or room number" }
+  - { ko: "국가지점번호", romanized: "guk-ga-ji-jeom-beon-ho", note: "national point number — the 10 m grid where there are no roads" }
+sources:
+  - title: "도로명주소법 — 국가법령정보센터 (Road Name Address Act, Korean Law Information Center)"
+    url: "https://www.law.go.kr/법령/도로명주소법"
+    type: public_institution
+    checkedAt: 2026-08-21
+  - title: "도로명주소법 시행령 — 국가법령정보센터 (Enforcement Decree of the Road Name Address Act)"
+    url: "https://www.law.go.kr/법령/도로명주소법시행령"
+    type: public_institution
+    checkedAt: 2026-08-21
+  - title: "도로명주소법 시행규칙 — 국가법령정보센터 (Enforcement Rule of the Road Name Address Act)"
+    url: "https://www.law.go.kr/법령/도로명주소법시행규칙"
+    type: public_institution
+    checkedAt: 2026-08-21
+  - title: "도로명주소 소개 — 행정안전부 주소정보누리집 (Introduction to Road Name Addresses, Ministry of the Interior and Safety)"
+    url: "https://www.juso.go.kr/introduction/RoadAddress"
+    type: public_institution
+    checkedAt: 2026-08-21
+---
+
+import Original from '../../components/Original.astro';
+import ChartAddressDistance from '../../components/ChartAddressDistance.astro';
+
+**699.** That is the number at the far end of the road-name plate standing at the start of Gangnam-daero, and the Ministry of the Interior and Safety explains it on its own website in five characters and a figure: 강남대로는 6.99km. Six point nine nine kilometres.
+
+The number is not a serial number. It is a distance.
+
+This is the part of the Korean address system that nobody translates, and it is the part that would have saved you the taxi fare. If you are standing outside number 39 looking for number 152, you are not one block away and you are not going to spot it. You are more than a kilometre away, and you are on the wrong side of the street.
+
+<ChartAddressDistance caption="On the street the useful form of this is subtraction, not multiplication: read the number on the nearest doorplate, subtract it from the one you are looking for, multiply by ten. That is your walk, in metres. If it comes out in four figures, stop and find transport — Korean blocks stay convincingly identical for a very long way." />
+
+## Two documents, one multiplier
+
+Two provisions build the rule, and they live in two different instruments.
+
+The first sets the pattern. Numbers are dealt out along a road from its start point toward its end, odd down one side and even down the other:
+
+<Original
+  ko="기초번호는 도로구간의 시작지점에서 끝지점 방향으로 왼쪽에는 홀수번호를, 오른쪽에는 짝수번호를 부여하며, 기초번호 간의 간격(이하 “기초간격”이라 한다)은 행정안전부령으로 정한다."
+  en="Basic numbers are assigned from the start point of a road section toward its end point, odd numbers on the left and even numbers on the right; the interval between basic numbers is prescribed by Ordinance of the Ministry of the Interior and Safety."
+  who="도로명주소법 시행령 제7조제4항"
+  whoEn="Enforcement Decree of the Road Name Address Act, Article 7(4)"
+  date="2026-01-02"
+  url="https://www.law.go.kr/법령/도로명주소법시행령" />
+
+Notice what it does not say. The decree hands the actual spacing to a ministerial rule, and you have to open a second instrument to find it:
+
+<Original
+  ko="「도로명주소법」 제2조제4호에서 “행정안전부령으로 정하는 간격”이란 20미터를 말한다."
+  en="The interval prescribed by Ordinance of the Ministry of the Interior and Safety under Article 2(4) of the Road Name Address Act means 20 metres."
+  who="도로명주소법 시행규칙 제3조"
+  whoEn="Enforcement Rule of the Road Name Address Act, Article 3"
+  date="2025-12-26"
+  url="https://www.law.go.kr/법령/도로명주소법시행규칙" />
+
+Put them together and the arithmetic is unavoidable. Every twenty metres the road issues two numbers, one to each side. Two numbers per twenty metres is one number per ten metres. **A door numbered 152 is roughly 1,520 metres from the start of its road** — and because 152 is even, it is on the right-hand side as you walk away from that start.
+
+The multiplier itself is written down nowhere. It is not in the Act, not in the decree, not in the rule. It exists only as the product of two provisions in two separate documents — which is presumably why the ministry does the sum for you in its signage diagrams rather than stating the constant in its statutes, and why almost nothing written in English about Korean addresses mentions it at all.
+
+The building number itself comes from whichever basic number sits at the building's main entrance, and a building with doors on two roads takes its number from the larger road. So the estimate is not exact — nobody promised it would be. What it gives you is the difference between *round the corner* and *get back in the taxi*, which is the decision you are actually making.
+
+Two exceptions, because they change the answer. Some narrow 길 *(gil)* are numbered every ten metres rather than twenty, and on those the ten-metre multiplier overshoots by half — treat it as a ceiling rather than a measurement. Expressways run on two-kilometre intervals, which is a different world entirely and not one you will be walking.
+
+## Where the start of a road is
+
+"From the start point" is doing a lot of work in that sentence, so it is worth knowing that the start is not arbitrary. The decree fixes it by compass:
+
+<Original
+  ko="서쪽과 동쪽을 잇는 도로는 서쪽을 시작지점으로, 동쪽을 끝지점으로 설정하고, 남쪽과 북쪽을 잇는 도로는 남쪽을 시작지점으로, 북쪽을 끝지점으로 설정할 것."
+  en="A road joining west and east shall be set with the west as its start point and the east as its end point; a road joining south and north shall be set with the south as its start point and the north as its end point."
+  who="도로명주소법 시행령 제7조제2항"
+  whoEn="Enforcement Decree of the Road Name Address Act, Article 7(2)"
+  date="2026-01-02"
+  url="https://www.law.go.kr/법령/도로명주소법시행령" />
+
+Which means the odd numbers — the left-hand side as you walk from the start — are the **north** side of an east–west road, and the **west** side of a south–north road. That last step is our geometry rather than the ministry's wording, and the same provision allows the rule to be set aside in cases prescribed by ministerial ordinance, so it is a strong default rather than a law of nature. But it is enough to answer the question you have while standing on a pavement holding a phone: cross now, or not.
+
+## 3길 and 3번길 are not the same thing
+
+Here is the trap, and it is a good one, because the two look nearly identical and mean entirely different things.
+
+Korean side streets get their names in two systems. In one, the number counts; in the other, the number measures.
+
+| The sign says | Say it | What the number is |
+|---|---|---|
+| **사직3길** | Sajik sam-gil | a **count**. The third branch, named in sequence. It tells you nothing about distance |
+| **시민로5번길** | Simin-ro o-beon-gil | a **distance**. It leaves Simin-ro at basic number 5 — about 50 m along, and on the left, because 5 is odd |
+| **OO로3번나길** | …sam-beon-na-gil | a branch off a branch. 가, 나, 다 are the Korean alphabet doing the work of a, b, c |
+
+The single syllable 번 *(beon)* is the whole tell. With it, you can compute. Without it, you cannot. Nobody puts this on a map legend, and the two forms sit side by side on the same district's streets.
+
+If those syllables are still a wall of shapes, the ninety minutes it takes to sound out Hangul is [where this series starts](/en/hangul/learn-to-read-korean-signs-alphabet/) — and the reason the romanisation on the sign above them does not match what you hear is [its own article](/en/hangul/korean-romanization-jongno-not-jongro/).
+
+## The last syllable is a width
+
+The three road words are not stylistic. They are legally defined by size, and they tell you what kind of thing you are about to walk down.
+
+| Ending | Say it | What it means |
+|---|---|---|
+| **대로** | dae-ro | 40 m wide or more, or eight lanes and up. A boulevard you cross at lights |
+| **로** | ro | 12 m to 40 m, or two to seven lanes |
+| **길** | gil | everything narrower — the capillaries |
+
+One honest caveat that the width table hides: the decree permits 대로 and 로, or 로 and 길, to be swapped where it makes addresses easier to use. So the ending is a reliable hint about scale, not a guarantee of lane count. Useful, all the same, when someone tells you their shop is "on a 길" — that is a lane, and a car will struggle.
+
+## The plate on the corner is a map
+
+Korea does not just number its buildings; it signposts the numbering. Five kinds of plate, and each one answers a different question.
+
+- **The one-direction plate** carries the road name and a range — `1 → 359` on the ministry's example. You are standing at the start, and the numbering runs that far in the direction of the arrow.
+- **The two-direction plate** stands at an intersection and splits the road in half: the arrow marked `92` points toward buildings numbered 92 and below, the arrow marked `96` toward 96 and above. You now know which corner to turn.
+- **The forward plate** faces you as you walk and gives two numbers — where you are, and where the road ends. On the ministry's example those are 92 and 250, so what is left is (250 − 92) × 10 m, or 1,580 metres. Its own caption rounds that to 1.5 km.
+- **The advance plate** names a road you have not reached yet, with a distance: 종로 *(Jongno)*, 200m.
+- **The building plate**, on the wall itself, carries the road name and that building's number. Basement arcades get 지하 *(ji-ha)*, "underground," printed in front of the number.
+
+Between them, the street gives you a position, a direction and a remaining distance, continuously — using a road name, two numbers and an arrow.
+
+## Written in English, the address runs backwards
+
+A Korean address is written largest unit first: province, then city or district, then road name, then building number, then the unit inside. Every English rendering reverses the whole thing. The ministry's own worked example:
+
+> 서울특별시 강남구 강남대로10길 109 → **109 Gangnam-daero 10-gil, Gangnam-gu, Seoul**
+
+The conventions it uses are worth copying exactly, because forms reject improvised spellings:
+
+- 대로, 로, 길 become **-daero, -ro, -gil**, and 번길 becomes **-beon-gil**.
+- The 시 *(si)* suffix may be dropped for Seoul and the metropolitan cities, but is kept elsewhere: Yangju-si, Chuncheon-si.
+- 동, 층, 호 are romanised — *dong, cheung, ho* — or given in the English shorthand most people actually use, where 층 becomes F and 지하 becomes B.
+
+One practical rule that outranks all of that: **when a Korean website gives you the address in Hangul, keep the Hangul.** That string is what a taxi driver, a delivery rider and a map app all read natively. Paste it, do not translate it. The romanised version is for the visa form and the customs declaration, not for the windscreen of a cab — and if you end up needing to describe where you were, [the lost-property system runs on the same addresses](/en/now/lost-something-in-korea-what-to-do/).
+
+There is a small irony to record here. The ministry runs a full Korean explanation of all of the above; the English side of the same site did not answer on 21 August 2026. Both the English guidebook URL that search engines still return and the site's own EN button resolved to the not-found page. That is not carelessness so much as the pattern we have written about before — [the English page is not the Korean page translated](/en/now/english-pages-korea-out-of-date/), and when it falls behind, it falls all the way over.
+
+## Where the roads stop, a grid starts
+
+There is a second numbering system underneath the first, and it exists for exactly the situation in which an address is most useful and least available: you are on a mountainside, or a breakwater, or a beach, and there is no road within sight.
+
+The state's answer is the 국가지점번호 *(guk-ga-ji-jeom-beon-ho)*, the national point number — a grid of ten-metre squares laid over the entire country from a fixed reference point. Every code is built the same way: two Hangul letters identify a 100 km block, then two four-digit numbers, zero-padded, pick out the square inside it. Always the same shape, always the same length, which is the property you want in something you may have to read aloud badly.
+
+It is required in places 100 metres or more from any named road, in areas the province has designated — which is to say, the places where people get into trouble. It appears on standalone plates, and on any fixed structure standing at least 50 cm above the ground or the water: pylons, floodgates, breakwaters.
+
+None of which is a substitute for telling somebody where you are going before you go. But it is worth knowing that the plate bolted to the post at a trail junction is not decoration. Korea has given a name to the ten metres you are standing on, and it is there for the day you need it.
+
+## What this article does not claim
+
+The ten-metres-per-number figure is a derivation, not a printed constant: it follows from Article 7(4) of the Enforcement Decree together with Article 3 of the Enforcement Rule, and the ministry uses it in its own signage diagrams. On narrow 길 numbered at ten-metre intervals it overshoots by half, so read it as a ceiling. That odd numbers fall on the north or west side is our geometry applied to the west-to-east, south-to-north rule; the decree allows exceptions by ordinance and we did not survey how common they are. We checked no individual road, address or plate on the ground, and we have not tested what an emergency operator does with a national point number — we describe what the plate is, not what happens when you read it out. Legal texts were read on 21 August 2026 at the Korean Law Information Center; the versions in force were the Decree of 2 January 2026 and the Rule of 26 December 2025.
