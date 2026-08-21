@@ -25,15 +25,23 @@ const W = 760, H = 470;
 /* 도로 막대 — 왼쪽이 시작지점(서쪽 또는 남쪽) */
 const RX = 78, RW = 604, RY = 132, RH = 42;
 
-/* 눈금 다섯 칸. 한 칸 = 20미터 = 기초번호 두 개 */
+/* 눈금 네 칸. 한 칸 = 20미터 = 기초번호 두 개
+ *
+ * 2026-08-21 오후. PNG 로 렌더해서 눈으로 보고 고쳤다 (⑥).
+ *   ① T0 가 RX+46 이었다 → 첫 숫자 1·2 가 'ODD — your left' ·
+ *      'EVEN — your right' 라벨 **위에 겹쳐** 찍혔다. 라벨 끝이 x≈180 인데
+ *      첫 눈금이 x=124 였다. 빌드는 통과했고 화면에서만 보였다.
+ *      T0 를 RX+130 으로 밀었다.
+ *   ② 다섯째 칸(9/10, 80 m)을 뺐다. 라벨을 피해 오른쪽으로 밀면
+ *      마지막 눈금이 'and so on' 과 부딪힌다. 네 칸으로도 규칙은 다 보인다.
+ */
 const TICKS = [
   { odd: '1', even: '2', m: '0 m' },
   { odd: '3', even: '4', m: '20 m' },
   { odd: '5', even: '6', m: '40 m' },
   { odd: '7', even: '8', m: '60 m' },
-  { odd: '9', even: '10', m: '80 m' },
 ];
-const T0 = RX + 46, TGAP = 118;
+const T0 = RX + 130, TGAP = 118;
 ---
 
 <figure class="chart">
@@ -88,8 +96,11 @@ const T0 = RX + 46, TGAP = 118;
     <text x={RX + 168} y="299" font-size="14" fill="#3c3733">
       The ministry reads its own sign as 6.99 km of road.
     </text>
+    {/* 2026-08-21 오후. 이 줄은 원래 '…and 152 would be about 1.5 km.' 로 끝났고,
+        상자(x 78~682)는커녕 viewBox(760)까지 넘어가 화면에서 잘려 있었다.
+        152 예시는 본문 첫 문단과 「Two documents, one multiplier」 절에 이미 두 번 있다. */}
     <text x={RX + 20} y="323" font-size="14" fill="#3c3733">
-      Two numbers every 20 m is one number every 10 m — so 699 is 6,990 metres, and 152 would be about 1.5 km.
+      Two numbers every 20 m is one number every 10 m — so 699 means 6,990 metres.
     </text>
 
     {/* 번길 */}
