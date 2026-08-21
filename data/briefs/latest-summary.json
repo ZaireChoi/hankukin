@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-18T20:14:19.243Z",
-  "radarCollectedAt": "2026-08-18T20:14:00.362Z",
+  "generatedAt": "2026-08-21T20:16:30.797Z",
+  "radarCollectedAt": "2026-08-21T20:16:10.036Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 2,
-    "needsSignal": 4,
+    "needsLocation": 3,
+    "needsSignal": 3,
     "skip": 0
   },
   "briefs": [
@@ -14,16 +14,43 @@
       "slug": "our-sticky-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.83,
+      "radarScore": 0.65,
       "independentSources": 2,
       "locationPotential": 0.6
+    },
+    {
+      "title": "Spooky in Love",
+      "slug": "spooky-in-love",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.52,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Badly in Love",
+      "slug": "badly-in-love",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.5,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "The East Palace",
+      "slug": "the-east-palace",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.419,
+      "independentSources": 2,
+      "locationPotential": 1
     },
     {
       "title": "I'm SOLO, Love goes on",
       "slug": "im-solo-love-goes-on",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.63,
+      "radarScore": 0.33,
       "independentSources": 1,
       "locationPotential": 0.6
     },
@@ -32,35 +59,8 @@
       "slug": "the-apartment-job",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.59,
+      "radarScore": 0.31,
       "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Whenever Possible",
-      "slug": "whenever-possible",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.59,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "The Auditors",
-      "slug": "the-auditors",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.53,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Spooky in Love",
-      "slug": "spooky-in-love",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.519,
-      "independentSources": 2,
       "locationPotential": 0.6
     }
   ]
