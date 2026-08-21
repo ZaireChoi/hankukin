@@ -1,0 +1,205 @@
+---
+title: "2026年首尔交通费：地铁、公交、出租车各是多少"
+seoTitle: "首尔交通费2026：地铁1,550韩元，公交、出租车"
+summary: "地铁刷卡1,550韩元，不刷卡1,650韩元——这个差价每一趟、每一次换乘都会重复一遍。这里是地铁、公交、出租车、机场巴士的实际价格，距离加价会多算多少，以及两条让人不知不觉多花钱的规则。"
+lang: zh-hans
+region: "Seoul"
+publishedAt: 2026-08-21
+checkedAt: 2026-08-21
+faresCheckedAt: 2026-08-14
+riskGrade: green
+contentScore: 85
+hero:
+  src: ../../../assets/images/places/incheon-airport-1.jpg
+  alt: 仁川国际机场第二航站楼内的上行扶梯，两侧是指示牌和店铺
+  license: kogl-3
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=2733967
+  credit: 한국관광공사 (Korea Tourism Organization)
+translation:
+  of: "now/seoul-transport-fares-subway-bus-taxi"
+  sourceCheckedAt: 2026-08-14
+  status: ai_translated_facts_verified
+  translatedAt: 2026-08-21
+  factsVerifiedAt: 2026-08-21
+sources:
+  - title: "교통 요금 안내 — 서울특별시 교통분야 누리집（首尔市交通门户：票价说明）"
+    url: "https://news.seoul.go.kr/traffic/traffic_price"
+    type: public_institution
+    checkedAt: 2026-08-14
+  - title: "우대용 교통카드 (수정일 2026-07-14) — 서울특별시 교통분야 누리집（优待交通卡）"
+    url: "https://news.seoul.go.kr/traffic/archives/1791"
+    type: public_institution
+    checkedAt: 2026-08-16
+  - title: "지하철 요금 안내 (조정일자 2025.6.28.) — 서울특별시（地铁票价表）"
+    url: "https://news.seoul.go.kr/traffic/files/2025/06/68539b266d80b9.22572911.png"
+    type: public_institution
+    checkedAt: 2026-08-14
+  - title: "버스 요금 안내 (조정일자 2023.8.12.) — 서울특별시（公交票价表）"
+    url: "https://news.seoul.go.kr/traffic/files/2025/07/687066d0e991d6.28954503.png"
+    type: public_institution
+    checkedAt: 2026-08-14
+---
+
+import Figure from '../../../components/Figure.astro';
+import Original from '../../../components/Original.astro';
+import arrivals from '../../../assets/images/places/incheon-airport-3.jpg';
+import ddp from '../../../assets/images/places/ddp-1.jpg';
+
+export const KTO = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264303',
+};
+
+export const KTO_AIRPORT = {
+  credit: '한국관광공사 (Korea Tourism Organization)',
+  license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2535506',
+};
+
+首尔是一座你可以用一杯咖啡的钱横穿、几乎任何时段都能横穿、而且从不用看时刻表的城市。光市中心地下就有九条线，公交按跑多远分颜色，出租车两分钟内到、能刷卡。对很多游客来说，来韩国之后真正感到惊讶的第一样东西不是某个古迹，是交通。
+
+它同时也是人们悄悄多付钱的地方，因为有两三条规则，闸机口不会告诉你。
+
+下面每一个数字都来自首尔特别市自己公布的表，<strong>2026年8月14日核实</strong>。地铁票价为2025年6月28日起施行，公交为2023年8月12日起施行，出租车标准计价为2023年2月1日起施行。
+
+先从最不声不响吃钱的那件事说起：<strong>不用交通卡。</strong>
+
+## 请先办一张卡。差价每一趟都在
+
+| 地铁·单程 | 刷卡 | 单程票 |
+|---|---|---|
+| 成人 | <strong>1,550韩元</strong> | 1,650韩元 |
+| 青少年（13–18岁） | <strong>900韩元</strong> | 1,650韩元 |
+| 儿童（6–12岁） | <strong>550韩元</strong> | 550韩元 |
+
+成人不刷卡，<strong>每趟多付100韩元</strong>。青少年<strong>多付750韩元</strong>——单程票根本没有青少年价。
+
+但真正的损失在后面：<strong>公交与地铁之间的免费换乘，只有刷卡才有。</strong>每次分开付钱，两段的行程就是两个全价。
+
+卡还会打开<strong>早鸟折扣</strong>：当天第一次乘车在06:30之前刷，基本票价降20%，地铁变成1,240韩元。
+
+## 公交按种类计价
+
+首尔的公交分好几类，价钱并不一样。车身上的编号和颜色就告诉你它是哪一类。
+
+| 类型 | 刷卡 | 现金 |
+|---|---|---|
+| <strong>蓝／绿</strong>（干线·支线） | <strong>1,500韩元</strong> | 1,500韩元 |
+| <strong>循环</strong>（순환） | 1,400韩元 | 1,400韩元 |
+| <strong>红——广域</strong>（광역） | <strong>3,000韩元</strong> | 3,000韩元 |
+| <strong>深夜</strong>（심야） | 2,500韩元 | 2,500韩元 |
+| <strong>社区小巴</strong>（마을） | 1,200韩元 | 1,200韩元 |
+
+陷阱是<strong>3,000韩元的红色公交</strong>——正好是市内公交的两倍。红色线路开往首尔之外的卫星城市。如果它先到、你又是在首尔市内移动，那就是花了双倍的钱、没有任何好处。
+
+<Figure src={ddp} alt="夜里亮着灯的曲面金属建筑东大门设计广场，前面是广场"
+        caption="东大门。3,000韩元的广域红色公交，和1,500韩元的市内公交经过的是同一批枢纽——站牌看上去一模一样。"
+        {...KTO} />
+
+## 没人提的距离加价
+
+基本票价包含前<strong>10公里</strong>。之后：
+
+- <strong>10–50公里</strong>：每5公里 +100韩元
+- <strong>超过50公里</strong>：每8公里 +100韩元
+
+在首尔市内移动，这基本等于没有——逛市场、[走一趟宫殿](/en/guides/five-palaces-seoul-which-one/)、在弘大过一晚，都在基本票价里。它开始起作用的地方是出城：仁川、水原、机场。一段长地铁会多出你没算到的几百韩元。
+
+## 出租车
+
+中型出租车，2023年2月1日起施行的标准：
+
+| | |
+|---|---|
+| 起步价 | 前1.6公里 <strong>4,800韩元</strong> |
+| 距离 | 每131米 +100韩元 |
+| 时间（时速低于15.33公里时） | 每30秒 +100韩元 |
+
+模范出租车和大型出租车是另一套：前3公里<strong>7,000韩元</strong>，之后每151米或每36秒加100韩元。
+
+有两件事会让外国乘客意外。
+
+<strong>不用给小费。</strong>没有人期待，也没有凑整的习惯。
+
+<strong>深夜有加成，</strong>跨出市界的行程可能有市外加成。这两样都是计价器自己加的，不是谈出来的。
+
+## 机场巴士
+
+去仁川的豪华巴士按<strong>线路</strong>定价，不按距离。
+
+| 区间 | 大致票价 |
+|---|---|
+| <strong>首尔 ↔ 仁川机场</strong> | <strong>17,000–18,000韩元</strong> |
+| 首尔 ↔ 金浦机场 | 5,000–8,000韩元 |
+| 金浦 ↔ 仁川机场 | 5,000–8,000韩元 |
+
+仁川豪华巴士不是全市一个价，而是<strong>一条线路一个价</strong>。运营方公布的表上，6001（东大门）、6002（清凉里）、6015（明洞）是<strong>17,000韩元</strong>，6701（市厅·光化门）和6703（江南·COEX）是<strong>18,000韩元</strong>。夜间线路18,000韩元。现金和刷卡同价。
+
+逐条线路的完整表格、首末班时间，在<strong>[从仁川机场进首尔市区](/zh-hans/now/incheon-airport-to-seoul-train-bus-taxi/)</strong>那一篇里。
+
+## 谁可以免费
+
+地铁上：<strong>未满6岁的儿童</strong>（一名成人最多带3名，成人照常付费）、<strong>持优待交通卡的满65岁以上人士</strong>、登记在册的残障人士、国家有功者。
+
+公交的免费范围窄得多——只有成人陪同的未满6岁儿童。<strong>65岁以上的免票不适用于公交。</strong>
+
+### 65岁以上这条，说准确一点
+
+这是外国旅客最常弄错的一项，所以我们把它说清楚。
+
+65岁以上地铁免费，靠的是<strong>优待交通卡（우대용 교통카드）</strong>。它是<strong>申请后发给的</strong>，而首尔市的交通卡页面——2026年8月16日复核，页面最后更新于2026年7月——用一句话写明了居住条件：
+
+<Original
+  ko="수도권 도시철도 무임승차 대상자(만 65세 이상 경로우대자, 장애인, 유공자) 중 주민등록 기준 서울시에 거주하는 자에 한함"
+  en="限于首都圈城市铁道免费乘车对象（年满65岁的敬老优待者、残障人士、国家有功者）中，按居民登记居住在首尔市的人。"
+  who="서울특별시 교통 누리집 「우대용 교통카드」"
+  whoEn="首尔特别市交通门户《优待交通卡》"
+  date="2026-07-14"
+  url="https://news.seoul.go.kr/traffic/archives/1791"
+  lang="zh-hans" />
+
+关键在<strong>按居民登记的居住</strong>：韩国国民可以，登记在册的永住者和在外同胞也可以——<strong>游客不行。</strong>免费版在首尔任何一个洞的住民中心（주민센터）办，信用卡／借记卡版在新韩银行网点办，2026年起 T-money 应用里有了手机版。其他城市各自为本市居民另有制度。
+
+<strong>它不是在闸机口出示护照就能通过的东西，短期停留的外国人没有这项权利。</strong>如果你68岁、来玩两周，请按普通成人票价做预算。
+
+同一页上还有一条，连本地人也会栽：这张卡免费的只有<strong>地铁</strong>。上了公交照样扣钱，而且免费坐完地铁再换公交，<strong>没有换乘折扣</strong>——公交那一段是全价。
+
+这和<strong>宫殿、博物馆的门票</strong>是两回事。那边65岁以上的外国游客凭护照确实免费。两条规则不一样，很容易把后一条搬到前一条上去。
+
+## 站牌上的到站信息是真的
+
+另一件刚到韩国的人不太敢信、但其实该信的事。
+
+<strong>韩国几乎每个公交站都有实时到站显示屏</strong>，而且它不是你习惯的那种「估计」。公交车是被连续追踪的，屏幕上每条线路会显示：
+
+- <strong>还有几分钟到</strong>
+- <strong>现在还差几站</strong>
+- 很多时候还有<strong>那辆车的车牌号</strong>，所以你知道来的是哪一辆
+- 不少屏幕上还有<strong>拥挤度</strong>——여유（空）／보통（一般）／혼잡（拥挤）
+
+地下也一样：站台屏幕会显示接下来两班车，以及各自还差几站。
+
+<strong>请相信那个数字。</strong>写着3分钟，就站在那儿等三分钟。外国乘客最常见的失误，是在第2分钟走开去找出租车。
+
+<strong>并排的两个数字是接下来的两班车</strong>，不是一个范围。「3·14」的意思是3分钟后一班、再下一班在14分钟后——这正是你决定要不要放过一辆挤车时需要的信息。
+
+<strong>곧 도착</strong> 意思是「即将到站」。把卡拿出来。
+
+<strong>末班车的问题是真的。</strong>首尔的市内公交大多在午夜前后收车，首都圈以外更早，而显示屏是直接空掉，不会通知你。要在外面待到很晚，请在需要之前就查好末班时间，而不是之后。
+
+## 两条会让你花钱的规则
+
+<strong>下车一定要刷。</strong>首尔交通公社对下车漏刷有追加收费：基本票价——成人1,550韩元——会在你下一次乘车时再扣一遍。这不是可以到窗口申诉的罚款，它是自动发生的。
+
+<strong>青少年和儿童票价需要登记。</strong>上面那些折扣不是自动生效的。卡必须先通过 T-money 登记成青少年卡或儿童卡，否则按成人价扣。
+
+<Figure src={arrivals} alt="旅客走过仁川国际机场到达大厅，两旁是成排的信息屏幕"
+        caption="仁川的到达大厅。上面所有票价都从这里开始——而第一个决定，坐火车、坐巴士还是打车，是整趟旅程里价差最大的一个选择。"
+        {...KTO_AIRPORT} />
+
+## 这篇文章没有主张什么
+
+票价是首尔特别市在上述日期公布的数字。韩国的交通票价由行政决定调整，地铁基本票价在过去两年里已经动过一次——在把某个具体数字放进预算之前，请到市政府的页面确认。
+
+<strong>我们没有核实 AREX 机场铁道、KTX、市外巴士，以及首尔首都圈票价体系之外任何运营方的票价。</strong>那些是不同运营方另定的另一套表，我们不在这里猜，会另外单独处理。

@@ -18,8 +18,8 @@
  *   한국어 낱말은 도표 안에서 로마자로 적는다 — 한글을 못 읽는 독자가 보는 그림이다.
  *   본문에서는 한글과 발음을 함께 적는다.
  */
-interface Props { caption: string }
-const { caption } = Astro.props;
+interface Props { lang?: string; caption: string }
+const { lang = 'en', caption } = Astro.props;
 
 const W = 760, H = 476;
 
@@ -31,52 +31,64 @@ const CARD_Y = 74, CARD_H = 330;
  * 렌더해서 열어 보니 1·3번 칸에서 글자가 카드 오른쪽 밖으로 나갔다.
  * 폭 = COL_W(215) - 들여쓰기(32) - 여백(18) = 165px, 10.5px 글꼴 기준 약 30자다.
  */
-const cols = [
-  {
-    ko: '바람', rom: 'ba-ram', gloss: 'Wind',
-    tone: '#4a6fa5', bg: '#e6ecf4',
-    fig: '117 days', figNote: 'a year at 10 m/s',
-    built: [
-      'Curved lanes, never straight',
-      'Roofs lashed in a rope grid',
-      'Gates of loose logs, no door',
-    ],
-    src: 'Rural Development Administration',
-  },
-  {
-    ko: '돌', rom: 'dol', gloss: 'Stone',
-    tone: '#6b6560', bg: '#ece8e2',
-    fig: '22,108 km', figNote: 'of walls round the fields',
-    built: [
-      'Batdam — a wall per field',
-      'A FAO agricultural heritage',
-      'Half the way round the earth',
-    ],
-    src: 'Rural Development Administration',
-  },
-  {
-    ko: '여자', rom: 'yeo-ja', gloss: 'Women — not a headcount',
-    tone: '#c9622e', bg: '#f6e2d5',
-    fig: '10 m down', figNote: 'on one held breath',
-    built: [
-      'Haenyeo — 7 hours a day',
-      '90 days a year, no air',
-      'A pantheon that is female',
-    ],
-    src: 'UNESCO, inscribed 2016',
-  },
+const TONE = [
+  { ko: '바람', rom: 'ba-ram', tone: '#4a6fa5', bg: '#e6ecf4' },
+  { ko: '돌',   rom: 'dol',    tone: '#6b6560', bg: '#ece8e2' },
+  { ko: '여자', rom: 'yeo-ja', tone: '#c9622e', bg: '#f6e2d5' },
 ];
+
+const T = {
+  en: {
+    kicker: 'SAMDA — THE THREE THINGS JEJU IS SAID TO HAVE TOO MANY OF',
+    sub: "Jeju's own tourism board still uses the phrase. This is what each one actually built.",
+    soHas: 'SO THE ISLAND HAS',
+    note: 'The third one is the one that travels badly. It never meant that Jeju had more women than men.',
+    foot: 'Our own illustration. Figures read from the three sources named in each column, 20 August 2026.',
+    alt: "What Jeju's three abundances actually produced. Wind: on average 117 days a year at 10 metres per second, which produced curving lanes, roofs lashed down in a rope grid, and gates made of loose logs instead of doors. Stone: 22,108 kilometres of walls around the fields, a FAO agricultural heritage site, half the circumference of the earth. Women: not a headcount but the haenyeo divers, who go 10 metres down on one held breath, up to seven hours a day, 90 days a year, inscribed by UNESCO in 2016, and an island pantheon that is largely female.",
+    cols: [
+      { gloss: 'Wind', fig: '117 days', figNote: 'a year at 10 m/s',
+        built: ['Curved lanes, never straight', 'Roofs lashed in a rope grid', 'Gates of loose logs, no door'],
+        src: 'Rural Development Administration' },
+      { gloss: 'Stone', fig: '22,108 km', figNote: 'of walls round the fields',
+        built: ['Batdam — a wall per field', 'A FAO agricultural heritage', 'Half the way round the earth'],
+        src: 'Rural Development Administration' },
+      { gloss: 'Women — not a headcount', fig: '10 m down', figNote: 'on one held breath',
+        built: ['Haenyeo — 7 hours a day', '90 days a year, no air', 'A pantheon that is female'],
+        src: 'UNESCO, inscribed 2016' },
+    ],
+  },
+  'zh-hans': {
+    kicker: '三多 —— 济州岛「太多」的三样东西',
+    sub: '济州旅游发展局至今仍在用这个说法。这里看的是每一样究竟造出了什么。',
+    soHas: '于是岛上有了',
+    note: '第三样最容易被译错。它从来不是说济州女人比男人多。',
+    foot: '本站自绘。三栏数字分别取自各栏注明的出处，2026年8月20日核实。',
+    alt: '济州「三多」各自造成了什么。风：一年约有117天风速达每秒10米，于是有了弯折的巷道、用粗绳织成网格压住的屋顶，以及三根横木、没有门板的门。石：环绕田地的石墙总长22,108公里，被列为联合国粮农组织全球重要农业文化遗产，相当于绕地球半圈。女：不是人口性别比，而是海女——一口气下潜10米，一天最多七小时，一年约90天，2016年列入联合国教科文组织名录；岛上的神明也多为女神。',
+    cols: [
+      { gloss: '风', fig: '117 天', figNote: '一年中风速达 10 m/s 的天数',
+        built: ['巷道是弯的，从不直通', '屋顶用粗绳压成网格', '门是三根横木，没有门板'],
+        src: '韩国农村振兴厅' },
+      { gloss: '石', fig: '22,108 公里', figNote: '环绕田地的石墙总长',
+        built: ['밭담 —— 一块田一道墙', '粮农组织全球农业遗产', '约等于绕地球半圈'],
+        src: '韩国农村振兴厅' },
+      { gloss: '女 —— 不是人数', fig: '下潜 10 米', figNote: '只凭一口气',
+        built: ['해녀 海女 —— 一天七小时', '一年90天，不带氧气', '岛上的神多是女神'],
+        src: '联合国教科文组织，2016年列入' },
+    ],
+  },
+};
+const t = T[lang] ?? T.en;
+const cols = TONE.map((c, i) => ({ ...c, ...t.cols[i] }));
 ---
 
 <figure class="chart">
-  <svg viewBox={`0 0 ${W} ${H}`} role="img"
-       aria-label="What Jeju's three abundances actually produced. Wind: on average 117 days a year at 10 metres per second, which produced curving lanes, roofs lashed down in a rope grid, and gates made of loose logs instead of doors. Stone: 22,108 kilometres of walls around the fields, a FAO agricultural heritage site, half the circumference of the earth. Women: not a headcount but the haenyeo divers, who go 10 metres down on one held breath, up to seven hours a day, 90 days a year, inscribed by UNESCO in 2016, and an island pantheon that is largely female.">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.alt}>
 
     <text x={X0} y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
-      SAMDA — THE THREE THINGS JEJU IS SAID TO HAVE TOO MANY OF
+      {t.kicker}
     </text>
     <text x={X0} y="48" font-size="12.5" fill="#3c3733">
-      Jeju's own tourism board still uses the phrase. This is what each one actually built.
+      {t.sub}
     </text>
 
     {cols.map((c, i) => {
@@ -100,7 +112,7 @@ const cols = [
                 stroke={c.tone} stroke-width="1" stroke-opacity="0.45" />
 
           <text x={x + 18} y={CARD_Y + 202} font-size="10.5" font-weight="700"
-                fill="#8a827b" letter-spacing="0.08em">SO THE ISLAND HAS</text>
+                fill="#8a827b" letter-spacing="0.08em">{t.soHas}</text>
 
           {c.built.map((b, j) => (
             <>
@@ -115,10 +127,10 @@ const cols = [
     })}
 
     <text x={X0} y={CARD_Y + CARD_H + 32} font-size="12" fill="#6b6560">
-      The third one is the one that travels badly. It never meant that Jeju had more women than men.
+      {t.note}
     </text>
     <text x={X0} y={H - 14} font-size="11.5" fill="#a09890">
-      Our own illustration. Figures read from the three sources named in each column, 20 August 2026.
+      {t.foot}
     </text>
   </svg>
   <figcaption>{caption}</figcaption>

@@ -1,0 +1,267 @@
+---
+title: "《苦尽柑来遇见你》的济州：风、石头、女人"
+seoTitle: "济州岛：《苦尽柑来遇见你》背后的那个韩国"
+summary: "这部剧的舞台，是一座不太像韩国的岛——地貌不同，房子不同，吃的不同，连话都是韩国本土人听不懂的。它的韩文原名，多数韩国人也要别人解释一遍。这里写的是这座岛由什么构成、为什么长成这样，以及你到了会遇到什么。附一条中国护照持有人务必先看的驾照规定。"
+lang: zh-hans
+work: "苦尽柑来遇见你"
+workType: drama
+sceneKind: culture
+region: "Jeju"
+stars: ["IU", "朴宝剑", "文素利"]
+publishedAt: 2026-08-21
+checkedAt: 2026-08-21
+hero:
+  src: ../../../assets/images/places/jeju-seongsan-ilchulbong-3.jpg
+  alt: 济州城山的海上日出，平顶的日出峰在金色水面上成为剪影，前景绿地里开着白色文珠兰
+  license: kogl-1
+  sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=126435
+  credit: 한국관광공사 (Korea Tourism Organization)
+riskGrade: green
+contentScore: 86
+translation:
+  of: "scenes/jeju-when-life-gives-you-tangerines"
+  sourceCheckedAt: 2026-08-20
+  status: ai_translated_facts_verified
+  translatedAt: 2026-08-21
+  factsVerifiedAt: 2026-08-21
+sources:
+  - title: "When Life Gives You Tangerines — Netflix 官方作品页（年份、集数、演员、主创、分集简介）"
+    url: "https://www.netflix.com/title/81681535"
+    type: official_production
+    checkedAt: 2026-08-20
+  - title: "삼다도 — 비짓제주, 제주관광공사（济州旅游发展局：三多）"
+    url: "https://www.visitjeju.net/kr/jejuStory/culture?tap=four&menuId=DOM_000001703003004000"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "의식주 — 비짓제주, 제주관광공사（衣食住：올레、정낭、茅草屋顶、안거리与밖거리）"
+    url: "https://www.visitjeju.net/kr/jejuStory/culture?tap=three&menuId=DOM_000001703003003000"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "국가중요농업유산 제2호 제주밭담 — 농촌진흥청 웹진（韩国农村振兴厅：济州田墙、风，以及没有水田种什么）"
+    url: "https://www.rda.go.kr/webzine/2020/03/sub3-4.html"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "Culture of Jeju Haenyeo (women divers) — 联合国教科文组织人类非物质文化遗产代表作名录，2016年列入"
+    url: "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "표준국어대사전 — 국립국어원（韩国国立国语院《标准国语大辞典》：标准韩语里「속다」的词义）"
+    url: "https://stdict.korean.go.kr/main/main.do"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "외국의 국제운전면허증으로 대한민국에서 운전하려 합니다 — 법제처 찾기쉬운 생활법령정보（道路交通法第96条：持外国驾照在韩驾车，附日内瓦、维也纳公约国名单）"
+    url: "https://easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=668&ccfNo=1&cciNo=1&cnpClsNo=3"
+    type: public_institution
+    checkedAt: 2026-08-20
+  - title: "국제운전면허증 안내 — 한국도로교통공단 안전운전 통합민원（有效证件、仿冒件、2002年起承认维也纳公约、香港与澳门）"
+    url: "https://www.safedriving.or.kr/diGuide/selectDiGuide10.do"
+    type: public_institution
+    checkedAt: 2026-08-20
+visitKorea:
+  - label: "在 Trip.com 搜济州住宿"
+    url: "https://www.trip.com/hotels/jeju-hotels-list-737/"
+    merchant: "Trip.com"
+    category: stay
+    relationship: suggested
+  - label: "济州包车（含司机）—— 乐天租车，Klook"
+    url: "https://www.klook.com/en-US/activity/132698-jeju-car-charter/"
+    merchant: "Klook"
+    category: transport
+    relationship: suggested
+  - label: "济州世界自然遗产一日游（英文小团）—— Klook"
+    url: "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/"
+    merchant: "Klook"
+    category: tour
+    relationship: suggested
+---
+
+import Original from '../../../components/Original.astro';
+import Figure from '../../../components/Figure.astro';
+import ChartJejuSamda from '../../../components/ChartJejuSamda.astro';
+
+import thatch from '../../../assets/images/places/jeju-seongeup-folk-2.jpg';
+import lane from '../../../assets/images/places/jeju-seongeup-folk-5.jpg';
+import cow from '../../../assets/images/places/jeju-udo-2.jpg';
+import turbines from '../../../assets/images/places/jeju-sinchang-windmill-4.jpg';
+import grass from '../../../assets/images/places/jeju-sangumburi-6.jpg';
+import crater from '../../../assets/images/places/jeju-hallasan-1.jpg';
+import seongsanpo from '../../../assets/images/places/jeju-haenyeo-show-5.jpg';
+
+export const KTO = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1' };
+export const SEONGEUP = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126471' };
+export const UDO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=127336' };
+export const SINCHANG = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
+export const SANGUMBURI = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
+export const HALLASAN = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264590' };
+export const SEONGSANPO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
+
+先从剧名说起，因为剧名本身就是论点。
+
+韩文原名是 <strong>폭싹 속았수다</strong>（读作 pok-ssak sog-at-su-da）。中文版叫《苦尽柑来遇见你》，把「甘」换成「柑」，接住了济州的柑橘——这是好的本地化，但它和英文版一样，都没有翻译原名。<strong>不翻是有原因的。</strong>
+
+这句话是济州话。在韩国本土人眼里，它看起来像另一句话：속았수다 和标准韩语的 속았습니다 只差一个音节，而在国立国语院的标准辞典里，<strong>속다 的意思是「被骗」。</strong>照本土韩语读，剧名就成了「你被彻底骗了」。它说的不是这个。
+
+我们不打算给你一个加引号的释义——最后一节会说明为什么。<strong>重点在于形状本身：这部剧的名字，用的是一种连韩国人都需要别人解释的韩语。</strong>这就是这座岛的一句话概括，下面所有内容都由此展开。
+
+Netflix 自己的简介只有一句：*「In Jeju, a spirited girl and a steadfast boy's island story blossoms into a lifelong tale of setbacks and triumphs.」*（在济州，一个倔强的女孩和一个笃定的男孩，把岛上的故事过成了一生的起落。）这句话里分量最重的，是第一个词。
+
+## 三样太多
+
+济州自己的旅游机构——由道政府运营——在文化页的开头写了一句话，值得你在整趟旅程里都记着。
+
+<Original
+  ko="제주는 육지(한국 본토)와 자연과 문화, 언어 등이 다르다."
+  en="济州与陆地（韩国本土）在自然、文化、语言上都不一样。"
+  who="제주관광공사, 비짓제주 — 문화·역사·예술"
+  whoEn="济州旅游发展局 VisitJeju《文化·历史·艺术》"
+  date="2026-08-20"
+  url="https://www.visitjeju.net/kr/jejuStory/culture?tap=four&menuId=DOM_000001703003004000"
+  lang="zh-hans" />
+
+这座岛的别名是 <strong>삼다도</strong>（sam-da-do），「三多之岛」——风多、石多、女多。这个说法翻译出去之后，通常变成旅游手册上一句轻飘飘的俏皮话。<strong>它不是俏皮话。</strong>三样每一样都是一个物理约束，而每一样逼出来的东西，今天都还看得见。
+
+<ChartJejuSamda lang="zh-hans" caption="三多，三个后果。风的天数和石墙长度来自韩国农村振兴厅，潜水的数字来自联合国教科文组织的列入文本。请注意第三栏——「女多」是最常被译错的一项，而道政府自己的说法根本不是在讲性别比例。" />
+
+## 风才是这座岛的建筑师
+
+韩国农村振兴厅给了一个旅游指南从不提的数字：在济州，风速达到每秒 10 米的日子，一年大约有 <strong>117 天</strong>。也就是说，一年里有三分之一的时间刮着接近大风的风——刮在农田上，刮在一座位于台风路径上的岛上。
+
+<Figure src={turbines} alt="济州新昌海岸线上，一排白色风力发电机立在浅水中，旁边是海岸公路、黑色火山礁石和清澈的蓝色海面"
+        caption="西岸的新昌风车海岸路。VisitJeju 讲风的那一页，结尾写道济州的风如今正被收集起来变成电——这就是那句话的样子。"
+        {...SINCHANG} />
+
+济州所有和居住有关的东西，都是对那阵风的回答。
+
+传统民居<strong>不从路上直接进</strong>。你要走一条 <strong>올레</strong>（ol-le）——一条私家的、砌着石墙的、<strong>弯的</strong>小巷。VisitJeju 说得很明白：这个弯是工程，不是造景。粗野的风顺着一条弯曲、松砌的巷子下来，到房子跟前时力气已经被卸掉了；而弯道同时意味着路上的人看不进院子。（这个词你可能眼熟：济州那条著名的长距离步道「올레길 Olle Trail」就是由它得名。）
+
+<Figure src={lane} alt="济州城邑民俗村的一条小巷，两侧是松砌的黑色玄武岩石墙，巷子弯向一座后面有树的瓦顶门楼"
+        caption="西归浦，城邑民俗村。墙是干砌的——不用灰浆——巷子是弯的，不直冲房子。站在巷子另一头，你看不见院子，那是它的第二个用途。"
+        {...SEONGEUP} />
+
+巷口没有门。只有<strong>三根横木</strong>——<strong>정낭</strong>（jeong-nang）——搁在一对石柱上。它们最初是用来拦散养的马和牛的；而它们是木头不是门板，理由在当地再明显不过：<strong>风能穿过去，所以台风掀不掉它。</strong>同时，它也是一条留言。
+
+| 横着的木头 | 告诉来客什么 |
+|---|---|
+| <strong>三根</strong> | 出门一整天 |
+| <strong>两根</strong> | 出去有一阵了 |
+| <strong>一根</strong> | 马上回来 |
+
+一块没有字的告示牌。你今天站在它前面，还是读得懂。
+
+<Figure src={cow} alt="济州牛岛的粗草地上，一头黄褐色的牛在吃草，背后是一座小亭子和大海"
+        caption="东岸外的牛岛。这就是那三根横木存在的理由：牛马是散养的，一头牛走进大麦田，就是一年的收成没了。那道门从头到尾都不是防人的。"
+        {...UDO} />
+
+屋顶把这个论证补完。先铺茅草，再把粗绳子扔上去织成格子——VisitJeju 用的词是 <strong>바둑판</strong>（ba-duk-pan），围棋盘——然后在屋檐上系死。外面是石墙，墙里填土，整个屋顶罩一张绳网。没有一样是装饰。
+
+<Figure src={thatch} alt="城邑民俗村的一座济州茅草屋，茅顶被粗绳织成的网格压住，木门、低矮的石砌墙基，扫净的院子里立着一个石臼"
+        caption="绳网格子，一张照片就是全部论证。光铺茅草，济州的一阵大风就会把它掀走，所以要一格一格压下来、在檐口系紧。院子里那个石钵是舂谷的臼。"
+        {...SEONGEUP} />
+
+<strong>还有一件事，剧情正是从这里回来的。</strong>一户济州人家，一个院子里有两栋住屋：里面那栋叫 <strong>안거리</strong>（an-geo-ri），外面那栋叫 <strong>밖거리</strong>（bak-geo-ri）。儿子结婚，父母留在里屋，小两口住外屋——<strong>各有各的厨房</strong>，各有各的坛罐，各有各的厕所。过了一段时间之后，两边<strong>对调</strong>。地址上是一家，经济上是两户。
+
+现在再读 Netflix 第四集的简介：*「夏天带来了喜悦，新婚夫妇开始了共同生活，但与宽植家人同住考验着他们的幸福——他们能找到相处之道吗？」*搁在韩国本土，这是一个婆媳故事。<strong>搁在济州，这是一个关于具体建筑安排的故事</strong>，也是一个关于「此刻谁有资格主持祭祀」的故事——因为在济州，那个权柄在里屋，并且会随着对调一起搬家。
+
+## 两万两千公里的墙
+
+<Figure src={crater} alt="济州汉拿山顶的白鹿潭，宽阔的绿色火山岩碗中一汪浅水，云层压在火口边缘之下"
+        caption="白鹿潭，汉拿山顶的火口湖。这篇文章里的一切都是从这个洞里出来的——田里的石头、石墙、留不住水的土壤，以及把全岛天气劈成两半的那座山。"
+        {...HALLASAN} />
+
+第二样，在你注意到之前就已经在你脚下了。济州是玄武岩：别的田里长草，济州的田里长石头，捡不完。搬走没有意义，于是就堆在地边——顺便挡了风，也拦住了牛。1234 年，一位济州判官下令修筑田界石墙，为的是不让强者悄悄侵占弱者的地，这个做法从此传遍全岛。
+
+总长是值得你记住的那个事实：农村振兴厅引用的研究把济州田墙的总长度定在 <strong>22,108 公里</strong>。地球一圈大约 4 万公里。济州人管它叫 <strong>흑룡만리</strong>——念作 *heung-nyong-mal-li*，不是 *heuk-ryong-man-ri*，[原因和「钟路是 Jongno 不是 Jongro」是同一个](/en/hangul/korean-romanization-jongno-not-jongro/)——黑龙万里，因为远看那些玄武岩在地上蜿蜒盘绕。它们是干砌的、不用灰浆，这一点也是刻意的：风掀掉一段，其余的照样立着，你只补那一个缺口。
+
+它们被列入<strong>联合国粮农组织全球重要农业文化遗产</strong>。一道墙拥有这样一个头衔，既古怪又准确。
+
+## 「女多」不是在数人头
+
+这一样翻译出去之后最容易走样，值得你在到达之前弄清楚，免得说出笨拙的话。
+
+道政府自己的说法，<strong>讲的不是性别比例</strong>。它讲的是谁在干活：下海的人、下田除草的人、去市场卖东西的人、挑水和背柴的人——都是女人，岛因此得名。它还提到一件你在任何一座本地神堂都能核对的事：<strong>济州重要的神，压倒性地是女神</strong>——造岛的雪门台、掌风的灵登、管庄稼的自请妃。
+
+至今最清楚的一个版本，是 <strong>해녀</strong>（hae-nyeo），海女，2016 年由联合国教科文组织列入名录。那份列入文本是用英文写的，而且对这份工作毫不浪漫：一个女人的共同体，<strong>「其中一些已经八十多岁」</strong>，不戴氧气面罩下潜十米，采鲍鱼和海胆。一天最多七小时，一年约九十天，每次下潜屏息约一分钟，出水时会发出一种特别的呼哨。潜水者按资历分等——*하군*、*중군*、*상군*——由资深者带着下去。
+
+这部剧第五集的标题叫《仲夏夜的满网》。那不是比喻。
+
+<Figure src={seongsanpo} alt="济州城山浦，清澈的浅水覆在深色火山礁上，海湾对面是陡峭的岬角，水中有几个人"
+        caption="城山浦，海女表演举行的那片水域。有一件事我们要说清楚：旅游机构登记在册的这个地点的照片，拍的是海和观众，不是在水下工作的海女。我们不会把一群围观的人写成海女。"
+        {...SEONGSANPO} />
+
+## 这里从来没有过水田
+
+下面这个事实会帮你把济州的饮食重新排一遍：<strong>这座岛没有水田。</strong>火山地留不住积水，所以济州种的是旱田，而农村振兴厅列出的作物单子读起来像另一个国家的储藏室——大麦、小麦、荞麦、粟和黍、大豆和赤豆，还有一种不需要淹水的旱稻。
+
+所以这座岛最平常的一样东西是 <strong>빙떡</strong>（bing-tteok）：一张薄荞麦饼卷着调过味的白萝卜丝，素到近乎寡淡，和韩国本土街头卖的任何东西都不一样。
+
+柑橘是现代的那一章。在火山灰土壤上，今天种的是萝卜和 <strong>감귤</strong>（gam-gyul），也就是柑橘；蒜和白菜种在非火山土上，胡萝卜种在火山砂里。中文剧名把「甘」换成「柑」，换对了字。
+
+## 当一座岛，是要付账的
+
+济州几乎所有东西都靠船运进来，这件事会出现在你午饭的价格里。我们为[「八样家常韩餐分别多少钱」那篇](/en/now/korea-food-prices-what-meals-cost/)通读韩国消费者院 2026 年 6 月的餐饮价格调查时发现，八道菜里有两道的<strong>全国最高价出现在济州</strong>——刀削面 10,375 韩元，炸酱面 7,750 韩元，两样都<strong>高于首尔</strong>。
+
+第二个才是真正的信号。炸酱面是全韩国价格最平的一道菜：全国 6,769 到 7,750 韩元，价差 14%，是韩国最接近「统一定价」的东西。<strong>连这道菜在济州都顶到了天花板。</strong>预算时把它算进去。
+
+## 你到底能不能在这里开车
+
+这一节请先看第一句。
+
+<strong>中国大陆签发的驾照和国际驾照，在韩国不能用。</strong>韩国承认的是依 <strong>1949 年日内瓦公约</strong>或 <strong>1968 年维也纳公约</strong>签发的国际驾驶许可证，以及有双边互认协定的外国驾照。<strong>中国大陆两个公约都不是缔约方。</strong>香港和澳门签发的国际驾驶许可证则是被承认的。
+
+这一点对这篇文章的其余部分影响很大，所以放在最前面：<strong>济州是全韩国最该自驾的地方</strong>——值得看的东西散在环岛和岛中央，替代方案是坐干线巴士到换乘站、再转支线巴士。但对持中国大陆驾照的读者来说，这条路基本是关着的。<strong>请在订机票之前核对名单，不要到了之后再查。</strong>
+
+法律条文本身是这样的：
+
+<Original
+  ko="…국제운전면허증 또는 상호인정외국면허증을 발급받은 사람은 국내에 입국한 날부터 1년 동안 … 자동차 등을 운전할 수 있습니다"
+  en="持有国际驾驶许可证、或互认外国驾照的人，自入境之日起一年内可以驾驶汽车等。"
+  who="법제처 찾기쉬운 생활법령정보 — 도로교통법 제96조제1항"
+  whoEn="韩国法制处《易查生活法令信息》——道路交通法第96条第1款"
+  date="2026-08-20"
+  url="https://easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=668&ccfNo=1&cciNo=1&cnpClsNo=3"
+  lang="zh-hans" />
+
+如果你持的是被承认的证件，还有三件事会绊住人。
+
+<strong>一年是从你入境那天算起，不是从证件签发那天算起。</strong>十一个月前签发的证件，在韩国照样管一整年。上周才签发的证件，如果你已经在韩国待了十个月，也买不到一年。
+
+<strong>必须是真的。</strong>韩国道路交通公团明文警告：非官方机构出具的文件无效，并且给了辨别方法——<strong>真件的名称是 International Driving _Permit_</strong>，网上卖的假件写的是 International Driving _Licence_。封面上一个词的差别，就是「开车」和「无证驾驶」的差别。
+
+<strong>租车是明文允许的。</strong>第96条第2款禁止持外国驾照驾驶营运车辆——但同一条把租赁车辆点名排除在外。「可以在济州机场提车」的法律依据就在这里。
+
+<strong>如果以上都走不通，这座岛的答案不是巴士时刻表。</strong>同样那些租车公司在航站楼里设柜台，提供<strong>带司机的包车</strong>；也有英语的一日游，把世界遗产的几个点——城山日出峰、柱状节理崖、瀑布——一趟走完。<strong>这两样我们各开过一个、核对过，放在文章末尾</strong>，连同这座岛的酒店搜索。全文只有那三个是商业链接，页面顶部也写明了。
+
+## 什么时候去
+
+<Figure src={grass} alt="济州的一整片芒草填满画面，穗子转成金色，全部朝同一个方向弯着"
+        caption="秋天的山君不离，芒草已经转金。注意它们倒向哪一边——画面里每一根都是同一个方向。那还是那 117 天。"
+        {...SANGUMBURI} />
+
+这部剧用季节给每一段命名——《眨眼之间的春天》《炽烈的夏日阳光》《结果的秋天》——这座岛撑得起这个结构。在我们的[逐月日历](/en/now/best-time-to-visit-korea-calendar/)之外，另加两条。
+
+VisitJeju 写明这座岛位于台风路径上；那和塑造了这些房子的是同一阵风，而<strong>夏末是它最可能让你损失一班船或一班飞机的时候。</strong>
+
+还有，中文剧名里的那颗柑橘，是<strong>晚秋和冬天</strong>的作物，不是夏天的。如果你是冲着画面里的果子来的，季节挑错了。
+
+有一处更正我们该给你，否则读者会从我们自己的旧文里得到错误印象。<strong>济州不是「温暖的避冬地」，汉拿山会下大雪。</strong>我们那篇[写韩国哪里真的下雪](/en/now/when-does-it-snow-in-korea/)的文章，是用气象厅在木浦、首尔、浦项的观测站数据写的——<strong>它一次都没有提到济州。</strong>那是那篇文章的一个洞，不是对这座岛的判断。我们还没有打开气象厅的济州数据，所以这里不写数字；等我们拿到了，那篇文章会补上济州，这一句会换成链接。
+
+## 五件我们没有做的事
+
+以上全部内容，来自制作方自己的页面，或来自政府与联合国教科文组织的资料，2026 年 8 月 20 日读取。
+
+<strong>我们没有给剧名下释义。</strong>속았수다 背后那个济州话动词，我们打不开道级的辞典条目；一个濒危语言里的词，不该为了效果去近似。
+
+<strong>我们没有核对到 Netflix 官方的中文剧名。</strong>《苦尽柑来遇见你》这个名字，我们是在中文维基百科的条目上读到的，不是在 Netflix 自己的中文页面上——我们所在的位置会被 Netflix 重定向到别的地区版本。所以这个名字是二手的，我们照实说明。
+
+<strong>我们没有说这部剧在哪里拍摄。</strong>Netflix 说故事<strong>设定</strong>在济州；拍摄地我们无法确认，无法确认的地点主张我们不发表。
+
+<strong>我们没有印租车柜台的规定。</strong>上面那条法律是法律，但最低年龄、持照月数、是否需要本人名下的信用卡，是每家公司自己的规定，我们没有一家一家核对过。
+
+<strong>还有语言，我们几乎没碰</strong>，它值得单独一篇：济州话保留了一个标准韩语丢掉的元音，也用一个标准韩语没有的词尾来标记正在进行的动作。那一篇是下一篇，我们会为它打开辞典。
+
+## 相关
+
+- [八样家常韩餐分别多少钱，按地区](/en/now/korea-food-prices-what-meals-cost/) —— 上面济州那两个数字的出处
+- [什么时候来韩国最好，逐月看](/en/now/best-time-to-visit-korea-calendar/) —— 含台风窗口期
+- [巨济岛：一个人亲手垒起来的城](/en/scenes/geoje-island-what-to-see/) —— 我们写过的另一座韩国的岛
+- [我们涵盖的每一个问题，各配一句答案](/zh-hans/stuck/)
