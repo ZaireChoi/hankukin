@@ -3446,9 +3446,313 @@
                                       }
                                   ],
                        "fetchedAt":  "2026-08-20"
+                   },
+                   {
+                       "slug":  "jeju-samyang-beach",
+                       "keyword":  "삼양해수욕장",
+                       "title":  "삼양해수욕장",
+                       "address":  "제주특별자치도 제주시 삼양이동",
+                       "contentId":  "129401",
+                       "images":  [
+                                      {
+                                          "file":  "jeju-samyang-beach-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-1.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-samyang-beach-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-2.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-samyang-beach-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-3.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-samyang-beach-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-4.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-samyang-beach-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-5.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-samyang-beach-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-samyang-beach-6.jpg",
+                                                              "alt":  "삼양해수욕장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=129401",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-21"
+                   },
+                   {
+                       "slug":  "jeju-hallasan-trek",
+                       "keyword":  "한라산 트레킹",
+                       "title":  "한라산 트레킹",
+                       "address":  "제주특별자치도 제주시 1100로 2070-61",
+                       "contentId":  "824619",
+                       "images":  [
+                                      {
+                                          "file":  "jeju-hallasan-trek-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-1.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-hallasan-trek-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-2.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-hallasan-trek-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-3.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-hallasan-trek-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-4.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-hallasan-trek-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-5.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-hallasan-trek-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-hallasan-trek-6.jpg",
+                                                              "alt":  "한라산 트레킹",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=824619",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-21"
+                   },
+                   {
+                       "slug":  "jeju-1100-highland",
+                       "keyword":  "1100고지",
+                       "title":  "1100고지습지",
+                       "address":  "제주특별자치도 서귀포시 1100로 1555",
+                       "contentId":  "1861656",
+                       "images":  [
+                                      {
+                                          "file":  "jeju-1100-highland-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-1.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "jeju-1100-highland-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-2.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "jeju-1100-highland-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-3.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "jeju-1100-highland-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-4.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "jeju-1100-highland-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-5.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "jeju-1100-highland-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-1100-highland-6.jpg",
+                                                              "alt":  "1100고지",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1861656",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-21"
+                   },
+                   {
+                       "slug":  "jeju-isidore-farm",
+                       "keyword":  "성이시돌목장",
+                       "title":  "성이시돌목장",
+                       "address":  "제주특별자치도 제주시 한림읍 산록남로 53",
+                       "contentId":  "2606298",
+                       "images":  [
+                                      {
+                                          "file":  "jeju-isidore-farm-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-1.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-isidore-farm-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-2.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-isidore-farm-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-3.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-isidore-farm-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-4.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-isidore-farm-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-5.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      },
+                                      {
+                                          "file":  "jeju-isidore-farm-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/jeju-isidore-farm-6.jpg",
+                                                              "alt":  "성이시돌목장",
+                                                              "license":  "kogl-3",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=2606298",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  false
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-21"
                    }
                ],
-    "generatedAt":  "2026-08-20T16:11:42",
+    "generatedAt":  "2026-08-21T06:56:50",
     "_comment":  [
                      "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
                      "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
