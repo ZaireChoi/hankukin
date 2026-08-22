@@ -696,6 +696,31 @@
       "expectRegion": "제주",
       "slug": "jeju-isidore-farm",
       "exactTitle": "성이시돌목장"
+    },
+    {
+      "slug": "jjimjilbang-spaland",
+      "keyword": "스파랜드 센텀시티",
+      "dir": "places"
+    },
+    {
+      "slug": "jjimjilbang-aquafield",
+      "keyword": "아쿠아필드",
+      "dir": "places"
+    },
+    {
+      "slug": "jjimjilbang-hanjeungmak",
+      "keyword": "한증막",
+      "dir": "places"
+    },
+    {
+      "slug": "oncheon-suanbo",
+      "keyword": "수안보온천",
+      "dir": "places"
+    },
+    {
+      "slug": "oncheon-asan",
+      "keyword": "아산온천",
+      "dir": "places"
     }
   ]
 }
