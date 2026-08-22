@@ -1,0 +1,151 @@
+{
+  "_comment": [
+    "위키미디어 공용 수집 결과. 라이선스를 API 응답에서 확인한 것만 담는다.",
+    "cc0 = 저작권 포기 / cc-by = 출처표시 / cc-by-sa = 출처표시-동일조건",
+    "",
+    "**frontmatter.alt 는 일부러 비워 놓았다.** 사람이 사진을 열어 보고 직접 적어야 한다.",
+    "그리고 data/photo-verified.json 에 무엇이 찍혀 있는지 한 줄 남겨야",
+    "photo-sanity 게이트가 발행을 허락한다.",
+    "",
+    "CC BY / CC BY-SA 는 저작자 표시가 의무다. credit 을 지우면 라이선스 위반이다.",
+    "2026-08-22 — korean-bathhouse 3장은 사람이 열어 보고 지웠다. 미국 아칸소 핫스프링스(Buckstaff·Ozark·Quapaw)였다. expectWords 에 영어 bathhouse 를 넣은 것이 원인."
+  ],
+  "generatedAt": "2026-08-22T04:36:03.475Z",
+  "stats": {
+    "saved": 7,
+    "rejectedLicence": 0,
+    "rejectedName": 9,
+    "rejectedSmall": 2,
+    "skippedDup": 0,
+    "failures": 0,
+    "rejectedByHuman": 3
+  },
+  "images": [
+    {
+      "slug": "jjimjilbang-room",
+      "file": "jjimjilbang-room-1.jpg",
+      "commonsTitle": "20200222아쿠아랜드24시찜질방1.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/jjimjilbang-room-1.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A20200222%EC%95%84%EC%BF%A0%EC%95%84%EB%9E%9C%EB%93%9C24%EC%8B%9C%EC%B0%9C%EC%A7%88%EB%B0%A91.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 154742,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "jjimjilbang-room",
+      "file": "jjimjilbang-room-2.jpg",
+      "commonsTitle": "20200222아쿠아랜드24시찜질방2.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/jjimjilbang-room-2.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A20200222%EC%95%84%EC%BF%A0%EC%95%84%EB%9E%9C%EB%93%9C24%EC%8B%9C%EC%B0%9C%EC%A7%88%EB%B0%A92.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 160820,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "jjimjilbang-room",
+      "file": "jjimjilbang-room-3.jpg",
+      "commonsTitle": "20200222아쿠아랜드24시찜질방3.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/jjimjilbang-room-3.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A20200222%EC%95%84%EC%BF%A0%EC%95%84%EB%9E%9C%EB%93%9C24%EC%8B%9C%EC%B0%9C%EC%A7%88%EB%B0%A93.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 236774,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "jjimjilbang-room",
+      "file": "jjimjilbang-room-4.jpg",
+      "commonsTitle": "20200222아쿠아랜드24시찜질방4.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/jjimjilbang-room-4.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A20200222%EC%95%84%EC%BF%A0%EC%95%84%EB%9E%9C%EB%93%9C24%EC%8B%9C%EC%B0%9C%EC%A7%88%EB%B0%A94.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 167083,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "bulgama-sauna",
+      "file": "bulgama-sauna-1.jpg",
+      "commonsTitle": "영신불가마사우나24시(강원 원주시 시청로 96)1.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/bulgama-sauna-1.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A%EC%98%81%EC%8B%A0%EB%B6%88%EA%B0%80%EB%A7%88%EC%82%AC%EC%9A%B0%EB%82%9824%EC%8B%9C(%EA%B0%95%EC%9B%90%20%EC%9B%90%EC%A3%BC%EC%8B%9C%20%EC%8B%9C%EC%B2%AD%EB%A1%9C%2096)1.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 230891,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "bulgama-sauna",
+      "file": "bulgama-sauna-2.jpg",
+      "commonsTitle": "영신불가마사우나24시(강원 원주시 시청로 96)2.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/bulgama-sauna-2.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A%EC%98%81%EC%8B%A0%EB%B6%88%EA%B0%80%EB%A7%88%EC%82%AC%EC%9A%B0%EB%82%9824%EC%8B%9C(%EA%B0%95%EC%9B%90%20%EC%9B%90%EC%A3%BC%EC%8B%9C%20%EC%8B%9C%EC%B2%AD%EB%A1%9C%2096)2.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 254989,
+      "fetchedAt": "2026-08-22"
+    },
+    {
+      "slug": "bulgama-sauna",
+      "file": "bulgama-sauna-3.jpg",
+      "commonsTitle": "영신불가마사우나24시(강원 원주시 시청로 96)3.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/places/bulgama-sauna-3.jpg",
+        "alt": "(사람이 열어 보고 무엇이 찍혀 있는지 직접 적을 것 — 이 줄을 그대로 두지 말 것)",
+        "license": "cc0",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File%3A%EC%98%81%EC%8B%A0%EB%B6%88%EA%B0%80%EB%A7%88%EC%82%AC%EC%9A%B0%EB%82%9824%EC%8B%9C(%EA%B0%95%EC%9B%90%20%EC%9B%90%EC%A3%BC%EC%8B%9C%20%EC%8B%9C%EC%B2%AD%EB%A1%9C%2096)3.jpg",
+        "credit": "Choikwangmo9 (Wikimedia Commons, CC0)"
+      },
+      "licenseLabel": "CC0",
+      "artist": "Choikwangmo9",
+      "width": 1600,
+      "height": 1200,
+      "bytes": 372110,
+      "fetchedAt": "2026-08-22"
+    }
+  ]
+}

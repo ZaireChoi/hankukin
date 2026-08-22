@@ -3750,9 +3750,85 @@
                                       }
                                   ],
                        "fetchedAt":  "2026-08-21"
+                   },
+                   {
+                       "slug":  "oncheon-suanbo",
+                       "keyword":  "수안보온천",
+                       "title":  "수안보온천 관광특구",
+                       "address":  "충청북도 충주시 수안보면 주정산로 12",
+                       "contentId":  "1958101",
+                       "images":  [
+                                      {
+                                          "file":  "oncheon-suanbo-1.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-1.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "oncheon-suanbo-2.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-2.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "oncheon-suanbo-3.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-3.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "oncheon-suanbo-4.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-4.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "oncheon-suanbo-5.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-5.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      },
+                                      {
+                                          "file":  "oncheon-suanbo-6.jpg",
+                                          "frontmatter":  {
+                                                              "src":  "../../assets/images/places/oncheon-suanbo-6.jpg",
+                                                              "alt":  "수안보온천",
+                                                              "license":  "kogl-1",
+                                                              "sourceUrl":  "https://api.visitkorea.or.kr/#/detail?cotId=1958101",
+                                                              "credit":  "한국관광공사 (Korea Tourism Organization)"
+                                                          },
+                                          "canModify":  true
+                                      }
+                                  ],
+                       "fetchedAt":  "2026-08-22"
                    }
                ],
-    "generatedAt":  "2026-08-21T06:56:50",
+    "generatedAt":  "2026-08-22T09:51:45",
     "_comment":  [
                      "기사가 요청한 장소의 사진. 저작권 유형(cpyrhtDivCd)이 확인된 것만 담는다.",
                      "kogl-3 은 변경금지이므로 리사이즈하지 않고, 화면에서도 원본 그대로 내보낸다.",
