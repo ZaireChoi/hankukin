@@ -4,12 +4,109 @@
  *
  * 우리가 직접 그렸으므로 저작권 표시는 필요 없다.
  * 대신 조사 주체·시점·단위를 캡션에 반드시 남긴다. 가격은 그것 없이는 숫자일 뿐이다.
+ *
+ * 2026-08-22 — **통짜 SVG 문자열을 데이터로 바꿨다.**
+ *   이 파일은 좌표까지 손으로 박힌 SVG 한 줄이었다. 그래서 일본어·중국어판을 만들 수
+ *   없었다 — 품목 이름이 그림 안에 영어로 박혀 있고, 그것만 바꿀 방법이 없었다.
+ *   한국어를 못 읽는 사람에게 또 하나의 못 읽는 언어를 보여주는 셈이 되므로
+ *   (Original.astro 에 적어 둔 것과 같은 문제) 눈금·좌표는 그대로 두고
+ *   **글자만 언어별로 갈랐다.**
+ *
+ *   눈금은 옛 SVG 에서 역산했다 — 0원이 x=168, 5,000원마다 +104.55px,
+ *   행 간격은 (301.6−44.4)/7. 렌더 결과를 옛 판과 대조했더니
+ *   **좌표 98개가 최대 0.1px 차이**(옛 판은 반올림이 아니라 버림이었다), 글자는 완전히 동일했다.
+ *   0.1px 은 화면에서 보이지 않는다. 그래도 「같다」가 아니라 「0.1px 이내」라고 적어 둔다.
  */
-const { caption } = Astro.props;
+interface Props { lang?: string; caption?: string }
+const { lang = 'en', caption } = Astro.props;
+
+const W = 760, H = 360;
+const X0 = 168;                 // 0원의 x
+const PX = 104.55 / 5000;       // 원당 픽셀
+const x = (won) => X0 + won * PX;
+const ROW0 = 44.4, ROW = (301.6 - 44.4) / 7;
+
+/** 숫자는 언어와 무관하다. 한 곳에만 적는다. */
+const DISHES = [
+  { min: 15305, minR: 'chungbuk',  max: 21321, maxR: 'seoul',    seoul: 21321 },
+  { min: 15600, minR: 'ulsan',     max: 18154, maxR: 'seoul',    seoul: 18154 },
+  { min:  9667, minR: 'jeonnam',   max: 12615, maxR: 'seoul',    seoul: 12615 },
+  { min:  9154, minR: 'gyeongnam', max: 12100, maxR: 'jeonbuk',  seoul: 11769 },
+  { min:  7583, minR: 'daegu',     max: 10375, maxR: 'jeju',     seoul: 10038 },
+  { min:  8278, minR: 'jeonnam',   max: 10800, maxR: 'daejeon',  seoul:  8654 },
+  { min:  6769, minR: 'gyeongbuk', max:  7750, maxR: 'jeju',     seoul:  7654 },
+  { min:  2889, minR: 'jeonnam',   max:  3838, maxR: 'seoul',    seoul:  3838 },
+];
+
+const T = {
+  en: {
+    names: ['Samgyeopsal 200g', 'Samgyetang', 'Naengmyeon', 'Bibimbap',
+            'Kalguksu', 'Kimchi jjigae set', 'Jajangmyeon', 'Gimbap (1 roll)'],
+    axis: ['0k', '5k', '10k', '15k', '20k'],
+    legend: ['cheapest region', 'Seoul', 'dearest region (grey = not Seoul)'],
+    alt: 'Price range across Korean regions for eight standard restaurant dishes, June 2026. Seoul is the most expensive region for samgyeopsal, samgyetang, naengmyeon and gimbap, but not for bibimbap, kalguksu, kimchi jjigae or jajangmyeon.',
+  },
+  ja: {
+    names: ['サムギョプサル 200g', 'サムゲタン', '冷麺', 'ビビンバ',
+            'カルグクス', 'キムチチゲ定食', 'ジャージャー麺', 'キンパ（1本）'],
+    axis: ['0千', '5千', '1万', '1.5万', '2万'],
+    legend: ['いちばん安い地域', 'ソウル', 'いちばん高い地域（灰＝ソウル以外）'],
+    alt: '2026年6月、韓国の地域別に見た外食8品目の価格の幅。ソウルはサムギョプサル・サムゲタン・冷麺・キンパで最も高いが、ビビンバ・カルグクス・キムチチゲ・ジャージャー麺では最高値ではない。',
+  },
+  'zh-hans': {
+    names: ['烤五花肉 200g', '参鸡汤', '冷面', '拌饭',
+            '刀削面', '泡菜汤套餐', '炸酱面', '紫菜包饭（1条）'],
+    axis: ['0千', '5千', '1万', '1.5万', '2万'],
+    legend: ['最便宜的地区', '首尔', '最贵的地区（灰＝不是首尔）'],
+    alt: '2026年6月，韩国各地区八种常见餐厅菜品的价格区间。首尔在烤五花肉、参鸡汤、冷面、紫菜包饭上最贵，但在拌饭、刀削面、泡菜汤、炸酱面上并不是最高价。',
+  },
+};
+const t = T[lang] ?? T.en;
+
+const won = (n) => n.toLocaleString('en-US');
+const rows = DISHES.map((d, i) => ({
+  ...d,
+  name: t.names[i],
+  y: ROW0 + i * ROW,
+  xMin: x(d.min),
+  xMax: x(d.max),
+  xSeoul: x(d.seoul),
+  seoulIsMax: d.seoul === d.max,
+}));
+const ticks = [0, 5000, 10000, 15000, 20000].map((v, i) => ({ x: x(v), label: t.axis[i] }));
 ---
 
 <figure class="chart">
-<svg viewBox="0 0 760 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Price range across Korean regions for eight standard restaurant dishes, June 2026. Seoul is the most expensive region for samgyeopsal, samgyetang, naengmyeon and gimbap, but not for bibimbap, kalguksu, kimchi jjigae or jajangmyeon."><line x1="168.0" y1="22" x2="168.0" y2="320" stroke="#efe9e1"/><text x="168.0" y="336" text-anchor="middle" font-size="11" fill="#6b6560">0k</text><line x1="272.5" y1="22" x2="272.5" y2="320" stroke="#efe9e1"/><text x="272.5" y="336" text-anchor="middle" font-size="11" fill="#6b6560">5k</text><line x1="377.1" y1="22" x2="377.1" y2="320" stroke="#efe9e1"/><text x="377.1" y="336" text-anchor="middle" font-size="11" fill="#6b6560">10k</text><line x1="481.6" y1="22" x2="481.6" y2="320" stroke="#efe9e1"/><text x="481.6" y="336" text-anchor="middle" font-size="11" fill="#6b6560">15k</text><line x1="586.2" y1="22" x2="586.2" y2="320" stroke="#efe9e1"/><text x="586.2" y="336" text-anchor="middle" font-size="11" fill="#6b6560">20k</text><text x="156" y="48.4" text-anchor="end" font-size="12.5" fill="#12100f">Samgyeopsal 200g</text><line x1="488.0" y1="44.4" x2="613.8" y2="44.4" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="488.0" cy="44.4" r="5" fill="#1f7a4d"/><circle cx="613.8" cy="44.4" r="5" fill="#c8341f"/><text x="624.8" y="48.4" font-size="11.5" fill="#6b6560">21,321</text><text x="477.0" y="48.4" text-anchor="end" font-size="11.5" fill="#1f7a4d">15,305</text><text x="156" y="85.1" text-anchor="end" font-size="12.5" fill="#12100f">Samgyetang</text><line x1="494.2" y1="81.1" x2="547.6" y2="81.1" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="494.2" cy="81.1" r="5" fill="#1f7a4d"/><circle cx="547.6" cy="81.1" r="5" fill="#c8341f"/><text x="558.6" y="85.1" font-size="11.5" fill="#6b6560">18,154</text><text x="483.2" y="85.1" text-anchor="end" font-size="11.5" fill="#1f7a4d">15,600</text><text x="156" y="121.9" text-anchor="end" font-size="12.5" fill="#12100f">Naengmyeon</text><line x1="370.1" y1="117.9" x2="431.8" y2="117.9" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="370.1" cy="117.9" r="5" fill="#1f7a4d"/><circle cx="431.8" cy="117.9" r="5" fill="#c8341f"/><text x="442.8" y="121.9" font-size="11.5" fill="#6b6560">12,615</text><text x="359.1" y="121.9" text-anchor="end" font-size="11.5" fill="#1f7a4d">9,667</text><text x="156" y="158.6" text-anchor="end" font-size="12.5" fill="#12100f">Bibimbap</text><line x1="359.4" y1="154.6" x2="421.0" y2="154.6" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="359.4" cy="154.6" r="5" fill="#1f7a4d"/><circle cx="421.0" cy="154.6" r="5" fill="#6b6560"/><circle cx="414.1" cy="154.6" r="5.5" fill="#c8341f"/><text x="432.0" y="158.6" font-size="11.5" fill="#6b6560">12,100</text><text x="348.4" y="158.6" text-anchor="end" font-size="11.5" fill="#1f7a4d">9,154</text><text x="156" y="195.4" text-anchor="end" font-size="12.5" fill="#12100f">Kalguksu</text><line x1="326.6" y1="191.4" x2="384.9" y2="191.4" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="326.6" cy="191.4" r="5" fill="#1f7a4d"/><circle cx="384.9" cy="191.4" r="5" fill="#6b6560"/><circle cx="377.9" cy="191.4" r="5.5" fill="#c8341f"/><text x="395.9" y="195.4" font-size="11.5" fill="#6b6560">10,375</text><text x="315.6" y="195.4" text-anchor="end" font-size="11.5" fill="#1f7a4d">7,583</text><text x="156" y="232.1" text-anchor="end" font-size="12.5" fill="#12100f">Kimchi jjigae set</text><line x1="341.1" y1="228.1" x2="393.8" y2="228.1" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="341.1" cy="228.1" r="5" fill="#1f7a4d"/><circle cx="393.8" cy="228.1" r="5" fill="#6b6560"/><circle cx="348.9" cy="228.1" r="5.5" fill="#c8341f"/><text x="404.8" y="232.1" font-size="11.5" fill="#6b6560">10,800</text><text x="330.1" y="232.1" text-anchor="end" font-size="11.5" fill="#1f7a4d">8,278</text><text x="156" y="268.9" text-anchor="end" font-size="12.5" fill="#12100f">Jajangmyeon</text><line x1="309.5" y1="264.9" x2="330.0" y2="264.9" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="309.5" cy="264.9" r="5" fill="#1f7a4d"/><circle cx="330.0" cy="264.9" r="5" fill="#6b6560"/><circle cx="328.0" cy="264.9" r="5.5" fill="#c8341f"/><text x="341.0" y="268.9" font-size="11.5" fill="#6b6560">7,750</text><text x="298.5" y="268.9" text-anchor="end" font-size="11.5" fill="#1f7a4d">6,769</text><text x="156" y="305.6" text-anchor="end" font-size="12.5" fill="#12100f">Gimbap (1 roll)</text><line x1="228.4" y1="301.6" x2="248.2" y2="301.6" stroke="#d8cfc4" stroke-width="6" stroke-linecap="round"/><circle cx="228.4" cy="301.6" r="5" fill="#1f7a4d"/><circle cx="248.2" cy="301.6" r="5" fill="#c8341f"/><text x="259.2" y="305.6" font-size="11.5" fill="#6b6560">3,838</text><text x="217.4" y="305.6" text-anchor="end" font-size="11.5" fill="#1f7a4d">2,889</text><circle cx="168" cy="350" r="5" fill="#1f7a4d"/><text x="178" y="354" font-size="11.5" fill="#6b6560">cheapest region</text><circle cx="318" cy="350" r="5" fill="#c8341f"/><text x="328" y="354" font-size="11.5" fill="#6b6560">Seoul</text><circle cx="398" cy="350" r="5" fill="#6b6560"/><text x="408" y="354" font-size="11.5" fill="#6b6560">dearest region (grey = not Seoul)</text></svg>
+<svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" role="img" aria-label={t.alt}>
+  {ticks.map((k) => (
+    <>
+      <line x1={k.x.toFixed(1)} y1="22" x2={k.x.toFixed(1)} y2="320" stroke="#efe9e1" />
+      <text x={k.x.toFixed(1)} y="336" text-anchor="middle" font-size="11" fill="#6b6560">{k.label}</text>
+    </>
+  ))}
+
+  {rows.map((r) => (
+    <>
+      <text x="156" y={(r.y + 4).toFixed(1)} text-anchor="end" font-size="12.5" fill="#12100f">{r.name}</text>
+      <line x1={r.xMin.toFixed(1)} y1={r.y.toFixed(1)} x2={r.xMax.toFixed(1)} y2={r.y.toFixed(1)}
+            stroke="#d8cfc4" stroke-width="6" stroke-linecap="round" />
+      <circle cx={r.xMin.toFixed(1)} cy={r.y.toFixed(1)} r="5" fill="#1f7a4d" />
+      <circle cx={r.xMax.toFixed(1)} cy={r.y.toFixed(1)} r="5" fill={r.seoulIsMax ? '#c8341f' : '#6b6560'} />
+      {!r.seoulIsMax && (
+        <circle cx={r.xSeoul.toFixed(1)} cy={r.y.toFixed(1)} r="5.5" fill="#c8341f" />
+      )}
+      <text x={(r.xMax + 11).toFixed(1)} y={(r.y + 4).toFixed(1)} font-size="11.5" fill="#6b6560">{won(r.max)}</text>
+      <text x={(r.xMin - 11).toFixed(1)} y={(r.y + 4).toFixed(1)} text-anchor="end" font-size="11.5" fill="#1f7a4d">{won(r.min)}</text>
+    </>
+  ))}
+
+  <circle cx="168" cy="350" r="5" fill="#1f7a4d" />
+  <text x="178" y="354" font-size="11.5" fill="#6b6560">{t.legend[0]}</text>
+  <circle cx="318" cy="350" r="5" fill="#c8341f" />
+  <text x="328" y="354" font-size="11.5" fill="#6b6560">{t.legend[1]}</text>
+  <circle cx="398" cy="350" r="5" fill="#6b6560" />
+  <text x="408" y="354" font-size="11.5" fill="#6b6560">{t.legend[2]}</text>
+</svg>
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 
