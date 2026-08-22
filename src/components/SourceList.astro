@@ -1,7 +1,13 @@
 ---
 import { isAffiliate, decorate, MERCHANTS } from '../config/merchants.mjs';
 import { t } from '../config/ui.mjs';
-const { sources = [], checkedAt, lang = 'en' } = Astro.props;
+const { sources = [], lang = 'en' } = Astro.props;
+/*
+ * 2026-08-22. checkedAt 을 여기서 뺐다.
+ * 「이 페이지는 언제 확인했다」 는 출처 목록이 아니라 **페이지 전체**에 대한 말이라
+ * 꼬리말(Byline)로 옮겼다. 출처 밑에 두면 출처만 오래됐다는 뜻으로 읽힌다.
+ * 출처 한 건 한 건의 확인일은 아래 s.checkedAt 으로 계속 각자 붙는다 — 그건 다른 정보다.
+ */
 
 /**
  * 출처 링크가 **제휴처를 가리키는 경우**를 따로 다룬다 (2026-08-17).
@@ -59,7 +65,6 @@ const fmt = (d) => new Date(d).toISOString().slice(0, 10);
       </li>
     ))}
   </ul>
-  <p class="notice">{t(lang, 'article.verifyNotice')(fmt(checkedAt))}</p>
 </section>
 
 <style>

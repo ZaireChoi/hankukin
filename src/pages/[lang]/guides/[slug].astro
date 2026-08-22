@@ -12,7 +12,6 @@ import { NOTICES } from '../../../lib/claims.mjs';
 import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { AUTHOR } from '../../../config/author.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
-import { pageHref } from '../../../config/links.mjs';
 import { t } from '../../../config/ui.mjs';
 
 export async function getStaticPaths() {
@@ -90,13 +89,9 @@ const jsonLd = {
     <ReadNext current={{ ...entry, _section: 'guides' }} lang={lang} />
 
     <CtaBlock lang={lang} heading={t(lang, 'article.ctaHeading')} items={[...d.visitKorea, ...d.bringKoreaHome]} />
-    <SourceList lang={lang} sources={d.sources} checkedAt={d.checkedAt} />
-    <Byline lang={lang} />
-
-    <section class="block">
-      <p class="notice">{t(lang, 'byline.policyNote')}</p>
-      <p class="notice">{t(lang, 'byline.spotted')}{' '}
-        <a href={pageHref(lang, 'contact')}>{t(lang, 'byline.reportError')}</a>.</p>
-    </section>
+    <SourceList lang={lang} sources={d.sources} />
+    {/* 2026-08-22. 확인일 고지·편집방침·오류신고가 전부 Byline 안으로 들어갔다.
+        상자 넷을 가는 선 하나로 바꿨고, 그중 둘은 같은 문장이라 합쳤다. */}
+    <Byline lang={lang} checkedAt={d.checkedAt} />
   </article>
 </BaseLayout>

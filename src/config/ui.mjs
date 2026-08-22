@@ -125,9 +125,24 @@ export const UI = {
       ledgerLink: 'record of what we got wrong',
       wrongTail: ', along with who found it — including the ones found by people outside this site, because pretending we caught everything ourselves would be its own small lie.',
       writtenBy: 'Written by',
-      aiNote: 'Drafted with AI assistance; sources read, figures checked and photographs opened by a person before publication.',
+      /*
+       * 2026-08-22. aiNote 와 policyNote 는 **같은 말이었다.**
+       *   aiNote     — 'Drafted with AI assistance; sources read, figures checked
+       *                 and photographs opened by a person before publication.'
+       *   policyNote — 'This article was researched, drafted and fact-checked
+       *                 with AI assistance under an editorial policy you can read.'
+       * 상자가 둘로 나뉘어 있어서 여섯 달 동안 아무도 눈치채지 못했다.
+       * 기사 하단이 어수선해 보인 진짜 이유는 상자가 넷이어서가 아니라
+       * **넷 중 둘이 같은 문장이어서** 였다. 하나로 합친다.
+       *
+       * 세 토막으로 쪼갠 것은 가운데에 편집방침 링크를 넣기 위해서다.
+       * 전에는 「an editorial policy you can read」 라고 써 놓고
+       * **정작 링크가 없었다** — 읽으라면서 어디 있는지는 안 알려준 셈이다.
+       */
+      colophonLead: 'Researched, drafted and fact-checked with AI assistance under an ',
+      colophonPolicy: 'editorial policy',
+      colophonTail: ' you can read; sources read, figures checked and photographs opened by a person before publication.',
       ledger: 'Mistakes we have found are on the public record.',
-      policyNote: 'This article was researched, drafted and fact-checked with AI assistance under an editorial policy you can read.',
       spotted: 'Spotted something wrong or out of date?',
       reportError: 'Report an error',
     },
@@ -305,9 +320,10 @@ export const UI = {
       ledgerLink: '「間違えたことの記録」',
       wrongTail: 'に、誰が見つけたかと一緒に残します。外部の方に指摘されたものも含めます——全部自分で気づいたふりをするのは、それ自体が小さな嘘だからです。',
       writtenBy: '執筆',
-      aiNote: 'AIの支援を受けて執筆しています。出典の確認、数字の照合、写真の確認は公開前に人が行っています。',
+      colophonLead: 'この記事は、公開している',
+      colophonPolicy: '編集方針',
+      colophonTail: 'のもとで、AIの支援を受けて調査・執筆・事実確認を行いました。出典の確認、数字の照合、写真の確認は公開前に人が行っています。',
       ledger: '見つかった誤りは公開の記録に残しています。',
-      policyNote: 'この記事は、公開している編集方針のもとで、AIの支援を受けて調査・執筆・事実確認を行いました。',
       spotted: '内容に誤りや古い情報を見つけましたか？',
       reportError: '誤りを知らせる',
     },
@@ -484,9 +500,10 @@ export const UI = {
       ledgerLink: '「我们错在哪里」的记录',
       wrongTail: '，并注明是谁发现的——包括由站外读者指出的那些，因为假装全是自己发现的，本身就是一个小谎。',
       writtenBy: '撰写',
-      aiNote: '本文在 AI 协助下撰写；出处、数字与照片在发布前均由人工核对。',
+      colophonLead: '本文依据公开的',
+      colophonPolicy: '编辑方针',
+      colophonTail: '，在 AI 协助下完成调查、撰写与事实核查；出处、数字与照片在发布前均由人工核对。',
       ledger: '我们发现的错误都公开记录在案。',
-      policyNote: '本文依据公开的编辑方针，在 AI 协助下完成调查、撰写与事实核查。',
       spotted: '发现错误或过时的信息了吗？',
       reportError: '告诉我们',
     },
