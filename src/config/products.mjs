@@ -322,6 +322,35 @@ export const PRODUCTS = {
     },
     checkedAt: '2026-08-17',
   },
+
+  /*
+   * 2026-08-22 Klook 상품 페이지에서 직접 읽은 것 (동대문 스파렉스, 후기 814건·2만건 이상 예약):
+   *   "This is a traditional Korean-style Jjimjilbang that operates 24 hours a day, year-round."
+   *   "Re-entry is not allowed once you have entered."          ← 라벨의 첫 마디가 되는 것
+   *   "Minors can enter only when accompanied by a parent or guardian."
+   *   "Bring alcohol or food is prohibited."
+   *   세신(body scrub) 프로그램과 식혜·구운 계란이 소개에 명시돼 있다.
+   *
+   * 왜 이 상품인가 — 우리 기사가 권하는 것은 11,000원짜리 동네 목욕탕이고
+   * 그것은 온라인 예약 상품이 아예 없다. 그래서 **파는 것과 권하는 것이 다르다.**
+   * 붙이되, 리조트 스파(26,000원)가 아니라 관광객이 이미 가 있는 동대문의
+   * 평범한 찜질방을 고른 이유가 그것이다. 본문의 추천은 이 링크 때문에 바뀌지 않는다.
+   *
+   * 라벨 규칙대로 **못 하는 것을 먼저 적는다** — 낮에 두세 시간 쓰려는 사람에게
+   * 「한번 나가면 재입장 불가」는 값보다 먼저 알아야 하는 것이다.
+   */
+  'klook-sparex-dongdaemun': {
+    url: 'https://www.klook.com/en-US/activity/133675-seoul-dongdaemun-sparex-jjimjilbang-sauna-admission-ticket/',
+    merchant: 'Klook',
+    category: 'experience',
+    relationship: 'suggested',
+    label: 'Dongdaemun jjimjilbang ticket — no re-entry once you go in, no outside food',
+    labels: {
+      ja: '東大門のチムジルバン入場券 — 一度入ると再入場不可、外部の飲食物持込不可',
+      'zh-hans': '东大门汗蒸幕入场券 —— 进去后不可再入场，禁止携带外食',
+    },
+    checkedAt: '2026-08-22',
+  },
 };
 
 /**
