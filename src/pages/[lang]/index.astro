@@ -9,6 +9,7 @@
  * 쌓아 둔 글이 일하게 하려면 홈에서 보여야 한다.
  */
 import { publicSlug } from '../../config/slug.mjs';
+import { makeHeroResolver } from '../../config/hero.mjs';
 import { pageHref, isForeign } from '../../config/links.mjs';
 import { t } from '../../config/ui.mjs';
 import { getCollection } from 'astro:content';
@@ -46,13 +47,21 @@ const SECTIONS = [
 ];
 
 const all = (await Promise.all(SECTIONS.map(async (s) => {
-  const entries = await getCollection(s.coll, (e) => !e.data.draft && e.data.lang === lang);
-  return entries.map((e) => ({
+  /*
+   * 컬렉션을 **언어로 거르지 않고** 통째로 받는다 (2026-08-22).
+   * 대표사진은 영어 원문 한 곳에만 적혀 있어서, 번역본의 사진을 찾으려면
+   * 원문이 같은 목록 안에 있어야 한다. 걸러 낸 뒤에 물려받으려 하면
+   * 일본어 홈에서는 원문이 이미 사라진 뒤라 사진이 없다고 판단해 버린다.
+   * 화면에 내보내는 것은 아래에서 다시 그 언어만 고른다.
+   */
+  const entries = await getCollection(s.coll, (e) => !e.data.draft);
+  const heroOf = makeHeroResolver(entries, s.coll);
+  return entries.filter((e) => e.data.lang === lang).map((e) => ({
     href: `/${lang}/${s.path}/${publicSlug(e.id)}/`,
     kicker: s.kicker(e, lang),
     title: e.data.title,
     summary: e.data.summary,
-    hero: e.data.hero ?? null,
+    hero: heroOf(e),
     at: e.data.publishedAt,
     path: s.path,
   }));

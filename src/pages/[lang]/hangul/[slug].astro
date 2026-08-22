@@ -12,6 +12,7 @@ import { NOTICES } from '../../../lib/claims.mjs';
 import { BRAND, LOCALES } from '../../../config/brand.mjs';
 import { AUTHOR } from '../../../config/author.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
+import { makeHeroResolver } from '../../../config/hero.mjs';
 import { t } from '../../../config/ui.mjs';
 
 export async function getStaticPaths() {
@@ -27,15 +28,17 @@ export async function getStaticPaths() {
     if (!bySlug.has(k)) bySlug.set(k, []);
     bySlug.get(k).push(e.data.lang);
   }
+  /* 대표사진은 원문 한 곳에만 적혀 있다 — 번역본은 여기서 물려받는다 (config/hero.mjs) */
+  const heroOf = makeHeroResolver(entries, 'hangul');
   return LOCALES.flatMap((lang) =>
     entries.filter((e) => e.data.lang === lang).map((entry) => ({
       params: { lang, slug: publicSlug(entry.id) },
-      props: { entry, availableLocales: bySlug.get(publicSlug(entry.id)) ?? [lang] },
+      props: { entry, hero: heroOf(entry), availableLocales: bySlug.get(publicSlug(entry.id)) ?? [lang] },
     }))
   );
 }
 
-const { entry, availableLocales } = Astro.props;
+const { entry, hero, availableLocales } = Astro.props;
 const { lang, slug } = Astro.params;
 const d = entry.data;
 const { Content } = await render(entry);
@@ -55,13 +58,13 @@ const jsonLd = {
   // 조직이 아니라 **사람**이다 (2026-08-16). 조직명은 저자 신호로 일하지 않는다.
   author: { '@type': 'Person', name: AUTHOR.name, url: `https://${BRAND.canonicalHost}/${lang}/author/` },
   publisher: { '@type': 'Organization', name: BRAND.name },
-  ...(d.hero ? { image: [new URL(d.hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
+  ...(hero ? { image: [new URL(hero.src.src, Astro.site ?? `https://${BRAND.canonicalHost}`).href] } : {}),
   ...(d.region ? { contentLocation: { '@type': 'Place', name: d.region } } : {}),
 };
 ---
 <BaseLayout availableLocales={availableLocales} title={d.title} seoTitle={d.seoTitle} description={d.summary} lang={lang}
             path={`hangul/${slug}`} jsonLd={jsonLd}
-            ogType="article" ogImage={d.hero ?? null}
+            ogType="article" ogImage={hero}
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
   <article class="wrap">
     <header class="article-head">
@@ -77,9 +80,9 @@ const jsonLd = {
     <TranslationNote lang={lang} translation={d.translation} />
     <AffiliateTopNote lang={lang} items={[...(d.visitKorea ?? []), ...(d.bringKoreaHome ?? [])]} />
 
-    {d.hero && (
-      <Figure src={d.hero.src} alt={d.hero.alt} credit={d.hero.credit}
-              license={d.hero.license} sourceUrl={d.hero.sourceUrl}
+    {hero && (
+      <Figure src={hero.src} alt={hero.alt} credit={hero.credit}
+              license={hero.license} sourceUrl={hero.sourceUrl}
               widths={[640, 960, 1280, 1600]} priority />
     )}
 

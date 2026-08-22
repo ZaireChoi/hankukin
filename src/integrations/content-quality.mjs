@@ -458,6 +458,22 @@ export default function contentQuality() {
         const warn = [];
         const shapes = [];   // 절 구성 비교용 — 판정은 반복문이 끝난 뒤
 
+        /*
+         * 어떤 원문이 대표사진을 가지고 있는가 — 「컬렉션/slug」 로 미리 모은다 (2026-08-22).
+         *
+         * 아래 hero-translation 게이트가 이걸 본다.
+         * 번역본은 사진을 안 적고 heroAlt 만 적는데, 원문에 사진이 있는지 모르면
+         * 「heroAlt 가 빠졌다」와 「원래 사진이 없는 기사다」를 구분할 수 없다.
+         */
+        const originHasHero = new Set();
+        for (const file of walk(CONTENT_DIR)) {
+          const rel = file.replace(/\\/g, '/').replace(`${CONTENT_DIR}/`, '');
+          const parts = rel.replace(/\.mdx?$/, '').split('/');
+          if (parts.length !== 2) continue;                 // 언어 폴더가 끼어 있으면 번역본이다
+          const head = readFileSync(file, 'utf8');
+          if (/^hero:/m.test(head.slice(0, head.indexOf('\n---', 4) + 4))) originHasHero.add(parts.join('/'));
+        }
+
         for (const file of walk(CONTENT_DIR)) {
           const text = readFileSync(file, 'utf8');
           const slug = basename(file).replace(/\.mdx?$/, '');
@@ -481,6 +497,39 @@ export default function contentQuality() {
               '      사진을 넣거나, 넣을 수 없다면 그 이유를 ' +
               'src/integrations/content-quality.mjs 의 HERO_EXEMPT 에 적으십시오.',
             );
+          }
+
+          // ── 1-b. 번역본의 대표사진 ──────────────────────────────
+          /*
+           * 2026-08-22. 위 주석이 「사진은 한 곳에만 적는다」고 선언해 놓고
+           * **어디에도 그 규칙을 강제하지 않고 있었다.** 결과가 두 갈래로 갈렸다:
+           *
+           *   사진을 안 적은 번역본 9쪽 → 일본어·중국어 페이지에 대표사진이 아예 없었다
+           *   적은 번역본 9쪽        → 같은 사실이 세 군데에 적혀, 원문에서 바꾸면 갈라졌다
+           *
+           * 이제 코드가 원문에서 물려받는다 (src/config/hero.mjs).
+           * 그러니 번역본은 사진을 적으면 안 되고, 대신 자기 언어의 alt 를 적어야 한다.
+           *
+           * alt 를 안 적었을 때 원문의 영어 alt 로 조용히 떨어뜨리지 않는 이유 —
+           * ui.mjs 의 t() 가 「영어로 대체하지 않습니다」라고 던지는 것과 같다.
+           * 반쯤 영어인 페이지는 미완성으로 읽히고, 조용히 메우면 아무도 모른다.
+           */
+          if (isTranslation) {
+            const of = fm.match(/^\s+of:\s*["']?([^"'\n]+)["']?/m)?.[1]?.trim();
+            if (/^hero:/m.test(fm)) {
+              fail.push(
+                `${slug} (${file}): 번역본에는 hero 를 적지 않습니다.\n` +
+                '      사진 파일·라이선스·출처·크레딧은 **원문 한 곳**에만 적고,\n' +
+                '      번역본은 그 언어의 대체텍스트만 heroAlt 로 적습니다.\n' +
+                '      같은 사실을 세 군데에 적어 두면 원문에서 사진을 바꿀 때 번역본만 옛 사진에 남습니다.',
+              );
+            } else if (of && originHasHero.has(of) && !/^heroAlt:/m.test(fm)) {
+              fail.push(
+                `${slug} (${file}): heroAlt 가 없습니다.\n` +
+                `      원문(${of})에는 대표사진이 있습니다. 그 사진의 대체텍스트를 이 언어로 적으십시오.\n` +
+                '      영어 alt 를 그대로 쓰지 않습니다 — 화면 낭독기가 이 문단들 사이에서 갑자기 영어를 읽습니다.',
+              );
+            }
           }
 
           // ── 2. 캡션 없는 사진 ───────────────────────────────────

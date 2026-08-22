@@ -164,6 +164,13 @@ for (const file of walk(CONTENT)) {
 
   // 대표사진이 있으면 그것이 공유 카드가 된다. 카드를 만들지 않는다.
   if (/^hero:/m.test(fm)) continue;
+  /*
+   * 2026-08-22. 번역본은 이제 hero 를 안 적고 원문에서 물려받는다 (src/config/hero.mjs).
+   * 그러니 「hero: 가 없다」만 보면 번역본 전부가 사진 없는 기사로 보이고,
+   * 화면에는 원문 사진이 나가는데 쓰이지도 않을 카드를 9장 더 그리게 된다.
+   * heroAlt 는 원문에 사진이 있을 때만 적히므로, 그것이 곧 「물려받을 사진이 있다」는 표시다.
+   */
+  if (/^heroAlt:/m.test(fm)) continue;
 
   const title = field(fm, 'title');
   const checked = field(fm, 'checkedAt');
