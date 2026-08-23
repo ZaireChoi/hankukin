@@ -244,6 +244,12 @@
           }
         },
         {
+          "when": "There are eight Olive Youngs in Myeong-dong. Which one do I walk into?",
+          "answer": "Not the biggest one. Olive Young Myeongdong Town is the furthest from the subway and the only one of the six that cannot hand your tax refund back at the till.",
+          "href": "now/olive-young-myeongdong-which-store",
+          "home": true
+        },
+        {
           "when": "Can I get fined for walking down a street and taking a photograph",
           "answer": "In one lane of Bukchon, yes — ₩100,000, outside 10:00–17:00, and it applies to visitors exactly as to Koreans.",
           "href": "guides/bukchon-hanok-village-visiting-hours-fine",

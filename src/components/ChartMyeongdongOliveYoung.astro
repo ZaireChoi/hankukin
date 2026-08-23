@@ -1,0 +1,122 @@
+---
+/**
+ * 명동 올리브영 — 지하철에서 먼 순서로, 그리고 세금이 어디서 돌아오는지.
+ *
+ * 왜 그렸나 (2026-08-23).
+ *   명동 한 동네에 올리브영이 **여덟 곳**이다. 외국인이 지도에서 고를 방법이 없다.
+ *   그런데 고를 근거가 실제로 두 개 있고, 둘 다 눈금 위에 놓으면 한눈에 보인다 —
+ *   ① 역에서 몇 미터인가  ② 세금을 매장에서 돌려받는가, 공항까지 들고 가야 하는가.
+ *
+ *   그리고 그 둘이 **어긋난다.** 이름이 제일 크고 지도에서 제일 먼저 뜨는
+ *   「올리브영 명동 타운」이 역에서 가장 멀고, 여섯 곳 중 유일하게 즉시환급이 안 된다.
+ *   문장으로 쓰면 시비처럼 읽히는데 막대로 그리면 그냥 사실로 보인다.
+ *
+ * 숫자의 출처.
+ *   거리·시간  카카오맵 도보 길찾기, 2026-08-23 확인. 최단시간 기준.
+ *   환급 여부  올리브영 매장찾기의 「택스리펀드」·「택스리펀드(즉시환급)」 필터를
+ *             각각 적용해 남는 매장을 비교했다 (2026-08-23 확인).
+ *
+ * ※ 출발역이 하나가 아니다. 명동타임워크점만 을지로입구(2호선)가 가깝고
+ *   나머지 다섯은 명동역(4호선)이 가깝다. 같은 자에 놓되 막대마다 출발역을 적었다 —
+ *   출발지가 다른 거리를 말없이 나란히 놓으면 그건 도표가 아니라 착시다.
+ *
+ * ※ 명동2가점·명동거리점은 이 도표에 없다. 두 곳은 택스리펀드 자체가 안 되므로
+ *   「어디서 돌려받나」라는 이 도표의 질문이 성립하지 않는다. 본문에 이름으로 적었다.
+ */
+interface Props { lang?: string; caption?: string }
+const { lang = 'en', caption } = Astro.props;
+
+/*
+ * H 를 380 으로 잡은 이유 (직접 좌표를 재 보고 고쳤다).
+ *   340 이면 마지막 줄의 출발역 보조라벨(y=300)과 범례 첫 줄(y=302)이
+ *   x 96~236 구간에서 **겹친다.** 둘 다 왼쪽에 있어서 화면에서 글자가 포개진다.
+ *   도표에서 글자가 겹치는 사고는 이 저장소에서 이미 한 번 냈다 (2026-08-14).
+ */
+const W = 760, H = 380;
+const X0 = 250;                  // 0m 의 x
+const PX = (700 - X0) / 500;     // 미터당 픽셀 (500m 가 오른쪽 끝)
+const x = (m) => X0 + m * PX;
+const ROW0 = 84, ROW = 40;
+
+/** 값은 언어와 무관하다. 한 곳에만 적는다. */
+const BARS = [
+  { m: 146, min: 2, from: 4, instant: true  },
+  { m: 192, min: 3, from: 4, instant: true  },
+  { m: 302, min: 4, from: 4, instant: true  },
+  { m: 372, min: 6, from: 2, instant: true  },
+  { m: 378, min: 6, from: 4, instant: true  },
+  { m: 453, min: 7, from: 4, instant: false },
+];
+
+const T = {
+  en: {
+    kicker: 'THE ONE WITH THE BIGGEST NAME IS THE FURTHEST',
+    sub: 'Six Olive Young branches in Myeong-dong that do tax refunds, by walking distance.',
+    names: [
+      'Myeongdong-daero',
+      'Myeongdong Station',
+      'Central Myeongdong Town',
+      'Myeongdong Time Walk',
+      'Myeongdong',
+      'Olive Young Myeongdong Town',
+    ],
+    lines: { 4: 'from Myeongdong Stn (Line 4)', 2: 'from Euljiro 1-ga Stn (Line 2)' },
+    legend: ['Refund handed back at the till', 'Refund only at the airport'],
+    note: 'Two more branches — Myeongdong 2-ga and Myeongdong-geori — do no tax refund at all.',
+    alt: 'Walking distance to six Olive Young branches in Myeong-dong, Seoul, measured on Kakao Map on 23 August 2026. Myeongdong-daero is 146 metres and two minutes from Myeongdong Station on Line 4; Myeongdong Station branch 192 metres, three minutes; Central Myeongdong Town 302 metres, four minutes; Myeongdong Time Walk 372 metres and six minutes from Euljiro 1-ga Station on Line 2; Myeongdong branch 378 metres, six minutes; and Olive Young Myeongdong Town 453 metres, seven minutes. The first five hand the tax refund back at the till. Olive Young Myeongdong Town, the largest and furthest, refunds only at the airport.',
+  },
+};
+const t = T[lang] ?? T.en;
+
+const rows = BARS.map((b, i) => ({
+  ...b, name: t.names[i], y: ROW0 + i * ROW, x2: x(b.m),
+  tone: b.instant ? '#1f7a4d' : '#c9622e',
+}));
+const ticks = [0, 100, 200, 300, 400, 500];
+---
+
+<figure class="chart">
+<svg viewBox={`0 0 ${W} ${H}`} xmlns="http://www.w3.org/2000/svg" role="img" aria-label={t.alt}>
+  <text x="30" y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">{t.kicker}</text>
+  <text x="30" y="47" font-size="12.5" fill="#3c3733">{t.sub}</text>
+
+  {ticks.map((v) => (
+    <>
+      <line x1={x(v).toFixed(1)} y1="62" x2={x(v).toFixed(1)} y2={(ROW0 + 6 * ROW - 26).toFixed(1)} stroke="#efe9e1" />
+      <text x={x(v).toFixed(1)} y={(ROW0 + 6 * ROW - 10).toFixed(1)} text-anchor="middle" font-size="11" fill="#8a827b">
+        {v === 0 ? '0' : v + 'm'}
+      </text>
+    </>
+  ))}
+
+  {rows.map((r) => (
+    <>
+      <text x={(X0 - 14).toFixed(1)} y={(r.y + 2).toFixed(1)} text-anchor="end" font-size="12.5"
+            font-weight={r.instant ? '400' : '700'} fill="#12100f">{r.name}</text>
+      <text x={(X0 - 14).toFixed(1)} y={(r.y + 16).toFixed(1)} text-anchor="end" font-size="10" fill="#a09890">
+        {t.lines[r.from]}
+      </text>
+      <rect x={X0} y={(r.y - 11).toFixed(1)} width={(r.x2 - X0).toFixed(1)} height="18" rx="3" fill={r.tone} opacity="0.85" />
+      <text x={(r.x2 + 10).toFixed(1)} y={(r.y + 2).toFixed(1)} font-size="12" font-weight="700" fill={r.tone}>
+        {r.m}m · {r.min} min
+      </text>
+    </>
+  ))}
+
+  <circle cx="34" cy={H - 42} r="5" fill="#1f7a4d" />
+  <text x="46" y={H - 38} font-size="11.5" fill="#6b6560">{t.legend[0]}</text>
+  <circle cx="34" cy={H - 24} r="5" fill="#c9622e" />
+  <text x="46" y={H - 20} font-size="11.5" fill="#6b6560">{t.legend[1]}</text>
+  <text x="30" y={H - 4} font-size="11" fill="#a09890">{t.note}</text>
+</svg>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart figcaption {
+    font-size: 0.85rem; line-height: 1.5; color: var(--suggested);
+    margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--line);
+  }
+</style>
