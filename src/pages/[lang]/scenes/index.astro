@@ -2,26 +2,46 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ArticleList from '../../../components/ArticleList.astro';
-import { LOCALES } from '../../../config/brand.mjs';
+import { LOCALES, categoryByPath } from '../../../config/brand.mjs';
 import { t } from '../../../config/ui.mjs';
 import { publicSlug } from '../../../config/slug.mjs';
 export async function getStaticPaths() { return LOCALES.map((lang) => ({ params: { lang } })); }
 const { lang } = Astro.params;
+
+/*
+ * 제목·설명은 brand.mjs + ui.mjs 에서 가져온다. 여기에 직접 적지 않는다.
+ *
+ * 2026-08-23. 이 페이지만 그 규칙을 안 지키고 있었다 —
+ * now·decode·hangul·guides 넷은 전부 t(lang, `sections.…`) 를 쓰는데
+ * Scenes 는 제일 먼저 만든 색인이라 **영어 한 줄이 하드코딩**된 채 남아 있었다.
+ *
+ * 그래서 두 가지가 동시에 틀려 있었다.
+ *   ① 문장이 사실과 다르다 — "K-drama, film and music video **locations**" 라고 적혀 있는데
+ *      영어 기사 11편 중 촬영지(sceneKind: location)는 **둘뿐**이고 아홉이 culture 다.
+ *      이태원·제주·거제·경주·성수가 「촬영지」로 소개되고 있었다.
+ *   ② 하드코딩이라 **일본어·중국어 색인에도 영어 메타 설명이 그대로 나갔다.**
+ *      본문 화면문구 검사(check-i18n)는 meta description 을 안 본다.
+ *
+ * ui.mjs 의 sections.scenes.lead 는 이미 세 언어로 있고, 두 종류를 다 덮는 문장이다.
+ * 쓰기만 하면 됐다.
+ */
+const cat = categoryByPath('scenes');
+
 const scenes = (await getCollection('scenes', (e) => !e.data.draft && e.data.lang === lang))
   .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
 const jsonLd = {
-  '@context': 'https://schema.org', '@type': 'ItemList',
+  '@context': 'https://schema.org', '@type': 'ItemList', name: cat.label,
   itemListElement: scenes.map((s, i) => ({ '@type':'ListItem', position:i+1, name:s.data.title,
     url: new URL(`/${lang}/scenes/${publicSlug(s.id)}/`, Astro.site).href })),
 };
 ---
-<BaseLayout availableLocales={LOCALES} lang={lang} path="scenes" title="HANKUKIN Scenes"
-  description="K-drama, film and music video locations you can actually visit, with routes, costs and photo tips."
+<BaseLayout availableLocales={LOCALES} lang={lang} path={cat.path} title={t(lang, `sections.${cat.key}.label`)}
+  description={t(lang, `sections.${cat.key}.lead`)}
   jsonLd={jsonLd}>
   <div class="wrap">
     <section class="hero">
-      <p class="q">Where to Go</p>
-      <h1>HANKUKIN Scenes</h1>
+      <p class="q">{t(lang, `sections.${cat.key}.blurb`)}</p>
+      <h1>{t(lang, `sections.${cat.key}.label`)}</h1>
       <p>{t(lang, 'home.scenesLead')}</p>
     </section>
     <section class="block">
