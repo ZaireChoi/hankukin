@@ -1,5 +1,6 @@
 ---
 import { BRAND, LOCALES, HREFLANG, DEFAULT_LOCALE } from '../config/brand.mjs';
+import { t } from '../config/ui.mjs';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
@@ -8,7 +9,18 @@ import '../styles/global.css';
 const {
   title,
   seoTitle = null,   // 검색 결과 전용 짧은 제목. 없으면 title 을 쓴다
-  description = BRAND.defaultMetaDescription,
+  /**
+   * 설명을 안 넘기면 **그 언어의** 기본 문장을 쓴다 (2026-08-23).
+   *
+   * 전에는 BRAND.defaultMetaDescription(영어 한 줄)이 기본값이었다.
+   * 홈이 설명을 안 넘기고 있어서 /ja/ 와 /zh-hans/ 대문 설명이 **영어로 나갔다.**
+   * 사이트에서 가장 중요한 한 줄인데 화면에는 안 보이는 자리라 여섯 달 동안 아무도 몰랐다.
+   * 게이트 14-b 를 만들자마자 처음 잡힌 것이 이것이다.
+   *
+   * 기본값을 여기서 언어별로 고르면, **앞으로 설명을 빠뜨리는 페이지가 생겨도 저절로 맞는다.**
+   * 게이트는 사고를 알려주고, 이 줄은 사고가 안 나게 한다. 둘 다 필요하다.
+   */
+  description = null,
   lang = DEFAULT_LOCALE,
   path = '',              // 언어 세그먼트를 뺀 경로. 예: 'scenes/goblin-jumunjin-breakwater'
   jsonLd = null,
@@ -75,7 +87,7 @@ function forSearch(text, max = 155) {
   const w = head.lastIndexOf(' ');
   return `${head.slice(0, w > 60 ? w : max)}…`;
 }
-const metaDescription = forSearch(description);
+const metaDescription = forSearch(description ?? t(lang, 'meta.default'));
 
 /**
  * 제목도 같은 문제였다. 사이트명까지 붙여 중앙값 66자, 최대 95자.

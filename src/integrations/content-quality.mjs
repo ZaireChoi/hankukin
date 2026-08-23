@@ -343,6 +343,61 @@ export default function contentQuality() {
       }
 
       /*
+       * ── 열네 번째 게이트 (b): 번역 페이지의 meta description ──────────────
+       *
+       * 2026-08-23. 위 게이트가 **왜 못 잡았는지**부터 적는다.
+       *   `.replace(/<[^>]+>/g, ' ')` 로 태그를 통째로 지운다.
+       *   그러면 <meta name="description" content="…"> 도 공백이 된다 —
+       *   **검사 대상에 애초에 들어온 적이 없다.**
+       *
+       * 그래서 일본어·중국어 Scenes 색인이 영어 설명을 달고 나가는 동안
+       * 「번역면에 남은 영어 화면문구 없음」이 계속 초록이었다.
+       * 색인 다섯 중 Scenes 만 하드코딩돼 있었고, 아무도 몰랐다.
+       *
+       * meta description 은 **화면에 안 보이는 자리**다. 그래서 사람이 못 잡는다.
+       * 검색 결과에만 나오므로, 틀려 있으면 정확히 우리가 팔려는 자리에서만 틀린다.
+       *
+       * 판정은 아주 단순하게 한다 — **CJK 글자가 하나도 없으면 영어다.**
+       * 일본어·중국어 설명문에 가나·한자·한글이 한 글자도 없는 경우는 없다.
+       * 정교한 언어 판별을 넣지 않는 이유: 안 터지는 게이트가 되기 쉽다.
+       */
+      /*
+       * 범위를 글자로 적지 않고 \u 이스케이프로 적는다.
+       * 이 파일이 한 번이라도 다른 인코딩으로 저장되면 글자로 적은 범위는 깨지는데,
+       * 깨진 정규식은 오류를 내지 않고 **그냥 아무것도 안 잡는다.**
+       * 안 우는 게이트는 없는 게이트보다 나쁘다 — 통과했다고 말하기 때문이다.
+       *   3040–30FF 가나 · 3400–4DBF 한자확장A · 4E00–9FFF 한자 · AC00–D7AF 한글
+       */
+      const CJK = /[぀-ヿ㐀-䶿一-鿿가-힯]/;
+      const latinMeta = [];
+      for (const f of pages) {
+        const rel = '/' + f.slice(root.length).replace(/\\/g, '/').replace(/^\//, '');
+        const lang = LOCALES.filter((l) => l !== DEFAULT_LOCALE).find((l) => rel.startsWith(`/${l}/`));
+        if (!lang) continue;
+        const html = readFileSync(f, 'utf8');
+        for (const [what, re] of [
+          ['description', /<meta name="description" content="([^"]*)"/],
+          ['og:description', /<meta property="og:description" content="([^"]*)"/],
+        ]) {
+          const v = re.exec(html)?.[1];
+          if (v && v.length >= 12 && !CJK.test(v)) {
+            latinMeta.push(`${rel} — ${what}\n        "${v.slice(0, 90)}${v.length > 90 ? '…' : ''}"`);
+          }
+        }
+      }
+      if (latinMeta.length) {
+        logger.error(
+          '\n\n번역 페이지의 meta description 이 영어입니다.\n\n  ' +
+          latinMeta.slice(0, 12).join('\n  ') +
+          (latinMeta.length > 12 ? `\n  … 외 ${latinMeta.length - 12}곳` : '') +
+          '\n\n**화면에는 안 보이는 자리라 눈으로는 못 찾습니다.** 검색 결과에만 나옵니다.\n' +
+          '원인은 대개 페이지 파일에 설명을 직접 적은 것입니다.\n' +
+          'ui.mjs 에 넣고 t(lang, …) 으로 부르십시오 — 색인 다섯 중 넷은 이미 그렇게 합니다.\n',
+        );
+        throw new Error('번역 페이지의 meta description 이 영어입니다 — 위 목록을 고치십시오.');
+      }
+
+      /*
        * ── 열다섯 번째 게이트: 공유 카드가 실제로 존재하는가 ────────────────
        *
        * 2026-08-17. 대표사진이 없는 기사는 og:image 가 /og/<…>.png 로 간다.

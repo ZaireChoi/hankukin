@@ -36,6 +36,25 @@ export const UI = {
       language: 'Language',
       notAvailable: 'Not yet available in this language',
     },
+    /**
+     * 페이지가 설명을 안 넘겼을 때 쓰는 meta description.
+     *
+     * 2026-08-23. 여기 오기 전에는 BRAND.defaultMetaDescription(영어 한 줄)이 그대로 나갔다.
+     * 홈이 설명을 안 넘기고 있어서 /ja/ 와 /zh-hans/ 의 대문 설명이 **영어였다.**
+     * 사이트에서 제일 중요한 한 줄인데, 화면에 안 보이는 자리라 아무도 못 봤다.
+     *
+     * ※ 이 주석을 처음 쓸 때 별표 둘 바로 뒤에 「/ja/」를 붙여 적었다가 빌드가 섰다.
+     *   별표 다음에 슬래시가 오면 그 자리에서 블록 주석이 닫히고, 뒤가 전부 코드로 읽힌다.
+     *   경로를 강조하고 싶으면 강조 표시를 경로 **뒤에** 둔다.
+     *   (이 줄을 고칠 때도 같은 실수를 한 번 더 했다 — 경고문에 그 문자열을 그대로 넣었다.)
+     * 게이트 14-b 를 만들자마자 처음 잡힌 것이 이것이다.
+     *
+     * brand.mjs 의 영어 원문을 지우지는 않는다 — 그쪽은 언어를 모르는 자리(JSON-LD 등)에서
+     * 계속 쓰인다. 화면과 검색에 나가는 것만 여기서 언어별로 고른다.
+     */
+    meta: {
+      default: 'K-drama brought you to Korea. We cover the ground game — reading signs, fares, tickets, food, clinics — checked against Korean primary sources.',
+    },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: 'Where to Go',
         lead: 'K-drama, film, K-pop and performance — the places you can stand in, and the things themselves.' },
@@ -231,6 +250,9 @@ export const UI = {
       language: '言語',
       notAvailable: 'この言語ではまだ公開していません',
     },
+    meta: {
+      default: 'ドラマがきっかけで韓国へ。着いてからの実務を書きます — 看板の読み方、運賃、チケット、食事、病院。すべて韓国語の一次情報で確認しています。',
+    },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: 'どこへ行くか',
         lead: 'ドラマ・映画・K-POP・舞台 — 実際に立てる場所と、その作品そのもの。' },
@@ -410,6 +432,9 @@ export const UI = {
       skipToContent: '跳到正文',
       language: '语言',
       notAvailable: '该语言尚未上线',
+    },
+    meta: {
+      default: '因为韩剧来到韩国。我们写的是落地之后的事 —— 怎么看懂招牌、票价、门票、吃饭、看病，全部对照韩文一手资料核对。',
     },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: '去哪里',
