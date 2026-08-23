@@ -109,6 +109,11 @@
           "href": "decode/korean-phrases-shops-restaurants"
         },
         {
+          "when": "A dish I did not order just arrived and I do not know if I am paying for it",
+          "answer": "If the word was 서비스, it is free. The dictionary sense is a discount or a bonus thrown in — not 'service' on a bill.",
+          "href": "decode/konglish-korean-words-that-look-english"
+        },
+        {
           "when": "I need a pharmacy and every door looks like an office",
           "answer": "Clinic signs run to a fixed formula — name, specialty, then 의원 or 병원. Korean law bars anyone who is not a licensed medical institution from using those words at all.",
           "href": "hangul/korean-clinic-pharmacy-signs"
