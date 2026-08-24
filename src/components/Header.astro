@@ -36,6 +36,28 @@ const here = Astro.url.pathname;
       */}
       <a class="stuck" href={pageHref(lang, 'stuck')}
          aria-current={here.includes('/stuck') ? 'page' : undefined}>{t(lang, 'nav.stuck')}{isForeign(lang, 'stuck') ? t(lang, 'footer.inEnglish') : ''}</a>
+      {/*
+        플래너 — 읽는 곳이 아니라 **하는 곳**이다.
+
+        왜 여기 넣나 (2026-08-24).
+          plan.hankuk-in.com 이 살아 있는데 이 사이트 어디에서도 그리로 가는 길이
+          없었다. 만들고 나서 갈 길을 안 만들어 준 것 — Stuck? 이 겪은 그 문제와
+          같은 모양이고, 이 헤더 주석이 이미 그 교훈을 적어 두고 있다.
+
+        왜 Stuck? 과 모양을 또 다르게 하나.
+          다섯 축은 「무엇에 관한 글인가」, Stuck 은 「지금 뭐가 막혔나」,
+          플래너는 「일정을 직접 짜 본다」다. 셋이 다른 종류의 입구다.
+          테두리만 있는 알약(Stuck) 옆에 **채워진 알약**을 두어 무게를 준다.
+
+        왜 다른 사이트인데 같은 탭인가.
+          같은 브랜드의 다른 화면이지 바깥으로 나가는 링크가 아니다.
+          rel=nofollow 도 붙이지 않는다 — 우리 사이트다.
+
+        언어.
+          플래너는 13개 언어를 스스로 고른다. 여기서 lang 을 넘기지 않는 것은
+          그 때문이다 — 넘길 파라미터가 없고, 지어내면 깨진다.
+      */}
+      <a class="plan" href="https://plan.hankuk-in.com/">{t(lang, 'nav.plan')}</a>
     </nav>
   </div>
 </header>

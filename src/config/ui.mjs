@@ -32,6 +32,7 @@ export const UI = {
     },
     nav: {
       stuck: 'Stuck?',
+      plan: 'Plan your trip',
       skipToContent: 'Skip to content',
       language: 'Language',
       notAvailable: 'Not yet available in this language',
@@ -246,6 +247,7 @@ export const UI = {
     },
     nav: {
       stuck: '困っていること',
+      plan: '旅程をつくる',
       skipToContent: '本文へ',
       language: '言語',
       notAvailable: 'この言語ではまだ公開していません',
@@ -429,6 +431,7 @@ export const UI = {
     },
     nav: {
       stuck: '卡住了？',
+      plan: '规划行程',
       skipToContent: '跳到正文',
       language: '语言',
       notAvailable: '该语言尚未上线',
