@@ -32,6 +32,19 @@ img{max-width:100%; height:auto; display:block}
 .nav a.stuck{margin-left:.35rem; padding:.28rem .6rem; border:1px solid var(--accent);
              border-radius:999px; color:var(--accent); font-weight:600}
 .nav a.stuck:hover,.nav a.stuck[aria-current]{background:var(--accent); color:var(--paper)}
+/* 플래너 — 읽는 곳이 아니라 하는 곳이라, 테두리만 있는 Stuck 옆에서 채워서 무게를 준다 (2026-08-24) */
+.nav a.plan{margin-left:.35rem; padding:.28rem .7rem; border:1px solid var(--accent);
+            border-radius:999px; background:var(--accent); color:var(--paper); font-weight:600}
+.nav a.plan:hover{background:transparent; color:var(--accent)}
+/*
+  좁은 화면에서는 맨 앞으로 보낸다.
+  .nav 는 가로 스크롤이라, 390px 에서 플래너가 오른쪽 화면 밖으로 밀려 있었다.
+  스크롤해야 보이는 링크는 없는 링크와 같다 — 이 헤더가 Stuck? 에 대해
+  이미 적어 둔 그 문제다. order 로 자리만 바꾼다(마크업은 그대로).
+*/
+@media (max-width:720px){
+  .nav a.plan{order:-1; margin-left:0; margin-right:.5rem}
+}
 
 /* ---------- hero / home ---------- */
 .hero{padding:2.6rem 0 1.8rem; border-bottom:1px solid var(--line)}
