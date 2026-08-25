@@ -1,0 +1,1956 @@
+{
+  "_출처": "서울교통공사 역간거리 (공공데이터포털)",
+  "_읽는법": "runSeconds 는 **앞 역에서 이 역까지** 걸리는 시간이다. 노선 첫 역은 0.",
+  "_한계": "서울교통공사 관할 노선만 있다. 우이신설선·공항철도·신분당선 등은 빠져 있을 수 있다.",
+  "_가져온날": "2026-08-25",
+  "_원본파일": "서울교통공사_역간거리.csv",
+  "_원본인코딩": "euc-kr",
+  "segments": [
+    {
+      "line": "1",
+      "name": "서울역",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "1",
+      "name": "시청",
+      "runSeconds": 120,
+      "km": 1.1,
+      "cumulativeKm": 1.1
+    },
+    {
+      "line": "1",
+      "name": "종각",
+      "runSeconds": 120,
+      "km": 1,
+      "cumulativeKm": 2.1
+    },
+    {
+      "line": "1",
+      "name": "종로3가",
+      "runSeconds": 90,
+      "km": 0.8,
+      "cumulativeKm": 2.9
+    },
+    {
+      "line": "1",
+      "name": "종로5가",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 3.8
+    },
+    {
+      "line": "1",
+      "name": "동대문",
+      "runSeconds": 90,
+      "km": 0.8,
+      "cumulativeKm": 4.6
+    },
+    {
+      "line": "1",
+      "name": "동묘앞",
+      "runSeconds": 60,
+      "km": 0.6,
+      "cumulativeKm": 5.2
+    },
+    {
+      "line": "1",
+      "name": "신설동",
+      "runSeconds": 90,
+      "km": 0.7,
+      "cumulativeKm": 5.9
+    },
+    {
+      "line": "1",
+      "name": "제기동",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 6.8
+    },
+    {
+      "line": "1",
+      "name": "청량리",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 7.8
+    },
+    {
+      "line": "2",
+      "name": "시청",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "2",
+      "name": "을지로입구",
+      "runSeconds": 90,
+      "km": 0.7,
+      "cumulativeKm": 0.7
+    },
+    {
+      "line": "2",
+      "name": "을지로3가",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 1.5
+    },
+    {
+      "line": "2",
+      "name": "을지로4가",
+      "runSeconds": 60,
+      "km": 0.6,
+      "cumulativeKm": 2.1
+    },
+    {
+      "line": "2",
+      "name": "동대문역사문화공원",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 3.1
+    },
+    {
+      "line": "2",
+      "name": "신당",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 4
+    },
+    {
+      "line": "2",
+      "name": "상왕십리",
+      "runSeconds": 60,
+      "km": 0.9,
+      "cumulativeKm": 4.9
+    },
+    {
+      "line": "2",
+      "name": "왕십리",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 5.7
+    },
+    {
+      "line": "2",
+      "name": "한양대",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 6.7
+    },
+    {
+      "line": "2",
+      "name": "뚝섬",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 7.8
+    },
+    {
+      "line": "2",
+      "name": "성수",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 8.6
+    },
+    {
+      "line": "2",
+      "name": "건대입구",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 9.8
+    },
+    {
+      "line": "2",
+      "name": "구의",
+      "runSeconds": 120,
+      "km": 1.6,
+      "cumulativeKm": 11.4
+    },
+    {
+      "line": "2",
+      "name": "강변",
+      "runSeconds": 60,
+      "km": 0.9,
+      "cumulativeKm": 12.3
+    },
+    {
+      "line": "2",
+      "name": "잠실나루",
+      "runSeconds": 120,
+      "km": 1.8,
+      "cumulativeKm": 14.1
+    },
+    {
+      "line": "2",
+      "name": "잠실",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 15.1
+    },
+    {
+      "line": "2",
+      "name": "잠실새내",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 16.3
+    },
+    {
+      "line": "2",
+      "name": "종합운동장",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 17.5
+    },
+    {
+      "line": "2",
+      "name": "삼성",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 18.5
+    },
+    {
+      "line": "2",
+      "name": "선릉",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 19.8
+    },
+    {
+      "line": "2",
+      "name": "역삼",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 21
+    },
+    {
+      "line": "2",
+      "name": "강남",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 21.8
+    },
+    {
+      "line": "2",
+      "name": "교대",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 23
+    },
+    {
+      "line": "2",
+      "name": "서초",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 23.7
+    },
+    {
+      "line": "2",
+      "name": "방배",
+      "runSeconds": 120,
+      "km": 1.7,
+      "cumulativeKm": 25.4
+    },
+    {
+      "line": "2",
+      "name": "사당",
+      "runSeconds": 150,
+      "km": 1.6,
+      "cumulativeKm": 27
+    },
+    {
+      "line": "2",
+      "name": "낙성대",
+      "runSeconds": 120,
+      "km": 1.7,
+      "cumulativeKm": 28.7
+    },
+    {
+      "line": "2",
+      "name": "서울대입구",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 29.7
+    },
+    {
+      "line": "2",
+      "name": "봉천",
+      "runSeconds": 60,
+      "km": 1,
+      "cumulativeKm": 30.7
+    },
+    {
+      "line": "2",
+      "name": "신림",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 31.8
+    },
+    {
+      "line": "2",
+      "name": "신대방",
+      "runSeconds": 120,
+      "km": 1.8,
+      "cumulativeKm": 33.6
+    },
+    {
+      "line": "2",
+      "name": "구로디지털단지",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 34.7
+    },
+    {
+      "line": "2",
+      "name": "대림",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 35.8
+    },
+    {
+      "line": "2",
+      "name": "신도림",
+      "runSeconds": 150,
+      "km": 1.8,
+      "cumulativeKm": 37.6
+    },
+    {
+      "line": "2",
+      "name": "문래",
+      "runSeconds": 120,
+      "km": 1.2,
+      "cumulativeKm": 38.8
+    },
+    {
+      "line": "2",
+      "name": "영등포구청",
+      "runSeconds": 60,
+      "km": 0.9,
+      "cumulativeKm": 39.7
+    },
+    {
+      "line": "2",
+      "name": "당산",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 40.8
+    },
+    {
+      "line": "2",
+      "name": "합정",
+      "runSeconds": 150,
+      "km": 2,
+      "cumulativeKm": 42.8
+    },
+    {
+      "line": "2",
+      "name": "홍대입구",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 43.9
+    },
+    {
+      "line": "2",
+      "name": "신촌",
+      "runSeconds": 120,
+      "km": 1.3,
+      "cumulativeKm": 45.2
+    },
+    {
+      "line": "2",
+      "name": "이대",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 46
+    },
+    {
+      "line": "2",
+      "name": "아현",
+      "runSeconds": 60,
+      "km": 0.9,
+      "cumulativeKm": 46.9
+    },
+    {
+      "line": "2",
+      "name": "충정로",
+      "runSeconds": 90,
+      "km": 0.8,
+      "cumulativeKm": 47.7
+    },
+    {
+      "line": "2",
+      "name": "시청",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 48.8
+    },
+    {
+      "line": "2",
+      "name": "용답",
+      "runSeconds": 180,
+      "km": 2.3,
+      "cumulativeKm": 51.1
+    },
+    {
+      "line": "2",
+      "name": "신답",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 52.1
+    },
+    {
+      "line": "2",
+      "name": "용두",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 53
+    },
+    {
+      "line": "2",
+      "name": "신설동",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 54.2
+    },
+    {
+      "line": "2",
+      "name": "도림천",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 55.2
+    },
+    {
+      "line": "2",
+      "name": "양천구청",
+      "runSeconds": 150,
+      "km": 1.7,
+      "cumulativeKm": 56.9
+    },
+    {
+      "line": "2",
+      "name": "신정네거리",
+      "runSeconds": 180,
+      "km": 1.9,
+      "cumulativeKm": 58.8
+    },
+    {
+      "line": "2",
+      "name": "까치산",
+      "runSeconds": 150,
+      "km": 1.4,
+      "cumulativeKm": 60.2
+    },
+    {
+      "line": "3",
+      "name": "지축",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "3",
+      "name": "구파발",
+      "runSeconds": 180,
+      "km": 1.5,
+      "cumulativeKm": 1.5
+    },
+    {
+      "line": "3",
+      "name": "연신내",
+      "runSeconds": 120,
+      "km": 2,
+      "cumulativeKm": 3.5
+    },
+    {
+      "line": "3",
+      "name": "불광",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 4.8
+    },
+    {
+      "line": "3",
+      "name": "녹번",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 5.9
+    },
+    {
+      "line": "3",
+      "name": "홍제",
+      "runSeconds": 120,
+      "km": 1.6,
+      "cumulativeKm": 7.5
+    },
+    {
+      "line": "3",
+      "name": "무악재",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 8.4
+    },
+    {
+      "line": "3",
+      "name": "독립문",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 9.5
+    },
+    {
+      "line": "3",
+      "name": "경복궁",
+      "runSeconds": 120,
+      "km": 1.6,
+      "cumulativeKm": 11.1
+    },
+    {
+      "line": "3",
+      "name": "안국",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 12.2
+    },
+    {
+      "line": "3",
+      "name": "종로3가",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 13.2
+    },
+    {
+      "line": "3",
+      "name": "을지로3가",
+      "runSeconds": 60,
+      "km": 0.6,
+      "cumulativeKm": 13.8
+    },
+    {
+      "line": "3",
+      "name": "충무로",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 14.5
+    },
+    {
+      "line": "3",
+      "name": "동대입구",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 15.4
+    },
+    {
+      "line": "3",
+      "name": "약수",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 16.1
+    },
+    {
+      "line": "3",
+      "name": "금호",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 16.9
+    },
+    {
+      "line": "3",
+      "name": "옥수",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 17.7
+    },
+    {
+      "line": "3",
+      "name": "압구정",
+      "runSeconds": 120,
+      "km": 2.1,
+      "cumulativeKm": 19.8
+    },
+    {
+      "line": "3",
+      "name": "신사",
+      "runSeconds": 120,
+      "km": 1.5,
+      "cumulativeKm": 21.3
+    },
+    {
+      "line": "3",
+      "name": "잠원",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 22.2
+    },
+    {
+      "line": "3",
+      "name": "고속터미널",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 23.4
+    },
+    {
+      "line": "3",
+      "name": "교대",
+      "runSeconds": 120,
+      "km": 1.6,
+      "cumulativeKm": 25
+    },
+    {
+      "line": "3",
+      "name": "남부터미널",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 25.9
+    },
+    {
+      "line": "3",
+      "name": "양재",
+      "runSeconds": 120,
+      "km": 1.8,
+      "cumulativeKm": 27.7
+    },
+    {
+      "line": "3",
+      "name": "매봉",
+      "runSeconds": 120,
+      "km": 1.2,
+      "cumulativeKm": 28.9
+    },
+    {
+      "line": "3",
+      "name": "도곡",
+      "runSeconds": 90,
+      "km": 0.8,
+      "cumulativeKm": 29.7
+    },
+    {
+      "line": "3",
+      "name": "대치",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 30.5
+    },
+    {
+      "line": "3",
+      "name": "학여울",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 31.3
+    },
+    {
+      "line": "3",
+      "name": "대청",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 32.2
+    },
+    {
+      "line": "3",
+      "name": "일원",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 33.4
+    },
+    {
+      "line": "3",
+      "name": "수서",
+      "runSeconds": 120,
+      "km": 1.8,
+      "cumulativeKm": 35.2
+    },
+    {
+      "line": "3",
+      "name": "가락시장",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 36.6
+    },
+    {
+      "line": "3",
+      "name": "경찰병원",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 37.4
+    },
+    {
+      "line": "3",
+      "name": "오금",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 38.2
+    },
+    {
+      "line": "4",
+      "name": "당고개",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "4",
+      "name": "상계",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 1.2
+    },
+    {
+      "line": "4",
+      "name": "노원",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 2.2
+    },
+    {
+      "line": "4",
+      "name": "창동",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 3.6
+    },
+    {
+      "line": "4",
+      "name": "쌍문",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 4.9
+    },
+    {
+      "line": "4",
+      "name": "수유",
+      "runSeconds": 120,
+      "km": 1.5,
+      "cumulativeKm": 6.4
+    },
+    {
+      "line": "4",
+      "name": "미아",
+      "runSeconds": 90,
+      "km": 1.4,
+      "cumulativeKm": 7.8
+    },
+    {
+      "line": "4",
+      "name": "미아사거리",
+      "runSeconds": 120,
+      "km": 1.5,
+      "cumulativeKm": 9.3
+    },
+    {
+      "line": "4",
+      "name": "길음",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 10.6
+    },
+    {
+      "line": "4",
+      "name": "성신여대입구",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 12
+    },
+    {
+      "line": "4",
+      "name": "한성대입구",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 13
+    },
+    {
+      "line": "4",
+      "name": "혜화",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 13.9
+    },
+    {
+      "line": "4",
+      "name": "동대문",
+      "runSeconds": 120,
+      "km": 1.5,
+      "cumulativeKm": 15.4
+    },
+    {
+      "line": "4",
+      "name": "동대문역사문화공원",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 16.1
+    },
+    {
+      "line": "4",
+      "name": "충무로",
+      "runSeconds": 120,
+      "km": 1.3,
+      "cumulativeKm": 17.4
+    },
+    {
+      "line": "4",
+      "name": "명동",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 18.1
+    },
+    {
+      "line": "4",
+      "name": "회현",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 18.8
+    },
+    {
+      "line": "4",
+      "name": "서울역",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 19.7
+    },
+    {
+      "line": "4",
+      "name": "숙대입구",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 20.7
+    },
+    {
+      "line": "4",
+      "name": "삼각지",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 21.9
+    },
+    {
+      "line": "4",
+      "name": "신용산",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 22.6
+    },
+    {
+      "line": "4",
+      "name": "이촌",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 23.9
+    },
+    {
+      "line": "4",
+      "name": "동작",
+      "runSeconds": 180,
+      "km": 2.7,
+      "cumulativeKm": 26.6
+    },
+    {
+      "line": "4",
+      "name": "총신대입구",
+      "runSeconds": 150,
+      "km": 1.8,
+      "cumulativeKm": 28.4
+    },
+    {
+      "line": "4",
+      "name": "사당",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 29.5
+    },
+    {
+      "line": "4",
+      "name": "남태령",
+      "runSeconds": 90,
+      "km": 2.2,
+      "cumulativeKm": 31.7
+    },
+    {
+      "line": "5",
+      "name": "방화",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "5",
+      "name": "개화산",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 0.9
+    },
+    {
+      "line": "5",
+      "name": "김포공항",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 2.1
+    },
+    {
+      "line": "5",
+      "name": "송정",
+      "runSeconds": 130,
+      "km": 1.2,
+      "cumulativeKm": 3.3
+    },
+    {
+      "line": "5",
+      "name": "마곡",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 4.4
+    },
+    {
+      "line": "5",
+      "name": "발산",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 5.6
+    },
+    {
+      "line": "5",
+      "name": "우장산",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 6.7
+    },
+    {
+      "line": "5",
+      "name": "화곡",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 7.7
+    },
+    {
+      "line": "5",
+      "name": "까치산",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 8.9
+    },
+    {
+      "line": "5",
+      "name": "신정",
+      "runSeconds": 110,
+      "km": 1.3,
+      "cumulativeKm": 10.2
+    },
+    {
+      "line": "5",
+      "name": "목동",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 11
+    },
+    {
+      "line": "5",
+      "name": "오목교",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 11.9
+    },
+    {
+      "line": "5",
+      "name": "양평",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 12.9
+    },
+    {
+      "line": "5",
+      "name": "영등포구청",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 13.7
+    },
+    {
+      "line": "5",
+      "name": "영등포시장",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 14.6
+    },
+    {
+      "line": "5",
+      "name": "신길",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 15.7
+    },
+    {
+      "line": "5",
+      "name": "여의도",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 16.7
+    },
+    {
+      "line": "5",
+      "name": "여의나루",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 17.7
+    },
+    {
+      "line": "5",
+      "name": "마포",
+      "runSeconds": 120,
+      "km": 1.8,
+      "cumulativeKm": 19.5
+    },
+    {
+      "line": "5",
+      "name": "공덕",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 20.3
+    },
+    {
+      "line": "5",
+      "name": "애오개",
+      "runSeconds": 80,
+      "km": 1.1,
+      "cumulativeKm": 21.4
+    },
+    {
+      "line": "5",
+      "name": "충정로",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 22.3
+    },
+    {
+      "line": "5",
+      "name": "서대문",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 23
+    },
+    {
+      "line": "5",
+      "name": "광화문",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 24.1
+    },
+    {
+      "line": "5",
+      "name": "종로3가",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 25.3
+    },
+    {
+      "line": "5",
+      "name": "을지로4가",
+      "runSeconds": 100,
+      "km": 1,
+      "cumulativeKm": 26.3
+    },
+    {
+      "line": "5",
+      "name": "동대문역사문화공원",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 27.2
+    },
+    {
+      "line": "5",
+      "name": "청구",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 28.1
+    },
+    {
+      "line": "5",
+      "name": "신금호",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 29
+    },
+    {
+      "line": "5",
+      "name": "행당",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 29.9
+    },
+    {
+      "line": "5",
+      "name": "왕십리",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 30.8
+    },
+    {
+      "line": "5",
+      "name": "마장",
+      "runSeconds": 60,
+      "km": 0.7,
+      "cumulativeKm": 31.5
+    },
+    {
+      "line": "5",
+      "name": "답십리",
+      "runSeconds": 100,
+      "km": 1,
+      "cumulativeKm": 32.5
+    },
+    {
+      "line": "5",
+      "name": "장한평",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 33.7
+    },
+    {
+      "line": "5",
+      "name": "군자",
+      "runSeconds": 100,
+      "km": 1.5,
+      "cumulativeKm": 35.2
+    },
+    {
+      "line": "5",
+      "name": "아차산",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 36.2
+    },
+    {
+      "line": "5",
+      "name": "광나루",
+      "runSeconds": 110,
+      "km": 1.5,
+      "cumulativeKm": 37.7
+    },
+    {
+      "line": "5",
+      "name": "천호",
+      "runSeconds": 130,
+      "km": 2,
+      "cumulativeKm": 39.7
+    },
+    {
+      "line": "5",
+      "name": "강동",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 40.5
+    },
+    {
+      "line": "5",
+      "name": "길동",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 41.4
+    },
+    {
+      "line": "5",
+      "name": "굽은다리",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 42.2
+    },
+    {
+      "line": "5",
+      "name": "명일",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 43
+    },
+    {
+      "line": "5",
+      "name": "고덕",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 44.2
+    },
+    {
+      "line": "5",
+      "name": "상일동",
+      "runSeconds": 100,
+      "km": 1.1,
+      "cumulativeKm": 45.3
+    },
+    {
+      "line": "5",
+      "name": "강일",
+      "runSeconds": 110,
+      "km": 0.8,
+      "cumulativeKm": 46.1
+    },
+    {
+      "line": "5",
+      "name": "미사",
+      "runSeconds": 110,
+      "km": 1.7,
+      "cumulativeKm": 47.8
+    },
+    {
+      "line": "5",
+      "name": "하남풍산",
+      "runSeconds": 150,
+      "km": 2.1,
+      "cumulativeKm": 49.9
+    },
+    {
+      "line": "5",
+      "name": "하남시청",
+      "runSeconds": 110,
+      "km": 1.3,
+      "cumulativeKm": 51.2
+    },
+    {
+      "line": "5",
+      "name": "하남검단산",
+      "runSeconds": 150,
+      "km": 1.6,
+      "cumulativeKm": 52.8
+    },
+    {
+      "line": "5",
+      "name": "둔촌동",
+      "runSeconds": 110,
+      "km": 1.2,
+      "cumulativeKm": 54
+    },
+    {
+      "line": "5",
+      "name": "올림픽공원",
+      "runSeconds": 100,
+      "km": 1.4,
+      "cumulativeKm": 55.4
+    },
+    {
+      "line": "5",
+      "name": "방이",
+      "runSeconds": 80,
+      "km": 0.8,
+      "cumulativeKm": 56.2
+    },
+    {
+      "line": "5",
+      "name": "오금",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 57.1
+    },
+    {
+      "line": "5",
+      "name": "개롱",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 58
+    },
+    {
+      "line": "5",
+      "name": "거여",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 58.9
+    },
+    {
+      "line": "5",
+      "name": "마천",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 59.8
+    },
+    {
+      "line": "6",
+      "name": "응암",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "6",
+      "name": "역촌",
+      "runSeconds": 100,
+      "km": 1.1,
+      "cumulativeKm": 1.1
+    },
+    {
+      "line": "6",
+      "name": "불광",
+      "runSeconds": 80,
+      "km": 0.8,
+      "cumulativeKm": 1.9
+    },
+    {
+      "line": "6",
+      "name": "독바위",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 2.8
+    },
+    {
+      "line": "6",
+      "name": "연신내",
+      "runSeconds": 130,
+      "km": 1.4,
+      "cumulativeKm": 4.2
+    },
+    {
+      "line": "6",
+      "name": "구산",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 5.1
+    },
+    {
+      "line": "6",
+      "name": "응암",
+      "runSeconds": 120,
+      "km": 1.5,
+      "cumulativeKm": 6.6
+    },
+    {
+      "line": "6",
+      "name": "새절",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 7.5
+    },
+    {
+      "line": "6",
+      "name": "증산",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 8.4
+    },
+    {
+      "line": "6",
+      "name": "디지털미디어시티",
+      "runSeconds": 80,
+      "km": 1.1,
+      "cumulativeKm": 9.5
+    },
+    {
+      "line": "6",
+      "name": "월드컵경기장",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 10.3
+    },
+    {
+      "line": "6",
+      "name": "마포구청",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 11.1
+    },
+    {
+      "line": "6",
+      "name": "망원",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 12.1
+    },
+    {
+      "line": "6",
+      "name": "합정",
+      "runSeconds": 80,
+      "km": 0.8,
+      "cumulativeKm": 12.9
+    },
+    {
+      "line": "6",
+      "name": "상수",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 13.7
+    },
+    {
+      "line": "6",
+      "name": "광흥창",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 14.6
+    },
+    {
+      "line": "6",
+      "name": "대흥",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 15.6
+    },
+    {
+      "line": "6",
+      "name": "공덕",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 16.5
+    },
+    {
+      "line": "6",
+      "name": "효창공원앞",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 17.4
+    },
+    {
+      "line": "6",
+      "name": "삼각지",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 18.6
+    },
+    {
+      "line": "6",
+      "name": "녹사평",
+      "runSeconds": 100,
+      "km": 1.1,
+      "cumulativeKm": 19.7
+    },
+    {
+      "line": "6",
+      "name": "이태원",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 20.5
+    },
+    {
+      "line": "6",
+      "name": "한강진",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 21.5
+    },
+    {
+      "line": "6",
+      "name": "버티고개",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 22.5
+    },
+    {
+      "line": "6",
+      "name": "약수",
+      "runSeconds": 70,
+      "km": 0.7,
+      "cumulativeKm": 23.2
+    },
+    {
+      "line": "6",
+      "name": "청구",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 24
+    },
+    {
+      "line": "6",
+      "name": "신당",
+      "runSeconds": 70,
+      "km": 0.7,
+      "cumulativeKm": 24.7
+    },
+    {
+      "line": "6",
+      "name": "동묘앞",
+      "runSeconds": 60,
+      "km": 0.6,
+      "cumulativeKm": 25.3
+    },
+    {
+      "line": "6",
+      "name": "창신",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 26.2
+    },
+    {
+      "line": "6",
+      "name": "보문",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 27
+    },
+    {
+      "line": "6",
+      "name": "안암",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 27.9
+    },
+    {
+      "line": "6",
+      "name": "고려대",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 28.7
+    },
+    {
+      "line": "6",
+      "name": "월곡",
+      "runSeconds": 100,
+      "km": 1.4,
+      "cumulativeKm": 30.1
+    },
+    {
+      "line": "6",
+      "name": "상월곡",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 30.9
+    },
+    {
+      "line": "6",
+      "name": "돌곶이",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 31.7
+    },
+    {
+      "line": "6",
+      "name": "석계",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 32.7
+    },
+    {
+      "line": "6",
+      "name": "태릉입구",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 33.5
+    },
+    {
+      "line": "6",
+      "name": "화랑대",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 34.4
+    },
+    {
+      "line": "6",
+      "name": "봉화산",
+      "runSeconds": 80,
+      "km": 0.7,
+      "cumulativeKm": 35.1
+    },
+    {
+      "line": "6",
+      "name": "신내역",
+      "runSeconds": 270,
+      "km": 1.3,
+      "cumulativeKm": 36.4
+    },
+    {
+      "line": "7",
+      "name": "장암",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "7",
+      "name": "도봉산",
+      "runSeconds": 270,
+      "km": 1.4,
+      "cumulativeKm": 1.4
+    },
+    {
+      "line": "7",
+      "name": "수락산",
+      "runSeconds": 140,
+      "km": 1.6,
+      "cumulativeKm": 3
+    },
+    {
+      "line": "7",
+      "name": "마들",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 4.4
+    },
+    {
+      "line": "7",
+      "name": "노원",
+      "runSeconds": 90,
+      "km": 1.2,
+      "cumulativeKm": 5.6
+    },
+    {
+      "line": "7",
+      "name": "중계",
+      "runSeconds": 80,
+      "km": 1.1,
+      "cumulativeKm": 6.7
+    },
+    {
+      "line": "7",
+      "name": "하계",
+      "runSeconds": 70,
+      "km": 1,
+      "cumulativeKm": 7.7
+    },
+    {
+      "line": "7",
+      "name": "공릉",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 9
+    },
+    {
+      "line": "7",
+      "name": "태릉입구",
+      "runSeconds": 60,
+      "km": 0.8,
+      "cumulativeKm": 9.8
+    },
+    {
+      "line": "7",
+      "name": "먹골",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 10.7
+    },
+    {
+      "line": "7",
+      "name": "중화",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 11.6
+    },
+    {
+      "line": "7",
+      "name": "상봉",
+      "runSeconds": 110,
+      "km": 1,
+      "cumulativeKm": 12.6
+    },
+    {
+      "line": "7",
+      "name": "면목",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 13.4
+    },
+    {
+      "line": "7",
+      "name": "사가정",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 14.3
+    },
+    {
+      "line": "7",
+      "name": "용마산",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 15.1
+    },
+    {
+      "line": "7",
+      "name": "중곡",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 16
+    },
+    {
+      "line": "7",
+      "name": "군자",
+      "runSeconds": 80,
+      "km": 1.1,
+      "cumulativeKm": 17.1
+    },
+    {
+      "line": "7",
+      "name": "어린이대공원",
+      "runSeconds": 80,
+      "km": 1.1,
+      "cumulativeKm": 18.2
+    },
+    {
+      "line": "7",
+      "name": "건대입구",
+      "runSeconds": 80,
+      "km": 0.8,
+      "cumulativeKm": 19
+    },
+    {
+      "line": "7",
+      "name": "뚝섬유원지",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 20
+    },
+    {
+      "line": "7",
+      "name": "청담",
+      "runSeconds": 150,
+      "km": 2,
+      "cumulativeKm": 22
+    },
+    {
+      "line": "7",
+      "name": "강남구청",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 23.1
+    },
+    {
+      "line": "7",
+      "name": "학동",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 24
+    },
+    {
+      "line": "7",
+      "name": "논현",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 25
+    },
+    {
+      "line": "7",
+      "name": "반포",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 25.9
+    },
+    {
+      "line": "7",
+      "name": "고속터미널",
+      "runSeconds": 90,
+      "km": 0.9,
+      "cumulativeKm": 26.8
+    },
+    {
+      "line": "7",
+      "name": "내방",
+      "runSeconds": 150,
+      "km": 2.2,
+      "cumulativeKm": 29
+    },
+    {
+      "line": "7",
+      "name": "이수",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 30
+    },
+    {
+      "line": "7",
+      "name": "남성",
+      "runSeconds": 80,
+      "km": 1,
+      "cumulativeKm": 31
+    },
+    {
+      "line": "7",
+      "name": "숭실대입구",
+      "runSeconds": 150,
+      "km": 2,
+      "cumulativeKm": 33
+    },
+    {
+      "line": "7",
+      "name": "상도",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 33.9
+    },
+    {
+      "line": "7",
+      "name": "장승배기",
+      "runSeconds": 150,
+      "km": 0.9,
+      "cumulativeKm": 34.8
+    },
+    {
+      "line": "7",
+      "name": "신대방삼거리",
+      "runSeconds": 110,
+      "km": 1.2,
+      "cumulativeKm": 36
+    },
+    {
+      "line": "7",
+      "name": "보라매",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 36.8
+    },
+    {
+      "line": "7",
+      "name": "신풍",
+      "runSeconds": 140,
+      "km": 0.9,
+      "cumulativeKm": 37.7
+    },
+    {
+      "line": "7",
+      "name": "대림",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 39.1
+    },
+    {
+      "line": "7",
+      "name": "남구로",
+      "runSeconds": 90,
+      "km": 1.1,
+      "cumulativeKm": 40.2
+    },
+    {
+      "line": "7",
+      "name": "가산디지털단지",
+      "runSeconds": 80,
+      "km": 0.8,
+      "cumulativeKm": 41
+    },
+    {
+      "line": "7",
+      "name": "철산",
+      "runSeconds": 120,
+      "km": 1.4,
+      "cumulativeKm": 42.4
+    },
+    {
+      "line": "7",
+      "name": "광명사거리",
+      "runSeconds": 110,
+      "km": 1.3,
+      "cumulativeKm": 43.7
+    },
+    {
+      "line": "7",
+      "name": "천왕",
+      "runSeconds": 120,
+      "km": 1.7,
+      "cumulativeKm": 45.4
+    },
+    {
+      "line": "7",
+      "name": "온수",
+      "runSeconds": 140,
+      "km": 1.5,
+      "cumulativeKm": 46.9
+    },
+    {
+      "line": "8",
+      "name": "암사",
+      "runSeconds": 0,
+      "km": 0,
+      "cumulativeKm": 0
+    },
+    {
+      "line": "8",
+      "name": "천호",
+      "runSeconds": 90,
+      "km": 1.3,
+      "cumulativeKm": 1.3
+    },
+    {
+      "line": "8",
+      "name": "강동구청",
+      "runSeconds": 80,
+      "km": 0.9,
+      "cumulativeKm": 2.2
+    },
+    {
+      "line": "8",
+      "name": "몽촌토성",
+      "runSeconds": 120,
+      "km": 1.6,
+      "cumulativeKm": 3.8
+    },
+    {
+      "line": "8",
+      "name": "잠실",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 4.6
+    },
+    {
+      "line": "8",
+      "name": "석촌",
+      "runSeconds": 110,
+      "km": 1.2,
+      "cumulativeKm": 5.8
+    },
+    {
+      "line": "8",
+      "name": "송파",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 6.7
+    },
+    {
+      "line": "8",
+      "name": "가락시장",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 7.5
+    },
+    {
+      "line": "8",
+      "name": "문정",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 8.4
+    },
+    {
+      "line": "8",
+      "name": "장지",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 9.3
+    },
+    {
+      "line": "8",
+      "name": "복정",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 10.2
+    },
+    {
+      "line": "8",
+      "name": "남위례",
+      "runSeconds": 110,
+      "km": 1.5,
+      "cumulativeKm": 11.7
+    },
+    {
+      "line": "8",
+      "name": "산성",
+      "runSeconds": 100,
+      "km": 1.2,
+      "cumulativeKm": 12.9
+    },
+    {
+      "line": "8",
+      "name": "남한산성입구",
+      "runSeconds": 130,
+      "km": 1.3,
+      "cumulativeKm": 14.2
+    },
+    {
+      "line": "8",
+      "name": "단대오거리",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 15
+    },
+    {
+      "line": "8",
+      "name": "신흥",
+      "runSeconds": 70,
+      "km": 0.8,
+      "cumulativeKm": 15.8
+    },
+    {
+      "line": "8",
+      "name": "수진",
+      "runSeconds": 70,
+      "km": 0.9,
+      "cumulativeKm": 16.7
+    },
+    {
+      "line": "8",
+      "name": "모란",
+      "runSeconds": 90,
+      "km": 1,
+      "cumulativeKm": 17.7
+    }
+  ]
+}
