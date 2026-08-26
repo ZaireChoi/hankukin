@@ -166,7 +166,12 @@
           }
         },
         {
-          "when": "My train pulled in, opened its doors, and has just been sitting there",
+          "when": "The shop says no refunds, but I read that Korea gives you seven days",
+        "answer": "Both are right. The seven days are in the e-commerce Act and attach to buying at a distance — online, by app, by post. Buy it over a counter and there is no statutory cooling-off period, so the sign is the deal. Ask 교환 되나요? (gyo-hwan doe-na-yo) before you pay.",
+        "href": "decode/korea-refund-hwanbul-cheongyakcheolhoe"
+      },
+      {
+        "when": "My train pulled in, opened its doors, and has just been sitting there",
         "answer": "On Seoul's Line 9 that is scheduled, not a fault — you are on a 일반 (il-ban) local waiting at a passing station while a 급행 (geup-haeng) express overtakes it on the same track. Getting off is the one bad move: the train you would wait for is the one that just went through.",
         "href": "hangul/seoul-line-9-express-geuphaeng-ilban"
       },
