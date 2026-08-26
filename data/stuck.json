@@ -166,7 +166,12 @@
           }
         },
         {
-          "when": "The map dropped me on the right road but I cannot find the building number",
+          "when": "My train pulled in, opened its doors, and has just been sitting there",
+        "answer": "On Seoul's Line 9 that is scheduled, not a fault — you are on a 일반 (il-ban) local waiting at a passing station while a 급행 (geup-haeng) express overtakes it on the same track. Getting off is the one bad move: the train you would wait for is the one that just went through.",
+        "href": "hangul/seoul-line-9-express-geuphaeng-ilban"
+      },
+      {
+        "when": "The map dropped me on the right road but I cannot find the building number",
           "answer": "The number is a distance, not a serial — multiply it by ten for metres from the start of the road, and odd numbers run down the left-hand side as you walk from that start, even down the right.",
           "href": "hangul/korean-address-road-name-building-number"
         }
