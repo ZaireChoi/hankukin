@@ -1,0 +1,122 @@
+---
+/**
+ * 「K팝 공연장」이라는 한 낱말이 덮고 있는 방들의 실제 크기.
+ *
+ * 왜 이 그림인가 (2026-08-26).
+ *   해외 팬은 표를 사기 전에 공연장 이름을 본다. 그런데 그 이름들은
+ *   **크기를 짐작하게 해주지 않는다.** 「올림픽공원」 안에만 237석부터 15,000석까지
+ *   다섯 개의 방이 있고, 이름은 다 다르고 넷은 후원사 이름이다.
+ *   표로 적으면 숫자가 나열되지만, 70배라는 것은 눈금이 있어야 보인다.
+ *
+ *   모든 숫자는 운영기관 공식 페이지의 「시설개요」에서 그대로 옮겼다.
+ *   추정한 숫자는 없다. 잠실실내체육관만 예외적으로 같은 페이지가 세 값을 적어
+ *   두었고, 그 사실을 각주에 적었다 — 우리가 하나를 고른 것이 아니라
+ *   기관이 셋을 적어 두었다는 것이 독자가 알아야 할 사실이다.
+ *
+ * 왜 가로 막대인가.
+ *   세로 막대로 그리면 237석이 축 위에서 사라지고 라벨이 서로 먹는다.
+ *   가로로 두면 값을 **막대 바깥 오른쪽**에 찍을 수 있어 어떤 값이든 안 겹친다.
+ *   (라벨 겹침은 이 리포가 이미 한 번 낸 사고다. PNG 로 뽑아서 눈으로 확인했다.)
+ *
+ * 잠실올림픽주경기장(65,599석)은 막대에 넣지 않았다.
+ *   넣으면 축이 네 배로 늘어나 나머지 여덟 개가 전부 실오라기가 된다.
+ *   그리고 그 방은 지금 닫혀 있다 — 열려 있는 방들과 같은 축에 둘 이유가 없다.
+ *   각주 한 줄로 내렸다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const PARK = 'park', ELSE = 'else';
+
+const ROWS = [
+  { name: 'Gocheok Sky Dome',        seats: 16601, label: '16,601', where: 'Guro, west Seoul',        kind: ELSE },
+  { name: 'KSPO DOME',               seats: 15000, label: '15,000', where: 'Olympic Park',            kind: PARK },
+  /*
+   * 처음에는 이 막대만 opacity 0.55 로 흐리게 두어 「최대치」임을 표시했다.
+   * PNG 로 뽑아 보니 **다른 주황 막대와 구별이 안 됐다.** 설명되지 않는 색 차이는
+   * 정보가 아니라 잡음이므로 지웠다. 「up to」는 라벨이 이미 말하고 있다.
+   */
+  { name: 'Inspire Arena',           seats: 15000, label: 'up to 15,000', where: 'Yeongjong Island, Incheon', kind: ELSE },
+  { name: 'Jamsil Indoor Stadium',   seats: 11044, label: '11,044', where: 'Jamsil, south-east Seoul', kind: ELSE },
+  { name: 'Ticketlink Live Arena',   seats: 5003,  label: '5,003',  where: 'Olympic Park',            kind: PARK },
+  { name: 'Olympic Hall',            seats: 2452,  label: '2,452',  where: 'Olympic Park',            kind: PARK },
+  { name: 'Woori Financial Art Hall', seats: 1184, label: '1,184',  where: 'Olympic Park',            kind: PARK },
+  { name: 'Muse Live',               seats: 237,   label: '237',    where: 'Olympic Park',            kind: PARK },
+];
+
+const W = 760;
+const TOP = 96;
+const ROW = 46;
+const H = TOP + ROWS.length * ROW + 76;
+
+const LABEL_R = 236;          /* 이름이 끝나는 x (오른쪽 정렬) */
+const BAR_X = 248;            /* 막대가 시작하는 x */
+const BAR_MAX = 372;          /* 막대의 최대 길이 → 끝은 620 */
+const SCALE = 16601;
+
+const INK = '#12100f', MUTE = '#6b6560', RULE = '#d8d0c6';
+const GREEN = '#4a6b52', CLAY = '#c9622e';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Seating capacity of eight Korean concert venues, taken from each operator's own facility page. Gocheok Sky Dome in Guro, west Seoul, 16,601 seats. KSPO DOME in Olympic Park, 15,000. Inspire Arena on Yeongjong Island in Incheon, up to 15,000. Jamsil Indoor Stadium in south-east Seoul, 11,044. Ticketlink Live Arena in Olympic Park, 5,003. Olympic Hall in Olympic Park, 2,452. Woori Financial Art Hall in Olympic Park, 1,184. Muse Live in Olympic Park, 237. Five of the eight stand inside the same park, and the largest of those is sixty-three times the smallest. Jamsil Olympic Main Stadium, 65,599 seats, is not shown because it is closed for remodelling.">
+
+    <text x="20" y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      EIGHT ROOMS THAT ARE ALL CALLED A K-POP VENUE
+    </text>
+    <text x="20" y="44" font-size="12.5" fill={MUTE}>
+      Seats, as each operator states them on its own facility page. Read 26 August 2026.
+    </text>
+
+    {/* 범례 */}
+    <rect x="20" y="60" width="11" height="11" rx="2" fill={GREEN} />
+    <text x="38" y="70" font-size="12" fill={MUTE}>Inside Olympic Park</text>
+    <rect x="196" y="60" width="11" height="11" rx="2" fill={CLAY} />
+    <text x="214" y="70" font-size="12" fill={MUTE}>Everywhere else</text>
+
+    <line x1={BAR_X} y1={TOP - 12} x2={BAR_X} y2={TOP + ROWS.length * ROW - 14}
+          stroke={RULE} stroke-width="1.5" />
+
+    {ROWS.map((r, i) => {
+      const y = TOP + i * ROW;
+      const w = Math.max(3, (r.seats / SCALE) * BAR_MAX);
+      const fill = r.kind === PARK ? GREEN : CLAY;
+      return (
+        <>
+          <text x={LABEL_R} y={y + 12} text-anchor="end" font-size="13.5"
+                font-weight="600" fill={INK}>{r.name}</text>
+          <text x={LABEL_R} y={y + 28} text-anchor="end" font-size="11.5" fill={MUTE}>
+            {r.where}
+          </text>
+
+          <rect x={BAR_X} y={y} width={w} height="19" rx="2.5" fill={fill} />
+
+          <text x={BAR_X + w + 10} y={y + 14} font-size="13"
+                font-weight="700" fill={INK}>{r.label}</text>
+        </>
+      );
+    })}
+
+    {/*
+      각주는 세 줄로 나눠 둔다. 한 줄로 두면 viewBox 오른쪽에서 잘린다 —
+      2026-08-16 에 실제로 그렇게 잘렸고 빌드는 통과했다.
+    */}
+    <text x="20" y={H - 52} font-size="11.5" fill={MUTE}>
+      Jamsil Olympic Main Stadium (65,599 seats) is not on this scale: it is closed to bookings until at least December 2026.
+    </text>
+    <text x="20" y={H - 34} font-size="11.5" fill={MUTE}>
+      Jamsil Indoor Stadium is drawn at 11,044, the figure in its operator's specification table. The same page also prints 11,032 and 13,000.
+    </text>
+    <text x="20" y={H - 16} font-size="11.5" fill={MUTE}>
+      Inspire Arena states a maximum, not a fixed count, and says the seating size is negotiable with the hirer.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
