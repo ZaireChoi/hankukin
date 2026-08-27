@@ -372,6 +372,11 @@
           "when": "I found the Lovely Runner spots in Suwon but cannot tell what needs a ticket",
           "answer": "The fortress wall is free and never closes; only the palace inside it charges — ₩2,000, with last entry at 17:00, an hour before it shuts.",
           "href": "scenes/lovely-runner-suwon-hwaseong-filming-spots"
+        },
+        {
+          "when": "I am well over 19 — why is the bar door still demanding my passport?",
+          "answer": "The fine for serving a minor — up to ₩20,000,000 — lands on the venue, and the law lets a door refuse anyone who shows nothing; the age itself runs by birth year, so in 2026 anyone born 2007 or earlier may buy.",
+          "href": "decode/korea-drinking-age-id-check"
         }
       ],
       "i18n": {
