@@ -1,0 +1,94 @@
+---
+/**
+ * 문 앞 팻말 해부도 — 영업 중 / 준비 중 / 브레이크 타임 / 금일 휴무.
+ *
+ * 왜 그렸나 (2026-08-27, Hangul 8편).
+ *   문 앞 안내판 사진이 재고에 0장이다. 그리고 있어도 문제다 —
+ *   특정 업소의 「금일 휴무」 문을 찍어 걸면 그 가게를 '닫는 가게'로
+ *   지목하는 일이 된다. 클리닉 간판편(ChartClinicSignFormula)과 같은 판단.
+ *
+ *   문구와 시각은 전형이지 실제 업소가 아니다. 15:00~17:00 은
+ *   「팻말이 스스로 시각을 적는다」를 보여주기 위한 예시 숫자다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 470;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Three Korean shop-door signs taken apart. First, one plastic sign with two faces: yeong-eop jung, open for business, and jun-bi jung, preparing — closed to you for now. Second, a paper notice reading break time 15:00 to 17:00: the loanword may be unreadable but the hours are plain digits, and the wavy dash between them means 'to'. Third, geum-il hyu-mu — closed today, come back tomorrow.">
+
+    <text x="40" y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      ONE PLASTIC SIGN, TWO FACES — THE SHOP FLIPS IT, YOU READ IT
+    </text>
+
+    {/* 영업 중 plate */}
+    <rect x="40" y="42" width="200" height="88" rx="8" fill="#12100f" />
+    <circle cx="140" cy="50" r="3" fill="#8a827b" />
+    <text x="140" y="100" text-anchor="middle" font-size="40" font-weight="700" fill="#fffdfa">영업 중</text>
+    <text x="140" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="#4f8a5b">yeong-eop jung</text>
+    <text x="140" y="168" text-anchor="middle" font-size="12" fill="#6b6560">doing business — walk in</text>
+
+    <path d="M 258 86 h 44" stroke="#a09890" stroke-width="1.5" />
+    <path d="M 296 81 l 8 5 -8 5" fill="none" stroke="#a09890" stroke-width="1.5" />
+    <text x="280" y="76" text-anchor="middle" font-size="10.5" fill="#a09890" letter-spacing="0.06em">FLIP</text>
+
+    {/* 준비 중 plate */}
+    <rect x="320" y="42" width="200" height="88" rx="8" fill="#fffdfa" stroke="#e0d8ce" stroke-width="1.5" />
+    <circle cx="420" cy="50" r="3" fill="#c9c0b6" />
+    <text x="420" y="100" text-anchor="middle" font-size="40" font-weight="700" fill="#12100f">준비 중</text>
+    <text x="420" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="#c9622e">jun-bi jung</text>
+    <text x="420" y="168" text-anchor="middle" font-size="12" fill="#6b6560">preparing — closed to you, no time named</text>
+
+    <text x="560" y="80" font-size="12.5" fill="#3c3733">The lights can be on and</text>
+    <text x="560" y="97" font-size="12.5" fill="#3c3733">staff visible behind the</text>
+    <text x="560" y="114" font-size="12.5" fill="#3c3733">glass. The face of the</text>
+    <text x="560" y="131" font-size="12.5" fill="#3c3733">sign still decides.</text>
+
+    <text x="40" y="216" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      THE PAPER NOTICE NAMES ITS OWN HOURS — READ THE DIGITS, NOT THE WORDS
+    </text>
+
+    {/* break time notice */}
+    <rect x="40" y="232" width="340" height="110" rx="4" fill="#fffdfa" stroke="#e0d8ce" stroke-width="1.5" />
+    <rect x="188" y="226" width="44" height="12" rx="2" fill="#efe9e1" />
+    <text x="210" y="282" text-anchor="middle" font-size="26" font-weight="700" fill="#12100f">브레이크 타임</text>
+    <path d="M 126 292 h 168" stroke="#c9c0b6" stroke-width="2" />
+    <text x="210" y="322" text-anchor="middle" font-size="24" font-weight="700" fill="#c9622e">15:00~17:00</text>
+    <path d="M 142 330 h 136" stroke="#c9622e" stroke-width="2" />
+
+    <path d="M 40 362 h 20" stroke="#c9c0b6" stroke-width="2" />
+    <text x="68" y="366" font-size="12" fill="#6b6560">the loanword you may not be able to read</text>
+    <path d="M 40 384 h 20" stroke="#c9622e" stroke-width="2" />
+    <text x="68" y="388" font-size="12" font-weight="700" fill="#c9622e">the part you already can</text>
+
+    <text x="420" y="262" font-size="12.5" fill="#3c3733">The wavy dash ~ marks a span —</text>
+    <text x="420" y="279" font-size="12.5" fill="#3c3733">“from 3 to 5 p.m.” That is a rule of</text>
+    <text x="420" y="296" font-size="12.5" fill="#3c3733">official Korean punctuation, so it</text>
+    <text x="420" y="313" font-size="12.5" fill="#3c3733">reads the same on every door.</text>
+
+    {/* 금일 휴무 */}
+    <rect x="404" y="332" width="170" height="60" rx="4" fill="#12100f" />
+    <text x="489" y="372" text-anchor="middle" font-size="25" font-weight="700" fill="#fffdfa">금일 휴무</text>
+    <text x="586" y="352" font-size="13" font-weight="700" fill="#3c3733">geum-il hyu-mu</text>
+    <text x="586" y="370" font-size="11.5" fill="#6b6560">closed today —</text>
+    <text x="586" y="386" font-size="11.5" fill="#6b6560">tomorrow is not cancelled</text>
+
+    <text x="40" y="420" font-size="12.5" fill="#3c3733">
+      If the notice has no digits at all, look for 휴무 — a day off — or 휴업, a suspension of business with no promised end.
+    </text>
+
+    <text x="40" y={H - 14} font-size="11.5" fill="#a09890">
+      Our own illustration. Wording is typical and the hours are an example, not a particular shop.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

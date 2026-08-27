@@ -179,6 +179,11 @@
           "when": "The map dropped me on the right road but I cannot find the building number",
           "answer": "The number is a distance, not a serial — multiply it by ten for metres from the start of the road, and odd numbers run down the left-hand side as you walk from that start, even down the right.",
           "href": "hangul/korean-address-road-name-building-number"
+        },
+        {
+          "when": "The restaurant is lit and staff are inside, but the door will not open",
+          "answer": "Read the sign, not the room: 준비중 (jun-bi jung) and 브레이크 타임 (break time) are pauses — the break-time notice normally carries its own reopening hour in plain digits — while 금일 휴무 (geum-il hyu-mu) means today is simply over.",
+          "href": "hangul/korean-shop-door-signs-closed-open"
         }
       ],
       "i18n": {
@@ -282,8 +287,18 @@
         },
         {
           "when": "I came for the Secret Garden and could not get in",
-          "answer": "It is a separate ticket and a separate booking, and in spring and autumn it sells out in minutes.",
-          "href": "guides/changdeokgung-secret-garden-booking"
+          "answer": "It is a separate ticket and a separate booking — and a timed tour whose schedule depends on your language. English runs 3–4 times a day; Japanese and Chinese, once a day on three days a week.",
+          "href": "guides/changdeokgung-secret-garden-booking",
+          "i18n": {
+            "ja": {
+              "when": "秘苑を見に来たのに入れなかった",
+              "answer": "別料金・別予約で、しかも時間指定のツアーです。日本語の回は13:30の一日一回、水・金・日だけです。"
+            },
+            "zh-hans": {
+              "when": "专程来看秘苑，却进不去",
+              "answer": "要另买票、另预约，而且是限时导览团。中文场是12:30，一天一次，只在周二、周四、周六。"
+            }
+          }
         },
         {
           "when": "There are five palaces and I have one day",
