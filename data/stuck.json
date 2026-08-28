@@ -184,6 +184,11 @@
           "when": "The restaurant is lit and staff are inside, but the door will not open",
           "answer": "Read the sign, not the room: 준비중 (jun-bi jung) and 브레이크 타임 (break time) are pauses — the break-time notice normally carries its own reopening hour in plain digits — while 금일 휴무 (geum-il hyu-mu) means today is simply over.",
           "href": "hangul/korean-shop-door-signs-closed-open"
+        },
+        {
+          "when": "I missed the announcement and cannot tell which station this is",
+          "answer": "Read the glass: since 2023 Seoul has been fixing the station's name to the platform screen doors, sized to be read from a seat through the train window — the screen inside the car describes two stations, the glass only ever one.",
+          "href": "hangul/seoul-subway-signs-name-on-the-glass"
         }
       ],
       "i18n": {

@@ -1,0 +1,75 @@
+---
+/**
+ * 승강장안전문 도착역명 표지 — 어느 문의 어느 높이에 무엇이 붙는가.
+ *
+ * 왜 그렸나 (2026-08-28, Hangul 9편).
+ *   재고 242장에 지하철 승강장 계열 사진이 0장이다. 그리고 요점이
+ *   「대형 표지는 비상문, 소형 표지는 가동문」이라는 배치라서
+ *   사진 한 장보다 도식이 정확하다. 배치는 서울시 보도자료
+ *   (2023-04-18, news.seoul.go.kr/traffic/archives/509486)의 서술 그대로 —
+ *   출입문 쪽 승객은 가동문의 소형 표지를, 앉은 승객은 유리창 너머
+ *   비상문의 대형 표지를 본다. 시청(City Hall)은 이 사업이 시작된 역이라
+ *   예시 역명으로 골랐다. 표지의 실제 서체·배색·영문 병기 여부는
+ *   역마다 다를 수 있으므로 그리지 않았다 — 위치만 그렸다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 470;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Two schematic views of a Seoul subway platform screen door with the arriving station's name on it. Left: seen from a seat inside the train, through the train window — the fixed emergency-door panel of the platform screen doors carries a large sign reading Sicheong, City Hall. Right: seen standing at the train door — the moving doors that open with the train each carry a small sign with the same name. The sign is fixed to the station, not the train, so it can only name the station you are actually at.">
+
+    <text x="40" y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      FROM A SEAT — THROUGH THE TRAIN WINDOW
+    </text>
+
+    {/* train window frame */}
+    <rect x="40" y="42" width="330" height="216" rx="14" fill="#12100f" />
+    <rect x="58" y="60" width="294" height="180" rx="4" fill="#fffdfa" />
+    {/* emergency-door panel behind the glass */}
+    <rect x="70" y="60" width="270" height="180" fill="none" stroke="#e0d8ce" stroke-width="1.5" />
+    {/* the large sign */}
+    <rect x="94" y="96" width="222" height="104" rx="6" fill="#f5efe6" stroke="#e0d8ce" stroke-width="1.5" />
+    <text x="205" y="172" text-anchor="middle" font-size="58" font-weight="700" fill="#12100f">시청</text>
+
+    <text x="40" y="286" font-size="12.5" font-weight="700" fill="#3c3733">비상문 <tspan font-weight="400" fill="#6b6560">bi-sang-mun — the fixed emergency panel carries the large sign,</tspan></text>
+    <text x="40" y="303" font-size="12.5" fill="#6b6560">placed to be read from a seat, through the train window.</text>
+
+    <text x="420" y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      STANDING AT THE TRAIN DOOR
+    </text>
+
+    {/* two moving doors */}
+    <rect x="420" y="42" width="146" height="216" rx="4" fill="#fffdfa" stroke="#e0d8ce" stroke-width="1.5" />
+    <rect x="574" y="42" width="146" height="216" rx="4" fill="#fffdfa" stroke="#e0d8ce" stroke-width="1.5" />
+    {/* the small signs, near standing eye level */}
+    <rect x="448" y="66" width="90" height="32" rx="4" fill="#f5efe6" stroke="#e0d8ce" stroke-width="1.5" />
+    <text x="493" y="89" text-anchor="middle" font-size="19" font-weight="700" fill="#12100f">시청</text>
+    <rect x="602" y="66" width="90" height="32" rx="4" fill="#f5efe6" stroke="#e0d8ce" stroke-width="1.5" />
+    <text x="647" y="89" text-anchor="middle" font-size="19" font-weight="700" fill="#12100f">시청</text>
+    {/* the gap where the doors part */}
+    <path d="M 570 42 v 216" stroke="#c9c0b6" stroke-width="1.5" stroke-dasharray="4 4" />
+    <text x="570" y="276" text-anchor="middle" font-size="10.5" fill="#a09890" letter-spacing="0.06em">DOORS PART HERE</text>
+
+    <text x="420" y="303" font-size="12.5" font-weight="700" fill="#3c3733">가동문 <tspan font-weight="400" fill="#6b6560">ga-dong-mun — the moving doors each</tspan></text>
+    <text x="420" y="320" font-size="12.5" fill="#6b6560">carry the small sign, at standing eye level.</text>
+
+    <text x="40" y="356" font-size="13" font-weight="700" fill="#c9622e">시청 si-cheong — City Hall, the Line 2 platform where installation began on 18 April 2023.</text>
+    <text x="40" y="378" font-size="12.5" fill="#3c3733">The sign is fixed to the station, not to the train. Unlike the screen inside the car, it can only</text>
+    <text x="40" y="395" font-size="12.5" fill="#3c3733">ever name the station your window is actually facing.</text>
+
+    <text x="40" y={H - 14} font-size="11.5" fill="#a09890">
+      Our own illustration. Positions follow the Seoul press release of 18 April 2023; sign styling varies by station and is not depicted.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>
