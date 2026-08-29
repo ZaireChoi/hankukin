@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-08-25T20:19:38.054Z",
-  "radarCollectedAt": "2026-08-25T20:19:19.214Z",
+  "generatedAt": "2026-08-29T02:38:04.458Z",
+  "radarCollectedAt": "2026-08-29T02:37:29.916Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 3,
-    "needsSignal": 3,
+    "needsLocation": 2,
+    "needsSignal": 4,
     "skip": 0
   },
   "briefs": [
-    {
-      "title": "Spooky in Love",
-      "slug": "spooky-in-love",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.74,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
     {
       "title": "Our Sticky Love",
       "slug": "our-sticky-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.632,
+      "radarScore": 0.634,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Spooky in Love",
+      "slug": "spooky-in-love",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.463,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -32,34 +32,34 @@
       "slug": "take-a-hike",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.63,
+      "radarScore": 0.33,
       "independentSources": 1,
       "locationPotential": 0.6
     },
     {
-      "title": "Your Honor",
-      "slug": "your-honor",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.564,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "My AI Partner: Strange Love",
-      "slug": "my-ai-partner-strange-love",
+      "title": "The Apartment Job",
+      "slug": "the-apartment-job",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.53,
+      "radarScore": 0.31,
       "independentSources": 1,
       "locationPotential": 0.6
     },
     {
-      "title": "The Auditors",
-      "slug": "the-auditors",
+      "title": "I'm SOLO, Love goes on",
+      "slug": "im-solo-love-goes-on",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.515,
+      "radarScore": 0.31,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Badly in Love",
+      "slug": "badly-in-love",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.29,
       "independentSources": 1,
       "locationPotential": 0.6
     }
