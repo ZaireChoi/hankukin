@@ -5,7 +5,7 @@
     "alt 는 기본값이므로 기사 맥락에 맞게 고쳐 쓰는 편이 낫다.",
     "출처 표기 의무: 국가유산청 궁능유적본부"
   ],
-  "generatedAt": "2026-08-16T21:25:17.425Z",
+  "generatedAt": "2026-08-30T23:19:48.295Z",
   "stats": {
     "ok": 14,
     "failed": 0
@@ -29,7 +29,7 @@
       "height": 1568,
       "bytes": 634272,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -49,7 +49,7 @@
       "height": 944,
       "bytes": 205253,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -69,7 +69,7 @@
       "height": 1066,
       "bytes": 298112,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -89,7 +89,7 @@
       "height": 769,
       "bytes": 232354,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -109,7 +109,7 @@
       "height": 1055,
       "bytes": 226201,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -129,7 +129,7 @@
       "height": 1067,
       "bytes": 229403,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -149,7 +149,7 @@
       "height": 1199,
       "bytes": 587487,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -169,7 +169,7 @@
       "height": 798,
       "bytes": 209987,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -189,7 +189,7 @@
       "height": 1097,
       "bytes": 506360,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -209,7 +209,7 @@
       "height": 1072,
       "bytes": 226368,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -229,7 +229,7 @@
       "height": 937,
       "bytes": 376040,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -249,7 +249,7 @@
       "height": 1063,
       "bytes": 551928,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -269,7 +269,7 @@
       "height": 1066,
       "bytes": 294273,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     },
     {
       "site": "경복궁",
@@ -289,7 +289,7 @@
       "height": 1164,
       "bytes": 526808,
       "resized": true,
-      "fetchedAt": "2026-08-16"
+      "fetchedAt": "2026-08-30"
     }
   ]
 }
