@@ -150,8 +150,23 @@ export const NOINDEX_PATHS = [];   // now 는 2026-08-14 발행 시작 (요금·
  * 한 곳에만 있으면 어긋날 자리가 없다.
  */
 export const CATEGORIES = [
+  /*
+   * 2026-08-27. lead 를 고쳤다. 전에는 이랬다 —
+   *   'K-drama, film, K-pop and performance — the places you can stand in, and the things themselves.'
+   * 「the things themselves」로 얼버무리고 있었고, 색인 페이지의 설명은 아예
+   *   'K-drama, film and music video locations you can actually visit'
+   * 였다. **영어 기사 13편 중 촬영지는 둘뿐이다** (도깨비 주문진, 선재 업고 튀어 수원).
+   * 나머지는 지역 소개 넷과 K-culture 해설 일곱이다.
+   * 간판이 내용물과 다르면 그건 문체 문제가 아니라 거짓말이다 — 특히 이 문장은
+   * 검색엔진이 읽는 자리다.
+   *
+   * 이름(Scenes)과 주소(/scenes/)는 그대로 둔다. 주소를 바꾸면 20쪽의 순위가
+   * 초기화되고, 지금 그 축에는 지킬 순위가 없지만 **바꿀 이유도 없다.**
+   * 축의 성격은 글이 쌓이면서 드러난다. 이름을 먼저 정하면 앞으로 쓸 글을
+   * 그 이름에 맞추게 된다 — 순서가 거꾸로다.
+   */
   { key: 'scenes',  path: 'scenes',  label: 'HANKUKIN Scenes',   blurb: 'Where to Go',
-    lead: 'K-drama, film, K-pop and performance — the places you can stand in, and the things themselves.' },
+    lead: 'Places worth the trip, and the K-culture that sends people there — what it costs, when it opens, and what the rules actually say.' },
   { key: 'now',     path: 'now',     label: 'HANKUKIN Now',      blurb: "What's Hot",
     lead: 'What Korea costs and how it works right now — fares, prices and rules, each checked against the operator on a stated date.' },
   { key: 'decode',  path: 'decode',  label: 'HANKUKIN Decode',   blurb: 'What It Means',

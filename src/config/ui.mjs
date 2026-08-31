@@ -58,7 +58,7 @@ export const UI = {
     },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: 'Where to Go',
-        lead: 'K-drama, film, K-pop and performance — the places you can stand in, and the things themselves.' },
+        lead: 'Places worth the trip, and the K-culture that sends people there — what it costs, when it opens, and what the rules actually say.' },
       now:     { label: 'HANKUKIN Now', blurb: "What's Hot",
         lead: 'What Korea costs and how it works right now — fares, prices and rules, each checked against the operator on a stated date.' },
       decode:  { label: 'HANKUKIN Decode', blurb: 'What It Means',
@@ -175,7 +175,12 @@ export const UI = {
       metaDescription: 'K-drama brought you to Korea. We cover the ground game — reading signs, fares, tickets, food, clinics — checked against Korean primary sources.',
       kickers: { filming: 'Filming location', kculture: 'K-culture', now: 'Korea Now',
                  decode: 'Decode', hangul: 'Read the signs', guides: 'Culture & History' },
-      scenesLead: 'K-drama, film, K-pop and live performance — and the places they happen. Some of these are locations you can stand in, with how to get there and what it costs. Others are the thing itself: what a song is doing on the chart two years late, or whether a film everyone was talking about is still being talked about.',
+      /*
+       * 2026-08-27. 「촬영지」를 앞세우던 문장을 고쳤다.
+       * 영어 기사 13편 중 촬영지는 둘뿐이고, 넷은 지역 소개, 일곱은 K-culture 해설이다.
+       * 실제로 있는 것을 순서대로 적는다 — 없는 것을 약속하지 않는다.
+       */
+      scenesLead: 'Two things live here. Places you can actually stand in — an island, a fortress wall, a capital that stays lit until ten — with how to get there and what it costs. And the K-culture that sends people to Korea in the first place: what a song is doing on the chart two years late, what a music-show audience ticket really asks of you, whether the film everyone discussed is still being discussed.',
     },
     stuck: {
       heading: 'Stuck on something?',
@@ -257,7 +262,7 @@ export const UI = {
     },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: 'どこへ行くか',
-        lead: 'ドラマ・映画・K-POP・舞台 — 実際に立てる場所と、その作品そのもの。' },
+        lead: '行く価値のある場所と、そこへ人を向かわせるK-カルチャー。いくらかかり、いつ開いていて、規定に何と書いてあるか。' },
       now:     { label: 'HANKUKIN Now', blurb: '今の韓国',
         lead: '韓国が今いくらで、どう動いているか — 運賃・価格・規則を、事業者の公表内容と確認日つきで。' },
       decode:  { label: 'HANKUKIN Decode', blurb: '言葉の意味',
@@ -360,7 +365,7 @@ export const UI = {
       metaDescription: 'ドラマがきっかけで韓国へ。このサイトは現地で実際に効くほうを扱います — 看板の読み方、運賃、チケット、食事、病院。すべて韓国語の一次資料で確認しています。',
       kickers: { filming: 'ロケ地', kculture: 'K-カルチャー', now: '今の韓国',
                  decode: '言葉の意味', hangul: '看板を読む', guides: '文化と歴史' },
-      scenesLead: 'ドラマ・映画・K-POP・ライブと、それが起きた場所。実際に立てるロケ地は、行き方と費用まで書きます。もう一方は作品そのもの — ある曲が二年遅れでチャートに戻ってきた理由や、話題だった映画が今も話題なのか。',
+      scenesLead: 'ここには二種類あります。実際に立てる場所 — 島、城壁、夜十時まで灯りの消えない古都 — は、行き方と費用まで書きます。もう一方は、そもそも人を韓国へ向かわせるK-カルチャーのほう。ある曲が二年遅れでチャートに戻ってきた理由、音楽番組の観覧券が実際に何を求めるのか、話題だった映画が今も話題なのか。',
     },
     stuck: {
       heading: '困っていることは何ですか',
@@ -441,7 +446,7 @@ export const UI = {
     },
     sections: {
       scenes:  { label: 'HANKUKIN Scenes', blurb: '去哪里',
-        lead: '韩剧、电影、K-POP 与现场演出 —— 你可以真正站上去的地方，以及作品本身。' },
+        lead: '值得跑一趟的地方，以及把人送到那里的 K-文化 —— 多少钱、几点开、规定到底怎么写的。' },
       now:     { label: 'HANKUKIN Now', blurb: '此刻的韩国',
         lead: '韩国现在多少钱、怎么运作 —— 票价、物价与规定，逐条对照运营方的公开信息，并注明核对日期。' },
       decode:  { label: 'HANKUKIN Decode', blurb: '这句话的意思',
@@ -544,7 +549,7 @@ export const UI = {
       metaDescription: '因为韩剧来到韩国。本站写的是落地之后真正要用的部分 —— 看招牌、车费、门票、吃饭、看病，全部对照韩文一手资料核对。',
       kickers: { filming: '取景地', kculture: 'K-文化', now: '此刻的韩国',
                  decode: '这句话的意思', hangul: '看懂招牌', guides: '文化与历史' },
-      scenesLead: '韩剧、电影、K-POP 与现场演出，以及它们发生的地方。有些是你可以真正站上去的取景地，我们会写怎么去、要花多少钱。另一些是作品本身 —— 一首歌为什么在两年后重新爬上榜单，或者当初人人都在谈的电影现在还有没有人谈。',
+      scenesLead: '这里有两种东西。一种是你可以真正站上去的地方 —— 一座岛、一段城墙、一座亮到夜里十点的古都 —— 我们会写怎么去、要花多少钱。另一种是把人送来韩国的 K-文化本身：一首歌为什么在两年后重新爬上榜单，一张打歌舞台的观众券实际上要求你做什么，当初人人都在谈的电影现在还有没有人谈。',
     },
     stuck: {
       heading: '你卡在哪一步',
