@@ -867,6 +867,8 @@ export default function contentQuality() {
             '놀거리 소개. 「무엇이 막혔나」가 아니라 「이 낱말이 무엇을 덮는가」에 답한다 — '
             + '막혀서 검색하는 글이 아니라, 가기 전에 값과 시간을 알고 가는 글이다',
           'goblin-jumunjin-breakwater': '촬영지 소개',
+          'deoksugung-doldamgil-stone-wall-road':
+            '촬영지·산책로 소개. 막힌 순간이 아니라 「언제 가면 헛걸음이 되나」에 답한다',
           'gyeongju-at-night-silla-capital': '여행지 소개',
           'jeju-when-life-gives-you-tangerines': '섬 자체를 설명하는 글. 막힌 순간이 아니라 「왜 가나」에 답한다',
           'itaewon-alone-what-to-eat-buy-and-when-to-go':
