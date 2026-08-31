@@ -63,6 +63,13 @@ export default function noSharedImages() {
 
         for (const file of walk(CONTENT_DIR)) {
           const text = readFileSync(file, 'utf8');
+          /*
+           * 초안은 세지 않는다 (2026-08-27).
+           * 이 게이트가 막으려는 것은 「독자가 다른 글에서 같은 풍경을 또 보는 일」이다.
+           * 발행되지 않은 글은 독자가 볼 수 없으므로 중복이 성립하지 않는다.
+           * 초안을 세면, 쓰다 만 글 때문에 정작 발행할 글이 사진을 못 쓰게 된다.
+           */
+          if (/^draft:\s*true/m.test(text.slice(0, 800))) continue;
           const article = articleKey(file);
           for (const m of text.matchAll(IMG_RE)) {
             // Set 이라 한 기사 안의 중복 참조도, 번역판도 한 번으로 접힌다

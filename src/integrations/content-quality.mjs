@@ -612,6 +612,22 @@ export default function contentQuality() {
           const fm = text.slice(0, text.indexOf('\n---', 4) + 4);
           const body = text.slice(fm.length);
 
+          /*
+           * 초안은 검사하지 않는다 (2026-08-27).
+           *
+           * 왜. 이 게이트들은 **발행 기준**이다. 대표사진이 있는가, 캡션이 붙었는가,
+           * 다른 기사로 가는 링크가 있는가 — 전부 「독자 앞에 내놓을 때」의 조건이다.
+           * 그런데 지금까지는 draft:true 인 글도 똑같이 검사했다.
+           * 그러면 **쓰다 만 글이 있는 채로는 빌드가 안 된다.**
+           * 초안을 커밋해 두고 며칠 뒤에 이어 쓰는 일이 불가능했다는 뜻이다.
+           *
+           * getCollection 이 draft 를 이미 걸러내므로 화면에는 안 나간다.
+           * 안 나가는 글에 발행 기준을 요구할 이유가 없다.
+           *
+           * ※ 대신 draft:false 로 바꾸는 순간 전부 검사한다. 초안은 유예이지 면제가 아니다.
+           */
+          if (/^draft:\s*true/m.test(fm)) continue;
+
           // ── 1. 대표사진 ─────────────────────────────────────────
           /*
            * 번역본은 대표사진 검사를 하지 않는다 (2026-08-17).
@@ -886,6 +902,7 @@ export default function contentQuality() {
              */
             const fm = readFileSync(file, 'utf8').slice(0, 800);
             if (/^translation:/m.test(fm)) continue;
+            if (/^draft:\s*true/m.test(fm)) continue;   // 초안은 색인에 넣지 않는다
             if (listed.has(`${sec}/${slug}`) || stuckExempt[slug]) continue;
             drifted.push(`${sec}/${slug}`);
           }
