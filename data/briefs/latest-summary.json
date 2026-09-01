@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-08-29T02:38:04.458Z",
-  "radarCollectedAt": "2026-08-29T02:37:29.916Z",
+  "generatedAt": "2026-09-01T22:14:06.941Z",
+  "radarCollectedAt": "2026-09-01T22:13:46.975Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -14,7 +14,7 @@
       "slug": "our-sticky-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.634,
+      "radarScore": 0.631,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -23,7 +23,7 @@
       "slug": "spooky-in-love",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.463,
+      "radarScore": 0.457,
       "independentSources": 2,
       "locationPotential": 0.6
     },
