@@ -1,0 +1,158 @@
+---
+/**
+ * BIFF 예매 창이 언제 열리는가 — 지난해(제30회)의 실제 일정을 개막일로부터 역산해 그린다.
+ *
+ * 왜 이 그림인가 (2026-09-01).
+ *   해외 독자가 영화제 표에서 막히는 지점은 '경쟁' 이 아니라 **순서**다.
+ *   예매창은 개막 12일 전에야 열렸는데, 그때는 이미 항공권을 끊었어야 하는 시점이다.
+ *   「일찍 예매하세요」 라는 조언이 쓸모없는 이유가 이것이다 — 일찍 예매할 수가 없다.
+ *   반대로 **날짜를 모르고 항공권부터 끊으면** 표 없이 부산에 도착한다.
+ *
+ *   근거: 부산국제영화제 보도자료 「제30회 부산국제영화제 예매 일정 안내!」(2025-08-28).
+ *   보도자료에 적힌 날짜·시각을 그대로 옮겼고, D− 값만 우리가 계산했다.
+ *   추정한 날짜는 하나도 없다.
+ *
+ * 왜 제31회(2026) 행은 비어 있나.
+ *   2026-09-01 현재 예매 일정이 **공표되지 않았다.** 영문 예매 안내는 자리표시 이미지이고
+ *   한국어 공지사항 게시판에도 예매 공고가 없다. 그래서 **빈 칸으로 그렸다.**
+ *   작년 간격을 2026 달력에 옮겨 적으면 그건 예측이지 사실이 아니다 — 하지 않는다.
+ *   ③ 「못 구한 숫자는 항목을 빼고 뺐다고 적는다」 그대로다.
+ *
+ * 왜 세로인가.
+ *   ChartTicketWindow 와 같은 판단이다. 가로축에 D−19·D−12·D−8 을 붙이면
+ *   오른쪽 끝에서 라벨이 서로 먹는다. 이 사이트가 이미 한 번 낸 사고다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const ROWS = [
+  {
+    d: 'D−19',
+    when: '29 Aug 2025',
+    time: '18:00',
+    what: 'The full screening schedule is published',
+    note: 'Until this moment there is nothing to choose from — no titles, no times, no venues',
+    kind: 'step',
+  },
+  {
+    d: 'D−12',
+    when: '5 Sep 2025',
+    time: '14:00',
+    what: 'First booking wave opens',
+    note: 'Opening and closing galas, Open Cinema, Midnight Passion, Actors’ House, Community BIFF',
+    kind: 'step',
+  },
+  {
+    d: 'D−8',
+    when: '9 Sep 2025',
+    time: '14:00',
+    what: 'Second booking wave — every other screening',
+    note: 'All seats sold online. Maximum two tickets per transaction',
+    kind: 'step',
+  },
+  {
+    d: 'D−1',
+    when: '16 Sep 2025',
+    time: '',
+    what: 'Last day to cancel without a fee',
+    note: 'During the festival itself, cancelling costs ₩1,000 per ticket',
+    kind: 'mark',
+  },
+  {
+    d: 'D-day',
+    when: '17 Sep 2025',
+    time: '',
+    what: 'The 30th festival opens',
+    note: 'Ran ten days, to 26 September',
+    kind: 'last',
+  },
+];
+
+const W = 780;
+const TOP = 74;
+const ROW = 92;
+/*
+ * 2026 행의 높이. 처음 86 으로 뒀다가 **PNG 로 뽑아 보고 고쳤다** —
+ * 상자 높이가 70 인데 마지막 줄 베이스라인이 66 이라 g·y 의 아래꼬리가
+ * 점선 테두리에 닿았다. 빌드는 통과했다. 도표는 눈으로 봐야 안다.
+ */
+const BAND = 104;                                 /* 2026 행 */
+const H = TOP + ROWS.length * ROW + BAND + 46;
+const RAIL = 168;
+const TEXT = RAIL + 30;
+
+const RED = '#b0453a', INK = '#12100f', MUTE = '#6b6560', RULE = '#d8d0c6';
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="The booking countdown for the 30th Busan International Film Festival in 2025, counted backwards from opening day. Nineteen days before opening, on 29 August 2025 at 18:00, the full screening schedule was published. Twelve days before opening, on 5 September at 14:00, the first booking wave opened, covering the opening and closing galas, Open Cinema, Midnight Passion, Actors' House and Community BIFF. Eight days before opening, on 9 September at 14:00, booking opened for every other screening, with all seats sold online and a maximum of two tickets per transaction. One day before opening, 16 September, was the last day to cancel without a fee; during the festival cancelling cost 1,000 won per ticket. The festival opened on 17 September and ran ten days to 26 September. For the 31st festival in 2026, which opens on 6 October, none of these dates had been published as of 1 September 2026, thirty-five days before opening.">
+
+    <text x="20" y="24" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      WHEN THE BOOKING WINDOW ACTUALLY OPENS
+    </text>
+    <text x="20" y="46" font-size="12.5" fill={MUTE}>
+      The 30th festival, 2025 — counted backwards from opening day
+    </text>
+
+    {ROWS.map((r, i) => {
+      const y = TOP + i * ROW;
+      const cy = y + 26;
+      const last = r.kind === 'last';
+      return (
+        <>
+          {i > 0 && (
+            <line x1={RAIL} y1={y - ROW + 26} x2={RAIL} y2={cy}
+                  stroke={RULE} stroke-width="2" />
+          )}
+
+          <text x={RAIL - 24} y={cy} text-anchor="end" font-size="13.5"
+                font-weight="700" fill={last ? RED : INK}>{r.d}</text>
+          <text x={RAIL - 24} y={cy + 19} text-anchor="end" font-size="11.5" fill={MUTE}>
+            {r.when}{r.time ? ` · ${r.time}` : ''}
+          </text>
+
+          <circle cx={RAIL} cy={cy - 5} r={last ? 8 : 6}
+                  fill={last ? RED : (r.kind === 'mark' ? '#c9622e' : '#fff')}
+                  stroke={last ? RED : (r.kind === 'mark' ? '#c9622e' : '#8a827b')}
+                  stroke-width="2" />
+
+          <text x={TEXT} y={cy} font-size="14" font-weight={last ? '700' : '500'}
+                fill={last ? RED : INK}>{r.what}</text>
+          <text x={TEXT} y={cy + 21} font-size="12" fill={MUTE}>{r.note}</text>
+        </>
+      );
+    })}
+
+    {/* 2026 — 아직 아무것도 공표되지 않았다. 비워 두는 것이 이 그림의 요점이다 */}
+    {(() => {
+      const by = TOP + ROWS.length * ROW - 4;
+      return (
+        <>
+          <rect x="20" y={by} width={W - 40} height={BAND - 16} rx="5"
+                fill="#f6f2ec" stroke={RULE} stroke-width="1" stroke-dasharray="5 4" />
+          <text x="40" y={by + 27} font-size="13.5" font-weight="700" fill={INK}>
+            The 31st festival opens 6 October 2026.
+          </text>
+          <text x="40" y={by + 48} font-size="12.5" fill={MUTE}>
+            As of 1 September 2026 — D−35 — none of the five dates above had a 2026 equivalent
+          </text>
+          <text x="40" y={by + 67} font-size="12.5" fill={MUTE}>
+            on the English booking page or the festival's Korean notice board. That is why this row is empty.
+          </text>
+        </>
+      );
+    })()}
+
+    <text x="20" y={H - 14} font-size="11.5" fill={MUTE}>
+      2025 dates from the festival's own booking press release, 28 August 2025. D− values calculated by us.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

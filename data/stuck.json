@@ -382,6 +382,11 @@
           "when": "I am well over 19 — why is the bar door still demanding my passport?",
           "answer": "The fine for serving a minor — up to ₩20,000,000 — lands on the venue, and the law lets a door refuse anyone who shows nothing; the age itself runs by birth year, so in 2026 anyone born 2007 or earlier may buy.",
           "href": "decode/korea-drinking-age-id-check"
+        },
+        {
+          "when": "I want to go to the Busan film festival but the English site tells me nothing about tickets",
+          "answer": "It is not you — the English booking page is a placeholder image, and no 2026 date has been announced in either language; last year the window opened only 12 days before the festival, and every seat sells online.",
+          "href": "scenes/biff-2026-tickets-english-page-blank"
         }
       ],
       "i18n": {
