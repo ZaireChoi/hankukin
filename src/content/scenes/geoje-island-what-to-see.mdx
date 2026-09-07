@@ -52,8 +52,20 @@ export const KTO_HILL = {
   credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-3',
   sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=129479',
 };
+/*
+ * 매미성 사진 두 장의 등급이 다르다 (2026-09-07 정정).
+ * 같은 관광지 · 같은 cotId 인데도 대장(data/place-images.json)은 이렇게 적고 있다 —
+ *   geoje-maemidong-1  kogl-3  canModify:false
+ *   geoje-maemidong-3  kogl-1  canModify:true
+ * 그래서 상수를 하나로 두면 안 된다. 전에는 둘 다 kogl-3 로 적어서
+ * **3번 사진이 웹용 리사이즈를 못 하고 있었다.** 위반은 아니지만 손해다.
+ */
 export const KTO_CASTLE = {
   credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-3',
+  sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2536133',
+};
+export const KTO_CASTLE_WALL = {
+  credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1',
   sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2536133',
 };
 
@@ -117,7 +129,7 @@ Two things make this worth an hour even if you are not interested in military hi
 
 <Figure src={wall} alt="Stone walls and arches of the hand-built castle rising against a bright sky, with a visitor for scale"
         caption="Maemiseong close up. The stonework is uneven in a way that industrial construction never is, which is the visible signature of it having been done by hand."
-        {...KTO_CASTLE} />
+        {...KTO_CASTLE_WALL} />
 
 ## Getting there
 
