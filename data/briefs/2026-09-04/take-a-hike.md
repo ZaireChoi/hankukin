@@ -1,0 +1,49 @@
+# Take a Hike!
+> Take a Hike!: Season 1
+
+**판정: ⚠️ 보류 — 독립 신호 부족**
+
+독립 신호가 1개입니다. 2개 미만이면 "Emerging" 이상으로 표기할 수 없어 기사 가치가 낮습니다.
+
+## 레이더 신호
+
+| 항목 | 값 |
+|---|---|
+| 레이더 점수 | 0.33 |
+| 한국 Netflix 순위 | 5위 (1주차) |
+| 신규성 | holding |
+| 독립 신호 | 1개 |
+| 촬영지 적합도 | 0.6 — 일반 드라마 — 촬영지 확인 필요 |
+| YouTube 화제성 | 근거 없음 |
+
+## 공식 채널 확인
+
+작품의 실재와 출연진은 아래 공식 채널 영상으로 확인됩니다. **다만 이것은 촬영지 근거가 아닙니다.**
+
+- **Netflix K-Content** — The ultimate Netflix fan test | Take a Hike! | Netflix [ENG SUB] (29,718회)
+- **Netflix K-Content** — [Preview] A hiking club with zero experience | Take a Hike! | Netflix [ENG SUB] (27,350회)
+- **Netflix K-Content** — Take a Hike! | Now Playing | Netflix [ENG SUB] (20,972회)
+
+## 채워야 할 것
+
+### 필수 — 촬영지와 그 출처
+
+기획문서 04 §3 기준으로 "Official filming location" 을 쓰려면 제작사 또는 공공기관 출처가 필요합니다.
+
+확인할 곳:
+- 제작사·방송사 공식 SNS 및 보도자료
+- 한국관광공사 대한민국구석구석 (촬영지 소개)
+- 촬영 지역 지자체 관광포털
+
+### 선택 — 두 번째 독립 신호
+
+신호 1개로는 Emerging 을 넘을 수 없습니다 (05 §8).
+
+확인할 곳:
+- 네이버 뉴스(제휴 승인 대기 중)
+- 데이터랩 검색 트렌드(승인 대기 중)
+
+---
+
+이 브리프는 자동 생성되었으며 **기사가 아닙니다.** 촬영지 출처가 채워지기 전에는
+초안 생성 단계로 넘어가지 않습니다. 빈칸을 추정으로 메우지 마세요 — 그것이 이 단계의 존재 이유입니다.
