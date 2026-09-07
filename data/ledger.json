@@ -292,6 +292,14 @@
       "right": "It now carries a train ticket link as well. Single journeys, not the rail pass — the two-day pass is US$94.65 against roughly ₩54,000 for a Gangneung return, so the more lucrative product is the wrong one for this reader and we are not linking it here.",
       "why": "We had been treating 'where do I sleep' as the whole of a destination article's commercial surface. For a day trip out of Seoul the first decision is not the bed, it is the train — and that is the number the article had already printed.",
       "found": "the site owner said the Goblin piece should carry an affiliate link"
+    },
+    {
+      "date": "2026-09-06",
+      "article": "/en/decode/korean-phrases-shops-restaurants/",
+      "wrong": "The article said Gyeongsang speech is “flatter, faster and more clipped than Seoul speech”. We had no source for any of the three, and the first one runs the wrong way.",
+      "right": "The Academy of Korean Studies' entries say Gyeongsang is one of the two modern Korean dialects that still uses tone — pitch there distinguishes 말 meaning horse, a grain measure and speech — while standard Korean lost tone. Whatever else it is, it is not the flatter of the two. The sentence has been replaced with a link to the new dialect article, which says only what the entries say.",
+      "why": "We were describing how the dialect strikes a listener and presenting it as a fact about the dialect. Impressions are not measurements, and this one was also backwards.",
+      "found": "writing the Gyeongsang piece and re-reading what the older article had already promised about it"
     }
   ],
   "withheld": [

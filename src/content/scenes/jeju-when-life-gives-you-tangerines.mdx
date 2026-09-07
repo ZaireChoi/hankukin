@@ -13,7 +13,7 @@ checkedAt: 2026-08-20
 hero:
   src: ../../assets/images/places/jeju-seongsan-ilchulbong-3.jpg
   alt: Sunrise over the sea at Seongsan on Jeju, the flat-topped Ilchulbong tuff cone in silhouette across gold water, with white crinum lilies flowering in the green foreground
-  license: kogl-1
+  license: kogl-3
   sourceUrl: https://api.visitkorea.or.kr/#/detail?cotId=126435
   credit: 한국관광공사 (Korea Tourism Organization)
 riskGrade: green
@@ -81,13 +81,22 @@ import grass from '../../assets/images/places/jeju-sangumburi-6.jpg';
 import crater from '../../assets/images/places/jeju-hallasan-1.jpg';
 import seongsanpo from '../../assets/images/places/jeju-haenyeo-show-5.jpg';
 
+{/*
+  공공누리 유형은 **기관이 아니라 사진마다** 다르다. 한국관광공사 자료 안에서도
+  1유형과 3유형이 섞여 있고, 같은 장소의 사진 여섯 장이 갈리기도 한다(거제 매미성).
+  여기서 KTO 하나에 license: 'kogl-1' 을 넣고 전부 물려주었더니
+  3유형(변경금지) 사진 넷이 1유형으로 선언돼 Astro 최적화를 탔다 — 리사이즈와 WebP 변환,
+  즉 licence 가 금지한 '변경' 이다. 빌드는 통과했고 화면도 멀쩡했다.
+  → 유형별로 가른다. data/place-images.json 이 파일별 정답을 갖고 있다. (2026-09-07)
+*/}
 export const KTO = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1' };
+export const KTO3 = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-3' };
 export const SEONGEUP = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126471' };
 export const UDO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=127336' };
-export const SINCHANG = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
-export const SANGUMBURI = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
+export const SINCHANG = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
+export const SANGUMBURI = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
 export const HALLASAN = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264590' };
-export const SEONGSANPO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
+export const SEONGSANPO = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
 
 Start with the title, because the title is already the argument.
 

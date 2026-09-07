@@ -721,6 +721,12 @@
       "slug": "oncheon-asan",
       "keyword": "아산온천",
       "dir": "places"
+    },
+    {
+      "slug": "jumunjin-bts-bus-stop",
+      "keyword": "BTS 버스정류장",
+      "expectRegion": "강원",
+      "dir": "scenes"
     }
   ]
 }

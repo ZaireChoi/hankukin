@@ -22,6 +22,11 @@
 | **글 하나 올리는 법** — 최소 frontmatter, 게이트가 우는 자리 | `_글쓰는법.md` |
 | **아직 기사가 아닌 자료** — 사진·영수증·증언 | `_초안/` |
 | **서울 지하철** — 역·거리·소요시간·환승·좌표 | `_서울지하철-자료.md` |
+| **방언 전반** — 한국민족문화대백과사전. **Chrome 으로만 열린다** (web_fetch 는 provenance 제약). 검색은 `encykorea.aks.ac.kr/Article/Search?query=낱말`, 본문은 `/Article/E00xxxxx`. 4~5초 기다린 뒤 `document.body.innerText`. 확인한 표제어: 동남방언(경상) `E0016323` · 제주방언 `E0051419` · 성조 `E0029547` · 영남지방 `E0037274`. **경상도는 표제어가 「동남방언」이고, 전라도는 「서남방언」일 것이다.** ⚠ 본문의 음성기호 일부가 ○(U+25CB)로 깨져 있다 | `src/content/decode/busan-gyeongsang-dialect-endings-no-na.mdx` sources |
+| **제주어** — 표제어·뜻풀이·용례 (제주학연구센터 「제주어왓」 `jeju.go.kr/jejueo/dictionary/search.htm?qtype=word&query=낱말`, 시험 운영 중 · 강영봉 「제주방언」 `jeju.grandculture.net/jeju/toc/GC00702008`, Chrome 으로 열어야 본문이 나온다) | `_다음편-제주어-Decode.md` |
+| **강릉 시내버스** — 노선별 정차 목록·첫차/막차·요금 (`bis.gn.go.kr/search`, Chrome 으로만 열린다. 노선검색 목록의 `.bus-route-nm-box` 를 JS 로 click 하면 정차 목록이 innerText 에 나온다. 300 은 강릉역을 지나지만 **300-1·300-2 는 안 지난다**) · KTX 운임은 `korail.com/ticket/main` 예매 화면에서 읽는다 (Chrome, 다음날 조회) | `src/content/scenes/bts-bus-stop-jumunjin-gangneung-bus-back-to-station.mdx` sources |
+| **법령 원문** — `law.go.kr/법령/<법령명>` 은 Chrome 으로만 열린다. `document.getElementById('lawService').contentDocument.body.innerText` 를 5~7초 기다린 뒤 읽는다 (공중화장실법·시행령 확인, 2026-09-06) | `src/content/hangul/korean-toilet-signs-nam-yeo-door-code-paper.mdx` sources |
+| **지하철 재승차(화장실) 규칙** — 서울 15분(2023-10-07~, `news.seoul.go.kr/traffic/archives/510086`) · 코레일 구간 15분(2026-06-20~, `korea.kr` newsId=148966539). 둘 다 web_fetch 로 열린다. **1회권 제외** | 같은 기사 sources |
 | 상업 링크를 실제로 열어 본 기록 | `data/link-verified.json` |
 | 사진을 열어 보고 확인한 기록 | `data/photo-verified.json` |
 | 제휴 상품 이름의 단일 출처 | `src/config/products.mjs` |

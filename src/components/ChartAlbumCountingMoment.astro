@@ -1,0 +1,195 @@
+---
+/**
+ * 앨범 한 장이 세 차트에 닿는 **세 개의 다른 순간**.
+ *
+ * 왜 그렸나 (2026-09-03 오후, Scenes 16편).
+ *   이 기사에는 쓸 사진이 없다. 재고 332장의 슬러그를 전부 훑었고
+ *   음반매장·계산대·앨범 매대 계열이 **0장**이다. 명동 5장 중 유일한 미사용분인
+ *   myeongdong-2 는 이미 두 번 기록된 오매칭(명동성당)이라 쓸 수 없다.
+ *   그리고 있어도 못 쓴다 — 앨범 표지는 타인의 저작물이라 스키마의
+ *   라이선스 목록(kogl-1·kogl-3·cc0·cc-by·cc-by-sa·own)에 들어올 수 없고,
+ *   매장 계산대는 식별 가능한 사람이 찍히는 자리다.
+ *
+ *   게다가 이 기사의 요점은 장면이 아니라 **시점**이다.
+ *   같은 앨범 한 장이 어떤 차트에는 「상자가 매장으로 나갈 때」 잡히고
+ *   어떤 차트에는 「내가 계산할 때」 잡힌다. 시간 축이 있어야 보이는 것이고,
+ *   사진으로는 애초에 못 찍는다. 안경편·클리닉편·환급편과 같은 판단이다.
+ *
+ * 무엇이 우리 것이고 무엇이 남의 것인가.
+ *   각 칸에 적힌 「무엇을 세는가」는 전부 그 차트 운영자가 자기 페이지에
+ *   써 놓은 문장을 옮긴 것이다 (써클차트 앨범차트·소매점앨범차트 순위집계 문구,
+ *   한터 실시간 음반차트 머리글). **우리가 만든 것은 배치뿐이다** —
+ *   세 문장을 시간 축 위에 얹으면 어긋나는 지점이 보인다는 것.
+ *   화살표의 굵기·간격에는 아무 의미도 없다. 눈금이 아니다.
+ *
+ * ⚠ 1차 렌더에서 실제로 깨졌던 것 (고치고 다시 렌더해 눈으로 확인했다).
+ *   ① 칸 이름과 본문이 상자 밖으로 나갔다 — 글자수를 세는 대신 **줄바꿈 함수**로
+ *      바꾸고 상자 폭에서 역산한 글자수를 상한으로 뒀다.
+ *   ② 가운데 순간의 화살표가 첫 칸을 **관통해** 둘째 칸까지 내려갔다 —
+ *      둘째 칸은 축이 아니라 **첫 칸의 아래변**에서 잇는다.
+ *   ③ 순간 이름 셋이 서로 붙었고 「TIME →」 가 셋째 이름 위로 올라탔다 —
+ *      이름을 줄이고 축 간격을 넓히고 TIME 을 축 아래로 내렸다.
+ *   게이트는 이 셋을 하나도 못 잡는다. PNG 로 렌더해서 눈으로 봐야 보인다.
+ *
+ * CJK 글꼴 주의.
+ *   샌드박스 렌더러에 한글 글꼴이 없어 PNG 검수에서 한글이 네모로 나온다.
+ *   그래서 **이 도표에는 한글을 한 자도 넣지 않았다.** 한국어 원문은 본문의
+ *   <Original> 블록이 지고 있으므로 도표까지 질 필요가 없다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760;
+
+const INK = '#12100f';
+const MUTE = '#6b6560';
+const FAINT = '#a09890';
+const GREEN = '#3d6b46';
+const ACCENT = '#c9622e';
+const BLUE = '#4a6fa5';
+
+/** 세 순간의 x 중심 — 칸이 236 폭이므로 서로 14 이상 벌어지도록 잡았다 */
+const CX = [130, 380, 630];
+const COLW = 236;
+const PAD = 14;
+
+const AXY = 126;
+const CARDY = 158;
+const CARDH = 112;
+const CARDGAP = 14;
+
+const H = CARDY + 2 * CARDH + CARDGAP + 76;
+
+/** 상자 폭에서 역산한 상한으로 줄을 나눈다 (글자수를 세어 자르지 않는다) */
+function wrap(text, max) {
+  const words = text.split(' ');
+  const lines = [];
+  let cur = '';
+  for (const w of words) {
+    if (!cur) { cur = w; continue; }
+    if ((cur + ' ' + w).length <= max) cur += ' ' + w;
+    else { lines.push(cur); cur = w; }
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
+const moments = [
+  { tag: 'WEEKS BEFORE YOU ARRIVE', label: 'Boxes ship from the distributor', tone: BLUE },
+  { tag: 'THE MOMENT YOU PAY',      label: 'The till rings up your copy',     tone: ACCENT },
+  { tag: 'LATER, IF NOBODY BUYS IT', label: 'The copy goes back unsold',      tone: FAINT },
+];
+
+/** col: 어느 순간에 붙는가 · row: 그 순간 아래 몇 번째 칸인가 */
+const cards = [
+  {
+    col: 0, row: 0, tone: BLUE, dashed: false,
+    name: 'CIRCLE ALBUM CHART',
+    counts: 'Wholesale shipment units, minus returns',
+    note: 'Your purchase does not move this one.',
+  },
+  {
+    col: 1, row: 0, tone: ACCENT, dashed: false,
+    name: 'HANTEO REAL-TIME ALBUM CHART',
+    counts: 'Copies sold at a registered store code',
+    note: 'No store code on that till, no entry.',
+  },
+  {
+    col: 1, row: 1, tone: GREEN, dashed: false,
+    name: 'CIRCLE RETAIL ALBUM CHART',
+    counts: 'Copies sold at retail stores',
+    note: 'A separate chart. Same organisation.',
+  },
+  {
+    col: 2, row: 0, tone: FAINT, dashed: true,
+    name: 'CIRCLE ALBUM CHART, AGAIN',
+    counts: 'The return is subtracted',
+    note: 'The only chart here that can go down.',
+  },
+].map((c) => ({
+  ...c,
+  countLines: wrap(c.counts, 29),   // 12.5px bold ≈ 7.0px/자 → 208px 안쪽
+  noteLines: wrap(c.note, 35),      // 11.5px       ≈ 5.9px/자 → 208px 안쪽
+}));
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Three moments in the life of one K-pop album, and which chart moves at each. Weeks before you arrive, boxes ship from the distributor: that moment feeds the Circle Chart Album Chart, which counts wholesale shipment units minus returns, so your own purchase does not move it. At the moment you pay, the till rings up your copy: that moment feeds the Hanteo real-time album chart, which counts copies sold at a registered store code, and below it the Circle Chart Retail Album Chart, which counts copies sold at retail stores. Later, if the copy goes back unsold, the return is subtracted from the Circle Album Chart, the only chart here that can go down. Every description of what a chart counts is taken from that chart operator's own page; only the arrangement on a time axis is ours.">
+
+    <text x="24" y="26" font-size="12" font-weight="700" fill={FAINT} letter-spacing="0.08em">
+      ONE ALBUM, THREE CHARTS, THREE DIFFERENT MOMENTS
+    </text>
+    <text x="24" y="48" font-size="12.5" fill={MUTE}>
+      One of these three had already counted your copy before you landed.
+    </text>
+    <text x="24" y="66" font-size="12.5" fill={MUTE}>
+      Only the middle column happens at the counter you are standing at.
+    </text>
+
+    {/* 시간 축 */}
+    <path d={`M 24 ${AXY} H ${W - 34}`} stroke="#ded6cc" stroke-width="1.5" fill="none" />
+    <path d={`M ${W - 34} ${AXY - 5} L ${W - 24} ${AXY} L ${W - 34} ${AXY + 5} Z`} fill="#ded6cc" />
+    <text x={W - 24} y={AXY + 22} text-anchor="end" font-size="10.5" font-weight="700"
+          fill={FAINT} letter-spacing="0.08em">TIME →</text>
+
+    {moments.map((m, i) => (
+      <>
+        <text x={CX[i]} y={AXY - 44} text-anchor="middle" font-size="10.5" font-weight="700"
+              fill={m.tone} letter-spacing="0.06em">{m.tag}</text>
+        <text x={CX[i]} y={AXY - 24} text-anchor="middle" font-size="12.5" font-weight="700" fill={INK}>
+          {m.label}
+        </text>
+        <circle cx={CX[i]} cy={AXY} r="7" fill="#fffdfa" stroke={m.tone} stroke-width="2.4" />
+        <circle cx={CX[i]} cy={AXY} r="2.6" fill={m.tone} />
+      </>
+    ))}
+
+    {cards.map((c) => {
+      const x = CX[c.col] - COLW / 2;
+      const y = CARDY + c.row * (CARDH + CARDGAP);
+      /* 둘째 칸은 축이 아니라 첫 칸의 아래변에서 잇는다 — 관통을 막는다 */
+      const fromY = c.row === 0 ? AXY + 8 : CARDY + CARDH;
+      return (
+        <>
+          <path d={`M ${CX[c.col]} ${fromY} V ${y - 6}`}
+                stroke={c.tone} stroke-width="1.4" stroke-dasharray={c.dashed ? '4 4' : '0'} fill="none" />
+          <path d={`M ${CX[c.col] - 4} ${y - 9} L ${CX[c.col]} ${y - 1} L ${CX[c.col] + 4} ${y - 9} Z`} fill={c.tone} />
+
+          <rect x={x} y={y} width={COLW} height={CARDH} rx="6"
+                fill={c.tone} fill-opacity={c.dashed ? '0.04' : '0.07'}
+                stroke={c.tone} stroke-width="1.4"
+                stroke-dasharray={c.dashed ? '5 4' : '0'} />
+
+          <text x={x + PAD} y={y + 23} font-size="10" font-weight="700" fill={c.tone} letter-spacing="0.02em">
+            {c.name}
+          </text>
+          <line x1={x + PAD} y1={y + 32} x2={x + COLW - PAD} y2={y + 32}
+                stroke={c.tone} stroke-opacity="0.3" stroke-width="1" />
+
+          {c.countLines.map((ln, k) => (
+            <text x={x + PAD} y={y + 52 + k * 17} font-size="12.5" font-weight="700" fill={INK}>{ln}</text>
+          ))}
+
+          {c.noteLines.map((ln, k) => (
+            <text x={x + PAD} y={y + 88 + k * 15} font-size="11.5" fill={MUTE}>{ln}</text>
+          ))}
+        </>
+      );
+    })}
+
+    <text x="24" y={H - 34} font-size="11.5" fill={FAINT}>
+      What each chart counts is the operator’s own wording, from its own page. The arrangement on a time axis is ours.
+    </text>
+    <text x="24" y={H - 16} font-size="11.5" fill={FAINT}>
+      Spacing along the axis carries no meaning — it is an order of events, not a scale.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

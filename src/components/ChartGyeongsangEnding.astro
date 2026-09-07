@@ -1,0 +1,123 @@
+---
+/**
+ * 경상도(동남방언) 의문법 어미 — 마지막 한 글자가 답하는 두 가지.
+ *
+ * 왜 그렸나 (2026-09-06 오후, Decode 11편).
+ *   이 글의 요점은 「사투리는 무례하지 않다」가 아니라 **어미가 문법이라는 것**이다.
+ *   문장으로 쓰면 「-노는 의문사가 있을 때 쓴다」로 흘러가고 독자는 규칙을 하나만 가져간다.
+ *   그런데 백과사전이 적어 놓은 것은 규칙 하나가 아니라 **두 축**이다 —
+ *     ① 서술어가 체언이냐 용언이냐 → 가·고 / 나·노
+ *     ② 의문사가 있느냐 없느냐     → 가·나 / 고·노
+ *   축이 둘이면 표는 2×2 여야 하고, 2×2 로 놓으면 독자가 네 칸을 직접 대조한다.
+ *   ChartJejuSameShape 는 두 열 대조였고, 이번엔 **격자**다.
+ *
+ * 네 칸의 어미·예문·영어 뜻이 아니라 **어미와 예문**은 전부
+ * 한국민족문화대백과사전 「동남방언」(집필 최명옥, 최종수정 2026-08-19)의
+ * 의문법어미 ①해라체 항에 그대로 적혀 있는 것이다. 2026-09-06 에 열어서 옮겼다.
+ *   ㉠ -가·고 는 체언서술어에, ㉡ -나·노 는 용언서술어에 연결된다.
+ *   '-가'와 '-나'는 의문사가 없는 문에, '-고'와 '-노'는 의문사가 있는 문에 사용된다.
+ *   예 : "이게 책이가?", "이게 누구 책이고?", "집에 가나?", "어데 가노?"
+ * 영어 뜻만 우리가 달았고, 그 사실을 도표 안에 적었다. 추측으로 채운 칸은 없다.
+ *
+ * 아래 띠의 하게체 -는가/-는고 도 같은 항에서 왔다 ("자네 집에 가는가?" / "자네 누구 집에 가는고?").
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 452;
+
+const ACCENT = '#c9622e';
+const INK = '#12100f';
+const MUTED = '#8a827b';
+const BODY = '#3c3733';
+
+const R0 = 40,  R0W = 148;   // 행 이름
+const C1 = 200, C1W = 262;   // 의문사 없음
+const C2 = 476, C2W = 244;   // 의문사 있음
+
+const TOP = 104;
+const RH = 118;
+
+const cells = [
+  {
+    rowLabel: ['Predicate is a', 'noun'],
+    rowSub: '이게 책이- …',
+    left:  { end: '-가', ko: '이게 책이가?', en: 'Is this a book?' },
+    right: { end: '-고', ko: '이게 누구 책이고?', en: 'Whose book is this?' },
+  },
+  {
+    rowLabel: ['Predicate is a', 'verb or adjective'],
+    rowSub: '가- …',
+    left:  { end: '-나', ko: '집에 가나?', en: 'Are you going home?' },
+    right: { end: '-노', ko: '어데 가노?', en: 'Where are you going?' },
+  },
+];
+
+const STRIP_Y = TOP + cells.length * RH + 6;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="A two-by-two grid of Gyeongsang question endings from the Encyclopedia of Korean Culture. The columns are whether the sentence contains a question word. The rows are whether the predicate is a noun or a verb. With a noun predicate and no question word the ending is -ga, as in ige chaegiga, is this a book. With a noun predicate and a question word it is -go, as in ige nugu chaegigo, whose book is this. With a verb predicate and no question word it is -na, as in jibe gana, are you going home. With a verb predicate and a question word it is -no, as in eode gano, where are you going. The same alternation repeats one politeness rung up, as -neunga and -neungo.">
+
+    <text x={R0} y="26" font-size="12" font-weight="700" fill={MUTED} letter-spacing="0.08em">
+      THE LAST SYLLABLE ANSWERS TWO QUESTIONS
+    </text>
+    <text x={R0} y="46" font-size="11.5" fill={MUTED}>
+      Gyeongsang plain-level question endings, as set out in the Encyclopedia of Korean Culture
+    </text>
+
+    {/* 열 머리 */}
+    <text x={C1} y="76" font-size="12.5" font-weight="700" fill={INK}>No question word in it</text>
+    <text x={C1} y="92" font-size="11" fill={MUTED}>You answer yes or no</text>
+    <text x={C2} y="76" font-size="12.5" font-weight="700" fill={ACCENT}>A question word is in it</text>
+    <text x={C2} y="92" font-size="11" fill={MUTED}>You answer with the information</text>
+
+    {cells.map((r, i) => {
+      const y = TOP + i * RH;
+      return (
+        <>
+          <rect x={R0} y={y} width={C2 + C2W - R0} height={RH - 12} rx="4" fill="#fffdfa" stroke="#e0d8ce" />
+          <rect x={C2 - 12} y={y} width={C2W + 12} height={RH - 12} rx="4" fill="#fbf3ec" stroke="none" />
+          <rect x={C2 - 12} y={y} width="3.5" height={RH - 12} rx="1.6" fill={ACCENT} />
+
+          {r.rowLabel.map((line, j) => (
+            <text x={R0 + 14} y={y + 34 + j * 16} font-size="12" font-weight="700" fill={INK}>{line}</text>
+          ))}
+          <text x={R0 + 14} y={y + 80} font-size="14" fill={MUTED}>{r.rowSub}</text>
+
+          <text x={C1} y={y + 40} font-size="27" font-weight="700" fill={INK}>{r.left.end}</text>
+          <text x={C1} y={y + 68} font-size="16" fill={BODY}>{r.left.ko}</text>
+          <text x={C1} y={y + 90} font-size="11.5" fill={MUTED}>{r.left.en}</text>
+
+          <text x={C2} y={y + 40} font-size="27" font-weight="700" fill={ACCENT}>{r.right.end}</text>
+          <text x={C2} y={y + 68} font-size="16" fill={BODY}>{r.right.ko}</text>
+          <text x={C2} y={y + 90} font-size="11.5" fill={MUTED}>{r.right.en}</text>
+        </>
+      );
+    })}
+
+    {/* 한 칸 위의 등급에서도 같은 교체가 일어난다 */}
+    <rect x={R0} y={STRIP_Y} width={C2 + C2W - R0} height="42" rx="4" fill="#f6f1ea" stroke="#e0d8ce" />
+    <text x={R0 + 14} y={STRIP_Y + 18} font-size="11.5" font-weight="700" fill={MUTED} letter-spacing="0.05em">
+      ONE POLITENESS RUNG UP, THE SAME PAIR REAPPEARS
+    </text>
+    <text x={R0 + 14} y={STRIP_Y + 34} font-size="12.5" fill={BODY}>
+      자네 집에 가는가? — no question word · 자네 누구 집에 가는고? — a question word. Grammar, not slang.
+    </text>
+
+    <text x={R0} y={H - 26} font-size="11.5" fill={MUTED}>
+      Our own illustration. Endings and all six Korean example sentences are quoted from 한국민족문화대백과사전 「동남방언」
+    </text>
+    <text x={R0} y={H - 11} font-size="11.5" fill={MUTED}>
+      (Academy of Korean Studies, written by Choi Myung-ok), opened 6 September 2026. The English glosses are ours.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; border: 1px solid #e0d8ce; border-radius: 6px; background: #fffdfa; }
+  .chart figcaption { margin-top: .6rem; font-size: .9rem; color: #6b6560; line-height: 1.5; }
+</style>

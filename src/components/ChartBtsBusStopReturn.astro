@@ -1,0 +1,125 @@
+---
+/**
+ * 강릉역 ↔ BTS 버스정류장 — 가는 버스와 오는 버스가 같은 길을 달리지 않는다.
+ *
+ * 왜 그렸나 (2026-09-05, BTS 버스정류장 편).
+ *   이 기사에는 쓸 사진이 없다. 재고의 주문진 13장을 대조표로 전부 열었다 —
+ *   항구 2장, 방파제 8장, 도깨비 안내판 1장, 모래 2장. 버스정류장 포토존은 0장이다.
+ *   안내판(13번)은 「포스터를 사진처럼 쓰지 않는다」에 걸린다.
+ *
+ *   그리고 이 그림은 사진이 있어도 사진이 못 보여주는 것이다. 강릉시 버스정보시스템에서
+ *   300번(공단→향호리)은 강릉역을 지나는데, 돌아오는 300-1·300-2 는 강릉역을 **안 지난다.**
+ *   「300-1(강릉역)」이라는 별도 노선이 하루 3회만 강릉역건너편에 선다.
+ *   기사의 요점이 이 비대칭이라, 표보다 그림이 한 번에 읽힌다.
+ *
+ * 정류장 수는 실제 비율이 아니다. 그 사실을 도표 안에 적는다.
+ * 출처: 강릉시 버스정보시스템 bis.gn.go.kr — 노선검색 300 · 300-1 · 300-2 · 300-1(강릉역), 2026-09-05.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760;
+const LAB = 8;
+const X0 = 250, X1 = 752;
+const INK = '#12100f', GREEN = '#3d6b46', ACCENT = '#c9622e', MUTE = '#8a827b', SHUT = '#ddd5cb';
+
+const rows = [
+  {
+    en: 'Out — bus 300',
+    ko: '가는 길 · 300번',
+    sub: '43 runs a day · 06:15–21:25',
+    stops: [
+      { at: 0.0, en: 'Gangneung Station', ko: '강릉역', on: true, bold: true },
+      { at: 0.5, en: 'Yeongjin entrance', ko: '영진입구', on: true },
+      { at: 1.0, en: 'Jumunjin Beach', ko: '주문진해변', on: true, bold: true },
+    ],
+    dashed: false,
+  },
+  {
+    en: 'Back — bus 300-1 or 300-2',
+    ko: '오는 길 · 300-1 · 300-2',
+    sub: '40 + 41 runs a day',
+    stops: [
+      { at: 1.0, en: 'Jumunjin Beach', ko: '주문진해변', on: true, bold: true },
+      { at: 0.14, en: 'Gangneung Station — not served', ko: '강릉역', on: false, bold: true, above: true },
+      { at: 0.0, en: 'Yongjigak · walk ~830 m', ko: '용지각', on: true },
+    ],
+    dashed: true,
+  },
+  {
+    en: 'Back — bus 300-1(강릉역)',
+    ko: '오는 길 · 300-1(강릉역)',
+    sub: '3 runs a day · 08:45 first · 17:05 last',
+    stops: [
+      { at: 1.0, en: 'Jumunjin Beach', ko: '주문진해변', on: true, bold: true },
+      { at: 0.0, en: 'Across from the station', ko: '강릉역건너편', on: true, bold: true },
+    ],
+    dashed: false,
+  },
+];
+
+const TOP = 96, RH = 92;
+const H = TOP + rows.length * RH + 74;
+const x = (t) => X0 + t * (X1 - X0 - 130) + 70;
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Three horizontal bus lines between Gangneung Station on the left and the Jumunjin Beach stop on the right. The outbound bus 300 runs from Gangneung Station through the Yeongjin entrance stop to Jumunjin Beach, 43 times a day. The return buses 300-1 and 300-2 run from Jumunjin Beach back into the city but pass Gangneung Station without stopping; the nearest stop is Yongjigak, about 830 metres from the station on foot. A third line, the 300-1 Gangneung Station variant, does stop across from the station but runs only three times a day, first at 08:45 and last at 17:05 from Hyangho-ri. Spacing is not to scale.">
+
+    <text x={LAB} y="24" font-size="12" font-weight="700" fill={MUTE} letter-spacing="0.08em">
+      THE BUS THAT TAKES YOU THERE IS NOT THE BUS THAT BRINGS YOU BACK
+    </text>
+    <text x={x(0)} y="52" text-anchor="middle" font-size="11" font-weight="700" fill={MUTE} letter-spacing="0.06em">CITY</text>
+    <text x={x(1)} y="52" text-anchor="middle" font-size="11" font-weight="700" fill={MUTE} letter-spacing="0.06em">BEACH</text>
+
+    {rows.map((r, ri) => {
+      const y = TOP + ri * RH + 22;
+      const xs = r.stops.map((s) => x(s.at));
+      const xmin = Math.min(...xs), xmax = Math.max(...xs);
+      return (
+        <>
+          <text x={LAB} y={y - 4} font-size="12.5" font-weight="700" fill={INK}>{r.en}</text>
+          <text x={LAB} y={y + 12} font-size="11" fill={MUTE}>{r.ko}</text>
+          <text x={LAB} y={y + 28} font-size="10.5" fill={MUTE}>{r.sub}</text>
+
+          <path d={`M ${xmin} ${y} H ${xmax}`} stroke={r.dashed ? SHUT : GREEN} stroke-width="3"
+                stroke-dasharray={r.dashed ? '6 5' : undefined} fill="none" />
+          {r.stops.map((s) => (
+            <>
+              {s.on
+                ? <circle cx={x(s.at)} cy={y} r="6.5" fill="#fffdfa" stroke={GREEN} stroke-width="2.4" />
+                : <>
+                    <circle cx={x(s.at)} cy={y} r="6.5" fill="#fffdfa" stroke={ACCENT} stroke-width="2.2" />
+                    <path d={`M ${x(s.at) - 4} ${y - 4} L ${x(s.at) + 4} ${y + 4} M ${x(s.at) + 4} ${y - 4} L ${x(s.at) - 4} ${y + 4}`}
+                          stroke={ACCENT} stroke-width="2" fill="none" />
+                  </>}
+              <text x={x(s.at)} y={s.above ? y - 26 : y + 24} text-anchor={s.at >= 1 ? 'end' : s.at <= 0 ? 'start' : 'middle'}
+                    dx={s.at >= 1 ? 8 : s.at <= 0 ? -8 : 0} font-size="11"
+                    font-weight={s.bold ? 700 : 400} fill={s.on ? INK : ACCENT}>{s.en}</text>
+              <text x={x(s.at)} y={s.above ? y - 12 : y + 38} text-anchor={s.at >= 1 ? 'end' : s.at <= 0 ? 'start' : 'middle'}
+                    dx={s.at >= 1 ? 8 : s.at <= 0 ? -8 : 0} font-size="10" fill={MUTE}>{s.ko}</text>
+            </>
+          ))}
+        </>
+      );
+    })}
+
+    <text x={LAB} y={H - 44} font-size="11.5" fill="#6b6560">
+      Stops are not spaced to scale — bus 300 makes about 47 stops between the station and the beach.
+    </text>
+    <text x={LAB} y={H - 26} font-size="11.5" fill="#6b6560">
+      Routes and run counts: Gangneung City bus information system, read 5 September 2026.
+    </text>
+    <text x={LAB} y={H - 8} font-size="11.5" fill="#6b6560">
+      The 830 m from Yongjigak to the station is Kakao Map's walking estimate, not the city's figure.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

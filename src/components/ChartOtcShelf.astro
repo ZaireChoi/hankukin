@@ -1,0 +1,117 @@
+---
+/**
+ * 편의점 안전상비의약품 — 네 개의 구분과 열세 개의 상자.
+ *
+ * 왜 그렸나 (2026-09-03, Hangul 10편).
+ *   편의점·약국·매대 사진이 재고 332장에 0장이다. 그리고 있어도 못 쓴다 —
+ *   편의점 계산대와 매대는 식별 가능한 사람이 그대로 찍히는 자리이고,
+ *   그 사람은 물건을 사러 거기 있었다. 금지 항목에 정면으로 걸린다.
+ *
+ *   그리고 이 기사의 요점은 장면이 아니라 **닫힌 목록**이다.
+ *   「네 구분 말고는 아무것도 없다」는 사실은 사진으로 찍을 수 없다.
+ *   비어 있음을 보여주려면 칸을 그려서 그 옆이 없다는 것을 보여야 한다.
+ *
+ * CJK 글꼴 주의 (2026-09-02 세금환급편에서 겪은 것).
+ *   샌드박스 렌더러에 한글 글꼴이 없어 PNG 검수에서 한글이 네모로 나온다.
+ *   그래서 **한글은 전부 textLength 로 진행폭을 고정**했다 —
+ *   글꼴이 무엇이든 글자가 칸을 넘지 않는다. 겹침을 눈으로 못 봐도
+ *   기하학적으로 못 겹치게 만들어 둔 것이다. 클리닉편(ChartClinicSignFormula)과 같은 처리다.
+ *
+ * 숫자의 출처.
+ *   구분·품목·포장단위는 보건복지부 「안전상비의약품 약국외 판매제도」 표 그대로다.
+ *   5·4·2·2 는 그 표를 센 것이고, 합이 13 으로 표의 「계 13개 품목」과 맞는다.
+ *   우리가 더한 것은 없다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760, H = 396;
+
+const X0 = 44, BOXW = 164, GAP = 10, BOXY = 62, BOXH = 178;
+
+/** 한글 진행폭을 글자수 × GLYPH 로 고정한다 (글꼴 독립) */
+const GLYPH = 27;
+
+const cats = [
+  { ko: '해열진통제', rom: 'hae-yeol-jin-tong-je', en: 'fever and pain', n: 5, tone: '#c9622e' },
+  { ko: '소화제',     rom: 'so-hwa-je',            en: 'digestion',      n: 4, tone: '#4f8a5b' },
+  { ko: '감기약',     rom: 'gam-gi-yak',           en: 'a cold',         n: 2, tone: '#4a6fa5' },
+  { ko: '파스',       rom: 'pa-seu',               en: 'a stuck-on patch', n: 2, tone: '#8a6b9e' },
+];
+
+/** 이름 자체의 분해 — 안전 + 상비 + 의약품 */
+const NAMEY = 288;
+const parts = [
+  { ko: '안전',   rom: 'an-jeon',   en: 'safe',                w: 150 },
+  { ko: '상비',   rom: 'sang-bi',   en: 'kept always ready',   w: 240 },
+  { ko: '의약품', rom: 'ui-yak-pum', en: 'pharmaceuticals',    w: 226 },
+];
+let px = X0;
+const laid = parts.map((p) => { const o = { ...p, x: px }; px += p.w + 10; return o; });
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="The Korean convenience-store medicine shelf has four headings and thirteen products in total: haeyeoljintongje, for fever and pain, five products; sohwaje, for digestion, four; gamgiyak, for a cold, two; and paseu, medicated patches, two. Below, the name of the system itself, anjeon sangbi uiyakpum, is broken into its three parts: safe, kept always ready, pharmaceuticals.">
+
+    <text x={X0} y="26" font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      FOUR HEADINGS, THIRTEEN PRODUCTS — AND NO FIFTH HEADING
+    </text>
+    <text x={X0} y="46" font-size="12.5" fill="#6b6560">
+      Every box a Korean convenience store may legally sell you sits under one of these four words.
+    </text>
+
+    {cats.map((c, i) => {
+      const x = X0 + i * (BOXW + GAP);
+      return (
+        <>
+          <rect x={x} y={BOXY} width={BOXW} height={BOXH} rx="6"
+                fill={c.tone} fill-opacity="0.07" stroke={c.tone} stroke-width="1.4" />
+
+          <text x={x + BOXW / 2} y={BOXY + 46} text-anchor="middle" font-size="26" font-weight="700"
+                fill="#12100f" textLength={c.ko.length * GLYPH} lengthAdjust="spacing">{c.ko}</text>
+
+          <text x={x + BOXW / 2} y={BOXY + 68} text-anchor="middle" font-size="11.5" font-weight="700" fill={c.tone}>{c.rom}</text>
+          <text x={x + BOXW / 2} y={BOXY + 86} text-anchor="middle" font-size="12" fill="#3c3733">for {c.en}</text>
+
+          <line x1={x + 22} y1={BOXY + 102} x2={x + BOXW - 22} y2={BOXY + 102} stroke={c.tone} stroke-opacity="0.35" stroke-width="1" />
+
+          {Array.from({ length: c.n }).map((_, k) => (
+            <rect x={x + BOXW / 2 - (c.n * 20 - 6) / 2 + k * 20} y={BOXY + 116} width="14" height="20" rx="2"
+                  fill={c.tone} fill-opacity="0.85" />
+          ))}
+
+          <text x={x + BOXW / 2} y={BOXY + 160} text-anchor="middle" font-size="13" font-weight="700" fill={c.tone}>
+            {c.n} {c.n === 1 ? 'product' : 'products'}
+          </text>
+        </>
+      );
+    })}
+
+    <text x={X0} y={NAMEY - 12} font-size="12" font-weight="700" fill="#8a827b" letter-spacing="0.08em">
+      AND THE NAME OF THE SCHEME ITSELF
+    </text>
+
+    {laid.map((p) => (
+      <>
+        <rect x={p.x} y={NAMEY} width={p.w} height="62" rx="5" fill="#efe9e1" stroke="#e0d8ce" stroke-width="1" />
+        <text x={p.x + p.w / 2} y={NAMEY + 30} text-anchor="middle" font-size="22" font-weight="700"
+              fill="#12100f" textLength={p.ko.length * 23} lengthAdjust="spacing">{p.ko}</text>
+        <text x={p.x + p.w / 2} y={NAMEY + 50} text-anchor="middle" font-size="11.5" fill="#6b6560">
+          {p.rom} — {p.en}
+        </text>
+      </>
+    ))}
+
+    <text x={X0} y={H - 12} font-size="11.5" fill="#a09890">
+      Our own illustration. Headings, products and the count of thirteen are from the Ministry of Health and Welfare’s own table.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  figcaption { margin-top: 0.65rem; font-size: 0.86rem; line-height: 1.55; color: #6b6560; }
+</style>

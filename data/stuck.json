@@ -129,6 +129,11 @@
           "href": "decode/oppa-hyung-unnie-noona"
         },
         {
+          "when": "The Korean title of When Life Gives You Tangerines looks like it says I was deceived",
+          "answer": "It does not. On Jeju, 속다 is a second verb meaning to take pains, and the island's own dictionary glosses 속앗수다 as 'you have worked hard' — the -수다 ending is the polite level there, not a clipped -습니다.",
+          "href": "decode/jeju-dialect-pokssak-sogatsuda-meaning"
+        },
+        {
           "when": "Someone is speaking to me casually in Korean and I cannot tell if it is friendly or rude",
           "answer": "The national dictionary gives banmal two meanings — closeness, and talking down — so read their age and whether they switched mid-conversation; keep putting 요 on the end of your own sentences either way.",
           "href": "decode/banmal-jondaemal-when-casual-korean-is-rude"
@@ -186,9 +191,19 @@
           "href": "hangul/korean-shop-door-signs-closed-open"
         },
         {
+          "when": "The café toilet is down the corridor and the door has a keypad on it",
+          "answer": "The code — 비밀번호 (bi-mil-beon-ho) — is printed at the bottom of your receipt or on a card at the counter; inside, 남 is men, 여 is women, the paper goes in the bowl (there is no bin, by decree), and 정지 (jeong-ji) is the bidet's stop button.",
+          "href": "hangul/korean-toilet-signs-nam-yeo-door-code-paper"
+        },
+        {
           "when": "I missed the announcement and cannot tell which station this is",
           "answer": "Read the glass: since 2023 Seoul has been fixing the station's name to the platform screen doors, sized to be read from a seat through the train window — the screen inside the car describes two stations, the glass only ever one.",
           "href": "hangul/seoul-subway-signs-name-on-the-glass"
+        },
+        {
+          "when": "Nobody in Busan uses the polite endings I learned, and I cannot tell if they are annoyed",
+          "answer": "They are using polite endings — the south-east has its own four-level set, and 오이소 and 없심더 are two of them.",
+          "href": "decode/busan-gyeongsang-dialect-endings-no-na"
         }
       ],
       "i18n": {
@@ -231,6 +246,11 @@
           "answer": "You do not book anything. Walk into a neighbourhood clinic, wait about twenty minutes, collect your medicine downstairs.",
           "href": "now/seeing-a-doctor-in-korea-cost-walk-in",
           "home": true
+        },
+        {
+          "when": "It is the middle of the night, I feel awful, and every pharmacy is dark",
+          "answer": "A convenience store registered to sell medicine stocks exactly thirteen government-designated products under four Korean headings — 해열진통제 fever and pain, 소화제 digestion, 감기약 a cold, 파스 patches — and you may take one sealed box of each.",
+          "href": "hangul/korea-convenience-store-medicine-13-items"
         },
         {
           "when": "I have broken my glasses",
@@ -387,6 +407,21 @@
           "when": "I want to go to the Busan film festival but the English site tells me nothing about tickets",
           "answer": "It is not you — the English booking page is a placeholder image, and no 2026 date has been announced in either language; last year the window opened only 12 days before the festival, and every seat sells online.",
           "href": "scenes/biff-2026-tickets-english-page-blank"
+        },
+        {
+          "when": "The shop had a TAX FREE sticker and I paid the full price anyway",
+          "answer": "Ask at the till with your passport in your hand. Under ₩1,000,000 the tax can come off there and then; above that the receipt has to go to a downtown booth or the airport.",
+          "href": "decode/korea-tax-refund-limits-and-what-to-say"
+        },
+        {
+          "when": "I am buying albums to support my favourite group — does buying them here count?",
+          "answer": "Only if that till is on Hanteo's published family list: it is per branch, and four Olive Youngs are on it.",
+          "href": "scenes/kpop-album-hanteo-family-store-counts"
+        },
+        {
+          "when": "I am at the BTS bus stop in Jumunjin and want the bus back to Gangneung Station",
+          "answer": "The 300-1 and 300-2 that come do not stop at the station — get off at 용지각 (Yongjigak) and walk about 830 m, or catch the three-a-day 300-1(강릉역), whose last run leaves the beach end at 17:05.",
+          "href": "scenes/bts-bus-stop-jumunjin-gangneung-bus-back-to-station"
         }
       ],
       "i18n": {

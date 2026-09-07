@@ -82,13 +82,15 @@ import grass from '../../../assets/images/places/jeju-sangumburi-6.jpg';
 import crater from '../../../assets/images/places/jeju-hallasan-1.jpg';
 import seongsanpo from '../../../assets/images/places/jeju-haenyeo-show-5.jpg';
 
+{/* 공공누리 유형은 사진마다 다르다. 원문과 함께 갈랐다 — 원문 주석 참조 (2026-09-07) */}
 export const KTO = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-1' };
+export const KTO3 = { credit: '한국관광공사 (Korea Tourism Organization)', license: 'kogl-3' };
 export const SEONGEUP = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126471' };
 export const UDO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=127336' };
-export const SINCHANG = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
-export const SANGUMBURI = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
+export const SINCHANG = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=2663250' };
+export const SANGUMBURI = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=126474' };
 export const HALLASAN = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=264590' };
-export const SEONGSANPO = { ...KTO, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
+export const SEONGSANPO = { ...KTO3, sourceUrl: 'https://api.visitkorea.or.kr/#/detail?cotId=770036' };
 
 先从剧名说起，因为剧名本身就是论点。
 
