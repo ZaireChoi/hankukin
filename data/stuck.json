@@ -422,6 +422,11 @@
           "when": "I am at the BTS bus stop in Jumunjin and want the bus back to Gangneung Station",
           "answer": "The 300-1 and 300-2 that come do not stop at the station — get off at 용지각 (Yongjigak) and walk about 830 m, or catch the three-a-day 300-1(강릉역), whose last run leaves the beach end at 17:05.",
           "href": "scenes/bts-bus-stop-jumunjin-gangneung-bus-back-to-station"
+        },
+        {
+          "when": "I got up at four for the Jeju sunrise and the gate was locked",
+          "answer": "Seongsan Ilchulbong closes on the first Monday of every month. In September the gate opens at 05:00 and the sun is up by about 06:06.",
+          "href": "scenes/seongsan-ilchulbong-hours-fee-sunrise"
         }
       ],
       "i18n": {
