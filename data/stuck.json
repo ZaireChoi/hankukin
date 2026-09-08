@@ -432,6 +432,11 @@
           "when": "I got up at four for the Jeju sunrise and the gate was locked",
           "answer": "Seongsan Ilchulbong closes on the first Monday of every month. In September the gate opens at 05:00 and the sun is up by about 06:06.",
           "href": "scenes/seongsan-ilchulbong-hours-fee-sunrise"
+        },
+        {
+          "when": "I booked the Nami Island coach and now I am not sure how long I actually get there",
+          "answer": "The one Seoul coach leaves the island at 16:30, but the boats run to 21:00 and the last Gapyeong train that reaches Seoul is 23:11.",
+          "href": "scenes/nami-island-from-seoul-ferry-fee-last-train"
         }
       ],
       "i18n": {
