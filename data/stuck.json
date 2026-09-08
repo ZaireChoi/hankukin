@@ -204,6 +204,11 @@
           "when": "Nobody in Busan uses the polite endings I learned, and I cannot tell if they are annoyed",
           "answer": "They are using polite endings — the south-east has its own four-level set, and 오이소 and 없심더 are two of them.",
           "href": "decode/busan-gyeongsang-dialect-endings-no-na"
+        },
+        {
+          "when": "Two buses pulled up and both of them are green",
+          "answer": "Colour tells you how far a Seoul bus goes, not what it costs — branch buses and village buses are both green, at different fares. The five digits on the pole are the part that settles it.",
+          "href": "hangul/seoul-bus-stop-sign-number-and-colours"
         }
       ],
       "i18n": {

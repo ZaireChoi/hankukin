@@ -1,0 +1,155 @@
+---
+/**
+ * 서울 버스 다섯 종류 — 색과 요금.
+ *
+ * 왜 그렸나 (2026-09-08, Hangul 12편).
+ *   재고 332장에 버스정류소 사진이 **0장**이다. 슬러그 전체를 훑었고
+ *   가장 가까운 것이 도로 사진(dongdaemun 계열)인데 그건 요금편이 이미 쓰고 있어
+ *   no-shared-images 가 막는다. 정류소 기둥·BIT 화면·버스 옆면은 하나도 없다.
+ *
+ *   그리고 이 기사의 요점은 **색이 겹친다는 것**이다.
+ *   서울시 자기 표에 Green(초록)이 두 줄 — 지선버스와 마을버스 — 있고,
+ *   그 둘은 요금이 다르다. 표로 적으면 「초록 두 줄」이 글자로만 남지만,
+ *   같은 색 막대가 서로 다른 높이에 놓이면 그 순간에 보인다.
+ *   사진으로는 애초에 못 찍는다 (한 화면에 다섯 종류가 서지 않는다).
+ *
+ * 무엇이 우리 것인가.
+ *   색·종류·특성·요금은 전부 서울시 「서울 시내버스 체계 및 이용방법」
+ *   (버스정책과, 수정일 2026-03-09, '26.1 기준)에 적힌 값이다.
+ *   우리가 만든 것은 **요금 축 위의 배치**뿐이다 — 같은 색이 두 높이에
+ *   놓인다는 것. 막대의 두께·간격에는 아무 의미가 없다.
+ *
+ *   지선버스가 두 자리에 찍히는 것도 서울시 표 그대로다. 요금표에
+ *   「간지선버스 1,500원」 줄과 「순환버스·지선버스(차등요금) 1,400원」 줄이
+ *   따로 있다. 우리가 합치거나 고르지 않았다.
+ *
+ * CJK 글꼴 주의.
+ *   샌드박스 렌더러에 한글 글꼴이 없어 PNG 검수에서 한글이 네모로 나온다.
+ *   그래서 이 도표에는 **한글을 한 자도 넣지 않았다.** 로마자만 쓴다.
+ */
+interface Props { caption: string }
+const { caption } = Astro.props;
+
+const W = 760;
+
+const INK = '#12100f';
+const MUTE = '#6b6560';
+const FAINT = '#a09890';
+const RULE = '#e0d9d0';
+
+/* 서울시 표의 색 이름을 화면 색으로 옮긴 것. 눈금이 아니라 식별용이다. */
+const BLUE = '#2f5fa8';
+const GREEN = '#2f7d46';
+const YELLOW = '#d8a520';
+const RED = '#c0392b';
+
+/** 왼쪽 이름칸 폭 — 가장 긴 이름(Wide-area)에서 역산했다 */
+const LABEL_X = 24;
+const BAR_X = 236;
+const BAR_MAX = W - BAR_X - 96;
+const FARE_MAX = 3000;
+
+const ROW_Y = 118;
+const ROW_H = 62;
+
+const rows = [
+  { name: 'Trunk',     ko: 'gan-seon',   colour: BLUE,   colourName: 'Blue',   fare: 1500, note: 'Across the city, and between outer districts and the centre' },
+  { name: 'Branch',    ko: 'ji-seon',    colour: GREEN,  colourName: 'Green',  fare: 1500, second: 1400, note: 'Feeds the trunk routes and the subway, within one area' },
+  { name: 'Circular',  ko: 'sun-hwan',   colour: YELLOW, colourName: 'Yellow', fare: 1400, note: 'Loops inside the centre and the sub-centres' },
+  { name: 'Wide-area', ko: 'gwang-yeok', colour: RED,    colourName: 'Red',    fare: 3000, note: 'Links the centre to cities outside Seoul' },
+  { name: 'Village',   ko: 'ma-eul',     colour: GREEN,  colourName: 'Green',  fare: 1200, note: 'Short hops to the nearest stop or subway entrance' },
+];
+
+const H = ROW_Y + rows.length * ROW_H + 58;
+
+const x = (fare) => BAR_X + (fare / FARE_MAX) * BAR_MAX;
+
+/**
+ * 2026-09-08 1차 렌더에서 실제로 깨진 것 — PNG 로 뽑아 눈으로 보고 고쳤다.
+ *   ① 요금 라벨의 ₩ 가 통째로 사라졌다. 샌드박스 렌더러에 그 글자가 없다.
+ *      브라우저에서는 나오겠지만 **확인할 수 없는 것은 쓰지 않는다** —
+ *      기호를 빼고 단위를 축 이름으로 올렸다. 어느 렌더러에서나 같게 나온다.
+ *   ② 맨 아래 출처 한 줄이 오른쪽으로 잘렸다 ("…Bar widths are a scale of fare on").
+ *      두 줄로 나눴다.
+ *   ③ 지선 행의 점선 표시가 너무 짧아 안 보였다. 길이를 늘리고 실선으로 바꿨다.
+ */
+const won = (n) => n.toLocaleString('en-US');
+---
+
+<figure class="chart">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={caption} xmlns="http://www.w3.org/2000/svg">
+    <text x={LABEL_X} y="34" fill={INK} font-size="19" font-weight="700">
+      Five kinds of Seoul bus, and what each costs
+    </text>
+    <text x={LABEL_X} y="58" fill={MUTE} font-size="13">
+      Two of the five are green. They are different services, run by different operators.
+    </text>
+
+    { [0, 1000, 2000, 3000].map((f) => (
+      <g>
+        <line x1={x(f)} y1={ROW_Y - 30} x2={x(f)} y2={ROW_Y + rows.length * ROW_H - 22}
+              stroke={RULE} stroke-width="1" />
+        <text x={x(f)} y={ROW_Y - 38} fill={FAINT} font-size="11" text-anchor="middle">
+          {f === 0 ? '0' : won(f)}
+        </text>
+        { f === 3000 && (
+          <text x={x(f)} y={ROW_Y - 56} fill={MUTE} font-size="11" text-anchor="end">
+            fare, won
+          </text>
+        ) }
+      </g>
+    )) }
+
+    { rows.map((r, i) => {
+      const y = ROW_Y + i * ROW_H;
+      return (
+        <g>
+          <rect x={LABEL_X} y={y - 14} width="16" height="16" rx="3" fill={r.colour} />
+          <text x={LABEL_X + 26} y={y} fill={INK} font-size="15" font-weight="700">{r.name}</text>
+          <text x={LABEL_X + 26} y={y + 18} fill={MUTE} font-size="12">
+            {r.ko} · {r.colourName}
+          </text>
+
+          <rect x={BAR_X} y={y - 13} width={x(r.fare) - BAR_X} height="15" rx="2"
+                fill={r.colour} opacity="0.88" />
+          <text x={x(r.fare) + 10} y={y} fill={INK} font-size="13" font-weight="700">
+            {won(r.fare)}
+          </text>
+
+          { r.second && (
+            <g>
+              <line x1={x(r.second)} y1={y - 16} x2={x(r.second)} y2={y + 24}
+                    stroke={r.colour} stroke-width="2" />
+              <text x={x(r.second) - 8} y={y + 22} fill={MUTE} font-size="11" text-anchor="end">
+                {won(r.second)} on differential-fare branch routes
+              </text>
+            </g>
+          ) }
+
+          { !r.second && (
+            <text x={BAR_X} y={y + 22} fill={FAINT} font-size="11">{r.note}</text>
+          ) }
+        </g>
+      );
+    }) }
+
+    <text x={LABEL_X} y={H - 34} fill={FAINT} font-size="11">
+      Adult transit-card fares, in force since 12 August 2023.
+    </text>
+    <text x={LABEL_X} y={H - 18} fill={FAINT} font-size="11">
+      Source: Seoul Metropolitan Government, Bus Policy Division. Bar length is a scale of fare only.
+    </text>
+  </svg>
+  <figcaption>{caption}</figcaption>
+</figure>
+
+<style>
+  .chart { margin: 2rem 0; }
+  .chart svg { width: 100%; height: auto; display: block; }
+  .chart figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--muted, #6b6560);
+  }
+</style>

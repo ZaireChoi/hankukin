@@ -68,7 +68,17 @@ const jsonLd = {
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
   <article class="wrap">
     <header class="article-head">
-      <p class="kicker">Decode{d.era ? ` · ${d.era}` : ''}</p>
+      {/*
+        2026-09-08. 여기에 'Decode' 가 하드코딩돼 있었다. Hangul 기사 11편 전부가
+        화면 맨 위에 「Decode」를 달고 나가고 있었고, 게이트 넷은 하나도 울지 않았다
+        (라벨은 검사 대상이 아니다). decode 의 [slug].astro 를 복사해 오면서
+        경로만 바꾸고 라벨을 안 바꾼 것이다 — 주제은행 2026-08-14 의
+        「Now 와 Decode 목록 페이지가 둘 다 같은 제목을 달고 있었다」와 같은 사고이고,
+        그때의 처방(「목록 페이지가 제목을 직접 적지 못하게 했다」)이 기사 페이지에는
+        적용되지 않은 채 남아 있었다.
+        d.era 도 함께 지웠다 — hangul 스키마에는 era 가 없다. 같은 복사의 흔적이다.
+      */}
+      <p class="kicker">{t(lang, 'sections.hangul.label')}</p>
       <h1>{d.title}</h1>
       <p class="summary">{d.summary}</p>
       <div class="meta">

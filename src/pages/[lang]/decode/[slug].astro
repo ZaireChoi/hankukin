@@ -68,7 +68,9 @@ const jsonLd = {
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
   <article class="wrap">
     <header class="article-head">
-      <p class="kicker">Decode{d.era ? ` · ${d.era}` : ''}</p>
+      {/* 2026-09-08. 라벨은 ui.mjs 한 곳에서만 온다 — hangul 편이 여기를 복사해 가면서
+          「Decode」를 그대로 달고 나간 사고를 고치는 김에 이쪽도 출처를 하나로 모았다. */}
+      <p class="kicker">{t(lang, 'sections.decode.label')}{d.era ? ` · ${d.era}` : ''}</p>
       <h1>{d.title}</h1>
       <p class="summary">{d.summary}</p>
       <div class="meta">

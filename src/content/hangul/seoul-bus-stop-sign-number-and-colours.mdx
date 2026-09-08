@@ -1,0 +1,127 @@
+---
+title: "Seoul Bus Stop Signs: The Five Digits, and the Two Greens"
+seoTitle: "Seoul Bus Stop Number: The 5 Digits and Bus Colours"
+summary: "16614A is Gimpo Airport. 16614B is a botanical garden. That pair is Seoul's own worked example of how bus stop numbers collide, and it is the kind of mistake the pole in front of you makes available. Here is what the five digits are for, why two different buses are both green, and the one syllable in the arrival announcement that is not a number."
+lang: en
+region: "Seoul"
+seriesPart: 12
+publishedAt: 2026-09-08
+checkedAt: 2026-09-08
+riskGrade: green
+contentScore: 86
+letters:
+  - { ko: "정류소", romanized: "jeong-nyu-so", note: "bus stop — the word on the pole and in every app" }
+  - { ko: "간선", romanized: "gan-seon", note: "trunk — the blue buses, across the city" }
+  - { ko: "지선", romanized: "ji-seon", note: "branch — green, and not the only green" }
+  - { ko: "순환", romanized: "sun-hwan", note: "circular — yellow, loops inside the centre" }
+  - { ko: "광역", romanized: "gwang-yeok", note: "wide-area — red, and double the fare" }
+  - { ko: "마을버스", romanized: "ma-eul beo-seu", note: "village bus — the other green, and the cheapest" }
+  - { ko: "중앙차로", romanized: "jung-ang cha-ro", note: "median lane — the stop is an island in the middle of the road" }
+  - { ko: "가로변", romanized: "ga-ro-byeon", note: "curbside — where 94 per cent of Seoul's stops are" }
+  - { ko: "곧 도착", romanized: "got do-chak", note: "arriving now — the words that replace a countdown" }
+sources:
+  - title: "서울시 버스정류소 위치정보 — 서울 열린데이터광장 (Seoul Open Data Plaza: bus stop location dataset, ARS-ID format and the A/B collision rule; provided by the Seoul Metropolitan Government Future Advanced Transport Division, data updated 2 September 2026, KOGL Type 1)"
+    url: "https://data.seoul.go.kr/dataList/OA-15067/S/1/datasetView.do"
+    type: public_institution
+    checkedAt: 2026-09-08
+  - title: "서울 시내버스 체계 및 이용방법 — 서울특별시 버스정책과 (Seoul Metropolitan Government, Bus Policy Division: route classes and colours, stop counts, fare table, transfer rules; page revised 9 March 2026, figures as of January 2026)"
+    url: "https://news.seoul.go.kr/traffic/archives/1706"
+    type: public_institution
+    checkedAt: 2026-09-08
+  - title: "버스정보 안내 단말기 개선…도착 확인 더 편리하게 — 서울특별시 교통실 미래첨단교통과, 2025-05-30 (Seoul Metropolitan Government press release: bus information terminal display and announcement changes)"
+    url: "https://news.seoul.go.kr/traffic/archives/514398"
+    type: public_institution
+    checkedAt: 2026-09-08
+---
+
+import Original from '../../components/Original.astro';
+import ChartSeoulBusColour from '../../components/ChartSeoulBusColour.astro';
+
+16614A is Gimpo Airport, domestic terminal. 16614B is the Seoul Botanic Park.
+
+Those are not two numbers. They are one number with a letter bolted on, and the pair is not something we went looking for — it is the worked example the city itself prints in the notes to its own bus stop dataset, to explain what happens when two stops end up sharing an ID. An airport terminal and a botanical garden, one keystroke apart.
+
+That is the scale of what the pole in front of you is carrying. Three things at a Seoul bus stop will tell you whether the bus pulling in is yours — the number on the pole, the colour of the bus, and the lit panel above your head. None of them is hard. They are simply unlabelled, and one of them is not telling you what you think it is.
+
+## The five digits are the lookup key, not a route number
+
+Every Seoul bus stop has a code the city calls an ARS-ID. It is <strong>five digits</strong>, it is printed on the pole, and it is what you type into a bus arrival lookup instead of trying to spell a stop name.
+
+Two things about it are worth knowing before you need it.
+
+The first is the leading zero. Seoul's own dataset notes warn that a spreadsheet will silently eat it, so a stop that is really `01234` shows up as `1234` and stops matching anything. If the pole shows five digits, type five digits.
+
+The second is the collision rule, and this is the airport one:
+
+<Original
+  ko="정류소ID가 동일한 두 정류장의 정류소ID는 A,B로 구분되어있습니다. 16614A 김포공항국내선 / 16614B 서울식물원.숲문화학교"
+  en="Where two stops have the same stop ID, the IDs are separated by A and B. 16614A Gimpo Airport Domestic Terminal / 16614B Seoul Botanic Park.Forest Culture School"
+  who="서울 열린데이터광장 「서울시 버스정류소 위치정보」 데이터 설명"
+  whoEn="Seoul Open Data Plaza, notes to the bus stop location dataset"
+  date="2026-09-08"
+  url="https://data.seoul.go.kr/dataList/OA-15067/S/1/datasetView.do" />
+
+There is a third thing, and we are marking it as ours rather than the city's, because no page we could open says it in plain words for visitors. Because each stop carries its own ID, <strong>the pole on the other side of the road is a different number even when the name painted on it is identical</strong>. That is the direction check. Not the name — the digits. A Seoul stop name is a place, and a place has two sides.
+
+## Colour tells you how far the bus goes, not what it costs
+
+Seoul runs five classes of bus and gives each a colour. The city's table is short enough to read in one go, and it contains a trap in plain sight.
+
+| Class | Colour | What the city says it does |
+|---|---|---|
+| 간선 *(gan-seon)*, trunk | Blue | Links outer districts, the centre and the sub-centres. Built for speed and for keeping to time |
+| 지선 *(ji-seon)*, branch | Green | Feeds the trunk routes and the subway. Handles travel inside one area |
+| 순환 *(sun-hwan)*, circular | Yellow | Loops inside the centre and sub-centres, for work and shopping trips |
+| 광역 *(gwang-yeok)*, wide-area | Red | Links the greater capital region to the centre of Seoul |
+| 마을버스 *(ma-eul beo-seu)*, village | Green | Backs up the branch routes. Short hops to the nearest stop or subway entrance |
+
+Green is in that table twice.
+
+Branch buses and village buses are different services with different operators, different route lengths and different fares, and the city's own colour column gives both of them Green(초록). If you are standing at a stop deciding whether the green bus pulling in is the one on your map, the colour cannot settle it. The number can.
+
+<ChartSeoulBusColour
+  caption="Green sits at two lengths because it is two services. Village buses are the cheapest thing on the street; the red wide-area bus is double a normal city bus and is leaving Seoul. The notch cut into the branch bar is the city's own second fare row — some branch routes are priced at ₩1,400 rather than ₩1,500, which is why 'green means ₩1,500' is not a rule you can lean on. Won symbols are left off the chart itself so the figures render the same everywhere." />
+
+The fares in that chart are adult transit-card fares in force since 12 August 2023, and we have kept them to one line here because the full table — cash, youth, child, the early-bird discount, the late-night rate — lives in our [Seoul transport fares article](/en/now/seoul-transport-fares-subway-bus-taxi/), which is the page that gets re-checked when they move.
+
+## 379 against 6,307
+
+Seoul counts its stops in two kinds, and the ratio is the useful part. As of January 2026 there were <strong>6,307 curbside stops</strong> 가로변 *(ga-ro-byeon)* and <strong>379 median-lane stops</strong> 중앙차로 *(jung-ang cha-ro)*.
+
+A median-lane stop is an island in the middle of the roadway rather than a pole on the pavement, which means you reach it by crossing the road, not by walking along it. They are under six per cent of Seoul's stops, and they sit on the wide arterial corridors — the city's own list of median-lane terminals is drawn from Jongno. That is exactly the kind of road on which a visitor ends up standing correctly at the right stop name and still watching the bus go past, several lanes away.
+
+The city writes these into its own documents with a bracket glued to the name: one of the terminals it lists is `(01-009)광화문역(중)`, Gwanghwamun Station. We could not find a published key explaining that bracketed 중, so we are not going to tell you what it stands for. What we will say is the practical half: if a Seoul stop name arrives with a short bracket on the end, treat the bracket as part of the name and not as noise, and check the digits.
+
+## The screen, and the voice reading it out
+
+The lit panel at a Seoul stop is a BIT, a Bus Information Terminal. There were 5,816 of them in 2025, about 4,048 run directly by the city.
+
+It lists the routes that are coming, and when one of them is about to pull in it says so in words: 곧 도착 *(got do-chak)*, arriving now. Since 2025 that phrase travels across the panel alongside the route number instead of sitting fixed in the corner, and a small bus icon rides with it — a change the city made in order to fit <strong>one more route</strong> onto the same screen. If you are watching a panel with a lot of routes on it, that is why the thing you are looking for slides in and out rather than staying put.
+
+The panels also talk, and there is one syllable in the announcement that will not resolve into anything you have learned.
+
+Korean route numbers use hyphens: 15-1, 19-1. The hyphen is read out loud. Until recently it was read as 다시, and in November 2024 the city began correcting it, on the standard dictionary's pronunciation, to <strong>대시</strong> — "dae-si", the English word *dash*. So route 15-1 is announced as "sib-o dae-si il". If you have carefully learned your Sino-Korean numbers and a foreign-sounding syllable lands in the middle of one, that is the hyphen, not a word you missed.
+
+The same round of changes added a safety line that plays as the bus comes in, and it is the most useful Korean sentence at any Seoul bus stop, because it is telling you to move:
+
+<Original
+  ko="버스가 들어오니 한걸음 뒤로 물러나 주시기 바랍니다"
+  en="A bus is coming in; please step back one pace."
+  who="서울특별시 보도자료 「버스정보 안내 단말기 개선」, 2025-05-30"
+  whoEn="Seoul Metropolitan Government press release on bus information terminal improvements, 30 May 2025"
+  date="2026-09-08"
+  url="https://news.seoul.go.kr/traffic/archives/514398" />
+
+The standard arrival announcement, for completeness, is built on 잠시 후 도착버스는 — "the buses arriving shortly are" — followed by the route numbers.
+
+## What we could not read, and did not print
+
+Seoul's route numbers are two to four digits, and the city states plainly that they are assigned so that origin and destination can be read off the number. The map of which zone is which digit, however, is published on that page as a graphic and nothing else. We could not read numbers out of an image, so <strong>we have not printed any zone numbers</strong>. If you see an English page confidently telling you that a leading 6 means one particular district, ask where it read that.
+
+We also could not find a published list of everything a BIT can display beyond 곧 도착. There are other states — buses waiting at a terminus, service finished for the night — and we have seen no official page that names them, so we have not put the Korean for them in front of you.
+
+If a stop sign leaves you stuck in a different way, the [subway sign article](/en/hangul/seoul-subway-signs-name-on-the-glass/) covers the platform equivalents, and the [Korean address article](/en/hangul/korean-address-road-name-building-number/) covers the other place where a number in Korea is the whole address rather than a label.
+
+## What this article does not claim
+
+The stop counts, route classes, colours and fares are the city's figures as of January 2026, on a page last revised 9 March 2026; we read them on 8 September 2026 and did not check them against any bus. The claim that the pole across the road carries a different number is our reading of how the dataset is keyed, not a sentence the city has published. And we have deliberately left out the zone-number map and the fuller display vocabulary, because the sources for both were closed to us — an image in one case, and nothing at all in the other.

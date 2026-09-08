@@ -68,7 +68,9 @@ const jsonLd = {
             publishedAt={d.publishedAt} modifiedAt={d.checkedAt}>
   <article class="wrap">
     <header class="article-head">
-      <p class="kicker">Korea Now{d.era ? ` · ${d.era}` : ''}</p>
+      {/* 2026-09-08. 「Korea Now」로 적혀 있었다 — 홈·목록은 ui.mjs 의 'HANKUKIN Now' 를
+          쓰는데 기사 머리만 다른 이름이었다. 라벨의 출처를 하나로 모은다. */}
+      <p class="kicker">{t(lang, 'sections.now.label')}{d.era ? ` · ${d.era}` : ''}</p>
       <h1>{d.title}</h1>
       <p class="summary">{d.summary}</p>
       <div class="meta">
