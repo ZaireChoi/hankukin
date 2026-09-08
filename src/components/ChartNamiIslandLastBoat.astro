@@ -88,12 +88,25 @@ const trains = [
   { t: hm(22, 26), label: '22:26', dest: 'Cheongnyangni', hollow: false },
   { t: hm(22, 32), label: '22:32', dest: 'Yongsan, ITX', hollow: false },
   { t: hm(23, 11), label: '23:11', dest: 'Sangbong', hollow: false },
-  { t: hm(23, 32), label: '23:32', dest: 'stops short', hollow: true },
+  { t: hm(23, 57), label: '23:57', dest: 'stops short', hollow: true },
 ];
 
-const H = ROW_Y + 2 * ROW_H + 150;
+const H = ROW_Y + 2 * ROW_H + 232;
 const COACH_Y = ROW_Y + 2 * ROW_H;
-const RAIL_Y = COACH_Y + 62;
+const RAIL_Y = COACH_Y + 88;
+
+/*
+ * 열차 행만 축을 따로 쓴다 — 1차 렌더에서 실제로 깨졌기 때문이다 (2026-09-08 오후).
+ * 마지막 네 편이 22:26·22:32·23:11·23:32 로 90분 안에 몰려 있어서,
+ * 17시간짜리 축 위에 얹으면 눈금 넷이 오른쪽 끝 8% 구간에 겹쳐 붙고
+ * 행선지 글자가 서로를 파고든다 ("Cheongn/Sangbong", "Yongsan,stops ITX short").
+ * PNG 로 뽑아 눈으로 보고서야 알았다. 게이트는 이런 것을 못 잡는다.
+ *
+ * 그래서 이 행만 22:00~24:00 을 폭 전체에 편다. **확대라고 화면에 적는다** —
+ * 적지 않으면 같은 축인 줄 알고 읽는다. 그게 도표가 거짓말하는 방식이다.
+ */
+const R0 = 22, R1 = 24;
+const rx = (h: number) => PLOT_X + ((h - R0) / (R1 - R0)) * PLOT_W;
 
 const hours = [7, 9, 11, 13, 15, 17, 19, 21, 23];
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -110,7 +123,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
     { hours.map((h) => (
       <g>
-        <line x1={x(h)} y1={ROW_Y - 30} x2={x(h)} y2={RAIL_Y + 12} stroke={RULE} stroke-width="1" />
+        <line x1={x(h)} y1={ROW_Y - 30} x2={x(h)} y2={COACH_Y + 14} stroke={RULE} stroke-width="1" />
         <text x={x(h)} y={ROW_Y - 38} fill={FAINT} font-size="11" text-anchor="middle">
           {pad(h)}:00
         </text>
@@ -151,22 +164,34 @@ const pad = (n: number) => String(n).padStart(2, '0');
       18:50 Hongdae
     </text>
 
+    <line x1={LABEL_X} y1={RAIL_Y - 52} x2={W - 34} y2={RAIL_Y - 52} stroke={RULE} stroke-width="1" />
     <text x={LABEL_X} y={RAIL_Y} fill={INK} font-size="15" font-weight="700">Last trains from Gapyeong</text>
     <text x={LABEL_X} y={RAIL_Y + 18} fill={MUTE} font-size="12">weekday, toward Seoul</text>
-    { trains.map((t, i) => (
-      <g>
-        <line x1={x(t.t)} y1={RAIL_Y - 16} x2={x(t.t)} y2={RAIL_Y + 6}
-              stroke={t.hollow ? FAINT : RAIL} stroke-width={t.hollow ? 1 : 3}
-              stroke-dasharray={t.hollow ? '3 3' : undefined} />
-        <text x={x(t.t)} y={RAIL_Y - 22 - (i % 2) * 15} fill={t.hollow ? FAINT : RAIL}
-              font-size="11" font-weight={t.hollow ? '400' : '700'} text-anchor="middle">
-          {t.label}
-        </text>
-        <text x={x(t.t)} y={RAIL_Y + 20 + (i % 2) * 14} fill={FAINT} font-size="10" text-anchor="middle">
-          {t.dest}
-        </text>
-      </g>
+    <text x={LABEL_X} y={RAIL_Y + 36} fill={COACH} font-size="11" font-weight="700">
+      22:00 - 24:00, enlarged
+    </text>
+    <line x1={PLOT_X} y1={RAIL_Y + 6} x2={W - 34} y2={RAIL_Y + 6} stroke={RULE} stroke-width="1" />
+    { [22, 23, 24].map((h) => (
+      <text x={rx(h)} y={RAIL_Y + 22} fill={FAINT} font-size="10" text-anchor="middle">{pad(h)}:00</text>
     )) }
+    { /* 22:26 과 22:32 는 6분 차이라 확대해도 라벨이 붙는다 — 위아래 두 층으로 어긋낸다 */ }
+    { trains.map((t, i) => {
+      const lv = i % 2;
+      return (
+        <g>
+          <line x1={rx(t.t)} y1={RAIL_Y - 14 - lv * 16} x2={rx(t.t)} y2={RAIL_Y + 6}
+                stroke={t.hollow ? FAINT : RAIL} stroke-width={t.hollow ? 1 : 3}
+                stroke-dasharray={t.hollow ? '3 3' : undefined} />
+          <text x={rx(t.t)} y={RAIL_Y - 22 - lv * 16} fill={t.hollow ? FAINT : RAIL}
+                font-size="12" font-weight={t.hollow ? '400' : '700'} text-anchor="middle">
+            {t.label}
+          </text>
+          <text x={rx(t.t)} y={RAIL_Y + 40 + lv * 15} fill={FAINT} font-size="10" text-anchor="middle">
+            {t.dest}
+          </text>
+        </g>
+      );
+    }) }
 
     <text x={LABEL_X} y={H - 46} fill={FAINT} font-size="11">
       Ferry and coach times: Nami Island Co., Ltd., official schedule and access pages, read 8 September 2026.
@@ -175,7 +200,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       Train times: Korea Railroad Corporation weekday timetable file for the Gyeongchun Line, in force from 1 September 2026.
     </text>
     <text x={LABEL_X} y={H - 14} fill={FAINT} font-size="11">
-      The dotted 23:32 train terminates at Pyeongnae-hopyeong, which is not Seoul. Bar length is time only.
+      The dotted 23:57 train is the last of the day and terminates at Pyeongnae-hopyeong, which is not Seoul.
     </text>
   </svg>
   <figcaption>{caption}</figcaption>
