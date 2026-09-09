@@ -27,6 +27,8 @@
 | **강릉 시내버스** — 노선별 정차 목록·첫차/막차·요금 (`bis.gn.go.kr/search`, Chrome 으로만 열린다. 노선검색 목록의 `.bus-route-nm-box` 를 JS 로 click 하면 정차 목록이 innerText 에 나온다. 300 은 강릉역을 지나지만 **300-1·300-2 는 안 지난다**) · KTX 운임은 `korail.com/ticket/main` 예매 화면에서 읽는다 (Chrome, 다음날 조회) | `src/content/scenes/bts-bus-stop-jumunjin-gangneung-bus-back-to-station.mdx` sources |
 | **법령 원문** — `law.go.kr/법령/<법령명>` 은 Chrome 으로만 열린다. `document.getElementById('lawService').contentDocument.body.innerText` 를 5~7초 기다린 뒤 읽는다 (공중화장실법·시행령 확인, 2026-09-06) | `src/content/hangul/korean-toilet-signs-nam-yeo-door-code-paper.mdx` sources |
 | **지하철 재승차(화장실) 규칙** — 서울 15분(2023-10-07~, `news.seoul.go.kr/traffic/archives/510086`) · 코레일 구간 15분(2026-06-20~, `korea.kr` newsId=148966539). 둘 다 web_fetch 로 열린다. **1회권 제외** | 같은 기사 sources |
+| **부산** — 세 곳 다 web_fetch 로 열린다 (2026-09-09 확인). 명소별 운영시간·요금·교통·여행에티켓은 `visitbusan.net/index.do?menuCd=DOM_000000201001001000&uc_seq=<번호>&lang_cd=ko` (감천문화마을 = 365) · 구청 문화관광은 `saha.go.kr/tour` · 마을 공식은 `gamcheon.or.kr`. ⚠ **게시판과 상품 목록만 Chrome 이 필요하다** (`notice`·`item` 은 JS 렌더). 그리고 감천 공지 33번처럼 **본문이 통째로 그림인 글이 있다** — innerText 가 비면 포기하지 말고 `img[naturalWidth>300]` 을 찾아 브라우저에서 확대해 읽을 것. `lang_cd=en` 주소는 **본문이 비어 나온다 — 주소가 틀린 것이지 영어판이 없는 것이 아니다.** 단정하지 말 것 | `_drafts/gamcheon-culture-village-busan-hours-buses-new-rules.mdx` sources |
+| **특별관리지역(관광진흥법 제48조의3)** — ⑥ 차량·관광객 통행 제한 가능, ⑦ **1천만원 이하** 과태료(상한이지 금액이 아니다), ⑧ 안내판 설치 의무. **실제 금액은 지자체 조례에 있다** — 북촌 10만원은 종로구 조례다. 사하구 조례(시행 2025-04-14)에는 **과태료 조항이 아예 없다**(전문 확인). 다른 마을을 볼 때도 모법이 아니라 **그 구의 조례를 열어야** 금액이 나온다 | 같은 기사 sources |
 | 상업 링크를 실제로 열어 본 기록 | `data/link-verified.json` |
 | 사진을 열어 보고 확인한 기록 | `data/photo-verified.json` |
 | 제휴 상품 이름의 단일 출처 | `src/config/products.mjs` |
