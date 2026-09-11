@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-09-08T22:13:15.494Z",
-  "radarCollectedAt": "2026-09-08T22:12:51.171Z",
+  "generatedAt": "2026-09-11T22:07:32.172Z",
+  "radarCollectedAt": "2026-09-11T22:07:08.497Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -14,7 +14,7 @@
       "slug": "four-hands-two-sonatas",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.909,
+      "radarScore": 0.611,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -23,17 +23,8 @@
       "slug": "mousetrap",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.86,
+      "radarScore": 0.56,
       "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "My Secretary",
-      "slug": "my-secretary",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.738,
-      "independentSources": 2,
       "locationPotential": 0.6
     },
     {
@@ -41,7 +32,16 @@
       "slug": "the-early-spring",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.727,
+      "radarScore": 0.452,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "My Secretary",
+      "slug": "my-secretary",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.439,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -50,7 +50,7 @@
       "slug": "your-honor",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.598,
+      "radarScore": 0.363,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -59,7 +59,7 @@
       "slug": "im-solo-love-goes-on",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.53,
+      "radarScore": 0.33,
       "independentSources": 1,
       "locationPotential": 0.6
     }
