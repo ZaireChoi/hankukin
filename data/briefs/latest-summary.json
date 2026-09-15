@@ -1,38 +1,47 @@
 {
-  "generatedAt": "2026-09-11T22:07:32.172Z",
-  "radarCollectedAt": "2026-09-11T22:07:08.497Z",
+  "generatedAt": "2026-09-15T22:34:18.931Z",
+  "radarCollectedAt": "2026-09-15T22:34:03.706Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 4,
-    "needsSignal": 2,
+    "needsLocation": 3,
+    "needsSignal": 3,
     "skip": 0
   },
   "briefs": [
-    {
-      "title": "Four Hands, Two Sonatas",
-      "slug": "four-hands-two-sonatas",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.611,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Mousetrap",
-      "slug": "mousetrap",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.56,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
     {
       "title": "The Early Spring",
       "slug": "the-early-spring",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.452,
+      "radarScore": 0.735,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Physical 100: Italy",
+      "slug": "physical-100-italy",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.7,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Badly in Love",
+      "slug": "badly-in-love",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.545,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Four Hands, Two Sonatas",
+      "slug": "four-hands-two-sonatas",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.461,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -41,25 +50,16 @@
       "slug": "my-secretary",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.439,
+      "radarScore": 0.44,
       "independentSources": 2,
       "locationPotential": 0.6
     },
     {
-      "title": "Your Honor",
-      "slug": "your-honor",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.363,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "I'm SOLO, Love goes on",
-      "slug": "im-solo-love-goes-on",
+      "title": "Mousetrap",
+      "slug": "mousetrap",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.33,
+      "radarScore": 0.41,
       "independentSources": 1,
       "locationPotential": 0.6
     }
