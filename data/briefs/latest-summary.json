@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-09-15T22:34:18.931Z",
-  "radarCollectedAt": "2026-09-15T22:34:03.706Z",
+  "generatedAt": "2026-09-18T22:06:49.475Z",
+  "radarCollectedAt": "2026-09-18T22:06:22.597Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 3,
-    "needsSignal": 3,
+    "needsLocation": 2,
+    "needsSignal": 4,
     "skip": 0
   },
   "briefs": [
@@ -14,26 +14,8 @@
       "slug": "the-early-spring",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.735,
+      "radarScore": 0.497,
       "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Physical 100: Italy",
-      "slug": "physical-100-italy",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.7,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Badly in Love",
-      "slug": "badly-in-love",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.545,
-      "independentSources": 1,
       "locationPotential": 0.6
     },
     {
@@ -46,20 +28,38 @@
       "locationPotential": 0.6
     },
     {
-      "title": "My Secretary",
-      "slug": "my-secretary",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.44,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
       "title": "Mousetrap",
       "slug": "mousetrap",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
       "radarScore": 0.41,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Physical 100: Italy",
+      "slug": "physical-100-italy",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.4,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "My Secretary",
+      "slug": "my-secretary",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.35,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "I'm SOLO, Love goes on",
+      "slug": "im-solo-love-goes-on",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.33,
       "independentSources": 1,
       "locationPotential": 0.6
     }
