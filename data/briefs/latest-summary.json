@@ -1,48 +1,30 @@
 {
-  "generatedAt": "2026-09-22T22:34:27.376Z",
-  "radarCollectedAt": "2026-09-22T22:34:05.063Z",
+  "generatedAt": "2026-09-25T22:59:10.096Z",
+  "radarCollectedAt": "2026-09-25T22:58:56.305Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 3,
-    "needsSignal": 3,
+    "needsLocation": 2,
+    "needsSignal": 4,
     "skip": 0
   },
   "briefs": [
-    {
-      "title": "The Scandal",
-      "slug": "the-scandal",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.749,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "K-Shaman: True Horror Stories",
-      "slug": "k-shaman-true-horror-stories",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.63,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Teach You a Lesson",
-      "slug": "teach-you-a-lesson",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.55,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
     {
       "title": "Four Hands, Two Sonatas",
       "slug": "four-hands-two-sonatas",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.462,
+      "radarScore": 0.449,
       "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "The Scandal",
+      "slug": "the-scandal",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.41,
+      "independentSources": 1,
       "locationPotential": 0.6
     },
     {
@@ -55,11 +37,29 @@
       "locationPotential": 0.6
     },
     {
+      "title": "K-Shaman: True Horror Stories",
+      "slug": "k-shaman-true-horror-stories",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.33,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "My Secretary",
+      "slug": "my-secretary",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.31,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
       "title": "The Early Spring",
       "slug": "the-early-spring",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.316,
+      "radarScore": 0.302,
       "independentSources": 2,
       "locationPotential": 0.6
     }
