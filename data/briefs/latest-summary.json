@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-02T23:27:48.408Z",
-  "radarCollectedAt": "2026-10-02T23:27:27.527Z",
+  "generatedAt": "2026-10-06T23:28:47.466Z",
+  "radarCollectedAt": "2026-10-06T23:28:20.983Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -10,20 +10,20 @@
   },
   "briefs": [
     {
-      "title": "The Scandal",
-      "slug": "the-scandal",
+      "title": "Marriage of Convenience",
+      "slug": "marriage-of-convenience",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.54,
+      "radarScore": 0.69,
       "independentSources": 1,
       "locationPotential": 0.6
     },
     {
-      "title": "Monster: The Lizzie Borden Story",
-      "slug": "monster-the-lizzie-borden-story",
+      "title": "Your Personal Taxi",
+      "slug": "your-personal-taxi",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.46,
+      "radarScore": 0.61,
       "independentSources": 1,
       "locationPotential": 0.6
     },
@@ -32,22 +32,22 @@
       "slug": "four-hands-two-sonatas",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.448,
+      "radarScore": 0.422,
       "independentSources": 2,
       "locationPotential": 0.6
     },
     {
-      "title": "Mousetrap",
-      "slug": "mousetrap",
+      "title": "The Scandal",
+      "slug": "the-scandal",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.35,
+      "radarScore": 0.37,
       "independentSources": 1,
       "locationPotential": 0.6
     },
     {
-      "title": "I'm SOLO, Love goes on",
-      "slug": "im-solo-love-goes-on",
+      "title": "Kian’s Bizarre B&B",
+      "slug": "kians-bizarre-b-b",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
       "radarScore": 0.26,
@@ -55,11 +55,11 @@
       "locationPotential": 0.6
     },
     {
-      "title": "K-Shaman: True Horror Stories",
-      "slug": "k-shaman-true-horror-stories",
+      "title": "Mousetrap",
+      "slug": "mousetrap",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.25,
+      "radarScore": 0.247,
       "independentSources": 1,
       "locationPotential": 0.6
     }
