@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-06T23:28:47.466Z",
-  "radarCollectedAt": "2026-10-06T23:28:20.983Z",
+  "generatedAt": "2026-10-09T23:44:26.196Z",
+  "radarCollectedAt": "2026-10-09T23:44:01.732Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 1,
-    "needsSignal": 5,
+    "needsLocation": 2,
+    "needsSignal": 4,
     "skip": 0
   },
   "briefs": [
@@ -14,16 +14,7 @@
       "slug": "marriage-of-convenience",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.69,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Your Personal Taxi",
-      "slug": "your-personal-taxi",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.61,
+      "radarScore": 0.39,
       "independentSources": 1,
       "locationPotential": 0.6
     },
@@ -32,7 +23,7 @@
       "slug": "four-hands-two-sonatas",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.422,
+      "radarScore": 0.377,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -43,6 +34,15 @@
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
       "radarScore": 0.37,
       "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Your Personal Taxi",
+      "slug": "your-personal-taxi",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.313,
+      "independentSources": 2,
       "locationPotential": 0.6
     },
     {
