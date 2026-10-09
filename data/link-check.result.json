@@ -1,19 +1,9 @@
 {
-  "ranAt": "2026-10-08",
+  "ranAt": "2026-10-09",
   "mode": "online",
   "articles": 103,
   "urls": 307,
   "fails": [
-    {
-      "file": "src/content/decode/korea-drinking-age-id-check.mdx",
-      "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C28%EC%A1%B0 — 404. 죽은 주소다."
-    },
-    {
-      "file": "src/content/decode/korea-drinking-age-id-check.mdx",
-      "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C2%EC%A1%B0 — 404. 죽은 주소다."
-    },
     {
       "file": "src/content/decode/korea-drinking-age-id-check.mdx",
       "rule": "dead-link",
@@ -25,14 +15,19 @@
       "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0 — 404. 죽은 주소다."
     },
     {
-      "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
+      "file": "src/content/decode/korea-drinking-age-id-check.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C17%EC%A1%B0 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C28%EC%A1%B0 — 404. 죽은 주소다."
+    },
+    {
+      "file": "src/content/decode/korea-drinking-age-id-check.mdx",
+      "rule": "dead-link",
+      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C2%EC%A1%B0 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C17%EC%A1%B0 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
@@ -42,17 +37,22 @@
     {
       "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
       "rule": "dead-link",
+      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0 — 404. 죽은 주소다."
+    },
+    {
+      "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
+      "rule": "dead-link",
       "msg": "https://www.law.go.kr/LSW//eng/engLsSc.do?menuId=2&query=Act+on+the+Consumer+Protection+in+Electronic+Commerce — 404. 죽은 주소다."
     },
     {
       "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%86%8C%EB%B9%84%EC%9E%90%EB%B6%84%EC%9F%81%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%86%8C%EB%B9%84%EC%9E%90%EB%B6%84%EC%9F%81%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/hangul/korean-address-road-name-building-number.mdx",
@@ -82,12 +82,12 @@
     {
       "file": "src/content/hangul/korean-toilet-signs-nam-yeo-door-code-paper.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/법령/공중화장실등에관한법률 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/법령/공중화장실등에관한법률시행령 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/hangul/korean-toilet-signs-nam-yeo-door-code-paper.mdx",
       "rule": "dead-link",
-      "msg": "https://www.law.go.kr/법령/공중화장실등에관한법률시행령 — 404. 죽은 주소다."
+      "msg": "https://www.law.go.kr/법령/공중화장실등에관한법률 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/hangul/seoul-bus-stop-sign-number-and-colours.mdx",
@@ -97,12 +97,12 @@
     {
       "file": "src/content/now/english-pages-korea-out-of-date.mdx",
       "rule": "dead-link",
-      "msg": "https://www.discoverseoulpass.com/app/spot/transit/index/topup — 404. 죽은 주소다."
+      "msg": "https://www.discoverseoulpass.com/app/spot/others/index/esim — 404. 죽은 주소다."
     },
     {
       "file": "src/content/now/english-pages-korea-out-of-date.mdx",
       "rule": "dead-link",
-      "msg": "https://www.discoverseoulpass.com/app/spot/others/index/esim — 404. 죽은 주소다."
+      "msg": "https://www.discoverseoulpass.com/app/spot/transit/index/topup — 404. 죽은 주소다."
     },
     {
       "file": "src/content/now/ja/seoul-climate-card-ending-what-visitors-should-buy.mdx",
@@ -115,14 +115,14 @@
       "msg": "https://www.law.go.kr/법령/공중위생관리법 — 404. 죽은 주소다."
     },
     {
+      "file": "src/content/scenes/bts-bus-stop-jumunjin-gangneung-bus-back-to-station.mdx",
+      "rule": "dead-link",
+      "msg": "https://www.khan.co.kr/article/201806291340001 — 410. 죽은 주소다."
+    },
+    {
       "file": "src/content/scenes/deoksugung-doldamgil-stone-wall-road.mdx",
       "rule": "dead-link",
       "msg": "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563 — 404. 죽은 주소다."
-    },
-    {
-      "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
-      "rule": "dead-link",
-      "msg": "https://www.ksponco.or.kr/menu.es?mid=a10405060200 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
@@ -132,12 +132,17 @@
     {
       "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
       "rule": "dead-link",
-      "msg": "https://www.ksponco.or.kr/menu.es?mid=a10405060400 — 404. 죽은 주소다."
+      "msg": "https://www.ksponco.or.kr/menu.es?mid=a10405060200 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
       "rule": "dead-link",
       "msg": "https://www.ksponco.or.kr/menu.es?mid=a10405060300 — 404. 죽은 주소다."
+    },
+    {
+      "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
+      "rule": "dead-link",
+      "msg": "https://www.ksponco.or.kr/menu.es?mid=a10405060400 — 404. 죽은 주소다."
     },
     {
       "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
@@ -148,6 +153,11 @@
       "file": "src/content/scenes/kpop-concert-venues-seoul-which-room.mdx",
       "rule": "dead-link",
       "msg": "https://www.ksponco.or.kr/olympicpark/menu.es?mid=a20109000000 — 404. 죽은 주소다."
+    },
+    {
+      "file": "src/content/scenes/lovely-runner-suwon-hwaseong-filming-spots.mdx",
+      "rule": "dead-link",
+      "msg": "https://www.khan.co.kr/article/202406151202001 — 410. 죽은 주소다."
     },
     {
       "file": "src/content/scenes/seongsu-dong-seoul-popups-and-what-stays.mdx",
@@ -182,24 +192,24 @@
       "msg": "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
+      "file": "src/content/decode/ja/korea-esim-no-phone-number.mdx",
+      "rule": "unreachable",
+      "msg": "https://www.skroaming.com/esim/esim — 접속 실패 (This operation was aborted). 일시적인 수 있어 경고로 둔다."
+    },
+    {
       "file": "src/content/decode/korea-esim-no-phone-number.mdx",
       "rule": "blocked",
       "msg": "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
-      "file": "src/content/decode/korea-tax-refund-limits-and-what-to-say.mdx",
+      "file": "src/content/decode/korea-refund-hwanbul-cheongyakcheolhoe.mdx",
       "rule": "blocked",
-      "msg": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
+      "msg": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140632 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
       "file": "src/content/decode/korean-numbers-two-counting-systems.mdx",
       "rule": "blocked",
       "msg": "https://www.korean.go.kr/kornorms/regltn/regltnView.do?regltn_code=0001&regltn_no=444 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
-    },
-    {
-      "file": "src/content/decode/ja/korea-esim-no-phone-number.mdx",
-      "rule": "unreachable",
-      "msg": "https://www.skroaming.com/esim/esim — 접속 실패 (fetch failed). 일시적인 수 있어 경고로 둔다."
     },
     {
       "file": "src/content/decode/oppa-hyung-unnie-noona.mdx",
@@ -252,6 +262,11 @@
       "msg": "https://korean.go.kr/kornorms/regltn/regltnView.do — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
+      "file": "src/content/guides/bukchon-hanok-village-visiting-hours-fine.mdx",
+      "rule": "unreachable",
+      "msg": "https://www.khan.co.kr/article/202502281142001 — 접속 실패 (This operation was aborted). 일시적인 수 있어 경고로 둔다."
+    },
+    {
       "file": "src/content/hangul/learn-to-read-korean-signs-alphabet.mdx",
       "rule": "blocked",
       "msg": "https://www.korean.go.kr/front/page/pageView.do?page_id=P000089 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
@@ -290,11 +305,6 @@
       "file": "src/content/now/ja/korea-food-prices-what-meals-cost.mdx",
       "rule": "unreachable",
       "msg": "https://www.price.go.kr/tprice/portal/servicepriceinfo/serviceindustryprice/serviceIndustryPriceList.do — 접속 실패 (fetch failed). 일시적인 수 있어 경고로 둔다."
-    },
-    {
-      "file": "src/content/hangul/learn-to-read-korean-signs-alphabet.mdx",
-      "rule": "unreachable",
-      "msg": "https://www.hangeul.go.kr/ — 접속 실패 (This operation was aborted). 일시적인 수 있어 경고로 둔다."
     },
     {
       "file": "src/content/now/jjimjilbang-what-it-costs-and-what-it-is.mdx",
@@ -347,6 +357,11 @@
       "msg": "https://www.klook.com/en-US/activity/88260-geoje-tour-from-busan/ — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
+      "file": "src/content/scenes/deoksugung-doldamgil-stone-wall-road.mdx",
+      "rule": "unreachable",
+      "msg": "https://mediahub.seoul.go.kr/archives/2006086 — 접속 실패 (fetch failed). 일시적인 수 있어 경고로 둔다."
+    },
+    {
       "file": "src/content/scenes/gyeongju-at-night-silla-capital.mdx",
       "rule": "blocked",
       "msg": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2378 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
@@ -377,14 +392,14 @@
       "msg": "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/ — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
     },
     {
+      "file": "src/content/scenes/itaewon-alone-what-to-eat-buy-and-when-to-go.mdx",
+      "rule": "unreachable",
+      "msg": "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029 — 접속 실패 (fetch failed). 일시적인 수 있어 경고로 둔다."
+    },
+    {
       "file": "src/content/scenes/lovely-runner-suwon-hwaseong-filming-spots.mdx",
       "rule": "blocked",
       "msg": "https://www.visitsuwon.or.kr/base/contents/view?contentsNo=11&menuLevel=2&menuNo=15 — 403. 봇 차단일 수 있다. 사람이 한 번 열어 본다."
-    },
-    {
-      "file": "src/content/scenes/seongsu-dong-seoul-popups-and-what-stays.mdx",
-      "rule": "unreachable",
-      "msg": "https://mediahub.seoul.go.kr/archives/2004343 — 접속 실패 (fetch failed). 일시적인 수 있어 경고로 둔다."
     }
   ],
   "online": {
@@ -398,15 +413,15 @@
       "finalUrl": "https://krdict.korean.go.kr/eng/dicSearch/SearchView?ParaWordNo=15843",
       "probed": "https://krdict.korean.go.kr/eng/dicSearch/SearchView?ParaWordNo=15843"
     },
-    "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4",
-      "probed": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4"
-    },
     "https://krdict.korean.go.kr/eng/dicSearch/SearchView?nation=eng&ParaWordNo=26032": {
       "status": 200,
       "finalUrl": "https://krdict.korean.go.kr/eng/dicSearch/SearchView?nation=eng&ParaWordNo=26032",
       "probed": "https://krdict.korean.go.kr/eng/dicSearch/SearchView?nation=eng&ParaWordNo=26032"
+    },
+    "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4": {
+      "status": 200,
+      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4",
+      "probed": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EB%84%88%EB%82%98%EB%93%A4%EC%9D%B4"
     },
     "https://encykorea.aks.ac.kr/Article/E0079632": {
       "status": 200,
@@ -428,35 +443,35 @@
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0002676",
       "probed": "https://encykorea.aks.ac.kr/Article/E0002676"
     },
-    "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88",
-      "probed": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88"
-    },
     "https://www.klook.com/en-US/activity/100060-4g-esim-korea/": {
       "status": 403,
       "finalUrl": "https://www.klook.com/en-US/activity/100060-4g-esim-korea/?aid=131289",
       "probed": "https://www.klook.com/en-US/activity/100060-4g-esim-korea/?aid=131289"
     },
-    "https://encykorea.aks.ac.kr/Article/E0037274": {
+    "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88": {
       "status": 200,
-      "finalUrl": "https://encykorea.aks.ac.kr/Article/E0037274",
-      "probed": "https://encykorea.aks.ac.kr/Article/E0037274"
+      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88",
+      "probed": "https://stdict.korean.go.kr/search/searchResult.do?searchKeyword=%EC%98%88"
     },
     "https://www.lguplus.com/korea-sim/eng/pc/product/esim?tab=data-voice": {
       "status": 403,
       "finalUrl": "https://www.lguplus.com/korea-sim/eng/pc/product/esim?tab=data-voice",
       "probed": "https://www.lguplus.com/korea-sim/eng/pc/product/esim?tab=data-voice"
     },
-    "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data": {
-      "status": 403,
-      "finalUrl": "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data",
-      "probed": "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data"
+    "https://encykorea.aks.ac.kr/Article/E0037274": {
+      "status": 200,
+      "finalUrl": "https://encykorea.aks.ac.kr/Article/E0037274",
+      "probed": "https://encykorea.aks.ac.kr/Article/E0037274"
     },
     "https://opendict.korean.go.kr/search/searchResult?query=-%EC%98%88": {
       "status": 200,
       "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=-%EC%98%88",
       "probed": "https://opendict.korean.go.kr/search/searchResult?query=-%EC%98%88"
+    },
+    "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data": {
+      "status": 403,
+      "finalUrl": "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data",
+      "probed": "https://www.lguplus.com/korea-sim/kor/pc/product/esim?tab=data"
     },
     "https://roaming.kt.com/eng/esim": {
       "status": 200,
@@ -483,25 +498,20 @@
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0051419",
       "probed": "https://encykorea.aks.ac.kr/Article/E0051419"
     },
-    "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3",
-      "probed": "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3"
-    },
     "https://jeju.grandculture.net/jeju/toc/GC00702008": {
       "status": 200,
       "finalUrl": "https://jeju.grandculture.net/jeju/toc/GC00702008",
       "probed": "https://jeju.grandculture.net/jeju/toc/GC00702008"
     },
+    "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3": {
+      "status": 200,
+      "finalUrl": "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3",
+      "probed": "https://stdict.korean.go.kr/search/searchView.do?word_no=447760&searchKeywordTo=3"
+    },
     "https://stdict.korean.go.kr/search/searchView.do?word_no=499631&searchKeywordTo=3": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchView.do?word_no=499631&searchKeywordTo=3",
       "probed": "https://stdict.korean.go.kr/search/searchView.do?word_no=499631&searchKeywordTo=3"
-    },
-    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4",
-      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4"
     },
     "https://www.jeju.go.kr/jejueo/dictionary/search.htm?qtype=word&query=%ED%95%98%EC%98%81": {
       "status": 200,
@@ -512,6 +522,11 @@
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%8E%9C%EC%85%98",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%8E%9C%EC%85%98"
+    },
+    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4": {
+      "status": 200,
+      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4",
+      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%84%9C%EB%B9%84%EC%8A%A4"
     },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%98%A4%ED%94%BC%EC%8A%A4%ED%85%94": {
       "status": 200,
@@ -558,11 +573,6 @@
       "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EC%8A%A4%ED%82%A8",
       "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EC%8A%A4%ED%82%A8"
     },
-    "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7": {
-      "status": 200,
-      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7",
-      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7"
-    },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%82%A4%EC%98%A4%EC%8A%A4%ED%81%AC": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%82%A4%EC%98%A4%EC%8A%A4%ED%81%AC",
@@ -572,6 +582,26 @@
       "status": 200,
       "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%ED%82%A4%EC%98%A4%EC%8A%A4%ED%81%AC",
       "probed": "https://opendict.korean.go.kr/search/searchResult?query=%ED%82%A4%EC%98%A4%EC%8A%A4%ED%81%AC"
+    },
+    "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7": {
+      "status": 200,
+      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7",
+      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9B%90%EC%83%B7"
+    },
+    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0",
+      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0"
+    },
+    "https://www.skroaming.com/esim/esim": {
+      "status": 0,
+      "error": "This operation was aborted",
+      "probed": "https://www.skroaming.com/esim/esim"
+    },
+    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0",
+      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0"
     },
     "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C28%EC%A1%B0": {
       "status": 404,
@@ -583,68 +613,53 @@
       "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C2%EC%A1%B0",
       "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C2%EC%A1%B0"
     },
-    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0",
-      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C29%EC%A1%B0"
-    },
-    "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D": {
-      "status": 200,
-      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D",
-      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D"
+    "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice": {
+      "status": 403,
+      "finalUrl": "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice",
+      "probed": "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice"
     },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%AF%BC%EC%A6%9D": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%AF%BC%EC%A6%9D",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EB%AF%BC%EC%A6%9D"
     },
-    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0",
-      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B2%AD%EC%86%8C%EB%85%84%EB%B3%B4%ED%98%B8%EB%B2%95/%EC%A0%9C59%EC%A1%B0"
-    },
-    "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice": {
-      "status": 403,
-      "finalUrl": "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice",
-      "probed": "https://www.lguplus.com/korea-sim/eng/pc/product/simcard?tab=data-voice"
+    "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D": {
+      "status": 200,
+      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D",
+      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EB%AF%BC%EC%A6%9D"
     },
     "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C17%EC%A1%B0": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C17%EC%A1%B0",
       "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C17%EC%A1%B0"
     },
-    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0",
-      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0"
-    },
     "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C2%EC%A1%B0": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C2%EC%A1%B0",
       "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C2%EC%A1%B0"
+    },
+    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0",
+      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%A0%84%EC%9E%90%EC%83%81%EA%B1%B0%EB%9E%98%EB%93%B1%EC%97%90%EC%84%9C%EC%9D%98%EC%86%8C%EB%B9%84%EC%9E%90%EB%B3%B4%ED%98%B8%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0/%EC%A0%9C18%EC%A1%B0"
     },
     "https://www.law.go.kr/LSW//eng/engLsSc.do?menuId=2&query=Act+on+the+Consumer+Protection+in+Electronic+Commerce": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/LSW//eng/engLsSc.do?menuId=2&query=Act+on+the+Consumer+Protection+in+Electronic+Commerce",
       "probed": "https://www.law.go.kr/LSW//eng/engLsSc.do?menuId=2&query=Act+on+the+Consumer+Protection+in+Electronic+Commerce"
     },
-    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0",
-      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0"
-    },
     "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%86%8C%EB%B9%84%EC%9E%90%EB%B6%84%EC%9F%81%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%86%8C%EB%B9%84%EC%9E%90%EB%B6%84%EC%9F%81%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80",
       "probed": "https://www.law.go.kr/%ED%96%89%EC%A0%95%EA%B7%9C%EC%B9%99/%EC%86%8C%EB%B9%84%EC%9E%90%EB%B6%84%EC%9F%81%ED%95%B4%EA%B2%B0%EA%B8%B0%EC%A4%80"
     },
-    "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736": {
-      "status": 403,
-      "finalUrl": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736",
-      "probed": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736"
+    "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0",
+      "probed": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%86%8C%EB%B9%84%EC%9E%90%EA%B8%B0%EB%B3%B8%EB%B2%95/%EC%A0%9C16%EC%A1%B0"
     },
     "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140632": {
-      "status": 200,
+      "status": 403,
       "finalUrl": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140632",
       "probed": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140632"
     },
@@ -652,6 +667,16 @@
       "status": 200,
       "finalUrl": "https://www.ccn.go.kr/",
       "probed": "https://www.ccn.go.kr/"
+    },
+    "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736": {
+      "status": 200,
+      "finalUrl": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736",
+      "probed": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140736"
+    },
+    "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do": {
+      "status": 302,
+      "finalUrl": "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do",
+      "probed": "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do"
     },
     "https://www.milemoa.com/bbs/board/11626710": {
       "status": 200,
@@ -668,16 +693,6 @@
       "finalUrl": "https://www.korean.go.kr/kornorms/regltn/regltnView.do?regltn_code=0001&regltn_no=444",
       "probed": "https://www.korean.go.kr/kornorms/regltn/regltnView.do?regltn_code=0001&regltn_no=444"
     },
-    "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do": {
-      "status": 302,
-      "finalUrl": "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do",
-      "probed": "https://www.airport.kr/ap_lp/en/dep/process/vacref/vacref.do"
-    },
-    "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84": {
-      "status": 200,
-      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84",
-      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84"
-    },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9D%B8%EB%B6%84": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%9D%B8%EB%B6%84",
@@ -688,20 +703,20 @@
       "finalUrl": "https://stdict.korean.go.kr/",
       "probed": "https://stdict.korean.go.kr/"
     },
-    "https://www.skroaming.com/esim/esim": {
-      "status": 0,
-      "error": "fetch failed",
-      "probed": "https://www.skroaming.com/esim/esim"
-    },
-    "https://opendict.korean.go.kr/": {
+    "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84": {
       "status": 200,
-      "finalUrl": "https://opendict.korean.go.kr/",
-      "probed": "https://opendict.korean.go.kr/"
+      "finalUrl": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84",
+      "probed": "https://opendict.korean.go.kr/search/searchResult?query=%EC%9D%B8%EB%B6%84"
     },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B0%9C": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B0%9C",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EA%B0%9C"
+    },
+    "https://opendict.korean.go.kr/": {
+      "status": 200,
+      "finalUrl": "https://opendict.korean.go.kr/",
+      "probed": "https://opendict.korean.go.kr/"
     },
     "https://www.korean.go.kr/nkview/nklife/2018_1/28_0101.pdf": {
       "status": 200,
@@ -738,11 +753,6 @@
       "finalUrl": "https://royal.khs.go.kr/ROYAL/contents/R705000000.do",
       "probed": "https://royal.khs.go.kr/ROYAL/contents/R705000000.do"
     },
-    "https://www.khan.co.kr/article/202502281142001": {
-      "status": 200,
-      "finalUrl": "https://www.khan.co.kr/article/202502281142001",
-      "probed": "https://www.khan.co.kr/article/202502281142001"
-    },
     "https://www.sisul.or.kr/open_content/cheonggye/intro/summary.jsp": {
       "status": 200,
       "finalUrl": "https://www.sisul.or.kr/open_content/cheonggye/intro/summary.jsp",
@@ -752,11 +762,6 @@
       "status": 200,
       "finalUrl": "https://www.sisul.or.kr/open_content/cheonggye/intro/disaster.jsp",
       "probed": "https://www.sisul.or.kr/open_content/cheonggye/intro/disaster.jsp"
-    },
-    "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp": {
-      "status": 200,
-      "finalUrl": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp",
-      "probed": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp"
     },
     "https://www.sisul.or.kr/open_content/cheonggye/community/attention.jsp": {
       "status": 200,
@@ -768,20 +773,25 @@
       "finalUrl": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/shack.jsp",
       "probed": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/shack.jsp"
     },
+    "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp": {
+      "status": 200,
+      "finalUrl": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp",
+      "probed": "https://www.sisul.or.kr/open_content/cheonggye/enjoy/walking.jsp"
+    },
     "https://news.seoul.go.kr/culture/archives/505244": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/culture/archives/505244",
       "probed": "https://news.seoul.go.kr/culture/archives/505244"
     },
-    "https://royal.khs.go.kr/ROYAL/contents/R701000000.do": {
-      "status": 403,
-      "finalUrl": "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
-      "probed": "https://royal.khs.go.kr/ROYAL/contents/R701000000.do"
-    },
     "https://encykorea.aks.ac.kr/Article/E0013680": {
       "status": 200,
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0013680",
       "probed": "https://encykorea.aks.ac.kr/Article/E0013680"
+    },
+    "https://royal.khs.go.kr/ROYAL/contents/R701000000.do": {
+      "status": 403,
+      "finalUrl": "https://royal.khs.go.kr/ROYAL/contents/R701000000.do",
+      "probed": "https://royal.khs.go.kr/ROYAL/contents/R701000000.do"
     },
     "https://encykorea.aks.ac.kr/Article/E0067111": {
       "status": 200,
@@ -813,30 +823,30 @@
       "finalUrl": "https://www.nseoultower.co.kr/visit/use2.asp",
       "probed": "https://www.nseoultower.co.kr/visit/use2.asp"
     },
-    "https://www.nseoultower.co.kr/eng/global/intro2.asp": {
-      "status": 200,
-      "finalUrl": "https://www.nseoultower.co.kr/eng/global/intro2.asp",
-      "probed": "https://www.nseoultower.co.kr/eng/global/intro2.asp"
-    },
     "https://www.nseoultower.co.kr/visit/use.asp": {
       "status": 200,
       "finalUrl": "https://www.nseoultower.co.kr/visit/use.asp",
       "probed": "https://www.nseoultower.co.kr/visit/use.asp"
+    },
+    "https://www.nseoultower.co.kr/eng/global/intro2.asp": {
+      "status": 200,
+      "finalUrl": "https://www.nseoultower.co.kr/eng/global/intro2.asp",
+      "probed": "https://www.nseoultower.co.kr/eng/global/intro2.asp"
     },
     "https://www.nseoultower.co.kr/eng/visit/observatory.asp": {
       "status": 200,
       "finalUrl": "https://www.nseoultower.co.kr/eng/visit/observatory.asp",
       "probed": "https://www.nseoultower.co.kr/eng/visit/observatory.asp"
     },
-    "https://www.seoultower.co.kr/": {
-      "status": 200,
-      "finalUrl": "https://www.seoultower.co.kr/",
-      "probed": "https://www.seoultower.co.kr/"
-    },
     "https://m.easylaw.go.kr/MOB/NtcInfoRetrieve.laf?ntcSeq=1442": {
       "status": 200,
       "finalUrl": "https://m.easylaw.go.kr/MOB/NtcInfoRetrieve.laf?ntcSeq=1442",
       "probed": "https://m.easylaw.go.kr/MOB/NtcInfoRetrieve.laf?ntcSeq=1442"
+    },
+    "https://www.seoultower.co.kr/": {
+      "status": 200,
+      "finalUrl": "https://www.seoultower.co.kr/",
+      "probed": "https://www.seoultower.co.kr/"
     },
     "https://www.korea.kr/news/policyNewsView.do?newsId=148909874": {
       "status": 200,
@@ -848,45 +858,40 @@
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0076896",
       "probed": "https://encykorea.aks.ac.kr/Article/E0076896"
     },
-    "https://dh.aks.ac.kr/sillokwiki/index.php/중희당(重熙堂)": {
-      "status": 200,
-      "finalUrl": "https://dh.aks.ac.kr/sillokwiki/index.php/%EC%A4%91%ED%9D%AC%EB%8B%B9(%E9%87%8D%E7%86%99%E5%A0%82)",
-      "probed": "https://dh.aks.ac.kr/sillokwiki/index.php/중희당(重熙堂)"
-    },
     "https://encykorea.aks.ac.kr/Article/E0029838": {
       "status": 200,
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0029838",
       "probed": "https://encykorea.aks.ac.kr/Article/E0029838"
     },
-    "https://www.law.go.kr/법령/도로명주소법": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EB%8F%84%EB%A1%9C%EB%AA%85%EC%A3%BC%EC%86%8C%EB%B2%95",
-      "probed": "https://www.law.go.kr/법령/도로명주소법"
-    },
-    "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2": {
+    "https://dh.aks.ac.kr/sillokwiki/index.php/중희당(重熙堂)": {
       "status": 200,
-      "finalUrl": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2",
-      "probed": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2"
+      "finalUrl": "https://dh.aks.ac.kr/sillokwiki/index.php/%EC%A4%91%ED%9D%AC%EB%8B%B9(%E9%87%8D%E7%86%99%E5%A0%82)",
+      "probed": "https://dh.aks.ac.kr/sillokwiki/index.php/중희당(重熙堂)"
     },
     "https://www.data.go.kr/data/15045034/fileData.do": {
       "status": 200,
       "finalUrl": "https://www.data.go.kr/data/15045034/fileData.do",
       "probed": "https://www.data.go.kr/data/15045034/fileData.do"
     },
-    "https://www.law.go.kr/법령/도로명주소법시행령": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EB%8F%84%EB%A1%9C%EB%AA%85%EC%A3%BC%EC%86%8C%EB%B2%95%EC%8B%9C%ED%96%89%EB%A0%B9",
-      "probed": "https://www.law.go.kr/법령/도로명주소법시행령"
-    },
-    "https://www.juso.go.kr/introduction/RoadAddress": {
+    "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2": {
       "status": 200,
-      "finalUrl": "https://www.juso.go.kr/introduction/RoadAddress",
-      "probed": "https://www.juso.go.kr/introduction/RoadAddress"
+      "finalUrl": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2",
+      "probed": "https://www.easylaw.go.kr/CSP/CnpClsMain.laf?popMenu=ov&csmSeq=906&ccfNo=2&cciNo=1&cnpClsNo=2"
     },
     "https://www.mohw.go.kr/menu.es?mid=a10702040200": {
       "status": 200,
       "finalUrl": "https://www.mohw.go.kr/menu.es?mid=a10702040200",
       "probed": "https://www.mohw.go.kr/menu.es?mid=a10702040200"
+    },
+    "https://www.law.go.kr/법령/도로명주소법": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EB%8F%84%EB%A1%9C%EB%AA%85%EC%A3%BC%EC%86%8C%EB%B2%95",
+      "probed": "https://www.law.go.kr/법령/도로명주소법"
+    },
+    "https://www.law.go.kr/법령/도로명주소법시행령": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EB%8F%84%EB%A1%9C%EB%AA%85%EC%A3%BC%EC%86%8C%EB%B2%95%EC%8B%9C%ED%96%89%EB%A0%B9",
+      "probed": "https://www.law.go.kr/법령/도로명주소법시행령"
     },
     "https://www.law.go.kr/법령/도로명주소법시행규칙": {
       "status": 404,
@@ -897,6 +902,11 @@
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/main/main.do",
       "probed": "https://stdict.korean.go.kr/main/main.do"
+    },
+    "https://www.juso.go.kr/introduction/RoadAddress": {
+      "status": 200,
+      "finalUrl": "https://www.juso.go.kr/introduction/RoadAddress",
+      "probed": "https://www.juso.go.kr/introduction/RoadAddress"
     },
     "https://www.law.go.kr/법령/의료법/제3조의2": {
       "status": 404,
@@ -918,55 +928,65 @@
       "finalUrl": "https://www.korean.go.kr/kornorms/regltn/regltnView.do?regltn_code=0002",
       "probed": "https://www.korean.go.kr/kornorms/regltn/regltnView.do?regltn_code=0002"
     },
-    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4",
-      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4"
-    },
-    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4": {
-      "status": 200,
-      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4",
-      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4"
-    },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%A4%80%EB%B9%84": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%A4%80%EB%B9%84",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%A4%80%EB%B9%84"
+    },
+    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4": {
+      "status": 200,
+      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4",
+      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%9C%B4%EB%AC%B4"
     },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%92%88%EC%A0%88": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%92%88%EC%A0%88",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%92%88%EC%A0%88"
     },
+    "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4": {
+      "status": 200,
+      "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4",
+      "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%EC%97%B0%EC%A4%91%EB%AC%B4%ED%9C%B4"
+    },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=50&searchKeyword=%EC%A4%91": {
       "status": 200,
       "finalUrl": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=50&searchKeyword=%EC%A4%91",
       "probed": "https://stdict.korean.go.kr/search/searchResult.do?pageSize=50&searchKeyword=%EC%A4%91"
-    },
-    "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm": {
-      "status": 200,
-      "finalUrl": "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm",
-      "probed": "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm"
     },
     "https://opendict.korean.go.kr/dictionary/view?sense_no=1821707&viewType=confirm": {
       "status": 200,
       "finalUrl": "https://opendict.korean.go.kr/dictionary/view?sense_no=1821707&viewType=confirm",
       "probed": "https://opendict.korean.go.kr/dictionary/view?sense_no=1821707&viewType=confirm"
     },
-    "https://www.law.go.kr/법령/공중화장실등에관한법률": {
-      "status": 404,
-      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B3%B5%EC%A4%91%ED%99%94%EC%9E%A5%EC%8B%A4%EB%93%B1%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0",
-      "probed": "https://www.law.go.kr/법령/공중화장실등에관한법률"
+    "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm": {
+      "status": 200,
+      "finalUrl": "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm",
+      "probed": "https://opendict.korean.go.kr/dictionary/view?sense_no=1824546&viewType=confirm"
     },
     "https://korean.go.kr/kornorms/regltn/regltnView.do": {
       "status": 403,
       "finalUrl": "https://korean.go.kr/kornorms/regltn/regltnView.do",
       "probed": "https://korean.go.kr/kornorms/regltn/regltnView.do"
     },
+    "https://www.khan.co.kr/article/202502281142001": {
+      "status": 0,
+      "error": "This operation was aborted",
+      "probed": "https://www.khan.co.kr/article/202502281142001"
+    },
     "https://www.law.go.kr/법령/공중화장실등에관한법률시행령": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B3%B5%EC%A4%91%ED%99%94%EC%9E%A5%EC%8B%A4%EB%93%B1%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0%EC%8B%9C%ED%96%89%EB%A0%B9",
       "probed": "https://www.law.go.kr/법령/공중화장실등에관한법률시행령"
+    },
+    "https://www.law.go.kr/법령/공중화장실등에관한법률": {
+      "status": 404,
+      "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B3%B5%EC%A4%91%ED%99%94%EC%9E%A5%EC%8B%A4%EB%93%B1%EC%97%90%EA%B4%80%ED%95%9C%EB%B2%95%EB%A5%A0",
+      "probed": "https://www.law.go.kr/법령/공중화장실등에관한법률"
+    },
+    "https://news.seoul.go.kr/traffic/archives/510086": {
+      "status": 200,
+      "finalUrl": "https://news.seoul.go.kr/traffic/archives/510086",
+      "probed": "https://news.seoul.go.kr/traffic/archives/510086"
     },
     "https://stdict.korean.go.kr/search/searchResult.do?pageSize=10&searchKeyword=%ED%99%94%EC%9E%A5%EC%8B%A4": {
       "status": 200,
@@ -983,60 +1003,50 @@
       "finalUrl": "https://www.korean.go.kr/front/page/pageView.do?page_id=P000089",
       "probed": "https://www.korean.go.kr/front/page/pageView.do?page_id=P000089"
     },
-    "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000": {
-      "status": 400,
-      "finalUrl": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000",
-      "probed": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000"
-    },
-    "https://news.seoul.go.kr/traffic/archives/510086": {
-      "status": 200,
-      "finalUrl": "https://news.seoul.go.kr/traffic/archives/510086",
-      "probed": "https://news.seoul.go.kr/traffic/archives/510086"
-    },
     "https://mediahub.seoul.go.kr/archives/2008368": {
       "status": 200,
       "finalUrl": "https://mediahub.seoul.go.kr/archives/2008368",
       "probed": "https://mediahub.seoul.go.kr/archives/2008368"
     },
-    "https://news.seoul.go.kr/traffic/archives/1706": {
+    "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000": {
+      "status": 400,
+      "finalUrl": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000",
+      "probed": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1113700700000"
+    },
+    "https://www.hangeul.go.kr/": {
       "status": 200,
-      "finalUrl": "https://news.seoul.go.kr/traffic/archives/1706",
-      "probed": "https://news.seoul.go.kr/traffic/archives/1706"
+      "finalUrl": "https://www.hangeul.go.kr/",
+      "probed": "https://www.hangeul.go.kr/"
     },
     "https://data.seoul.go.kr/dataList/OA-15067/S/1/datasetView.do": {
       "status": 404,
       "finalUrl": "https://data.seoul.go.kr/dataList/OA-15067/S/1/datasetView.do",
       "probed": "https://data.seoul.go.kr/dataList/OA-15067/S/1/datasetView.do"
     },
-    "https://www.metro9.co.kr/kor/sub01_04.do": {
-      "status": 400,
-      "finalUrl": "https://www.metro9.co.kr/kor/sub01_04.do",
-      "probed": "https://www.metro9.co.kr/kor/sub01_04.do"
-    },
-    "https://www.metro9.co.kr/eng/sitemap.do": {
-      "status": 400,
-      "finalUrl": "https://www.metro9.co.kr/eng/sitemap.do",
-      "probed": "https://www.metro9.co.kr/eng/sitemap.do"
+    "https://news.seoul.go.kr/traffic/archives/1706": {
+      "status": 200,
+      "finalUrl": "https://news.seoul.go.kr/traffic/archives/1706",
+      "probed": "https://news.seoul.go.kr/traffic/archives/1706"
     },
     "https://news.seoul.go.kr/traffic/archives/514398": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/traffic/archives/514398",
       "probed": "https://news.seoul.go.kr/traffic/archives/514398"
     },
+    "https://www.metro9.co.kr/kor/sub01_04.do": {
+      "status": 400,
+      "finalUrl": "https://www.metro9.co.kr/kor/sub01_04.do",
+      "probed": "https://www.metro9.co.kr/kor/sub01_04.do"
+    },
     "https://news.seoul.go.kr/traffic/archives/509486": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/traffic/archives/509486",
       "probed": "https://news.seoul.go.kr/traffic/archives/509486"
     },
-    "https://mediahub.seoul.go.kr/archives/2007663": {
-      "status": 200,
-      "finalUrl": "https://mediahub.seoul.go.kr/archives/2007663",
-      "probed": "https://mediahub.seoul.go.kr/archives/2007663"
-    },
-    "https://www.airportrailroad.com/train/express/info": {
-      "status": 200,
-      "finalUrl": "https://www.airportrailroad.com/train/express/info",
-      "probed": "https://www.airportrailroad.com/train/express/info"
+    "https://www.metro9.co.kr/eng/sitemap.do": {
+      "status": 400,
+      "finalUrl": "https://www.metro9.co.kr/eng/sitemap.do",
+      "probed": "https://www.metro9.co.kr/eng/sitemap.do"
     },
     "https://www.weather.go.kr/kma/news/press_01.jsp?mode=view&num=1194521": {
       "status": 200,
@@ -1048,10 +1058,20 @@
       "finalUrl": "https://www.weather.go.kr/kma/news/press_01.jsp?mode=view&num=1194607",
       "probed": "https://www.weather.go.kr/kma/news/press_01.jsp?mode=view&num=1194607"
     },
+    "https://www.airportrailroad.com/train/express/info": {
+      "status": 200,
+      "finalUrl": "https://www.airportrailroad.com/train/express/info",
+      "probed": "https://www.airportrailroad.com/train/express/info"
+    },
     "https://www.evenrealities.com/blogs/buyers-guide/prescription-glasses-cost": {
       "status": 200,
       "finalUrl": "https://www.evenrealities.com/blogs/buyers-guide/prescription-glasses-cost",
       "probed": "https://www.evenrealities.com/blogs/buyers-guide/prescription-glasses-cost"
+    },
+    "https://mediahub.seoul.go.kr/archives/2007663": {
+      "status": 200,
+      "finalUrl": "https://mediahub.seoul.go.kr/archives/2007663",
+      "probed": "https://mediahub.seoul.go.kr/archives/2007663"
     },
     "https://www.a-ha.io/questions/4aeeb2d5495f3e2aaf16ea62432ce1ab": {
       "status": 200,
@@ -1068,6 +1088,11 @@
       "finalUrl": "http://se-cu.com/ndsoft/error.html",
       "probed": "https://www.cctimes.kr/news/articleView.html?idxno=869315"
     },
+    "https://www.discoverseoulpass.com/app/spot/others/index/esim": {
+      "status": 404,
+      "finalUrl": "https://www.discoverseoulpass.com/app/spot/others/index/esim",
+      "probed": "https://www.discoverseoulpass.com/app/spot/others/index/esim"
+    },
     "https://news.seoul.go.kr/traffic/traffic_price": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/traffic/traffic_price",
@@ -1078,15 +1103,15 @@
       "finalUrl": "https://www.discoverseoulpass.com/app/spot/transit/index/topup",
       "probed": "https://www.discoverseoulpass.com/app/spot/transit/index/topup"
     },
-    "https://www.discoverseoulpass.com/app/spot/others/index/esim": {
-      "status": 404,
-      "finalUrl": "https://www.discoverseoulpass.com/app/spot/others/index/esim",
-      "probed": "https://www.discoverseoulpass.com/app/spot/others/index/esim"
-    },
     "https://etk.srail.kr/main.do?language=en": {
       "status": 500,
       "finalUrl": "https://etk.srail.kr/main.do?language=en",
       "probed": "https://etk.srail.kr/main.do?language=en"
+    },
+    "https://www.airportrailroad.com/train/express/introduce": {
+      "status": 200,
+      "finalUrl": "https://www.airportrailroad.com/train/express/introduce",
+      "probed": "https://www.airportrailroad.com/train/express/introduce"
     },
     "https://www.airportrailroad.com/train/normal/introduce": {
       "status": 200,
@@ -1098,25 +1123,25 @@
       "finalUrl": "https://www.airportrailroad.com/train/normal/fare",
       "probed": "https://www.airportrailroad.com/train/normal/fare"
     },
-    "https://www.airportrailroad.com/train/express/introduce": {
-      "status": 200,
-      "finalUrl": "https://www.airportrailroad.com/train/express/introduce",
-      "probed": "https://www.airportrailroad.com/train/express/introduce"
-    },
-    "https://www.airport.kr/ap_ko/987/subview.do": {
-      "status": 302,
-      "finalUrl": "https://www.airport.kr/ap_ko/987/subview.do",
-      "probed": "https://www.airport.kr/ap_ko/987/subview.do"
+    "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/": {
+      "status": 403,
+      "finalUrl": "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/?aid=131289",
+      "probed": "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/?aid=131289"
     },
     "https://www.airport.kr/ap_ko/976/subview.do": {
       "status": 302,
       "finalUrl": "https://www.airport.kr/ap_ko/976/subview.do",
       "probed": "https://www.airport.kr/ap_ko/976/subview.do"
     },
-    "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/": {
-      "status": 403,
-      "finalUrl": "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/?aid=131289",
-      "probed": "https://www.klook.com/en-US/activity/1163-airport-to-seoul-city-center-arex-train-incheon/?aid=131289"
+    "https://www.airport.kr/ap_ko/987/subview.do": {
+      "status": 302,
+      "finalUrl": "https://www.airport.kr/ap_ko/987/subview.do",
+      "probed": "https://www.airport.kr/ap_ko/987/subview.do"
+    },
+    "https://news.seoul.go.kr/traffic/find": {
+      "status": 200,
+      "finalUrl": "https://news.seoul.go.kr/traffic/find",
+      "probed": "https://news.seoul.go.kr/traffic/find"
     },
     "https://www.price.go.kr/tprice/portal/servicepriceinfo/dineoutprice/dineOutPriceList.do": {
       "status": 0,
@@ -1128,40 +1153,30 @@
       "error": "fetch failed",
       "probed": "https://www.price.go.kr/tprice/portal/servicepriceinfo/serviceindustryprice/serviceIndustryPriceList.do"
     },
-    "https://news.seoul.go.kr/traffic/find": {
+    "https://news.seoul.go.kr/traffic/archives/517575": {
       "status": 200,
-      "finalUrl": "https://news.seoul.go.kr/traffic/find",
-      "probed": "https://news.seoul.go.kr/traffic/find"
+      "finalUrl": "https://news.seoul.go.kr/traffic/archives/517575",
+      "probed": "https://news.seoul.go.kr/traffic/archives/517575"
     },
     "https://news.seoul.go.kr/traffic/public/climatecard-faq/faq-stop": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/traffic/public/climatecard-faq/faq-stop",
       "probed": "https://news.seoul.go.kr/traffic/public/climatecard-faq/faq-stop"
     },
-    "https://news.seoul.go.kr/traffic/archives/517575": {
-      "status": 200,
-      "finalUrl": "https://news.seoul.go.kr/traffic/archives/517575",
-      "probed": "https://news.seoul.go.kr/traffic/archives/517575"
-    },
     "https://www.seoul.go.kr/news/news_report.do?nttNo=462949": {
       "status": 200,
       "finalUrl": "https://www.seoul.go.kr/news/news_report.do?nttNo=462949",
       "probed": "https://www.seoul.go.kr/news/news_report.do?nttNo=462949"
-    },
-    "https://news.seoul.go.kr/traffic/archives/510963": {
-      "status": 200,
-      "finalUrl": "https://www.seoul.go.kr/common/errorAccess.html",
-      "probed": "https://news.seoul.go.kr/traffic/archives/510963"
     },
     "https://news.seoul.go.kr/traffic/archives/515781": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/traffic/archives/515781",
       "probed": "https://news.seoul.go.kr/traffic/archives/515781"
     },
-    "https://mediahub.seoul.go.kr/archives/2003621": {
+    "https://news.seoul.go.kr/traffic/archives/510963": {
       "status": 200,
-      "finalUrl": "https://mediahub.seoul.go.kr/archives/2003621",
-      "probed": "https://mediahub.seoul.go.kr/archives/2003621"
+      "finalUrl": "https://www.seoul.go.kr/common/errorAccess.html",
+      "probed": "https://news.seoul.go.kr/traffic/archives/510963"
     },
     "https://news.seoul.go.kr/traffic/archives/1763": {
       "status": 200,
@@ -1193,35 +1208,35 @@
       "finalUrl": "https://www.weather.go.kr/w/climate/statistics/region.do",
       "probed": "https://www.weather.go.kr/w/climate/statistics/region.do"
     },
-    "https://www.hangeul.go.kr/": {
-      "status": 0,
-      "error": "This operation was aborted",
-      "probed": "https://www.hangeul.go.kr/"
-    },
     "https://www.law.go.kr/법령/공중위생관리법": {
       "status": 404,
       "finalUrl": "https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B3%B5%EC%A4%91%EC%9C%84%EC%83%9D%EA%B4%80%EB%A6%AC%EB%B2%95",
       "probed": "https://www.law.go.kr/법령/공중위생관리법"
+    },
+    "https://www.aquafield.co.kr/usage.html": {
+      "status": 200,
+      "finalUrl": "https://www.aquafield.co.kr/usage.html",
+      "probed": "https://www.aquafield.co.kr/usage.html"
+    },
+    "https://mediahub.seoul.go.kr/archives/2003621": {
+      "status": 200,
+      "finalUrl": "https://mediahub.seoul.go.kr/archives/2003621",
+      "probed": "https://mediahub.seoul.go.kr/archives/2003621"
     },
     "https://www.klook.com/en-US/activity/133675-seoul-dongdaemun-sparex-jjimjilbang-sauna-admission-ticket/": {
       "status": 403,
       "finalUrl": "https://www.klook.com/en-US/activity/133675-seoul-dongdaemun-sparex-jjimjilbang-sauna-admission-ticket/?aid=131289",
       "probed": "https://www.klook.com/en-US/activity/133675-seoul-dongdaemun-sparex-jjimjilbang-sauna-admission-ticket/?aid=131289"
     },
-    "https://docs.tosspayments.com/resources/glossary/international-payment": {
-      "status": 200,
-      "finalUrl": "https://docs.tosspayments.com/resources/glossary/international-payment",
-      "probed": "https://docs.tosspayments.com/resources/glossary/international-payment"
-    },
     "https://www.visa.com/en-us/products/visa-secure": {
       "status": 200,
       "finalUrl": "https://www.visa.com/en-us/products/visa-secure",
       "probed": "https://www.visa.com/en-us/products/visa-secure"
     },
-    "https://www.aquafield.co.kr/usage.html": {
+    "https://docs.tosspayments.com/resources/glossary/international-payment": {
       "status": 200,
-      "finalUrl": "https://www.aquafield.co.kr/usage.html",
-      "probed": "https://www.aquafield.co.kr/usage.html"
+      "finalUrl": "https://docs.tosspayments.com/resources/glossary/international-payment",
+      "probed": "https://docs.tosspayments.com/resources/glossary/international-payment"
     },
     "https://www.visa.com/locator/atm": {
       "status": 200,
@@ -1248,6 +1263,16 @@
       "finalUrl": "https://www.weather.go.kr/w/obs-climate/land/season-obs.do",
       "probed": "https://www.weather.go.kr/w/obs-climate/land/season-obs.do"
     },
+    "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881": {
+      "status": 200,
+      "finalUrl": "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881",
+      "probed": "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881"
+    },
+    "https://encykorea.aks.ac.kr/Article/E0080007": {
+      "status": 200,
+      "finalUrl": "https://encykorea.aks.ac.kr/Article/E0080007",
+      "probed": "https://encykorea.aks.ac.kr/Article/E0080007"
+    },
     "https://encykorea.aks.ac.kr/Article/E0031878": {
       "status": 200,
       "finalUrl": "https://encykorea.aks.ac.kr/Article/E0031878",
@@ -1258,25 +1283,10 @@
       "finalUrl": "https://www.oliveyoung.co.kr/store/store/getStoreInfoMain.do",
       "probed": "https://www.oliveyoung.co.kr/store/store/getStoreInfoMain.do"
     },
-    "https://encykorea.aks.ac.kr/Article/E0080007": {
-      "status": 200,
-      "finalUrl": "https://encykorea.aks.ac.kr/Article/E0080007",
-      "probed": "https://encykorea.aks.ac.kr/Article/E0080007"
-    },
-    "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881": {
-      "status": 200,
-      "finalUrl": "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881",
-      "probed": "https://ich.unesco.org/en/RL/kimjang-making-and-sharing-kimchi-in-the-republic-of-korea-00881"
-    },
     "https://global.oliveyoung.com/product/detail?prdtNo=GA260136903": {
       "status": 200,
       "finalUrl": "https://global.oliveyoung.com/product/detail?prdtNo=GA260136903",
       "probed": "https://global.oliveyoung.com/product/detail?prdtNo=GA260136903"
-    },
-    "https://clubclio.co.kr/shop/goodsView/0000003508": {
-      "status": 200,
-      "finalUrl": "https://clubclio.co.kr/shop/goodsView/0000003508",
-      "probed": "https://clubclio.co.kr/shop/goodsView/0000003508"
     },
     "https://mywebring.com/foreigner-korea-hospital-cost-insurance-guide/": {
       "status": 200,
@@ -1288,6 +1298,11 @@
       "finalUrl": "https://map.kakao.com/",
       "probed": "https://map.kakao.com/"
     },
+    "https://clubclio.co.kr/shop/goodsView/0000003508": {
+      "status": 200,
+      "finalUrl": "https://clubclio.co.kr/shop/goodsView/0000003508",
+      "probed": "https://clubclio.co.kr/shop/goodsView/0000003508"
+    },
     "https://www.zocdoc.com/blog/guides/how-much-does-a-primary-care-visit-cost-without-insurance/": {
       "status": 200,
       "finalUrl": "https://www.zocdoc.com/blog/guides/how-much-does-a-primary-care-visit-cost-without-insurance/",
@@ -1297,16 +1312,6 @@
       "status": 200,
       "finalUrl": "https://www.comparethemarket.com.au/health-insurance/features/health-appointment-wait-times-aross-the-world-2024/",
       "probed": "https://www.comparethemarket.com.au/health-insurance/features/health-appointment-wait-times-aross-the-world-2024/"
-    },
-    "https://www.lost112.go.kr/": {
-      "status": 0,
-      "error": "fetch failed",
-      "probed": "https://www.lost112.go.kr/"
-    },
-    "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228": {
-      "status": 200,
-      "finalUrl": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228",
-      "probed": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228"
     },
     "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27135": {
       "status": 200,
@@ -1318,30 +1323,40 @@
       "finalUrl": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=41&LAWGROUP=1",
       "probed": "https://www.nhis.or.kr/lm/lmxsrv/law/lawDetail.do?SEQ=41&LAWGROUP=1"
     },
+    "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180": {
+      "status": 200,
+      "finalUrl": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180",
+      "probed": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180"
+    },
+    "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228": {
+      "status": 200,
+      "finalUrl": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228",
+      "probed": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27228"
+    },
     "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27162": {
       "status": 200,
       "finalUrl": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27162",
       "probed": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27162"
     },
-    "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000": {
-      "status": 200,
-      "finalUrl": "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000",
-      "probed": "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000"
-    },
-    "https://www.korea.kr/news/policyNewsView.do?newsId=148969267": {
-      "status": 200,
-      "finalUrl": "https://www.korea.kr/news/policyNewsView.do?newsId=148969267",
-      "probed": "https://www.korea.kr/news/policyNewsView.do?newsId=148969267"
+    "https://www.lost112.go.kr/": {
+      "status": 0,
+      "error": "fetch failed",
+      "probed": "https://www.lost112.go.kr/"
     },
     "https://www.klook.com/en-US/activity/201665-korea-train-ticket/": {
       "status": 403,
       "finalUrl": "https://www.klook.com/en-US/activity/201665-korea-train-ticket/?aid=131289",
       "probed": "https://www.klook.com/en-US/activity/201665-korea-train-ticket/?aid=131289"
     },
-    "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180": {
+    "https://www.korea.kr/news/policyNewsView.do?newsId=148969267": {
       "status": 200,
-      "finalUrl": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180",
-      "probed": "https://info.korail.com/info/selectBbsNttView.do?key=911&bbsNo=199&nttNo=27180"
+      "finalUrl": "https://www.korea.kr/news/policyNewsView.do?newsId=148969267",
+      "probed": "https://www.korea.kr/news/policyNewsView.do?newsId=148969267"
+    },
+    "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000": {
+      "status": 200,
+      "finalUrl": "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000",
+      "probed": "https://www.srail.or.kr/cms/archive.do?pageId=KR0405000000"
     },
     "http://www.seoulmetro.co.kr/kr/cyberStation.do?menuIdx=546": {
       "status": 200,
@@ -1353,6 +1368,11 @@
       "finalUrl": "https://www.trip.com/hotels/busan-hotels-list-253/",
       "probed": "https://www.trip.com/hotels/busan-hotels-list-253/"
     },
+    "https://www.korail.com/ticket/main": {
+      "status": 200,
+      "finalUrl": "https://www.korail.com/ticket/main",
+      "probed": "https://www.korail.com/ticket/main"
+    },
     "https://developers.naver.com/docs/serviceapi/datalab/search/search.md": {
       "status": 200,
       "finalUrl": "https://developers.naver.com/docs/serviceapi/datalab/search/search.md",
@@ -1363,30 +1383,25 @@
       "finalUrl": "https://www.weather.go.kr/kma/news/press_01.jsp?mode=view&num=1194053",
       "probed": "https://www.weather.go.kr/kma/news/press_01.jsp?mode=view&num=1194053"
     },
-    "https://www.korail.com/ticket/main": {
+    "https://www.biff.kr/eng/": {
       "status": 200,
-      "finalUrl": "https://www.korail.com/ticket/main",
-      "probed": "https://www.korail.com/ticket/main"
-    },
-    "https://datalab.naver.com/shoppingInsight/sCategory.naver": {
-      "status": 500,
-      "finalUrl": "https://datalab.naver.com/shoppingInsight/sCategory.naver",
-      "probed": "https://datalab.naver.com/shoppingInsight/sCategory.naver"
+      "finalUrl": "https://www.biff.kr/eng/",
+      "probed": "https://www.biff.kr/eng/"
     },
     "https://www.biff.kr/eng/addon/10000001/page.asp?page_num=11402": {
       "status": 200,
       "finalUrl": "https://www.biff.kr/eng/addon/10000001/page.asp?page_num=11402",
       "probed": "https://www.biff.kr/eng/addon/10000001/page.asp?page_num=11402"
     },
-    "https://www.biff.kr/eng/": {
-      "status": 200,
-      "finalUrl": "https://www.biff.kr/eng/",
-      "probed": "https://www.biff.kr/eng/"
-    },
     "https://data.kma.go.kr/data/seasonObs/seasonObsDataList.do": {
       "status": 200,
       "finalUrl": "https://data.kma.go.kr/data/seasonObs/seasonObsDataList.do",
       "probed": "https://data.kma.go.kr/data/seasonObs/seasonObsDataList.do"
+    },
+    "https://datalab.naver.com/shoppingInsight/sCategory.naver": {
+      "status": 500,
+      "finalUrl": "https://datalab.naver.com/shoppingInsight/sCategory.naver",
+      "probed": "https://datalab.naver.com/shoppingInsight/sCategory.naver"
     },
     "https://www.biff.kr/eng/addon/10000001/page.asp?page_num=11238": {
       "status": 200,
@@ -1418,65 +1433,70 @@
       "finalUrl": "https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=affa8a02-ae7b-4ad7-9bae-728b6ea04607",
       "probed": "https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=affa8a02-ae7b-4ad7-9bae-728b6ea04607"
     },
-    "https://www.gn.go.kr/tour/sub01_02_01.do": {
-      "status": 200,
-      "finalUrl": "https://www.gn.go.kr/tour/sub01_02_01.do",
-      "probed": "https://www.gn.go.kr/tour/sub01_02_01.do"
-    },
     "https://bis.gn.go.kr/search": {
       "status": 200,
       "finalUrl": "https://bis.gn.go.kr/search",
       "probed": "https://bis.gn.go.kr/search"
     },
     "https://www.khan.co.kr/article/201806291340001": {
-      "status": 200,
+      "status": 410,
       "finalUrl": "https://www.khan.co.kr/article/201806291340001",
       "probed": "https://www.khan.co.kr/article/201806291340001"
     },
-    "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563": {
-      "status": 404,
-      "finalUrl": "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563",
-      "probed": "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563"
+    "https://www.gn.go.kr/tour/sub01_02_01.do": {
+      "status": 200,
+      "finalUrl": "https://www.gn.go.kr/tour/sub01_02_01.do",
+      "probed": "https://www.gn.go.kr/tour/sub01_02_01.do"
     },
     "https://www.hankyung.com/article/2026041249597": {
       "status": 200,
       "finalUrl": "https://www.hankyung.com/article/2026041249597",
       "probed": "https://www.hankyung.com/article/2026041249597"
     },
-    "https://www.newsis.com/view/NISX20250512_0003171720": {
-      "status": 200,
-      "finalUrl": "https://www.newsis.com/view/NISX20250512_0003171720",
-      "probed": "https://www.newsis.com/view/NISX20250512_0003171720"
+    "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563": {
+      "status": 404,
+      "finalUrl": "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563",
+      "probed": "https://english.visitseoul.net/attractions/Deoksugung-Stone-Wall-Path/ENP023563"
     },
     "https://news.seoul.go.kr/safe/archives/500255": {
       "status": 200,
       "finalUrl": "https://news.seoul.go.kr/safe/archives/500255",
       "probed": "https://news.seoul.go.kr/safe/archives/500255"
     },
-    "https://www.harpersbazaar.co.kr/article/1904188": {
+    "https://www.newsis.com/view/NISX20250512_0003171720": {
       "status": 200,
-      "finalUrl": "https://www.harpersbazaar.co.kr/article/1904188",
-      "probed": "https://www.harpersbazaar.co.kr/article/1904188"
+      "finalUrl": "https://www.newsis.com/view/NISX20250512_0003171720",
+      "probed": "https://www.newsis.com/view/NISX20250512_0003171720"
+    },
+    "https://mediahub.seoul.go.kr/archives/1176004": {
+      "status": 200,
+      "finalUrl": "https://mediahub.seoul.go.kr/archives/1176004",
+      "probed": "https://mediahub.seoul.go.kr/archives/1176004"
     },
     "https://news.knn.co.kr/news/article_sns/1379": {
       "status": 403,
       "finalUrl": "https://news.knn.co.kr/news/article_sns/1379",
       "probed": "https://news.knn.co.kr/news/article_sns/1379"
     },
+    "https://www.harpersbazaar.co.kr/article/1904188": {
+      "status": 200,
+      "finalUrl": "https://www.harpersbazaar.co.kr/article/1904188",
+      "probed": "https://www.harpersbazaar.co.kr/article/1904188"
+    },
     "https://www.klook.com/en-US/activity/88260-geoje-tour-from-busan/": {
       "status": 403,
       "finalUrl": "https://www.klook.com/en-US/activity/88260-geoje-tour-from-busan/?aid=131289",
       "probed": "https://www.klook.com/en-US/activity/88260-geoje-tour-from-busan/?aid=131289"
     },
+    "https://mediahub.seoul.go.kr/archives/2006086": {
+      "status": 0,
+      "error": "fetch failed",
+      "probed": "https://mediahub.seoul.go.kr/archives/2006086"
+    },
     "https://www.trip.com/hotels/geoje-si-hotels-list-61331/": {
       "status": 200,
       "finalUrl": "https://www.trip.com/hotels/geoje-si-hotels-list-61331/",
       "probed": "https://www.trip.com/hotels/geoje-si-hotels-list-61331/"
-    },
-    "https://mediahub.seoul.go.kr/archives/2006086": {
-      "status": 200,
-      "finalUrl": "https://mediahub.seoul.go.kr/archives/2006086",
-      "probed": "https://mediahub.seoul.go.kr/archives/2006086"
     },
     "https://www.trip.com/hotels/gangneung-si-hotels-list-61325/": {
       "status": 200,
@@ -1503,35 +1523,35 @@
       "finalUrl": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=d772b34c-c781-4385-815d-34653b506ea8",
       "probed": "https://korean.visitkorea.or.kr/detail/rem_detail.do?cotid=d772b34c-c781-4385-815d-34653b506ea8"
     },
+    "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/": {
+      "status": 403,
+      "finalUrl": "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/?aid=131289",
+      "probed": "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/?aid=131289"
+    },
     "https://m.kwnews.co.kr/page/view/2026022514511453111": {
       "status": 200,
       "finalUrl": "https://www.kwnews.co.kr/article/202602252097752",
       "probed": "https://m.kwnews.co.kr/page/view/2026022514511453111"
+    },
+    "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR": {
+      "status": 200,
+      "finalUrl": "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR",
+      "probed": "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR"
     },
     "https://www.trip.com/hotels/gyeongju-hotels-list-3675/": {
       "status": 200,
       "finalUrl": "https://www.trip.com/hotels/gyeongju-hotels-list-3675/",
       "probed": "https://www.trip.com/hotels/gyeongju-hotels-list-3675/"
     },
-    "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/": {
-      "status": 403,
-      "finalUrl": "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/?aid=131289",
-      "probed": "https://www.klook.com/en-US/activity/117284-gyeongju-hanbok-experience/?aid=131289"
-    },
-    "https://mediahub.seoul.go.kr/archives/1176004": {
-      "status": 200,
-      "finalUrl": "https://mediahub.seoul.go.kr/archives/1176004",
-      "probed": "https://mediahub.seoul.go.kr/archives/1176004"
-    },
     "https://www.netflix.com/title/81193309": {
       "status": 200,
       "finalUrl": "https://www.netflix.com/title/81193309",
       "probed": "https://www.netflix.com/title/81193309"
     },
-    "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR": {
-      "status": 200,
-      "finalUrl": "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR",
-      "probed": "https://gjfmc.or.kr/gjsiseol/facility/facilityTab1.do?menuNo=221&classId=TOUR"
+    "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229": {
+      "status": 403,
+      "finalUrl": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229",
+      "probed": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229"
     },
     "https://www.koreaislam.org/seoul-muslim-info%ec%84%9c%ec%9a%b8%ec%a4%91%ec%95%99%ec%84%b1%ec%9b%90%ec%95%88%eb%82%b4/": {
       "status": 200,
@@ -1542,16 +1562,6 @@
       "status": 200,
       "finalUrl": "https://www.koreaislam.org/%eb%b0%a9%eb%ac%b8%ec%8b%a0%ec%b2%ad/",
       "probed": "https://www.koreaislam.org/%eb%b0%a9%eb%ac%b8%ec%8b%a0%ec%b2%ad/"
-    },
-    "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229": {
-      "status": 403,
-      "finalUrl": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229",
-      "probed": "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=2229"
-    },
-    "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029": {
-      "status": 200,
-      "finalUrl": "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029",
-      "probed": "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029"
     },
     "https://program.kbs.co.kr/2tv/enter/musicbank/pc/board.html?smenu=3b7ca1&m_seq=9": {
       "status": 200,
@@ -1588,20 +1598,15 @@
       "finalUrl": "https://www.rda.go.kr/webzine/2020/03/sub3-4.html",
       "probed": "https://www.rda.go.kr/webzine/2020/03/sub3-4.html"
     },
-    "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068": {
-      "status": 200,
-      "finalUrl": "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068",
-      "probed": "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068"
-    },
     "https://www.visitjeju.net/kr/jejuStory/culture?tap=three&menuId=DOM_000001703003003000": {
       "status": 200,
       "finalUrl": "https://www.visitjeju.net/kr/jejuStory/culture?tap=three&menuId=DOM_000001703003003000",
       "probed": "https://www.visitjeju.net/kr/jejuStory/culture?tap=three&menuId=DOM_000001703003003000"
     },
-    "https://www.klook.com/en-US/activity/132698-jeju-car-charter/": {
-      "status": 403,
-      "finalUrl": "https://www.klook.com/en-US/activity/132698-jeju-car-charter/?aid=131289",
-      "probed": "https://www.klook.com/en-US/activity/132698-jeju-car-charter/?aid=131289"
+    "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068": {
+      "status": 200,
+      "finalUrl": "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068",
+      "probed": "https://ich.unesco.org/en/RL/culture-of-jeju-haenyeo-women-divers-01068"
     },
     "https://easylaw.go.kr/CSP/CnpClsMain.laf?csmSeq=668&ccfNo=1&cciNo=1&cnpClsNo=3": {
       "status": 200,
@@ -1613,95 +1618,100 @@
       "finalUrl": "https://www.safedriving.or.kr/diGuide/selectDiGuide10.do",
       "probed": "https://www.safedriving.or.kr/diGuide/selectDiGuide10.do"
     },
-    "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/": {
-      "status": 403,
-      "finalUrl": "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/?aid=131289",
-      "probed": "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/?aid=131289"
-    },
     "https://www.trip.com/hotels/jeju-hotels-list-737/": {
       "status": 200,
       "finalUrl": "https://www.trip.com/hotels/jeju-hotels-list-737/",
       "probed": "https://www.trip.com/hotels/jeju-hotels-list-737/"
     },
-    "https://eng.koreafilm.or.kr/movie/PM_009889": {
-      "status": 200,
-      "finalUrl": "https://eng.koreafilm.or.kr/movie/PM_009889",
-      "probed": "https://eng.koreafilm.or.kr/movie/PM_009889"
+    "https://www.klook.com/en-US/activity/132698-jeju-car-charter/": {
+      "status": 403,
+      "finalUrl": "https://www.klook.com/en-US/activity/132698-jeju-car-charter/?aid=131289",
+      "probed": "https://www.klook.com/en-US/activity/132698-jeju-car-charter/?aid=131289"
+    },
+    "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/": {
+      "status": 403,
+      "finalUrl": "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/?aid=131289",
+      "probed": "https://www.klook.com/en-US/activity/19902-unesco-walking-day-tour-jeju/?aid=131289"
     },
     "https://eng.koreafilm.or.kr/pages/PC_00000102": {
       "status": 200,
       "finalUrl": "https://eng.koreafilm.or.kr/pages/PC_00000102",
       "probed": "https://eng.koreafilm.or.kr/pages/PC_00000102"
     },
+    "https://eng.koreafilm.or.kr/movie/PM_009889": {
+      "status": 200,
+      "finalUrl": "https://eng.koreafilm.or.kr/movie/PM_009889",
+      "probed": "https://eng.koreafilm.or.kr/movie/PM_009889"
+    },
     "https://eng.koreafilm.or.kr/cinematheque/screenings": {
       "status": 200,
       "finalUrl": "https://eng.koreafilm.or.kr/cinematheque/screenings",
       "probed": "https://eng.koreafilm.or.kr/cinematheque/screenings"
-    },
-    "https://eng.koreafilm.or.kr/main": {
-      "status": 200,
-      "finalUrl": "https://eng.koreafilm.or.kr/main",
-      "probed": "https://eng.koreafilm.or.kr/main"
-    },
-    "https://www.koreafilm.or.kr/cinematheque/schedule": {
-      "status": 200,
-      "finalUrl": "https://www.koreafilm.or.kr/cinematheque/schedule",
-      "probed": "https://www.koreafilm.or.kr/cinematheque/schedule"
     },
     "https://eng.koreafilm.or.kr/pages/PC_00000110": {
       "status": 200,
       "finalUrl": "https://eng.koreafilm.or.kr/pages/PC_00000110",
       "probed": "https://eng.koreafilm.or.kr/pages/PC_00000110"
     },
+    "https://www.koreafilm.or.kr/cinematheque/schedule": {
+      "status": 200,
+      "finalUrl": "https://www.koreafilm.or.kr/cinematheque/schedule",
+      "probed": "https://www.koreafilm.or.kr/cinematheque/schedule"
+    },
     "https://eng.koreafilm.or.kr/pages/PC_00000104": {
       "status": 200,
       "finalUrl": "https://eng.koreafilm.or.kr/pages/PC_00000104",
       "probed": "https://eng.koreafilm.or.kr/pages/PC_00000104"
     },
-    "https://www.koreafilm.or.kr/pages/PC_00000126": {
+    "https://eng.koreafilm.or.kr/main": {
       "status": 200,
-      "finalUrl": "https://www.koreafilm.or.kr/pages/PC_00000126",
-      "probed": "https://www.koreafilm.or.kr/pages/PC_00000126"
+      "finalUrl": "https://eng.koreafilm.or.kr/main",
+      "probed": "https://eng.koreafilm.or.kr/main"
     },
     "https://www.koreafilm.or.kr/kofa/news/news/BC_0000045308": {
       "status": 200,
       "finalUrl": "https://www.koreafilm.or.kr/kofa/news/news/BC_0000045308",
       "probed": "https://www.koreafilm.or.kr/kofa/news/news/BC_0000045308"
     },
-    "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp": {
+    "https://www.koreafilm.or.kr/pages/PC_00000126": {
       "status": 200,
-      "finalUrl": "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp",
-      "probed": "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp"
+      "finalUrl": "https://www.koreafilm.or.kr/pages/PC_00000126",
+      "probed": "https://www.koreafilm.or.kr/pages/PC_00000126"
     },
     "https://www.koreanfilm.or.kr/eng/schedule/subtitMovie.jsp": {
       "status": 200,
       "finalUrl": "https://www.koreanfilm.or.kr/eng/schedule/subtitMovie.jsp",
       "probed": "https://www.koreanfilm.or.kr/eng/schedule/subtitMovie.jsp"
     },
+    "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp": {
+      "status": 200,
+      "finalUrl": "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp",
+      "probed": "https://www.koreanfilm.or.kr/eng/schedule/subtitSchedule.jsp"
+    },
     "https://www.hanteochart.com/ko/family/guide": {
       "status": 200,
       "finalUrl": "https://www.hanteochart.com/ko/family/guide",
       "probed": "https://www.hanteochart.com/ko/family/guide"
+    },
+    "https://www.hanteochart.com/ko/family/search": {
+      "status": 200,
+      "finalUrl": "https://www.hanteochart.com/ko/family/search",
+      "probed": "https://www.hanteochart.com/ko/family/search"
     },
     "https://www.hanteochart.com/en/family/search": {
       "status": 200,
       "finalUrl": "https://www.hanteochart.com/en/family/search",
       "probed": "https://www.hanteochart.com/en/family/search"
     },
-    "https://www.hanteochart.com/ko/charts/album/real": {
-      "status": 200,
-      "finalUrl": "https://www.hanteochart.com/ko/charts/album/real",
-      "probed": "https://www.hanteochart.com/ko/charts/album/real"
-    },
     "https://www.hanteochart.com/en/about": {
       "status": 200,
       "finalUrl": "https://www.hanteochart.com/en/about",
       "probed": "https://www.hanteochart.com/en/about"
     },
-    "https://www.hanteochart.com/ko/family/search": {
+    "https://www.hanteochart.com/ko/charts/album/real": {
       "status": 200,
-      "finalUrl": "https://www.hanteochart.com/ko/family/search",
-      "probed": "https://www.hanteochart.com/ko/family/search"
+      "finalUrl": "https://www.hanteochart.com/ko/charts/album/real",
+      "probed": "https://www.hanteochart.com/ko/charts/album/real"
     },
     "https://www.hanteochart.com/en/charts/album/real": {
       "status": 200,
@@ -1718,20 +1728,25 @@
       "finalUrl": "https://circlechart.kr/page_chart/retail.circle",
       "probed": "https://circlechart.kr/page_chart/retail.circle"
     },
-    "https://circlechart.kr/page_chart/album.circle": {
-      "status": 200,
-      "finalUrl": "https://circlechart.kr/page_chart/album.circle",
-      "probed": "https://circlechart.kr/page_chart/album.circle"
-    },
     "https://circlechart.kr/page_community/faq.circle": {
       "status": 200,
       "finalUrl": "https://circlechart.kr/page_community/faq.circle",
       "probed": "https://circlechart.kr/page_community/faq.circle"
     },
+    "https://circlechart.kr/page_chart/album.circle": {
+      "status": 200,
+      "finalUrl": "https://circlechart.kr/page_chart/album.circle",
+      "probed": "https://circlechart.kr/page_chart/album.circle"
+    },
     "https://www.musickorea.asia/Mobile/Paper/view/code/store": {
       "status": 200,
       "finalUrl": "https://www.musickorea.asia/Mobile/Paper/view/code/store",
       "probed": "https://www.musickorea.asia/Mobile/Paper/view/code/store"
+    },
+    "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084": {
+      "status": 200,
+      "finalUrl": "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084",
+      "probed": "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084"
     },
     "https://m.ticket.yes24.com/Notice/18023": {
       "status": 200,
@@ -1748,45 +1763,40 @@
       "finalUrl": "https://m.ticket.yes24.com/Notice/15448",
       "probed": "https://m.ticket.yes24.com/Notice/15448"
     },
-    "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084": {
-      "status": 200,
-      "finalUrl": "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084",
-      "probed": "https://www.musickorea.asia/Mobile/Board/view/board_name/notice/idx/146084"
-    },
     "https://world.nol.com/en/content/articles/8f4ece42-1f9e-4e30-b47a-4970e1bbabc8": {
       "status": 200,
       "finalUrl": "https://world.nol.com/en/content/articles/8f4ece42-1f9e-4e30-b47a-4970e1bbabc8",
       "probed": "https://world.nol.com/en/content/articles/8f4ece42-1f9e-4e30-b47a-4970e1bbabc8"
-    },
-    "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp": {
-      "status": 200,
-      "finalUrl": "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp",
-      "probed": "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp"
     },
     "https://www.sisul.or.kr/open_content/skydome/introduce/facility.jsp": {
       "status": 200,
       "finalUrl": "https://www.sisul.or.kr/open_content/skydome/introduce/facility.jsp",
       "probed": "https://www.sisul.or.kr/open_content/skydome/introduce/facility.jsp"
     },
-    "https://www.ksponco.or.kr/menu.es?mid=a10405060200": {
-      "status": 404,
-      "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060200",
-      "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060200"
+    "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp": {
+      "status": 200,
+      "finalUrl": "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp",
+      "probed": "https://www.sisul.or.kr/open_content/skydome/introduce/location.jsp"
     },
     "https://www.ksponco.or.kr/menu.es?mid=a10405060100": {
       "status": 404,
       "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060100",
       "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060100"
     },
-    "https://www.ksponco.or.kr/menu.es?mid=a10405060400": {
+    "https://www.ksponco.or.kr/menu.es?mid=a10405060200": {
       "status": 404,
-      "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060400",
-      "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060400"
+      "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060200",
+      "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060200"
     },
     "https://www.ksponco.or.kr/menu.es?mid=a10405060300": {
       "status": 404,
       "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060300",
       "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060300"
+    },
+    "https://www.ksponco.or.kr/menu.es?mid=a10405060400": {
+      "status": 404,
+      "finalUrl": "https://www.ksponco.or.kr/menu.es?mid=a10405060400",
+      "probed": "https://www.ksponco.or.kr/menu.es?mid=a10405060400"
     },
     "https://www.ksponco.or.kr/menu.es?mid=a10405060500": {
       "status": 404,
@@ -1798,10 +1808,20 @@
       "finalUrl": "https://www.ksponco.or.kr/olympicpark/menu.es?mid=a20109000000",
       "probed": "https://www.ksponco.or.kr/olympicpark/menu.es?mid=a20109000000"
     },
+    "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029": {
+      "status": 0,
+      "error": "fetch failed",
+      "probed": "https://culture.seoul.go.kr/culture/festival/borough/view.do?festivalId=96&menuNo=200029"
+    },
     "https://stadium.seoul.go.kr/reserve/jamsil/inside-stadium": {
       "status": 200,
       "finalUrl": "https://stadium.seoul.go.kr/reserve/jamsil/inside-stadium",
       "probed": "https://stadium.seoul.go.kr/reserve/jamsil/inside-stadium"
+    },
+    "https://stadium.seoul.go.kr/about/location": {
+      "status": 200,
+      "finalUrl": "https://stadium.seoul.go.kr/about/location",
+      "probed": "https://stadium.seoul.go.kr/about/location"
     },
     "https://stadium.seoul.go.kr/reserve/jamsil/mainstadium": {
       "status": 200,
@@ -1812,11 +1832,6 @@
       "status": 200,
       "finalUrl": "https://www.inspireresorts.com/ko/entertainment/inspire-arena/inspire-arena",
       "probed": "https://www.inspireresorts.com/ko/entertainment/inspire-arena/inspire-arena"
-    },
-    "https://stadium.seoul.go.kr/about/location": {
-      "status": 200,
-      "finalUrl": "https://stadium.seoul.go.kr/about/location",
-      "probed": "https://stadium.seoul.go.kr/about/location"
     },
     "https://www.inspireresorts.com/ko/about-us/getting-here": {
       "status": 200,
@@ -1838,20 +1853,25 @@
       "finalUrl": "https://www.swcf.or.kr/?p=65",
       "probed": "https://www.swcf.or.kr/?p=65"
     },
+    "https://www.khan.co.kr/article/202406151202001": {
+      "status": 410,
+      "finalUrl": "https://www.khan.co.kr/article/202406151202001",
+      "probed": "https://www.khan.co.kr/article/202406151202001"
+    },
     "https://www.namisum.com/276": {
       "status": 200,
       "finalUrl": "https://www.namisum.com/276",
       "probed": "https://www.namisum.com/276"
     },
-    "https://www.khan.co.kr/article/202406151202001": {
-      "status": 200,
-      "finalUrl": "https://www.khan.co.kr/article/202406151202001",
-      "probed": "https://www.khan.co.kr/article/202406151202001"
-    },
     "https://namisum-en.imweb.me/163": {
       "status": 200,
       "finalUrl": "https://namisum-en.imweb.me/163",
       "probed": "https://namisum-en.imweb.me/163"
+    },
+    "https://www.namisum.com/277": {
+      "status": 200,
+      "finalUrl": "https://www.namisum.com/277",
+      "probed": "https://www.namisum.com/277"
     },
     "https://www.namisum.com/275": {
       "status": 200,
@@ -1863,60 +1883,55 @@
       "finalUrl": "https://www.namisum.com/34",
       "probed": "https://www.namisum.com/34"
     },
-    "https://www.namisum.com/277": {
-      "status": 200,
-      "finalUrl": "https://www.namisum.com/277",
-      "probed": "https://www.namisum.com/277"
-    },
     "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=351&vcontsId=111127": {
       "status": 200,
       "finalUrl": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=351&vcontsId=111127",
       "probed": "https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=351&vcontsId=111127"
-    },
-    "https://www.korail.com/ticket/reserve/train-timeTable": {
-      "status": 200,
-      "finalUrl": "https://www.korail.com/ticket/reserve/train-timeTable",
-      "probed": "https://www.korail.com/ticket/reserve/train-timeTable"
     },
     "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/intro.htm": {
       "status": 200,
       "finalUrl": "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/intro.htm",
       "probed": "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/intro.htm"
     },
+    "https://www.korail.com/ticket/reserve/train-timeTable": {
+      "status": 200,
+      "finalUrl": "https://www.korail.com/ticket/reserve/train-timeTable",
+      "probed": "https://www.korail.com/ticket/reserve/train-timeTable"
+    },
     "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/sunrise.htm?year=2026&month=09": {
       "status": 200,
       "finalUrl": "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/sunrise.htm?year=2026&month=09",
       "probed": "https://www.jeju.go.kr/jejuwnh/heritage/seongsan/sunrise.htm?year=2026&month=09"
-    },
-    "https://api.visitkorea.or.kr/#/detail?cotId=2930901": {
-      "status": 200,
-      "finalUrl": "https://api.visitkorea.or.kr/",
-      "probed": "https://api.visitkorea.or.kr/#/detail?cotId=2930901"
     },
     "https://parks.seoul.go.kr/parks/detailView.do?pIdx=5": {
       "status": 404,
       "finalUrl": "https://parks.seoul.go.kr/parks/detailView.do?pIdx=5",
       "probed": "https://parks.seoul.go.kr/parks/detailView.do?pIdx=5"
     },
+    "https://api.visitkorea.or.kr/#/detail?cotId=2930901": {
+      "status": 200,
+      "finalUrl": "https://api.visitkorea.or.kr/",
+      "probed": "https://api.visitkorea.or.kr/#/detail?cotId=2930901"
+    },
+    "https://mediahub.seoul.go.kr/archives/2004343": {
+      "status": 200,
+      "finalUrl": "https://mediahub.seoul.go.kr/archives/2004343",
+      "probed": "https://mediahub.seoul.go.kr/archives/2004343"
+    },
     "https://www.munhwa.com/article/11601414": {
       "status": 200,
       "finalUrl": "https://www.munhwa.com/article/11601414",
       "probed": "https://www.munhwa.com/article/11601414"
     },
-    "https://mediahub.seoul.go.kr/archives/2004343": {
-      "status": 0,
-      "error": "fetch failed",
-      "probed": "https://mediahub.seoul.go.kr/archives/2004343"
+    "https://m.map.kakao.com/scheme/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT": {
+      "status": 200,
+      "finalUrl": "https://applink.map.kakao.com/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT",
+      "probed": "https://m.map.kakao.com/scheme/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT"
     },
     "https://m.map.kakao.com/scheme/route?sn=%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD+%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.543645796605,127.044746216358&ep=37.5443222301513,127.037617759165&by=FOOT": {
       "status": 200,
       "finalUrl": "https://applink.map.kakao.com/route?sn=%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD+%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.543645796605,127.044746216358&ep=37.5443222301513,127.037617759165&by=FOOT",
       "probed": "https://m.map.kakao.com/scheme/route?sn=%EC%84%9C%EC%9A%B8%EC%88%B2%EC%97%AD+%EC%88%98%EC%9D%B8%EB%B6%84%EB%8B%B9%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.543645796605,127.044746216358&ep=37.5443222301513,127.037617759165&by=FOOT"
-    },
-    "https://m.map.kakao.com/scheme/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT": {
-      "status": 200,
-      "finalUrl": "https://applink.map.kakao.com/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT",
-      "probed": "https://m.map.kakao.com/scheme/route?sn=%EC%84%B1%EC%88%98%EC%97%AD+2%ED%98%B8%EC%84%A0&en=%EC%84%9C%EC%9A%B8%EC%88%B2&sp=37.5445888153751,127.056066999327&ep=37.5443222301513,127.037617759165&by=FOOT"
     },
     "https://www.starnewskorea.com/star/2026/07/03/2026070221092626225": {
       "status": 200,
