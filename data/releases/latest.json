@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-09T23:44:01.732Z",
+  "collectedAt": "2026-10-13T23:32:33.807Z",
   "charts": {
     "korea": [
       {
@@ -182,13 +182,13 @@
         "videos": 10,
         "relevant": 1,
         "rejected": 9,
-        "topViews": 96254,
+        "topViews": 153002,
         "samples": [
           {
             "title": "Ninety Days with Lucas: A Romantic Marriage of Convenience",
             "channel": "Pearls ",
             "publishedAt": "2026-10-01T04:11:42Z",
-            "views": 96254
+            "views": 153002
           }
         ],
         "strength": null
@@ -218,30 +218,30 @@
         "method": "search",
         "query": "Four Hands, Two Sonatas",
         "videos": 10,
-        "relevant": 7,
-        "rejected": 3,
-        "topViews": 1891019,
+        "relevant": 8,
+        "rejected": 2,
+        "topViews": 1903743,
         "samples": [
           {
             "title": "Bro's Aura In This Scene 💀🔥| Four Hands Two Sonatas edit | #shorts #kdrama #edit",
             "channel": "REWIND w",
             "publishedAt": "2026-09-23T03:46:15Z",
-            "views": 1891019
+            "views": 1903743
           },
           {
             "title": "Their Heartache ❤️‍🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
             "channel": "ThrillVille",
             "publishedAt": "2026-09-30T12:21:38Z",
-            "views": 670797
+            "views": 691081
           },
           {
-            "title": "That Hug Is Everything 💗Four Hands, Two Sonatas🎵#Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
+            "title": "Spark In His Eyes 💗 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
             "channel": "ThrillVille",
-            "publishedAt": "2026-09-21T17:51:20Z",
-            "views": 591530
+            "publishedAt": "2026-09-28T03:00:39Z",
+            "views": 501248
           }
         ],
-        "strength": 0.4
+        "strength": 0.401
       },
       "independentSources": 2
     },
@@ -268,17 +268,10 @@
         "method": "search",
         "query": "The Scandal",
         "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 1056405,
-        "samples": [
-          {
-            "title": "The Crash That Killed An Airline | The Scandal Behind Adam Air Flight 574",
-            "channel": "Mentour Pilot",
-            "publishedAt": "2026-09-19T15:00:28Z",
-            "views": 1056405
-          }
-        ],
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
         "strength": null
       },
       "independentSources": 1
@@ -296,7 +289,7 @@
       "noveltyScore": 0.2,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.313,
+      "score": 0.36,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -306,30 +299,30 @@
         "method": "search",
         "query": "Your Personal Taxi",
         "videos": 10,
-        "relevant": 4,
-        "rejected": 6,
-        "topViews": 321211,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 956271,
         "samples": [
           {
             "title": "She Found the Most Unexpected Cure for Sleepless Nights 💚 | Your Personal Taxi",
             "channel": "Lewi Editz",
             "publishedAt": "2026-10-08T16:30:17Z",
-            "views": 321211
+            "views": 956271
           },
           {
             "title": "She Finally Realized She Deserved Better 💔✨ | Your Personal Taxi",
             "channel": "Lewi Editz",
             "publishedAt": "2026-10-05T16:30:07Z",
-            "views": 149145
+            "views": 163596
           },
           {
             "title": "Teddy's Heart is Broken💔 | Your Personal Taxi  #kdrama",
             "channel": "K-Feels",
             "publishedAt": "2026-10-03T01:05:28Z",
-            "views": 61126
+            "views": 63129
           }
         ],
-        "strength": 0.015
+        "strength": 0.252
       },
       "independentSources": 2
     },
@@ -449,10 +442,17 @@
         "method": "search",
         "query": "Teach You a Lesson",
         "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 807430,
+        "samples": [
+          {
+            "title": "vincenzo x teach you a lesson.. #kdrama #vincenzo #teachyoualesson",
+            "channel": "Vincenzo and Dot's edit",
+            "publishedAt": "2026-10-09T11:57:01Z",
+            "views": 807430
+          }
+        ],
         "strength": null
       },
       "independentSources": 1
@@ -483,7 +483,7 @@
   ],
   "errors": [],
   "sourceMode": "tsv",
-  "youtubeVideosScanned": 130,
+  "youtubeVideosScanned": 129,
   "aliasesUsed": 1,
   "aliasesUnverified": 3,
   "youtubeQuotaUnits": 811

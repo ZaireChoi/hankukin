@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-09T23:44:26.196Z",
-  "radarCollectedAt": "2026-10-09T23:44:01.732Z",
+  "generatedAt": "2026-10-13T23:32:57.427Z",
+  "radarCollectedAt": "2026-10-13T23:32:33.807Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -41,7 +41,7 @@
       "slug": "your-personal-taxi",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.313,
+      "radarScore": 0.36,
       "independentSources": 2,
       "locationPotential": 0.6
     },
