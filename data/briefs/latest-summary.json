@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-13T23:32:57.427Z",
-  "radarCollectedAt": "2026-10-13T23:32:33.807Z",
+  "generatedAt": "2026-10-16T22:21:33.212Z",
+  "radarCollectedAt": "2026-10-16T22:21:09.571Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -19,11 +19,11 @@
       "locationPotential": 0.6
     },
     {
-      "title": "Four Hands, Two Sonatas",
-      "slug": "four-hands-two-sonatas",
+      "title": "Your Personal Taxi",
+      "slug": "your-personal-taxi",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.377,
+      "radarScore": 0.371,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -37,11 +37,11 @@
       "locationPotential": 0.6
     },
     {
-      "title": "Your Personal Taxi",
-      "slug": "your-personal-taxi",
+      "title": "Four Hands, Two Sonatas",
+      "slug": "four-hands-two-sonatas",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.36,
+      "radarScore": 0.334,
       "independentSources": 2,
       "locationPotential": 0.6
     },

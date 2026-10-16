@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-13T23:32:33.807Z",
+  "collectedAt": "2026-10-16T22:21:09.571Z",
   "charts": {
     "korea": [
       {
@@ -182,13 +182,13 @@
         "videos": 10,
         "relevant": 1,
         "rejected": 9,
-        "topViews": 153002,
+        "topViews": 209281,
         "samples": [
           {
             "title": "Ninety Days with Lucas: A Romantic Marriage of Convenience",
             "channel": "Pearls ",
             "publishedAt": "2026-10-01T04:11:42Z",
-            "views": 153002
+            "views": 209281
           }
         ],
         "strength": null
@@ -196,19 +196,19 @@
       "independentSources": 1
     },
     {
-      "title": "Four Hands, Two Sonatas",
-      "season": "Four Hands, Two Sonatas: Limited Series",
+      "title": "Your Personal Taxi",
+      "season": "Your Personal Taxi: Season 1",
       "charts": [
         "korea"
       ],
       "alsoGlobal": false,
-      "rank": 4,
-      "weeksInTop10": 6,
-      "novelty": "saturated",
-      "noveltyScore": 0.175,
+      "rank": 6,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.377,
+      "score": 0.371,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -216,32 +216,32 @@
         "via": null,
         "triedAliases": 0,
         "method": "search",
-        "query": "Four Hands, Two Sonatas",
+        "query": "Your Personal Taxi",
         "videos": 10,
-        "relevant": 8,
-        "rejected": 2,
-        "topViews": 1903743,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1221102,
         "samples": [
           {
-            "title": "Bro's Aura In This Scene 💀🔥| Four Hands Two Sonatas edit | #shorts #kdrama #edit",
-            "channel": "REWIND w",
-            "publishedAt": "2026-09-23T03:46:15Z",
-            "views": 1903743
+            "title": "She Found the Most Unexpected Cure for Sleepless Nights 💚 | Your Personal Taxi",
+            "channel": "Lewi Editz",
+            "publishedAt": "2026-10-08T16:30:17Z",
+            "views": 1221102
           },
           {
-            "title": "Their Heartache ❤️‍🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-09-30T12:21:38Z",
-            "views": 691081
+            "title": "She Finally Realized She Deserved Better 💔✨ | Your Personal Taxi",
+            "channel": "Lewi Editz",
+            "publishedAt": "2026-10-05T16:30:07Z",
+            "views": 171415
           },
           {
-            "title": "Spark In His Eyes 💗 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-09-28T03:00:39Z",
-            "views": 501248
+            "title": "Teddy's Heart is Broken💔 | Your Personal Taxi  #kdrama",
+            "channel": "K-Feels",
+            "publishedAt": "2026-10-03T01:05:28Z",
+            "views": 63891
           }
         ],
-        "strength": 0.401
+        "strength": 0.305
       },
       "independentSources": 2
     },
@@ -268,28 +268,35 @@
         "method": "search",
         "query": "The Scandal",
         "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 243555,
+        "samples": [
+          {
+            "title": "LIC, Mundhra & Feroze Gandhi: The Scandal That Led to a Minister's Resignation #History #India #News",
+            "channel": "Alok Ratupaa",
+            "publishedAt": "2026-10-02T06:46:02Z",
+            "views": 243555
+          }
+        ],
         "strength": null
       },
       "independentSources": 1
     },
     {
-      "title": "Your Personal Taxi",
-      "season": "Your Personal Taxi: Season 1",
+      "title": "Four Hands, Two Sonatas",
+      "season": "Four Hands, Two Sonatas: Limited Series",
       "charts": [
         "korea"
       ],
       "alsoGlobal": false,
-      "rank": 6,
-      "weeksInTop10": 1,
-      "novelty": "holding",
-      "noveltyScore": 0.2,
+      "rank": 4,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.175,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.36,
+      "score": 0.334,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -297,32 +304,32 @@
         "via": null,
         "triedAliases": 0,
         "method": "search",
-        "query": "Your Personal Taxi",
+        "query": "Four Hands, Two Sonatas",
         "videos": 10,
-        "relevant": 3,
-        "rejected": 7,
-        "topViews": 956271,
+        "relevant": 8,
+        "rejected": 2,
+        "topViews": 698246,
         "samples": [
           {
-            "title": "She Found the Most Unexpected Cure for Sleepless Nights 💚 | Your Personal Taxi",
-            "channel": "Lewi Editz",
-            "publishedAt": "2026-10-08T16:30:17Z",
-            "views": 956271
+            "title": "Their Heartache ❤️‍🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-09-30T12:21:38Z",
+            "views": 698246
           },
           {
-            "title": "She Finally Realized She Deserved Better 💔✨ | Your Personal Taxi",
-            "channel": "Lewi Editz",
-            "publishedAt": "2026-10-05T16:30:07Z",
-            "views": 163596
+            "title": "Spark In His Eyes 💗 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-09-28T03:00:39Z",
+            "views": 504574
           },
           {
-            "title": "Teddy's Heart is Broken💔 | Your Personal Taxi  #kdrama",
-            "channel": "K-Feels",
-            "publishedAt": "2026-10-03T01:05:28Z",
-            "views": 63129
+            "title": "Rocking The Stage 🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-03T17:09:36Z",
+            "views": 450892
           }
         ],
-        "strength": 0.252
+        "strength": 0.183
       },
       "independentSources": 2
     },
@@ -442,17 +449,10 @@
         "method": "search",
         "query": "Teach You a Lesson",
         "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 807430,
-        "samples": [
-          {
-            "title": "vincenzo x teach you a lesson.. #kdrama #vincenzo #teachyoualesson",
-            "channel": "Vincenzo and Dot's edit",
-            "publishedAt": "2026-10-09T11:57:01Z",
-            "views": 807430
-          }
-        ],
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
         "strength": null
       },
       "independentSources": 1
@@ -483,7 +483,7 @@
   ],
   "errors": [],
   "sourceMode": "tsv",
-  "youtubeVideosScanned": 129,
+  "youtubeVideosScanned": 130,
   "aliasesUsed": 1,
   "aliasesUnverified": 3,
   "youtubeQuotaUnits": 811
