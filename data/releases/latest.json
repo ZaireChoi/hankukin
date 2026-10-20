@@ -1,162 +1,472 @@
 {
-  "collectedAt": "2026-10-16T22:21:09.571Z",
+  "collectedAt": "2026-10-20T22:50:39.302Z",
   "charts": {
     "korea": [
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 1,
-        "title": "Kian’s Bizarre B&B",
-        "season": "Kian’s Bizarre B&B: Season 2",
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
         "weeksInTop10": 2
       },
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 2,
-        "title": "Marriage of Convenience",
-        "season": "Marriage of Convenience: Season 1",
-        "weeksInTop10": 1
+        "title": "100 Days of Deception",
+        "season": "100 Days of Deception: Limited Series",
+        "weeksInTop10": 2
       },
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 3,
-        "title": "The Scandal",
-        "season": "The Scandal: Limited Series",
+        "title": "I am Solo",
+        "season": "I am Solo: Part 34",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 4,
+        "title": "Take Charge of My Heart",
+        "season": "Take Charge of My Heart: Limited Series",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 5,
+        "title": "The Ballad of Us",
+        "season": "The Ballad of Us: Season 2",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 6,
+        "title": "Marriage of Convenience",
+        "season": "Marriage of Convenience: Season 1",
         "weeksInTop10": 3
       },
       {
-        "week": "2026-10-04",
-        "rank": 4,
-        "title": "Four Hands, Two Sonatas",
-        "season": "Four Hands, Two Sonatas: Limited Series",
-        "weeksInTop10": 6
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 5,
-        "title": "I am Solo",
-        "season": "I am Solo: Part 33",
-        "weeksInTop10": 9
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 6,
-        "title": "Your Personal Taxi",
-        "season": "Your Personal Taxi: Season 1",
+        "week": "2026-10-18",
+        "rank": 7,
+        "title": "The Wonder Coach",
+        "season": "The Wonder Coach: Season 2",
         "weeksInTop10": 1
       },
       {
-        "week": "2026-10-04",
-        "rank": 7,
-        "title": "Kian’s Bizarre B&B",
-        "season": "Kian’s Bizarre B&B: Season 1",
-        "weeksInTop10": 7
-      },
-      {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 8,
-        "title": "Mousetrap",
-        "season": "Mousetrap: Limited Series",
-        "weeksInTop10": 6
+        "title": "Below",
+        "season": "Below: Limited Series",
+        "weeksInTop10": 1
       },
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 9,
-        "title": "I'm SOLO, Love goes on",
-        "season": "I'm SOLO, Love goes on: 2026 Part 2",
-        "weeksInTop10": 8
+        "title": "Kian’s Bizarre B&B",
+        "season": "Kian’s Bizarre B&B: Season 2",
+        "weeksInTop10": 4
       },
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 10,
-        "title": "Teach You a Lesson",
-        "season": "Teach You a Lesson: Limited Series",
-        "weeksInTop10": 12
+        "title": "The Apothecary Diaries",
+        "season": "The Apothecary Diaries: Season 3",
+        "weeksInTop10": 2
       }
     ],
     "global": [
       {
-        "week": "2026-10-04",
+        "week": "2026-10-18",
         "rank": 1,
+        "title": "Below",
+        "season": "Below: Limited Series",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 1,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 2,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 2,
         "title": "East of Eden",
         "season": "East of Eden: Limited Series",
+        "weeksInTop10": 3,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 2,
+        "title": "Take Charge of My Heart",
+        "season": "Take Charge of My Heart: Limited Series",
+        "weeksInTop10": 2,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 3,
+        "title": "Instadocs: AI Gone Wild",
+        "season": "N/A",
         "weeksInTop10": 1,
         "category": "TV (English)"
       },
       {
-        "week": "2026-10-04",
-        "rank": 1,
+        "week": "2026-10-18",
+        "rank": 3,
+        "title": "The Trap",
+        "season": "The Trap: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 4,
+        "title": "TYSON",
+        "season": "TYSON: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 4,
+        "title": "100 Days of Deception",
+        "season": "100 Days of Deception: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 5,
+        "title": "The Diplomat",
+        "season": "The Diplomat: Season 4",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-10-18",
+        "rank": 5,
         "title": "Not a Stranger",
         "season": "Not a Stranger: Season 1",
-        "weeksInTop10": 3,
-        "category": "TV (Non-English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 2,
-        "title": "Monster: The Lizzie Borden Story",
-        "season": "Monster: The Lizzie Borden Story: Season 1",
-        "weeksInTop10": 3,
-        "category": "TV (English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 2,
-        "title": "Shaque: Trust No One",
-        "season": "Shaque: Trust No One: Season 1",
-        "weeksInTop10": 2,
-        "category": "TV (Non-English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 3,
-        "title": "A Different World",
-        "season": "A Different World: Season 1",
-        "weeksInTop10": 2,
-        "category": "TV (English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 3,
-        "title": "The Final Problem",
-        "season": "The Final Problem: Limited Series",
-        "weeksInTop10": 2,
-        "category": "TV (Non-English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 4,
-        "title": "Wonka's The Golden Ticket",
-        "season": "Wonka's The Golden Ticket: Season 1",
-        "weeksInTop10": 2,
-        "category": "TV (English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 4,
-        "title": "Minerva Academy",
-        "season": "Minerva Academy: Season 1",
-        "weeksInTop10": 2,
-        "category": "TV (Non-English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 5,
-        "title": "LEGO ONE PIECE",
-        "season": "LEGO ONE PIECE: Season 1",
-        "weeksInTop10": 1,
-        "category": "TV (English)"
-      },
-      {
-        "week": "2026-10-04",
-        "rank": 5,
-        "title": "Plastic Beauty",
-        "season": "Plastic Beauty: Season 1",
-        "weeksInTop10": 3,
+        "weeksInTop10": 5,
         "category": "TV (Non-English)"
       }
     ]
   },
   "candidates": [
+    {
+      "title": "Doctor X: Mafia in White",
+      "season": "Doctor X: Mafia in White: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 1,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 1,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.934,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Doctor X: Mafia in White",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1650708,
+        "samples": [
+          {
+            "title": "She Was Aura Farming Throughout 🔥 Doctor X: Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-10T04:45:09Z",
+            "views": 1650708
+          },
+          {
+            "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-16T17:27:39Z",
+            "views": 1366435
+          },
+          {
+            "title": "Doctor Gye Su Jeong Core 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-12T13:14:02Z",
+            "views": 1304443
+          }
+        ],
+        "strength": 0.37
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 2,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.96,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.929,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 5,
+        "rejected": 5,
+        "topViews": 2351941,
+        "samples": [
+          {
+            "title": "100 Days of Deception #kdrama #koreandrama #kimyoojung",
+            "channel": "Annu",
+            "publishedAt": "2026-10-16T06:45:39Z",
+            "views": 2351941
+          },
+          {
+            "title": "100 days of deception #kimyoojung #jinyoung  #100daysofdeception #kdrama",
+            "channel": "saiyatok",
+            "publishedAt": "2026-10-12T14:00:00Z",
+            "views": 1497545
+          },
+          {
+            "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-18T17:26:20Z",
+            "views": 1317106
+          }
+        ],
+        "strength": 0.447
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Take Charge of My Heart",
+      "season": "Take Charge of My Heart: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 4,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.88,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.84,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Take Charge of My Heart",
+        "videos": 10,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 749273,
+        "samples": [
+          {
+            "title": "Drama | Take Charge of My Heart© Netfli#TakeChargeOfMyHeart #나를충전해줘 #KimYoungKwang #ChaeSooBin",
+            "channel": "☆𝘚𝘦𝘰𝘶𝘭𝘉𝘭𝘪𝘴𝘴☆",
+            "publishedAt": "2026-10-12T10:41:47Z",
+            "views": 749273
+          },
+          {
+            "title": "قفاز مطاطي بشري 😭 . | حبك يشحن قلبي Take Charge of My Heart",
+            "channel": "هـاري♡",
+            "publishedAt": "2026-10-09T14:01:37Z",
+            "views": 625414
+          }
+        ],
+        "strength": 0.199
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Below",
+      "season": "Below: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 8,
+      "weeksInTop10": 1,
+      "novelty": "new_entry",
+      "noveltyScore": 0.72,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.72,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Below",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Ballad of Us",
+      "season": "The Ballad of Us: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 5,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.84,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.63,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Ballad of Us",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Wonder Coach",
+      "season": "The Wonder Coach: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 7,
+      "weeksInTop10": 1,
+      "novelty": "new_entry",
+      "noveltyScore": 0.76,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.59,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Wonder Coach",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Apothecary Diaries",
+      "season": "The Apothecary Diaries: Season 3",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 10,
+      "weeksInTop10": 2,
+      "novelty": "new_entry",
+      "noveltyScore": 0.64,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.53,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Apothecary Diaries",
+        "videos": 10,
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 1080484,
+        "samples": [
+          {
+            "title": "The apothecary diaries live action #anime #shorts #theapothecarydairies #viral #story",
+            "channel": "The Mayuverse",
+            "publishedAt": "2026-09-30T10:37:08Z",
+            "views": 1080484
+          }
+        ],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I am Solo",
+      "season": "I am Solo: Part 34",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 3,
+      "weeksInTop10": 2,
+      "novelty": "climbing",
+      "noveltyScore": 0.76,
+      "locationPotential": 0.2,
+      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
+      "score": 0.45,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "I am Solo",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
     {
       "title": "Marriage of Convenience",
       "season": "Marriage of Convenience: Season 1",
@@ -164,313 +474,36 @@
         "korea"
       ],
       "alsoGlobal": false,
-      "rank": 2,
-      "weeksInTop10": 1,
-      "novelty": "holding",
-      "noveltyScore": 0.36,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.39,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Marriage of Convenience",
-        "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 209281,
-        "samples": [
-          {
-            "title": "Ninety Days with Lucas: A Romantic Marriage of Convenience",
-            "channel": "Pearls ",
-            "publishedAt": "2026-10-01T04:11:42Z",
-            "views": 209281
-          }
-        ],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Your Personal Taxi",
-      "season": "Your Personal Taxi: Season 1",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
       "rank": 6,
-      "weeksInTop10": 1,
+      "weeksInTop10": 3,
       "novelty": "holding",
       "noveltyScore": 0.2,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.371,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Your Personal Taxi",
-        "videos": 10,
-        "relevant": 3,
-        "rejected": 7,
-        "topViews": 1221102,
-        "samples": [
-          {
-            "title": "She Found the Most Unexpected Cure for Sleepless Nights 💚 | Your Personal Taxi",
-            "channel": "Lewi Editz",
-            "publishedAt": "2026-10-08T16:30:17Z",
-            "views": 1221102
-          },
-          {
-            "title": "She Finally Realized She Deserved Better 💔✨ | Your Personal Taxi",
-            "channel": "Lewi Editz",
-            "publishedAt": "2026-10-05T16:30:07Z",
-            "views": 171415
-          },
-          {
-            "title": "Teddy's Heart is Broken💔 | Your Personal Taxi  #kdrama",
-            "channel": "K-Feels",
-            "publishedAt": "2026-10-03T01:05:28Z",
-            "views": 63891
-          }
-        ],
-        "strength": 0.305
-      },
-      "independentSources": 2
-    },
-    {
-      "title": "The Scandal",
-      "season": "The Scandal: Limited Series",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 3,
-      "weeksInTop10": 3,
-      "novelty": "holding",
-      "noveltyScore": 0.32,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.37,
+      "score": 0.31,
       "youtube": {
         "matched": false,
-        "reason": "below_buzz_threshold",
+        "reason": "no_match",
         "hits": [],
         "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "The Scandal",
-        "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 243555,
-        "samples": [
-          {
-            "title": "LIC, Mundhra & Feroze Gandhi: The Scandal That Led to a Minister's Resignation #History #India #News",
-            "channel": "Alok Ratupaa",
-            "publishedAt": "2026-10-02T06:46:02Z",
-            "views": 243555
-          }
-        ],
-        "strength": null
+        "triedAliases": 0
       },
       "independentSources": 1
-    },
-    {
-      "title": "Four Hands, Two Sonatas",
-      "season": "Four Hands, Two Sonatas: Limited Series",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 4,
-      "weeksInTop10": 6,
-      "novelty": "saturated",
-      "noveltyScore": 0.175,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.334,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Four Hands, Two Sonatas",
-        "videos": 10,
-        "relevant": 8,
-        "rejected": 2,
-        "topViews": 698246,
-        "samples": [
-          {
-            "title": "Their Heartache ❤️‍🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-09-30T12:21:38Z",
-            "views": 698246
-          },
-          {
-            "title": "Spark In His Eyes 💗 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-09-28T03:00:39Z",
-            "views": 504574
-          },
-          {
-            "title": "Rocking The Stage 🔥 Four Hands, Two Sonatas 🎵 #Kdrama #SongKang #LeeJunYoung #JangGyuRi #FourHands",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-03T17:09:36Z",
-            "views": 450892
-          }
-        ],
-        "strength": 0.183
-      },
-      "independentSources": 2
     },
     {
       "title": "Kian’s Bizarre B&B",
-      "season": "Kian’s Bizarre B&B: Season 1",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 7,
-      "weeksInTop10": 7,
-      "novelty": "saturated",
-      "noveltyScore": 0.1,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.26,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Kian’s Bizarre B&B",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Mousetrap",
-      "season": "Mousetrap: Limited Series",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 8,
-      "weeksInTop10": 6,
-      "novelty": "saturated",
-      "noveltyScore": 0.075,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.247,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Mousetrap",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "I'm SOLO, Love goes on",
-      "season": "I'm SOLO, Love goes on: 2026 Part 2",
+      "season": "Kian’s Bizarre B&B: Season 2",
       "charts": [
         "korea"
       ],
       "alsoGlobal": false,
       "rank": 9,
-      "weeksInTop10": 8,
-      "novelty": "saturated",
-      "noveltyScore": 0.05,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.08,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.235,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "I'm SOLO, Love goes on",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "Teach You a Lesson",
-      "season": "Teach You a Lesson: Limited Series",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 10,
-      "weeksInTop10": 12,
-      "novelty": "saturated",
-      "noveltyScore": 0.025,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.223,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Teach You a Lesson",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "I am Solo",
-      "season": "I am Solo: Part 33",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 5,
-      "weeksInTop10": 9,
-      "novelty": "saturated",
-      "noveltyScore": 0.15,
-      "locationPotential": 0.2,
-      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
-      "score": 0.145,
+      "score": 0.25,
       "youtube": {
         "matched": false,
         "reason": "no_match",

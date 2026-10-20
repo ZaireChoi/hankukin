@@ -1,65 +1,65 @@
 {
-  "generatedAt": "2026-10-16T22:21:33.212Z",
-  "radarCollectedAt": "2026-10-16T22:21:09.571Z",
+  "generatedAt": "2026-10-20T22:51:02.163Z",
+  "radarCollectedAt": "2026-10-20T22:50:39.302Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 2,
-    "needsSignal": 4,
+    "needsLocation": 3,
+    "needsSignal": 3,
     "skip": 0
   },
   "briefs": [
     {
-      "title": "Marriage of Convenience",
-      "slug": "marriage-of-convenience",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.39,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Your Personal Taxi",
-      "slug": "your-personal-taxi",
+      "title": "Doctor X: Mafia in White",
+      "slug": "doctor-x-mafia-in-white",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.371,
+      "radarScore": 0.934,
       "independentSources": 2,
       "locationPotential": 0.6
     },
     {
-      "title": "The Scandal",
-      "slug": "the-scandal",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.37,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Four Hands, Two Sonatas",
-      "slug": "four-hands-two-sonatas",
+      "title": "100 Days of Deception",
+      "slug": "100-days-of-deception",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.334,
+      "radarScore": 0.929,
       "independentSources": 2,
       "locationPotential": 0.6
     },
     {
-      "title": "Kian’s Bizarre B&B",
-      "slug": "kians-bizarre-b-b",
+      "title": "Take Charge of My Heart",
+      "slug": "take-charge-of-my-heart",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.84,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Below",
+      "slug": "below",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.26,
+      "radarScore": 0.72,
       "independentSources": 1,
       "locationPotential": 0.6
     },
     {
-      "title": "Mousetrap",
-      "slug": "mousetrap",
+      "title": "The Ballad of Us",
+      "slug": "the-ballad-of-us",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.247,
+      "radarScore": 0.63,
+      "independentSources": 1,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "The Wonder Coach",
+      "slug": "the-wonder-coach",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.59,
       "independentSources": 1,
       "locationPotential": 0.6
     }
