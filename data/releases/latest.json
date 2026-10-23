@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-20T22:50:39.302Z",
+  "collectedAt": "2026-10-23T22:46:11.242Z",
   "charts": {
     "korea": [
       {
@@ -158,57 +158,6 @@
   },
   "candidates": [
     {
-      "title": "Doctor X: Mafia in White",
-      "season": "Doctor X: Mafia in White: Limited Series",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "alsoGlobal": true,
-      "rank": 1,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 1,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.934,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Doctor X: Mafia in White",
-        "videos": 10,
-        "relevant": 3,
-        "rejected": 7,
-        "topViews": 1650708,
-        "samples": [
-          {
-            "title": "She Was Aura Farming Throughout 🔥 Doctor X: Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-10T04:45:09Z",
-            "views": 1650708
-          },
-          {
-            "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-16T17:27:39Z",
-            "views": 1366435
-          },
-          {
-            "title": "Doctor Gye Su Jeong Core 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-12T13:14:02Z",
-            "views": 1304443
-          }
-        ],
-        "strength": 0.37
-      },
-      "independentSources": 2
-    },
-    {
       "title": "100 Days of Deception",
       "season": "100 Days of Deception: Limited Series",
       "charts": [
@@ -218,11 +167,11 @@
       "alsoGlobal": true,
       "rank": 2,
       "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.96,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.929,
+      "score": 0.643,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -234,28 +183,79 @@
         "videos": 10,
         "relevant": 5,
         "rejected": 5,
-        "topViews": 2351941,
+        "topViews": 3241987,
         "samples": [
           {
             "title": "100 Days of Deception #kdrama #koreandrama #kimyoojung",
             "channel": "Annu",
             "publishedAt": "2026-10-16T06:45:39Z",
-            "views": 2351941
-          },
-          {
-            "title": "100 days of deception #kimyoojung #jinyoung  #100daysofdeception #kdrama",
-            "channel": "saiyatok",
-            "publishedAt": "2026-10-12T14:00:00Z",
-            "views": 1497545
+            "views": 3241987
           },
           {
             "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-18T17:26:20Z",
-            "views": 1317106
+            "views": 1628157
+          },
+          {
+            "title": "100 days of deception #kimyoojung #jinyoung  #100daysofdeception #kdrama",
+            "channel": "saiyatok",
+            "publishedAt": "2026-10-12T14:00:00Z",
+            "views": 1500206
           }
         ],
-        "strength": 0.447
+        "strength": 0.517
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Doctor X: Mafia in White",
+      "season": "Doctor X: Mafia in White: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 1,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.4,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.636,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Doctor X: Mafia in White",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1708055,
+        "samples": [
+          {
+            "title": "She Was Aura Farming Throughout 🔥 Doctor X: Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-10T04:45:09Z",
+            "views": 1708055
+          },
+          {
+            "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-16T17:27:39Z",
+            "views": 1535588
+          },
+          {
+            "title": "Doctor Gye Su Jeong Core 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-12T13:14:02Z",
+            "views": 1399282
+          }
+        ],
+        "strength": 0.378
       },
       "independentSources": 2
     },
@@ -269,40 +269,34 @@
       "alsoGlobal": true,
       "rank": 4,
       "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.88,
+      "novelty": "holding",
+      "noveltyScore": 0.28,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.84,
+      "score": 0.5,
       "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
+        "matched": false,
+        "reason": "below_buzz_threshold",
         "hits": [],
         "via": null,
         "triedAliases": 0,
         "method": "search",
         "query": "Take Charge of My Heart",
         "videos": 10,
-        "relevant": 2,
-        "rejected": 8,
-        "topViews": 749273,
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 627379,
         "samples": [
-          {
-            "title": "Drama | Take Charge of My Heart© Netfli#TakeChargeOfMyHeart #나를충전해줘 #KimYoungKwang #ChaeSooBin",
-            "channel": "☆𝘚𝘦𝘰𝘶𝘭𝘉𝘭𝘪𝘴𝘴☆",
-            "publishedAt": "2026-10-12T10:41:47Z",
-            "views": 749273
-          },
           {
             "title": "قفاز مطاطي بشري 😭 . | حبك يشحن قلبي Take Charge of My Heart",
             "channel": "هـاري♡",
             "publishedAt": "2026-10-09T14:01:37Z",
-            "views": 625414
+            "views": 627379
           }
         ],
-        "strength": 0.199
+        "strength": null
       },
-      "independentSources": 2
+      "independentSources": 1
     },
     {
       "title": "Below",
@@ -314,11 +308,11 @@
       "alsoGlobal": true,
       "rank": 8,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.72,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.72,
+      "score": 0.42,
       "youtube": {
         "matched": false,
         "reason": "below_buzz_threshold",
@@ -345,11 +339,11 @@
       "alsoGlobal": false,
       "rank": 5,
       "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.84,
+      "novelty": "holding",
+      "noveltyScore": 0.24,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.63,
+      "score": 0.33,
       "youtube": {
         "matched": false,
         "reason": "below_buzz_threshold",
@@ -358,106 +352,6 @@
         "triedAliases": 0,
         "method": "search",
         "query": "The Ballad of Us",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "The Wonder Coach",
-      "season": "The Wonder Coach: Season 2",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 7,
-      "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.76,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.59,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "The Wonder Coach",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "The Apothecary Diaries",
-      "season": "The Apothecary Diaries: Season 3",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 10,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.64,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.53,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "The Apothecary Diaries",
-        "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 1080484,
-        "samples": [
-          {
-            "title": "The apothecary diaries live action #anime #shorts #theapothecarydairies #viral #story",
-            "channel": "The Mayuverse",
-            "publishedAt": "2026-09-30T10:37:08Z",
-            "views": 1080484
-          }
-        ],
-        "strength": null
-      },
-      "independentSources": 1
-    },
-    {
-      "title": "I am Solo",
-      "season": "I am Solo: Part 34",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 3,
-      "weeksInTop10": 2,
-      "novelty": "climbing",
-      "noveltyScore": 0.76,
-      "locationPotential": 0.2,
-      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
-      "score": 0.45,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "I am Solo",
         "videos": 10,
         "relevant": 0,
         "rejected": 10,
@@ -483,10 +377,49 @@
       "score": 0.31,
       "youtube": {
         "matched": false,
-        "reason": "no_match",
+        "reason": "below_buzz_threshold",
         "hits": [],
         "via": null,
-        "triedAliases": 0
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Marriage of Convenience",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Wonder Coach",
+      "season": "The Wonder Coach: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 7,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.16,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.29,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Wonder Coach",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
       },
       "independentSources": 1
     },
@@ -506,6 +439,60 @@
       "score": 0.25,
       "youtube": {
         "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Kian’s Bizarre B&B",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I am Solo",
+      "season": "I am Solo: Part 34",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 3,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
+      "locationPotential": 0.2,
+      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
+      "score": 0.23,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Apothecary Diaries",
+      "season": "The Apothecary Diaries: Season 3",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 10,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.04,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.23,
+      "youtube": {
+        "matched": false,
         "reason": "no_match",
         "hits": [],
         "via": null,
@@ -516,7 +503,7 @@
   ],
   "errors": [],
   "sourceMode": "tsv",
-  "youtubeVideosScanned": 130,
+  "youtubeVideosScanned": 129,
   "aliasesUsed": 1,
   "aliasesUnverified": 3,
   "youtubeQuotaUnits": 811
