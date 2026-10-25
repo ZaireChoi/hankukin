@@ -8,13 +8,106 @@
     "",
     "출처 표기 의무: 한국관광공사"
   ],
-  "generatedAt": "2026-10-18T22:29:46.834Z",
+  "generatedAt": "2026-10-25T22:40:20.284Z",
   "stats": {
     "targets": 1,
-    "saved": 0,
+    "saved": 4,
     "rejected": 0,
     "apiFailures": 0,
-    "skippedDup": 13
+    "skippedDup": 0
   },
-  "images": []
+  "images": [
+    {
+      "contentId": "131271",
+      "work": "Goblin (Guardian: The Lonely and Great God)",
+      "place": "Jumunjin Breakwater",
+      "placeKo": "주문진 방파제",
+      "file": "jumunjin-breakwater-1.jpg",
+      "path": "src/assets/images/scenes/jumunjin-breakwater-1.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/scenes/jumunjin-breakwater-1.jpg",
+        "alt": "Jumunjin Breakwater (주문진 방파제) — 한국관광공사 제공 사진",
+        "license": "kogl-1",
+        "sourceUrl": "https://api.visitkorea.or.kr/#/detail?cotId=131271",
+        "credit": "한국관광공사"
+      },
+      "licenseLabel": "공공누리 제1유형 (출처표시)",
+      "canModify": true,
+      "resized": true,
+      "width": 940,
+      "height": 627,
+      "bytes": 78313,
+      "originalName": "강릉시_주문진 방파제 (1).jpg",
+      "fetchedAt": "2026-10-25"
+    },
+    {
+      "contentId": "131271",
+      "work": "Goblin (Guardian: The Lonely and Great God)",
+      "place": "Jumunjin Breakwater",
+      "placeKo": "주문진 방파제",
+      "file": "jumunjin-breakwater-2.jpg",
+      "path": "src/assets/images/scenes/jumunjin-breakwater-2.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/scenes/jumunjin-breakwater-2.jpg",
+        "alt": "Jumunjin Breakwater (주문진 방파제) — 한국관광공사 제공 사진",
+        "license": "kogl-1",
+        "sourceUrl": "https://api.visitkorea.or.kr/#/detail?cotId=131271",
+        "credit": "한국관광공사"
+      },
+      "licenseLabel": "공공누리 제1유형 (출처표시)",
+      "canModify": true,
+      "resized": true,
+      "width": 940,
+      "height": 627,
+      "bytes": 66801,
+      "originalName": "강릉시_주문진 방파제 (4).jpg",
+      "fetchedAt": "2026-10-25"
+    },
+    {
+      "contentId": "131271",
+      "work": "Goblin (Guardian: The Lonely and Great God)",
+      "place": "Jumunjin Breakwater",
+      "placeKo": "주문진 방파제",
+      "file": "jumunjin-breakwater-3.jpg",
+      "path": "src/assets/images/scenes/jumunjin-breakwater-3.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/scenes/jumunjin-breakwater-3.jpg",
+        "alt": "Jumunjin Breakwater (주문진 방파제) — 한국관광공사 제공 사진",
+        "license": "kogl-1",
+        "sourceUrl": "https://api.visitkorea.or.kr/#/detail?cotId=131271",
+        "credit": "한국관광공사"
+      },
+      "licenseLabel": "공공누리 제1유형 (출처표시)",
+      "canModify": true,
+      "resized": true,
+      "width": 940,
+      "height": 627,
+      "bytes": 63598,
+      "originalName": "강릉시_주문진 방파제 (2).jpg",
+      "fetchedAt": "2026-10-25"
+    },
+    {
+      "contentId": "131271",
+      "work": "Goblin (Guardian: The Lonely and Great God)",
+      "place": "Jumunjin Breakwater",
+      "placeKo": "주문진 방파제",
+      "file": "jumunjin-breakwater-4.jpg",
+      "path": "src/assets/images/scenes/jumunjin-breakwater-4.jpg",
+      "frontmatter": {
+        "src": "../../assets/images/scenes/jumunjin-breakwater-4.jpg",
+        "alt": "Jumunjin Breakwater (주문진 방파제) — 한국관광공사 제공 사진",
+        "license": "kogl-1",
+        "sourceUrl": "https://api.visitkorea.or.kr/#/detail?cotId=131271",
+        "credit": "한국관광공사"
+      },
+      "licenseLabel": "공공누리 제1유형 (출처표시)",
+      "canModify": true,
+      "resized": true,
+      "width": 940,
+      "height": 627,
+      "bytes": 96523,
+      "originalName": "강릉시_주문진 방파제 (5).jpg",
+      "fetchedAt": "2026-10-25"
+    }
+  ]
 }
