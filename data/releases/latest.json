@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-23T22:46:11.242Z",
+  "collectedAt": "2026-10-27T23:23:15.264Z",
   "charts": {
     "korea": [
       {
@@ -158,57 +158,6 @@
   },
   "candidates": [
     {
-      "title": "100 Days of Deception",
-      "season": "100 Days of Deception: Limited Series",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "alsoGlobal": true,
-      "rank": 2,
-      "weeksInTop10": 2,
-      "novelty": "holding",
-      "noveltyScore": 0.36,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.643,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "100 Days of Deception",
-        "videos": 10,
-        "relevant": 5,
-        "rejected": 5,
-        "topViews": 3241987,
-        "samples": [
-          {
-            "title": "100 Days of Deception #kdrama #koreandrama #kimyoojung",
-            "channel": "Annu",
-            "publishedAt": "2026-10-16T06:45:39Z",
-            "views": 3241987
-          },
-          {
-            "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-18T17:26:20Z",
-            "views": 1628157
-          },
-          {
-            "title": "100 days of deception #kimyoojung #jinyoung  #100daysofdeception #kdrama",
-            "channel": "saiyatok",
-            "publishedAt": "2026-10-12T14:00:00Z",
-            "views": 1500206
-          }
-        ],
-        "strength": 0.517
-      },
-      "independentSources": 2
-    },
-    {
       "title": "Doctor X: Mafia in White",
       "season": "Doctor X: Mafia in White: Limited Series",
       "charts": [
@@ -222,7 +171,7 @@
       "noveltyScore": 0.4,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.636,
+      "score": 0.663,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -232,30 +181,63 @@
         "method": "search",
         "query": "Doctor X: Mafia in White",
         "videos": 10,
-        "relevant": 3,
-        "rejected": 7,
-        "topViews": 1708055,
+        "relevant": 5,
+        "rejected": 5,
+        "topViews": 3235930,
         "samples": [
+          {
+            "title": "Doctor X Mafia In White #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite #jangseungjo",
+            "channel": "…KLIRAEL…",
+            "publishedAt": "2026-10-23T18:05:17Z",
+            "views": 3235930
+          },
           {
             "title": "She Was Aura Farming Throughout 🔥 Doctor X: Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-10T04:45:09Z",
-            "views": 1708055
+            "views": 1784971
           },
           {
             "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-16T17:27:39Z",
-            "views": 1535588
-          },
-          {
-            "title": "Doctor Gye Su Jeong Core 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-12T13:14:02Z",
-            "views": 1399282
+            "views": 1669220
           }
         ],
-        "strength": 0.378
+        "strength": 0.516
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 2,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.569,
+      "youtube": {
+        "matched": true,
+        "reason": "title_in_trending",
+        "hits": [
+          {
+            "rank": 42,
+            "title": "[100일의 거짓말 (100 Days of Deception) OST Part 2] 이소라 (Lee So Ra) -  널 (You) MV",
+            "channel": "STONE MUSIC",
+            "views": 129666
+          }
+        ],
+        "via": "100 Days of Deception",
+        "triedAliases": 0,
+        "strength": 0.144,
+        "method": "trending"
       },
       "independentSources": 2
     },
@@ -273,30 +255,36 @@
       "noveltyScore": 0.28,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.5,
+      "score": 0.545,
       "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
+        "matched": true,
+        "reason": "search_buzz",
         "hits": [],
         "via": null,
         "triedAliases": 0,
         "method": "search",
         "query": "Take Charge of My Heart",
         "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 627379,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 836031,
         "samples": [
+          {
+            "title": "Drama | Take Charge of My Heart© Netfli#TakeChargeOfMyHeart #나를충전해줘 #KimYoungKwang #ChaeSooBin",
+            "channel": "☆𝘚𝘦𝘰𝘶𝘭𝘉𝘭𝘪𝘴𝘴☆",
+            "publishedAt": "2026-10-12T10:41:47Z",
+            "views": 836031
+          },
           {
             "title": "قفاز مطاطي بشري 😭 . | حبك يشحن قلبي Take Charge of My Heart",
             "channel": "هـاري♡",
             "publishedAt": "2026-10-09T14:01:37Z",
-            "views": 627379
+            "views": 633588
           }
         ],
-        "strength": null
+        "strength": 0.223
       },
-      "independentSources": 1
+      "independentSources": 2
     },
     {
       "title": "Below",
@@ -446,10 +434,17 @@
         "method": "search",
         "query": "Kian’s Bizarre B&B",
         "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 325209,
+        "samples": [
+          {
+            "title": "Momen Josjis Dex Bukain Pintu Raksasa | Kian’s Bizarre B&B",
+            "channel": "Netflix Indonesia",
+            "publishedAt": "2026-10-14T01:00:00Z",
+            "views": 325209
+          }
+        ],
         "strength": null
       },
       "independentSources": 1
@@ -470,10 +465,18 @@
       "score": 0.23,
       "youtube": {
         "matched": false,
-        "reason": "no_match",
+        "reason": "below_buzz_threshold",
         "hits": [],
         "via": null,
-        "triedAliases": 0
+        "triedAliases": 0,
+        "method": "search",
+        "query": "I am Solo",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
       },
       "independentSources": 1
     },
