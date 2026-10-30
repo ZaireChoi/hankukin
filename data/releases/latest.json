@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-10-27T23:23:15.264Z",
+  "collectedAt": "2026-10-30T23:23:35.017Z",
   "charts": {
     "korea": [
       {
@@ -171,7 +171,7 @@
       "noveltyScore": 0.4,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.663,
+      "score": 0.687,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -183,28 +183,28 @@
         "videos": 10,
         "relevant": 5,
         "rejected": 5,
-        "topViews": 3235930,
+        "topViews": 5586290,
         "samples": [
           {
             "title": "Doctor X Mafia In White #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite #jangseungjo",
             "channel": "…KLIRAEL…",
             "publishedAt": "2026-10-23T18:05:17Z",
-            "views": 3235930
+            "views": 5586290
           },
           {
             "title": "She Was Aura Farming Throughout 🔥 Doctor X: Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-10T04:45:09Z",
-            "views": 1784971
+            "views": 1839150
           },
           {
             "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-16T17:27:39Z",
-            "views": 1669220
+            "views": 1738082
           }
         ],
-        "strength": 0.516
+        "strength": 0.635
       },
       "independentSources": 2
     },
@@ -222,22 +222,40 @@
       "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.569,
+      "score": 0.652,
       "youtube": {
         "matched": true,
-        "reason": "title_in_trending",
-        "hits": [
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 4,
+        "rejected": 6,
+        "topViews": 3920427,
+        "samples": [
           {
-            "rank": 42,
-            "title": "[100일의 거짓말 (100 Days of Deception) OST Part 2] 이소라 (Lee So Ra) -  널 (You) MV",
-            "channel": "STONE MUSIC",
-            "views": 129666
+            "title": "100 Days of Deception #kdrama #koreandrama #kimyoojung",
+            "channel": "Annu",
+            "publishedAt": "2026-10-16T06:45:39Z",
+            "views": 3920427
+          },
+          {
+            "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-18T17:26:20Z",
+            "views": 1921051
+          },
+          {
+            "title": "100 days of deception #kimyoojung #jinyoung  #100daysofdeception #kdrama",
+            "channel": "saiyatok",
+            "publishedAt": "2026-10-12T14:00:00Z",
+            "views": 1505108
           }
         ],
-        "via": "100 Days of Deception",
-        "triedAliases": 0,
-        "strength": 0.144,
-        "method": "trending"
+        "strength": 0.558
       },
       "independentSources": 2
     },
@@ -255,7 +273,7 @@
       "noveltyScore": 0.28,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.545,
+      "score": 0.546,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -265,24 +283,30 @@
         "method": "search",
         "query": "Take Charge of My Heart",
         "videos": 10,
-        "relevant": 2,
-        "rejected": 8,
-        "topViews": 836031,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 861958,
         "samples": [
           {
             "title": "Drama | Take Charge of My Heart© Netfli#TakeChargeOfMyHeart #나를충전해줘 #KimYoungKwang #ChaeSooBin",
             "channel": "☆𝘚𝘦𝘰𝘶𝘭𝘉𝘭𝘪𝘴𝘴☆",
             "publishedAt": "2026-10-12T10:41:47Z",
-            "views": 836031
+            "views": 861958
           },
           {
-            "title": "قفاز مطاطي بشري 😭 . | حبك يشحن قلبي Take Charge of My Heart",
-            "channel": "هـاري♡",
-            "publishedAt": "2026-10-09T14:01:37Z",
-            "views": 633588
+            "title": "التنسيق رهيببب 😋~حبك يشحن قلبي take charge of my heart",
+            "channel": "Mαყαɾ",
+            "publishedAt": "2026-10-10T18:17:44Z",
+            "views": 640704
+          },
+          {
+            "title": "بنت فاشلة بترتبط باشهر رجل اعمال3شهورعشان تشحنله قلبه الصناعي(حبك يشحن قلبي) Take charge of my heart",
+            "channel": "فيلم في الخمسينة ",
+            "publishedAt": "2026-10-10T12:04:05Z",
+            "views": 544066
           }
         ],
-        "strength": 0.223
+        "strength": 0.229
       },
       "independentSources": 2
     },
@@ -424,30 +448,36 @@
       "noveltyScore": 0.08,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.25,
+      "score": 0.258,
       "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
+        "matched": true,
+        "reason": "search_buzz",
         "hits": [],
         "via": null,
         "triedAliases": 0,
         "method": "search",
         "query": "Kian’s Bizarre B&B",
         "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 325209,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 361999,
         "samples": [
           {
             "title": "Momen Josjis Dex Bukain Pintu Raksasa | Kian’s Bizarre B&B",
             "channel": "Netflix Indonesia",
             "publishedAt": "2026-10-14T01:00:00Z",
-            "views": 325209
+            "views": 361999
+          },
+          {
+            "title": "Why Lee Junho Says Kian’s Bizarre B&B 2 Was Brutal",
+            "channel": "depoooy",
+            "publishedAt": "2026-10-10T11:00:46Z",
+            "views": 65176
           }
         ],
-        "strength": null
+        "strength": 0.041
       },
-      "independentSources": 1
+      "independentSources": 2
     },
     {
       "title": "I am Solo",
@@ -465,18 +495,10 @@
       "score": 0.23,
       "youtube": {
         "matched": false,
-        "reason": "below_buzz_threshold",
+        "reason": "no_match",
         "hits": [],
         "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "I am Solo",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
+        "triedAliases": 0
       },
       "independentSources": 1
     },
@@ -506,7 +528,7 @@
   ],
   "errors": [],
   "sourceMode": "tsv",
-  "youtubeVideosScanned": 129,
+  "youtubeVideosScanned": 130,
   "aliasesUsed": 1,
   "aliasesUnverified": 3,
   "youtubeQuotaUnits": 811

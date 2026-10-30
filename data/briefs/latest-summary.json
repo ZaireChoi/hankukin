@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-27T23:23:36.902Z",
-  "radarCollectedAt": "2026-10-27T23:23:15.264Z",
+  "generatedAt": "2026-10-30T23:23:50.085Z",
+  "radarCollectedAt": "2026-10-30T23:23:35.017Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -14,7 +14,7 @@
       "slug": "doctor-x-mafia-in-white",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.663,
+      "radarScore": 0.687,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -23,7 +23,7 @@
       "slug": "100-days-of-deception",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.569,
+      "radarScore": 0.652,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -32,7 +32,7 @@
       "slug": "take-charge-of-my-heart",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.545,
+      "radarScore": 0.546,
       "independentSources": 2,
       "locationPotential": 0.6
     },
