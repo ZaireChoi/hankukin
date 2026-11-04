@@ -1,21 +1,48 @@
 {
-  "generatedAt": "2026-10-30T23:23:50.085Z",
-  "radarCollectedAt": "2026-10-30T23:23:35.017Z",
+  "generatedAt": "2026-11-04T00:18:28.232Z",
+  "radarCollectedAt": "2026-11-04T00:18:04.043Z",
   "counts": {
     "total": 6,
     "ready": 0,
-    "needsLocation": 3,
-    "needsSignal": 3,
+    "needsLocation": 4,
+    "needsSignal": 2,
     "skip": 0
   },
   "briefs": [
+    {
+      "title": "Dead-End Job",
+      "slug": "dead-end-job",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.932,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
     {
       "title": "Doctor X: Mafia in White",
       "slug": "doctor-x-mafia-in-white",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.687,
+      "radarScore": 0.696,
       "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "Where the Mask Ends",
+      "slug": "where-the-mask-ends",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.637,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "World Dice Tour",
+      "slug": "world-dice-tour",
+      "gate": "needs_signal",
+      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
+      "radarScore": 0.61,
+      "independentSources": 1,
       "locationPotential": 0.6
     },
     {
@@ -23,26 +50,8 @@
       "slug": "100-days-of-deception",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.652,
+      "radarScore": 0.483,
       "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Take Charge of My Heart",
-      "slug": "take-charge-of-my-heart",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.546,
-      "independentSources": 2,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Below",
-      "slug": "below",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.42,
-      "independentSources": 1,
       "locationPotential": 0.6
     },
     {
@@ -51,15 +60,6 @@
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
       "radarScore": 0.33,
-      "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "Marriage of Convenience",
-      "slug": "marriage-of-convenience",
-      "gate": "needs_signal",
-      "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.31,
       "independentSources": 1,
       "locationPotential": 0.6
     }
