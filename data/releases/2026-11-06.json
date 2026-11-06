@@ -1,0 +1,539 @@
+{
+  "collectedAt": "2026-11-06T23:53:06.578Z",
+  "charts": {
+    "korea": [
+      {
+        "week": "2026-11-01",
+        "rank": 1,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 4
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 2,
+        "title": "Dead-End Job",
+        "season": "Dead-End Job: Limited Series",
+        "weeksInTop10": 1
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 3,
+        "title": "100 Days of Deception",
+        "season": "100 Days of Deception: Limited Series",
+        "weeksInTop10": 4
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 4,
+        "title": "I am Solo",
+        "season": "I am Solo: Part 34",
+        "weeksInTop10": 4
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 5,
+        "title": "The Ballad of Us",
+        "season": "The Ballad of Us: Season 2",
+        "weeksInTop10": 4
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 6,
+        "title": "World Dice Tour",
+        "season": "World Dice Tour: Season 4",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 7,
+        "title": "The Wonder Coach",
+        "season": "The Wonder Coach: Season 2",
+        "weeksInTop10": 3
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 8,
+        "title": "Where the Mask Ends",
+        "season": "Where the Mask Ends: Season 1",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 9,
+        "title": "Marriage of Convenience",
+        "season": "Marriage of Convenience: Season 1",
+        "weeksInTop10": 4
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 10,
+        "title": "Take Charge of My Heart",
+        "season": "Take Charge of My Heart: Limited Series",
+        "weeksInTop10": 4
+      }
+    ],
+    "global": [
+      {
+        "week": "2026-11-01",
+        "rank": 1,
+        "title": "The One About Matthew Perry",
+        "season": "The One About Matthew Perry: Season 1",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 1,
+        "title": "Lupin",
+        "season": "Lupin: Part 4",
+        "weeksInTop10": 2,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 2,
+        "title": "Nobody Wants This",
+        "season": "Nobody Wants This: Season 3",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 2,
+        "title": "Lupin",
+        "season": "Lupin: Part 1",
+        "weeksInTop10": 7,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 3,
+        "title": "Below",
+        "season": "Below: Limited Series",
+        "weeksInTop10": 4,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 3,
+        "title": "The Fall of El Mayo",
+        "season": "The Fall of El Mayo: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 4,
+        "title": "The Diplomat",
+        "season": "The Diplomat: Season 4",
+        "weeksInTop10": 3,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 4,
+        "title": "Dead-End Job",
+        "season": "Dead-End Job: Limited Series",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 5,
+        "title": "Love Is Blind",
+        "season": "Love Is Blind: S11: Boston",
+        "weeksInTop10": 3,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-01",
+        "rank": 5,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 4,
+        "category": "TV (Non-English)"
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "title": "Doctor X: Mafia in White",
+      "season": "Doctor X: Mafia in White: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 1,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.4,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.7,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Doctor X: Mafia in White",
+        "videos": 10,
+        "relevant": 4,
+        "rejected": 6,
+        "topViews": 7574906,
+        "samples": [
+          {
+            "title": "Doctor X Mafia In White #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite #jangseungjo",
+            "channel": "…KLIRAEL…",
+            "publishedAt": "2026-10-23T18:05:17Z",
+            "views": 7574906
+          },
+          {
+            "title": "Their Reactions Are Just Peak 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-23T17:25:18Z",
+            "views": 1821880
+          },
+          {
+            "title": "Doctor X Mafia In White #jangseungjo #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite",
+            "channel": "…KLIRAEL…",
+            "publishedAt": "2026-10-17T18:00:30Z",
+            "views": 1432850
+          }
+        ],
+        "strength": 0.701
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Dead-End Job",
+      "season": "Dead-End Job: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 2,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.545,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Dead-End Job",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 340338,
+        "samples": [
+          {
+            "title": "Clown's dark side came out 🗿🔥 | Dead-End Job | #deadendjob #kdrama #shorts",
+            "channel": "Xyltr EditZ",
+            "publishedAt": "2026-11-02T10:51:11Z",
+            "views": 340338
+          },
+          {
+            "title": "Dead-End Job | Official Hindi Trailer | Netflix Original Series",
+            "channel": "TrailerLuxe Official",
+            "publishedAt": "2026-10-30T08:32:01Z",
+            "views": 254941
+          },
+          {
+            "title": "حلقه المهرج غير 💀 . | وظيفه الكوابيس Dead-End Job",
+            "channel": "هـاري♡",
+            "publishedAt": "2026-10-31T17:12:39Z",
+            "views": 252587
+          }
+        ],
+        "strength": 0.027
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 3,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.453,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 2047180,
+        "samples": [
+          {
+            "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-18T17:26:20Z",
+            "views": 2047180
+          },
+          {
+            "title": "So Girl-Dad Coded 🎀 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-25T06:53:12Z",
+            "views": 1830510
+          },
+          {
+            "title": "Smoothest Hands 😂 100 Days of Deception ✨ #Kdrama #KimYouJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-17T17:21:02Z",
+            "views": 1082423
+          }
+        ],
+        "strength": 0.417
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "The Ballad of Us",
+      "season": "The Ballad of Us: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 5,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.24,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.33,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Ballad of Us",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "World Dice Tour",
+      "season": "World Dice Tour: Season 4",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 6,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.31,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "World Dice Tour",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Wonder Coach",
+      "season": "The Wonder Coach: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 7,
+      "weeksInTop10": 3,
+      "novelty": "holding",
+      "noveltyScore": 0.16,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.29,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Wonder Coach",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Where the Mask Ends",
+      "season": "Where the Mask Ends: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 8,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.27,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Where the Mask Ends",
+        "videos": 10,
+        "relevant": 5,
+        "rejected": 5,
+        "topViews": 278740,
+        "samples": [
+          {
+            "title": "وقعت للمسلسل وبقوة 😭 . | حين يسقط القناع Where the Mask Ends",
+            "channel": "هـاري♡",
+            "publishedAt": "2026-10-18T17:20:49Z",
+            "views": 278740
+          },
+          {
+            "title": "(req) instantly thought about this song! | Where The Mask Ends | #wherethemaskends #tianwixei #yanan",
+            "channel": "kash.",
+            "publishedAt": "2026-11-03T09:30:20Z",
+            "views": 233705
+          },
+          {
+            "title": "Where the Mask Ends Full OST《嫁金钗》影视原声带",
+            "channel": "Peachey Blossom",
+            "publishedAt": "2026-10-20T02:58:36Z",
+            "views": 228066
+          }
+        ],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Marriage of Convenience",
+      "season": "Marriage of Convenience: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 9,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.08,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.25,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Marriage of Convenience",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Take Charge of My Heart",
+      "season": "Take Charge of My Heart: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 10,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.04,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.23,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I am Solo",
+      "season": "I am Solo: Part 34",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 4,
+      "weeksInTop10": 4,
+      "novelty": "holding",
+      "noveltyScore": 0.28,
+      "locationPotential": 0.2,
+      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
+      "score": 0.21,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    }
+  ],
+  "errors": [],
+  "sourceMode": "tsv",
+  "youtubeVideosScanned": 130,
+  "aliasesUsed": 1,
+  "aliasesUnverified": 3,
+  "youtubeQuotaUnits": 811
+}

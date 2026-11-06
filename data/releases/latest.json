@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-04T00:18:04.043Z",
+  "collectedAt": "2026-11-06T23:53:06.578Z",
   "charts": {
     "korea": [
       {
@@ -158,57 +158,6 @@
   },
   "candidates": [
     {
-      "title": "Dead-End Job",
-      "season": "Dead-End Job: Limited Series",
-      "charts": [
-        "korea",
-        "global"
-      ],
-      "alsoGlobal": true,
-      "rank": 2,
-      "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.96,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.932,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "Dead-End Job",
-        "videos": 10,
-        "relevant": 4,
-        "rejected": 6,
-        "topViews": 2469380,
-        "samples": [
-          {
-            "title": "Dead-End Job | Official Trailer | Netflix [ENG SUB]",
-            "channel": "Netflix K-Content",
-            "publishedAt": "2026-10-16T00:00:00Z",
-            "views": 2469380
-          },
-          {
-            "title": "งานสนุก จะตาย (Dead-End Job) | ตัวอย่างอย่างเป็นทางการ | Netflix",
-            "channel": "Netflix Thailand",
-            "publishedAt": "2026-10-16T00:00:02Z",
-            "views": 270625
-          },
-          {
-            "title": "Jerma's Dead-End Job",
-            "channel": "2ndJerma",
-            "publishedAt": "2026-10-29T18:00:01Z",
-            "views": 243869
-          }
-        ],
-        "strength": 0.458
-      },
-      "independentSources": 2
-    },
-    {
       "title": "Doctor X: Mafia in White",
       "season": "Doctor X: Mafia in White: Limited Series",
       "charts": [
@@ -222,7 +171,7 @@
       "noveltyScore": 0.4,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.696,
+      "score": 0.7,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -232,47 +181,48 @@
         "method": "search",
         "query": "Doctor X: Mafia in White",
         "videos": 10,
-        "relevant": 5,
-        "rejected": 5,
-        "topViews": 6814042,
+        "relevant": 4,
+        "rejected": 6,
+        "topViews": 7574906,
         "samples": [
           {
             "title": "Doctor X Mafia In White #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite #jangseungjo",
             "channel": "…KLIRAEL…",
             "publishedAt": "2026-10-23T18:05:17Z",
-            "views": 6814042
-          },
-          {
-            "title": "This Intern & Doctor Duo 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-16T17:27:39Z",
-            "views": 1809505
+            "views": 7574906
           },
           {
             "title": "Their Reactions Are Just Peak 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-23T17:25:18Z",
-            "views": 1765817
+            "views": 1821880
+          },
+          {
+            "title": "Doctor X Mafia In White #jangseungjo #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite",
+            "channel": "…KLIRAEL…",
+            "publishedAt": "2026-10-17T18:00:30Z",
+            "views": 1432850
           }
         ],
-        "strength": 0.678
+        "strength": 0.701
       },
       "independentSources": 2
     },
     {
-      "title": "Where the Mask Ends",
-      "season": "Where the Mask Ends: Season 1",
+      "title": "Dead-End Job",
+      "season": "Dead-End Job: Limited Series",
       "charts": [
-        "korea"
+        "korea",
+        "global"
       ],
-      "alsoGlobal": false,
-      "rank": 8,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.72,
+      "alsoGlobal": true,
+      "rank": 2,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.637,
+      "score": 0.545,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -280,65 +230,34 @@
         "via": null,
         "triedAliases": 0,
         "method": "search",
-        "query": "Where the Mask Ends",
+        "query": "Dead-End Job",
         "videos": 10,
-        "relevant": 8,
-        "rejected": 2,
-        "topViews": 1391583,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 340338,
         "samples": [
           {
-            "title": "【2026最新陸劇】EP01 嫁金釵 Where The Mask Ends | 田曦薇飾演雙生花，替嫁衝喜逆天改命✨| 田曦薇/閆桉 | 優酷台灣 YOUKU TAIWAN",
-            "channel": "優酷台灣-APP搶先看",
-            "publishedAt": "2026-10-16T10:00:32Z",
-            "views": 1391583
+            "title": "Clown's dark side came out 🗿🔥 | Dead-End Job | #deadendjob #kdrama #shorts",
+            "channel": "Xyltr EditZ",
+            "publishedAt": "2026-11-02T10:51:11Z",
+            "views": 340338
           },
           {
-            "title": "2026 female-led revenge dramas❤️‍🔥ENGSUB【Where the Mask Ends】EP01 Her true colors shock Lu Zhuo😮",
-            "channel": "YOUKU English-Get APP now",
-            "publishedAt": "2026-10-16T10:00:39Z",
-            "views": 697417
+            "title": "Dead-End Job | Official Hindi Trailer | Netflix Original Series",
+            "channel": "TrailerLuxe Official",
+            "publishedAt": "2026-10-30T08:32:01Z",
+            "views": 254941
           },
           {
-            "title": "พากย์ไทย EP01 | ปลดหน้ากาก Where The Mask Ends | เถียนซีเวย / เหยียนอัน | YOUKU Thailand",
-            "channel": "YOUKU Thailand-โหลดแอปตอนนี้",
-            "publishedAt": "2026-10-16T10:00:32Z",
-            "views": 636852
+            "title": "حلقه المهرج غير 💀 . | وظيفه الكوابيس Dead-End Job",
+            "channel": "هـاري♡",
+            "publishedAt": "2026-10-31T17:12:39Z",
+            "views": 252587
           }
         ],
-        "strength": 0.333
+        "strength": 0.027
       },
       "independentSources": 2
-    },
-    {
-      "title": "World Dice Tour",
-      "season": "World Dice Tour: Season 4",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 6,
-      "weeksInTop10": 2,
-      "novelty": "new_entry",
-      "noveltyScore": 0.8,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.61,
-      "youtube": {
-        "matched": false,
-        "reason": "below_buzz_threshold",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "World Dice Tour",
-        "videos": 10,
-        "relevant": 0,
-        "rejected": 10,
-        "topViews": 0,
-        "samples": [],
-        "strength": null
-      },
-      "independentSources": 1
     },
     {
       "title": "100 Days of Deception",
@@ -353,7 +272,7 @@
       "noveltyScore": 0.32,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.483,
+      "score": 0.453,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -363,30 +282,30 @@
         "method": "search",
         "query": "100 Days of Deception",
         "videos": 10,
-        "relevant": 5,
-        "rejected": 5,
-        "topViews": 4032564,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 2047180,
         "samples": [
-          {
-            "title": "100 Days of Deception #kdrama #koreandrama #kimyoojung",
-            "channel": "Annu",
-            "publishedAt": "2026-10-16T06:45:39Z",
-            "views": 4032564
-          },
           {
             "title": "He Treats Her So Well ☘️ 100 Days of Deception✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-18T17:26:20Z",
-            "views": 1983706
+            "views": 2047180
           },
           {
             "title": "So Girl-Dad Coded 🎀 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
             "channel": "ThrillVille",
             "publishedAt": "2026-10-25T06:53:12Z",
-            "views": 1815993
+            "views": 1830510
+          },
+          {
+            "title": "Smoothest Hands 😂 100 Days of Deception ✨ #Kdrama #KimYouJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-17T17:21:02Z",
+            "views": 1082423
           }
         ],
-        "strength": 0.564
+        "strength": 0.417
       },
       "independentSources": 2
     },
@@ -412,6 +331,37 @@
         "triedAliases": 0,
         "method": "search",
         "query": "The Ballad of Us",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "World Dice Tour",
+      "season": "World Dice Tour: Season 4",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 6,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.31,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "World Dice Tour",
         "videos": 10,
         "relevant": 0,
         "rejected": 10,
@@ -448,6 +398,56 @@
         "rejected": 10,
         "topViews": 0,
         "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Where the Mask Ends",
+      "season": "Where the Mask Ends: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 8,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.27,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Where the Mask Ends",
+        "videos": 10,
+        "relevant": 5,
+        "rejected": 5,
+        "topViews": 278740,
+        "samples": [
+          {
+            "title": "وقعت للمسلسل وبقوة 😭 . | حين يسقط القناع Where the Mask Ends",
+            "channel": "هـاري♡",
+            "publishedAt": "2026-10-18T17:20:49Z",
+            "views": 278740
+          },
+          {
+            "title": "(req) instantly thought about this song! | Where The Mask Ends | #wherethemaskends #tianwixei #yanan",
+            "channel": "kash.",
+            "publishedAt": "2026-11-03T09:30:20Z",
+            "views": 233705
+          },
+          {
+            "title": "Where the Mask Ends Full OST《嫁金钗》影视原声带",
+            "channel": "Peachey Blossom",
+            "publishedAt": "2026-10-20T02:58:36Z",
+            "views": 228066
+          }
+        ],
         "strength": null
       },
       "independentSources": 1
