@@ -1,5 +1,5 @@
 {
-  "collectedAt": "2026-11-11T00:19:42.815Z",
+  "collectedAt": "2026-11-14T00:34:26.977Z",
   "charts": {
     "korea": [
       {
@@ -167,11 +167,11 @@
       "alsoGlobal": true,
       "rank": 1,
       "weeksInTop10": 2,
-      "novelty": "climbing",
-      "noveltyScore": 0.76,
+      "novelty": "holding",
+      "noveltyScore": 0.4,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.821,
+      "score": 0.641,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -181,24 +181,30 @@
         "method": "search",
         "query": "Dead-End Job",
         "videos": 10,
-        "relevant": 2,
-        "rejected": 8,
-        "topViews": 1918565,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1935094,
         "samples": [
           {
             "title": "This film is called Dead-End Job(2026)#movie  #film  #horro #horror #shorts",
             "channel": "Nanyu Movie",
             "publishedAt": "2026-11-07T15:44:31Z",
-            "views": 1918565
+            "views": 1935094
           },
           {
-            "title": "Clown's dark side came out 🗿🔥 | Dead-End Job | #deadendjob #kdrama #shorts",
-            "channel": "Xyltr EditZ",
-            "publishedAt": "2026-11-02T10:51:11Z",
-            "views": 454873
+            "title": "Dead-End Job.This boss, who’s used to yelling at his staff, has finally met his match#movie #shorts",
+            "channel": "Firepower Film",
+            "publishedAt": "2026-11-10T16:30:36Z",
+            "views": 1823473
+          },
+          {
+            "title": "Joker requests for eat something 😋 | dead-end job | montagem royal | #weakheroclass1 #edit",
+            "channel": "PixelWizEditz",
+            "publishedAt": "2026-11-09T14:30:36Z",
+            "views": 886772
           }
         ],
-        "strength": 0.403
+        "strength": 0.405
       },
       "independentSources": 2
     },
@@ -216,7 +222,7 @@
       "noveltyScore": 0.36,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.686,
+      "score": 0.607,
       "youtube": {
         "matched": true,
         "reason": "search_buzz",
@@ -226,30 +232,74 @@
         "method": "search",
         "query": "Doctor X: Mafia in White",
         "videos": 10,
-        "relevant": 4,
-        "rejected": 6,
-        "topViews": 8598467,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 1391306,
         "samples": [
-          {
-            "title": "Doctor X Mafia In White #kdrama #doctorx #kimjiwon #kimwooseok #doctorxmafiainwhite #jangseungjo",
-            "channel": "…KLIRAEL…",
-            "publishedAt": "2026-10-23T18:05:17Z",
-            "views": 8598467
-          },
-          {
-            "title": "Their Reactions Are Just Peak 😂 Doctor X Mafia In White ✨ #Kdrama #KimJiWon #KimWooSeok #DoctorX",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-23T17:25:18Z",
-            "views": 1922404
-          },
           {
             "title": "She Has A Heart Of Gold ✨ Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
             "channel": "ThrillVille",
             "publishedAt": "2026-11-06T17:20:23Z",
-            "views": 1245679
+            "views": 1391306
+          },
+          {
+            "title": "Dancing Kim Ji-won # Doctor X : Mafia in white....",
+            "channel": "Me Jaanakee",
+            "publishedAt": "2026-11-03T17:22:12Z",
+            "views": 1276294
+          },
+          {
+            "title": "How To Become Doctor X 101 🔥 Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-01T11:20:13Z",
+            "views": 989802
           }
         ],
-        "strength": 0.729
+        "strength": 0.333
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 3,
+      "weeksInTop10": 5,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.45,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 1898093,
+        "samples": [
+          {
+            "title": "So Girl-Dad Coded 🎀 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-10-25T06:53:12Z",
+            "views": 1898093
+          },
+          {
+            "title": "[100일의 거짓말 (100 Days of Deception) OST Part 2] 이소라 (Lee So Ra) -  널 (You) MV",
+            "channel": "STONE MUSIC",
+            "publishedAt": "2026-10-26T03:00:02Z",
+            "views": 745112
+          }
+        ],
+        "strength": 0.401
       },
       "independentSources": 2
     },
@@ -262,11 +312,11 @@
       "alsoGlobal": false,
       "rank": 5,
       "weeksInTop10": 1,
-      "novelty": "new_entry",
-      "noveltyScore": 0.84,
+      "novelty": "holding",
+      "noveltyScore": 0.24,
       "locationPotential": 0.6,
       "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.63,
+      "score": 0.33,
       "youtube": {
         "matched": false,
         "reason": "below_buzz_threshold",
@@ -283,50 +333,6 @@
         "strength": null
       },
       "independentSources": 1
-    },
-    {
-      "title": "100 Days of Deception",
-      "season": "100 Days of Deception: Limited Series",
-      "charts": [
-        "korea"
-      ],
-      "alsoGlobal": false,
-      "rank": 3,
-      "weeksInTop10": 5,
-      "novelty": "holding",
-      "noveltyScore": 0.32,
-      "locationPotential": 0.6,
-      "locationNote": "일반 드라마 — 촬영지 확인 필요",
-      "score": 0.449,
-      "youtube": {
-        "matched": true,
-        "reason": "search_buzz",
-        "hits": [],
-        "via": null,
-        "triedAliases": 0,
-        "method": "search",
-        "query": "100 Days of Deception",
-        "videos": 10,
-        "relevant": 2,
-        "rejected": 8,
-        "topViews": 1858071,
-        "samples": [
-          {
-            "title": "So Girl-Dad Coded 🎀 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
-            "channel": "ThrillVille",
-            "publishedAt": "2026-10-25T06:53:12Z",
-            "views": 1858071
-          },
-          {
-            "title": "Some scenes are too painful to watch… 💔 | 100 Days of Deception #Shorts #youtubeshorts #kdramashorts",
-            "channel": "Soundtoscene",
-            "publishedAt": "2026-11-02T08:14:25Z",
-            "views": 805791
-          }
-        ],
-        "strength": 0.396
-      },
-      "independentSources": 2
     },
     {
       "title": "World Dice Tour",
@@ -353,13 +359,13 @@
         "videos": 10,
         "relevant": 1,
         "rejected": 9,
-        "topViews": 17950,
+        "topViews": 20089,
         "samples": [
           {
             "title": "Team Sweet or Team Salty?!🥛| World Dice Tour 4 | Channel K",
             "channel": "Channel K India",
             "publishedAt": "2026-10-31T13:00:20Z",
-            "views": 17950
+            "views": 20089
           }
         ],
         "strength": null
@@ -451,17 +457,10 @@
         "method": "search",
         "query": "Marriage of Convenience",
         "videos": 10,
-        "relevant": 1,
-        "rejected": 9,
-        "topViews": 200500,
-        "samples": [
-          {
-            "title": "【Full Version】She Thought It Was a Marriage of Convenience—He'd Loved Her at First Sight!",
-            "channel": "Drama Fever Hour",
-            "publishedAt": "2026-11-10T02:23:22Z",
-            "views": 200500
-          }
-        ],
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
         "strength": null
       },
       "independentSources": 1

@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-11T00:20:06.722Z",
-  "radarCollectedAt": "2026-11-11T00:19:42.815Z",
+  "generatedAt": "2026-11-14T00:34:50.856Z",
+  "radarCollectedAt": "2026-11-14T00:34:26.977Z",
   "counts": {
     "total": 6,
     "ready": 0,
@@ -14,7 +14,7 @@
       "slug": "dead-end-job",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.821,
+      "radarScore": 0.641,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -23,7 +23,16 @@
       "slug": "doctor-x-mafia-in-white",
       "gate": "needs_location",
       "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.686,
+      "radarScore": 0.607,
+      "independentSources": 2,
+      "locationPotential": 0.6
+    },
+    {
+      "title": "100 Days of Deception",
+      "slug": "100-days-of-deception",
+      "gate": "needs_location",
+      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
+      "radarScore": 0.45,
       "independentSources": 2,
       "locationPotential": 0.6
     },
@@ -32,17 +41,8 @@
       "slug": "romance-school-first-again",
       "gate": "needs_signal",
       "reason": "독립 신호가 1개입니다. 2개 미만이면 \"Emerging\" 이상으로 표기할 수 없어 기사 가치가 낮습니다.",
-      "radarScore": 0.63,
+      "radarScore": 0.33,
       "independentSources": 1,
-      "locationPotential": 0.6
-    },
-    {
-      "title": "100 Days of Deception",
-      "slug": "100-days-of-deception",
-      "gate": "needs_location",
-      "reason": "촬영지 출처가 없습니다. 이 상태로 초안을 만들면 장소를 지어내게 됩니다.",
-      "radarScore": 0.449,
-      "independentSources": 2,
       "locationPotential": 0.6
     },
     {
