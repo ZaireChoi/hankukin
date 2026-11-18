@@ -1,0 +1,521 @@
+{
+  "collectedAt": "2026-11-18T01:58:25.640Z",
+  "charts": {
+    "korea": [
+      {
+        "week": "2026-11-15",
+        "rank": 1,
+        "title": "The Devil's Plan",
+        "season": "The Devil's Plan: Season 3",
+        "weeksInTop10": 1
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 2,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 3,
+        "title": "Dead-End Job",
+        "season": "Dead-End Job: Limited Series",
+        "weeksInTop10": 3
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 4,
+        "title": "100 Days of Deception",
+        "season": "100 Days of Deception: Limited Series",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 5,
+        "title": "I am Solo",
+        "season": "I am Solo: Part 34",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 6,
+        "title": "Romance School : First & Again",
+        "season": "Romance School : First & Again: Season 2",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 7,
+        "title": "Sword & Silence",
+        "season": "Sword & Silence: Season 1",
+        "weeksInTop10": 1
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 8,
+        "title": "The Wonder Coach",
+        "season": "The Wonder Coach: Season 2",
+        "weeksInTop10": 5
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 9,
+        "title": "The Ballad of Us",
+        "season": "The Ballad of Us: Season 2",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 10,
+        "title": "What a Boss Wants",
+        "season": "What a Boss Wants: Season 1",
+        "weeksInTop10": 1
+      }
+    ],
+    "global": [
+      {
+        "week": "2026-11-15",
+        "rank": 1,
+        "title": "Taken: Natalee Holloway",
+        "season": "Taken: Natalee Holloway: Season 1",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 1,
+        "title": "Anaesthesia",
+        "season": "Anaesthesia: Season 1",
+        "weeksInTop10": 2,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 2,
+        "title": "Black Doves",
+        "season": "Black Doves: Season 2",
+        "weeksInTop10": 2,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 2,
+        "title": "The Empress",
+        "season": "The Empress: Season 3",
+        "weeksInTop10": 1,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 3,
+        "title": "The Body",
+        "season": "The Body: Season 1",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 3,
+        "title": "Lupin",
+        "season": "Lupin: Part 4",
+        "weeksInTop10": 4,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 4,
+        "title": "Doozie's Doghouse",
+        "season": "Doozie's Doghouse: Season 1",
+        "weeksInTop10": 1,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 4,
+        "title": "Dead-End Job",
+        "season": "Dead-End Job: Limited Series",
+        "weeksInTop10": 3,
+        "category": "TV (Non-English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 5,
+        "title": "Black Doves",
+        "season": "Black Doves: Season 1",
+        "weeksInTop10": 7,
+        "category": "TV (English)"
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 5,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 6,
+        "category": "TV (Non-English)"
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "title": "Sword & Silence",
+      "season": "Sword & Silence: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 7,
+      "weeksInTop10": 1,
+      "novelty": "new_entry",
+      "noveltyScore": 0.76,
+      "locationPotential": 1,
+      "locationNote": "사극·궁궐 — 고궁/한옥 촬영지, 문화·역사 축과 중첩",
+      "score": 0.73,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Sword & Silence",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Devil's Plan",
+      "season": "The Devil's Plan: Season 3",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 1,
+      "weeksInTop10": 1,
+      "novelty": "new_entry",
+      "noveltyScore": 1,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.71,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Devil's Plan",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "What a Boss Wants",
+      "season": "What a Boss Wants: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 10,
+      "weeksInTop10": 1,
+      "novelty": "new_entry",
+      "noveltyScore": 0.64,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.625,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "What a Boss Wants",
+        "videos": 10,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 2655866,
+        "samples": [
+          {
+            "title": "His AI Singer Turned Out Real 🔥 What A Boss Wants ✨ #Kdrama #SungHoon #OhSeYoung #WhatABossWants",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-12T17:22:04Z",
+            "views": 2655866
+          },
+          {
+            "title": "Most Chaotic Boss & Secretary 😂 What A Boss Wants ✨ #Kdrama #SungHoon #OhSeYoung #WhatABossWants",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-13T11:50:04Z",
+            "views": 326343
+          }
+        ],
+        "strength": 0.474
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Dead-End Job",
+      "season": "Dead-End Job: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 3,
+      "weeksInTop10": 3,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.605,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Dead-End Job",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 2123579,
+        "samples": [
+          {
+            "title": "Dead-End Job.This boss, who’s used to yelling at his staff, has finally met his match#movie #shorts",
+            "channel": "Firepower Film",
+            "publishedAt": "2026-11-10T16:30:36Z",
+            "views": 2123579
+          },
+          {
+            "title": "This film is called Dead-End Job(2026)#movie  #film  #horro #horror #shorts",
+            "channel": "Nanyu Movie",
+            "publishedAt": "2026-11-07T15:44:31Z",
+            "views": 1939360
+          },
+          {
+            "title": "Joker requests for eat something 😋 | dead-end job | montagem royal | #weakheroclass1 #edit",
+            "channel": "PixelWizEditz",
+            "publishedAt": "2026-11-09T14:30:36Z",
+            "views": 1640646
+          }
+        ],
+        "strength": 0.425
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Doctor X: Mafia in White",
+      "season": "Doctor X: Mafia in White: Limited Series",
+      "charts": [
+        "korea",
+        "global"
+      ],
+      "alsoGlobal": true,
+      "rank": 2,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.225,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.557,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Doctor X: Mafia in White",
+        "videos": 10,
+        "relevant": 4,
+        "rejected": 6,
+        "topViews": 2071619,
+        "samples": [
+          {
+            "title": "A Devil In Angel's Guise ✨ Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-13T18:05:28Z",
+            "views": 2071619
+          },
+          {
+            "title": "She Has A Heart Of Gold ✨ Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-06T17:20:23Z",
+            "views": 1619503
+          },
+          {
+            "title": "Dancing Kim Ji-won # Doctor X : Mafia in white....",
+            "channel": "Me Jaanakee",
+            "publishedAt": "2026-11-03T17:22:12Z",
+            "views": 1333458
+          }
+        ],
+        "strength": 0.42
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Romance School : First & Again",
+      "season": "Romance School : First & Again: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 6,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.31,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Romance School : First & Again",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 4,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.175,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.297,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 1,
+        "rejected": 9,
+        "topViews": 1443142,
+        "samples": [
+          {
+            "title": "He Knows Her Name 💗 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-14T17:32:10Z",
+            "views": 1443142
+          }
+        ],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Wonder Coach",
+      "season": "The Wonder Coach: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 8,
+      "weeksInTop10": 5,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.27,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Wonder Coach",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Ballad of Us",
+      "season": "The Ballad of Us: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 9,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.05,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.235,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I am Solo",
+      "season": "I am Solo: Part 34",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 5,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.15,
+      "locationPotential": 0.2,
+      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
+      "score": 0.145,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    }
+  ],
+  "errors": [],
+  "sourceMode": "tsv",
+  "youtubeVideosScanned": 130,
+  "aliasesUsed": 1,
+  "aliasesUnverified": 3,
+  "youtubeQuotaUnits": 811
+}
