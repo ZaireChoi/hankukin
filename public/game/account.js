@@ -223,8 +223,19 @@ function chooseModal() {
 }
 
 // ── 게임 모드: 자동 동기화 ──
-let timer = null, lastHash = null, busy = false;
+let timer = null, lastHash = null, busy = false, ready = false;
+// 계정 기록을 이 기기에 덮어쓴 뒤 새로고침할 때, 게임이 끝나면서 옛 값을 다시 저장하지 못하게 막는다.
+function freezeAndReload() {
+  try {
+    const P = Storage.prototype, oSet = P.setItem, oRem = P.removeItem;
+    const hit = k => typeof k === 'string' && PREFIXES.some(p => k.startsWith(p));
+    P.setItem = function (k, v) { if (this === localStorage && hit(k)) return; return oSet.call(this, k, v); };
+    P.removeItem = function (k) { if (this === localStorage && hit(k)) return; return oRem.call(this, k); };
+  } catch (e) {}
+  location.reload();
+}
 async function syncGame(user) {
+  ready = false;
   if (!GAME || !PREFIXES.length) return;
   const local = collectLocal(PREFIXES);
   const lh = hashOf(local);
@@ -246,6 +257,8 @@ async function syncGame(user) {
     const localChanged = sameAcc && mark.hash !== lh;
     let pick;
     if (!hasLocal) pick = 'cloud';
+    // 이 기기에서 한 번도 동기화한 적 없고, 이 기기 기록이 계정 기록보다 작으면(막 설치한 기기) 계정 기록을 쓴다
+    else if (!mark && Object.keys(local).length < Object.keys(cloud.data || {}).length) pick = 'cloud';
     else if (sameAcc && cloudNewer && !localChanged) pick = 'cloud';
     else if (sameAcc && !cloudNewer) pick = 'local';
     else pick = await chooseModal();
@@ -253,19 +266,21 @@ async function syncGame(user) {
       applyLocal(PREFIXES, cloud.data || {});
       setMark(GAME, { uid: user.uid, at: cloud.updatedAtMs || Date.now(), hash: cloud.hash });
       const rk = 'hk_reloaded_' + GAME;
-      if (!sessionStorage.getItem(rk)) { sessionStorage.setItem(rk, '1'); location.reload(); return; }
+      if (!sessionStorage.getItem(rk)) { sessionStorage.setItem(rk, '1'); freezeAndReload(); return; }
     } else {
       await pushSave(user, GAME, PREFIXES, 'choose-local');
     }
     lastHash = hashOf(collectLocal(PREFIXES));
   }
+  try { sessionStorage.removeItem('hk_reloaded_' + GAME); } catch (e) {}
+  ready = true;
   toast(t('cloudOn'), 3000);
   clearInterval(timer);
   timer = setInterval(() => flush('interval'), 15000);
 }
 async function flush(reason) {
   const user = auth.currentUser;
-  if (!user || !GAME || busy) return;
+  if (!user || !GAME || busy || !ready) return;
   const h = hashOf(collectLocal(PREFIXES));
   if (h === lastHash) return;
   busy = true;
@@ -366,6 +381,9 @@ onAuthStateChanged(auth, async user => {
   if (user) touchUser(user);
   if (MODE === 'portal') { renderPortal(user); if (!user && /[?&]login=1/.test(location.search) && firstState) openAuthModal('signup'); }
   else if (user) { syncGame(user); }
-  else if (firstState && GAME) { toast(t('cloudOff'), 4500, () => { location.href = PORTAL + '?login=1'; }); }
+  else {
+    ready = false; clearInterval(timer);
+    if (firstState && GAME) toast(t('cloudOff'), 4500, () => { location.href = PORTAL + '?login=1'; });
+  }
   firstState = false;
 });
