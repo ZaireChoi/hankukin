@@ -17,7 +17,7 @@ import {
   sendEmailVerification, sendPasswordResetEmail, signOut, setPersistence, browserLocalPersistence
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp
+  getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp, query, orderBy, limit
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ── Firebase 설정 (공개해도 되는 값. 보안은 Firestore 규칙이 맡는다) ──
@@ -35,6 +35,8 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
 setPersistence(auth, browserLocalPersistence).catch(() => {});
+// 로그인 상태가 처음 확인될 때까지 기다리는 약속 (주간 순위 등에서 사용)
+const authReady = new Promise(res => { const un = onAuthStateChanged(auth, u => { un(); res(u); }); });
 
 // ── 언어 ──
 function lang() {
@@ -391,7 +393,22 @@ window.HKAccount = {
   saveNow: () => flush('manual'),
   // 게임이 직접 값을 저장/불러오고 싶을 때 (localStorage 와 별개)
   async save(key, value) { const u = auth.currentUser; if (!u) return false; await setDoc(doc(db, 'users', u.uid, 'kv', key), { v: JSON.stringify(value), at: Date.now() }); return true; },
-  async load(key) { const u = auth.currentUser; if (!u) return null; const s = await getDoc(doc(db, 'users', u.uid, 'kv', key)); return s.exists() ? JSON.parse(s.data().v) : null; }
+  async load(key) { const u = auth.currentUser; if (!u) return null; const s = await getDoc(doc(db, 'users', u.uid, 'kv', key)); return s.exists() ? JSON.parse(s.data().v) : null; },
+  whenReady: () => authReady,
+  // 전 세계 순위표: leaderboards/{boardId}/entries/{uid} (자기 점수보다 높을 때만 올린다)
+  async submitScore(boardId, score, name) {
+    const u = auth.currentUser; if (!u) return false;
+    score = Math.max(0, Math.min(99999999, Math.floor(Number(score) || 0)));
+    const ref = doc(db, 'leaderboards', String(boardId), 'entries', u.uid);
+    let prev = null; try { const s = await getDoc(ref); if (s.exists()) prev = s.data().score; } catch (e) {}
+    if (prev != null && prev >= score) return false;
+    await setDoc(ref, { name: String(name || 'Player').slice(0, 20), score, at: Date.now() });
+    return true;
+  },
+  async topScores(boardId, n) {
+    const qs = await getDocs(query(collection(db, 'leaderboards', String(boardId), 'entries'), orderBy('score', 'desc'), limit(n || 50)));
+    const out = []; qs.forEach(d => out.push(Object.assign({ id: d.id }, d.data()))); return out;
+  }
 };
 
 let firstState = true;
