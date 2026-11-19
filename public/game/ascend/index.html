@@ -3296,6 +3296,31 @@ function lobbyModels(){if(!R3||!R3.show||!mdlUse())return;if(R3._lobbyFor===R3.s
 function lobbyTick(dt,now){if(!R3||!R3.showM||R3._lobbyFor!==R3.show)return;for(const s of R3.showM){const w=s.i.wrap;if(s.air){w.position.y=s.y+Math.sin(now*1.1+s.ph)*6;w.rotation.z=Math.sin(now*.7+s.ph)*.08;}else if(!s.big){w.rotation.y+=Math.sin(now*.6+s.ph)*.0008;if(s.i.mx){s.i.mx.mixer.update(0);}}}}
 function lobbyWrap(){if(!R3||!R3.ready||R3._lw)return;R3._lw=1;const om=R3.menu;R3.menu=function(dt,now){om.call(this,dt,now);try{lobbyModels();lobbyTick(dt,now);}catch(e){}};}
 setInterval(()=>{try{lobbyWrap();}catch(e){}},500);
+// ================= v1.2.2 : MY CHARACTER (faction · look · link) with real models =================
+Object.assign(STR.ko,{chFaction:'소속 진영',chLook:'외형',chLink:'링크 휴머노이드',lookO:'장교',lookF:'여성 장교',lookT:'병사',linkA:'세라 (흑발)',linkB:'루나 (은발)',facFed:'자유주의 연맹',facEmp:'은하 제국',chModelNote:'고른 외형으로 전장에 나갑니다. 진영을 바꾸면 내 팀의 이름과 군복이 바뀝니다.'});
+Object.assign(STR.en,{chFaction:'Faction',chLook:'Look',chLink:'LINK humanoid',lookO:'Officer',lookF:'Female officer',lookT:'Trooper',linkA:'Sera (black hair)',linkB:'Luna (silver hair)',facFed:'Liberty Federation',facEmp:'Galactic Empire',chModelNote:'You deploy with this look. Switching faction changes your team name and uniforms.'});
+if(!P.faction)P.faction='fed';if(!P.look)P.look='o';if(!P.linkM)P.linkM='link2';
+const facOf=team=>((team===0)===(P.faction!=='emp'))?'fed':'emp';
+infModel=function(u){const s=u.slot;const mine=s&&(s===G.local);const fac=G&&G.inv?(mine?P.faction:((s&&s.sid||u.id)%2?'emp':'fed')):facOf(u.team);return INF_M[fac][mine?P.look:(INF_ROLE[u.cls]||'t')];};
+{const _it=invTeams;invTeams=function(on){_it(on);if(!on&&P.faction==='emp'){TEAMS[0].n=TEAMS_PVP[1];TEAMS[1].n=TEAMS_PVP[0];}};invTeams(!!(G&&G.inv));}
+// UI block
+{const prev=$('#chPrev');if(prev){const box=document.createElement('div');box.id='chModel';box.innerHTML='<div class="small" style="margin:4px 0 6px" id="chMN"></div><h3 id="chFH"></h3><div id="chFac" class="row"></div><h3 id="chLH"></h3><div id="chLook" class="row"></div><h3 id="chKH"></h3><div id="chLink" class="row"></div><canvas id="chPrev3" width="760" height="330" style="width:100%;height:auto;background:#070b16;border-radius:12px;margin:8px 0"></canvas>';prev.parentNode.insertBefore(box,prev);}}
+const CP={r:null,s:null,c:null,objs:[],key:'',run:false};
+function chPreview(){const cv=$('#chPrev3');if(!cv)return;const T3=window.THREE,X=window.__TX||{};if(!T3||!X.GLTFLoader){return;}
+ if(!CP.r){CP.r=new T3.WebGLRenderer({canvas:cv,antialias:true,alpha:false});CP.r.setPixelRatio(Math.min(2,devicePixelRatio||1));CP.r.setSize(760,330,false);CP.r.toneMapping=T3.ACESFilmicToneMapping;CP.r.outputColorSpace=T3.SRGBColorSpace;
+  CP.s=new T3.Scene();CP.s.background=new T3.Color(0x070b16);try{CP.s.environment=new T3.PMREMGenerator(CP.r).fromScene(new X.RoomEnvironment(),.04).texture;}catch(e){}
+  CP.s.add(new T3.HemisphereLight(0xcfe0ff,0x20202a,.8));const k=new T3.DirectionalLight(0xfff0dd,2.2);k.position.set(3,6,5);CP.s.add(k);const r1=new T3.PointLight(0x7fd8ff,30,30,1.5);r1.position.set(-4,3,-2);CP.s.add(r1);const r2=new T3.PointLight(0xff6fd8,25,30,1.5);r2.position.set(4,3,-2);CP.s.add(r2);
+  const fl=new T3.Mesh(new T3.CircleGeometry(6,48),new T3.MeshStandardMaterial({color:0x141a28,metalness:.6,roughness:.35}));fl.rotation.x=-Math.PI/2;CP.s.add(fl);const rg=new T3.Mesh(new T3.RingGeometry(1.15,1.22,64),new T3.MeshBasicMaterial({color:0x5ad1ff}));rg.rotation.x=-Math.PI/2;rg.position.y=.01;CP.s.add(rg);
+  CP.c=new T3.PerspectiveCamera(30,760/330,.1,200);CP.c.position.set(0,1.55,6.2);CP.c.lookAt(0,1.05,0);}
+ const me=INF_M[P.faction][P.look];const key=me+'|'+P.linkM;const need=[me,P.linkM,'mech3'];let ready=true;for(const f of need)if(!mdlGet(f))ready=false;
+ if(ready&&CP.key!==key){for(const o of CP.objs)CP.s.remove(o.wrap);CP.objs=[];const a=mdlInstance(me,0,1.85,'h');a.wrap.position.set(-.55,0,.4);a.wrap.rotation.y=.25;const b=mdlInstance(P.linkM,0,1.72,'h');b.wrap.position.set(.65,0,.1);b.wrap.rotation.y=-.35;const m=mdlInstance('mech3',0,9,'h');m.wrap.position.set(0,0,-5.5);m.wrap.rotation.y=.1;
+  for(const o of[a,b,m]){CP.s.add(o.wrap);CP.objs.push(o);}CP.key=key;}
+ if(!CP.run){CP.run=true;const tick=()=>{if(isHidden('#char')){CP.run=false;return;}const t=performance.now()/1000;if(CP.objs[0])CP.objs[0].wrap.rotation.y=.25+Math.sin(t*.5)*.35;if(CP.objs[1])CP.objs[1].wrap.rotation.y=-.35+Math.sin(t*.45+1)*.35;CP.c.position.x=Math.sin(t*.15)*.8;CP.c.lookAt(0,1.05,0);CP.r.render(CP.s,CP.c);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
+ if(!ready)setTimeout(()=>{if(!isHidden('#char'))chPreview();},600);}
+{const _oc=openChar;openChar=function(){_oc();try{const mk=(box,items,cur,fn)=>{const el=$(box);if(!el)return;el.innerHTML='';for(const[v,l]of items){const b=document.createElement('button');b.className='sm opt'+(v===cur?' on':'');b.textContent=l;b.onclick=()=>{fn(v);saveP();openChar();};el.appendChild(b);}};
+  $('#chMN').textContent=t('chModelNote');$('#chFH').textContent=t('chFaction');$('#chLH').textContent=t('chLook');$('#chKH').textContent=t('chLink');
+  mk('#chFac',[['fed',t('facFed')],['emp',t('facEmp')]],P.faction,v=>P.faction=v);mk('#chLook',[['o',t('lookO')],['f',t('lookF')],['t',t('lookT')]],P.look,v=>P.look=v);mk('#chLink',[['link2',t('linkA')],['link3',t('linkB')]],P.linkM,v=>P.linkM=v);
+  const useM=mdlUse()&&window.__TX&&window.__TX.GLTFLoader;$('#chModel').style.display=useM?'':'none';$('#chPrev').style.display=useM?'none':'';if(useM)chPreview();}catch(e){console.warn(e);}};}
 // ================= v1.0 : CAMERA ROTATE (right-drag) + WHEEL ZOOM =================
 function camRotOK(){return typeof use3D==='function'&&use3D()&&P.view!=='chase';}
 function camRot(x,y){if(!camRotOK()||!P.camYaw)return[x,y];const c=Math.cos(P.camYaw),s=Math.sin(P.camYaw);return[x*c+y*s,-x*s+y*c];}
