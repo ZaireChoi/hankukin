@@ -1,15 +1,129 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HANKUKIN Games - 귀여운 동물 블록 대전 Anibrix</title>
-<meta name="description" content="설치 없이 바로 하는 무료 브라우저 게임. 귀여운 동물 블록 대전 Anibrix.">
-<meta property="og:title" content="HANKUKIN Games"><meta property="og:image" content="https://www.hankuk-in.com/game/anibrix/og-image.png"><meta property="og:url" content="https://www.hankuk-in.com/game/">
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HANKUKIN PLAY · 무료 웹 게임</title>
+<meta name="description" content="설치 없이 바로 하는 무료 웹 게임. 100명 우주 전장 ASCEND, 귀여운 동물 블록 대전 Anibrix. PC와 모바일 모두 지원.">
+<link rel="canonical" href="https://www.hankuk-in.com/game/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="HANKUKIN PLAY">
+<meta property="og:title" content="HANKUKIN PLAY · Free browser games">
+<meta property="og:description" content="Play instantly, no install. ASCEND (100-player sci-fi battlefield) and Anibrix (cute animal block battle).">
+<meta property="og:image" content="https://www.hankuk-in.com/game/ascend/og.jpg">
+<meta property="og:url" content="https://www.hankuk-in.com/game/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#070b16">
 <link rel="icon" href="/game/anibrix/icons/icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Jua&display=swap" rel="stylesheet">
-<style>body{margin:0;min-height:100vh;font-family:'Jua',system-ui,sans-serif;background:linear-gradient(160deg,#ffd6e3,#d8ecff);color:#4a3426;display:flex;flex-direction:column;align-items:center}
-h1{font-family:'Fredoka',sans-serif;font-size:44px;color:#ff5c8a;margin:36px 0 4px;text-shadow:3px 3px 0 #fff}p.s{margin:0 0 24px;opacity:.8}
-.card{background:#fff;border-radius:28px;box-shadow:0 12px 40px rgba(120,60,80,.18);width:min(92vw,520px);overflow:hidden;text-decoration:none;color:inherit;display:block;transition:transform .15s}.card:hover{transform:translateY(-4px)}
-.card img{width:100%;display:block}.card div{padding:16px 20px 22px}.card b{font-size:26px;font-family:'Fredoka',sans-serif;color:#ff5c8a}.card span{display:block;margin-top:6px;font-size:16px}
-.play{display:inline-block;margin-top:14px;background:linear-gradient(180deg,#ffb84d,#ff8a00);color:#fff;font-size:22px;padding:12px 34px;border-radius:999px;box-shadow:0 5px 0 #d96b00}
-footer{margin:30px 0 20px;font-size:12px;opacity:.6}</style></head><body>
-<h1>HANKUKIN Games</h1><p class="s">설치 없이 바로 하는 무료 게임 · Free browser games</p>
-<a class="card" href="/game/anibrix/"><img src="/game/anibrix/og-image.png" alt="Anibrix"><div><b>Anibrix</b><span>귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.</span><span style="opacity:.7">Cute animal block battle · 한국어 · English · 日本語 · 中文</span><span class="play">▶ 플레이</span></div></a>
-<footer>© 2026 HANKUKIN · <a href="/en/">Korea guide</a></footer></body></html>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070b16;--card:rgba(18,26,48,.72);--line:rgba(120,150,220,.22);--text:#e9eefc;--sub:#9fb0d4}
+html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic","Hiragino Sans","PingFang SC",sans-serif;min-height:100%}
+a{color:inherit;text-decoration:none}
+#sky{position:fixed;inset:0;z-index:-1}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 18px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:3px;font-size:18px}
+.logo i{display:inline-block;width:30px;height:30px;border-radius:9px;background:conic-gradient(from 200deg,#6cc4ff,#c58cff,#ff7a9a,#ffb84d,#6cc4ff);box-shadow:0 0 24px #8a7cff66}
+.langs{display:flex;gap:6px}
+.langs button{background:transparent;border:1px solid var(--line);color:var(--sub);border-radius:99px;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer}
+.langs button.on{color:#fff;border-color:#8fb4ff;background:rgba(80,120,220,.25)}
+.hero{padding:64px 0 34px;text-align:center}
+.hero h1{font-size:clamp(34px,6vw,64px);font-weight:900;line-height:1.08;letter-spacing:-.5px}
+.hero h1 span{background:linear-gradient(90deg,#6cc4ff,#c58cff,#ff7a9a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--sub);margin-top:14px;font-size:clamp(15px,2vw,18px)}
+.pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+.pill{border:1px solid var(--line);border-radius:99px;padding:6px 12px;font-size:13px;color:#cfdaf5;background:rgba(20,30,60,.5)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:26px}
+.game{position:relative;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--card);backdrop-filter:blur(8px);transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column}
+.game:hover{transform:translateY(-4px);box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.thumb{aspect-ratio:1200/630;background-size:cover;background-position:center;position:relative}
+.thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(7,11,22,0) 55%,rgba(7,11,22,.85))}
+.badge{position:absolute;top:12px;left:12px;z-index:2;font-size:12px;font-weight:800;padding:5px 10px;border-radius:99px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.2)}
+.body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.body h2{font-size:26px;font-weight:900;letter-spacing:.5px}
+.body p{color:var(--sub);line-height:1.55;font-size:15px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tags span{font-size:12px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cbd6f2}
+.play{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:17px;padding:14px;border-radius:14px;color:#fff}
+.asc .play{background:linear-gradient(90deg,#3b82f6,#8b5cf6)}
+.ani .play{background:linear-gradient(90deg,#ffb84d,#ff8a00);color:#2a1300}
+.asc h2{background:linear-gradient(90deg,#6cc4ff,#c58cff,#ff7a7a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ani h2{color:#ff5c8a}
+.how{margin-top:42px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.how div{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(14,20,40,.6)}
+.how b{display:block;margin-bottom:6px}
+.how small{color:var(--sub);line-height:1.5;font-size:13.5px}
+footer{margin-top:46px;color:#7f8fb3;font-size:13px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;border-top:1px solid var(--line);padding-top:18px}
+footer a{color:#a9bbe6}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="wrap">
+ <header>
+  <a class="logo" href="/game/"><i></i>HANKUKIN PLAY</a>
+  <div class="langs" id="langs"></div>
+ </header>
+ <section class="hero">
+  <h1 data-t="h1"></h1>
+  <p data-t="lead"></p>
+  <div class="pills"><span class="pill" data-t="p1"></span><span class="pill" data-t="p2"></span><span class="pill" data-t="p3"></span><span class="pill" data-t="p4"></span></div>
+ </section>
+ <section class="grid">
+  <a class="game asc" href="/game/ascend/">
+   <div class="thumb" style="background-image:url(/game/ascend/og.jpg)"><span class="badge" data-t="newBadge"></span></div>
+   <div class="body"><h2>ASCEND</h2><p data-t="ascDesc"></p>
+    <div class="tags"><span data-t="ascT1"></span><span data-t="ascT2"></span><span data-t="ascT3"></span><span data-t="ascT4"></span></div>
+    <span class="play" data-t="playBtn"></span></div>
+  </a>
+  <a class="game ani" href="/game/anibrix/">
+   <div class="thumb" style="background-image:url(/game/anibrix/og-image.png)"><span class="badge" data-t="hotBadge"></span></div>
+   <div class="body"><h2>Anibrix</h2><p data-t="aniDesc"></p>
+    <div class="tags"><span data-t="aniT1"></span><span data-t="aniT2"></span><span data-t="aniT3"></span><span data-t="aniT4"></span></div>
+    <span class="play" data-t="playBtn"></span></div>
+  </a>
+ </section>
+ <section class="how">
+  <div><b data-t="w1t"></b><small data-t="w1d"></small></div>
+  <div><b data-t="w2t"></b><small data-t="w2d"></small></div>
+  <div><b data-t="w3t"></b><small data-t="w3d"></small></div>
+ </section>
+ <footer><span>© 2026 HANKUKIN · <span data-t="rights"></span></span><span><a href="/en/" data-t="guide"></a></span></footer>
+</div>
+<script>
+const S={
+ ko:{h1:'설치 없이 <span>바로 플레이</span>',lead:'브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.',p1:'무료',p2:'설치 없음',p3:'PC · 모바일',p4:'한국어 · English',
+  newBadge:'NEW · 3D',hotBadge:'인기',playBtn:'지금 플레이 ▶',
+  ascDesc:'최대 100명이 싸우는 우주 전장. 보병으로 시작해 전투기 조종사, 타이탄 로봇, 함선 지휘관으로 진급하세요. 탑뷰와 슈팅 시점을 바꿔 가며 즐길 수 있습니다.',ascT1:'대규모 전투',ascT2:'진급·분대',ascT3:'탑뷰 / 3인칭',ascT4:'방 코드 대전',
+  aniDesc:'귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.',aniT1:'퍼즐 대전',aniT2:'친구 초대',aniT3:'보스 스테이지',aniT4:'4개 언어',
+  w1t:'1. 게임 고르기',w1d:'카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.',w2t:'2. 친구와 함께',w2d:'방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.',w3t:'3. 성장 기록',w3d:'계급, 기록, 캐릭터 꾸미기는 이 기기에 저장됩니다.',rights:'모든 권리 보유',guide:'한국 여행 가이드 보기 →'},
+ en:{h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
+  newBadge:'NEW · 3D',hotBadge:'Popular',playBtn:'Play now ▶',
+  ascDesc:'A sci-fi battlefield for up to 100 players. Start as a foot soldier and get promoted to pilot, titan mech driver and fleet commander. Switch between top-down and shooter views.',ascT1:'Massive battles',ascT2:'Ranks & squads',ascT3:'Top-down / 3rd person',ascT4:'Room-code multiplayer',
+  aniDesc:'Cute animal block battle. Clear lines, attack friends, and meet new animals and bosses every 12 stages.',aniT1:'Puzzle battle',aniT2:'Invite friends',aniT3:'Boss stages',aniT4:'4 languages',
+  w1t:'1. Pick a game',w1d:'Tap a card and you are in. No sign-up, just choose a nickname.',w2t:'2. Play with friends',w2d:'Create a room and share the 6-digit code to bring friends into the same battle.',w3t:'3. Keep progress',w3d:'Ranks, records and character looks are saved on this device.',rights:'All rights reserved',guide:'Korea travel guide →'},
+ ja:{h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
+  newBadge:'NEW · 3D',hotBadge:'人気',playBtn:'今すぐプレイ ▶',
+  ascDesc:'最大100人が戦う宇宙の戦場。歩兵から始めて、パイロット、タイタンメカ、艦隊司令官へと昇進しよう。(英語・韓国語)',ascT1:'大規模戦闘',ascT2:'昇進・分隊',ascT3:'見下ろし / TPS',ascT4:'ルームコード対戦',
+  aniDesc:'かわいい動物ブロックを消して友だちと対戦！12ステージごとに新しい動物とボスが登場。',aniT1:'パズル対戦',aniT2:'友だち招待',aniT3:'ボス戦',aniT4:'4言語',
+  w1t:'1. ゲームを選ぶ',w1d:'カードをタップするだけ。登録不要、ニックネームを決めるだけ。',w2t:'2. 友だちと遊ぶ',w2d:'ルームを作って6桁のコードを送れば同じ戦場に参加できます。',w3t:'3. 記録を残す',w3d:'階級や記録はこの端末に保存されます。',rights:'All rights reserved',guide:'韓国旅行ガイド →'},
+ zh:{h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
+  newBadge:'NEW · 3D',hotBadge:'热门',playBtn:'立即开玩 ▶',
+  ascDesc:'最多100人同场的太空战场。从步兵开始，晋升为飞行员、泰坦机甲驾驶员和舰队指挥官。（英文·韩文）',ascT1:'大规模战斗',ascT2:'晋升·小队',ascT3:'俯视 / 第三人称',ascT4:'房间码对战',
+  aniDesc:'消除可爱的动物方块与好友对战！每12关出现新的动物和Boss。',aniT1:'益智对战',aniT2:'邀请好友',aniT3:'Boss关卡',aniT4:'4种语言',
+  w1t:'1. 选择游戏',w1d:'点一下卡片即可开始，无需注册，只要起个昵称。',w2t:'2. 和朋友一起',w2d:'创建房间并分享6位房间码，朋友就能加入同一战场。',w3t:'3. 保存进度',w3d:'军衔、战绩和角色外观保存在本设备上。',rights:'版权所有',guide:'韩国旅行指南 →'}};
+const NAMES={ko:'한국어',en:'English',ja:'日本語',zh:'中文'};
+let L=null;try{L=localStorage.getItem('hk_play_lang');}catch(e){}if(!S[L]){const n=(navigator.language||'en').toLowerCase();L=n.startsWith('ko')?'ko':n.startsWith('ja')?'ja':n.startsWith('zh')?'zh':'en';}
+function apply(){document.documentElement.lang=L;document.querySelectorAll('[data-t]').forEach(e=>{const v=S[L][e.dataset.t]??S.en[e.dataset.t];if(v!=null)e.innerHTML=v;});
+ const box=document.getElementById('langs');box.innerHTML='';for(const k in NAMES){const b=document.createElement('button');b.textContent=NAMES[k];if(k===L)b.className='on';b.onclick=()=>{L=k;try{localStorage.setItem('hk_play_lang',k);}catch(e){}apply();};box.appendChild(b);}}
+apply();
+// starfield
+const c=document.getElementById('sky'),g=c.getContext('2d');let W,H,st=[];
+function rs(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devicePixelRatio;st=Array.from({length:220},()=>({x:Math.random()*W,y:Math.random()*H,z:Math.random()}));}
+addEventListener('resize',rs);rs();
+(function f(t){const gr=g.createRadialGradient(W*.5,H*.1,0,W*.5,H*.1,H*1.1);gr.addColorStop(0,'#1c1640');gr.addColorStop(.5,'#0b1024');gr.addColorStop(1,'#05070d');g.fillStyle=gr;g.fillRect(0,0,W,H);
+ for(const s of st){s.y+=(.05+s.z*.35)*devicePixelRatio;if(s.y>H)s.y=0;g.fillStyle=`rgba(200,220,255,${.25+s.z*.7})`;g.fillRect(s.x,s.y,1+s.z*2,1+s.z*2);}requestAnimationFrame(f);})();
+</script>
+</body>
+</html>
