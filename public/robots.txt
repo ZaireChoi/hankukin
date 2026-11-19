@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://www.hankuk-in.com/sitemap-index.xml
+Sitemap: https://www.hankuk-in.com/sitemap-games.xml
