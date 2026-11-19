@@ -1379,7 +1379,8 @@ function awardEnd(w){
   {const c=Math.min(120,me.lines*2)+(G.mode==='ai'?(win?20+Math.min(G.level,20)*5:10):(win?60:15));const c2=c+Math.min(30,G.bonusCoins|0);addCoins(c2);G.xpRes.coins=c2;}
   if(G.mode==='ai'&&win){DAY.track('win',1);if(G.stars===3)DAY.track('stars3',1);}
   if(G.mode==='online'&&NET.quick)DAY.track('quick',1);
-  if(G.mode==='online'&&NET.quick){const my=store.get('trophy',0),op=(NET.opp&&NET.opp.tr)|0,cl=(v,a,b)=>Math.max(a,Math.min(b,v));let d=win?Math.round(25+cl((op-my)/20,-10,10)):-Math.round(18+cl((my-op)/20,-8,8));if(my+d<0)d=-my;store.set('trophy',my+d);G.xpRes.tr=d;store.set(win?'ow':'ol',store.get(win?'ow':'ol',0)+1);}
+  if(G.mode==='online'&&NET.quick){const my=store.get('trophy',0),op=(NET.opp&&NET.opp.tr)|0,cl=(v,a,b)=>Math.max(a,Math.min(b,v));// 등급분류(전체이용가): 패배해도 트로피를 잃지 않음
+    let d=win?Math.round(25+cl((op-my)/20,-10,10)):0;store.set('trophy',my+d);G.xpRes.tr=d;store.set(win?'ow':'ol',store.get(win?'ow':'ol',0)+1);}
   if(G.xpRes.after>G.xpRes.before)setTimeout(()=>Snd.fever(),1700);
 }
 function xpBlock(){const r=G.xpRes;if(!r)return '';const p=prof();let h=`<div class="subt" style="font-weight:800;color:#7048e8;margin:2px 0">${tr('xp_gain',{n:r.gain})}${r.coins?' · 🪙 +'+r.coins:''}${r.tr!==undefined?' · '+tr('tr_gain',{n:(r.tr>=0?'+':'')+r.tr}):''}</div><div class="xpbar" style="max-width:320px;margin:4px auto"><div class="xpfill" style="width:${Math.round(p.xp/p.need*100)}%"></div></div><div class="subt" style="font-size:12px">Lv.${p.lv} · ${tr('xp',{a:p.xp,b:p.need})}</div>`;if(r.after>r.before){h+=`<div class="lvup">${tr('lvup',{n:r.after})}</div>`;for(const u of r.unl)h+=`<div class="subt" style="color:#d6336c;font-weight:800">${u.startsWith('hero:')?img(u.slice(5),48,false,'happy')+'<br>'+tr('hero_get',{name:heroName(u.slice(5))}):tr(u)}</div>`;}return h;}
