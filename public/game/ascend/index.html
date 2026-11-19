@@ -3285,6 +3285,17 @@ Object.assign(STR.ko,{ztitan:'시즈 타이탄',zsled:'스카이 슬레드',levi
 CL.ztitan={...ZB,n:{ko:'시즈 타이탄',en:'Siege Titan'},role:'armor',cat:3,arm:'heavy',layer:0,r:58,hp:5200,spd:44,wpns:['zqueen'],a1:'shock',cd:[8,10],xp:1600,d:{ko:'거대한 공성 괴수',en:'Colossal siege beast'}};
 CL.zsled={...ZB,n:{ko:'스카이 슬레드',en:'Sky Sled'},role:'air',cat:2,arm:'air',layer:1,r:15,hp:150,spd:320,turn:3,wpns:['zhop'],a1:'stim',xp:90,d:{ko:'제타 기수가 탄 비행 썰매',en:'Zeta rider on a hover sled'}};SHAPE.zsled=SHAPE.zhopper.slice();
 {const _zp=zetaPick;zetaPick=function(tier){if(tier>=2&&Math.random()<.12)return'zsled';return _zp(tier);};}
+// ================= v1.2.1 : LOBBY LINEUP WITH REAL MODELS =================
+const LOBBY_M=[['fed_officer',-36,0,30,.9,50],['emp_officer',36,0,30,2.2,52],['link2',-86,0,-6,.7,47],['link3',86,0,-6,2.5,48],['fed_female',-128,0,46,1.0,46],['emp_female',128,0,46,2.1,47],['fed_trooper',-66,0,84,1.1,50],['emp_trooper',66,0,84,2.0,51]];
+function lobbyModels(){if(!R3||!R3.show||!mdlUse())return;if(R3._lobbyFor===R3.show)return;const need=LOBBY_M.map(m=>m[0]).concat(['mech3','a_fighter','s_battleship']);let ok=true;for(const f of need)if(!mdlGet(f))ok=false;if(!ok)return;
+ const g=R3.show;R3._lobbyFor=g;try{if(!R3._envSet&&window.__TX.RoomEnvironment){const pm=new window.THREE.PMREMGenerator(R3.r);R3.scene.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;R3._envSet=1;}const T3=window.THREE;const k1=new T3.PointLight(0xffe2c0,9000,600,1.6);k1.position.set(0,150,170);g.add(k1);const k2=new T3.PointLight(0x7fd8ff,7000,600,1.6);k2.position.set(-160,120,-120);g.add(k2);const k3=new T3.PointLight(0xff6fd8,5000,600,1.6);k3.position.set(170,110,-80);g.add(k3);}catch(e){}for(const s of R3.showU||[])if(s.kind!=='pad')s.e.root.visible=false;R3.showM=[];
+ for(const[f,x,y,z,ry,h]of LOBBY_M){const i=mdlInstance(f,0,h,'h');if(!i)continue;i.wrap.position.set(x,8+y,z);i.wrap.rotation.y=ry;g.add(i.wrap);R3.showM.push({i,ph:Math.random()*6});}
+ const m=mdlInstance('mech3',0,230,'h');if(m){m.wrap.position.set(0,8,-150);m.wrap.rotation.y=.15;g.add(m.wrap);R3.showM.push({i:m,ph:0,big:1});}
+ for(const [x,y,z,s] of [[-60,170,70,46],[30,200,110,46]]){const a=mdlInstance('a_fighter',PI,s,'l');if(a){a.wrap.position.set(x,y,z);a.wrap.rotation.y=.6;g.add(a.wrap);R3.showM.push({i:a,ph:x,air:1,y});}}
+ const b=mdlInstance('s_battleship',PI,260,'l');if(b){b.wrap.position.set(-320,360,-380);b.wrap.rotation.y=.6;g.add(b.wrap);R3.showM.push({i:b,ph:1,air:1,y:360});}}
+function lobbyTick(dt,now){if(!R3||!R3.showM||R3._lobbyFor!==R3.show)return;for(const s of R3.showM){const w=s.i.wrap;if(s.air){w.position.y=s.y+Math.sin(now*1.1+s.ph)*6;w.rotation.z=Math.sin(now*.7+s.ph)*.08;}else if(!s.big){w.rotation.y+=Math.sin(now*.6+s.ph)*.0008;if(s.i.mx){s.i.mx.mixer.update(0);}}}}
+function lobbyWrap(){if(!R3||!R3.ready||R3._lw)return;R3._lw=1;const om=R3.menu;R3.menu=function(dt,now){om.call(this,dt,now);try{lobbyModels();lobbyTick(dt,now);}catch(e){}};}
+setInterval(()=>{try{lobbyWrap();}catch(e){}},500);
 // ================= v1.0 : CAMERA ROTATE (right-drag) + WHEEL ZOOM =================
 function camRotOK(){return typeof use3D==='function'&&use3D()&&P.view!=='chase';}
 function camRot(x,y){if(!camRotOK()||!P.camYaw)return[x,y];const c=Math.cos(P.camYaw),s=Math.sin(P.camYaw);return[x*c+y*s,-x*s+y*c];}
