@@ -617,5 +617,304 @@
    "walk",
    "run"
   ]
+ },
+ "m_striker": {
+  "bytes": 5385536,
+  "tris": 41149,
+  "size": [
+   5.58,
+   6.1,
+   5.06
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_ranger": {
+  "bytes": 4320744,
+  "tris": 40960,
+  "size": [
+   4.03,
+   4.88,
+   4.32
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_guardian": {
+  "bytes": 5888752,
+  "tris": 41104,
+  "size": [
+   6.03,
+   7.52,
+   6.01
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_artillery": {
+  "bytes": 5770364,
+  "tris": 41010,
+  "size": [
+   5.2,
+   6.4,
+   7.97
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_wizard": {
+  "bytes": 5131636,
+  "tris": 41006,
+  "size": [
+   7.57,
+   7.86,
+   6.24
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_phantom": {
+  "bytes": 4187764,
+  "tris": 41292,
+  "size": [
+   6.39,
+   8.06,
+   9.63
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_titan": {
+  "bytes": 4956480,
+  "tris": 40905,
+  "size": [
+   6.68,
+   7.98,
+   6.92
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_sky": {
+  "bytes": 6087288,
+  "tris": 40884,
+  "size": [
+   12.71,
+   8.46,
+   5.35
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_origin": {
+  "bytes": 4433596,
+  "tris": 41310,
+  "size": [
+   4.81,
+   5.16,
+   6.49
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_samurai": {
+  "bytes": 4855864,
+  "tris": 41085,
+  "size": [
+   3.26,
+   5.74,
+   4.64
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "mech_leg": {
+  "bytes": 6631860,
+  "tris": 45847,
+  "size": [
+   17.11,
+   11.41,
+   7.43
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_fire": {
+  "bytes": 4105584,
+  "tris": 41346,
+  "size": [
+   0.33,
+   0.39,
+   0.39
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_ice": {
+  "bytes": 3833916,
+  "tris": 41352,
+  "size": [
+   0.25,
+   0.38,
+   0.26
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_thunder": {
+  "bytes": 4151444,
+  "tris": 41232,
+  "size": [
+   0.43,
+   0.51,
+   0.41
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_wind": {
+  "bytes": 4458812,
+  "tris": 41163,
+  "size": [
+   0.76,
+   0.66,
+   0.39
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_dark": {
+  "bytes": 5335728,
+  "tris": 40516,
+  "size": [
+   0.63,
+   0.68,
+   0.85
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_time": {
+  "bytes": 4288108,
+  "tris": 41468,
+  "size": [
+   0.3,
+   0.42,
+   0.31
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_void": {
+  "bytes": 4229724,
+  "tris": 41099,
+  "size": [
+   0.24,
+   0.41,
+   0.26
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_earth": {
+  "bytes": 4008304,
+  "tris": 41194,
+  "size": [
+   0.26,
+   0.39,
+   0.28
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "god": {
+  "bytes": 8094536,
+  "tris": 51328,
+  "size": [
+   18.91,
+   11.94,
+   4.67
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "god_red": {
+  "bytes": 7668796,
+  "tris": 51328,
+  "size": [
+   18.84,
+   12.95,
+   6.25
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "god_black": {
+  "bytes": 7669212,
+  "tris": 51328,
+  "size": [
+   18.23,
+   10.02,
+   5.34
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "god_white": {
+  "bytes": 8126020,
+  "tris": 51328,
+  "size": [
+   18.45,
+   13.44,
+   4.88
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
  }
 }
