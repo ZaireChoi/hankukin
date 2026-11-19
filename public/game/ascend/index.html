@@ -2831,7 +2831,7 @@ const storyOwner=s=>s?(s.ownerSlot||s):null;
 const perkLv=(s,k)=>{const o=storyOwner(s);return(o&&o.pk&&o.pk[k])||0;};
 const xpNeed=l=>250+150*l;
 function storyEvent(txt,c){if(!G||!G.story)return;G.story.ev.push({t:G.t,txt,c:c||'#ffd166'});}
-function announce(c1,c2,c3,big,col){try{cine(c1,c2,c3,3600);}catch(e){}pop(c2+(c3?' · '+c3:''),col||'#ffd166',big!==false);try{SFX.horn&&SFX.horn();}catch(e){}if(NET.mode==='host')storyBroadcast({an:[c1,c2,c3,col||'#ffd166']});}
+function announce(c1,c2,c3,big,col){try{cine(c3||'',c1||c2,c1?c2:'',3600);}catch(e){}pop(c1?(c1+' · '+c2):c2,col||'#ffd166',big!==false);try{SFX.horn&&SFX.horn();}catch(e){}if(NET.mode==='host')storyBroadcast({an:[c1,c2,c3,col||'#ffd166']});}
 function storyBroadcast(extra){for(const[,c]of NET.conns){if(c.open&&c.slot)try{c.send({t:'story',s:storyPacket(),...extra});}catch(e){}}}
 function storyPacket(){const S=G.story;const o=S.obj;return{ph:S.phase,o:o&&!o.dead?[o.x|0,o.y|0,Math.ceil(o.hp),o.mhp,o.z|0]:null,of:S.fallAt?Math.max(0,S.fallAt-G.t):0,fn:S.fin?[S.fin.team,+S.fin.p.toFixed(3)]:null,bt:G.slots.filter(s=>s.bounty&&s.unit).map(s=>s.unit.id)};}
 
@@ -2911,7 +2911,7 @@ function storyStep(dt){const S=G.story;if(!S||G.over)return;
   setTimeout(()=>{if(G&&G.story)announce(t('act1'),t('act1s'),tx(MAP.n),true,'#a8d4ff');},3800);storyEvent(t('act1')+' · '+tx(MAP.n),'#a8d4ff');};}
 {const _st=step;step=function(dt){_st(dt);if(G&&!G.client)storyStep(dt);};}
 {const _cr=clientRecv;clientRecv=function(m){if(m&&m.t==='story'){if(!G||!G.client)return;const S=G.story||(G.story={ev:[]});const p=m.s;S.phase=p.ph;S.obj=p.o?{x:p.o[0],y:p.o[1],hp:p.o[2],mhp:p.o[3],z:p.o[4],r:54,a:(S.obj?S.obj.a:0)+.5}:null;S.fallLeft=p.of;S.fin=p.fn?{team:p.fn[0],p:p.fn[1]}:null;S.bt=p.bt||[];
-  if(m.an){try{cine(m.an[0],m.an[1],m.an[2],3600);}catch(e){}pop(m.an[1],m.an[3],true);S.ev.push({t:G.t,txt:m.an[1],c:m.an[3]});}if(m.pp){pop(m.pp[0],m.pp[1],true);S.ev.push({t:G.t,txt:m.pp[0],c:m.pp[1]});}return;}_cr(m);};}
+  if(m.an){try{cine(m.an[2]||'',m.an[0]||m.an[1],m.an[0]?m.an[1]:'',3600);}catch(e){}pop(m.an[1],m.an[3],true);S.ev.push({t:G.t,txt:m.an[1],c:m.an[3]});}if(m.pp){pop(m.pp[0],m.pp[1],true);S.ev.push({t:G.t,txt:m.pp[0],c:m.pp[1]});}return;}_cr(m);};}
 
 // ---------- drawing: objective, finale meter, level bar, bounty / nemesis marks ----------
 function drawStory(info,now){const S=G&&G.story;if(!S)return;const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=G.local.team;
