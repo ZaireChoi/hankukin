@@ -30,6 +30,8 @@ const GAME = (SCRIPT && SCRIPT.dataset.game) || '';
 const PREFIXES = ((SCRIPT && SCRIPT.dataset.prefix) || (GAME ? GAME + '_' : '')).split(',').map(s => s.trim()).filter(Boolean);
 const PORTAL = '/game/';
 const GAME_NAMES = { anibrix: 'Anibrix', ascend: 'ASCEND' };
+// 다른 게임 사이트(CrazyGames 등)에 올린 판에서는 우리 이메일 로그인을 보이지 않는다 (그 사이트 규칙: 외부 로그인 금지)
+const EMBED_NOLOGIN = (() => { const hit = /[?&]src=crazygames\b/i.test(location.search); try { if (hit) sessionStorage.setItem('hk_nologin', '1'); return sessionStorage.getItem('hk_nologin') === '1'; } catch (e) { return hit; } })();
 
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
@@ -420,6 +422,7 @@ window.HKAccount = {
   }
 };
 
+if (EMBED_NOLOGIN) { window.HKAccount.disabled = true; window.HKAccount.openLogin = window.HKAccount.openSignup = () => {}; }
 let firstState = true;
 onAuthStateChanged(auth, async user => {
   listeners.forEach(fn => { try { fn(user); } catch (e) {} });
@@ -428,7 +431,7 @@ onAuthStateChanged(auth, async user => {
   else if (user) { syncGame(user); }
   else {
     ready = false; clearInterval(timer);
-    if (firstState && GAME) toast(t('cloudOff'), 4500, () => { location.href = PORTAL + '?login=1'; });
+    if (firstState && GAME && !EMBED_NOLOGIN) toast(t('cloudOff'), 4500, () => { location.href = PORTAL + '?login=1'; });
   }
   firstState = false;
 });
