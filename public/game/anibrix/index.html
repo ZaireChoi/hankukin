@@ -312,6 +312,16 @@ body.phone #keys{display:none}
 body.phone #touch{flex-wrap:nowrap;gap:5px;margin-top:2px}
 body.phone #touch button{width:44px;height:54px;font-size:20px;border-radius:14px}
 body.phone #touch button.item,body.phone #touch button.hold{width:52px;font-size:12px}
+.board.danger{animation:dgPulse .7s infinite}
+@keyframes dgPulse{0%,100%{box-shadow:0 0 0 4px #fff,0 0 0 8px rgba(240,62,62,.9),0 0 20px 8px rgba(240,62,62,.55)}50%{box-shadow:0 0 0 4px #fff,0 0 0 8px rgba(240,62,62,.25),0 0 6px 2px rgba(240,62,62,.2)}}
+.board.goldframe{outline:4px solid #f5c400;outline-offset:3px}
+#timer.climax{color:#e03131;animation:tPulse .6s infinite}
+@keyframes tPulse{50%{transform:scale(1.2)}}
+.rpill.streak{background:linear-gradient(90deg,#ff922b,#f03e3e)}
+.dexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin:8px 0 12px}
+.dexc{background:#fff;border-radius:14px;padding:6px;box-shadow:0 2px 6px rgba(120,80,40,.12);font-size:12px;font-weight:800;text-align:center}
+.dexc.no img{filter:grayscale(1) brightness(.35);opacity:.5}
+.goal{margin:6px auto;max-width:340px;background:#fff3bf;border-radius:12px;padding:6px 10px;font-weight:800;color:#8a5a00;font-size:14px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -553,6 +563,7 @@ Object.assign(I18N_F.en,{ad_x2:'Watch ad: 2x coins (+{n})',ad_none:'No ad availa
 Object.assign(I18N_F.ja,{ad_x2:'広告を見てコイン2倍（+{n}）',ad_none:'今は表示できる広告がありません',ad_skip:'最後まで見ると報酬がもらえます',ad_got:'\ud83e\ude99 +{n} コイン2倍！',copy_block:'このアドレスはAnibrix公式サイトではありません。下の公式アドレスで遊んでください。'});
 Object.assign(I18N_F.zh,{ad_x2:'看广告金币翻倍（+{n}）',ad_none:'暂时没有可播放的广告',ad_skip:'看完广告才能获得奖励',ad_got:'\ud83e\ude99 +{n} 金币翻倍！',copy_block:'此网址不是Anibrix官方网站，请前往下方官方网址游玩。'});
 I18N_F.ko.paid_soon='유료 상품은 정식 출시 때 열려요. 지금은 영웅 조각 30개로 전설 영웅을 얻을 수 있어요!';I18N_F.en.paid_soon='Paid items open at full launch. For now, collect 30 shards to unlock legendary heroes!';I18N_F.ja.paid_soon='有料商品は正式リリース時に開放されます。今はかけら30個で伝説ヒーローを入手できます！';I18N_F.zh.paid_soon='付费商品将在正式上线时开放。现在收集30个碎片即可获得传说英雄！';
+Object.assign(I18N_F.ko,{"clutch":"기사회생!","f_clutch":"위기 탈출 +500점","block_ok":"막아냄!","counter":"반격!","incoming":"⚠ 털뭉치 {n}줄 · {s}초 안에 줄을 지워 막으세요","incoming_now":"⚠ 털뭉치 {n}줄 도착!","climax":"결판 타임!","sudden":"서든데스!","streak_chip":"{n}연승 · 다음 ×{m}","streak_win":"🔥 {n}연승! 보상 ×{m}","streak_lost":"연승 불꽃이 꺼졌어요. 잃은 건 하나도 없어요!","streak_next":"1번 더 이기면 보상 ×{m}","dex":"도감","dex_title":"황금 동물 도감","dex_note":"가끔 반짝이는 황금 동물 블록이 나와요. 지우면 도감에 등록돼요!","dex_found":"황금 {name} 발견!","f_gold":"황금 블록! +50","dex_set1":"기본 동물 세트","dex_set2":"특별 동물 세트 (6종 모으기)","dex_r1":"보상: 🪙500 + 🧩10 + 황금 테두리","dex_r2":"보상: 🧩20","dex_done":"도감 세트 완성! {r}","dex_frame":"✨ 황금 테두리 사용","dex_count":"{n}번 발견","goal_dex":"도감 기본 세트까지 {n}종 남음","cont_t":"아깝다!","cont_d":"보스 체력이 {n}%밖에 안 남았어요. 한 번 더 이어서 해 볼까요?","cont_ad":"📺 광고 보고 이어하기","cont_free":"▶ 이어하기 (한 판에 1번)","cont_no":"포기하기","cont_go":"다시 힘내자!","goal_xp":"다음 레벨까지 경험치 {n}","goal_hero":"Lv.{lv}이 되면 {name} 영웅을 얻어요","wk_title":"🌏 주간 순위","wk_login":"로그인하면 순위에 올라가요","wk_empty":"아직 이번 주 기록이 없어요. 첫 주인공이 되어 보세요!","wk_loading":"불러오는 중...","wk_mine":"내 이번 주 최고 점수: {n}","wk_fail":"순위를 불러오지 못했어요","score_col":"점수"});Object.assign(I18N_F.en,{"clutch":"Clutch save!","f_clutch":"Escaped danger +500","block_ok":"Blocked!","counter":"Counter!","incoming":"⚠ {n} fur lines · clear a line within {s}s to block","incoming_now":"⚠ {n} fur lines incoming!","climax":"Final Showdown!","sudden":"Sudden death!","streak_chip":"{n} win streak · next ×{m}","streak_win":"🔥 {n} wins in a row! Rewards ×{m}","streak_lost":"Your streak flame went out. You lost nothing!","streak_next":"Win 1 more for ×{m} rewards","dex":"Album","dex_title":"Golden Animal Album","dex_note":"Shiny golden animal blocks appear now and then. Clear one to add it to your album!","dex_found":"Golden {name} found!","f_gold":"Golden block! +50","dex_set1":"Basic animal set","dex_set2":"Special animal set (collect 6)","dex_r1":"Reward: 🪙500 + 🧩10 + Golden frame","dex_r2":"Reward: 🧩20","dex_done":"Album set complete! {r}","dex_frame":"✨ Use golden frame","dex_count":"found {n}×","goal_dex":"{n} more for the basic album set","cont_t":"So close!","cont_d":"The boss has only {n}% HP left. Continue once more?","cont_ad":"📺 Watch an ad to continue","cont_free":"▶ Continue (once per match)","cont_no":"Give up","cont_go":"Let's go again!","goal_xp":"{n} XP to the next level","goal_hero":"Reach Lv.{lv} to get {name}","wk_title":"🌏 Weekly ranking","wk_login":"Log in to join the ranking","wk_empty":"No scores this week yet. Be the first!","wk_loading":"Loading...","wk_mine":"My best this week: {n}","wk_fail":"Could not load the ranking","score_col":"Score"});Object.assign(I18N_F.ja,{"clutch":"起死回生！","f_clutch":"ピンチ脱出 +500点","block_ok":"ブロック！","counter":"反撃！","incoming":"⚠ 毛玉{n}列 · {s}秒以内に列を消して防ごう","incoming_now":"⚠ 毛玉{n}列が到着！","climax":"決着タイム！","sudden":"サドンデス！","streak_chip":"{n}連勝 · 次は×{m}","streak_win":"🔥 {n}連勝！報酬×{m}","streak_lost":"連勝の炎が消えました。失ったものはありません！","streak_next":"あと1勝で報酬×{m}","dex":"図鑑","dex_title":"黄金どうぶつ図鑑","dex_note":"ときどきキラキラの黄金ブロックが出ます。消すと図鑑に登録！","dex_found":"黄金の{name}を発見！","f_gold":"黄金ブロック！+50","dex_set1":"基本どうぶつセット","dex_set2":"特別どうぶつセット（6種）","dex_r1":"報酬：🪙500 + 🧩10 + 黄金フレーム","dex_r2":"報酬：🧩20","dex_done":"図鑑セット完成！{r}","dex_frame":"✨ 黄金フレームを使う","dex_count":"{n}回発見","goal_dex":"基本セットまであと{n}種","cont_t":"おしい！","cont_d":"ボスの体力は残り{n}%。もう一度続けますか？","cont_ad":"📺 広告を見て続ける","cont_free":"▶ 続ける（1試合1回）","cont_no":"あきらめる","cont_go":"もう一度がんばろう！","goal_xp":"次のレベルまで経験値{n}","goal_hero":"Lv.{lv}で{name}をゲット","wk_title":"🌏 週間ランキング","wk_login":"ログインするとランキングに載ります","wk_empty":"今週の記録はまだありません。一番乗りしよう！","wk_loading":"読み込み中...","wk_mine":"今週の自己ベスト：{n}","wk_fail":"ランキングを読み込めませんでした","score_col":"スコア"});Object.assign(I18N_F.zh,{"clutch":"起死回生！","f_clutch":"化险为夷 +500分","block_ok":"挡住了！","counter":"反击！","incoming":"⚠ {n}行毛球 · {s}秒内消行即可抵挡","incoming_now":"⚠ {n}行毛球到达！","climax":"决战时刻！","sudden":"突然死亡！","streak_chip":"{n}连胜 · 下次×{m}","streak_win":"🔥 {n}连胜！奖励×{m}","streak_lost":"连胜之火熄灭了，但你什么都没失去！","streak_next":"再赢1场奖励×{m}","dex":"图鉴","dex_title":"黄金动物图鉴","dex_note":"偶尔会出现闪亮的黄金动物方块，消除后记入图鉴！","dex_found":"发现黄金{name}！","f_gold":"黄金方块！+50","dex_set1":"基础动物套组","dex_set2":"特殊动物套组（收集6种）","dex_r1":"奖励：🪙500 + 🧩10 + 黄金边框","dex_r2":"奖励：🧩20","dex_done":"图鉴套组完成！{r}","dex_frame":"✨ 使用黄金边框","dex_count":"发现{n}次","goal_dex":"距基础套组还差{n}种","cont_t":"太可惜了！","cont_d":"Boss只剩{n}%体力了。要再继续一次吗？","cont_ad":"📺 看广告继续","cont_free":"▶ 继续（每局1次）","cont_no":"放弃","cont_go":"再加把劲！","goal_xp":"距下一级还差{n}经验","goal_hero":"达到Lv.{lv}获得{name}","wk_title":"🌏 每周排名","wk_login":"登录后即可上榜","wk_empty":"本周还没有记录，快来争第一！","wk_loading":"加载中...","wk_mine":"我本周最高分：{n}","wk_fail":"无法加载排名","score_col":"分数"});
 for(const l in I18N_F)Object.assign(I18N[l],I18N_F[l]);
 function detectLang(){const s=store.get('lang',null);if(s&&I18N[s])return s;const ls=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];for(const l of ls){const x=(l||'').toLowerCase();if(x.startsWith('ko'))return 'ko';if(x.startsWith('ja'))return 'ja';if(x.startsWith('zh'))return 'zh';if(x.startsWith('en'))return 'en';}return 'en';}
 let LANG=detectLang(),L=I18N[LANG];
@@ -640,6 +651,7 @@ const Snd={ctx:null,master:null,nbuf:null,on:store.get('sfx3',true),bgm:store.ge
   shot(kind){if(kind==='arrow'){this.tone('sine',1500,500,0.16,0.12);this.noise(0.12,3000,1200,0.06);}else if(kind==='bullet'){for(let i=0;i<3;i++)this.tone('square',950,280,0.07,0.06,i*0.07);}else{this.noise(0.55,500,2600,0.14);this.tone('sawtooth',180,620,0.45,0.06);}},
   impact(){this.tone('sine',160,45,0.25,0.26);this.noise(0.3,2200,200,0.16);},
   bad(){this.tone('square',220,110,0.3,0.08);},
+  heart(){this.tone('sine',78,48,0.13,0.42);this.tone('sine',70,44,0.15,0.32,0.17);},
   win(){[523,659,784,1046,1318].forEach((f,i)=>this.tone('triangle',f,f,0.22,0.14,i*0.11));},
   lose(){[392,330,262,196].forEach((f,i)=>this.tone('triangle',f,f*0.97,0.26,0.12,i*0.15));},
 };
@@ -778,7 +790,8 @@ function randPiece(p){
   for(const s of pool){if((r-=s.w)<0){sh=s;break;}}
   let cells=norm(sh.c.map(c=>[...c]));const rots=Math.floor(R()*4);for(let i=0;i<rots;i++)cells=rotCells(cells,1);
   const ir=R(),ii=R(),it=R(),item=(f.items&&ir<(G.itemRate||0.13))?{i:Math.floor(ii*cells.length),t:ITEM_POOL[Math.floor(it*ITEM_POOL.length)]}:null;
-  return {a:sh.a,cells,item,x:0,y:0};
+  const gr=R(),gold=G.mode!=='demo'&&gr<(G.goldRate||0.045);
+  return {a:sh.a,cells,item,gold,x:0,y:0};
 }
 const emptyGrid=()=>Array.from({length:H},()=>Array(W).fill(null));
 function collide(grid,cells,x,y){for(const [cx,cy] of cells){const gx=x+cx,gy=y+cy;if(gx<0||gx>=W||gy>=H)return true;if(gy>=0&&grid[gy][gx])return true;}return false;}
@@ -786,7 +799,7 @@ function collide(grid,cells,x,y){for(const [cx,cy] of cells){const gx=x+cx,gy=y+
 /* =====================  게임 상태  ===================== */
 const G={mode:null,players:null,running:false,paused:false,t:0,events:[],countdown:0,ended:false,level:1,speed:1,mercy:0,lossesNow:0,lastWinner:null};
 function makePlayer(idx,kind,seed){
-  const p={idx,isAI:kind==='ai',remote:kind==='remote',grid:emptyGrid(),cur:null,next:null,hold:null,canHold:true,rng:rng32(seed),dropT:0,lockT:0,lockN:0,inv:[],fx:{},shield:false,pending:0,score:0,lines:0,dead:false,parts:[],floats:[],shakeUntil:0,maxH:0,ui:null,ai:null,held:{},combo:0,fever:0,feverUntil:0,waitUntil:0,waitSpawn:false,flash:[],big:null,fall:null,warn:null,hp:0,hpMax:0,skillNext:0,warned:false,koByHP:false,sk:0,hero:null,revive:false,isBoss:false,lastClearRow:H-3};
+  const p={idx,isAI:kind==='ai',remote:kind==='remote',grid:emptyGrid(),cur:null,next:null,hold:null,canHold:true,rng:rng32(seed),dropT:0,lockT:0,lockN:0,inv:[],fx:{},shield:false,pending:0,score:0,lines:0,dead:false,parts:[],floats:[],shakeUntil:0,maxH:0,ui:null,ai:null,held:{},combo:0,fever:0,feverUntil:0,waitUntil:0,waitSpawn:false,flash:[],big:null,fall:null,warn:null,hp:0,hpMax:0,skillNext:0,warned:false,koByHP:false,sk:0,hero:null,revive:false,isBoss:false,lastClearRow:H-3,pq:[],inDanger:false,hbT:0};
   if(!p.remote)p.next=randPiece(p);return p;
 }
 const opp=p=>G.players[1-p.idx];
@@ -836,7 +849,7 @@ const canFever=p=>!p.isAI||G.mode==='demo'||(G.mode==='ai'&&G.level>=3);
 function bigK(p,key,vars,color){p.big={text:tr(key,vars),color,life:1100};if(mirror(p))nsend({t:'big',k:key,v:vars||null,c:color});}
 // v0.3: 줄 지우기 + 그 줄의 동물과 이어진 같은 동물도 함께 제거 -> 빈칸으로 낙하 -> 다시 줄이 차면 연쇄
 function resolveBoard(p){
-  const R={cnt:{},steps:[],lines:0,extra:0,tiger:false,rabbit:false,dogFam:false,got:[],clr:[],moves:[]};
+  const R={cnt:{},steps:[],lines:0,extra:0,tiger:false,rabbit:false,dogFam:false,got:[],clr:[],moves:[],gold:[]};
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=p.grid[y][x];if(v)v._fy=y;}
   for(let chain=1;chain<=8;chain++){
     const full=[];for(let y=0;y<H;y++)if(p.grid[y].every(v=>v))full.push(y);
@@ -844,7 +857,7 @@ function resolveBoard(p){
     const rem=new Set(),q=[],cols=new Set();let extra=0;
     for(const y of full){let dogs=0;for(let x=0;x<W;x++){const v=p.grid[y][x];rem.add(y*W+x);if(v.a==='dog')dogs++;if(v.a!=='stone'&&v.a!=='cheese')q.push([x,y,v.a]);}if(dogs>=5)R.dogFam=true;}
     while(q.length){const [x,y,a]=q.pop();for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx<0||nx>=W||ny<0||ny>=H)continue;const k=ny*W+nx;if(rem.has(k))continue;const v=p.grid[ny][nx];if(v&&v.a===a){rem.add(k);extra++;cols.add(nx);q.push([nx,ny,a]);}}}
-    for(const k of rem){const y=Math.floor(k/W),x=k%W,v=p.grid[y][x];if(!v)continue;R.cnt[v.a]=(R.cnt[v.a]||0)+1;if(v.a==='tiger')R.tiger=true;if(v.a==='rabbit')R.rabbit=true;if(v.item)R.got.push(v.item);R.clr.push([x,y,ACODE[v.a]||'s',chain]);p.grid[y][x]=null;}
+    for(const k of rem){const y=Math.floor(k/W),x=k%W,v=p.grid[y][x];if(!v)continue;R.cnt[v.a]=(R.cnt[v.a]||0)+1;if(v.a==='tiger')R.tiger=true;if(v.a==='rabbit')R.rabbit=true;if(v.item)R.got.push(v.item);if(v.gold)R.gold.push(v.a);R.clr.push([x,y,ACODE[v.a]||'s',chain]);p.grid[y][x]=null;}
     const fs=new Set(full);p.grid=p.grid.filter((_,y)=>!fs.has(y));while(p.grid.length<H)p.grid.unshift(Array(W).fill(null));
     for(const x of cols){let w=H-1;for(let y=H-1;y>=0;y--){const v=p.grid[y][x];if(v){if(y!==w){p.grid[w][x]=v;p.grid[y][x]=null;}w--;}}}
     R.steps.push({rows:full,n:full.length,extra});R.lines+=full.length;R.extra+=extra;
@@ -852,6 +865,23 @@ function resolveBoard(p){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=p.grid[y][x];if(v){if(v._fy!==undefined&&v._fy!==y)R.moves.push([x,y,v._fy]);delete v._fy;}}
   return R;
 }
+const PQ_DELAY=2000,DANGER2=H-6,DEX1=['cat','dog','tiger','rabbit'];
+function syncPQ(p){if(!p.pq)p.pq=[];let s=0;for(const e of p.pq)s+=e.n;const tot=Math.max(0,p.pending|0);if(tot>s)p.pq.push({n:tot-s,at:G.t+PQ_DELAY});else if(tot<s){let d=s-tot;while(d>0&&p.pq.length){const e=p.pq[0];if(e.n<=d){d-=e.n;p.pq.shift();}else{e.n-=d;d=0;}}}}
+function pqReady(p){let r=0;for(const e of p.pq||[])if(e.at<=G.t)r+=e.n;return r;}
+function dangerCheck(p,cleared){const h=p.maxH;if(h>=DANGER2){p.inDanger=true;return;}if(p.inDanger&&cleared&&h<=DANGER2-3){p.inDanger=false;p.score+=500;bigK(p,'clutch',null,'#f08c00');floatK(p,'f_clutch',null,'#f08c00');if(p.idx===0&&!p.isAI&&!p.remote&&G.mode!=='demo'){G.clutch=(G.clutch||0)+1;Snd.fever();}return;}if(h<=DANGER2-3)p.inDanger=false;}
+function dangerTick(dt){for(const p of G.players){if(!p.ui||!p.ui.board)continue;const d=!p.dead&&p.maxH>=DANGER2;p.ui.board.classList.toggle('danger',d);if(d&&p.idx===0&&!p.isAI&&!p.remote){p.hbT-=dt;if(p.hbT<=0){Snd.heart();p.hbT=p.maxH>=H-3?430:720;}}else p.hbT=0;}}
+function riseRow(p){if(!p||p.dead||p.remote)return;if(p.isBoss&&G.level<=3)return;const top=p.grid.shift(),hole=Math.floor(Math.random()*W);p.grid.push(Array.from({length:W},(_,x)=>x===hole?null:{a:'stone',item:null}));p.shakeUntil=G.t+150;if(p.cur&&collide(p.grid,p.cur.cells,p.cur.x,p.cur.y))p.cur.y--;if(top.some(v=>v))topOut(p);calcH(p);if(p.idx===0&&!p.isAI)Snd.thud();}
+function climaxTick(dt){if(!G.clock||G.ended)return;const left=G.clock-G.t;
+  if(!G.climax&&left<=30000){G.climax=true;G.riseT=0;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'climax',null,'#e03131');Snd.siren();}
+  if(G.climax&&!G.sudden&&left<=0){G.sudden=true;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'sudden',null,'#c92a2a');Snd.siren();}
+  if(G.climax){G.riseT+=dt;const ev=G.sudden?Math.max(2500,G.riseEvery*0.6):G.riseEvery;if(G.riseT>=ev){G.riseT=0;for(const p of G.players)riseRow(p);}}}
+const streakMul=s=>s>=5?2:s>=3?1.5:s>=2?1.2:1;
+function dexGet(){const d=store.get('dex',{});return (d&&typeof d==='object')?d:{};}
+function anName(a){if(DEX1.includes(a))return String(tr('a_'+a)).replace(/\s*[\(（].*$/,'');return tr('an_'+a);}
+function dexSp(){return Object.keys(SP_SHAPES);}
+function dexRewards(notify){const d=dexGet(),r=store.get('dexr',{})||{},got=[];if(!r.s1&&DEX1.every(a=>d[a])){r.s1=1;addCoins(500);store.set('shards',store.get('shards',0)+10);store.set('goldframe',1);got.push(tr('dex_r1'));}if(!r.s2&&dexSp().filter(a=>d[a]).length>=6){r.s2=1;store.set('shards',store.get('shards',0)+20);got.push(tr('dex_r2'));}if(got.length){store.set('dexr',r);if(notify)setTimeout(()=>toast('\ud83c\udf89 '+tr('dex_done',{r:got.join(' · ')})),1800);}return got;}
+function goldFound(p,list){p.score+=list.length*50;const human=p.idx===0&&!p.isAI&&!p.remote&&G.mode!=='demo';if(!human){floatK(p,'f_gold',null,'#f08c00');return;}const d=dexGet();let fresh=null;for(const a of new Set(list)){if(!d[a])fresh=a;d[a]=(d[a]|0)+1;}store.set('dex',d);Snd.sparkle();if(fresh){bigK(p,'dex_found',{name:anName(fresh)},'#f08c00');G.dexNew=(G.dexNew||0)+1;}else floatK(p,'f_gold',null,'#f08c00');dexRewards(true);}
+function drawGold(ctx,x,y,s,now){ctx.save();ctx.globalAlpha=0.26+0.12*Math.sin(now/200+x);ctx.fillStyle='#ffd43b';rr(ctx,x+1,y+1,s-2,s-2,s*0.25);ctx.fill();ctx.globalAlpha=1;ctx.lineWidth=Math.max(1.5,s*0.09);ctx.strokeStyle='#f5b400';rr(ctx,x+1.5,y+1.5,s-3,s-3,s*0.25);ctx.stroke();const k=(now/650+x*0.013+y*0.007)%1;if(k<0.35){ctx.globalAlpha=1-k/0.35;ctx.fillStyle='#fff';const cx=x+s*0.75,cy=y+s*0.25,r=s*0.16;ctx.beginPath();ctx.moveTo(cx,cy-r);ctx.lineTo(cx+r*0.3,cy-r*0.3);ctx.lineTo(cx+r,cy);ctx.lineTo(cx+r*0.3,cy+r*0.3);ctx.lineTo(cx,cy+r);ctx.lineTo(cx-r*0.3,cy+r*0.3);ctx.lineTo(cx-r,cy);ctx.lineTo(cx-r*0.3,cy-r*0.3);ctx.closePath();ctx.fill();}ctx.restore();}
 function lock(p){
   const c=p.cur;if(!c||p.dead)return;
   if(c.a==='cat'&&Math.random()<0.15){
@@ -859,7 +889,7 @@ function lock(p){
     for(const d of [d0,-d0]){if(!collide(p.grid,c.cells,c.x+d,c.y)){c.x+=d;while(!collide(p.grid,c.cells,c.x,c.y+1))c.y++;sayK(p,'s_cat',null,1500);floatK(p,'f_cat',null,'#e8590c');Snd.meow();break;}}
   }
   let over=false;
-  c.cells.forEach(([cx,cy],i)=>{const gx=c.x+cx,gy=c.y+cy;if(gy<0){over=true;return;}p.grid[gy][gx]={a:c.a,item:(c.item&&c.item.i===i)?c.item.t:null};});
+  c.cells.forEach(([cx,cy],i)=>{const gx=c.x+cx,gy=c.y+cy;if(gy<0){over=true;return;}{const o={a:c.a,item:(c.item&&c.item.i===i)?c.item.t:null};if(c.gold)o.gold=1;p.grid[gy][gx]=o;}});
   p.cur=null;
   if(!p.isAI&&!p.remote)Snd.voice(c.a);
   if(c.a==='tiger'){p.shakeUntil=G.t+220;if(p.isAI)Snd.thud();}
@@ -874,6 +904,7 @@ function lock(p){
     if(R.moves.length)p.fall={start:performance.now()+chains*90,dur:220,map:new Map(R.moves.map(([x,y,fy])=>[y*W+x,fy]))};
     p.lines+=n;p.score+=Math.round(([0,100,300,600,1000,1500][Math.min(5,n)]+R.extra*30)*chains*(1+Math.min(10,p.combo-1)*0.1));
     Snd.clear(n,p.combo-1,chains);
+    if(R.gold.length)goldFound(p,R.gold);
     if(n>=3||R.extra>=6||chains>=2){Snd.boom();p.shakeUntil=G.t+330;}
     let atk=0;for(const st of R.steps)atk+=[0,0,1,2,3,4][Math.min(5,st.n)];
     if(chains>=2){atk+=chains-1;if(p.hero&&p.hero.passive==='chainplus')atk+=chains-1;bigK(p,'chain',{n:chains},'#7048e8');}
@@ -895,7 +926,7 @@ function lock(p){
     let gotN=0;for(const it of R.got){if(p.inv.length<3){p.inv.push(it);gotN++;}}
     if(gotN){Snd.sparkle();floatK(p,'f_item',null,'#7048e8');}
     const dmgBoss=n+atk;
-    if(atk>0){const cancel=Math.min(p.pending,atk);p.pending-=cancel;atk-=cancel;if(cancel>0)floatK(p,'f_cancel',{n:cancel},'#2b8a3e');}
+    if(atk>0){const cancel=Math.min(p.pending,atk);p.pending-=cancel;atk-=cancel;if(cancel>0){floatK(p,'f_cancel',{n:cancel},'#2b8a3e');bigK(p,atk>0?'counter':'block_ok',null,atk>0?'#1c7ed6':'#2b8a3e');if(!p.isAI)Snd.sparkle();syncPQ(p);}}
     {const o=opp(p),k=atk,toBoss=G.mode==='ai'&&p.idx===0;
       if(k>0||toBoss){const tt=launchShots(p,o,n,chains,Math.max(k,toBoss?Math.ceil(dmgBoss/2):0),G.t<p.feverUntil);
         G.events.push({at:G.t+tt,fn:()=>{if(toBoss)bossDamage(dmgBoss);if(k>0&&!o.remote&&!o.dead){o.pending+=k;updateUI(o);if(!o.isAI)Snd.hit();}}});
@@ -903,10 +934,10 @@ function lock(p){
     delay=160+chains*130;
   } else {
     p.combo=0;
-    if(p.pending>0&&!fxOn(p,'immune')){const k=Math.min(p.pending,4);p.pending-=k;addGarbage(p,k);floatK(p,'f_garb',{n:k},'#868e96');if(p.dead)return;}
+    syncPQ(p);const rdy=pqReady(p);if(rdy>0&&!fxOn(p,'immune')){const k=Math.min(rdy,4);p.pending-=k;syncPQ(p);addGarbage(p,k);floatK(p,'f_garb',{n:k},'#868e96');if(p.dead)return;}
   }
   if(p.ai&&p.ai.mistake&&Math.random()<0.35)sayK(p,'s_miss',null,1400);
-  checkMood(p);updateUI(p);
+  checkMood(p);dangerCheck(p,n>0);updateUI(p);
   if(delay>0){p.waitUntil=G.t+delay;p.waitSpawn=true;}else spawn(p);
 }
 /* ---- 보스 체력 & 필살기 (챌린지) ---- */
@@ -1021,7 +1052,7 @@ function aiUpdate(p){
 }
 
 /* =====================  업데이트  ===================== */
-function gravity(p){let iv=Math.max(110,(820/G.speed)*Math.pow(0.92,Math.floor(G.t/30000)));if(p.cur&&p.cur.a==='tiger')iv*=0.6;if(fxOn(p,'fast'))iv*=0.45;if(fxOn(p,'nap'))iv*=2.2;return Math.max(40,iv);}
+function gravity(p){let iv=Math.max(110,(820/G.speed)*Math.pow(0.9,Math.floor(G.t/20000)));if(p.cur&&p.cur.a==='tiger')iv*=0.6;if(fxOn(p,'fast'))iv*=0.45;if(fxOn(p,'nap'))iv*=2.2;if(G.climax)iv*=G.sudden?0.4:0.5;return Math.max(40,iv);}
 function handleHeld(p){const now=performance.now();for(const a in p.held){if(now>=p.held[a]){doAction(p,a);p.held[a]=now+(a==='D'?40:55);}}}
 function updatePlayer(p,dt){
   if(p.remote||p.dead)return;
@@ -1033,7 +1064,8 @@ function updatePlayer(p,dt){
   else{p.lockT=0;p.dropT+=dt;const iv=gravity(p);while(p.dropT>=iv){p.dropT-=iv;if(!collide(p.grid,c.cells,c.x,c.y+1))c.y++;else break;}}
 }
 function checkEnd(){
-  if(G.ended)return;const dead=G.players.filter(p=>p.dead);if(!dead.length)return;
+  if(G.ended||G.contOffer)return;const dead=G.players.filter(p=>p.dead);if(!dead.length)return;
+  if(G.mode==='ai'&&!G.contUsed){const me=G.players[0],b=G.players[1];if(me.dead&&!me.isAI&&!b.dead&&b.hpMax&&b.hp/b.hpMax<=0.6){offerContinue();return;}}
   G.ended=true;G.running=false;const winner=G.players.find(p=>!p.dead)||null;G.lastWinner=winner;for(const p of G.players)p.held={};Music.stop();Music.fever=false;
   if(G.mode==='ai'){
     const ai=G.players[1],lk='loss_'+G.level;
@@ -1045,6 +1077,26 @@ function checkEnd(){
   setTimeout(()=>showResult(winner),1500);
 }
 
+/* ---- 아깝게 졌을 때 한 번 이어하기 ---- */
+function offerContinue(){G.contOffer=true;G.running=false;Music.stop();for(const p of G.players)p.held={};const b=G.players[1],pct=Math.max(1,Math.round(b.hp/b.hpMax*100)),adOK=!!(ADS.on&&window.adBreak);
+  setTimeout(()=>{if(!G.contOffer)return;ov(`<div class="card"><div class="title">${tr('cont_t')}</div>${img(b.ai.cfg.por,72,false,'scared')}<div class="subt">${tr('cont_d',{n:pct})}</div><button class="btn" id="contBtn" onclick="doContinue(${adOK?1:0})">${adOK?tr('cont_ad'):tr('cont_free')}</button><button class="btn gray" id="contNo" onclick="declineContinue()">${tr('cont_no')}</button></div>`);},700);}
+function doContinue(ad){if(!G.contOffer)return;if(ad)showRewarded('continue',()=>applyContinue());else applyContinue();}
+function applyContinue(){if(!G.contOffer)return;G.contOffer=false;G.contUsed=true;const me=G.players[0];me.dead=false;me.grid.splice(0,12);while(me.grid.length<H)me.grid.unshift(Array(W).fill(null));me.pending=0;me.pq=[];me.inDanger=false;me.hp=Math.max(1,Math.ceil(me.hpMax*0.5));me.fx={};me.cur=null;me.waitSpawn=false;calcH(me);updateHP();hideOv();spawn(me);updateUI(me);G.running=true;G.countdown=2000;showCount(2);Music.start();bigK(me,'cont_go',null,'#2b8a3e');}
+function declineContinue(){if(!G.contOffer)return;G.contOffer=false;G.contUsed=true;hideOv();checkEnd();}
+function submitWeekly(){try{const A=window.HKAccount,b=myWeek();if(A&&A.user&&A.submitScore&&b>0)A.submitScore('anibrix-'+weekKey(),b,nick()).catch(()=>{});}catch(e){}}
+function streakBlock(){const r=G.streakRes;if(!r)return '';if(r.win&&r.s>=2)return `<div class="goal" style="background:#ffe8cc;color:#d9480f">${tr('streak_win',{n:r.s,m:r.mul})}</div>`;if(!r.win&&r.prev>=2)return `<div class="subt">${tr('streak_lost')}</div>`;return '';}
+function goalBlock(){if(!G.xpRes)return '';const p=prof(),g=[tr('goal_xp',{n:p.need-p.xp})];const s=store.get('wstreak',0),nm=streakMul(s+1);if(nm>streakMul(s))g.push(tr('streak_next',{m:nm}));const nx=HEROES.find(x=>!ownHero(x.id)&&x.lv>p.lv);if(nx&&nx.lv-p.lv<=2)g.push(tr('goal_hero',{lv:nx.lv,name:heroName(nx.id)}));const d=dexGet(),ms=DEX1.filter(a=>!d[a]).length;if(ms&&ms<=2)g.push(tr('goal_dex',{n:ms}));return `<div class="goal">\ud83c\udfaf ${g.slice(0,2).join('<br>\ud83c\udfaf ')}</div>`;}
+function showDex(){const d=dexGet(),r=store.get('dexr',{})||{},sp=dexSp();const cell=a=>`<div class="dexc ${d[a]?'':'no'}">${img(a,56,true,d[a]?'happy':'normal')}<div>${d[a]?'\u2728 '+anName(a):'???'}</div><div style="opacity:.6">${d[a]?tr('dex_count',{n:d[a]}):'&nbsp;'}</div></div>`;
+  ov(`<div class="card"><div class="title" style="font-size:28px">\ud83d\udcd6 ${tr('dex_title')}</div><div class="subt">${tr('dex_note')}</div><h3>${tr('dex_set1')} ${DEX1.filter(a=>d[a]).length}/${DEX1.length} ${r.s1?'\u2705':''}</h3><div class="subt" style="font-size:12px">${tr('dex_r1')}</div><div class="dexgrid">${DEX1.map(cell).join('')}</div><h3>${tr('dex_set2')} ${sp.filter(a=>d[a]).length}/${sp.length} ${r.s2?'\u2705':''}</h3><div class="subt" style="font-size:12px">${tr('dex_r2')}</div><div class="dexgrid">${sp.map(cell).join('')}</div>${r.s1?`<div class="minirow"><button class="lbtn ${store.get('goldframe',0)?'on':''}" onclick="store.set('goldframe',store.get('goldframe',0)?0:1);showDex()">${tr('dex_frame')}</button></div>`:''}<button class="btn gray" onclick="showMenu()">${tr('back')}</button></div>`);}
+async function loadWeekly(){const box=()=>document.getElementById('wkbox');let A=window.HKAccount;for(let i=0;i<24&&!(A&&A.topScores);i++){await new Promise(r=>setTimeout(r,250));A=window.HKAccount;}
+  if(!box())return;if(!A||!A.topScores){box().innerHTML=`<div class="subt">${tr('wk_fail')}</div>`;return;}
+  try{if(A.whenReady)await A.whenReady();}catch(e){}
+  const bid='anibrix-'+weekKey();if(A.user&&myWeek()>0){try{await A.submitScore(bid,myWeek(),nick());}catch(e){}}
+  let arr=[];try{arr=await A.topScores(bid,50);}catch(e){if(box())box().innerHTML=`<div class="subt">${tr('wk_fail')}</div>`;return;}
+  if(!box())return;const me=A.user&&A.user.uid;
+  let h=arr.length?`<table class="rank"><tr><th>${tr('col_rank')}</th><th>${tr('col_name')}</th><th>${tr('score_col')}</th></tr>${arr.map((e,i)=>`<tr class="${e.id===me?'me':''}"><td>${i===0?'\ud83e\udd47':i===1?'\ud83e\udd48':i===2?'\ud83e\udd49':i+1}</td><td>${esc(e.name)}</td><td>${(e.score|0).toLocaleString()}</td></tr>`).join('')}</table>`:`<div class="subt">${tr('wk_empty')}</div>`;
+  h+=`<div class="subt">${tr('wk_mine',{n:myWeek().toLocaleString()})}</div>`;if(!A.user)h+=`<a class="btn alt" style="display:block;text-decoration:none" href="/game/?login=1" target="_blank" rel="noopener">${tr('wk_login')}</a>`;box().innerHTML=h;}
+
 /* =====================  렌더링  ===================== */
 function drawMini(ctx,ns,pc){const sz=ns*5;ctx.clearRect(0,0,sz,sz);if(!pc)return;const [w,h]=dims(pc.cells),ox=(5-w)/2*ns,oy=(5-h)/2*ns;pc.cells.forEach(([x,y],i)=>{ctx.drawImage(sprite(pc.a,'normal',ns),ox+x*ns,oy+y*ns,ns,ns);if(pc.item&&pc.item.i===i)drawStar(ctx,ox+x*ns,oy+y*ns,ns);});}
 function renderNext(p){const u=p.ui;if(!u||!u.ns)return;drawMini(u.nctx,u.ns,p.next);drawMini(u.hctx,u.ns,p.hold);u.hbox.style.opacity=(p.canHold||p.remote)?1:0.45;}
@@ -1054,7 +1106,7 @@ function updateUI(p){
   u.inv.innerHTML=h;u.score.textContent=tr('score',{s:p.score,l:p.lines});u.pfill.style.height=Math.min(100,p.pending*8)+'%';
 }
 function renderPlayer(p,dt){
-  const u=p.ui;if(!u)return;const ctx=u.ctx,s=CELL,bw=W*s,bh=H*s,now=performance.now();
+  const u=p.ui;if(!u)return;syncPQ(p);const ctx=u.ctx,s=CELL,bw=W*s,bh=H*s,now=performance.now();
   const fever=G.t<p.feverUntil;ctx.clearRect(0,0,bw,bh);ctx.fillStyle=fever?`hsl(${(now/6)%360},100%,95%)`:(p.idx===0?'#fff8f1':'#f4f8ff');ctx.fillRect(0,0,bw,bh);
   ctx.strokeStyle='rgba(170,130,100,0.10)';ctx.lineWidth=1;ctx.beginPath();for(let x=1;x<W;x++){ctx.moveTo(x*s+0.5,0);ctx.lineTo(x*s+0.5,bh);}for(let y=1;y<H;y++){ctx.moveTo(0,y*s+0.5);ctx.lineTo(bw,y*s+0.5);}ctx.stroke();
   if(p.maxH>=DANGER&&!p.dead){const g=ctx.createLinearGradient(0,0,0,bh*0.35);g.addColorStop(0,`rgba(255,90,90,${0.18+0.08*Math.sin(now/140)})`);g.addColorStop(1,'rgba(255,90,90,0)');ctx.fillStyle=g;ctx.fillRect(0,0,bw,bh*0.35);}
@@ -1064,13 +1116,13 @@ function renderPlayer(p,dt){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=p.grid[y][x];if(!v)continue;let dy=y*s;if(fall){const fy=fall.map.get(y*W+x);if(fy!==undefined){const e=fk<=0?0:1-Math.pow(1-fk,3);dy=(fy+(y-fy)*e)*s;}}
     let st2=st;if(st==='normal'){const ph=((x*37+y*61)%97)/97*6;if(((now/1000+ph)%6)<0.14)st2='blink';}
     if(sq&&sq.has(y*W+x)){const e=Math.max(0,sk),bounce=Math.sin(e*Math.PI)*0.18,w=s*(1+bounce*0.6),hh=s*(1-bounce);ctx.drawImage(sprite(v.a,st2,s),x*s+(s-w)/2,dy+(s-hh),w,hh);}else ctx.drawImage(sprite(v.a,st2,s),x*s,dy,s,s);
-    if(v.item)drawStar(ctx,x*s,dy,s);}
+    if(v.item)drawStar(ctx,x*s,dy,s);if(v.gold)drawGold(ctx,x*s,dy,s,now);}
   if(fxOn(p,'cover'))drawCover(ctx,bw,bh,now,p);
   const c=p.cur;
   if(c&&!p.dead){
     let gy=c.y;while(!collide(p.grid,c.cells,c.x,gy+1))gy++;
     ctx.globalAlpha=0.3;for(const [cx,cy] of c.cells){if(gy+cy>=0)ctx.drawImage(sprite(c.a,'normal',s),(c.x+cx)*s,(gy+cy)*s,s,s);}ctx.globalAlpha=1;
-    c.cells.forEach(([cx,cy],i)=>{const yy=c.y+cy;if(yy<0)return;ctx.drawImage(sprite(c.a,'normal',s),(c.x+cx)*s,yy*s,s,s);if(c.item&&c.item.i===i)drawStar(ctx,(c.x+cx)*s,yy*s,s);});
+    c.cells.forEach(([cx,cy],i)=>{const yy=c.y+cy;if(yy<0)return;ctx.drawImage(sprite(c.a,'normal',s),(c.x+cx)*s,yy*s,s,s);if(c.item&&c.item.i===i)drawStar(ctx,(c.x+cx)*s,yy*s,s);if(c.gold)drawGold(ctx,(c.x+cx)*s,yy*s,s,now);});
   }
   for(let i=p.flash.length-1;i>=0;i--){const f=p.flash[i];if(f.delay>0){f.delay-=dt;continue;}f.life-=dt;if(f.life<=0){p.flash.splice(i,1);continue;}const k=1-f.life/f.max,wd=bw*Math.min(1,k*2.2),a=Math.max(0,1-k),yy=f.y*s,x0=bw/2-wd/2;const g=ctx.createLinearGradient(x0,0,x0+wd,0);g.addColorStop(0,'rgba(255,255,255,0)');g.addColorStop(0.5,`rgba(255,255,255,${0.95*a})`);g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(x0,yy-s*0.15*k,wd,s*(1+0.3*k));ctx.fillStyle=`rgba(255,212,59,${0.85*a})`;const th=Math.max(1.5,s*0.08);ctx.fillRect(x0,yy-s*0.15*k,wd,th);ctx.fillRect(x0,yy+s*(1+0.15*k)-th,wd,th);}
   const ps=Math.round(s*0.95);
@@ -1088,11 +1140,12 @@ function renderPlayer(p,dt){
   if(p.warn&&G.mode==='ai'&&p.idx===0&&G.players[1]&&G.players[1].warned&&!p.dead){const bl=0.6+0.4*Math.sin(now/90);ctx.save();ctx.globalAlpha=bl;rr(ctx,8,bh*0.12,bw-16,s*1.2,s*0.4);ctx.fillStyle='rgba(224,49,49,0.92)';ctx.fill();ctx.fillStyle='#fff';ctx.font=`900 ${Math.max(11,Math.round(s*0.55))}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.warn,bw/2,bh*0.12+s*0.6,bw-24);ctx.restore();}
   if(u.skbtn&&p.hero){const r=Math.min(1,p.sk/p.hero.charge);u.skfill.style.height=(r*100)+'%';u.skbtn.style.setProperty('--p',(r*100)+'%');u.skbtn.classList.toggle('ready',r>=1);}
   if(u.ffill){u.ffill.style.width=(fever?Math.max(0,(p.feverUntil-G.t)/80):Math.min(100,p.fever))+'%';u.fbar.classList.toggle('on',fever);u.board.classList.toggle('fever',fever);}
+  if(p.pq&&p.pq.length&&!p.dead&&G.running){const nx=p.pq[0],left=Math.max(0,nx.at-G.t),bh2=Math.max(16,s*1.05),by=bh-bh2-4;ctx.save();ctx.globalAlpha=left>0?0.95:0.75+0.25*Math.sin(now/80);rr(ctx,6,by,bw-12,bh2,bh2*0.4);ctx.fillStyle=left>0?'rgba(247,103,7,0.92)':'rgba(224,49,49,0.95)';ctx.fill();if(left>0){ctx.fillStyle='rgba(255,255,255,0.35)';rr(ctx,6,by,Math.max(bh2*0.8,(bw-12)*(left/PQ_DELAY)),bh2,bh2*0.4);ctx.fill();}ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font=`900 ${Math.max(9,Math.round(s*0.45))}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(left>0?tr('incoming',{n:p.pending,s:(left/1000).toFixed(1)}):tr('incoming_now',{n:p.pending}),bw/2,by+bh2/2,bw-20);ctx.restore();}
   if(p.dead){ctx.fillStyle='rgba(60,60,70,0.45)';ctx.fillRect(0,0,bw,bh);ctx.font=`900 ${Math.round(s*2.4)}px sans-serif`;ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('KO',bw/2,bh/2);}
   u.board.style.transform=(G.t<p.shakeUntil&&G.running)?`translate(${(Math.random()-0.5)*6}px,${(Math.random()-0.5)*6}px)`:'';
 }
 function fmt(ms){const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-function updateMid(){$('#timer').textContent=fmt(G.t);$('#spd').textContent=tr('speed',{n:1+Math.floor(G.t/30000)});}
+function updateMid(){const t=$('#timer');if(G.clock){const left=G.clock-G.t;t.textContent=left>0?fmt(left+999):tr('sudden');t.classList.toggle('climax',!!G.climax);}else{t.textContent=fmt(G.t);t.classList.remove('climax');}$('#spd').textContent=G.climax?tr('climax'):tr('speed',{n:1+Math.floor(G.t/20000)});}
 
 /* =====================  화면 구성  ===================== */
 function computeCell(){
@@ -1159,18 +1212,20 @@ function startMatch(mode,level,seed){
   Snd.init();hideOv();
   if(mode!=='online')leaveOnline();
   if(seed===undefined||seed===null)seed=(Math.random()*2147483647)|0;
-  G.mode=mode;G.level=level||1;G.sp=mode==='ai'?stageSpecials(G.level):[];G.ch=mode==='ai'?chInfo(chOf(G.level)):null;G.mods=new Set(G.ch?G.ch.mods:[]);G.itemRate=G.mods.has('starRain')?0.26:0.13;G.bonusCoins=0;{const pl=PL();G.feat=mode==='ai'?{items:pl>=2,tiger:pl>=3,skills:pl>=4}:{items:true,tiger:true,skills:true};}G.maxCombo=0;G.maxChain=0;G.xpRes=null;G.t=0;G.events=[];G.paused=false;G.ended=false;G.countdown=3000;G.mercy=0;G.lastWinner=null;
+  G.mode=mode;G.level=level||1;G.sp=mode==='ai'?stageSpecials(G.level):[];G.ch=mode==='ai'?chInfo(chOf(G.level)):null;G.mods=new Set(G.ch?G.ch.mods:[]);G.itemRate=G.mods.has('starRain')?0.26:0.13;G.bonusCoins=0;{const pl=PL();G.feat=mode==='ai'?{items:pl>=2,tiger:pl>=3,skills:pl>=4}:{items:true,tiger:true,skills:true};}G.maxCombo=0;G.maxChain=0;G.xpRes=null;G.t=0;G.events=[];G.paused=false;G.ended=false;G.countdown=3000;G.mercy=0;G.lastWinner=null;G.clutch=0;G.dexNew=0;G.contUsed=false;G.contOffer=false;G.climax=false;G.sudden=false;G.riseT=0;G.streakRes=null;G.goldRate=0.045;
   document.querySelectorAll('.runner').forEach(e=>e.remove());
   const kinds=mode==='ai'?['human','ai']:mode==='demo'?['ai','ai']:mode==='online'?['human','remote']:['human','human'];
   G.players=[makePlayer(0,kinds[0],seed),makePlayer(1,kinds[1],seed)];
-  if(mode==='ai'){const cfg=bossFor(G.level);if(G.mods.has('heavy'))cfg.garbBonus+=1;if(G.mods.has('rage'))cfg.skillEvery*=0.7;makeAI(G.players[1],cfg);G.speed=cfg.speed;G.mercy=Math.min(0.2,store.get('loss_'+G.level,0)*0.05);}
+  if(mode==='ai'){const cfg=bossFor(G.level);if(G.mods.has('heavy'))cfg.garbBonus+=1;if(G.mods.has('rage'))cfg.skillEvery*=0.7;makeAI(G.players[1],cfg);G.speed=cfg.speed;G.mercy=Math.min(0.12,store.get('loss_'+G.level,0)*0.04);}
   else if(mode==='demo'){makeAI(G.players[0],{...bossFor(5),por:'cat',garbBonus:0});makeAI(G.players[1],bossFor(5));G.speed=1.1;}
   else G.speed=1;
   for(const p of G.players){p.hp=p.hpMax=100;}
   if(mode!=='demo'){const me=G.players[0],h=HERO_BY[heroId()];me.hero=h;me.hp=me.hpMax=h.hp+4*(heroLv(h.id)-1);me.revive=!!h.revive;}
   if(mode==='ai')G.players[1].isBoss=true;
   G.bgTheme=mode==='ai'?(G.ch&&G.ch.c>=2?G.ch.theme:bossFor(G.level).por):mode==='online'?'online':'lobby';document.body.classList.remove('inlobby');
+  G.clock=mode==='demo'?60000:mode==='ai'?(120000+Math.min(60000,G.level*3000)):120000;G.riseEvery=(mode==='ai'&&G.level<=3)?8000:5000;
   buildUI();setKeys();if(mode==='ai')bossSetup();updateHP();
+  if(mode!=='demo'&&store.get('goldframe',0)&&G.players[0].ui)G.players[0].ui.board.classList.add('goldframe');
   {const me=G.players[0];if(me.hero&&me.hero.tier==='legend'){me.ui.el.querySelector('.namebar').classList.add('legend');setTimeout(()=>{if(G.players&&G.players[0]===me){bigK(me,'legend_in',{name:heroName(me.hero.id)},'#f08c00');flashGold();Snd.fever();}},600);}}
   $('#touch').classList.toggle('on',(TOUCH||document.body.classList.contains('phone'))&&(mode==='ai'||mode==='online'));
   for(const p of G.players){if(!p.remote)spawn(p);updateUI(p);}
@@ -1187,11 +1242,11 @@ function showMenu(){
   ov(`<div class="lobby-wrap">
    <div class="ltop">
      <div class="pchip" onclick="showRank('me')"><div class="av">${img(hid,46,false,'happy')}</div><div><div class="pn">${esc(p.name)}</div><div class="lvrow"><span class="lvb">Lv.${p.lv}</span><div class="xpmini"><div style="width:${Math.round(p.xp/p.need*100)}%"></div></div></div></div></div>
-     <div class="res"><span class="rpill">\ud83c\udfc6 ${p.tr}</span><span class="rpill">\ud83e\ude99 ${getCoins().toLocaleString()}<b onclick="showHeroes()">+</b></span><span class="rpill">\ud83e\udde9 ${store.get('shards',0)}</span></div>
+     <div class="res"><span class="rpill">\ud83c\udfc6 ${p.tr}</span><span class="rpill">\ud83e\ude99 ${getCoins().toLocaleString()}<b onclick="showHeroes()">+</b></span><span class="rpill">\ud83e\udde9 ${store.get('shards',0)}</span>${store.get('wstreak',0)>=1?`<span class="rpill streak">\ud83d\udd25 ${tr('streak_chip',{n:store.get('wstreak',0),m:streakMul(store.get('wstreak',0)+1)})}</span>`:''}</div>
      <button class="icbtn" onclick="showSettings()">\u2699\ufe0f</button>
    </div>
    <div class="lmid">
-     <div class="lside"><button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button><button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button><button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button></div>
+     <div class="lside"><button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button><button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button><button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button><button class="rbtn" onclick="showDex()">\ud83d\udcd6<span>${tr('dex')}</span></button></div>
      <div class="showcase">
        <div class="logo">Anibrix</div><div class="logosub">${tr('subtitle')}</div><div class="copyr">\u00a9 ${new Date().getFullYear()} ${OWNER}. All rights reserved.</div>
        <div class="ped ${lg?'lg':''}">${own.length>1?`<button class="arr" onclick="cycleHero(-1)">\u2039</button>`:''}<div class="hbig">${img(hid,190,false,'happy')}</div>${own.length>1?`<button class="arr" onclick="cycleHero(1)">\u203a</button>`:''}</div>
@@ -1218,9 +1273,10 @@ function saveNick2(){const v=(($('#nickIn')&&$('#nickIn').value)||'').trim().sli
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function profCard(){const p=prof(),hid=heroId(),a=attState(),nx=HEROES.find(h=>!ownHero(h.id)&&h.lv>p.lv);return `<div class="prof"><div onclick="showHeroes()" style="cursor:pointer;text-align:center">${img(hid,56,false,'happy')}<div class="price" style="color:#d6336c">\ud83d\udc09 ${tr('change_hero')}</div></div><div style="flex:1"><div class="pn">${esc(p.name)} <span style="color:#ff6b9a">Lv.${p.lv}</span> <span class="price">${heroName(hid)}</span></div><div class="pl">🏆 ${p.tr} <span class="coin">🪙 ${getCoins().toLocaleString()}</span> ${(a.streak&&(a.last===dstr(0)||a.last===dstr(-1)))?tr('streak',{n:a.streak}):''}</div><div class="xpbar"><div class="xpfill" style="width:${Math.round(p.xp/p.need*100)}%"></div></div><div class="pl">${tr('xp',{a:p.xp,b:p.need})}${nx?' · '+tr('next_hero',{name:heroName(nx.id),lv:nx.lv}):''}</div></div></div>`;}
 function showRank(tab){
-  tab=tab||'online';const p=prof();
-  let h=`<div class="card"><div class="title" style="font-size:30px">${tr('rank_title')}</div><div class="tabs"><button class="lbtn ${tab==='online'?'on':''}" onclick="showRank('online')">${tr('rank_online')}</button><button class="lbtn ${tab==='me'?'on':''}" onclick="showRank('me')">${tr('rank_me')}</button></div>`;
-  if(tab==='online'){const arr=lbTop().slice(0,50);h+=`<table class="rank"><tr><th>${tr('col_rank')}</th><th>${tr('col_name')}</th><th>${tr('col_lv')}</th><th>${tr('col_tr')}</th></tr>${arr.map((e,i)=>`<tr class="${e.id===p.id?'me':''}"><td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${esc(e.name)}</td><td>${e.lv|0}</td><td>🏆 ${e.tr|0}</td></tr>`).join('')}</table><div class="subt" style="font-size:12px">${tr('rank_note')}</div>`;}
+  tab=tab||'week';const p=prof();
+  let h=`<div class="card"><div class="title" style="font-size:30px">${tr('rank_title')}</div><div class="tabs"><button class="lbtn ${tab==='week'?'on':''}" onclick="showRank('week')">${tr('wk_title')}</button><button class="lbtn ${tab==='online'?'on':''}" onclick="showRank('online')">${tr('rank_online')}</button><button class="lbtn ${tab==='me'?'on':''}" onclick="showRank('me')">${tr('rank_me')}</button></div>`;
+  if(tab==='week'){h+=`<div id="wkbox"><div class="subt">${tr('wk_loading')}</div></div>`;setTimeout(loadWeekly,0);}
+  else if(tab==='online'){const arr=lbTop().slice(0,50);h+=`<table class="rank"><tr><th>${tr('col_rank')}</th><th>${tr('col_name')}</th><th>${tr('col_lv')}</th><th>${tr('col_tr')}</th></tr>${arr.map((e,i)=>`<tr class="${e.id===p.id?'me':''}"><td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${esc(e.name)}</td><td>${e.lv|0}</td><td>🏆 ${e.tr|0}</td></tr>`).join('')}</table><div class="subt" style="font-size:12px">${tr('rank_note')}</div>`;}
   else{const mx=store.get('maxst',1);let stars=0;for(let s=1;s<=mx;s++)stars+=store.get('star_'+s,0);
     const rows=[[tr('st_lv'),'Lv.'+p.lv+' ('+tr('xp',{a:p.xp,b:p.need})+')'],[tr('col_tr'),'🏆 '+p.tr],[tr('st_best'),tr('stage',{n:mx})],[tr('st_stars'),'★ '+stars],[tr('st_wins'),store.get('ow',0)+' / '+store.get('ol',0)],[tr('st_lines'),store.get('b_lines',0)],[tr('st_combo'),store.get('b_combo',0)],[tr('st_chain'),store.get('b_chain',0)]];
     h+=`<table class="rank">${rows.map(r=>`<tr><td>${r[0]}</td><td style="font-weight:900">${r[1]}</td></tr>`).join('')}</table>`;}
@@ -1243,12 +1299,12 @@ function showResult(w){
     const c=b.ai.cfg;
     if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
     else h+=`${img(c.por,84,false,'happy')}<div class="ribbon lose">${tr('lose')}</div><div class="subt">${tr('lose_sub',{name:bossName(c)})} ${G.lossesNow>=1?tr('mercy_next'):''}</div>`;
-    h+=`${xpBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
+    h+=`${xpBlock()}${streakBlock()}${goalBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
     if(w===a)h+=`<button class="btn" onclick="adGate(()=>startMatch('ai',${G.level+1}))">${tr('stage',{n:G.level+1})} ▶</button>`;
     h+=`${heroPicker('result')}<button class="btn alt" onclick="adGate(()=>startMatch('ai',${G.level}))">${tr('retry')}</button><button class="btn green" onclick="quickMatch()">\u2694\ufe0f ${tr('go_quick')}</button><div class="minirow"><button class="lbtn" onclick="showSelect()">\ud83d\uddfa ${tr('sel_title2')}</button><button class="lbtn" onclick="showHeroes()">\ud83d\udc09 ${tr('change_hero')}</button><button class="lbtn" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;
   } else if(G.mode==='online'){
     const meWin=w===a;
-    h+=`${img(meWin?'cat':'dog',84,false,'happy')}<div class="ribbon ${meWin?'win':'lose'}">${meWin?tr('win'):tr('lose')}</div><div class="subt">${tr('playtime',{t:fmt(G.t)})}</div>${NET.left?`<div class="subt" style="color:#e03131;font-weight:800">${tr('on_left')}</div>`:''}${xpBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
+    h+=`${img(meWin?'cat':'dog',84,false,'happy')}<div class="ribbon ${meWin?'win':'lose'}">${meWin?tr('win'):tr('lose')}</div><div class="subt">${tr('playtime',{t:fmt(G.t)})}</div>${NET.left?`<div class="subt" style="color:#e03131;font-weight:800">${tr('on_left')}</div>`:''}${xpBlock()}${streakBlock()}${goalBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
     h+=heroPicker('result');
     if(!NET.left&&NET.conn)h+=`<div id="renote" class="subt" style="color:#d6336c;font-weight:800">${NET.peerRe?tr('on_peer_re'):''}</div><button class="btn" id="rebtn" onclick="requestRematch()">${tr('rematch')}</button>`;
     if(NET.quick)h+=`<button class="btn green" onclick="quickMatch()">${tr('q_again')}</button>`;
@@ -1374,9 +1430,10 @@ function lbTop(){const arr=Object.values(lbGet());arr.push(myEntry());return arr
 function awardEnd(w){
   if(G.mode==='demo')return;const me=G.players[0],win=w===me;if(me.isAI)return;
   store.set('b_lines',Math.max(store.get('b_lines',0),me.lines));store.set('b_combo',Math.max(store.get('b_combo',0),G.maxCombo||0));store.set('b_chain',Math.max(store.get('b_chain',0),G.maxChain||0));
+  let mul=1;if(G.mode==='ai'||G.mode==='online'){const s0=store.get('wstreak',0),s=win?s0+1:0;store.set('wstreak',s);store.set('wsbest',Math.max(store.get('wsbest',0),s));mul=win?streakMul(s):1;G.streakRes={s,prev:s0,mul,win};}
   let xp=Math.min(60,me.lines);if(G.mode==='ai')xp+=win?30+Math.min(G.level,20)*4:10;else if(G.mode==='online')xp+=win?50:20;
-  G.xpRes=addXP(xp);addWeekScore(me.score);
-  {const c=Math.min(120,me.lines*2)+(G.mode==='ai'?(win?20+Math.min(G.level,20)*5:10):(win?60:15));const c2=c+Math.min(30,G.bonusCoins|0);addCoins(c2);G.xpRes.coins=c2;}
+  G.xpRes=addXP(Math.round(xp*mul));G.xpRes.mul=mul;addWeekScore(me.score);submitWeekly();
+  {const c=Math.min(120,me.lines*2)+(G.mode==='ai'?(win?20+Math.min(G.level,20)*5:10):(win?60:15));const c2=Math.round((c+Math.min(30,G.bonusCoins|0)+Math.min(3,G.clutch|0)*15)*mul);addCoins(c2);G.xpRes.coins=c2;}
   if(G.mode==='ai'&&win){DAY.track('win',1);if(G.stars===3)DAY.track('stars3',1);}
   if(G.mode==='online'&&NET.quick)DAY.track('quick',1);
   if(G.mode==='online'&&NET.quick){const my=store.get('trophy',0),op=(NET.opp&&NET.opp.tr)|0,cl=(v,a,b)=>Math.max(a,Math.min(b,v));// 등급분류(전체이용가): 패배해도 트로피를 잃지 않음
@@ -1460,7 +1517,7 @@ function heal(p,v){p.hp=Math.min(p.hpMax,p.hp+v);addFloat(p,'+'+v+' HP','#2b8a3e
 function topOut(p){
   if(!p||p.dead||p.remote)return;
   p.grid.splice(0,10);while(p.grid.length<H)p.grid.unshift(Array(W).fill(null));
-  p.pending=0;p.shakeUntil=G.t+400;Snd.boom();
+  p.pending=0;p.pq=[];p.inDanger=false;p.shakeUntil=G.t+400;Snd.boom();
   if(p.isBoss){bossDamage(Math.ceil(p.hpMax*0.3));}
   else{floatK(p,'f_topout',{n:30},'#e03131');hurt(p,30);}
   calcH(p);updateUI(p);
@@ -1846,7 +1903,7 @@ function showSelect(chSel){
 function chapterClear(lv){if(lv%12!==0)return;const c=chOf(lv);if(store.get('chrew_'+c,0))return;store.set('chrew_'+c,1);addCoins(500);store.set('shards',store.get('shards',0)+3);setTimeout(()=>{toast(tr('ch_clear',{n:c}));Snd.fever();},2400);}
 // 다국어
 const I18N_CH={
-ko:{subtitle:'애니브릭스: 동물 블록 대소동 · v0.9',chapter:'챕터 {n}',th_zodiac:'십이지 마을',th_moon:'달빛 숲',th_meadow:'구름 초원',th_sunset:'노을 마을',th_palace:'별빛 궁전',
+ko:{subtitle:'애니브릭스: 동물 블록 대소동 · v1.0',chapter:'챕터 {n}',th_zodiac:'십이지 마을',th_moon:'달빛 숲',th_meadow:'구름 초원',th_sunset:'노을 마을',th_palace:'별빛 궁전',
  ch_new_sub:'새로운 동물 친구들이 블록으로 합류했어요! 줄을 지우면 특별한 힘을 써요.',ch_loop_sub:'황금 보스들이 돌아왔어요. 이번 챕터만의 규칙을 이겨내세요!',ch_new_animals:'새 동물 블록',ch_animals:'이번 챕터 동물',ch_bosses:'이번 챕터 보스',ch_rules:'챕터 규칙',ch_go:'챕터 시작',ch_more:'자세히',ch_reward_note:'챕터 마지막 스테이지를 깨면 🪙500 + 🧩3 보상!',ch_clear:'🎉 챕터 {n} 클리어! 🪙500 + 🧩3',
  elite_pre:'황금 ',elite_note:'황금 보스는 필살기를 2개씩 씁니다',mod_on:'챕터 규칙: {m}',
  an_pig:'돼지',an_panda:'판다',an_penguin:'펭귄',an_fox:'여우',an_bear:'곰',an_owl:'부엉이',an_octopus:'문어',an_hedgehog:'고슴도치',
@@ -1856,7 +1913,7 @@ ko:{subtitle:'애니브릭스: 동물 블록 대소동 · v0.9',chapter:'챕터 
  modd_wind:'가끔 바람이 불어 떨어지는 블록이 한 칸 밀려요',modd_starRain:'아이템 별 블록이 2배로 나와요',modd_rage:'보스 필살기가 더 자주 와요',modd_heavy:'보스가 털뭉치를 1줄 더 보내요',modd_gold:'피버 게이지가 1.5배 빨리 차요',
  sk_rabbit:'헷갈려 깡총',sk_dragon:'구름 숨결',sk_snake:'똬리 조이기',sk_horse:'질풍 질주',sk_sheep:'양털 폭탄',sk_monkey:'바나나 장난',sk_rooster:'새벽 알람',sk_dog:'물어오기',sk_pig:'꿀꿀 박치기',
  sk_hit_rabbit:'깡총! 좌우가 헷갈려!',sk_hit_dragon:'구름이 앞을 가린다!',sk_hit_snake:'꽁꽁 조여서 회전이 안 돼!',sk_hit_horse:'히힝! 블록이 빨라졌다!',sk_hit_sheep:'양털 뭉치가 쏟아진다!',sk_hit_monkey:'바나나 껍질! 회전이 반대로!',sk_hit_rooster:'꼬끼오! 정신이 없다!',sk_hit_dog:'보관 블록을 물어갔다!',sk_hit_pig:'꿀꿀 박치기! 바닥이 2줄 솟았다!'},
-en:{subtitle:'Animal Block Battle · v0.9',chapter:'Chapter {n}',th_zodiac:'Zodiac Village',th_moon:'Moonlit Forest',th_meadow:'Cloud Meadow',th_sunset:'Sunset Town',th_palace:'Starlight Palace',
+en:{subtitle:'Animal Block Battle · v1.0',chapter:'Chapter {n}',th_zodiac:'Zodiac Village',th_moon:'Moonlit Forest',th_meadow:'Cloud Meadow',th_sunset:'Sunset Town',th_palace:'Starlight Palace',
  ch_new_sub:'New animal friends joined the blocks! Clear them to use special powers.',ch_loop_sub:'The golden bosses are back. Beat this chapter\'s special rules!',ch_new_animals:'New animal blocks',ch_animals:'Animals this chapter',ch_bosses:'Bosses this chapter',ch_rules:'Chapter rules',ch_go:'Start chapter',ch_more:'Details',ch_reward_note:'Clear the last stage of a chapter for 🪙500 + 🧩3!',ch_clear:'🎉 Chapter {n} cleared! 🪙500 + 🧩3',
  elite_pre:'Golden ',elite_note:'Golden bosses use 2 special skills',mod_on:'Chapter rule: {m}',
  an_pig:'Pig',an_panda:'Panda',an_penguin:'Penguin',an_fox:'Fox',an_bear:'Bear',an_owl:'Owl',an_octopus:'Octopus',an_hedgehog:'Hedgehog',
@@ -1866,7 +1923,7 @@ en:{subtitle:'Animal Block Battle · v0.9',chapter:'Chapter {n}',th_zodiac:'Zodi
  modd_wind:'Wind sometimes pushes your falling block one cell',modd_starRain:'Twice as many item star blocks',modd_rage:'Boss specials come more often',modd_heavy:'The boss sends 1 extra fur line',modd_gold:'Fever gauge fills 1.5x faster',
  sk_rabbit:'Dizzy Hop',sk_dragon:'Cloud Breath',sk_snake:'Coil Squeeze',sk_horse:'Gale Gallop',sk_sheep:'Wool Bomb',sk_monkey:'Banana Prank',sk_rooster:'Dawn Alarm',sk_dog:'Fetch!',sk_pig:'Piggy Headbutt',
  sk_hit_rabbit:'Hop! Left and right are mixed up!',sk_hit_dragon:'Clouds block your view!',sk_hit_snake:'Squeezed! You can\'t rotate!',sk_hit_horse:'Neigh! Blocks speed up!',sk_hit_sheep:'Wool balls are falling!',sk_hit_monkey:'Banana peel! Rotation flipped!',sk_hit_rooster:'Cock-a-doodle-doo! So dizzy!',sk_hit_dog:'It fetched your hold block!',sk_hit_pig:'Oink headbutt! 2 lines rose!'},
-ja:{subtitle:'アニブリックス：どうぶつブロック大騒動 · v0.9',chapter:'チャプター {n}',th_zodiac:'十二支の村',th_moon:'月明かりの森',th_meadow:'雲の草原',th_sunset:'夕焼けの町',th_palace:'星明かりの宮殿',
+ja:{subtitle:'アニブリックス：どうぶつブロック大騒動 · v1.0',chapter:'チャプター {n}',th_zodiac:'十二支の村',th_moon:'月明かりの森',th_meadow:'雲の草原',th_sunset:'夕焼けの町',th_palace:'星明かりの宮殿',
  ch_new_sub:'新しい動物たちがブロックに加わった！消すと特別な力を使うよ。',ch_loop_sub:'黄金ボスが帰ってきた。このチャプターだけのルールに勝とう！',ch_new_animals:'新しい動物ブロック',ch_animals:'このチャプターの動物',ch_bosses:'このチャプターのボス',ch_rules:'チャプタールール',ch_go:'チャプター開始',ch_more:'くわしく',ch_reward_note:'チャプター最後のステージをクリアで 🪙500 + 🧩3！',ch_clear:'🎉 チャプター{n}クリア！🪙500 + 🧩3',
  elite_pre:'黄金の',elite_note:'黄金ボスは必殺技を2つ使います',mod_on:'チャプタールール：{m}',
  an_pig:'ブタ',an_panda:'パンダ',an_penguin:'ペンギン',an_fox:'キツネ',an_bear:'クマ',an_owl:'フクロウ',an_octopus:'タコ',an_hedgehog:'ハリネズミ',
@@ -1876,7 +1933,7 @@ ja:{subtitle:'アニブリックス：どうぶつブロック大騒動 · v0.9'
  modd_wind:'時々風が吹いて落下中のブロックが1マスずれる',modd_starRain:'アイテム星ブロックが2倍',modd_rage:'ボスの必殺技が多くなる',modd_heavy:'ボスが毛玉を1列多く送る',modd_gold:'フィーバーゲージが1.5倍速くたまる',
  sk_rabbit:'まどわせジャンプ',sk_dragon:'雲の息',sk_snake:'とぐろ締め',sk_horse:'疾風ダッシュ',sk_sheep:'羊毛爆弾',sk_monkey:'バナナいたずら',sk_rooster:'夜明けのアラーム',sk_dog:'とってこい',sk_pig:'ブタ頭突き',
  sk_hit_rabbit:'ピョン！左右がわからない！',sk_hit_dragon:'雲で前が見えない！',sk_hit_snake:'締められて回転できない！',sk_hit_horse:'ヒヒン！ブロックが速い！',sk_hit_sheep:'羊毛が降ってきた！',sk_hit_monkey:'バナナの皮！回転が逆！',sk_hit_rooster:'コケコッコー！目が回る！',sk_hit_dog:'ホールドを持っていかれた！',sk_hit_pig:'ブタ頭突き！床が2列せり上がった！'},
-zh:{subtitle:'动物方块大作战 · v0.9',chapter:'第{n}章',th_zodiac:'十二生肖村',th_moon:'月光森林',th_meadow:'云朵草原',th_sunset:'晚霞小镇',th_palace:'星光宫殿',
+zh:{subtitle:'动物方块大作战 · v1.0',chapter:'第{n}章',th_zodiac:'十二生肖村',th_moon:'月光森林',th_meadow:'云朵草原',th_sunset:'晚霞小镇',th_palace:'星光宫殿',
  ch_new_sub:'新的动物朋友加入了方块！消除它们就能发动特殊能力。',ch_loop_sub:'黄金Boss回来了。战胜本章的特殊规则吧！',ch_new_animals:'新动物方块',ch_animals:'本章动物',ch_bosses:'本章Boss',ch_rules:'本章规则',ch_go:'开始本章',ch_more:'详情',ch_reward_note:'通关本章最后一关可获得 🪙500 + 🧩3！',ch_clear:'🎉 第{n}章通关！🪙500 + 🧩3',
  elite_pre:'黄金',elite_note:'黄金Boss会使用2个必杀技',mod_on:'本章规则：{m}',
  an_pig:'小猪',an_panda:'熊猫',an_penguin:'企鹅',an_fox:'狐狸',an_bear:'小熊',an_owl:'猫头鹰',an_octopus:'章鱼',an_hedgehog:'刺猬',
@@ -1944,7 +2001,7 @@ function loop(now){
         G.t+=dt;
         for(let i=G.events.length-1;i>=0;i--){if(G.events[i].at<=G.t){const ev=G.events.splice(i,1)[0];ev.fn();}}
         for(const p of G.players)updatePlayer(p,dt);
-        bossTick();Music.fever=!!(G.players[0]&&!G.players[0].isAI&&G.t<G.players[0].feverUntil);
+        bossTick();climaxTick(dt);dangerTick(dt);Music.fever=!!(G.players[0]&&!G.players[0].isAI&&G.t<G.players[0].feverUntil);
         if(isOnline()&&G.t-NET.lastSend>=80){NET.lastSend=G.t;netState();}
         checkEnd();updateMid();
       }
