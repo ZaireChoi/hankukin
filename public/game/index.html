@@ -22,7 +22,8 @@ html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-sy
 a{color:inherit;text-decoration:none}
 #sky{position:fixed;inset:0;z-index:-1}
 .wrap{max-width:1120px;margin:0 auto;padding:22px 18px 60px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+#hkacc-slot{display:flex;align-items:center}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:3px;font-size:18px}
 .logo i{display:inline-block;width:30px;height:30px;border-radius:9px;background:conic-gradient(from 200deg,#6cc4ff,#c58cff,#ff7a9a,#ffb84d,#6cc4ff);box-shadow:0 0 24px #8a7cff66}
 .langs{display:flex;gap:6px}
@@ -87,7 +88,7 @@ footer a{color:#a9bbe6}
  <section class="how">
   <div><b data-t="w1t">1. 게임 고르기</b><small data-t="w1d">카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.</small></div>
   <div><b data-t="w2t">2. 친구와 함께</b><small data-t="w2d">방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.</small></div>
-  <div><b data-t="w3t">3. 성장 기록</b><small data-t="w3d">계급, 기록, 캐릭터 꾸미기는 이 기기에 저장됩니다.</small></div>
+  <div><b data-t="w3t">3. 성장 기록</b><small data-t="w3d">이메일로 가입하면 경험치, 게임머니, 기술, 계급이 계정에 저장돼서 다른 기기에서도 이어서 할 수 있어요.</small></div>
  </section>
  <footer><span>© 2026 HANKUKIN · <span data-t="rights">모든 권리 보유</span></span><span><a href="/en/" data-t="guide">한국 여행 가이드 보기 →</a></span></footer>
 </div>
@@ -97,22 +98,22 @@ const S={
   newBadge:'NEW · 3D',hotBadge:'인기',playBtn:'지금 플레이 ▶',
   ascDesc:'AI 병사들과 함께 최대 100명 규모로 싸우는 3D 우주 전장. 친구는 6자리 방 코드로 초대해요. 보병으로 시작해 전투기 조종사, 타이탄 로봇, 함선 지휘관으로 진급하세요. 탑뷰와 슈팅 시점을 바꿔 가며 즐길 수 있습니다.',ascT1:'대규모 전투',ascT2:'진급·분대',ascT3:'탑뷰 / 3인칭',ascT4:'방 코드 대전',
   aniDesc:'귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.',aniT1:'퍼즐 대전',aniT2:'친구 초대',aniT3:'보스 스테이지',aniT4:'4개 언어',
-  w1t:'1. 게임 고르기',w1d:'카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.',w2t:'2. 친구와 함께',w2d:'방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.',w3t:'3. 성장 기록',w3d:'계급, 기록, 캐릭터 꾸미기는 이 기기에 저장됩니다.',rights:'모든 권리 보유',guide:'한국 여행 가이드 보기 →'},
+  w1t:'1. 게임 고르기',w1d:'카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.',w2t:'2. 친구와 함께',w2d:'방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.',w3t:'3. 성장 기록',w3d:'이메일로 가입하면 경험치, 게임머니, 기술, 계급이 계정에 저장돼서 다른 기기에서도 이어서 할 수 있어요.',rights:'모든 권리 보유',guide:'한국 여행 가이드 보기 →'},
  en:{h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
   newBadge:'NEW · 3D',hotBadge:'Popular',playBtn:'Play now ▶',
   ascDesc:'A 3D sci-fi battlefield with up to 100 fighters, filled out by AI troops. Invite friends with a 6-digit room code. Start as a foot soldier and get promoted to pilot, titan mech driver and fleet commander. Switch between top-down and shooter views.',ascT1:'Massive battles',ascT2:'Ranks & squads',ascT3:'Top-down / 3rd person',ascT4:'Room-code multiplayer',
   aniDesc:'Cute animal block battle. Clear lines, attack friends, and meet new animals and bosses every 12 stages.',aniT1:'Puzzle battle',aniT2:'Invite friends',aniT3:'Boss stages',aniT4:'4 languages',
-  w1t:'1. Pick a game',w1d:'Tap a card and you are in. No sign-up, just choose a nickname.',w2t:'2. Play with friends',w2d:'Create a room and share the 6-digit code to bring friends into the same battle.',w3t:'3. Keep progress',w3d:'Ranks, records and character looks are saved on this device.',rights:'All rights reserved',guide:'Korea travel guide →'},
+  w1t:'1. Pick a game',w1d:'Tap a card and you are in. No sign-up, just choose a nickname.',w2t:'2. Play with friends',w2d:'Create a room and share the 6-digit code to bring friends into the same battle.',w3t:'3. Keep progress',w3d:'Sign up with email and your XP, coins, skills and rank are saved to your account, on any device.',rights:'All rights reserved',guide:'Korea travel guide →'},
  ja:{h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
   newBadge:'NEW · 3D',hotBadge:'人気',playBtn:'今すぐプレイ ▶',
   ascDesc:'AI兵と一緒に最大100人規模で戦う宇宙の戦場。友だちは6桁のルームコードで招待。歩兵から始めて、パイロット、タイタンメカ、艦隊司令官へと昇進しよう。(英語・韓国語)',ascT1:'大規模戦闘',ascT2:'昇進・分隊',ascT3:'見下ろし / TPS',ascT4:'ルームコード対戦',
   aniDesc:'かわいい動物ブロックを消して友だちと対戦！12ステージごとに新しい動物とボスが登場。',aniT1:'パズル対戦',aniT2:'友だち招待',aniT3:'ボス戦',aniT4:'4言語',
-  w1t:'1. ゲームを選ぶ',w1d:'カードをタップするだけ。登録不要、ニックネームを決めるだけ。',w2t:'2. 友だちと遊ぶ',w2d:'ルームを作って6桁のコードを送れば同じ戦場に参加できます。',w3t:'3. 記録を残す',w3d:'階級や記録はこの端末に保存されます。',rights:'All rights reserved',guide:'韓国旅行ガイド →'},
+  w1t:'1. ゲームを選ぶ',w1d:'カードをタップするだけ。登録不要、ニックネームを決めるだけ。',w2t:'2. 友だちと遊ぶ',w2d:'ルームを作って6桁のコードを送れば同じ戦場に参加できます。',w3t:'3. 記録を残す',w3d:'メールで登録すると、経験値・コイン・スキル・階級がアカウントに保存されます。',rights:'All rights reserved',guide:'韓国旅行ガイド →'},
  zh:{h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
   newBadge:'NEW · 3D',hotBadge:'热门',playBtn:'立即开玩 ▶',
   ascDesc:'与AI士兵并肩、最多100人规模的太空战场。用6位房间码邀请好友。从步兵开始，晋升为飞行员、泰坦机甲驾驶员和舰队指挥官。（英文·韩文）',ascT1:'大规模战斗',ascT2:'晋升·小队',ascT3:'俯视 / 第三人称',ascT4:'房间码对战',
   aniDesc:'消除可爱的动物方块与好友对战！每12关出现新的动物和Boss。',aniT1:'益智对战',aniT2:'邀请好友',aniT3:'Boss关卡',aniT4:'4种语言',
-  w1t:'1. 选择游戏',w1d:'点一下卡片即可开始，无需注册，只要起个昵称。',w2t:'2. 和朋友一起',w2d:'创建房间并分享6位房间码，朋友就能加入同一战场。',w3t:'3. 保存进度',w3d:'军衔、战绩和角色外观保存在本设备上。',rights:'版权所有',guide:'韩国旅行指南 →'}};
+  w1t:'1. 选择游戏',w1d:'点一下卡片即可开始，无需注册，只要起个昵称。',w2t:'2. 和朋友一起',w2d:'创建房间并分享6位房间码，朋友就能加入同一战场。',w3t:'3. 保存进度',w3d:'用邮箱注册后，经验、金币、技能和军衔会保存到账号，换设备也能继续。',rights:'版权所有',guide:'韩国旅行指南 →'}};
 const NAMES={ko:'한국어',en:'English',ja:'日本語',zh:'中文'};
 let L=null;try{L=localStorage.getItem('hk_play_lang');}catch(e){}if(!S[L]){const n=(navigator.language||'en').toLowerCase();L=n.startsWith('ko')?'ko':n.startsWith('ja')?'ja':n.startsWith('zh')?'zh':'en';}
 function apply(){document.documentElement.lang=L;document.querySelectorAll('[data-t]').forEach(e=>{const v=S[L][e.dataset.t]??S.en[e.dataset.t];if(v!=null)e.innerHTML=v;});
@@ -125,5 +126,6 @@ addEventListener('resize',rs);rs();
 (function f(t){const gr=g.createRadialGradient(W*.5,H*.1,0,W*.5,H*.1,H*1.1);gr.addColorStop(0,'#1c1640');gr.addColorStop(.5,'#0b1024');gr.addColorStop(1,'#05070d');g.fillStyle=gr;g.fillRect(0,0,W,H);
  for(const s of st){s.y+=(.05+s.z*.35)*devicePixelRatio;if(s.y>H)s.y=0;g.fillStyle=`rgba(200,220,255,${.25+s.z*.7})`;g.fillRect(s.x,s.y,1+s.z*2,1+s.z*2);}requestAnimationFrame(f);})();
 </script>
+<script type="module" src="/game/account.js" data-mode="portal"></script>
 </body>
 </html>
