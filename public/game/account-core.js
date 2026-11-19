@@ -405,6 +405,15 @@ window.HKAccount = {
     await setDoc(ref, { name: String(name || 'Player').slice(0, 20), score, at: Date.now() });
     return true;
   },
+  // 서버 전체 고유 소유권: unique/{key} (먼저 만든 계정이 영구 소유, 규칙상 수정·삭제 불가)
+  async claimUnique(key, info) {
+    const u = auth.currentUser; if (!u) return { ok: false, reason: 'login' };
+    const ref = doc(db, 'unique', String(key));
+    try { const s = await getDoc(ref); if (s.exists()) return { ok: s.data().uid === u.uid, owner: s.data(), reason: s.data().uid === u.uid ? 'mine' : 'taken' }; } catch (e) {}
+    try { await setDoc(ref, Object.assign({}, info || {}, { uid: u.uid, email: u.email || '', at: Date.now() })); return { ok: true, reason: 'claimed' }; }
+    catch (e) { return { ok: false, reason: 'taken', err: String(e && e.code || e) }; }
+  },
+  async getUnique(key) { try { const s = await getDoc(doc(db, 'unique', String(key))); return s.exists() ? s.data() : null; } catch (e) { return null; } },
   async topScores(boardId, n) {
     const qs = await getDocs(query(collection(db, 'leaderboards', String(boardId), 'entries'), orderBy('score', 'desc'), limit(n || 50)));
     const out = []; qs.forEach(d => out.push(Object.assign({ id: d.id }, d.data()))); return out;
