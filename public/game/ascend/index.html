@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v1.5 RPG</div>
+   <div class="ver"><i></i>ASCEND · v1.5.1 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3629,7 +3629,7 @@ const EPIS=[
   SC('space','좌표 불명 · 신기 격납 성소','Unknown coordinates — the sanctum of the divine frame'),
   S('astra','여섯 날개의 신기 엘 샤다이. 알파가 오메가를 지우려 만든 최종 병기입니다.','El Shaddai. The six-winged divine frame. Alpha\'s final weapon, forged to erase Omega.'),
   S('astra','이것을 쥐는 순간, 당신은 심판할 힘을 가집니다. 쓰지 않을 용기도 함께 가지세요.','The moment you take it, you hold the power to judge. Hold the courage not to use it, as well.'),
-  S('astra','한 서버에 단 세 대. 이미 주인이 있다면, 문은 다시 열리지 않습니다.','Only three exist on each server. Once all have masters, this gate will never open again.'),
+  S('astra','시련을 이겨낸 자에게만 문이 열립니다. 금빛, 진홍, 흑요 — 빛은 단 하나만 고를 수 있습니다.','The gate opens only for those who pass the trial. Gold, crimson, obsidian—you may choose only one light.'),
   {t:'battle',x:K('신의 시련: 오메가 군주의 그림자를 이겨라.','Trial of the Divine — defeat the shadow of the Omega Lord.'),waves:7,boss:'omegaw',diff:6,rw:{god:1,shards:1500,item:4}}]},
 ];
 const EDIFF={e_p:1,e0:1,e1:2,e2:3,e3:3,e4:4,e5:5,e6:6};
@@ -3640,20 +3640,15 @@ function giveRw(rw,log){const r=R();if(!rw)return;if(rw.shards){r.shards+=rw.sha
  if(rw.item){const n=rw.item>=3?2:1;for(let i=0;i<n;i++){const rr=Math.min(4,Math.max(0,rw.item-1+(Math.random()<.3?1:0)-(Math.random()<.3?1:0)));const it=mkItem(rr);r.inv.push(it);log.push('<span style="color:'+RAR[it.r].c+'">'+tx(it.n)+'</span>');}}
  if(rw.link&&Math.random()<(rw.chance==null?1:rw.chance)){addUnit(rw.link,1,log);}
  if(rw.flag){r.flags=r.flags||{};r.flags[rw.flag]=1;}
- if(rw.god){log.push(tx(K('신기 소유권 확인 중…','Verifying divine frame ownership…')));setTimeout(godAfter,800);}
+ if(rw.god&&!R().mythic){log.push(tx(K('신기 엘 샤다이 해방!','Divine El Shaddai unsealed!')));setTimeout(godAfter,800);}
  saveP();}
 function addUnit(k,isLink,log){const r=R();const arr=isLink?r.links:r.mechs;const C=isLink?LINKS[k]:MECHS[k];if(!C)return;if(arr.includes(k)){r.aw[k]=Math.min(5,(r.aw[k]||0)+1);log&&log.push(tx(C.n)+' · '+tx(K('각성','Awaken'))+' '+r.aw[k]);}else{arr.push(k);log&&log.push('<b style="color:'+RAR[C.r].c+'">NEW '+tx(C.n)+'</b>');}}
-// server-unique divine frames via shared account backend if present
-const GODS=['god','god_red','god_black'];const GBASE=1790000000000;
-async function claimGodAsync(){const r=R();if(r.mythic)return{c:r.mythic};const A=window.HKAccount;if(!A||!A.user)return{need:'login'};const me=A.user;
- if(me.email==='suyol1974@gmail.com'){r.mythic='god_white';addUnit('god_white');saveP();return{c:'god_white'};}
- for(const c of GODS){let ok=false;try{if(A.claimUnique){const res=await A.claimUnique('ascend_'+c,{name:P.name||'Pilot'});if(res.ok)ok=true;else if(!(res.err&&/permission/i.test(res.err)))continue;}
-   if(!ok){const top=await A.topScores('ascend_'+c,1);if(top.length&&top[0].id!==me.uid)continue;if(!top.length){await A.submitScore('ascend_'+c,99999999-Math.floor((Date.now()-GBASE)/1000),P.name||'Pilot');const t2=await A.topScores('ascend_'+c,1);ok=!!(t2.length&&t2[0].id===me.uid);}else ok=true;}}catch(e){}
-  if(ok){r.mythic=c;addUnit(c);saveP();return{c};}}return{c:null};}
-async function godStatus(){const A=window.HKAccount;const out={};for(const c of GODS){let o=null;try{if(A&&A.getUnique)o=await A.getUnique('ascend_'+c);if(!o&&A&&A.topScores){const t=await A.topScores('ascend_'+c,1);if(t.length)o={name:t[0].name};}}catch(e){}out[c]=o;}return out;}
-function godAfter(){claimGodAsync().then(res=>{if(res.need==='login'){showDlg('astra',L('신기의 소유권은 서버 전체에 단 하나씩만 기록됩니다. 계정으로 로그인한 뒤 다시 시련을 마치세요.','Ownership of a divine frame is recorded server-wide. Log in to your account, then finish the trial again.'),[{l:L('로그인','Log in'),pri:1,f:()=>{try{window.HKAccount.openLogin();}catch(e){}}},{l:'OK',f:()=>{}}]);R().godPending=1;saveP();}
-  else if(res.c)showDlg('astra','<b style="color:#ffd166">'+tx(MECHS[res.c].n)+'</b><br><br>'+L('이 신기는 이제 당신의 것입니다. 이 서버에서 영원히.','This divine frame is yours now — on this server, forever.'),[{l:'OK',pri:1,f:()=>{render();}}]);
-  else showDlg('astra',L('세 대의 신기는 이미 모두 주인이 있습니다… 문은 닫혔습니다.','All three divine frames already have masters… the gate has closed.'),[{l:'OK',pri:1,f:()=>{}}]);});}
+// divine frames: reward for clearing the Trial of the Divine (no server-wide cap)
+const GODS=['god','god_red','god_black'];
+function godAfter(){const r=R();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!(r.mechs||[]).includes('god_white'))addUnit('god_white');}catch(e){}
+ if(r.mythic){saveP();return;}
+ const pickG=c=>{r.mythic=c;addUnit(c);saveP();render();showDlg('astra','<b style="color:#ffd166">'+tx(MECHS[c].n)+'</b><br><br>'+L('이 신기는 이제 당신의 것입니다. 그 힘을 지키는 데 쓰세요.','This divine frame is yours now. Use its power to protect.'),[{l:'OK',pri:1,f:()=>{}}]);};
+ showDlg('astra',L('시련을 이겨낸 자여. 당신의 빛을 고르십시오. 한 번 고른 빛은 바뀌지 않습니다.','You who passed the trial—choose your light. Once chosen, it cannot be changed.'),GODS.map(c=>({l:tx(MECHS[c].n),pri:c==='god',f:()=>pickG(c)})));}
 // ---------- gacha ----------
 const BANNERS={mech:{n:K('기동전사 소환','Mech Summon'),cost:300,rates:[50,30,14,5,1],pity:100,soft:90},link:{n:K('링크 각성','LINK Awakening'),cost:300,rates:[50,30,14.5,4.8,.7],pity:100,soft:90},gear:{n:K('장비 보급','Gear Supply'),cost:100,rates:[45,32,16,6,1],pity:0}};
 function rollR(b){const B=BANNERS[b];const r=R();if(B.pity){r.pity[b]=(r.pity[b]||0)+1;const p=r.pity[b];if(p>=B.pity)return 4;let leg=B.rates[4];if(p>B.soft)leg+=6*(p-B.soft);const x=Math.random()*100;if(x<leg)return 4;const rest=100-leg,base=100-B.rates[4];let acc=0;const y=Math.random()*rest;for(let i=0;i<4;i++){acc+=B.rates[i]*rest/base;if(y<acc)return i;}return 3;}
@@ -3701,7 +3696,7 @@ const MEMS=[K('알파는 별들 사이에 생명을 뿌린 창조자 문명이�
  K('알파의 「정화 계획」: 피조물이 창조주를 넘어서기 전에, 때가 되면 오메가도 지운다.','Alpha\'s "Purification Protocol": before a creation surpasses its makers, erase Omega too.'),
  K('오메가는 정화 계획을 알아냈다. 그리고 살아남기 위해 먼저 칼을 들었다.','Omega discovered the protocol—and raised the blade first, to survive.'),
  K('아스트라는 알파 최후의 수호 AI. 심판과 수호 사이에서 스스로 선택하도록 설계되었다.','Astra is Alpha\'s last guardian AI, designed to choose for herself between judgment and protection.'),
- K('엘 샤다이: 오메가를 지우기 위해 만든 알파의 최종 병기. 날개 여섯, 서버마다 단 세 대.','El Shaddai: Alpha\'s final weapon, forged to erase Omega. Six wings. Three per server.'),
+ K('엘 샤다이: 오메가를 지우기 위해 만든 알파의 최종 병기. 날개 여섯, 네 가지 빛.','El Shaddai: Alpha\'s final weapon, forged to erase Omega. Six wings, four lights.'),
  K('은하 바깥에서, 알파도 오메가도 아닌 무언가의 신호가 깨어나고 있다.','Beyond the galaxy, a signal from something neither Alpha nor Omega is waking.')];
 const ENDS={stars:K('별의 아이들','Children of the Stars'),coexist:K('공존','Coexistence'),judge:K('심판','Judgment')};
 function renderArc(B){const r=R();let h='<div class="hg"><div><h3>'+L('알파의 기억 조각','Alpha memory fragments')+' ('+Math.min(r.mem,MEMS.length)+'/'+MEMS.length+')</h3>';MEMS.forEach((m,i)=>{const o=i<r.mem;h+='<div class="epi" style="margin:6px 0;'+(o?'':'opacity:.4')+'"><b style="color:#c58cff">#'+(i+1)+'</b> '+(o?tx(m):L('잠김 — 원정을 진행해 기억을 되찾으세요.','Locked — continue the expedition to recover it.'))+'</div>';});
@@ -3786,8 +3781,8 @@ function renderSummon(B){const r=R();let h='<div class="ban">';for(const[b,B2]of
  if(lastPull){const pr=$('#pullRes');lastPull.forEach((o,i)=>{const d=document.createElement('div');d.className='cd';d.style.borderColor=RAR[o.r].c;d.style.boxShadow=o.r>=3?'0 0 16px '+RAR[o.r].c:'';d.style.animation='rise .35s ease-out '+(i*.06)+'s both';d.innerHTML=(o.k?`<img src="${TH+o.k}.jpg">`:`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,${RAR[o.r].c}33,#060a14 70%);border-radius:6px">${icon(o.item?o.item.slot:'core',RAR[o.r].c,64)}</div>`)+`<b style="color:${RAR[o.r].c}">${tx(o.n)}</b><small>${rn(o.r)}${o.dup?' · '+L('각성','Awaken'):''}${o.item?' · '+tx(SLOTS[o.item.slot]):''}</small>`;pr.appendChild(d);});}}
 function renderDex(B){const r=R();let h=`<h3>${L('기동전사','Mechs')} (${r.mechs.length}/${Object.keys(MECHS).length})</h3><div class="cards">`;for(const[k,C]of Object.entries(MECHS)){const o=r.mechs.includes(k);if(k==='god_white'&&!o)continue;h+=`<div class="cd ${o?'':'lock'}"><img src="${TH+k}.jpg"><b style="color:${RAR[C.r].c}">${o?tx(C.n):'???'}</b><small>${rn(C.r)} · ${tx(C.ty)}</small></div>`;}
  h+=`</div><h3>${L('링크 안드로이드','LINK androids')} (${r.links.length}/${Object.keys(LINKS).length})</h3><div class="cards">`;for(const[k,C]of Object.entries(LINKS)){const o=r.links.includes(k);h+=`<div class="cd ${o?'':'lock'}"><img src="${TH+k}.jpg"><b style="color:${RAR[C.r].c}">${o?tx(C.n):'???'}</b><small>${rn(C.r)} · ${tx(C.el)}</small></div>`;}h+='</div>';
- h+=`<h3>${L('신기 엘 샤다이 (서버당 3대 + 관리자 1대)','Divine El Shaddai (3 per server + 1 admin)')}</h3><div class="small" id="godSt">${L('서버 기록 확인 중…','Checking server records…')}</div>`;B.innerHTML=h;godStatus().then(st=>{const el=$('#godSt');if(el)el.innerHTML=GODS.map(c=>'<b>'+tx(MECHS[c].n)+'</b>: '+(st[c]?L('주인 ','owner ')+(st[c].name||'?'):L('미발견','unclaimed'))).join('<br>');});}
-function openRpg(){R();show('#rpg');render();if(R().godPending&&!R().mythic&&window.HKAccount&&window.HKAccount.user){R().godPending=0;saveP();godAfter();}}window.openRpg=openRpg;
+ h+=`<h3>${L('신기 엘 샤다이 · 신의 시련 클리어 보상','Divine El Shaddai · Trial of the Divine reward')}</h3><div class="small">${GODS.map(c=>'<b>'+tx(MECHS[c].n)+'</b>: '+(R().mythic===c?L('보유','owned'):L('미보유','not owned'))).join('<br>')}<br>${L('신의 시련을 처음 클리어하면 세 빛깔 중 하나를 고릅니다.','On your first clear of the Trial, choose one of the three lights.')}</div>`;B.innerHTML=h;}
+function openRpg(){R();show('#rpg');render();if(epS('e6').done&&!R().mythic)godAfter();}window.openRpg=openRpg;
 $('#rpgBack').onclick=()=>{hide('#rpg');show('#menu');refreshMenu();};
 // lobby button
 {const pri=$('#mSolo');if(pri){const b=document.createElement('button');b.className='nav pri';b.id='mRpg';b.style.cssText='background:linear-gradient(90deg,#b8860b,#7a4a14 70%,rgba(122,74,20,.55));border-color:#ffd166;border-left-color:#fff';b.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span class="tx"><span id="mRpgT"></span><small id="mRpgS"></small></span>';pri.parentNode.insertBefore(b,pri.nextSibling);b.onclick=()=>{ensureName();hide('#menu');openRpg();};}}
