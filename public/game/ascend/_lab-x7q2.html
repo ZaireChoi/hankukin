@@ -209,7 +209,7 @@ addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProje
 // ---------- animation ----------
 let t=0,ph=0,ang=0,spd=0,thr=0,alt=0,lean=0,prevKn=[0,0],shake=0;const RAD=32;const lerp=(a,b,k)=>a+(b-a)*k;
 const clock=new THREE.Clock();const tmp=new THREE.Vector3(),tmp2=new THREE.Vector3();
-function frame(){const dt=Math.min(.05,clock.getDelta());t+=dt;
+let TS=1;function frame(){const dt=Math.min(.05,clock.getDelta())*TS;t+=dt;
  const tgt={idle:[0,0,0,0],walk:[5,.12,0,.08],boost:[22,.75,.6,.38],fly:[42,1,9,1.05]}[mode];
  spd=lerp(spd,tgt[0],dt*1.6);thr=lerp(thr,tgt[1],dt*3);alt=lerp(alt,tgt[2],dt*1.4);lean=lerp(lean,tgt[3],dt*2.2);
  ang+=spd/RAD*dt;const px=Math.cos(ang)*RAD,pz=Math.sin(ang)*RAD;
@@ -259,7 +259,7 @@ function frame(){const dt=Math.min(.05,clock.getDelta());t+=dt;
  const focus=showLink?tmp.set(link.position.x,link.position.y+2.4*1.05,link.position.z):tmp.set(mech.position.x,body.position.y,mech.position.z);
  ctl.target.lerp(focus,dt*2.5);if(showLink){const want=tmp2.set(link.position.x+5.5,4.5,link.position.z+6.5);cam.position.lerp(want,dt*1.5);}
  else if(cockpit){const c=new THREE.Vector3();CK.g.getWorldPosition(c);ctl.target.lerp(c,dt*3);const f=new THREE.Vector3(0,.9,6.5);mech.localToWorld(f.add(new THREE.Vector3(0,body.position.y+2.2,0)));cam.position.lerp(f,dt*2);}
- else if(act||halves||missiles.length){const want=tmp2.set(-26,15,-2);cam.position.lerp(want,dt*1.2);ctl.target.lerp(tmp.set(0,7,9),dt*2);}
+ else if(act||halves||missiles.length){const want=tmp2.set(-36,17,2);cam.position.lerp(want,dt*1.6);ctl.target.lerp(tmp.set(0,7,10),dt*2.5);}
  else if(spd>1){const back=tmp2.set(mech.position.x-Math.cos(ang+1.2)*34,body.position.y+9,mech.position.z-Math.sin(ang+1.2)*34);cam.position.lerp(back,dt*1.2);}
  ctl.autoRotate=autoRot;ctl.autoRotateSpeed=1.2;ctl.update();
  if(shake>0){shake-=dt;cam.position.y+=(Math.random()-.5)*shake*.6;}
@@ -435,6 +435,6 @@ function beastTick(dt){if(!beast)return;beastT+=dt;const f=beast.userData.flash=
 {const bar=document.getElementById('bar');const mk=(lbl,fn)=>{const b=document.createElement('button');b.textContent=lbl;b.onclick=fn;b.style.borderColor='#ff6b6b';bar.appendChild(b);};
  mk('빔 세이버 절단',()=>startAct('saber'));mk('숄더 미사일',()=>startAct('missile'));mk('레이저',()=>startAct('laser'));mk('히트 액스',()=>startAct('axe'));mk('에너지 채찍',()=>startAct('whip'));mk('풀 콤보',()=>startCombo());}
 
-window.__lab={setCockpit:v=>setCockpit(v),startAct:k=>startAct(k),startCombo:()=>startCombo(),setMode:m=>{mode=m;},setLink:v=>{if(v!==showLink)document.getElementById('bLink').click();},setCamo};
+window.__lab={slow:v=>{TS=v;},setCockpit:v=>setCockpit(v),startAct:k=>startAct(k),startCombo:()=>startCombo(),setMode:m=>{mode=m;},setLink:v=>{if(v!==showLink)document.getElementById('bLink').click();},setCamo};
 frame();
 </script></body></html>
