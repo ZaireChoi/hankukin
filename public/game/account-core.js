@@ -299,7 +299,24 @@ function fmtTime(ms) { try { return new Date(ms).toLocaleString(lang() === 'ko' 
 function summarize(g, data) {
   // 게임 저장값에서 알아볼 수 있는 숫자만 골라 보여 준다.
   const bits = [];
+  const ko = lang() === 'ko';
+  const num = k => { const v = Number(String(data[k] ?? '').replace(/"/g, '')); return isFinite(v) && data[k] != null ? v : null; };
   try {
+    if (g === 'anibrix') {
+      const lv = num('anibrix_plv'), xp = num('anibrix_xp'), co = num('anibrix_coins');
+      if (lv != null) bits.push((ko ? '레벨 ' : 'Lv ') + lv);
+      if (xp != null) bits.push((ko ? '경험치 ' : 'XP ') + xp.toLocaleString());
+      if (co != null) bits.push((ko ? '코인 ' : 'Coins ') + co.toLocaleString());
+      return bits.join(' · ');
+    }
+    if (g === 'ascend' && data.ascend_profile_v2) {
+      const p = JSON.parse(data.ascend_profile_v2);
+      const sk = Object.values(p.skills || {}).reduce((a, b) => a + (Number(b) || 0), 0);
+      bits.push((ko ? '계급 ' : 'Rank ') + ((p.rank || 0) + 1) + (ko ? '단계' : ''));
+      bits.push((ko ? '공훈 ' : 'Merit ') + (p.merit || 0).toLocaleString());
+      bits.push((ko ? '기술 ' : 'Skills ') + sk);
+      return bits.join(' · ');
+    }
     for (const k in data) {
       let v; try { v = JSON.parse(data[k]); } catch (e) { continue; }
       if (!v || typeof v !== 'object') continue;
