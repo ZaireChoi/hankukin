@@ -1957,5 +1957,6 @@ function loop(now){
 if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 if(!hostOK())showCopyBlock();else{adsInit();socBoot();fxInit();bgInit();applyStatic();showMenu();requestAnimationFrame(loop);}
 </script>
+<script type="module" src="/game/account.js" data-game="anibrix" data-prefix="anibrix_"></script>
 </body>
 </html>
