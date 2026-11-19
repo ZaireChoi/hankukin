@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v1.2 MODELS</div>
+   <div class="ver"><i></i>ASCEND · v1.3 ARK</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1798,6 +1798,7 @@ R.buildEnv=function(){const S=this.envG,th=this.th,SP=!!MAP.space,ZM=MAP.zmax||1
  const pillarM=this.std('#4a5262',.75,.35),pillarG=this.glow('#5ad1ff',2.2),wallM=this.std(th.wallC||'#4a4238',.3,.85),wallL=this.glow('#ff8a3d',2.4);
  let ci=0;for(const k of ROCKS){
   if(k.cv)continue;
+  if(!SP&&!k.wall&&!th.city&&window.__envProp&&window.__envProp(k,S,th))continue;
   if(th.city&&!SP&&!k.wall){this.cityTower(k,S,ci++);continue;}
   if(k.wall){const b=BASES[1],a=Math.atan2(k.y-b.y,k.x-b.x);const m=new T.Mesh(this.box(k.r*2.3,96,k.r*1.3),wallM);m.position.set(k.x,48,k.y);m.rotation.y=-(a+Math.PI/2);m.castShadow=m.receiveShadow=true;S.add(m);
    this.mesh(this.box(k.r*.8,10,k.r*1.5),wallM,k.x,101,k.y,0,-(a+Math.PI/2),0,S);this.mesh(this.box(6,6,6),wallL,k.x+Math.cos(a)*-k.r*.7,70,k.y+Math.sin(a)*-k.r*.7,0,0,0,S);continue;}
@@ -1807,7 +1808,7 @@ R.buildEnv=function(){const S=this.envG,th=this.th,SP=!!MAP.space,ZM=MAP.zmax||1
   m.rotation.y=Rn()*6;m.castShadow=m.receiveShadow=true;S.add(m);}
  {const th2=MAP.theme,SPc=!!MAP.space;const cvM=th2==='frost'?new T.MeshStandardMaterial({color:0xcfe6ff,roughness:.2,metalness:.1,transparent:true,opacity:.9}):this.std(th2==='station'?'#4a5262':th2==='volcano'?'#3a302c':SPc?'#5a606c':'#8a7552',th2==='station'||SPc?.7:.05,th2==='station'||SPc?.35:.9);
   const cvG=this.glow(th2==='station'||SPc?'#5ad1ff':th2==='volcano'?'#ff7a2a':'#ffd9a0',th2==='dune'||th2==='frost'?.6:2.2);const H=SPc?28:34;
-  for(const c of COVERS){const g=new T.Group();g.position.set(c.x,SPc?(c.z||0):0,c.y);g.rotation.y=-c.ang;S.add(g);
+  for(const c of COVERS){if(window.__envCover&&window.__envCover(c,S,SPc))continue;const g=new T.Group();g.position.set(c.x,SPc?(c.z||0):0,c.y);g.rotation.y=-c.ang;S.add(g);
    if(th2==='dune'){const n=Math.max(3,Math.round((c.len+20)/20));for(let row=0;row<3;row++)for(let i=0;i<n-(row%2);i++){const m=new T.Mesh(this.box(19,11,20),cvM);m.position.set((i-(n-1-(row%2))/2)*20,6+row*11,0);m.rotation.y=(i*7%5-2)*.04;m.castShadow=m.receiveShadow=true;g.add(m);}}
    else{const m=new T.Mesh(this.box(c.len+22,H,20),cvM);m.position.y=SPc?0:H/2;m.castShadow=m.receiveShadow=true;g.add(m);const cap=new T.Mesh(this.box(c.len+24,3,22),cvM);cap.position.y=(SPc?0:H/2)+H/2+1;g.add(cap);
     const strip=new T.Mesh(this.box(c.len+16,1.6,20.6),cvG);strip.position.y=(SPc?0:H/2)+H*.18;g.add(strip);}}}
@@ -3297,8 +3298,8 @@ function lobbyTick(dt,now){if(!R3||!R3.showM||R3._lobbyFor!==R3.show)return;for(
 function lobbyWrap(){if(!R3||!R3.ready||R3._lw)return;R3._lw=1;const om=R3.menu;R3.menu=function(dt,now){om.call(this,dt,now);try{lobbyModels();lobbyTick(dt,now);}catch(e){}};}
 setInterval(()=>{try{lobbyWrap();}catch(e){}},500);
 // ================= v1.2.2 : MY CHARACTER (faction · look · link) with real models =================
-Object.assign(STR.ko,{chFaction:'소속 진영',chLook:'외형',chLink:'링크 휴머노이드',lookO:'장교',lookF:'여성 장교',lookT:'병사',linkA:'세라 (흑발)',linkB:'루나 (은발)',facFed:'자유주의 연맹',facEmp:'은하 제국',chModelNote:'고른 외형으로 전장에 나갑니다. 진영을 바꾸면 내 팀의 이름과 군복이 바뀝니다.'});
-Object.assign(STR.en,{chFaction:'Faction',chLook:'Look',chLink:'LINK humanoid',lookO:'Officer',lookF:'Female officer',lookT:'Trooper',linkA:'Sera (black hair)',linkB:'Luna (silver hair)',facFed:'Liberty Federation',facEmp:'Galactic Empire',chModelNote:'You deploy with this look. Switching faction changes your team name and uniforms.'});
+Object.assign(STR.ko,{chFaction:'소속 진영',chLook:'외형',chLink:'링크 휴머노이드',lookO:'장교',lookF:'여성 장교',lookT:'병사',linkA:'세라 (흑발)',linkB:'루나 (은발)',linkL:'★ 아스트라 · 전설',facFed:'자유주의 연맹',facEmp:'은하 제국',chModelNote:'고른 외형으로 전장에 나갑니다. 진영을 바꾸면 내 팀의 이름과 군복이 바뀝니다.'});
+Object.assign(STR.en,{chFaction:'Faction',chLook:'Look',chLink:'LINK humanoid',lookO:'Officer',lookF:'Female officer',lookT:'Trooper',linkA:'Sera (black hair)',linkB:'Luna (silver hair)',linkL:'★ Astra · Legendary',facFed:'Liberty Federation',facEmp:'Galactic Empire',chModelNote:'You deploy with this look. Switching faction changes your team name and uniforms.'});
 if(!P.faction)P.faction='fed';if(!P.look)P.look='o';if(!P.linkM)P.linkM='link2';
 const facOf=team=>((team===0)===(P.faction!=='emp'))?'fed':'emp';
 infModel=function(u){const s=u.slot;const mine=s&&(s===G.local);const fac=G&&G.inv?(mine?P.faction:((s&&s.sid||u.id)%2?'emp':'fed')):facOf(u.team);return INF_M[fac][mine?P.look:(INF_ROLE[u.cls]||'t')];};
@@ -3313,14 +3314,85 @@ function chPreview(){const cv=$('#chPrev3');if(!cv)return;const T3=window.THREE,
   const fl=new T3.Mesh(new T3.CircleGeometry(6,48),new T3.MeshStandardMaterial({color:0x141a28,metalness:.6,roughness:.35}));fl.rotation.x=-Math.PI/2;CP.s.add(fl);const rg=new T3.Mesh(new T3.RingGeometry(1.15,1.22,64),new T3.MeshBasicMaterial({color:0x5ad1ff}));rg.rotation.x=-Math.PI/2;rg.position.y=.01;CP.s.add(rg);
   CP.c=new T3.PerspectiveCamera(30,760/330,.1,200);CP.c.position.set(0,1.55,6.2);CP.c.lookAt(0,1.05,0);}
  const me=INF_M[P.faction][P.look];const key=me+'|'+P.linkM;const need=[me,P.linkM,'mech3'];let ready=true;for(const f of need)if(!mdlGet(f))ready=false;
- if(ready&&CP.key!==key){for(const o of CP.objs)CP.s.remove(o.wrap);CP.objs=[];const a=mdlInstance(me,0,1.85,'h');a.wrap.position.set(-.55,0,.4);a.wrap.rotation.y=.25;const b=mdlInstance(P.linkM,0,1.72,'h');b.wrap.position.set(.65,0,.1);b.wrap.rotation.y=-.35;const m=mdlInstance('mech3',0,9,'h');m.wrap.position.set(0,0,-5.5);m.wrap.rotation.y=.1;
+ if(ready&&CP.key!==key){for(const o of CP.objs)CP.s.remove(o.wrap);CP.objs=[];const a=mdlInstance(me,0,1.85,'h');a.wrap.position.set(-.55,0,.4);a.wrap.rotation.y=.25;const b=mdlInstance(P.linkM,0,1.72,'h');b.wrap.position.set(.65,0,.1);b.wrap.rotation.y=-.35;if(P.linkM==='link_leg'){const T4=window.THREE;const halo=new T4.Mesh(new T4.TorusGeometry(.22,.012,8,48),new T4.MeshBasicMaterial({color:0xffd27a}));halo.position.set(0,1.78,-.12);b.wrap.add(halo);const gl=new T4.PointLight(0xffd27a,3,3,1.5);gl.position.set(0,1.7,0);b.wrap.add(gl);for(const s of[-1,1]){const w=new T4.Mesh(new T4.PlaneGeometry(.5,.9),new T4.MeshBasicMaterial({color:0xffe9b0,transparent:true,opacity:.35,side:T4.DoubleSide,blending:T4.AdditiveBlending,depthWrite:false}));w.position.set(s*.32,1.3,-.18);w.rotation.set(0,s*.5,s*-.35);b.wrap.add(w);}}const m=mdlInstance('mech3',0,9,'h');m.wrap.position.set(0,0,-5.5);m.wrap.rotation.y=.1;
   for(const o of[a,b,m]){CP.s.add(o.wrap);CP.objs.push(o);}CP.key=key;}
  if(!CP.run){CP.run=true;const tick=()=>{if(isHidden('#char')){CP.run=false;return;}const t=performance.now()/1000;if(CP.objs[0])CP.objs[0].wrap.rotation.y=.25+Math.sin(t*.5)*.35;if(CP.objs[1])CP.objs[1].wrap.rotation.y=-.35+Math.sin(t*.45+1)*.35;CP.c.position.x=Math.sin(t*.15)*.8;CP.c.lookAt(0,1.05,0);CP.r.render(CP.s,CP.c);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
  if(!ready)setTimeout(()=>{if(!isHidden('#char'))chPreview();},600);}
 {const _oc=openChar;openChar=function(){_oc();try{const mk=(box,items,cur,fn)=>{const el=$(box);if(!el)return;el.innerHTML='';for(const[v,l]of items){const b=document.createElement('button');b.className='sm opt'+(v===cur?' on':'');b.textContent=l;b.onclick=()=>{fn(v);saveP();openChar();};el.appendChild(b);}};
   $('#chMN').textContent=t('chModelNote');$('#chFH').textContent=t('chFaction');$('#chLH').textContent=t('chLook');$('#chKH').textContent=t('chLink');
-  mk('#chFac',[['fed',t('facFed')],['emp',t('facEmp')]],P.faction,v=>P.faction=v);mk('#chLook',[['o',t('lookO')],['f',t('lookF')],['t',t('lookT')]],P.look,v=>P.look=v);mk('#chLink',[['link2',t('linkA')],['link3',t('linkB')]],P.linkM,v=>P.linkM=v);
+  mk('#chFac',[['fed',t('facFed')],['emp',t('facEmp')]],P.faction,v=>P.faction=v);mk('#chLook',[['o',t('lookO')],['f',t('lookF')],['t',t('lookT')]],P.look,v=>P.look=v);mk('#chLink',[['link2',t('linkA')],['link3',t('linkB')],['link_leg',t('linkL')]],P.linkM,v=>P.linkM=v);
   const useM=mdlUse()&&window.__TX&&window.__TX.GLTFLoader;$('#chModel').style.display=useM?'':'none';$('#chPrev').style.display=useM?'none':'';if(useM)chPreview();}catch(e){console.warn(e);}};}
+// ================= v1.3 : ARK FRAME boarding (Alpha contact) · mechanical FX (assembly / shrapnel) =================
+Object.assign(STR.ko,{arkName:'아크 프레임 AX-01',arkOffer:'알파의 선물 — 아크 프레임 탑승 가능! [K] 또는 탑승 버튼',arkBoard:'아크 프레임 탑승',arkCd:'아크 프레임 재정비 중 {0}초',arkBtn:'기동로봇\n탑승',arkLinkHello:'동기화 98%. 처음 뵙겠습니다, 파일럿. 저는 {0}입니다.',arkLinkKill:'{0}: 목표 제거. 다음 표적으로 유도합니다.',arkLinkLow:'{0}: 장갑 손상 심각! 제가 균형을 잡을게요, 앞만 보세요.',
+ a_palmlaser:'손바닥 레이저',a_saberslash:'빔 세이버 베기',a_mswarm:'숄더 미사일 일제사격',wbeamrifle:'빔 라이플'});
+Object.assign(STR.en,{arkName:'ARK Frame AX-01',arkOffer:'Gift of Alpha: ARK Frame ready! Press [K] or the board button',arkBoard:'Board ARK Frame',arkCd:'ARK Frame refitting {0}s',arkBtn:'BOARD\nMECH',arkLinkHello:'Sync 98%. Nice to meet you, pilot. I am {0}.',arkLinkKill:'{0}: Target down. Guiding you to the next one.',arkLinkLow:'{0}: Heavy armor damage! I will keep us balanced, eyes forward.',
+ a_palmlaser:'Palm Laser',a_saberslash:'Beam Saber Slash',a_mswarm:'Shoulder Missile Swarm',wbeamrifle:'Beam Rifle'});
+W.beamrifle={n:{ko:'빔 라이플',en:'Beam Rifle'},dmg:36,rate:.32,spd:1500,range:900,spr:.02,kind:3,dt:'k',air:1,rank:0};
+CL.arkframe={n:{ko:'아크 프레임 AX-01',en:'ARK Frame AX-01'},npc:1,role:'armor',cat:1,arm:'heavy',layer:0,r:30,hp:2600,spd:185,wpns:['beamrifle'],a1:'palmlaser',a2:'saberslash',ul:'mswarm',cd:[7,4.5],rank:0,xp:700,d:{ko:'알파 기술로 만든 인간형 기동로봇. 링크 휴머노이드가 보조조종사로 함께 탑승.',en:'Alpha-tech humanoid mech, co-piloted by a LINK humanoid.'}};
+if(typeof MDL!=='undefined')MDL.arkframe=['mech3',PI/2,74,'h'];
+const linkName=()=>({link2:LANG==='en'?'Sera':'세라',link3:LANG==='en'?'Luna':'루나',link_leg:LANG==='en'?'Astra':'아스트라'})[P.linkM]||'Sera';
+function linkSay(key){try{COMMS.say('sq',linkName(),t(key,linkName()),{pri:1});}catch(e){}}
+{const _ab=ability;ability=function(u,n,inp){const c=CL[u.cls];const key=c&&c['a'+n];if(u.cls!=='arkframe')return _ab(u,n,inp);const s=u.slot,st=u.st;
+  if(key==='palmlaser'){const p=clampTo(u,inp.tx,inp.ty,1100);const a=Math.atan2(p.y-u.y,p.x-u.x);G.pend.push({k:'beam',x:u.x,y:u.y,x2:u.x+Math.cos(a)*1100,y2:u.y+Math.sin(a)*1100,t:.9,mt:.9,team:u.team,dmg:420*dmgMul(u,1),r:46,owner:s});if(isLocal(s))pop(t('a_palmlaser')+' …','#9ff6ff',false);}
+  else if(key==='saberslash'){const a0=u.aa;let hit=0;for(const e of G.units){if(e.dead||e.team===u.team)continue;const dx=e.x-u.x,dy=e.y-u.y,d=Math.hypot(dx,dy);if(d>170+e.r)continue;if(Math.abs(angDiff(a0,Math.atan2(dy,dx)))>1.0)continue;hurt(e,(isMech(e.cls)?300:220)*dmgMul(u,1),s,Math.atan2(dy,dx),'x');hit++;if(!e.dead&&e.layer===0&&e.cls!=='sentry'){e.x+=dx/(d||1)*40;e.y+=dy/(d||1)*40;}}
+   for(let i=0;i<26;i++){const aa=a0+(i/25-.5)*2;part(u.x+Math.cos(aa)*130,u.y+Math.sin(aa)*130,Math.cos(aa)*80,Math.sin(aa)*80,.35,i%2?'#ff7ae0':'#ffffff',4,40);}fx(1,u.x+Math.cos(a0)*110,u.y+Math.sin(a0)*110,0);if(hit)G.hitm=.15;}
+  else if(key==='mswarm'){const tg=lockTargets(u,1100,3.2,u.aa);for(let i=0;i<16;i++)shoot(u,u.aa+(i-7.5)*.14,{dmg:72*dmgMul(u,1),spd:700,range:1300,kind:6,dt:'at',rad:5,home:tg.length?tg[i%tg.length]:null,turn:4.2,mis:1});}
+  else return _ab(u,n,inp);
+  setCd(u,n,c.cd[n-1]*st.cd);};}
+{const _ul=ultimate;ultimate=function(u,inp){if(u.cls!=='arkframe')return _ul(u,inp);const tg=lockTargets(u,1200,3.2,u.aa);for(let i=0;i<16;i++)shoot(u,u.aa+(i-7.5)*.14,{dmg:80*dmgMul(u,1),spd:700,range:1300,kind:6,dt:'at',rad:5,home:tg.length?tg[i%tg.length]:null,turn:4.2,mis:1});if(isLocal(u.slot))pop(t('a_mswarm'),'#ffd27a',true);};}
+function arkOffer(){const I=G&&G.inv;return!!(I&&I.joined&&G.local&&G.local.unit&&!G.local.unit.dead&&G.local.unit.cls!=='arkframe'&&!(G.arkCd>0));}
+function boardArk(){if(!arkOffer())return;const s=G.local,o=s.unit;const keep=P.lastCls;o.dead=true;s.unit=null;const u=spawnUnit(s,'arkframe',null,{x:o.x,y:o.y});P.lastCls=keep;u.spawnProt=1.5;G.arkOn=1;
+ for(let i=0;i<60;i++){const a=Math.random()*6.283,r=40+Math.random()*120;part(u.x+Math.cos(a)*r,u.y+Math.sin(a)*r,-Math.cos(a)*r*2,-Math.sin(a)*r*2,.5,i%3?'#ffd27a':'#9ff6ff',3,10+Math.random()*80);}
+ cam.shake=Math.max(cam.shake||0,10);try{SFX.boom(1.5);}catch(e){}announce(t('arkBoard'),t('arkName'),'',true,'#9ff6ff');linkSay('arkLinkHello');}
+addEventListener('keydown',e=>{if(e.code==='KeyK'&&!e.repeat&&G&&!G.client)boardArk();});
+{const tb=document.createElement('div');tb.className='tb ul';tb.id='tArk';tb.style.cssText='left:50%;bottom:150px;transform:translateX(-50%);display:none;border-color:#9ff6ff;width:86px;height:86px;font-size:12px';tb.textContent=t('arkBtn');const host=$('#touchUI');if(host)host.appendChild(tb);tb.addEventListener('pointerdown',e=>{e.stopPropagation();boardArk();});}
+{const b=document.createElement('button');b.id='arkPC';b.style.cssText='position:fixed;left:50%;bottom:118px;transform:translateX(-50%);z-index:6;display:none;padding:12px 22px;font-size:16px;font-weight:800;border:2px solid #9ff6ff;background:linear-gradient(180deg,#1f6fd0,#123a7a);color:#fff;border-radius:6px;box-shadow:0 0 24px rgba(90,209,255,.6)';document.body.appendChild(b);b.onclick=()=>boardArk();}
+let arkMsgT=0;{const _st=step;step=function(dt){_st(dt);if(!G)return;if(G.arkCd>0)G.arkCd-=dt;const lu=G.local&&G.local.unit;
+ if(G.arkOn&&(!lu||lu.dead||lu.cls!=='arkframe')){G.arkOn=0;G.arkCd=40;}
+ const off=arkOffer();const b=$('#arkPC'),tb=$('#tArk');if(b){b.style.display=off&&!touchMode?'block':'none';b.textContent=t('arkBoard')+' [K]';}if(tb)tb.style.display=off&&touchMode?'flex':'none';
+ if(off&&G.t-arkMsgT>25){arkMsgT=G.t;pop(t('arkOffer'),'#9ff6ff',true);}
+ if(lu&&lu.cls==='arkframe'){if(lu.hp<lu.mhp*.3&&!lu._lowSaid){lu._lowSaid=1;linkSay('arkLinkLow');}}};}
+{const _gs=giveScore;giveScore=function(s,amt,key,arg){_gs(s,amt,key,arg);if(s===G.local&&key==='kill'&&s.unit&&s.unit.cls==='arkframe'&&Math.random()<.25)linkSay('arkLinkKill');};}
+// ---- mechanical FX: shrapnel on mech deaths (3D) ----
+var G_DEBRIS=[];
+{const _ku=killUnit;killUnit=function(u,src){const mech=u&&CL[u.cls]&&CL[u.cls].arm!=='inf'&&!CL[u.cls].bug;_ku(u,src);if(mech&&use3D())G_DEBRIS.push({x:u.x,y:u.y,h:unitH(u)+10,n:Math.min(36,10+u.r),r:u.r});};}
+function mechFxWrap(){if(!R3||!R3.ready||R3._fxw)return;R3._fxw=1;const T3=window.THREE;try{R3.r.localClippingEnabled=true;}catch(e){}
+ const shG=new T3.BoxGeometry(1,1,1);const shM=new T3.MeshStandardMaterial({color:0x8a9099,metalness:.9,roughness:.35});const N=260;const shards=new T3.InstancedMesh(shG,shM,N);shards.instanceMatrix.setUsage(T3.DynamicDrawUsage);shards.frustumCulled=false;R3.scene.add(shards);const S=[];for(let i=0;i<N;i++)S.push({l:0});let si=0;const m4=new T3.Matrix4(),q=new T3.Quaternion(),e3=new T3.Euler(),v3=new T3.Vector3(),s3=new T3.Vector3();
+ const ob=R3.build;R3.build=function(u,ch,rel){const e=ob.call(this,u,ch,rel);try{const c=CL[u.cls];if(e.mdl&&c&&c.arm!=='inf'&&!c.bug&&u.layer!==2){const mats=[];e.mdl.obj.traverse(o=>{if(o.isMesh){o.material=Array.isArray(o.material)?o.material.map(m=>m.clone()):o.material.clone();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>{m.clippingPlanes=[];mats.push(m);});}});e.asm={t:0,dur:u.cls==='arkframe'?1.4:.8,mats,plane:new T3.Plane(new T3.Vector3(0,-1,0),0)};}}catch(err){}return e;};
+ const oa=R3.animate;R3.animate=function(e,u,dt,now){oa.call(this,e,u,dt,now);const A=e.asm;if(!A)return;if(A.t===0)for(const m of A.mats)m.clippingPlanes=[A.plane];A.t+=dt;const k=Math.min(1,A.t/A.dur);const top=(u.cls==='arkframe'?80:CL[u.cls].layer===1?30:60);const base=unitH(u);const h=base+top*k;A.plane.constant=h;
+  if(Math.random()<.9)for(let i=0;i<3;i++){const a=Math.random()*6.283,r=u.r*(.5+Math.random()*.7);part(u.x+Math.cos(a)*r,u.y+Math.sin(a)*r,Math.cos(a)*40,Math.sin(a)*40,.35,Math.random()<.5?'#ffd27a':'#9ff6ff',2.5,h);}
+  if(k>=1){for(const m of A.mats)m.clippingPlanes=[];e.asm=null;}};
+ const os=R3.syncUnits;R3.syncUnits=function(dt,now){os.call(this,dt,now);
+  while(G_DEBRIS.length){const d=G_DEBRIS.shift();for(let i=0;i<d.n;i++){const s=S[si=(si+1)%N];const a=Math.random()*6.283,sp=60+Math.random()*220;s.l=2.2+Math.random();s.x=d.x;s.y=d.h;s.z=d.y;s.vx=Math.cos(a)*sp;s.vz=Math.sin(a)*sp;s.vy=80+Math.random()*260;s.rx=Math.random()*6;s.ry=Math.random()*6;s.w=(Math.random()-.5)*14;s.sz=1.5+Math.random()*d.r*.18;}for(let i=0;i<30;i++)part(d.x,d.y,(Math.random()-.5)*300,(Math.random()-.5)*300,.5,'#ffcf70',3,d.h);}
+  for(let i=0;i<N;i++){const s=S[i];if(s.l<=0){m4.makeScale(0,0,0);shards.setMatrixAt(i,m4);continue;}s.l-=dt;s.vy-=520*dt;s.x+=s.vx*dt;s.y+=s.vy*dt;s.z+=s.vz*dt;if(s.y<1){s.y=1;s.vy*=-.3;s.vx*=.6;s.vz*=.6;s.w*=.6;}s.rx+=s.w*dt;s.ry+=s.w*.7*dt;
+   if(Math.random()<.05&&s.l>1)part(s.x,s.z,0,0,.5,'#666a73',3,s.y);const sc=s.sz*Math.min(1,s.l*1.5);e3.set(s.rx,s.ry,0);q.setFromEuler(e3);m4.compose(v3.set(s.x,s.y,s.z),q,s3.set(sc,sc*.5,sc*1.4));shards.setMatrixAt(i,m4);}shards.instanceMatrix.needsUpdate=true;};}
+setInterval(()=>{try{mechFxWrap();}catch(e){}},500);
+// ================= v1.3 : REALISTIC BATTLEFIELDS (Meshy props · feature labels · lava embers) =================
+Object.assign(STR.ko,{fLava:'용암 · 닿으면 지속 피해',fMud:'늪지 · 이동 속도 감소',fHigh:'고지 · 사거리 +20%',fFog:'안개 · 안에 있으면 은신',fBhole:'블랙홀 · 끌어당김 · 중심 위험',fWhole:'웜홀 · 순간이동',fGust:'이온 폭풍 · 밀어냄',fRiver:'한강 · 수면 위 이동'});
+Object.assign(STR.en,{fLava:'Lava · damage over time',fMud:'Swamp · slows movement',fHigh:'High ground · +20% range',fFog:'Fog · hides units inside',fBhole:'Black hole · pulls in, deadly core',fWhole:'Wormhole · teleport',fGust:'Ion storm · pushes units',fRiver:'Han River'});
+const PROP_FILES=['p_rock1','p_rock2','p_ice','p_lava','p_barrier','p_cover','p_wreck','p_crates','p_bunker'];
+let propsReady=false;function propsCheck(){if(propsReady||!mdlUse())return propsReady;let ok=true;for(const f of PROP_FILES)if(!mdlGet(f))ok=false;if(ok){propsReady=true;try{if(R3&&R3.ready&&R3.envG)R3.rebuildEnv();}catch(e){}}return propsReady;}
+setInterval(()=>{try{if(window.__TX&&window.__TX.GLTFLoader)propsCheck();}catch(e){}},700);
+const hsh=(x,y)=>{const s=Math.sin(x*12.9898+y*78.233)*43758.5453;return s-Math.floor(s);};
+function propInst(f,size,axis,yaw){const c=MC[f];if(!c||c.st!=='ok')return null;const i=mdlInstance(f,yaw||0,size,axis||'l');return i;}
+window.__envProp=function(k,S,th){if(!propsReady)return false;const t=MAP.theme;let f=null;if(t==='dune')f=hsh(k.x,k.y)<.5?'p_rock1':'p_rock2';else if(t==='frost')f='p_ice';else if(t==='volcano')f='p_lava';if(!f)return false;
+ const i=propInst(f,k.r*2.5,'l',hsh(k.y,k.x)*6.28);if(!i)return false;i.wrap.position.set(k.x,-2,k.y);S.add(i.wrap);return true;};
+window.__envCover=function(c,S,SPc){if(!propsReady||SPc)return false;const t=MAP.theme;const f=(t==='station'||t==='seoul')?'p_cover':'p_barrier';const C=MC[f];if(!C||C.st!=='ok')return false;const yaw=C.size.z>C.size.x?Math.PI/2:0;
+ const g=new (window.THREE.Group)();g.position.set(c.x,0,c.y);g.rotation.y=-c.ang;S.add(g);const seg=34,n=Math.max(1,Math.round((c.len+20)/seg));for(let i=0;i<n;i++){const m=propInst(f,seg+2,'l',yaw);if(!m)return false;m.wrap.position.set((i-(n-1)/2)*seg,0,0);g.add(m.wrap);}return true;};
+function envExtras(R){const T3=window.THREE;const S=R.envG;if(!S||MAP.space)return;
+ // feature labels
+ const mkLbl=(txt,col,x,z,y)=>{const cv=document.createElement('canvas');cv.width=512;cv.height=96;const g=cv.getContext('2d');g.fillStyle='rgba(4,8,18,.62)';g.fillRect(0,14,512,68);g.fillStyle=col;g.fillRect(0,14,8,68);g.font='bold 40px "Noto Sans KR",sans-serif';g.fillStyle='#fff';g.textBaseline='middle';g.fillText(txt,22,50);const tx=new T3.CanvasTexture(cv);tx.colorSpace=T3.SRGBColorSpace;const sp=new T3.Sprite(new T3.SpriteMaterial({map:tx,transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(150,28,1);sp.position.set(x,y||70,z);sp.renderOrder=5;S.add(sp);};
+ for(const l of LAVA)mkLbl(t('fLava'),'#ff6a2a',l.x,l.y,60);for(const m of MUD)mkLbl(t('fMud'),'#6fbf6a',m.x,m.y,40);for(const h of HIGH)mkLbl(t('fHigh'),'#ffd166',h.x,h.y,70);for(const f of FOGS)mkLbl(t('fFog'),'#a8b8d8',f.x,f.y,80);
+ for(const b of BHOLES)mkLbl(t('fBhole'),'#c58cff',b.x,b.y,120);for(const w of WHOLES)mkLbl(t('fWhole'),w.c||'#7df9ff',w.x,w.y,90);const gs=new Set();for(const g of GUSTS){const k=(g.cx|0)+','+(g.cy|0);if(gs.has(k))continue;gs.add(k);mkLbl(t('fGust'),'#9fe0ff',g.cx,g.cy,110);}
+ if(MAP.river)mkLbl(t('fRiver'),'#5ad1ff',WW/2,MAP.river.y,40);
+ // decor scatter (visual only)
+ if(!propsReady)return;const R2=mulberry((MAP.seed||1)+7);const safe=(x,y,r)=>{if(x<120||y<120||x>WW-120||y>WH-120)return false;for(const k of ROCKS)if(Math.hypot(k.x-x,k.y-y)<k.r+r+20)return false;for(const p of POINTS)if(Math.hypot(p.x-x,p.y-y)<PR+r+40)return false;for(const l of LAVA)if(Math.hypot(l.x-x,l.y-y)<l.r+r)return false;return true;};
+ const place=(f,size,n,near)=>{let tries=0,done=0;while(done<n&&tries<120){tries++;let x,y;if(near){const b=BASES[done%2];const q=bOff(b,rnd(-60,420),rnd(-420,420));x=q.x;y=q.y;}else{x=R2()*WW;y=R2()*WH;}if(!safe(x,y,size*.5))continue;const i=propInst(f,size,'l',R2()*6.28);if(!i)return;i.wrap.position.set(x,0,y);S.add(i.wrap);done++;}};
+ place('p_bunker',90,4,true);place('p_crates',40,10,true);place('p_crates',36,8,false);place('p_wreck',160,MAP.theme==='seoul'?2:3,false);}
+function envWrap(){if(!R3||!R3.ready||R3._ew)return;R3._ew=1;const ob=R3.buildEnv;R3.buildEnv=function(){ob.call(this);try{envExtras(this);}catch(e){console.warn('env',e);}};
+ const os=R3.syncUnits;R3.syncUnits=function(dt,now){os.call(this,dt,now);if(!MAP.space&&Math.random()<.6)for(const l of LAVA){if(d2(l.x,l.y,cam.x,cam.y)>1300*1300)continue;const a=Math.random()*6.28,r=Math.random()*l.r;part(l.x+Math.cos(a)*r,l.y+Math.sin(a)*r,rnd(-10,10),rnd(-10,10),1.2,Math.random()<.5?'#ff8a2a':'#ffd27a',3,4+Math.random()*10);}};
+ try{R3.rebuildEnv();}catch(e){}}
+setInterval(()=>{try{envWrap();}catch(e){}},500);
 // ================= v1.0 : CAMERA ROTATE (right-drag) + WHEEL ZOOM =================
 function camRotOK(){return typeof use3D==='function'&&use3D()&&P.view!=='chase';}
 function camRot(x,y){if(!camRotOK()||!P.camYaw)return[x,y];const c=Math.cos(P.camYaw),s=Math.sin(P.camYaw);return[x*c+y*s,-x*s+y*c];}
