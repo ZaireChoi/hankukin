@@ -1122,7 +1122,7 @@ async function loadWeekly(){const box=()=>document.getElementById('wkbox');let A
   let arr=[];try{arr=await A.topScores(bid,50);}catch(e){if(box())box().innerHTML=`<div class="subt">${tr('wk_fail')}</div>`;return;}
   if(!box())return;const me=A.user&&A.user.uid;
   let h=arr.length?`<table class="rank"><tr><th>${tr('col_rank')}</th><th>${tr('col_name')}</th><th>${tr('score_col')}</th></tr>${arr.map((e,i)=>`<tr class="${e.id===me?'me':''}"><td>${i===0?'\ud83e\udd47':i===1?'\ud83e\udd48':i===2?'\ud83e\udd49':i+1}</td><td>${esc(e.name)}</td><td>${(e.score|0).toLocaleString()}</td></tr>`).join('')}</table>`:`<div class="subt">${tr('wk_empty')}</div>`;
-  h+=`<div class="subt">${tr('wk_mine',{n:myWeek().toLocaleString()})}</div>`;if(!A.user)h+=`<a class="btn alt" style="display:block;text-decoration:none" href="/game/?login=1" target="_blank" rel="noopener">${tr('wk_login')}</a>`;box().innerHTML=h;}
+  h+=`<div class="subt">${tr('wk_mine',{n:myWeek().toLocaleString()})}</div>`;if(!A.user&&!noExt())h+=`<a class="btn alt" style="display:block;text-decoration:none" href="/game/?login=1" target="_blank" rel="noopener">${tr('wk_login')}</a>`;box().innerHTML=h;}
 
 /* =====================  렌더링  ===================== */
 function drawMini(ctx,ns,pc){const sz=ns*5;ctx.clearRect(0,0,sz,sz);if(!pc)return;const [w,h]=dims(pc.cells),ox=(5-w)/2*ns,oy=(5-h)/2*ns;pc.cells.forEach(([x,y],i)=>{ctx.drawImage(sprite(pc.a,'normal',ns),ox+x*ns,oy+y*ns,ns,ns);if(pc.item&&pc.item.i===i)drawStar(ctx,ox+x*ns,oy+y*ns,ns);});}
@@ -1337,7 +1337,7 @@ function showRank(tab){
   else{const mx=store.get('maxst',1);let stars=0;for(let s=1;s<=mx;s++)stars+=store.get('star_'+s,0);
     const rows=[[tr('st_lv'),'Lv.'+p.lv+' ('+tr('xp',{a:p.xp,b:p.need})+')'],[tr('col_tr'),'🏆 '+p.tr],[tr('st_best'),tr('stage',{n:mx})],[tr('st_stars'),'★ '+stars],[tr('st_wins'),store.get('ow',0)+' / '+store.get('ol',0)],[tr('st_lines'),store.get('b_lines',0)],[tr('st_combo'),store.get('b_combo',0)],[tr('st_chain'),store.get('b_chain',0)]];
     h+=`<table class="rank">${rows.map(r=>`<tr><td>${r[0]}</td><td style="font-weight:900">${r[1]}</td></tr>`).join('')}</table>`;}
-  h+=`<div class="nickrow"><input id="nickIn" maxlength="12" value="${esc(p.name)}" placeholder="${tr('nick')}"><button class="btn alt" onclick="saveNick()">${tr('save')}</button></div><div class="minirow"><button class="lbtn" onclick="showFriends()">\ud83d\udc65 ${tr('friends')} \u00b7 ${tr('week_rank')}</button><button class="lbtn" onclick="shareBrag()">${tr('brag')}</button></div><button class="btn gray" onclick="showMenu()">${tr('back')}</button></div>`;ov(h);
+  h+=`<div class="nickrow"><input id="nickIn" maxlength="12" value="${esc(p.name)}" placeholder="${tr('nick')}"><button class="btn alt" onclick="saveNick()">${tr('save')}</button></div><div class="minirow"><button class="lbtn" onclick="showFriends()">\ud83d\udc65 ${tr('friends')} \u00b7 ${tr('week_rank')}</button>${noExt()?'':`<button class="lbtn" onclick="shareBrag()">${tr('brag')}</button>`}</div><button class="btn gray" onclick="showMenu()">${tr('back')}</button></div>`;ov(h);
 }
 function saveNick(){const v=(($('#nickIn')&&$('#nickIn').value)||'').trim().slice(0,12);if(v)store.set('nick',v);showRank('me');}
 function showHelp(){
@@ -1650,6 +1650,9 @@ const OWNER='Anibrix';
 // 게임이 실행될 수 있는 공식 주소. 비워 두면 어디서나 실행됨. 예: ['anibrix.com','www.anibrix.com','anibrix.netlify.app']
 // itch.io에 올릴 때는 'html-classic.itch.zone' 도 넣어야 합니다.
 const ALLOWED_HOSTS=['hankuk-in.com','hankukin.pages.dev'];
+const CG_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='crazygames'){try{sessionStorage.setItem('hk_src','crazygames');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='crazygames';}catch(e){return false;}})();
+function noExt(){try{return CG_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE;}}
+
 function hostOK(){try{const h=location.hostname;if(!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
 function showCopyBlock(){document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:60px 20px;color:#4a3426"><h1 style="color:#ff5c8a">Anibrix</h1><p>'+tr('copy_block')+'</p>'+(GAME_URL?'<p><a style="font-size:20px;color:#ff5c8a" href="'+GAME_URL+'">'+GAME_URL+'</a></p>':'')+'<p style="opacity:.6">\u00a9 '+new Date().getFullYear()+' '+OWNER+'. All rights reserved.</p></div>';}
 // 광고: 승인 받은 뒤 on:true 와 client 값을 넣으세요. test:true 이면 구글 테스트 광고만 나옵니다.
@@ -1808,7 +1811,7 @@ async function challengeFriend(code){
   c.on('data',m=>{if(!m)return;if(m.t==='acc'){leaveOnline();setupConn(c);NET.host=false;NET.started=true;}else if(m.t==='dec'||m.t==='busy'){toast(tr('chal_no'));try{c.close();}catch(e){}showFriends();}});
   try{c.send({...syncMsg(code),t:'chal',hearts:0});}catch(e){}
 }
-function inviteURL(){let base=GAME_URL;if(!base){try{base=/^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){base='';}}return base?base+(base.includes('?')?'&':'?')+'ref='+uid():'';}
+function inviteURL(){if(noExt())return '';let base=GAME_URL;if(!base){try{base=/^https?:/.test(location.protocol)?location.origin+location.pathname:'';}catch(e){base='';}}return base?base+(base.includes('?')?'&':'?')+'ref='+uid():'';}
 function loadKakao(){return new Promise((res,rej)=>{if(window.Kakao)return res();loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js').then(()=>window.Kakao?res():rej()).catch(rej);});}
 async function shareText(text,kind){
   const url=inviteURL(),full=text+(url?'\n'+url:'');
@@ -1840,13 +1843,13 @@ function showFriends(){
   const list=[me,...Object.values(friends()).map(f=>({...f,wk:f.wkId===wk?f.wk:0}))].sort((a,b)=>b.wk-a.wk);
   let h=`<div class="card" id="frlist"><div class="title" style="font-size:28px">\ud83d\udc65 ${tr('friends')}</div>
   <div class="mycode"><span>${tr('my_code')}</span><b>${myCode()}</b><button class="sbtn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${myCode()}').then(()=>toast(tr('copied')))">${tr('copy')}</button></div>
-  <div class="minirow">${(()=>{const m=msgr();return `<button class="btn" style="background:${m.bg};color:${m.fg};box-shadow:0 5px 0 ${m.sh};width:auto;margin:4px" onclick="shareInvite('msgr')">${m.ic} ${tr('inv_'+m.id)}</button>`;})()}<button class="btn alt" style="width:auto;margin:4px" onclick="shareInvite('share')">\ud83d\udce4 ${tr('invite_share')}</button><button class="btn gray" style="width:auto;margin:4px" onclick="shareInvite('copy')">\ud83d\udd17 ${tr('invite_link')}</button></div>
-  <div class="subt" style="font-size:12px;color:#d6336c;font-weight:700">${tr('ref_note')}</div>
+  ${noExt()?'':`<div class="minirow">${(()=>{const m=msgr();return `<button class="btn" style="background:${m.bg};color:${m.fg};box-shadow:0 5px 0 ${m.sh};width:auto;margin:4px" onclick="shareInvite('msgr')">${m.ic} ${tr('inv_'+m.id)}</button>`;})()}<button class="btn alt" style="width:auto;margin:4px" onclick="shareInvite('share')">\ud83d\udce4 ${tr('invite_share')}</button><button class="btn gray" style="width:auto;margin:4px" onclick="shareInvite('copy')">\ud83d\udd17 ${tr('invite_link')}</button></div>
+  <div class="subt" style="font-size:12px;color:#d6336c;font-weight:700">${tr('ref_note')}</div>`}
   <div class="nickrow"><input id="frIn" maxlength="16" placeholder="${tr('add_ph')}" style="text-transform:uppercase"><button class="btn alt" onclick="addFriendFromInput()">${tr('add_friend')}</button></div>
   <h3>\ud83c\udfc6 ${tr('week_rank')}</h3>`;
   if(list.length===1)h+=`<div class="subt">${tr('no_friends')}</div>`;
   h+=`<div class="frl">`+list.map((f,i)=>{const sent=!f.me&&heartSentToday(f.code);return `<div class="frow ${f.me?'me':''}"><div class="frk">${i===0?'\ud83e\udd47':i===1?'\ud83e\udd48':i===2?'\ud83e\udd49':i+1}</div>${img(HERO_BY[f.hero]?f.hero:'cat',40,false,'happy')}<div class="frn"><b>${esc(f.name)}</b>${f.me?'':`<i class="${f.on?'on':''}"></i>`}<br><span>Lv.${f.lv|0} \u00b7 ${tr('week_pts',{n:(f.wk|0).toLocaleString()})}</span></div>${f.me?'':`<button class="sbtn" ${sent?'disabled':''} onclick="sendHeart('${f.code}')">${sent?'\u2714':'\ud83d\udc97'}</button><button class="sbtn" onclick="challengeFriend('${f.code}')">\u2694\ufe0f</button>`}</div>`;}).join('')+`</div>`;
-  h+=`<div class="minirow"><button class="lbtn" onclick="syncAll().then(showFriends)">\ud83d\udd04 ${tr('refresh')}</button><button class="lbtn" onclick="shareBrag()">${tr('brag')}</button></div><button class="btn gray" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;
+  h+=`<div class="minirow"><button class="lbtn" onclick="syncAll().then(showFriends)">\ud83d\udd04 ${tr('refresh')}</button>${noExt()?'':`<button class="lbtn" onclick="shareBrag()">${tr('brag')}</button>`}</div><button class="btn gray" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;
   ov(h);
 }
 /* =====================  v0.9 챕터 시스템: 12스테이지마다 새 동물 · 새 보스 · 새 규칙  ===================== */
