@@ -292,6 +292,26 @@ h3{font-family:'Jua',sans-serif;font-weight:400}
 .stars span.on{color:#ffc107;text-shadow:0 3px 0 #e67700,0 0 20px rgba(255,193,7,.75)}
 @keyframes starpop{to{transform:scale(1)}}
 @media (max-width:700px){.lside{display:none}.logo{font-size:44px}.hbig{width:160px;height:160px}.hbig img{width:140px;height:140px}.cta{min-width:0!important;padding:10px 16px 10px 10px}.cta b{font-size:20px}.rpill{font-size:12px;padding:4px 10px}.ltop{flex-wrap:wrap}.bnav button{padding:6px 10px}#mid{padding-top:60px}.vs{width:46px;height:46px;font-size:18px}}
+/* =================== v0.9.1 휴대폰 세로 화면 =================== */
+body.phone #app{justify-content:flex-start;padding:max(6px,env(safe-area-inset-top)) 4px max(4px,env(safe-area-inset-bottom));gap:4px}
+body.phone #arena{display:grid;grid-template-columns:auto auto;grid-template-rows:auto 1fr;align-items:start;justify-content:center;gap:4px 8px}
+body.phone #s0{grid-column:1;grid-row:1/3}
+body.phone #s1{grid-column:2;grid-row:1;zoom:.47}
+body.phone #s1 .info,body.phone #s1 .score,body.phone #s1 .fbar{display:none}
+body.phone #s1 .nm{font-size:24px}body.phone #s1 .sub{display:block;font-size:18px}
+body.phone #s1 .namebar{max-width:100%;overflow:hidden}
+body.phone #mid{grid-column:2;grid-row:2;padding-top:6px;min-width:0;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:5px;max-width:150px}
+body.phone .vs{width:40px;height:40px;font-size:15px}body.phone #timer{font-size:13px}body.phone #spd{display:none}
+body.phone #mid .sbtn{font-size:10px;padding:4px 7px;white-space:nowrap}
+body.phone #s0 .namebar{min-height:34px;padding:2px 10px 2px 3px}body.phone #s0 .nm{font-size:14px}body.phone #s0 .sub{display:none}
+body.phone #s0 .info{gap:4px;flex-wrap:nowrap;max-width:calc(100vw - 170px)}
+body.phone #s0 .box{padding:3px 4px;min-width:0}body.phone #s0 .lbl{font-size:10px}
+body.phone #s0 .inv{min-width:0}body.phone .pill{font-size:9px;padding:1px 3px}
+body.phone .skbtn{width:48px;height:48px}
+body.phone #keys{display:none}
+body.phone #touch{flex-wrap:nowrap;gap:5px;margin-top:2px}
+body.phone #touch button{width:44px;height:54px;font-size:20px;border-radius:14px}
+body.phone #touch button.item,body.phone #touch button.hold{width:52px;font-size:12px}
 </style>
 </head>
 <body>
@@ -1077,6 +1097,8 @@ function updateMid(){$('#timer').textContent=fmt(G.t);$('#spd').textContent=tr('
 /* =====================  화면 구성  ===================== */
 function computeCell(){
   const vw=innerWidth,vh=innerHeight,small=vw<700;
+  const phone=vw<640&&vh>vw*1.15;document.body.classList.toggle('phone',phone);
+  if(phone){const tb=(G.mode==='ai'||G.mode==='online')?64:0;CELL=Math.max(10,Math.min(28,Math.floor((vh-232-tb)/H),Math.floor((vw-50)/13.6)));return;}
   const extra=(TOUCH&&(G.mode==='ai'||G.mode==='online'))?70:0;
   const byH=Math.floor((vh-(small?236:252)-extra)/(H+(small?4.2:2.9)));
   const midW=small?50:120,byW=Math.floor((vw-midW-60)/(2*W+1));
@@ -1150,7 +1172,7 @@ function startMatch(mode,level,seed){
   G.bgTheme=mode==='ai'?(G.ch&&G.ch.c>=2?G.ch.theme:bossFor(G.level).por):mode==='online'?'online':'lobby';document.body.classList.remove('inlobby');
   buildUI();setKeys();if(mode==='ai')bossSetup();updateHP();
   {const me=G.players[0];if(me.hero&&me.hero.tier==='legend'){me.ui.el.querySelector('.namebar').classList.add('legend');setTimeout(()=>{if(G.players&&G.players[0]===me){bigK(me,'legend_in',{name:heroName(me.hero.id)},'#f08c00');flashGold();Snd.fever();}},600);}}
-  $('#touch').classList.toggle('on',TOUCH&&(mode==='ai'||mode==='online'));
+  $('#touch').classList.toggle('on',(TOUCH||document.body.classList.contains('phone'))&&(mode==='ai'||mode==='online'));
   for(const p of G.players){if(!p.remote)spawn(p);updateUI(p);}
   G.running=true;modsStart();showCount(3);Snd.beep(false);Music.fever=false;Music.stop();Music.start();
   for(const p of G.players)if(p.ai)say(p,lineOf(p.ai.cfg,'start'),2600);

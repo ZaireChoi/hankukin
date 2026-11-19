@@ -1,11 +1,11 @@
 {
   "name": "Anibrix - 동물 블록 대전",
   "short_name": "Anibrix",
-  "description": "귀여운 동물 블록 퍼즐 대전 게임",
-  "start_url": "./",
-  "scope": "./",
+  "description": "귀여운 동물 블록을 지워 친구와 대결하는 퍼즐 게임. 12스테이지마다 새로운 동물과 보스가 등장해요.",
+  "start_url": "/game/anibrix/?src=app",
+  "scope": "/game/anibrix/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait",
   "background_color": "#ffe9e3",
   "theme_color": "#ff6b9a",
   "lang": "ko",
@@ -25,6 +25,28 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "id": "/game/anibrix/",
+  "categories": [
+    "games",
+    "puzzle",
+    "entertainment"
+  ],
+  "screenshots": [
+    {
+      "src": "screen-phone.png",
+      "sizes": "780x1688",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Anibrix 게임 화면"
+    },
+    {
+      "src": "screen-wide.png",
+      "sizes": "2560x1720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Anibrix PC 화면"
     }
   ]
 }
