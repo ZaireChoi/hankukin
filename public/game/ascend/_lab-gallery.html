@@ -1,0 +1,16 @@
+<!doctype html><html><head><meta charset="utf-8"><title>ASCEND model gallery</title>
+<style>html,body{margin:0;background:#0b0f18;color:#fff;font:12px sans-serif;overflow:hidden}#lbl{position:fixed;inset:0;pointer-events:none}#lbl div{position:absolute;transform:translate(-50%,0);background:rgba(0,0,0,.6);padding:1px 4px;font-weight:700}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script></head><body><div id="lbl"></div>
+<script type="module">
+import * as THREE from 'three';import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+const R=new THREE.WebGLRenderer({antialias:true});R.setSize(innerWidth,innerHeight);R.toneMapping=THREE.ACESFilmicToneMapping;document.body.appendChild(R.domElement);
+const S=new THREE.Scene();S.environment=new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(),.04).texture;S.add(new THREE.HemisphereLight(0xffffff,0x334,1.2));const dl=new THREE.DirectionalLight(0xffffff,2);dl.position.set(3,6,4);S.add(dl);
+const names=(new URLSearchParams(location.search).get('m')||'').split(',').filter(Boolean);const cols=Math.ceil(Math.sqrt(names.length*1.6));
+const cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);const rows=Math.ceil(names.length/cols);const W=cols*3,H=rows*3;const asp=innerWidth/innerHeight;const half=Math.max(W/2/asp,H/2)+.5;cam.left=-half*asp;cam.right=half*asp;cam.top=half;cam.bottom=-half;cam.updateProjectionMatrix();
+cam.position.set(0,30,0.001);cam.lookAt(0,0,0);// top-down: +X right, +Z down on screen
+const ld=new GLTFLoader();window.__done=0;
+names.forEach((n,i)=>{const cx=(i%cols-(cols-1)/2)*3,cz=(Math.floor(i/cols)-(rows-1)/2)*3;const ar=new THREE.ArrowHelper(new THREE.Vector3(1,0,0),new THREE.Vector3(cx-1.3,0,cz+1.2),1,0xff3030,.3,.2);S.add(ar);
+ ld.load('models/'+n+'.glb',g=>{const o=g.scene;const b=new THREE.Box3().setFromObject(o);const s=b.getSize(new THREE.Vector3());const k=2.4/Math.max(s.x,s.z,s.y);o.scale.setScalar(k);const c=b.getCenter(new THREE.Vector3()).multiplyScalar(k);o.position.set(cx-c.x,-c.y,cz-c.z);S.add(o);window.__done++;},undefined,()=>{window.__done++;});
+ const d=document.createElement('div');d.textContent=n;const p=new THREE.Vector3(cx,0,cz+1.35).project(cam);d.style.left=((p.x+1)/2*innerWidth)+'px';d.style.top=((1-p.y)/2*innerHeight)+'px';document.getElementById('lbl').appendChild(d);});
+(function f(){R.render(S,cam);requestAnimationFrame(f);})();
+</script></body></html>
