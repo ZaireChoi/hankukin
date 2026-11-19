@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v1.1 ZETA</div>
+   <div class="ver"><i></i>ASCEND · v1.2 MODELS</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2038,7 +2038,7 @@ R.build=function(u,ch,rel){const c=u.cls,rc=RELC[rel];let e;
  e.rel=rel;return e;};
 R.setGhost=function(e,on){const gm=this.M('ghost',()=>new T.MeshBasicMaterial({color:0x9fdcff,transparent:true,opacity:.22,blending:T.AdditiveBlending,depthWrite:false}));e.root.traverse(m=>{if((m.isMesh||m.isSprite)&&m!==e.ring&&m!==e.blob){if(on){if(!m.userData.om){m.userData.om=m.material;m.material=m.isSprite?m.material:gm;}}else if(m.userData.om){m.material=m.userData.om;m.userData.om=null;}}});};
 R.syncUnits=function(dt,now){const lt=G.local.team;const chase=P.view==='chase';const cx=chase?this.cam.position.x:this.camT.x,cz=chase?this.cam.position.z:this.camT.z,cull=(chase?2600:1400)**2;const fr=this.fno=(this.fno||0)+1;
- for(const u of G.units){if(u.dead)continue;const ch=chOf(u),rel=relOf(u);const key=u.cls+'|'+this.chKey(ch)+'|'+(u.wk||'')+'|'+rel+'|'+(MAP.space?1:0);let e=this.units.get(u.id);
+ for(const u of G.units){if(u.dead)continue;const ch=chOf(u),rel=relOf(u);const key=u.cls+'|'+this.chKey(ch)+'|'+(u.wk||'')+'|'+rel+'|'+(MAP.space?1:0)+'|'+(this._mver||0);let e=this.units.get(u.id);
   if(!e||e.key!==key){if(e)this.scene.remove(e.root);e=this.build(u,ch,rel);e.key=key;this.units.set(u.id,e);this.scene.add(e.root);}
   e.seen=fr;const far=d2(u.x,u.y,cx,cz)>cull;if(far){if(e.root.parent)this.scene.remove(e.root);continue;}else if(!e.root.parent)this.scene.add(e.root);const hid=u.team!==lt&&!visibleTo(u,lt);const near=chase&&rel!==0&&d2(u.x,u.y,this.cam.position.x,this.cam.position.z)<75*75&&u.layer===0;e.root.visible=!hid&&!near&&!(u.spawnProt>0&&Math.floor(now*10)%2);if(hid)continue;
   const ghost=((u.cloak>0||u.illu)&&u.team===lt)||u.phase>0;if(ghost!==!!e.ghost){e.ghost=ghost;this.setGhost(e,ghost);}
@@ -3247,6 +3247,44 @@ function zetaTick(dt){if(!G||!G.inv)return;for(const u of G.units){if(u.dead||u.
   else if(c==='zbane'){for(const e of G.units){if(e.dead||e.team===u.team||e.layer!==0)continue;if(d2(e.x,e.y,u.x,u.y)<(u.r+e.r+22)**2){explode(u.x,u.y,95,125,u.team,u.slot,{dt:'x',sm:1.4});fx(0,u.x,u.y,60);killUnit(u,null);break;}}}
   else if(c==='zlurk'){let near=false;for(const e of G.units){if(e.dead||e.team===u.team||e.layer!==0)continue;if(d2(e.x,e.y,u.x,u.y)<560*560){near=true;break;}}if(near){if(u.burX==null){u.burX=u.x;u.burY=u.y;}u.x=u.burX;u.y=u.burY;u.vx=u.vy=0;}else u.burX=u.burY=null;}}}
 {const _st3=step;step=function(dt){_st3(dt);if(G&&!G.client&&G.inv)try{zetaTick(dt);}catch(e){}};}
+// ================= v1.2 : REAL 3D MODELS (Meshy) =================
+const MDL_BASE='models/';const PI=Math.PI;
+// file, yaw(front->+X), size in game units, axis: 'h' height | 'l' longest horizontal, bob(procedural float)
+const MDL={bike:['v_bike',PI,34,'l'],walker:['v_goliath',PI/2,52,'h'],mech:['mech3',PI/2,70,'h'],
+ fighter:['a_fighter',PI,42,'l'],stealth:['a_interceptor',PI,44,'l'],interceptor:['a_interceptor',PI,38,'l'],bomber:['a_bomber',PI,62,'l'],heli:['a_heli',PI,48,'l'],gunship:['a_bomber',PI,74,'l'],dropship:['a_dropship',PI,50,'l'],
+ frigate:['s_frigate',PI,135,'l'],destroyer:['s_destroyer',PI,150,'l'],tender:['s_frigate',PI,130,'l'],ewar:['s_destroyer',PI,135,'l'],carrier:['s_carrier',PI,310,'l'],battleship:['s_battleship',PI,200,'l'],
+ zling:['zling',-PI/2,30,'l',1],zspit:['zspit',-PI/2,34,'h',1],zhopper:['zwing',-PI/2,38,'l'],zguard:['z_broodlord',PI/2,78,'l'],ztank:['zbehemoth',-PI/2,96,'l',1],zqueen:['zqueen',-PI/2,150,'l',1],ztitan:['z_titan',-PI/2,170,'l',1],zsled:['z_sled',-PI/2,34,'l']};
+const INF_M={fed:{t:'fed_trooper',f:'fed_female',o:'fed_officer'},emp:{t:'emp_trooper',f:'emp_female',o:'emp_officer'}};
+const INF_ROLE={assault:'t',heavy:'t',rocket:'t',engineer:'t',medic:'f',emp:'f',recon:'o'};
+const INF_W={assault:'w_laserrifle',medic:'w_laserrifle',engineer:'w_laserrifle',emp:'w_laserrifle',heavy:'w_plasmacannon',rocket:'w_rocket',recon:'w_railsniper'};
+function infModel(u){const fac=G&&G.inv?((u.slot&&u.slot.sid||u.id)%2?'emp':'fed'):(u.team===1?'emp':'fed');return INF_M[fac][INF_ROLE[u.cls]||'t'];}
+const MC={};let mVer=0;
+function mdlUse(){return typeof gfxMode==='function'?gfxMode()!=='low':true;}
+function mdlGet(f){const c=MC[f];if(c)return c.st==='ok'?c:null;const X=window.__TX||{};if(!X.GLTFLoader)return null;MC[f]={st:'ld'};new X.GLTFLoader().load(MDL_BASE+f+'.glb',g=>{const T3=window.THREE;g.scene.updateMatrixWorld(true);const b=new T3.Box3().setFromObject(g.scene);MC[f]={st:'ok',g,box:b,size:b.getSize(new T3.Vector3()),skinned:(()=>{let s=false;g.scene.traverse(o=>{if(o.isSkinnedMesh)s=true;});return s;})()};mVer++;if(R3)R3._mver=mVer;},undefined,()=>{MC[f]={st:'fail'};});return null;}
+function mdlInstance(f,yaw,size,axis){const c=mdlGet(f);if(!c)return null;const T3=window.THREE,X=window.__TX;const obj=c.skinned&&X.SkeletonUtils?X.SkeletonUtils.clone(c.g.scene):c.g.scene.clone(true);
+ const k=size/(axis==='h'?c.size.y:Math.max(c.size.x,c.size.z));const wrap=new T3.Group();const inner=new T3.Group();inner.rotation.y=yaw;wrap.add(inner);obj.scale.setScalar(k);const ctr=c.box.getCenter(new T3.Vector3());obj.position.set(-ctr.x*k,-c.box.min.y*k,-ctr.z*k);inner.add(obj);
+ obj.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=!o.isSkinnedMesh;}});
+ let mx=null;if(c.g.animations&&c.g.animations.length){const mixer=new T3.AnimationMixer(obj);const acts={};for(const cl of c.g.animations){acts[cl.name]=mixer.clipAction(cl);}const first=acts.walk||Object.values(acts)[0];if(first){first.play();first.timeScale=0;}mx={mixer,acts,cur:first};}
+ return{wrap,inner,obj,mx,k};}
+function hideProc(e){e.root.traverse(o=>{if((o.isMesh||o.isSprite||o.isPoints)&&o!==e.ring&&o!==e.blob&&o!==e.jet&&!o.userData.keep)o.visible=false;});if(e.flames)for(const f of e.flames)f.visible=false;}
+function modelWrap(){if(!R3||!R3.ready||R3._mw)return;R3._mw=1;const ob=R3.build;
+ R3.build=function(u,ch,rel){const e=ob.call(this,u,ch,rel);if(!mdlUse())return e;try{const c=CL[u.cls];let inst=null,isInf=false;
+   if(c&&c.arm==='inf'&&!c.bug){isInf=true;inst=mdlInstance(infModel(u),PI/2,24,'h');}
+   else if(MDL[u.cls]){const m=MDL[u.cls];inst=mdlInstance(m[0],m[1],m[2],m[3]);if(inst)inst.bob=m[4];}
+   if(inst){hideProc(e);(e.bank||e.root).add(inst.wrap);e.mdl=inst;
+    if(isInf){const wk=INF_W[u.cls]||'w_laserrifle';const w=mdlInstance(wk,PI,u.cls==='recon'?20:u.cls==='heavy'||u.cls==='rocket'?18:14,'l');if(w){e.root.add(w.wrap);e.mdlW=w;let hb=null;inst.obj.traverse(o=>{if(o.isBone&&!hb&&/right.?hand/i.test(o.name))hb=o;});e.mdlHand=hb;}}}}catch(err){console.warn('mdl',err);}return e;};
+ const oa=R3.animate;R3.animate=function(e,u,dt,now){oa.call(this,e,u,dt,now);const m=e.mdl;if(!m)return;
+  if(m.mx){const sp=Math.hypot(u.vx||0,u.vy||0);const A=m.mx.acts;const want=sp>150&&A.run?A.run:A.walk||m.mx.cur;if(want!==m.mx.cur){want.reset().play();if(m.mx.cur)m.mx.cur.crossFadeTo(want,.2,false);m.mx.cur=want;}
+   want.timeScale=sp<6?0:want===A.run?sp/240:sp/90;m.mx.mixer.update(dt);}
+  if(m.bob){m.inner.position.y=Math.abs(Math.sin(now*6+u.id))*1.2*Math.min(1,Math.hypot(u.vx||0,u.vy||0)/60);m.inner.rotation.z=Math.sin(now*3+u.id)*.03;}
+  if(e.mdlW){const T3=window.THREE;const w=e.mdlW;let p;if(e.mdlHand){p=e.mdlHand.getWorldPosition(new T3.Vector3());e.root.worldToLocal(p);}else p=new T3.Vector3(4,13,3);w.wrap.position.set(p.x+3,p.y-1,p.z);w.wrap.rotation.set(0,0,0);w.wrap.position.x-=(e.rec||0)*2;}};
+ const os=R3.syncUnits;R3.syncUnits=function(dt,now){if(!this._envSet&&this.scene&&window.__TX&&window.__TX.RoomEnvironment){try{const pm=new window.THREE.PMREMGenerator(this.r);this.scene.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}catch(e){}this._envSet=1;}return os.call(this,dt,now);};}
+{const _stM=step;step=function(dt){try{modelWrap();}catch(e){}_stM(dt);};}
+// new Zeta giants
+Object.assign(STR.ko,{ztitan:'시즈 타이탄',zsled:'스카이 슬레드',levi:'리바이어던 출현! 하늘을 올려다봐라'});Object.assign(STR.en,{ztitan:'Siege Titan',zsled:'Sky Sled',levi:'Leviathan inbound! Look to the sky'});
+CL.ztitan={...ZB,n:{ko:'시즈 타이탄',en:'Siege Titan'},role:'armor',cat:3,arm:'heavy',layer:0,r:58,hp:5200,spd:44,wpns:['zqueen'],a1:'shock',cd:[8,10],xp:1600,d:{ko:'거대한 공성 괴수',en:'Colossal siege beast'}};
+CL.zsled={...ZB,n:{ko:'스카이 슬레드',en:'Sky Sled'},role:'air',cat:2,arm:'air',layer:1,r:15,hp:150,spd:320,turn:3,wpns:['zhop'],a1:'stim',xp:90,d:{ko:'제타 기수가 탄 비행 썰매',en:'Zeta rider on a hover sled'}};SHAPE.zsled=SHAPE.zhopper.slice();
+{const _zp=zetaPick;zetaPick=function(tier){if(tier>=2&&Math.random()<.12)return'zsled';return _zp(tier);};}
 // ================= v1.0 : CAMERA ROTATE (right-drag) + WHEEL ZOOM =================
 function camRotOK(){return typeof use3D==='function'&&use3D()&&P.view!=='chase';}
 function camRot(x,y){if(!camRotOK()||!P.camYaw)return[x,y];const c=Math.cos(P.camYaw),s=Math.sin(P.camYaw);return[x*c+y*s,-x*s+y*c];}
@@ -3285,7 +3323,10 @@ import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
 import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
 import {UnrealBloomPass} from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {OutputPass} from 'three/addons/postprocessing/OutputPass.js';
-window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass};window.THREE=THREE;
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
 </body>
