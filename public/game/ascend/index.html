@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v2.5 RPG</div>
+   <div class="ver"><i></i>ASCEND · v2.6 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3095,7 +3095,7 @@ function drawFun(info,now){const S=G&&G.story;if(!S)return;const c=ctx;c.setTran
  for(const d of S.drops||[]){const D=DROPS[d.k];if(!D)continue;const p=scrPt(d.x,d.y,(d.z||0)+14);if(!p||p.x<-30||p.x>VW+30||p.y<-30||p.y>VH+30)continue;const bob=Math.sin(now*3+(d.ph||0))*4;const rr=13;
   c.save();c.translate(p.x,p.y+bob);c.shadowColor=D.c;c.shadowBlur=16;c.fillStyle='rgba(6,11,22,.85)';c.beginPath();c.arc(0,0,rr,0,6.28);c.fill();c.lineWidth=2.5;c.strokeStyle=D.c;c.stroke();c.shadowBlur=0;
   c.fillStyle=D.c;c.font='bold 15px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(D.ic,0,1);c.textBaseline='alphabetic';if(d.t!=null&&d.t<6&&Math.floor(now*4)%2)c.globalAlpha=.4;c.restore();c.globalAlpha=1;}
- if(S.ms&&!G.client&&!G.over&&!(window.__phoneLand&&window.__phoneLand())){const x=14,y0=mob?(VH*.42):(VH*.42);c.font=typeof fnt==='function'?fnt(11,800,1):'bold 11px sans-serif';c.textAlign='left';c.fillStyle='rgba(140,170,220,.85)';c.fillText('◢ '+t('missions'),x,y0);
+ if(S.ms&&!G.client&&!G.over&&!G.rpg&&!(window.__phoneLand&&window.__phoneLand())){const x=14,y0=mob?(VH*.42):(VH*.42);c.font=typeof fnt==='function'?fnt(11,800,1):'bold 11px sans-serif';c.textAlign='left';c.fillStyle='rgba(140,170,220,.85)';c.fillText('◢ '+t('missions'),x,y0);
   S.ms.forEach((m,i)=>{const yy=y0+8+i*21;c.fillStyle=m.done?'rgba(40,90,50,.75)':'rgba(6,11,22,.7)';c.fillRect(x-4,yy,mob?170:230,18);c.fillStyle=m.done?'#7ee787':'#ffd166';c.fillRect(x-4,yy,2,18);
    c.font=typeof fnt==='function'?fnt(12,m.done?800:600):'12px sans-serif';c.fillStyle=m.done?'#7ee787':'#e9f0ff';c.fillText((m.done?'✓ ':'')+t('m_'+m.k,m.n),x+3,yy+13);c.textAlign='right';c.fillStyle=m.done?'#7ee787':'#8ea3c8';c.fillText(m.done?'+'+m.merit:Math.floor(m.v)+'/'+m.n,x+(mob?162:222),yy+13);c.textAlign='left';});}
  const me=G.local;if(me&&me.cs&&info.u){const k=me.cs,w=150,x=VW/2-w/2,y=VH-(mob?130:150);c.fillStyle=`rgba(90,62,8,${.75+.2*Math.sin(now*6)})`;c.fillRect(x,y,w,24);c.strokeStyle='#ffd166';c.lineWidth=1.5;c.strokeRect(x,y,w,24);
@@ -4851,7 +4851,7 @@ function bossBar(){let el=document.getElementById('bossBar');if(!el){el=document
 // 7) hunting tab: hide events in zones the player cannot reach yet
 {const _rh=renderHunt;renderHunt=function(B){_rh(B);try{const ev=evNow();const lockZ=id=>{const Z=HUNT.find(z=>z.id===id);return Z&&Z.req&&!epS(Z.req).done;};B.querySelectorAll('.epi').forEach(d=>{const t=d.textContent;if((/행성 소탕 이벤트|Planet purge event/.test(t)&&lockZ(ev.purge.zone))||(/우주적 존재|Cosmic/.test(t)&&ev.cosmic.zone&&lockZ(ev.cosmic.zone)))d.remove();});}catch(e){}};}
 // 8) map: big "next chapter" button
-{const _rm=renderMap;renderMap=function(B){const nx=EPIS.find(E=>epOpen(E)&&!epS(E.id).done);if(nx&&(!selEpi||epS(selEpi).done))selEpi=nx.id;_rm(B);if(!nx)return;const b=document.createElement('button');b.className='pri';b.style.cssText='display:block;width:100%;margin:0 0 10px;padding:12px;font-size:17px;background:linear-gradient(90deg,#b8860b,#7a4a14)';b.innerHTML='▶ '+L('다음 이야기: ','Next story: ')+tx(nx.t);b.onclick=()=>{selEpi=nx.id;epiPanel();const p=$('#epiP');if(p){p.scrollIntoView({behavior:'smooth',block:'center'});const go=p.querySelector('button.pri');if(go)go.click();}};B.insertBefore(b,B.firstChild);};}
+{const _rm=renderMap;renderMap=function(B){const nx=EPIS.find(E=>epOpen(E)&&!epS(E.id).done);if(nx&&(!selEpi||epS(selEpi).done))selEpi=nx.id;_rm(B);if(!nx)return;const b=document.createElement('button');b.className='ns-btn';b.innerHTML='<small>NEXT</small>▶ '+tx(nx.t);b.onclick=()=>{selEpi=nx.id;epiPanel();const p=$('#epiP');if(p){p.scrollIntoView({behavior:'smooth',block:'center'});const go=p.querySelector('button.pri');if(go)go.click();}};B.insertBefore(b,B.firstChild);};}
 // 9) save migration for renamed character keys (adel→adel, aiden→aiden)
 try{const r0=P.rpg;if(r0){const A1='"'+'rein'+'hard"',A2='"'+'ya'+'ng"';let s=JSON.stringify(r0);if(s.includes(A1)||s.includes(A2)){s=s.split(A1).join('"adel"').split(A2).join('"aiden"');P.rpg=JSON.parse(s);saveP();}}}catch(e){}
 
@@ -5139,7 +5139,7 @@ function mergeShow(srcs,res,done){const ov=document.createElement('div');ov.styl
 droneMerge=function(it){const r=R();if(it.tier>=6)return toast(L('최고 등급(봉황)입니다','Already top grade (Phoenix)'));const eqIds=new Set(Object.values(r.eq));const same=r.inv.filter(x=>x.slot==='drone'&&x.tier===it.tier);if(same.length<3)return toast(L('같은 등급 드론 3기가 필요합니다 (','Need 3 drones of the same grade (')+same.length+'/3)');const cost=DMERGE_COST[it.tier];if(r.cred<cost)return toast(L('크레딧 부족 (◆','Not enough credits (◆')+cost+')');
  const use=[it].concat(same.filter(x=>x!==it).sort((a,b)=>(eqIds.has(a.id)?1:0)-(eqIds.has(b.id)?1:0)).slice(0,2));const nd=mkDrone(it.sub,it.tier+1);let slotKeep=null;for(const k of Object.keys(r.eq))if(use.some(x=>x.id===r.eq[k])){if(!slotKeep)slotKeep=k;r.eq[k]=null;}r.cred-=cost;r.inv=r.inv.filter(x=>!use.includes(x));r.inv.push(nd);const free=slotKeep||DSLOTS.find((s,i)=>dSlotOpen(i)&&!eqIt(r,s));if(free)r.eq[free]=nd.id;saveP();hgSel=nd.id;mergeShow(use,nd,()=>render());};
 // ---------- equipment window v3 (paper doll by body position · bag grid · drag & drop) ----------
-const BODY={radar:[50,2,K('머리','Head')],msl:[13,16,K('어깨','Shoulder')],wing:[87,16,K('등','Back')],mel:[8,40,K('오른손','R. hand')],rng:[92,40,K('왼손','L. hand')],shld:[13,64,K('팔','Arm')],fuel:[87,64,K('가슴','Chest')],ult:[50,68,K('중심','Core')]};
+const BODY={radar:[50,2,K('머리','Head')],msl:[15,16,K('어깨','Shoulder')],wing:[85,16,K('등','Back')],mel:[12,40,K('오른손','R. hand')],rng:[88,40,K('왼손','L. hand')],shld:[15,64,K('팔','Arm')],fuel:[85,64,K('가슴','Chest')],ult:[50,68,K('중심','Core')]};
 let hgDis=false;
 {const _rh2=renderHangar2;renderHangar2=function(B){const r=R();try{droneMigrate(r);uqMigrate(r);ivMigrate(r);}catch(e){}_rh2(B);try{
  const doll=B.querySelector('.pd-doll');const T=HGT.find(g=>g[0]===hgTab)||HGT[0];
@@ -5208,20 +5208,20 @@ function tipHide(){const t=document.getElementById('pdFloat');if(t)t.style.displ
  const equip=it=>{if(it.slot==='drone'){const free=DSLOTS.find((s,i)=>dSlotOpen(i)&&!eqIt(r,s));if(!free)return toast(L('빈 드론 칸이 없습니다','No free drone slot'));r.eq[free]=it.id;}else r.eq[it.slot]=it.id;saveP();tipHide();render();};
  for(let i=0;i<n;i++){const it=list[i];const c=document.createElement('div');c.className='pd-cell';if(!it){c.style.cssText='--c:rgba(80,100,140,.22);cursor:default';inv.appendChild(c);continue;}
   const col=RAR[it.r].c;c.style.setProperty('--c',col);c.setAttribute('aria-label',tx(it.n)+' · '+rn(it.r));c.title='';c.draggable=true;if(it.id===hgSel)c.classList.add('sel');
-  const art=itemArt(it);c.innerHTML=(art?`<img src="${art}" style="width:88%;height:88%;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:icon(it.slot,col,30))+(it.tier?`<b>${tx(DGR[it.tier].n).slice(0,3)}</b>`:it.lv?`<b>+${it.lv}</b>`:'');if(it.u||it.r>=3)c.style.boxShadow='0 0 10px '+col;
+  const art=itemArt(it);c.innerHTML=(art?`<img src="${art}" style="width:88%;height:88%;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:icon(it.slot,col,30))+(it.tier?`<b>${tx(DGR[it.tier].n).slice(0,3)}</b>`:it.lv?`<b>+${it.lv}</b>`:'')+(it.lock?'<em style="color:#ffd166">🔒</em>':'');if(it.u||it.r>=3)c.style.boxShadow='0 0 10px '+col;
   c.addEventListener('mousemove',e=>tipShow(it,e));c.addEventListener('mouseleave',tipHide);
   c.addEventListener('contextmenu',e=>{e.preventDefault();equip(it);});c.addEventListener('dblclick',()=>equip(it));c.addEventListener('dragstart',e=>{tipHide();e.dataTransfer.setData('text/plain',it.id);});
   let lp=null;c.addEventListener('touchstart',e=>{const t0=e.touches[0];lp=setTimeout(()=>tipShow(it,{clientX:t0.clientX,clientY:t0.clientY}),450);},{passive:true});c.addEventListener('touchend',()=>{clearTimeout(lp);setTimeout(tipHide,1800);});
-  c.onclick=()=>{if(hgDis){const g=Math.round(40*(it.r+1)*(it.tier||1));r.inv=r.inv.filter(x=>x!==it);r.cred+=g;saveP();toast('+◆'+g);render();return;}hgSel=it.id;inv.querySelectorAll('.pd-cell').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');const tp=B.querySelector('#pdTip');if(tp)tp.innerHTML=itemTip(it);acts(it);};inv.appendChild(c);}
+  c.onclick=()=>{if(hgDis&&it.lock)return toast(L('잠긴 아이템입니다','Item is locked'));if(hgDis){const g=Math.round(40*(it.r+1)*(it.tier||1));r.inv=r.inv.filter(x=>x!==it);r.cred+=g;saveP();toast('+◆'+g);render();return;}hgSel=it.id;inv.querySelectorAll('.pd-cell').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');const tp=B.querySelector('#pdTip');if(tp)tp.innerHTML=itemTip(it);acts(it);};inv.appendChild(c);}
  const h3=inv.parentElement.querySelector('h3 small');if(h3)h3.textContent='('+list.length+')';
  // equipped-slot hover tooltips
  B.querySelectorAll('.pd-slot').forEach(d=>{const it=eqIt(r,d.dataset.sl);if(!it)return;d.setAttribute('aria-label',tx(it.n));d.addEventListener('mousemove',e=>tipShow(it,e));d.addEventListener('mouseleave',tipHide);});
  // details panel only when something is selected
  const tp=B.querySelector('#pdTip');if(tp&&!hgSel){tp.style.display='none';const h=tp.previousElementSibling;if(h&&h.tagName==='H3')h.style.display='none';}
- function acts(it){const A=B.querySelector('#hgAct');if(!A)return;const tp2=B.querySelector('#pdTip');if(tp2){tp2.style.display='block';const h=tp2.previousElementSibling;if(h)h.style.display='';}A.innerHTML='';const mk=(l,f,pri)=>{const b=document.createElement('button');b.className='sm'+(pri?' pri':'');b.textContent=l;b.onclick=f;A.appendChild(b);};mk(L('장착','Equip'),()=>equip(it),1);if(it.slot==='drone')mk(L('합체 (같은 등급 3기)','Merge (3 of a grade)'),()=>droneMerge(it));mk(L('분해 +◆','Dismantle +◆')+Math.round(40*(it.r+1)*(it.tier||1)),()=>{r.inv=r.inv.filter(x=>x!==it);r.cred+=Math.round(40*(it.r+1)*(it.tier||1));hgSel=null;saveP();render();});}
+ function acts(it){const A=B.querySelector('#hgAct');if(!A)return;const tp2=B.querySelector('#pdTip');if(tp2){tp2.style.display='block';const h=tp2.previousElementSibling;if(h)h.style.display='';}A.innerHTML='';const mk=(l,f,pri)=>{const b=document.createElement('button');b.className='sm'+(pri?' pri':'');b.textContent=l;b.onclick=f;A.appendChild(b);};mk(L('장착','Equip'),()=>equip(it),1);if(it.slot==='drone')mk(L('합체 (같은 등급 3기)','Merge (3 of a grade)'),()=>droneMerge(it));mk(L('분해 +◆','Dismantle +◆')+Math.round(40*(it.r+1)*(it.tier||1)),()=>{if(it.lock)return toast(L('잠긴 아이템입니다','Item is locked'));r.inv=r.inv.filter(x=>x!==it);r.cred+=Math.round(40*(it.r+1)*(it.tier||1));hgSel=null;saveP();render();});mk(it.lock?L('🔒 잠금 해제','🔒 Unlock'):L('🔓 잠금','🔓 Lock'),()=>{it.lock=!it.lock;saveP();render();});}
  // drone tab: slots in a ring around the frame
  if(hgTab==='drone'){const doll=B.querySelector('.pd-doll');if(doll){const cv=doll.querySelector('canvas');const slots=[...doll.querySelectorAll('.pd-slot')];doll.innerHTML='';doll.style.cssText+=';display:block;position:relative;height:460px;padding:0';const mid=document.createElement('div');mid.style.cssText='position:absolute;left:24%;right:24%;top:18%;height:64%';if(cv){cv.style.cssText='width:100%;height:100%;object-fit:contain';mid.appendChild(cv);}doll.appendChild(mid);
-  slots.forEach((d,i)=>{const a=-Math.PI/2+i/6*Math.PI*2;d.style.cssText+=`;position:absolute;left:${50+Math.cos(a)*38}%;top:${50+Math.sin(a)*40}%;transform:translate(-50%,-50%);width:92px;height:84px`;doll.appendChild(d);});}}}catch(e){console.warn('hg4',e);}};}
+  slots.forEach((d,i)=>{const a=-Math.PI/2+i/6*Math.PI*2;d.style.cssText+=`;position:absolute;left:${50+Math.cos(a)*38}%;top:${50+Math.sin(a)*40}%;transform:translate(-50%,-50%);width:92px;height:84px`;if(!dSlotOpen(i)){d.innerHTML=`<span style="opacity:.75">🔒 ${L('파일럿 Lv','Pilot Lv')}${DSLV[i]}</span>`;d.style.opacity=.55;d.style.setProperty('--c','#3a4a6a');}const nb=document.createElement('b');nb.textContent=String(i+1);nb.style.cssText='position:absolute;left:6px;top:3px;font-size:12px;color:#cfe3ff;opacity:.8';d.appendChild(nb);doll.appendChild(d);});}}}catch(e){console.warn('hg4',e);}};}
 // in-battle gear window (I / C) — the battle keeps running, like Diablo
 let gearOv=null;
 function gearOpen(focusStats){if(gearOv){gearClose();return;}gearOv=document.createElement('div');gearOv.style.cssText='position:fixed;inset:4vh 4vw;z-index:40;background:rgba(5,9,20,.95);border:1px solid #3a5a96;border-radius:14px;overflow:auto;padding:14px';gearOv.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:8px"><b style="font-size:18px">${L('장비 (I) · 능력치 (C)','Gear (I) · Stats (C)')}</b><small style="margin-left:10px;opacity:.65">${L('드론·고유 장비 효과는 닫는 즉시, 기본 능력치는 다음 출격부터 적용','Drones and named effects apply on close; base stats from your next sortie')}</small><button id="gearX" style="margin-left:auto">✕</button></div><div id="gearB"></div>`;document.body.appendChild(gearOv);gearOv.querySelector('#gearX').onclick=gearClose;const rb=$('#rpgBody');if(rb)rb.innerHTML='';tab='hangar';renderHangar2(gearOv.querySelector('#gearB'));if(focusStats){const s=gearOv.querySelector('.pd-stats');if(s)s.scrollIntoView({block:'center'});}}
@@ -5379,6 +5379,85 @@ window.__phoneLand=()=>innerHeight<=520&&innerWidth>innerHeight;
 // PWA: service worker + iOS home-screen icon
 try{if(!document.querySelector('link[rel=apple-touch-icon]')){const l=document.createElement('link');l.rel='apple-touch-icon';l.href='apple-touch-icon.png';document.head.appendChild(l);}}catch(e){}
 try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}
+
+
+// ================= v2.6 : AUTO-ORGANIZE — auto-synthesis (gear 3→1), drone auto-merge, auto-dismantle, item lock =================
+function autoCfg(){const r=R();r.auto=Object.assign({dis:true,disR:1,syn:true,drn:true},r.auto||{});return r.auto;}
+const SYN_COST=[60,200,600];
+function autoSort(quiet){const r=R();const A=autoCfg();const eqIds=new Set(Object.values(r.eq||{}).filter(Boolean));const keep=it=>eqIds.has(it.id)||it.lock||it.u||it.st==='none';const rep={syn:0,dis:0,cred:0,drn:0};
+ // 1) gear synthesis: 3 unused items of the same slot & rarity (Common–Rare) → 1 item of the next rarity
+ if(A.syn){for(let rr=0;rr<=2;rr++){let again=true;while(again){again=false;const groups={};for(const it of r.inv){if(it.slot==='drone'||keep(it)||it.r!==rr)continue;(groups[it.slot]=groups[it.slot]||[]).push(it);}
+   for(const[sl,arr]of Object.entries(groups)){while(arr.length>=3&&r.cred>=SYN_COST[rr]){const use=arr.splice(0,3);r.cred-=SYN_COST[rr];r.inv=r.inv.filter(x=>!use.includes(x));const ni=mkItem(rr+1,sl);r.inv.push(ni);rep.syn++;again=true;}}}}}
+ // 2) drone auto-merge: 3 unequipped drones of the same grade (up to Hawk) → next grade
+ if(A.drn){for(let g=1;g<=4;g++){let list=r.inv.filter(x=>x.slot==='drone'&&x.tier===g&&!keep(x));while(list.length>=3&&r.cred>=DMERGE_COST[g]){const use=list.splice(0,3);const best=use.slice().sort((a,b)=>(DRONES[b.sub]&&DRONES[b.sub].cls==='boss'?1:0)-(DRONES[a.sub]&&DRONES[a.sub].cls==='boss'?1:0))[0];r.cred-=DMERGE_COST[g];r.inv=r.inv.filter(x=>!use.includes(x));r.inv.push(mkDrone(best.sub,g+1));rep.drn++;if(g<4)list=r.inv.filter(x=>x.slot==='drone'&&x.tier===g&&!keep(x));}}}
+ // 3) auto-dismantle: unused gear at or below the chosen rarity that is not better than what you wear
+ if(A.dis){const better=it=>{const e=eqIt(r,it.slot);if(!e)return true;try{return it.st===e.st?itemVal(it)>itemVal(e):false;}catch(err){return false;}};
+  const out=r.inv.filter(it=>it.slot!=='drone'&&!keep(it)&&it.r<=A.disR&&!better(it));for(const it of out){const g=Math.round(40*(it.r+1));rep.cred+=g;r.cred+=g;rep.dis++;}r.inv=r.inv.filter(it=>!out.includes(it));
+  const dout=r.inv.filter(it=>it.slot==='drone'&&!keep(it)&&it.tier<=1&&A.disR>=1&&r.inv.filter(x=>x.slot==='drone'&&x.tier===1&&!keep(x)).length>6);for(const it of dout.slice(0,Math.max(0,dout.length-6))){rep.cred+=40;r.cred+=40;rep.dis++;r.inv=r.inv.filter(x=>x!==it);}}
+ if(rep.syn||rep.dis||rep.drn){saveP();if(!quiet)toast(L('자동 정리 · ','Auto-organize · ')+[rep.syn?L('합성 ','Synth ')+rep.syn:'',rep.drn?L('드론 합체 ','Drone merge ')+rep.drn:'',rep.dis?L('분해 ','Dismantle ')+rep.dis+' (+◆'+rep.cred+')':''].filter(Boolean).join(' · '));}return rep;}
+window.autoSort=autoSort;
+// run: after each hunt result, when the bag passes 50 items in the field, and when the gear window opens
+{const _hres=huntResult;huntResult=function(...a){const v=_hres.apply(this,a);try{autoSort(false);}catch(e){}return v;};}
+{let t=0;const _stA=step;step=function(dt){_stA(dt);try{if(!G||!G.rpg)return;t-=dt;if(t>0)return;t=4;const r=R();if((r.inv||[]).length>50)autoSort(false);}catch(e){}};}
+// gear window: auto-organize bar (toggles + "organize now") and per-item lock
+{const _rh5=renderHangar2;renderHangar2=function(B){try{autoSort(true);}catch(e){}_rh5(B);try{const r=R();const A=autoCfg();const inv=B.querySelector('#pdInv');if(!inv)return;const bar=document.createElement('div');bar.style.cssText='display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px;padding:8px 10px;border:1px solid rgba(255,209,102,.25);border-radius:8px;background:rgba(40,30,8,.35);font-size:12px';
+  const RN=[L('일반','Common'),L('고급 이하','≤ Uncommon'),L('희귀 이하','≤ Rare')];
+  bar.innerHTML=`<b style="color:#ffd166">${L('자동 정리','Auto-organize')}</b>
+   <label><input type="checkbox" id="auSyn" ${A.syn?'checked':''}> ${L('합성 (같은 부위·등급 3개 → 상위 1개)','Synthesis (3 same slot & rarity → 1 higher)')}</label>
+   <label><input type="checkbox" id="auDrn" ${A.drn?'checked':''}> ${L('드론 자동 합체 (매까지)','Drone auto-merge (up to Hawk)')}</label>
+   <label><input type="checkbox" id="auDis" ${A.dis?'checked':''}> ${L('자동 분해','Auto-dismantle')}</label>
+   <select id="auR" style="padding:2px 4px">${RN.map((n,i)=>`<option value="${i}" ${A.disR===i?'selected':''}>${n}</option>`).join('')}</select>
+   <button class="sm pri" id="auNow" style="margin-left:auto">${L('지금 정리','Organize now')}</button>
+   <small style="flex-basis:100%;opacity:.65">${L('장착 중·잠금·고유(영웅 이상 이름 있는) 장비와 지금 것보다 좋은 장비는 건드리지 않습니다.','Equipped, locked, named gear and anything better than what you wear are never touched.')}</small>`;
+  inv.before(bar);const sv=()=>{A.syn=$('#auSyn').checked;A.drn=$('#auDrn').checked;A.dis=$('#auDis').checked;A.disR=+$('#auR').value;saveP();};['#auSyn','#auDrn','#auDis','#auR'].forEach(s=>$(s).onchange=sv);$('#auNow').onclick=()=>{sv();const rp=autoSort(false);if(!rp.syn&&!rp.dis&&!rp.drn)toast(L('정리할 아이템이 없습니다','Nothing to organize'));render();};}catch(e){console.warn('auto',e);}};}
+
+
+// ================= v2.6 : REFINED UI STYLE (smaller, glass, muted champagne accents) + playtest fixes =================
+{const st=document.createElement('style');st.id='style26';st.textContent=`
+:root{--gl-bg:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.025));--gl-bd:rgba(255,255,255,.16);--ch:#b9d6e6;--ch2:#eef6fb;--ice:#8fc4dc}
+body button.pri{background:var(--gl-bg)!important;border:1px solid rgba(185,214,230,.6)!important;color:var(--ch2)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 4px 14px rgba(0,0,0,.35)!important;letter-spacing:.04em;text-shadow:none}
+body button.pri:hover{background:linear-gradient(180deg,rgba(185,214,230,.2),rgba(185,214,230,.06))!important;border-color:var(--ch)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 18px rgba(0,0,0,.45)!important}
+/* home action stack: compact glass cards with a thin accent bar */
+body .hm-stack{width:min(330px,28vw)!important;gap:8px!important;right:48px!important;bottom:84px!important}
+body .hm-stack .nav{padding:11px 16px 11px 18px!important;border-radius:10px!important;background:linear-gradient(90deg,rgba(8,12,24,.72),rgba(8,12,24,.45))!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 6px 20px rgba(0,0,0,.35)!important;position:relative;overflow:hidden}
+body .hm-stack .nav::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:rgba(255,255,255,.25)}
+body .hm-stack .nav:hover{transform:translateX(-4px)!important;background:linear-gradient(90deg,rgba(18,26,46,.85),rgba(18,26,46,.55))!important;border-color:rgba(255,255,255,.28)!important}
+body .hm-stack .nav .tx>span{font-size:16px!important;font-weight:800!important;letter-spacing:.03em}
+body .hm-stack .nav small{font-size:11.5px!important;opacity:.6!important}
+body .hm-stack .nav svg{width:20px!important;height:20px!important;opacity:.85}
+body .hm-stack #mRpg{background:linear-gradient(90deg,rgba(16,24,40,.82),rgba(10,12,22,.5))!important;border-color:rgba(185,214,230,.5)!important;box-shadow:0 6px 20px rgba(0,0,0,.35),0 0 18px rgba(143,196,220,.12)!important;padding:13px 16px 13px 18px!important}
+body .hm-stack #mRpg::before{background:var(--ch);width:3px}
+body .hm-stack #mRpg .tx>span{font-size:18px!important;color:var(--ch2)}
+body .hm-stack #mSolo{background:linear-gradient(90deg,rgba(12,18,32,.8),rgba(10,12,22,.5))!important;border-color:rgba(255,255,255,.14)!important;box-shadow:0 6px 20px rgba(0,0,0,.35)!important}body .hm-stack #mSolo::before{background:rgba(143,196,220,.55)}
+body .hm-stack .lb-row{gap:6px!important}
+body .hm-stack .lb-row .nav{padding:8px 4px!important;font-size:11.5px!important;gap:4px!important;border-radius:9px!important}
+body .hm-stack .lb-row .nav::before{display:none}
+body .hm-stack .lb-row .nav svg{width:17px!important;height:17px!important}
+/* galaxy expedition */
+body #rpgDaily{font-size:13px!important;padding:6px 14px!important}
+body .ns-btn{display:block;width:100%;margin:0 0 10px;padding:10px 16px!important;font-size:15px!important;text-align:left;background:linear-gradient(90deg,rgba(16,24,40,.85),rgba(10,12,22,.4))!important;border:1px solid rgba(185,214,230,.35)!important;border-left:3px solid var(--ch)!important;color:var(--ch2)!important;border-radius:8px!important}
+body .ns-btn small{opacity:.6;margin-right:8px;letter-spacing:.2em;font-size:11px}
+body .chc-go{background:linear-gradient(180deg,rgba(185,214,230,.22),rgba(185,214,230,.08))!important;border:1px solid var(--ch)!important;color:var(--ch2)!important;font-size:16px!important;padding:12px!important;letter-spacing:.08em!important}
+body .chc-go:hover{background:linear-gradient(180deg,rgba(185,214,230,.32),rgba(185,214,230,.12))!important}
+body .chc{border-color:rgba(185,214,230,.2)!important}
+body .chc-rw span{background:rgba(255,255,255,.04)!important;border-color:rgba(185,214,230,.25)!important;color:var(--ch2)!important}
+body #rpgRs button.pri{font-size:16px!important;padding:11px 26px!important}
+@media (max-height:520px) and (orientation:landscape){body .hm-stack{width:min(300px,40vw)!important;right:14px!important;top:50px!important;bottom:auto!important}body .hm-stack .nav{padding:8px 12px 8px 14px!important}body .hm-stack #mRpg{padding:9px 12px 9px 14px!important}body .hm-stack #mRpg .tx>span{font-size:15px!important}body .hm-stack .nav .tx>span{font-size:13.5px!important}}
+`;document.head.appendChild(st);}
+// news line
+Object.assign(STR.ko,{news:'v2.6 — 은하 원정 RPG · 장 카드 · 고유 장비와 세트 · 드론 6등급 · 아이콘 스킬바 · 자동 정리(합성·분해)'});Object.assign(STR.en,{news:'v2.6 — Galaxy RPG · chapter cards · named gear & sets · 6-grade drones · icon skill bar · auto-organize'});
+try{applyLang();}catch(e){}
+// 1) no faction-battle radio inside RPG battles; tutorial hint matches the skill bar
+try{const _hq=COMMS.hq;COMMS.hq=function(...a){if(G&&G.rpg)return;return _hq.apply(this,a);};}catch(e){}
+{const ep=EPIS.find(e=>e.id==='e_p');if(ep)for(const n of ep.nodes)if(n.t==='battle')n.x=K('튜토리얼: 격납고로 몰려오는 제타를 막아라. 이동 WASD · 사격 마우스 왼쪽 · 아래 스킬바 Q·E·R (아이콘에 마우스를 올리면 설명)','Tutorial — Hold the hangar. Move WASD · fire with left click · skill bar Q·E·R below (hover an icon for details)');}
+// 3) fill empty slots automatically with the best unused item (gear and drones), in and out of battle
+function fillEmpty(){const r=R();let n=0;const eqIds=new Set(Object.values(r.eq||{}).filter(Boolean));for(const sl of Object.keys(SLOTS)){if(sl==='drone'||DSLOTS.includes(sl))continue;if(eqIt(r,sl))continue;const c=r.inv.filter(it=>it.slot===sl&&!eqIds.has(it.id)&&it.st!=='none').sort((a,b)=>(b.r-a.r)||((b.v||0)-(a.v||0)))[0];if(c){r.eq[sl]=c.id;eqIds.add(c.id);n++;}}
+ DSLOTS.forEach((s,i)=>{if(!dSlotOpen(i)){if(r.eq[s]){r.eq[s]=null;n++;}return;}if(eqIt(r,s))return;const d=r.inv.filter(it=>it.slot==='drone'&&!eqIds.has(it.id)).sort((a,b)=>b.tier-a.tier)[0];if(d){r.eq[s]=d.id;eqIds.add(d.id);n++;}});if(n)saveP();return n;}
+window.fillEmpty=fillEmpty;
+{let t=0;const _stE=step;step=function(dt){_stE(dt);try{if(!G||!G.rpg)return;t-=dt;if(t>0)return;t=2;const n=fillEmpty();if(n){const u=G.local&&G.local.unit;if(u&&u.cls==='arkframe'){u.drones=droneLoadout();try{u.drB=drBonus(u.drones);}catch(e){}G.uqStamp=(G.uqStamp||0)+1;try{mechFXCleanup&&mechFXCleanup(u);}catch(e){}}toast(L('빈 칸에 새 장비를 자동 장착했습니다','Auto-equipped new gear into empty slots'));}}catch(e){}};}
+{const _rh6=renderHangar2;renderHangar2=function(B){try{fillEmpty();}catch(e){}return _rh6(B);};}
+// 6) galaxy map: keep the two Earth labels apart
+{const a=EPIS.find(e=>e.id==='e_p'),b=EPIS.find(e=>e.id==='e0');if(a&&b&&Math.hypot(a.x-b.x,a.y-b.y)<12){a.x=Math.max(6,a.x-3);a.y=Math.min(88,a.y+9);}}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if(/^Pilot-\d+$/.test(P.name||'')&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
