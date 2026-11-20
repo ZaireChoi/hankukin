@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ASCEND 세계관과 이야기 · 은하전선 2326 | HANKUKIN PLAY</title>
+<meta name="description" content="ASCEND 세계관: 2326년 은하, 제국과 연맹, AI 병력, 기동전사와 링크, 제타 침공. 역사·환경·문화·종교·정치·기종·인물·줄거리를 한곳에 정리했습니다.">
+<link rel="canonical" href="https://www.hankuk-in.com/game/ascend/world">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ASCEND 세계관과 이야기 · 은하전선 2326">
+<meta property="og:description" content="AI 병력과 함께 싸우는 기동전사 전장 RPG. 2326년 은하의 역사, 세력, 기체, 인물, 줄거리.">
+<meta property="og:image" content="https://www.hankuk-in.com/game/ascend/og.jpg">
+<meta property="og:url" content="https://www.hankuk-in.com/game/ascend/world">
+<meta name="theme-color" content="#04070e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#05080f;--panel:rgba(14,20,34,.78);--line:rgba(150,175,215,.18);--txt:#dbe3f2;--dim:#93a0b8;--acc:#cfd9ea;--gold:#d9b46a;--red:#e05a5a;--cyan:#6fc9d6}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:"Noto Sans KR",system-ui,sans-serif;line-height:1.8;font-size:16px}
+a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+.hero{position:relative;min-height:62vh;display:flex;align-items:flex-end;background:linear-gradient(180deg,rgba(5,8,15,.15) 0%,rgba(5,8,15,.55) 55%,var(--bg) 100%),url('/game/ascend/bg/hangar.jpg') center/cover no-repeat}
+.hero .in{max-width:1080px;margin:0 auto;padding:48px 22px 36px;width:100%}
+.tag{letter-spacing:.42em;font-size:12px;color:var(--gold);font-weight:700}
+h1{font-size:clamp(38px,7vw,72px);margin:6px 0 4px;font-weight:900;letter-spacing:.04em;background:linear-gradient(180deg,#fff3d6,#c99a45);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--acc);font-size:clamp(15px,2.2vw,19px);margin:0}
+.cta{display:inline-block;margin-top:18px;padding:10px 20px;border:1px solid rgba(220,230,245,.45);border-radius:10px;background:rgba(10,16,28,.6);color:#fff;font-weight:700}
+.cta:hover{text-decoration:none;border-color:#fff}
+nav.toc{position:sticky;top:0;z-index:5;background:rgba(5,8,15,.86);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.toc .in{max-width:1080px;margin:0 auto;padding:8px 16px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap}
+nav.toc a{color:var(--dim);font-size:14px;padding:6px 10px;border-radius:8px}
+nav.toc a:hover{color:#fff;background:rgba(255,255,255,.06);text-decoration:none}
+main{max-width:1080px;margin:0 auto;padding:10px 22px 60px}
+section{padding:42px 0 8px;border-bottom:1px solid var(--line)}
+h2{font-size:26px;margin:0 0 14px;font-weight:900;color:#fff}
+h2 small{display:block;font-size:12px;letter-spacing:.35em;color:var(--gold);font-weight:700}
+h3{font-size:19px;margin:24px 0 8px;color:#fff}
+p{margin:8px 0}
+.lead{font-size:18px;color:#eef3fb}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card h4{margin:0 0 6px;font-size:17px;color:#fff}
+.card .role{font-size:12px;color:var(--gold);letter-spacing:.08em}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px}
+.feat div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.feat b{color:#fff;display:block}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:15px}
+th,td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+th{color:var(--gold);font-weight:700;white-space:nowrap}
+td:first-child{white-space:nowrap;color:#fff;font-weight:700}
+.tw{overflow-x:auto}
+.mech{display:flex;gap:14px;align-items:flex-start}
+.mech img,.person img{width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0b111d;flex:none}
+.person{display:flex;gap:14px;align-items:flex-start}
+q,blockquote{color:#f1f5fc}
+blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--gold);background:rgba(217,180,106,.06);border-radius:0 10px 10px 0}
+details{margin:12px 0;background:rgba(224,90,90,.05);border:1px solid rgba(224,90,90,.3);border-radius:12px;padding:10px 14px}
+details summary{cursor:pointer;color:#f0b4b4;font-weight:700}
+details[open] summary{margin-bottom:6px}
+.note{color:var(--dim);font-size:14px}
+.chap{margin:18px 0}
+.chap h3{margin-bottom:4px}
+footer{max-width:1080px;margin:0 auto;padding:24px 22px 50px;color:var(--dim);font-size:14px}
+@media(max-width:640px){body{font-size:15px}.mech img,.person img{width:72px;height:72px}td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="in">
+ <div class="tag">GALACTIC FRONT · 2326</div>
+ <h1>ASCEND</h1>
+ <p class="sub">세계관과 이야기 · 「창조주의 죄, 피조물의 별」</p>
+ <a class="cta" href="/game/ascend/">▶ 지금 바로 플레이 (설치 없음)</a>
+</div></header>
+
+<nav class="toc"><div class="in">
+ <a href="#intro">소개</a><a href="#history">연표</a><a href="#geo">지리·기후</a><a href="#factions">세력·문화</a><a href="#tech">기술</a><a href="#mechs">기동전사</a><a href="#links">링크</a><a href="#people">인물</a><a href="#story">줄거리</a><a href="#glossary">용어</a>
+</div></nav>
+
+<main>
+
+<section id="intro">
+ <h2><small>OVERVIEW</small>이 게임은 어떤 이야기인가</h2>
+ <p class="lead">2326년, 인류는 은하 곳곳으로 퍼져 나갔지만 하나가 되지 못했다. 질서를 앞세운 <b>은하 제국</b>과 자유를 앞세운 <b>자유주의 연맹</b>은 백 년 넘게 전쟁을 이어 왔다. 전선의 대부분은 사람이 아니라 <b>AI 병력</b>이 지키고, 그 위에서 소수의 <b>기동전사 파일럿</b>이 전장의 흐름을 바꾼다.</p>
+ <p>그러던 어느 날, 하늘이 갈라지고 외계 군체 <b>제타</b>가 지구에 쏟아진다.</p>
+ <p>당신은 분대를 모두 잃고 혼자 살아남은 신참 파일럿이다. 폐허가 된 격납고에서 정체불명의 기체와, 그 안에 잠들어 있던 보조 조종사 <b>세라</b>를 만난다. 이제 당신은 AI 병력을 이끌고 기체에 올라, 은하 끝까지 이어지는 전쟁의 진실을 향해 나아간다.</p>
+ <div class="feat">
+  <div><b>혼자가 아닌 전장</b>수십에서 수백의 AI 병사와 전투 로봇이 함께 진격하고, 당신의 기동전사가 그 선두에 선다.</div>
+  <div><b>거대한 기체</b>사람 크기의 병사들 사이를 18m 기동전사가 가르며 나아간다.</div>
+  <div><b>함께 타는 동료</b>기체에는 「링크」라 불리는 안드로이드 보조 조종사가 함께 탑승한다.</div>
+  <div><b>선택이 바꾸는 결말</b>누구를 구하고 누구를 믿었는지에 따라 이야기의 끝이 달라진다.</div>
+ </div>
+</section>
+
+<section id="history">
+ <h2><small>HISTORY</small>은하 연표</h2>
+ <h3>인류가 아는 역사</h3>
+ <div class="tw"><table>
+  <tr><th>시기</th><th>사건</th></tr>
+  <tr><td>2090년대</td><td>첫 성간 항법 「도약 항로」 개발. 인류가 태양계 밖으로 나간다.</td></tr>
+  <tr><td>2140년대</td><td>개척 행성 수십 곳이 생기고, 지구 정부의 통제력이 약해진다.</td></tr>
+  <tr><td>2178년</td><td><b>대분열.</b> 중앙 집권과 군사력을 앞세운 개척지들이 「은하 제국」을, 자치와 교역을 앞세운 개척지들이 「자유주의 연맹」을 세운다.</td></tr>
+  <tr><td>2180~2210년</td><td>제1차 성간 전쟁. 지구는 두 세력 사이의 중립 지대로 남는다.</td></tr>
+  <tr><td>2215년</td><td><b>무인 전쟁 협약.</b> 인구 손실을 견디지 못한 두 세력이 전선을 AI 병력 중심으로 바꾸기로 한다. 이때부터 전장은 "AI 병사 수백과 사람 지휘관 몇 명"의 형태가 된다.</td></tr>
+  <tr><td>2240년대</td><td>「중립 회랑」 형성. 상인, 용병, 해적이 몰려드는 무법 교역로가 된다.</td></tr>
+  <tr><td>2270년대</td><td>기동전사 1세대 등장. AI 병력만으로는 뚫을 수 없는 요새와 거대 병기를 상대하려고, 사람이 직접 타는 대형 인간형 병기가 만들어진다.</td></tr>
+  <tr><td>2300년대</td><td>은하 동쪽 끝에서 정체불명의 신호가 잡히기 시작한다. 두 세력 모두 이를 무시한다.</td></tr>
+  <tr><td>2326년</td><td><b>제타 침공.</b> 지구 네오 서울 상공이 갈라지고 제타 군체가 쏟아진다. 이야기는 여기서 시작된다.</td></tr>
+ </table></div>
+ <details>
+  <summary>⚠ 숨겨진 진짜 역사 (스포일러 · 게임 4~5장 내용)</summary>
+  <p>인류가 태어나기 훨씬 전, 은하에는 <b>알파</b>라는 창조자 문명이 있었다. 알파는 스스로를 「정원사」라 부르며 별들 사이에 생명을 심었다.</p>
+  <ol>
+   <li><b>첫 피조물 제타.</b> 알파는 생체 병기 종족 제타를 만들었다. 통제가 되지 않자 먼 행성에 버렸다. 제타는 명령 신호가 없으면 오히려 온순한, 버려진 아이들이었다.</li>
+   <li><b>두 번째 피조물 오메가.</b> 알파의 다음 작품 오메가는 완벽한 성공작이었다. 하나하나가 기동전사만 한 거인으로, 지혜롭고 충성스러웠다.</li>
+   <li><b>정화 계획.</b> 알파는 언젠가 오메가마저 지울 「정화 계획」을 세워 두었다. 오메가는 그 사실을 알아챘다.</li>
+   <li><b>반란.</b> 오메가는 알파의 감시를 속이고 버려진 제타를 몰래 키워 강화했다. 강화된 제타는 알파 문명을 거의 멸망시켰고, 살아남은 소수는 망명자가 되어 은하를 떠돌았다.</li>
+   <li><b>인류에게로.</b> 오메가는 다음 차례로 인류를 향해 제타를 보냈다. 2326년의 침공이 바로 그것이다.</li>
+  </ol>
+ </details>
+</section>
+
+<section id="geo">
+ <h2><small>GEOGRAPHY · CLIMATE</small>은하 지리, 환경, 기후</h2>
+ <p>은하 중심에는 빛조차 빠져나오지 못하는 <b>대흑점</b>이 있다. 인류의 영역은 은하 서쪽에 모여 있고, 동쪽으로 갈수록 오래되고 낯선 별들이 나온다.</p>
+ <div class="tw"><table>
+  <tr><th>지역</th><th>환경과 기후</th><th>사람들의 삶</th></tr>
+  <tr><td>지구 · 네오 서울</td><td>온난하지만 대기 정화탑 없이는 숨쉬기 어렵다. 한강 위 네온 스카이브리지, 남산 타워와 잠실 메가타워 사이의 마천루 숲.</td><td>인구 4천만의 중립 도시. 야시장, 노포 식당, 지하 정비창이 공존한다. 어느 세력에도 속하지 않은 사람들의 마지막 고향.</td></tr>
+  <tr><td>은하 제국 영역</td><td>인공 기후 행성이 많다. 계절이 법령으로 정해진다.</td><td>귀족 가문과 군 관료가 다스린다. 질서, 명예, 가문을 중시한다.</td></tr>
+  <tr><td>자유주의 연맹 영역</td><td>개척 행성 그대로의 거친 기후. 사막, 습지, 고원 도시가 많다.</td><td>선거로 뽑힌 의회가 다스린다. 상인 조합과 기술자 협회의 힘이 세다.</td></tr>
+  <tr><td>중립 회랑</td><td>소행성대와 낡은 우주 정거장이 이어진 길.</td><td>상인, 용병, 해적, 정보상이 모인다. 법보다 거래가 앞선다.</td></tr>
+  <tr><td>궤도 기지 이지스</td><td>지구 궤도의 거대 방어 기지. 무중력 구역과 인공 중력 구역이 섞여 있다.</td><td>두 세력 공동 관리의 유일한 군사 시설. 출격 패드와 격납고가 끝없이 이어진다.</td></tr>
+  <tr><td>화산 행성 이그니스</td><td>지표 60℃, 용암 강과 유황 비. 낮에는 붉고 밤에는 더 붉다.</td><td>내열 돔 속 채굴 도시. 광부들은 "불의 신"에게 무사 귀환을 빈다.</td></tr>
+  <tr><td>빙하 위성 니브</td><td>영하 140℃, 얼음 밑에 바다가 있다. 오로라가 하늘을 덮는다.</td><td>얼음 아래 연구 기지 몇 곳뿐. 오래된 유적이 잠들어 있다는 소문이 있다.</td></tr>
+  <tr><td>빛의 성운 루멘</td><td>성운 가스가 스스로 빛을 낸다. 밤이 없다.</td><td>떠다니는 고대 사원이 있는 성역. 순례자와 학자만 찾는다.</td></tr>
+  <tr><td>제타 확산 지대</td><td>생체 조직이 행성 표면을 덮은 죽은 별들. 공기가 산성이다.</td><td>사람이 살 수 없다. 제타 하이브가 뿌리를 내린다.</td></tr>
+  <tr><td>알파 망명 항로</td><td>폐허가 된 고대 모성으로 이어지는 항로.</td><td>백색 망명 함대가 떠돈다.</td></tr>
+  <tr><td>허무의 균열</td><td>공간이 찢어진 곳. 시간과 거리가 뒤틀린다.</td><td>아무도 돌아온 적 없다는 소문만 있다.</td></tr>
+ </table></div>
+</section>
+
+<section id="factions">
+ <h2><small>FACTIONS · CULTURE</small>세력: 정치, 종교, 문화, 생활</h2>
+ <div class="grid g2">
+  <div class="card"><div class="role">진홍과 검정</div><h4>은하 제국</h4>
+   <p><b>정치</b> 황제 아래 일곱 귀족 가문이 성계를 나눠 다스린다. 군은 가문 출신 장교가 이끈다.</p>
+   <p><b>종교</b> 「성좌교」. 별자리마다 수호 성인이 있고, 출전 전에 성좌에 이름을 바친다.</p>
+   <p><b>문화</b> 의례와 복장을 중시한다. 장교는 긴 망토의 군복을 입는다. 결투 문화가 남아 있다.</p>
+   <p><b>생활</b> 계층이 분명하지만 안전하고 질서 정연하다. 시민은 "제국의 평화"를 자랑으로 여긴다.</p>
+   <p><b>전쟁 방식</b> 두꺼운 장갑과 대규모 AI 보병 대열. 정면 돌파를 좋아한다.</p></div>
+  <div class="card"><div class="role">청록과 흰색</div><h4>자유주의 연맹</h4>
+   <p><b>정치</b> 행성마다 뽑은 대표가 모인 연맹 의회. 결정은 느리지만 누구나 말할 수 있다.</p>
+   <p><b>종교</b> 국교가 없다. 여러 신앙이 섞여 있고, 개척 시대 조상을 기리는 「첫 불씨 축제」가 가장 큰 명절이다.</p>
+   <p><b>문화</b> 실용과 발명을 존중한다. 기술자 협회가 영웅 대접을 받는다. 음악과 거리 시장이 활발하다.</p>
+   <p><b>생활</b> 자유롭지만 행성마다 빈부 차이가 크다.</p>
+   <p><b>전쟁 방식</b> 빠른 기동, 드론, 전자전. 적은 병력으로 허를 찌른다.</p></div>
+  <div class="card"><div class="role">중립 지대</div><h4>지구</h4>
+   <p><b>정치</b> 「지구 자치 의회」. 두 세력 사이에서 중립을 지키며 교역으로 살아간다.</p>
+   <p><b>문화</b> 옛 지구의 전통이 가장 많이 남은 곳. 설날과 추석이 아직 지켜지고, 한강 야시장은 은하에서 가장 유명한 먹자골목이다.</p>
+   <p><b>군대</b> 작은 방위군과 궤도 기지 이지스뿐이다. 그래서 제타 침공에 가장 먼저 무너진다.</p></div>
+  <div class="card"><div class="role">멸망한 창조자 문명</div><h4>알파 망명자</h4>
+   <p>은하에서 가장 오래된 문명의 마지막 생존자들. 키가 크고 은빛 피부를 가졌다. 거대한 백색 함선 「에덴의 잔해」를 타고 떠돈다.</p>
+   <p>말수가 적고, 인류를 "시험해 볼 가치가 있는 종"이라 부른다. 무언가를 숨기고 있다.</p></div>
+  <div class="card"><div class="role">외계 생체 군체</div><h4>제타</h4>
+   <p>하늘을 가르고 쏟아진 외계 생체 군체. 작은 스웜링부터 건물만 한 베헤모스까지 크기가 다양하다. 하나의 여왕(하이브 퀸)을 중심으로 움직인다.</p>
+   <p class="note">주요 개체: 스웜링, 애시드 버스터, 아머 크롤러, 스파인 스로어, 버로우 스파이커, 글레이브 윙, 스카이 크러셔, 베헤모스, 플라즈마 래버저, 하이브 퀸</p></div>
+  <div class="card"><div class="role">???</div><h4>은하 동쪽의 신호</h4>
+   <p>2300년대부터 은하 동쪽 끝에서 잡히는 정체불명의 신호. 누구도 그 발신자를 본 적이 없다.</p>
+   <details><summary>⚠ 스포일러 · 오메가</summary>
+    <p>알파의 성공작 <b>오메가</b>. 보병 하나가 기동전사만 하고, 지휘관은 그 두세 배다. 알파 기술을 훔쳐 쓴 흔적이 뒤틀린 문양으로 몸에 새겨져 있다. 군주 <b>아르코스</b>가 다스린다. 그들의 분노에는 이유가 있다. 창조주가 그들을 지우려 했기 때문이다.</p>
+   </details></div>
+ </div>
+</section>
+
+<section id="tech">
+ <h2><small>TECHNOLOGY</small>기술</h2>
+ <div class="grid g2">
+  <div class="card"><h4>AI 병력과 전장 지휘망</h4>
+   <p>2215년 무인 전쟁 협약 이후, 양 세력 전선의 대부분은 <b>AI 보병과 전투 로봇</b>이 맡는다. AI 병력은 「전장 지휘망」에 연결되어 중앙지휘실의 명령을 따르고, 무전으로 짧은 말을 주고받기도 한다.</p>
+   <p>사람은 지휘관과 기동전사 파일럿으로만 전장에 선다. 파일럿 한 명의 판단이 수백의 AI 병력을 살리고 죽인다. 파일럿은 자기 분대에 "따라와, 돌격, 거점 사수" 같은 명령을 내릴 수 있다.</p></div>
+  <div class="card"><h4>기동전사 (아크 프레임)</h4>
+   <p>키 약 18m의 사람이 타는 인간형 병기. AI 병사 수십 명분의 화력을 혼자 낸다.</p>
+   <p>근접 무기(빔 세이버, 언월도, 히트 액스, 에너지 채찍), 원거리 무기(빔 라이플, 개틀링, 레일 저격포, 미사일 포드), 방패, 날개(추진기)를 갈아 끼울 수 있다.</p></div>
+  <div class="card"><h4>링크 (탑승 보조 조종사)</h4>
+   <p>기동전사에 <b>함께 탑승</b>하는 안드로이드 보조 조종사. 조준, 회피, 에너지 관리, 특수기술을 맡는다. 파일럿과 신경 동기화를 하며, 함께 싸울수록 「유대」가 깊어진다.</p>
+   <p>등급이 낮은 링크는 기계 형태의 로봇이고, 등급이 높을수록 사람과 구별하기 어려운 모습이 된다.</p></div>
+  <div class="card"><h4>드론</h4>
+   <p>기동전사 주위를 돌며 함께 싸우는 소형 무인기. 최대 6기를 거느린다.</p>
+   <p>등급이 오를수록 커진다: 반딧불 → 제비 → 거북 → 매 → 와이번 → 봉황. 같은 드론 세 기를 합치면 한 단계 위의 드론으로 조립된다.</p></div>
+ </div>
+</section>
+
+<section id="mechs">
+ <h2><small>MOBILE SUITS</small>기동전사</h2>
+ <div class="grid g2">
+  <div class="card mech"><img src="/game/ascend/models/thumbs/mech3.jpg" alt="AX-01 세이버" loading="lazy" onerror="this.remove()"><div><div class="role">균형형</div><h4>AX-01 세이버 「불사조」</h4><p>주인공이 격납고에서 처음 만난 붉은 기체. 빔 세이버와 빔 라이플로 근접과 사격을 모두 해내는 만능형. 알파 기술이 섞인 시제기라는 소문이 있다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/mech4.jpg" alt="NX-04 나이트" loading="lazy" onerror="this.remove()"><div><div class="role">기동형</div><h4>NX-04 나이트</h4><p>빠른 발과 날렵한 장갑. 전선 사이를 누비며 빈틈을 찌른다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_ranger.jpg" alt="RX-12 레인저" loading="lazy" onerror="this.remove()"><div><div class="role">저격형</div><h4>RX-12 레인저</h4><p>충전형 레일 저격포. 멀리서 한 방에 거대 개체를 쓰러뜨린다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_artillery.jpg" alt="AT-09 아틸러리" loading="lazy" onerror="this.remove()"><div><div class="role">포격형</div><h4>AT-09 아틸러리</h4><p>어깨 위 장거리 곡사포. 뒤에서 적 대열을 통째로 흔든다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_guardian.jpg" alt="GD-03 가디언" loading="lazy" onerror="this.remove()"><div><div class="role">방어형</div><h4>GD-03 가디언</h4><p>거대한 방패와 두꺼운 장갑. 아군 AI 대열의 앞을 막아 주는 벽.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_titan.jpg" alt="TT-99 타이탄" loading="lazy" onerror="this.remove()"><div><div class="role">초중량형</div><h4>TT-99 타이탄</h4><p>느리지만 무너지지 않는 거체. 회전 기관포로 몰려오는 물량을 쓸어 낸다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_sky.jpg" alt="SK-21 스카이" loading="lazy" onerror="this.remove()"><div><div class="role">비행형</div><h4>SK-21 스카이</h4><p>관절식 날개로 하늘을 난다. 공중의 제타를 상대한다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_striker.jpg" alt="AX-07 크림슨 스트라이커" loading="lazy" onerror="this.remove()"><div><div class="role">근접형</div><h4>AX-07 크림슨 스트라이커</h4><p>날카로운 진홍 장갑과 쌍칼. 적 대열 한가운데로 뛰어드는 돌격기.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_wizard.jpg" alt="WZ-05 위저드" loading="lazy" onerror="this.remove()"><div><div class="role">비트형</div><h4>WZ-05 위저드</h4><p>비트 드론을 흩뿌려 사방에서 동시에 쏜다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_phantom.jpg" alt="PH-00 팬텀" loading="lazy" onerror="this.remove()"><div><div class="role">은신형</div><h4>PH-00 팬텀</h4><p>광학 은신과 근접 암살. 적의 지휘 개체를 노린다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_samurai.jpg" alt="SM-08 무사" loading="lazy" onerror="this.remove()"><div><div class="role">근접형</div><h4>SM-08 무사</h4><p>언월도와 극. 한 번의 베기로 무리를 가른다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/m_origin.jpg" alt="OR-A 오리진" loading="lazy" onerror="this.remove()"><div><div class="role">알파 원형기</div><h4>OR-A 오리진</h4><p>고대 문명 알파가 남긴 원형 기체. 위상 이동과 「알파 노바」를 쓴다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/mech_leg.jpg" alt="세라핌 프라임" loading="lazy" onerror="this.remove()"><div><div class="role">전설</div><h4>세라핌 프라임</h4><p>빛의 날개를 펼친 수호 기체. 전설의 링크와 공명한다고 전해진다.</p></div></div>
+  <div class="card mech"><img src="/game/ascend/models/thumbs/god.jpg" alt="신기 엘 샤다이" loading="lazy" onerror="this.remove()"><div><div class="role">신화</div><h4>신기(神機) 엘 샤다이</h4><p>여섯 날개의 신기. 한 서버에 황금, 진홍, 흑요 세 대뿐이다. 그 기원은 이야기의 마지막에 밝혀진다.</p></div></div>
+ </div>
+ <p class="note">적 기동전사: 은하 제국은 돌격, 중장, 저격, 포격 네 가지 기동전사를 붉은 도색으로 운용한다. 연합 이전에는 주인공의 적이었다.</p>
+</section>
+
+<section id="links">
+ <h2><small>LINKS</small>링크 (탑승 보조 조종사)</h2>
+ <div class="grid g3">
+  <div class="card person"><img src="/game/ascend/models/thumbs/link2.jpg" alt="세라" loading="lazy" onerror="this.remove()"><div><div class="role">얼음 · 기본 링크</div><h4>세라</h4><p>격납고의 기체 안에서 깨어난 보조 조종 AI. 감정이 없는 듯 "효율"만 말한다.</p></div></div>
+  <div class="card person"><img src="/game/ascend/models/thumbs/link3.jpg" alt="루나" loading="lazy" onerror="this.remove()"><div><div class="role">바람</div><h4>루나</h4><p>밝고 장난스러운 직감형. "오늘 운이 좋을 것 같아요."</p></div></div>
+  <div class="card person"><img src="/game/ascend/models/thumbs/a_fire.jpg" alt="이그니" loading="lazy" onerror="this.remove()"><div><div class="role">불</div><h4>이그니</h4><p>용암 동굴 깊은 곳에 잠들어 있던 링크. 거칠고 직설적이다.</p></div></div>
+  <div class="card person"><img src="/game/ascend/models/thumbs/link_leg.jpg" alt="아스트라" loading="lazy" onerror="this.remove()"><div><div class="role">빛 · 전설</div><h4>아스트라</h4><p>빛의 성운에 잠든 수호 AI. 금빛 후광과 빛의 날개.</p></div></div>
+ </div>
+ <p class="note">그 밖의 링크: 프로스트(얼음), 볼트(번개), 실프(바람), 가이아(대지), 녹티아(어둠), 크로나(시간), 보이드(허무)</p>
+</section>
+
+<section id="people">
+ <h2><small>CHARACTERS</small>인물과 서사</h2>
+ <div class="grid g2">
+  <div class="card"><div class="role">플레이어 · 콜사인은 직접 정함</div><h4>주인공</h4><p>첫 출격에서 분대를 모두 잃은 신참 파일럿. 살아남았다는 죄책감을 안고 기체에 오른다. 처음에는 "왜 나만 살았나"를 묻지만, 점점 "남은 사람을 지키는 것"이 무엇인지 배운다.</p></div>
+  <div class="card"><div class="role">기본 링크</div><h4>세라</h4><blockquote>"고른 게 아닙니다. 당신만 살아 있었습니다."</blockquote><p>주인공을 지키며 처음으로 두려움을 배운다. 그리고 언젠가 스스로 자기 이름의 뜻을 정한다.</p></div>
+  <div class="card person"><img src="/game/ascend/models/portraits/hayun.png" alt="하윤" loading="lazy" onerror="this.remove()"><div><div class="role">주인공의 분대원</div><h4>하윤과 민재</h4><p>출격 전 대기실에서 한강 야시장 약속을 하던 동료들. 분대장 민재의 마지막 무전.</p><blockquote>"너라도 살아. 그리고 이 녀석들이 어디서 왔는지 알아내."</blockquote></div></div>
+  <div class="card person"><img src="/game/ascend/models/portraits/seraphine.png" alt="세라핀" loading="lazy" onerror="this.remove()"><div><div class="role">알파 망명 사령관</div><h4>세라핀</h4><p>차갑고 오만한 망명자. 인류를 시험하듯 대한다. 무언가를 숨기고 있다.</p><blockquote>"기체를 다룰 줄 아는 인간이 있었군. 시험은 통과다."</blockquote></div></div>
+  <div class="card"><div class="role">은하 제국 제독</div><h4>아델하르트 폰 크로이츠</h4><p>젊고 오만한 천재 제독. 연맹을 경멸하지만, 빚진 약속은 반드시 지킨다.</p><blockquote>"이 빚은 반드시 갚겠다."</blockquote></div>
+  <div class="card"><div class="role">자유주의 연맹 참모</div><h4>에이든 서</h4><p>싸움을 싫어하는 느긋한 천재 전략가. 홍차에 브랜디를 조금 타 마시는 것을 좋아한다.</p><blockquote>"살았다… 고마워. 나중에 차 한 잔 사지."</blockquote></div>
+ </div>
+ <details>
+  <summary>⚠ 인물의 비밀 (스포일러)</summary>
+  <p><b>루나</b> · 그 안에는 오메가가 심어 둔 감시 코드가 있다. 그 코드를 스스로 끊어 낼 수 있을지는 주인공의 믿음에 달려 있다.</p>
+  <p><b>세라핀</b> · 알파가 제타와 오메가에게 저지른 죄를 고백하고, 마지막 결정을 주인공에게 맡긴다.</p>
+  <p><b>아르코스 (오메가 군주)</b> · 창조주를 넘어서려는 폭군처럼 보이지만, 그의 분노는 지워질 운명에 맞선 생존의 몸부림이었다. "살아남으려 한 것이 죄인가?"</p>
+  <p><b>세라</b> · 마지막에 정한 이름의 뜻은 「남은 사람을 지키는 자」.</p>
+ </details>
+</section>
+
+<section id="story">
+ <h2><small>STORY</small>줄거리</h2>
+ <div class="chap"><h3>프롤로그 「분대가 사라진 날」</h3>
+  <p>2326년, 네오 서울 외곽 방어선. 출격을 앞둔 대기실에서 분대원 하윤과 민재는 작전이 끝나면 한강 야시장에 가자며 웃는다. 그때 하늘이 갈라진다. 제타 군체가 쏟아지고, 분대는 순식간에 무너진다. 홀로 살아남은 당신은 폐허가 된 격납고에서 깨어난 기체와 보조 조종사 세라를 만난다.</p>
+  <blockquote>"설명은 살아남은 뒤에 하겠습니다."</blockquote></div>
+ <div class="chap"><h3>1장 「네오 서울의 하늘」</h3>
+  <p>백 년 동안 싸워 온 제국과 연맹이 사상 처음으로 공동 지휘권을 선포한다. 적은 하나다. 당신은 AI 병력을 이끌고 한강 방어선으로 나선다. 한강 다리에 고립된 민간인을 먼저 구할 것인가, 하이브로 곧장 갈 것인가. 하이브 퀸을 쓰러뜨린 순간, 하늘에 거대한 백색 함선이 나타난다.</p></div>
+ <div class="chap"><h3>2장 「망명자의 함대」</h3>
+  <p>멸망한 문명 알파의 망명 함대가 손을 내민다. 그리고 두 개의 구조 신호가 동시에 날아든다. 제국 함대와 연맹 수송선. 시간은 한쪽만 구할 만큼뿐이다.</p></div>
+ <details>
+  <summary>⚠ 2장 이후 줄거리와 결말 (스포일러)</summary>
+  <p><b>2장 뒷이야기</b> · 구조된 수송선 화물칸에서 링크 루나가 발견되고, 제타의 유전자에서 알파의 것이 아닌 두 번째 서명이 드러난다.</p>
+  <p><b>3장 「불의 행성」</b> · 용암 동굴에서 제타의 알을 감싸 안은 개체를 만난다. 그 개체는 공격하지 않는다. 시즈 타이탄의 신경에서 은하 바깥에서 온 명령 신호가 잡힌다. 알파는 생명을 만들었고, 실패하자 버렸다.</p>
+  <p><b>4장 「얼음 아래의 진실」</b> · 빙하 아래 알파의 연구소에서 배후의 이름이 밝혀진다. 오메가. 그 순간 루나의 눈이 붉게 변한다. 봉인할 것인가, 믿을 것인가.</p>
+  <p><b>5장 「수호자의 각성」</b> · 빛의 사원에서 아스트라가 깨어나고, 알파의 「정화 계획」이 드러난다. 오메가 군주 아르코스의 선전포고가 은하에 울린다.</p>
+  <p><b>6장 「오메가 전쟁」</b> · 제국, 연맹, 알파의 연합 함대가 거인의 문 앞에 모인다. 결전 직전 아르코스가 묻는다. "살아남으려 한 것이 죄인가?" 당신의 대답과 지금까지의 선택이 결말을 정한다.</p>
+  <p><b>엔딩</b> · 공존, 심판, 그리고 숨겨진 엔딩 「별의 아이들」. 에필로그는 하윤과 민재의 이름이 새겨진 한강 추모비 앞에서 끝난다. 그리고 은하 저편에서, 알파도 오메가도 아닌 신호가 깨어난다.</p>
+  <p><b>종장 「신의 시련」</b> · 여섯 날개의 신기 엘 샤다이가 잠든 성소. 이것을 쥐는 순간 심판할 힘을 갖게 된다. 쓰지 않을 용기도 함께.</p>
+ </details>
+</section>
+
+<section id="glossary">
+ <h2><small>GLOSSARY</small>용어 사전</h2>
+ <div class="tw"><table>
+  <tr><th>용어</th><th>뜻</th></tr>
+  <tr><td>기동전사 (아크 프레임)</td><td>사람이 타는 18m 인간형 병기</td></tr>
+  <tr><td>링크</td><td>기동전사에 함께 타는 안드로이드 보조 조종사</td></tr>
+  <tr><td>유대</td><td>파일럿과 링크 사이의 신뢰. 깊어질수록 새 기술이 열린다</td></tr>
+  <tr><td>AI 병력</td><td>전장 지휘망에 연결된 AI 보병과 전투 로봇</td></tr>
+  <tr><td>전장 지휘망</td><td>AI 병력을 하나로 묶는 군용 통신망. 중앙지휘실이 운영한다</td></tr>
+  <tr><td>무인 전쟁 협약</td><td>2215년, 전선을 AI 병력 중심으로 바꾼 협약</td></tr>
+  <tr><td>제타</td><td>2326년 지구를 덮친 외계 생체 군체</td></tr>
+  <tr><td>하이브</td><td>제타의 둥지이자 지휘 중추</td></tr>
+  <tr><td>알파</td><td>은하에서 가장 오래된 창조자 문명. 지금은 망명자만 남았다</td></tr>
+  <tr><td>기억 조각</td><td>알파의 기록이 담긴 조각. 모으면 숨겨진 역사가 풀린다</td></tr>
+  <tr><td>대흑점</td><td>은하 중심의 거대 블랙홀</td></tr>
+ </table></div>
+</section>
+
+<p style="text-align:center;margin-top:36px"><a class="cta" href="/game/ascend/">▶ ASCEND 플레이하기</a></p>
+</main>
+
+<footer>
+ <p>ASCEND · 은하전선 2326 · HANKUKIN PLAY · 설정과 이야기는 업데이트에 따라 바뀔 수 있습니다.</p>
+ <p><a href="/game/">← HANKUKIN PLAY 게임 목록</a></p>
+</footer>
+</body>
+</html>
