@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.4 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.5 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2535,7 +2535,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
  const ot=(G&&(G.rpg||G.arena))?null:hudOrderText();if(ot){const age=G.t-G.order.t,fresh=age<4;c.font=fnt(mob?12:13.5);const lab=t('order')+'  ▸  '+ot,w=c.measureText(lab).width+26,yy=oy+26;plate(cx-w/2,yy,w,22,6,fresh?`rgba(90,62,8,${.75+.2*Math.sin(now*8)})`:'rgba(6,11,22,.72)',fresh?'#ffc24a':'rgba(255,194,74,.4)');c.fillStyle=fresh?'#fff':'#ffc24a';c.textAlign='center';c.fillText(lab,cx,yy+15.5);}
  // ---- player plate ----
  const py0=mob?92:10,pw=mob?176:226,ph=mob?56:70;plate(10,py0,pw,ph,10);c.fillStyle='rgba(255,194,74,.9)';c.fillRect(10,py0+10,3,ph-10);
- {const hx=34,hy=py0+ph/2,hr=mob?15:19;c.beginPath();for(let i=0;i<6;i++){const a=i/6*6.283-Math.PI/2;c.lineTo(hx+Math.cos(a)*hr,hy+Math.sin(a)*hr);}c.closePath();c.fillStyle='rgba(30,52,100,.95)';c.fill();c.strokeStyle='#ffc24a';c.lineWidth=1.5;c.stroke();c.fillStyle='#ffc24a';c.font=fnt(mob?13:15,800,1);c.textAlign='center';c.fillText(P.rank,hx,hy+5);}
+ {const hx=34,hy=py0+ph/2,hr=mob?15:19;c.beginPath();for(let i=0;i<6;i++){const a=i/6*6.283-Math.PI/2;c.lineTo(hx+Math.cos(a)*hr,hy+Math.sin(a)*hr);}c.closePath();c.fillStyle='rgba(30,52,100,.95)';c.fill();c.strokeStyle='#ffc24a';c.lineWidth=1.5;c.stroke();c.fillStyle='#ffc24a';c.font=fnt(mob?13:15,800,1);c.textAlign='center';c.fillText((window.__plv?window.__plv():P.rank),hx,hy+5);}
  const tx0=mob?56:62;c.textAlign='left';c.font=fnt(mob?13:15);c.fillStyle='#fff';c.fillText(fitText(c,G.local.name||P.name,pw-tx0-8),tx0,py0+(mob?18:21));c.font=fnt(11.5,600);c.fillStyle=ME;c.fillText(rankName(P.rank),tx0,py0+(mob?32:36));
  const myRow=G.client?(G.sb||[]).find(r=>r[0]===G.local.sid):null;const sc=G.client?(myRow?myRow[6]:0):G.local.score;
  c.font=fnt(12,600);c.fillStyle='#c9d4ea';c.fillText(t('score')+' '+sc,tx0,py0+(mob?47:52));c.fillStyle=autoOn()?'#4ee6a0':'#6b7a99';c.fillText((autoOn()?(LANG==='en'?'AUTO-AIM ●':'자동 조준 ●'):(LANG==='en'?'AUTO-AIM ○':'자동 조준 ○'))+(touchMode?'':' [F]'),tx0+(mob?62:76),py0+(mob?47:52));
@@ -4206,7 +4206,7 @@ const HUNT=[
  {id:'h6',area:'e5',req:'e5',min:38,max:50,pool:['owalker','halpha','ztank'],rare:['oknight'],n:K('거인의 문 전장','Gate of Giants Front'),bg:'gate'},
  {id:'h7',area:'e6',req:'e6',min:48,max:60,pool:['voidhopper','owalker','zguard'],rare:['oshadow'],n:K('허무의 균열','Void Rift'),bg:'sanctum'}];
 const LVMAX=60;
-const lvNeed=L=>L<30?Math.floor(20+L*L*1.2):Math.floor(60*Math.pow(L,1.55)*(L>20?1+(L-20)*.14:1)*(L>35?1+(L-35)*.3:1)*(L>50?1+(L-50)*.5:1));
+const lvNeed=L=>L<30?Math.floor(40+L*L*3):Math.floor(60*Math.pow(L,1.55)*(L>20?1+(L-20)*.14:1)*(L>35?1+(L-35)*.3:1)*(L>50?1+(L-50)*.5:1));
 const plv=()=>{const r=R();if(!r.lv){r.lv=1;r.exp=0;}return r.lv;};
 function gainExp(n,quiet){const r=R();plv();if(r.lv>=LVMAX){return;}r.exp=(r.exp||0)+Math.max(1,Math.round(n*(Date.now()<(r.xpUntil||0)?2:1)));let up=0;while(r.lv<LVMAX&&r.exp>=lvNeed(r.lv)){r.exp-=lvNeed(r.lv);r.lv++;up++;}
  if(up){saveP();try{announce('LEVEL UP',L('파일럿 레벨 ','Pilot Lv ')+r.lv,'',true,'#ffd166');if(G&&G.local&&G.local.unit){const u=G.local.unit;u.hp=u.mhp;for(let i=0;i<40;i++){const a=Math.random()*6.28;part(u.x+Math.cos(a)*40,u.y+Math.sin(a)*40,Math.cos(a)*120,Math.sin(a)*120,.6,i%2?'#ffd166':'#ffffff',3,30+Math.random()*60);}}}catch(e){}}}
@@ -4440,7 +4440,7 @@ const RIFT_GUARD=['pboss','icetitan','oknight','alphabeh','oshadow'];
 {const _rh=renderHunt;renderHunt=function(B){_rh(B);const r=R();const open=epS(RIFTZ.req).done;const best=r.riftBest||0;const card=document.createElement('div');card.className='epi';card.style.cssText='margin:0 0 12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid #c58cff;box-shadow:0 0 18px rgba(197,140,255,.25);background:linear-gradient(90deg,rgba(60,20,90,.55),rgba(10,10,30,.4))';
   card.innerHTML=`<div style="flex:1;min-width:240px"><b style="color:#c58cff;font-size:18px">⫽ ${L('균열 던전','Rift Dungeon')}</b><br><small>${L('5분 안에 몬스터를 쓸어 진행도를 채우면 균열 수호자가 나타납니다. 단계가 오를수록 적이 강해지고 보상이 커집니다. 만렙(60) 뒤에는 경험치가 초월 레벨로 쌓입니다.','Fill the progress bar within 5 minutes to summon the Rift Guardian. Higher tiers mean tougher foes and bigger rewards. After level 60, EXP flows into Paragon levels.')}</small><br><small>${L('최고 기록 ','Best ')}${best}${L('단계',' ')} · ${L('초월 ','Paragon ')}${r.par||0}</small></div>`+(open?`<div style="display:flex;gap:8px;align-items:center"><select id="rfTier">${Array.from({length:best+1},(_,i)=>i+1).reverse().map(t=>`<option value="${t}">${L('단계 ','Tier ')+t}</option>`).join('')}</select><button class="pri" id="rfGo">${L('균열 진입 ▶','Enter rift ▶')}</button></div>`:`<div>🔒 ${L('「3장 · 불의 행성」 클리어 필요','Clear "Ch.3 · World of Fire"')}</div>`);B.insertBefore(card,B.children[1]||null);const go=card.querySelector('#rfGo');if(go)go.onclick=()=>riftLaunch(+card.querySelector('#rfTier').value);};}
 // hangar-defence landmark for the prologue battle
-{const _dc=window.__rpgDeco;window.__rpgDeco=function(R0){_dc&&_dc(R0);try{const X=(G&&G.rpg)||window.__rpgNext;if(!X||X.epi!=='e_p'||X.obj)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const b=BASES[0];const side=b.x<WW/2?1:-1;const x=b.x-side*220,y=b.y-180;const g=new T3.Group();const pi=typeof propInst==='function'?propInst('p_bunker',230,'l',Math.PI/2):null;if(pi)g.add(pi.wrap);else{const m=new T3.Mesh(new T3.BoxGeometry(200,80,160),new T3.MeshStandardMaterial({color:0x5a6878}));m.position.y=40;g.add(m);}
+{const _dc=window.__rpgDeco;window.__rpgDeco=function(R0){_dc&&_dc(R0);try{const X=(G&&G.rpg)||window.__rpgNext;if(!X||X.epi!=='e_p'||X.obj)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const b=BASES[0];const side=b.x<WW/2?1:-1;const x=b.x+side*170,y=b.y-280;const g=new T3.Group();const pi=typeof propInst==='function'?propInst('p_bunker',230,'l',Math.PI/2):null;if(pi)g.add(pi.wrap);else{const m=new T3.Mesh(new T3.BoxGeometry(200,80,160),new T3.MeshStandardMaterial({color:0x5a6878}));m.position.y=40;g.add(m);}
   const cv=document.createElement('canvas');cv.width=512;cv.height=96;const c=cv.getContext('2d');c.fillStyle='rgba(4,8,18,.7)';c.fillRect(0,14,512,68);c.fillStyle='#ffd166';c.fillRect(0,14,8,68);c.font='bold 40px "Noto Sans KR",sans-serif';c.fillStyle='#fff';c.textBaseline='middle';c.fillText(L('격납고 · 사수하라','HANGAR · HOLD THE LINE'),22,50);const sp=new T3.Sprite(new T3.SpriteMaterial({map:new T3.CanvasTexture(cv),transparent:true,depthTest:false}));sp.scale.set(170,32,1);sp.position.y=150;sp.renderOrder=6;g.add(sp);g.position.set(x,0,y);S0.add(g);}catch(e){}};}
 
 
@@ -5468,7 +5468,7 @@ window.fillEmpty=fillEmpty;
 try{W.beamrifle.rate=.21;W.beamrifle.dmg=28;}catch(e){}
 // ---- growth curve: very fast to Lv30, then the original plateau ----
 
-{const _ge3=gainExp;gainExp=function(n,quiet){const r=R();const before=plv();const boost=before<10?3:before<30?2:1;const v=_ge3(n*boost,quiet);try{const after=r.lv;if(after>before)lvUpShow(before,after);}catch(e){}return v;};}
+{const _ge3=gainExp;gainExp=function(n,quiet){const r=R();const before=plv();const boost=before<10?1.5:before<30?1.2:1;const v=_ge3(n*boost,quiet);try{const after=r.lv;if(after>before)lvUpShow(before,after);}catch(e){}return v;};}
 function lvUpShow(a,b){const ov=document.createElement('div');ov.style.cssText='position:fixed;left:50%;top:30%;transform:translate(-50%,-50%);z-index:70;pointer-events:none;text-align:center';
  const unl=[];DSLV.forEach((lv,i)=>{if(lv>a&&lv<=b)unl.push(L('드론 칸 ','Drone slot ')+(i+1));});
  ov.innerHTML=`<style>@keyframes luIn{0%{opacity:0;transform:scale(.6)}15%{opacity:1;transform:scale(1.08)}25%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-30px)}}@keyframes luRay{to{transform:rotate(360deg)}}</style>
@@ -5518,7 +5518,7 @@ function idleClaim(){const r=R();const now=Date.now();if(!r.lastSeen){r.lastSeen
  ov.innerHTML=`<div style="width:min(520px,92vw);padding:24px;border:1px solid rgba(185,214,230,.3);border-radius:16px;background:linear-gradient(180deg,rgba(14,22,40,.96),rgba(6,10,20,.97));text-align:center"><div style="font:700 13px Rajdhani,sans-serif;letter-spacing:.4em;color:#b9d6e6">IDLE PATROL REPORT</div><div style="font:900 24px 'Noto Sans KR',sans-serif;margin:6px 0 4px">${L('자리 비운 동안의 정찰 보고','While you were away')}</div><small style="opacity:.7">${hh?hh+L('시간 ','h '):''}${mm}${L('분 동안 편대가 ','m — your squadron patrolled ')}${zone?tx(zone.n):L('기지 주변','the base')}${L('을(를) 정찰했습니다. (최대 12시간)','. (max 12 h)')}</small>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:16px 0">${[['EXP',exp.toLocaleString()],['◆',cred.toLocaleString()],['★',sh.toLocaleString()],[L('장비','Gear'),'×'+nItems]].map(a=>`<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px 4px"><small style="opacity:.7">${a[0]}</small><div style="font:800 20px Rajdhani,sans-serif">${a[1]}</div></div>`).join('')}</div>
   <button class="pri" id="idOk" style="font-size:16px;padding:11px 36px">${L('보상 받기','Collect')}</button></div>`;
- document.body.appendChild(ov);ov.querySelector('#idOk').onclick=()=>{r.cred+=cred;r.shards+=sh;for(let i=0;i<nItems;i++)r.inv.push(mkItem(Math.max(0,Math.min(3,zr+(Math.random()<.15?1:0))),null));r.lastSeen=Date.now();saveP();gainExp(exp/ (plv()<10?3:plv()<30?2:1),true);ov.remove();try{autoSort(false);fillEmpty();}catch(e){}render();};return true;}
+ document.body.appendChild(ov);ov.querySelector('#idOk').onclick=()=>{r.cred+=cred;r.shards+=sh;for(let i=0;i<nItems;i++)r.inv.push(mkItem(Math.max(0,Math.min(3,zr+(Math.random()<.15?1:0))),null));r.lastSeen=Date.now();saveP();gainExp(exp/ (plv()<10?1.5:plv()<30?1.2:1),true);ov.remove();try{autoSort(false);fillEmpty();}catch(e){}render();};return true;}
 window.__idleClaim=idleClaim;
 
 
@@ -5789,7 +5789,7 @@ function swMesh(){if(SW.mesh||!R3||!R3.scene||!window.THREE)return SW.mesh;const
  const mat=new T3.MeshStandardMaterial({color:0x6b2a8a,emissive:0x9b3cff,emissiveIntensity:.55,roughness:.5,metalness:.2});SW.mesh=new T3.InstancedMesh(geo,mat,SW.max);SW.mesh.castShadow=false;SW.mesh.receiveShadow=false;SW.mesh.frustumCulled=false;SW.mesh.count=0;SW.mesh.userData.keep=1;R3.scene.add(SW.mesh);SW.dummy=new T3.Object3D();return SW.mesh;}
 function swClear(){SW.list=[];SW.groups={};if(SW.mesh){SW.mesh.count=0;}}
 function swSpawn(n,x,y,opt){if(!use3D())return;const o=opt||{};const gid=++SW.gid;SW.groups[gid]={n:0,alive:0,x,y,chest:o.chest!==false};const cap=swCap();for(let i=0;i<n&&SW.list.length<cap;i++){const a=Math.random()*Math.PI*2,r=Math.random()*o.spread||Math.random()*140;SW.list.push({x:clamp(x+Math.cos(a)*r,30,WW-30),y:clamp(y+Math.sin(a)*r,30,WH-30),vx:0,vy:0,hp:o.hp||40,mhp:o.hp||40,a:0,gid,spd:(o.spd||150)*(.85+Math.random()*.3),atk:0,ph:Math.random()*6});SW.groups[gid].n++;SW.groups[gid].alive++;}return gid;}
-function swHit(s,dmg,src){if(s.dead)return;s.hp-=dmg;if(s.hp<=0){s.dead=1;const G0=SW.groups[s.gid];if(G0){G0.alive--;G0.lx=s.x;G0.ly=s.y;}for(let i=0;i<3;i++)part(s.x,s.y,rnd(-120,120),rnd(-120,120),.35,'#c58cff',5,10);SW.killT.push(G.t);if(src===G.local){try{gainExp(.15,true);const r=R();r.cred+=1;}catch(e){}G.rpg&&(G.rpg.swK=(G.rpg.swK||0)+1);}
+function swHit(s,dmg,src){if(s.dead)return;s.hp-=dmg;if(s.hp<=0){s.dead=1;const G0=SW.groups[s.gid];if(G0){G0.alive--;G0.lx=s.x;G0.ly=s.y;}for(let i=0;i<3;i++)part(s.x,s.y,rnd(-120,120),rnd(-120,120),.35,'#c58cff',5,10);SW.killT.push(G.t);if(src===G.local){try{gainExp(.05,true);const r=R();r.cred+=1;}catch(e){}G.rpg&&(G.rpg.swK=(G.rpg.swK||0)+1);}
   if(G0&&G0.alive<=0&&G0.chest&&G0.n>=12){try{lootDrop(mkItem(Math.min(4,1+Math.floor(Math.random()*2.2)+(((G.rpg&&G.rpg.diff)||0)>3?1:0)),null),G0.lx,G0.ly);pop(L('무리 섬멸 · 보급 상자','Swarm cleared · supply crate'),'#ffd166',false);}catch(e){}}}}
 function swArea(x,y,rad,dmg,src){let n=0;for(const s of SW.list){if(s.dead)continue;if((s.x-x)*(s.x-x)+(s.y-y)*(s.y-y)<rad*rad){swHit(s,dmg,src);n++;}}return n;}
 function swLine(x,y,a,len,w,dmg,src){const cx=Math.cos(a),cy=Math.sin(a);for(const s of SW.list){if(s.dead)continue;const dx=s.x-x,dy=s.y-y;const t=dx*cx+dy*cy;if(t<0||t>len)continue;const pd=Math.abs(dx*cy-dy*cx);if(pd<w)swHit(s,dmg,src);}}
@@ -6050,6 +6050,25 @@ try{const _sh=swHit;swHit=function(s,dmg,src){const was=s.dead;_sh(s,dmg,src);if
 // result screen: what you earned
 {const _sr4=showResult;showResult=function(...a){_sr4.apply(this,a);try{const ov=document.getElementById('rpgRs');const X=(window.__rpgRes&&window.__rpgRes.X)||null;const E=X&&X.earn;if(ov&&E){const go=ov.querySelector('#rpgRsGo');const d=document.createElement('div');d.style.cssText='margin:-6px 0 14px;color:#9ff6ff;font-weight:700';d.innerHTML=L('전투 획득: ','Battle earnings: ')+'◆ '+E.cred.toLocaleString()+(E.items?' · '+L('장비 ','gear ')+E.items:'');go.parentElement.insertBefore(d,go);}}catch(e){}};}
 // auto-fire costs the same energy, so standing still with the trigger held runs dry
+
+
+// ================= v3.5 : playtest fixes — prologue pressure, more swarm, see-through buildings, single level badge, tutorial detection =================
+window.__plv=()=>{try{return plv();}catch(e){return P.rank;}};
+// ---- swarm: more of them, from several sides, tougher, and spitters that shoot back ----
+{let t=0;const _stH2=step;step=function(dt){_stH2(dt);try{const X=G&&G.rpg;const me=G&&G.local&&G.local.unit;if(!X||!me||G.over||!use3D()||(X.obj&&X.obj.k==='field')||X.quest)return;t-=dt;if(t>0)return;t=X.epi==='e_p'?3.5:4.5;
+ const SWm=window.__SW;if(!SWm||SWm.list.length>swCap()*.85)return;const lvk=1+.08*(plv()-1);for(let k=0;k<2;k++){const a=Math.random()*6.28;const x=clamp(me.x+Math.cos(a)*820,60,WW-60),y=clamp(me.y+Math.sin(a)*820,60,WH-60);swSpawn(14,x,y,{hp:Math.round((40+(X.diff||0)*16)*lvk),spread:150,spd:175});}}catch(e){}};}
+// swarm bite hurts more and some swarmlings spit acid from range
+{let t=0;const _stSp2=step;step=function(dt){_stSp2(dt);try{const me=G&&G.local&&G.local.unit;const SWm=window.__SW;if(!me||me.dead||!SWm||!SWm.list.length||G.over)return;t-=dt;if(t>0)return;t=.5;const lvk=1+.05*(plv()-1);let shots=0;
+ for(const s of SWm.list){if(shots>=4)break;if(s.spit==null)s.spit=Math.random()<.22;if(!s.spit)continue;const d=Math.hypot(me.x-s.x,me.y-s.y);if(d>520||d<160)continue;if(Math.random()<.35){const a=Math.atan2(me.y-s.y,me.x-s.x)+rnd(-.12,.12);addBullet({x:s.x,y:s.y,vx:Math.cos(a)*520,vy:Math.sin(a)*520,life:1.3,kind:0,team:1,dmg:(7+((G.rpg&&G.rpg.diff)||0)*2)*lvk,owner:{name:'#zspit',team:1,kind:'env'},dt:'b',h:20,splash:0});shots++;}}}catch(e){}};}
+// ---- tall buildings fade out when they hide your frame ----
+{let t=0;const faded=new Set();const ray=()=>window.THREE?new window.THREE.Raycaster():null;let rc=null;const _stO2=step;step=function(dt){_stO2(dt);try{t-=dt;if(t>0)return;t=.2;const me=G&&G.local&&G.local.unit;if(!me||!R3||!R3.cam||!R3.envG)return;rc=rc||ray();if(!rc)return;const T3=window.THREE;const target=new T3.Vector3(me.x,unitH(me)+40,me.y);const cp=R3.cam.position.clone();const dir=target.clone().sub(cp);const dist=dir.length();dir.normalize();rc.set(cp,dir);rc.far=dist-30;
+ const hits=rc.intersectObjects(R3.envG.children,true);const now=new Set();for(const h of hits){let o=h.object;if(!o.isMesh)continue;now.add(o);}
+ for(const o of now){if(!faded.has(o)){if(!o.userData.origMat){o.userData.origMat=o.material;const mats=Array.isArray(o.material)?o.material:[o.material];const cl=mats.map(m=>{const c=m.clone();c.transparent=true;c.opacity=.22;c.depthWrite=false;return c;});o.material=Array.isArray(o.material)?cl:cl[0];}else o.material=o.userData.fadeMat||o.material;faded.add(o);}}
+ for(const o of [...faded]){if(!now.has(o)){if(o.userData.origMat){o.userData.fadeMat=o.material;o.material=o.userData.origMat;}faded.delete(o);}}}catch(e){}};}
+// ---- tutorial: also count auto-aim fire, skill-bar and touch input ----
+{const _stT2=step;step=function(dt){_stT2(dt);try{const u=G&&G.local&&G.local.unit;if(!u)return;if(u._wantFire||(u.fireT>0&&(u.en==null||u.en<100)))TUTF.fire=1;if(u.qch>0||u.qfire||(u.cd1>0&&u.cd1>(u.m1||1)*.8))TUTF.q=1;}catch(e){}};}
+// ---- prologue: enemies actually reach and hit you ----
+{const _hu11=hurt;hurt=function(u,amt,src,ang,dt){try{const X=G&&G.rpg;const me=G.local&&G.local.unit;if(X&&X.epi==='e_p'&&u===me&&src&&src!==G.local)amt*=1.35;}catch(e){}return _hu11(u,amt,src,ang,dt);};}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
