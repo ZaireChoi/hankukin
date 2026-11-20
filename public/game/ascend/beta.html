@@ -5377,7 +5377,7 @@ function mobHdr(){try{if(!(innerHeight<=520&&innerWidth>innerHeight))return;cons
 // touch HUD: keep the tactical map clear of skill buttons in phone landscape (canvas HUD reads this flag)
 window.__phoneLand=()=>innerHeight<=520&&innerWidth>innerHeight;
 // PWA: service worker + iOS home-screen icon
-try{if(!document.querySelector('link[rel=apple-touch-icon]')){const l=document.createElement('link');l.rel='apple-touch-icon';l.href='icon-192.png';document.head.appendChild(l);}}catch(e){}
+try{if(!document.querySelector('link[rel=apple-touch-icon]')){const l=document.createElement('link');l.rel='apple-touch-icon';l.href='apple-touch-icon.png';document.head.appendChild(l);}}catch(e){}
 try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
