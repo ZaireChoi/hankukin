@@ -84,14 +84,15 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=functi
  }catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
 
 // ================= v2: "shell" transform — a Meshy jet model split into armour pieces; each piece launches from the robot part it comes from and locks into the jet =================
-var JETM={mech3:'saberjet'};
+var JETM={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet'};
 function jetKey(){var k=AX().myMechKey?AX().myMechKey():'';return JETM[k]||null;}
 var JC={};// split cache per jet model
 function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);if(!c||c.st!=='ok'||!c.g)return null;var src=c.g.scene;src.updateMatrixWorld(true);var tris=[];var mat=null;var box=new T.Box3();
  src.traverse(function(o){if(!o.isMesh)return;mat=mat||(Array.isArray(o.material)?o.material[0]:o.material);var g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();g.applyMatrix4(o.matrixWorld);var P=g.attributes.position,N=g.attributes.normal,U=g.attributes.uv;for(var i=0;i<P.count;i+=3){var t={p:[],n:[],u:[]};for(var j=0;j<3;j++){t.p.push(P.getX(i+j),P.getY(i+j),P.getZ(i+j));if(N)t.n.push(N.getX(i+j),N.getY(i+j),N.getZ(i+j));if(U)t.u.push(U.getX(i+j),U.getY(i+j));box.expandByPoint(new T.Vector3(P.getX(i+j),P.getY(i+j),P.getZ(i+j)));}tris.push(t);}});
  var sz=box.getSize(new T.Vector3()),ctr=box.getCenter(new T.Vector3());
  // length axis = longest horizontal; the nose end is the narrower end
- var LX=sz.x>=sz.z;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
+ // length axis: the fuselage holds most vertices, so its spread is wider than the thin wings' spread
+ var vx=0,vz=0,nv=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var dx=t.p[i]-ctr.x,dz=t.p[i+2]-ctr.z;vx+=dx*dx;vz+=dz*dz;nv++;}});var LX=vx>=vz;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
  var wA=0,wB=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var a=ax(t.p,i)/len,s=Math.abs(sd(t.p,i))/wid;if(a>.35)wA=Math.max(wA,s);if(a<-.35)wB=Math.max(wB,s);}});var noseSign=wA<wB?1:-1;
  var groups={nose:[],body:[],wingL:[],wingR:[],tailL:[],tailR:[]};
  tris.forEach(function(t){var a=0,s=0;for(var i=0;i<9;i+=3){a+=ax(t.p,i);s+=sd(t.p,i);}a=a/3/len*noseSign;s=s/3/wid;var key;if(a>.22)key='nose';else if(Math.abs(s)>.2&&a>-.3)key=s>0?'wingL':'wingR';else if(a<-.18)key=s>=0?'tailL':'tailR';else key='body';groups[key].push(t);});
@@ -105,11 +106,11 @@ function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);
 // where each jet piece comes from on the robot
 var SRC={nose:'Head',body:'Spine',wingL:'LeftArm',wingR:'RightArm',tailL:'LeftFoot',tailR:'RightFoot'};
 var ORDER={body:0,wingL:.12,wingR:.12,nose:.24,tailL:.32,tailR:.32};
-function shellBuild(e,f,H){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,S.mat);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
+function shellBuild(e,f,H,pf){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,S.mat);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
  // engine flames at the tail
- var fl=[];for(var s=-1;s<=1;s+=2){var cg=new T.ConeGeometry(len*.035,len*.32,10,1,true);cg.rotateZ(Math.PI/2);cg.translate(-len*.16,0,0);var fm=new T.Mesh(cg,new T.MeshBasicMaterial({color:0xff7a4a,transparent:true,opacity:.65,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fm.position.set(-len*.5,len*.0,s*len*.06);fm.userData.keep=1;fm.frustumCulled=false;grp.add(fm);fl.push(fm);}
+ var fl=[];for(var s=-1;s<=1;s+=2){var cg=new T.ConeGeometry(len*.035,len*.32,10,1,true);cg.rotateZ(Math.PI/2);cg.translate(-len*.16,0,0);var fm=new T.Mesh(cg,new T.MeshBasicMaterial({color:(pf&&pf.flame)||0xff7a4a,transparent:true,opacity:.65,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fm.position.set(-len*.5,len*.0,s*len*.06);fm.userData.keep=1;fm.frustumCulled=false;grp.add(fm);fl.push(fm);}
  grp.userData.keep=1;e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len};return e._jet;}
-function shellPose(e,m,u,k,p,H,B){var T=T3();var J=shellBuild(e,jetKey(),H);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
+function shellPose(e,m,u,k,p,H,B){var T=T3();var J=shellBuild(e,jetKey(),H,p);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
  // jet frame: same place/heading as the robot, lifted to flight height (robot wrap faces +X)
  var lift=seg(k,.35,.9);J.grp.position.set(m.wrap.position.x,H*.45+p.alt*lift,m.wrap.position.z);J.grp.rotation.set(0,m.wrap.rotation.y,0);J.grp.visible=k>.02;J.grp.updateMatrixWorld(true);
  var inv=new T.Matrix4().copy(J.grp.matrixWorld).invert();var wp=new T.Vector3();
@@ -133,3 +134,11 @@ function boot(){hookInput();hookStep();hookPose();addCell();syncCell();}
 setInterval(boot,600);
 window.__TF={toggle:toggle,prof:prof,PROF:PROF,set:function(k){var u=me();if(!u)return;u.tf={mode:'hold',k:k,mark:-1};}};
 })();
+
+;(function(){var IMG={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet'};
+ function hook(){var f=window.flyTo;if(!f||f.__tf)return;var w=function(h){var r=f.apply(this,arguments);try{var k=(window.__AX&&window.__AX.myMechKey&&window.__AX.myMechKey())||'mech3';var jk=IMG[k]||'saberjet';var im=document.createElement('img');im.src='bg/jetrear_'+jk+'.png';im.id='tfJetFly';im.style.cssText='position:fixed;left:50%;bottom:9%;width:min(34vw,420px);transform:translateX(-50%) scale(.2);opacity:0;z-index:61;pointer-events:none;transition:transform .9s cubic-bezier(.2,1.4,.4,1),opacity .4s;filter:drop-shadow(0 0 18px rgba(255,140,90,.55))';document.body.appendChild(im);
+  var fl=document.createElement('div');fl.style.cssText='position:fixed;left:50%;bottom:7%;width:min(16vw,200px);height:min(9vw,110px);transform:translateX(-50%);z-index:60;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgba(255,200,140,.9),rgba(255,110,60,.35) 45%,transparent 70%);filter:blur(4px);opacity:0;transition:opacity .6s';document.body.appendChild(fl);
+  try{window.__AX&&window.__AX.SFX2&&window.__AX.SFX2.hatch();}catch(e){}setTimeout(function(){im.style.opacity='1';im.style.transform='translateX(-50%) scale(1)';try{window.__AX.SFX2.clang();}catch(e){}},60);setTimeout(function(){fl.style.opacity='1';try{window.__AX.SFX2.launch();}catch(e){}},900);
+  var mx=0,my=0;var pm=function(e){mx=(e.clientX/innerWidth-.5);my=(e.clientY/innerHeight-.5);};addEventListener('pointermove',pm);var bank=0;var t0=performance.now();
+  var tick=function(){var cv=document.querySelector('canvas[style*="z-index:60"]');if(!cv){im.remove();fl.remove();removeEventListener('pointermove',pm);return;}bank+=(mx*30-bank)*.08;if(performance.now()-t0>1000){im.style.transition='none';im.style.transform='translateX(calc(-50% + '+(mx*120)+'px)) translateY('+(my*60)+'px) rotate('+bank+'deg)';fl.style.transform='translateX(calc(-50% + '+(mx*120)+'px)) translateY('+(my*60)+'px)';fl.style.opacity=String(.75+Math.random()*.25);}requestAnimationFrame(tick);};requestAnimationFrame(tick);}catch(e){}return r;};w.__tf=1;window.flyTo=w;}
+ setInterval(hook,800);})();
