@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.2 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.4 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3344,9 +3344,9 @@ function mechFX(e,m,u,dt,now,sp){const T3=window.THREE;if(!e.mfx)mechInit(e,m,u)
  // beam saber blade during slash
  if(fx.blade)fx.blade.visible=u.slashT>0;if(fx.blade2)fx.blade2.visible=u.slashT>0;if(fx.aura)fx.aura.material.opacity=.25+.15*Math.sin(now*3);
  // afterimages
- if(fx.ghosts.length&&scene){fx.gT-=dt;if((sp>170||fly&&sp>60||u.slashT>0)&&fx.gT<=0){fx.gT=.06;const gh=fx.ghosts.find(g=>g.t<=0);if(gh){for(let i=0;i<gh.bones.length&&i<fx.srcB.length;i++){gh.bones[i].position.copy(fx.srcB[i].position);gh.bones[i].quaternion.copy(fx.srcB[i].quaternion);gh.bones[i].scale.copy(fx.srcB[i].scale);}m.obj.updateWorldMatrix(true,false);gh.obj.position.copy(m.obj.position);gh.obj.scale.copy(m.obj.scale);gh.obj.quaternion.copy(m.obj.quaternion);
-   const mw=m.obj.parent.matrixWorld.clone();gh.w.matrixAutoUpdate=false;gh.w.matrix.copy(mw);if(gh.w.parent!==scene)scene.add(gh.w);gh.w.visible=true;gh.t=.36;}}
-  for(const g of fx.ghosts){if(g.t>0){g.t-=dt;g.obj.traverse(o=>{if(o.isMesh)o.material.opacity=Math.max(0,g.t/.36)*.42;});if(g.t<=0)g.w.visible=false;}}}
+ if(fx.ghosts.length&&scene){fx.gT-=dt;if((sp>330||u.slashT>0||u.chargeT>0)&&fx.gT<=0){fx.gT=.08;const gh=fx.ghosts.find(g=>g.t<=0);if(gh){for(let i=0;i<gh.bones.length&&i<fx.srcB.length;i++){gh.bones[i].position.copy(fx.srcB[i].position);gh.bones[i].quaternion.copy(fx.srcB[i].quaternion);gh.bones[i].scale.copy(fx.srcB[i].scale);}m.obj.updateWorldMatrix(true,false);gh.obj.position.copy(m.obj.position);gh.obj.scale.copy(m.obj.scale);gh.obj.quaternion.copy(m.obj.quaternion);
+   const mw=m.obj.parent.matrixWorld.clone();gh.w.matrixAutoUpdate=false;gh.w.matrix.copy(mw);if(gh.w.parent!==scene)scene.add(gh.w);gh.w.visible=true;gh.t=.24;}}
+  for(const g of fx.ghosts){if(g.t>0){g.t-=dt;g.obj.traverse(o=>{if(o.isMesh)o.material.opacity=Math.max(0,g.t/.24)*.16;});if(g.t<=0)g.w.visible=false;}}}
  // drones orbit + fire
  if(fx.drones&&scene){fx.drones.forEach((d,i)=>{if(d.parent!==scene)scene.add(d);const U=d.userData;const D=U.D||{};for(const s of U.trail)if(s.parent!==scene)scene.add(s);const th=now*U.w+U.ph;const px=U.R*Math.cos(th),q=U.R*Math.sin(th);const py=q*Math.sin(U.inc),pz=q*Math.cos(U.inc);const cN=Math.cos(U.node),sN=Math.sin(U.node);let tx=u.x+px*cN-pz*sN,tz=u.y+px*sN+pz*cN,ty=unitH(u)+46+py;
    if(u.fusion>0){const bk=(u.aa!=null?u.aa:u.a||0)+Math.PI+(i-2.5)*.55;tx=u.x+Math.cos(bk)*16;tz=u.y+Math.sin(bk)*16;ty=unitH(u)+50+Math.abs(i-2.5)*6;}
@@ -5566,8 +5566,8 @@ window.__T={endMatch:(w)=>endMatch(w),leaveMatch:()=>leaveMatch(),get G(){return
 {const _hp=hideProc;hideProc=function(e){try{const list=[];e.root.traverse(o=>{if((o.isMesh||o.isSprite||o.isPoints)&&o!==e.ring&&o!==e.blob&&o!==e.jet&&!o.userData.keep&&o.visible)list.push(o);});e.procList=list;}catch(err){}return _hp(e);};}
 const LOD={max:34,far:1900,t:0};
 function lodTick(dt){LOD.t-=dt;if(LOD.t>0||!R3||!R3.units||!G)return;LOD.t=.3;const me=G.local&&G.local.unit;const cx=me?me.x:cam.x,cy=me?me.y:cam.y;const arr=[];
- for(const u of G.units){if(u.dead)continue;const e=R3.units.get(u.id);if(!e||!e.mdl||!e.procList)continue;const big=(MDL[u.cls]&&MDL[u.cls][2]>=60)||u===me||u.boss;if(big){if(e.lod){e.lod=0;e.mdl.wrap.visible=true;for(const o of e.procList)o.visible=false;}continue;}arr.push([Math.hypot(u.x-cx,u.y-cy),e]);}
- arr.sort((a,b)=>a[0]-b[0]);const lim=gfxMode()==='high'?LOD.max:Math.round(LOD.max*.6);arr.forEach(([d,e],i)=>{const low=i>=lim||d>LOD.far;if(low&&!e.lod){e.lod=1;e.mdl.wrap.visible=false;for(const o of e.procList)o.visible=true;}else if(!low&&e.lod){e.lod=0;e.mdl.wrap.visible=true;for(const o of e.procList)o.visible=false;}});}
+ for(const u of G.units){if(u.dead)continue;const e=R3.units.get(u.id);if(!e||!e.mdl||!e.procList)continue;const big=(MDL[u.cls]&&MDL[u.cls][2]>=60)||u===me||u.boss;if(big){if(e.lod){e.lod=0;const mx=e.mdl.mx;if(mx&&mx.mixer)mx.mixer.timeScale=1;}continue;}arr.push([Math.hypot(u.x-cx,u.y-cy),e]);}
+ arr.sort((a,b)=>a[0]-b[0]);const lim=gfxMode()==='high'?LOD.max:Math.round(LOD.max*.6);arr.forEach(([d,e],i)=>{const low=i>=lim||d>LOD.far;const mx=e.mdl.mx;if(low&&!e.lod){e.lod=1;if(mx&&mx.mixer)mx.mixer.timeScale=0;e.mdl.wrap.traverse(o=>{if(o.isMesh)o.castShadow=false;});}else if(!low&&e.lod){e.lod=0;if(mx&&mx.mixer)mx.mixer.timeScale=1;}});}
 {const _stL2=step;step=function(dt){_stL2(dt);try{lodTick(dt);}catch(e){}};}
 // ---- resolution: lighter pixel ratio on high, adaptive drop when frames are slow ----
 {const _ag=R3.applyGfx;R3.applyGfx=function(){const r=_ag.apply(this,arguments);try{if(this.r){this.pr=gfxMode()==='high'?Math.min(1.25,window.devicePixelRatio||1):1;this.r.setPixelRatio(this.pr);if(this.composer&&this.composer.setPixelRatio)this.composer.setPixelRatio(this.pr);}}catch(e){}return r;};}
@@ -5777,6 +5777,8 @@ document.addEventListener('pointerdown',e=>{const t=e.target;if(!t)return;if(t.i
 Object.assign(STR.ko,{news:'v3.2 — 기동전사 전용 · 5대5 궤도 전선 · 스킨 · 스웜 물량 · 보스 패턴 · 드론 빛 궤도'});Object.assign(STR.en,{news:'v3.2 — ARK frames only · 5v5 Orbital Front · skins · swarms · boss patterns · orbiting drone lights'});try{applyLang();}catch(e){}
 setInterval(()=>{try{const s=document.querySelector('#mSolo small');if(s&&!/기체로|in your ARK/.test(s.textContent))s.textContent=L('기체로 즉시 출격 · 거점 점령전','Sortie in your ARK frame · point capture');}catch(e){}},1500);
 
+{const st=document.createElement('style');st.textContent='body #cine .c1,body #cine .c2{font-size:clamp(22px,3.2vw,40px)!important;letter-spacing:.12em!important}body #cine .c3{font-size:13px!important}';document.head.appendChild(st);}
+
 
 // ================= v3.1 : HORDE (instanced swarmlings) · chapter difficulty · boss patterns · defeat guidance =================
 // ---------- lightweight swarm: one instanced draw, simple flocking, no shadows / names ----------
@@ -5837,6 +5839,217 @@ try{const _rc=window;}catch(e){}
 {const _sr3=showResult;showResult=function(...a){_sr3.apply(this,a);try{const res=window.__rpgRes||null;const ov=document.getElementById('rpgRs');if(ov&&ov.dataset.win!=='1'&&/실패|FAILED/.test(ov.textContent)){const box=ov.firstElementChild;const d=document.createElement('div');d.style.cssText='margin:-4px 0 14px;padding:10px 12px;border-radius:10px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.3);font-size:13.5px;line-height:1.6';d.innerHTML=`<b>${L('재도전 안내','Retry tips')}</b><br>${L('정비소에서 「추천 장착」·강화·드론 합체로 전력을 올리고, 사냥터에서 레벨을 올린 뒤 다시 도전하세요. 보스의 붉은 바닥 경고는 꼭 피하세요.','Boost power in the Hangar (auto-equip, upgrades, drone merges) and level up in hunting grounds, then retry. Always dodge the boss’s red ground warnings.')}<div style="margin-top:8px"><button class="sm" id="rsHangar">${L('정비소로 가기','Go to Hangar')}</button></div>`;const go=box.querySelector('#rpgRsGo');box.insertBefore(d,go);d.querySelector('#rsHangar').onclick=()=>{ov.remove();try{__ascend.leaveMatch();}catch(e){leaveMatch();}setTimeout(()=>{try{window.__A.tab='hangar';window.__A.render();}catch(e){}},500);};}}catch(e){}};}
 // chapter card: recommended levels follow the new growth curve
 try{const _ep2=epiPanel;epiPanel=function(){_ep2();try{const E=EPIS.find(x=>x.id===selEpi);const i=EPIS.indexOf(E);const row=[...document.querySelectorAll('.chc-row')].find(r=>/권장|Recommended/.test(r.textContent));if(row&&REC_LV[i]){const b=row.querySelector('b');b.textContent='Lv '+REC_LV[i];b.style.color=plv()>=REC_LV[i]?'#7ee787':'#ff8a8a';}}catch(e){}};}catch(e){}
+
+
+// ================= v3.3 : NATURAL ALIEN TERRAIN — irregular lava fields, soft hills, alien flora, magnetic cloud ceiling, steam vents =================
+const NAT={on:false,steam:[],aur:[],clouds:null,t:0,embers:[]};
+function natNoise(seed){const R=mulberry(seed|0);const a=[];for(let i=0;i<6;i++)a.push([R()*6.28,1+Math.floor(R()*5),R()*.18]);return t=>{let v=0;for(const[p,f,amp]of a)v+=Math.sin(t*f+p)*amp;return v;};}
+function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;const S=R.envG,th=MAP.theme;if(MAP.space||th==='station'||th==='seoul'||th==='city')return;
+ // 1) lava: drop the round dish & torus crust, lay an irregular cooled-basalt field with glowing veins
+ const rm=[];S.children.forEach(o=>{if(!o.geometry)return;const g=o.geometry.type;for(const l of LAVA){if(Math.abs(o.position.x-l.x)<2&&Math.abs(o.position.z-l.y)<2&&(g==='TorusGeometry'||g==='CircleGeometry'))rm.push(o);}
+  for(const h of HIGH){if(Math.abs(o.position.x-h.x)<2&&Math.abs(o.position.z-h.y)<2&&(g==='CylinderGeometry'||g==='TorusGeometry'))rm.push(o);}});rm.forEach(o=>S.remove(o));
+ for(const l of LAVA){const nz=natNoise(l.x*7+l.y);const sh=new T3.Shape();const N=56;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*(1+.12*Math.sin(a*3+l.x));const x=Math.cos(a)*r,y=Math.sin(a)*r;i?sh.lineTo(x,y):sh.moveTo(x,y);}
+  const lava=new T3.Mesh(new T3.ShapeGeometry(sh,2),new T3.MeshStandardMaterial({color:0x200400,emissive:0xffffff,emissiveMap:R.lavaTex,emissiveIntensity:1.8,roughness:.6}));lava.rotation.x=-Math.PI/2;lava.position.set(l.x,.6,l.y);S.add(lava);
+  // basalt crust: irregular dark slab ring + scattered cooled rocks, no torus
+  const crustSh=new T3.Shape();for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*1.38+18*Math.sin(a*5+l.y);i?crustSh.lineTo(Math.cos(a)*r,Math.sin(a)*r):crustSh.moveTo(Math.cos(a)*r,Math.sin(a)*r);}const hole=new T3.Path();for(let i=0;i<=N;i++){const a=-i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*(1+.12*Math.sin(a*3+l.x))*.98;i?hole.lineTo(Math.cos(a)*r,Math.sin(a)*r):hole.moveTo(Math.cos(a)*r,Math.sin(a)*r);}crustSh.holes.push(hole);
+  const crust=new T3.Mesh(new T3.ShapeGeometry(crustSh,2),new T3.MeshStandardMaterial({color:0x1a1210,roughness:1,emissive:0x3a0c02,emissiveIntensity:.35}));crust.rotation.x=-Math.PI/2;crust.position.set(l.x,.4,l.y);crust.receiveShadow=true;S.add(crust);
+  const rk=new T3.InstancedMesh(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:0x221815,roughness:1,flatShading:true}),18);const D=new T3.Object3D();const Rn=mulberry(l.x+l.y*3);for(let i=0;i<18;i++){const a=Rn()*6.28,r=(l.r+10)*(1.05+Rn()*.45);const s=6+Rn()*16;D.position.set(l.x+Math.cos(a)*r,s*.25,l.y+Math.sin(a)*r);D.scale.set(s*(1+Rn()*.6),s*(.35+Rn()*.4),s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();rk.setMatrixAt(i,D.matrix);}rk.castShadow=true;S.add(rk);
+  for(let i=0;i<5;i++)NAT.steam.push({x:l.x+(Math.random()-.5)*l.r,y:l.y+(Math.random()-.5)*l.r,hot:1});}
+ // 1b) swamps / fog pools: same irregular outline instead of perfect discs
+ const irr=(o,x,y,r,seed)=>{const nz=natNoise(seed);const sh=new T3.Shape();const N=48;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const rr=r*(1+nz(a)*1.3)*(1+.1*Math.sin(a*4+seed));i?sh.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):sh.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}const m=new T3.Mesh(new T3.ShapeGeometry(sh,2),o.material);m.rotation.copy(o.rotation);m.position.copy(o.position);m.renderOrder=o.renderOrder;S.add(m);S.remove(o);};
+ const disc=[];S.children.forEach(o=>{if(!o.geometry||o.geometry.type!=='CircleGeometry')return;for(const md of MUD)if(Math.abs(o.position.x-md.x)<2&&Math.abs(o.position.z-md.y)<2)disc.push([o,md]);for(const f of FOGS)if(Math.abs(o.position.x-f.x)<2&&Math.abs(o.position.z-f.y)<2)disc.push([o,f]);});disc.forEach(([o,c])=>irr(o,c.x,c.y,c.r,c.x*3+c.y));
+ // 2) hills: soft noisy mounds instead of flat-topped cylinders
+ const hillM=new T3.MeshStandardMaterial({color:th==='frost'?0xc9d6e2:th==='volcano'?0x2e2622:0x6a5a44,roughness:1,flatShading:false});
+ for(const h of HIGH){const g=new T3.SphereGeometry(h.r+46,40,14,0,Math.PI*2,0,Math.PI/2);const p=g.attributes.position;const nz=natNoise(h.x+h.y*5);for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const a=Math.atan2(z,x);const k=1+nz(a)*.6;p.setXYZ(i,x*k,y*(34/(h.r+46))*(1+nz(a*2)*.5),z*k);}g.computeVertexNormals();const m=new T3.Mesh(g,hillM);m.position.set(h.x,0,h.y);m.receiveShadow=true;m.castShadow=true;S.add(m);}
+ // 3) alien flora (instanced): trees, crystal spires, glowing fungus — kept off lanes, bases and capture points
+ const avoid=(x,y)=>{for(const b of BASES)if(Math.hypot(x-b.x,y-b.y)<520)return true;for(const p of POINTS)if(Math.hypot(x-p.x,y-p.y)<300)return true;for(const l of LAVA)if(Math.hypot(x-l.x,y-l.y)<l.r+70)return true;for(const h of HIGH)if(Math.hypot(x-h.x,y-h.y)<h.r+60)return true;if(Math.abs(y-WH/2)<160&&MAP.id!=='seoul')return true;return false;};
+ const Rn=mulberry(4242+(MAP.id||'').length*31);const spots=[];for(let i=0;i<900&&spots.length<170;i++){const x=60+Rn()*(WW-120),y=60+Rn()*(WH-120);if(avoid(x,y))continue;
+  // cluster: favour near rocks / map edges
+  let near=Math.min(x,y,WW-x,WH-y)<420;for(const r of ROCKS){if(Math.hypot(r.x-x,r.y-y)<r.r+160){near=true;break;}}if(!near&&Rn()<.65)continue;spots.push([x,y,.7+Rn()*.9,Rn()]);}
+ if(!window.__floraReady||!window.__floraReady()){
+ const pal=th==='frost'?{trunk:0x9fb6c8,cap:0xcff4ff,glow:0x9ff6ff}:th==='volcano'?{trunk:0x1a1412,cap:0x3a1a10,glow:0xff7a2a}:{trunk:0x3a2c3a,cap:0x2bd1a6,glow:0x7dffd8};
+ const trunkG=new T3.CylinderGeometry(2.2,5,58,6);trunkG.translate(0,29,0);const capG=new T3.IcosahedronGeometry(22,1);capG.scale(1,.55,1);capG.translate(0,62,0);const spireG=new T3.ConeGeometry(7,70,5);spireG.translate(0,35,0);const shroomG=new T3.SphereGeometry(10,10,6,0,Math.PI*2,0,Math.PI/2);shroomG.scale(1,.6,1);shroomG.translate(0,18,0);const stemG=new T3.CylinderGeometry(2,3,18,6);stemG.translate(0,9,0);
+ const mk=(geo,mat,n)=>{const m=new T3.InstancedMesh(geo,mat,Math.max(1,n));m.castShadow=gfxMode()==='high';m.receiveShadow=false;S.add(m);return m;};
+ const trees=spots.filter(s=>s[3]<.5),spires=spots.filter(s=>s[3]>=.5&&s[3]<.75),shrooms=spots.filter(s=>s[3]>=.75);
+ const mT=mk(trunkG,new T3.MeshStandardMaterial({color:pal.trunk,roughness:.9}),trees.length),mC=mk(capG,new T3.MeshStandardMaterial({color:pal.cap,emissive:pal.glow,emissiveIntensity:.35,roughness:.6,flatShading:true}),trees.length);
+ const mS=mk(spireG,new T3.MeshStandardMaterial({color:th==='volcano'?0x2a1a14:0x8fa8ff,emissive:th==='volcano'?0xff4a10:0x6f8cff,emissiveIntensity:.4,roughness:.25,metalness:.3,flatShading:true}),spires.length*3);
+ const mSt=mk(stemG,new T3.MeshStandardMaterial({color:0xd8d0c0,roughness:.8}),shrooms.length*4),mSh=mk(shroomG,new T3.MeshStandardMaterial({color:th==='volcano'?0x5a2010:0x5a3aa8,emissive:th==='volcano'?0xff6a20:0xc58cff,emissiveIntensity:.55,roughness:.5}),shrooms.length*4);
+ const D=new T3.Object3D();trees.forEach((s,i)=>{D.position.set(s[0],0,s[1]);D.rotation.set((Rn()-.5)*.15,Rn()*6,(Rn()-.5)*.15);D.scale.setScalar(s[2]);D.updateMatrix();mT.setMatrixAt(i,D.matrix);mC.setMatrixAt(i,D.matrix);});
+ let k=0;spires.forEach(s=>{for(let j=0;j<3;j++){D.position.set(s[0]+(Rn()-.5)*30,0,s[1]+(Rn()-.5)*30);D.rotation.set((Rn()-.5)*.5,Rn()*6,(Rn()-.5)*.5);D.scale.set(s[2]*(.6+Rn()*.6),s[2]*(.5+Rn()),s[2]*(.6+Rn()*.6));D.updateMatrix();mS.setMatrixAt(k++,D.matrix);}});
+ k=0;shrooms.forEach(s=>{for(let j=0;j<4;j++){D.position.set(s[0]+(Rn()-.5)*40,0,s[1]+(Rn()-.5)*40);D.rotation.set(0,Rn()*6,0);D.scale.setScalar(s[2]*(.5+Rn()*.8));D.updateMatrix();mSt.setMatrixAt(k,D.matrix);mSh.setMatrixAt(k,D.matrix);k++;}});
+ }else{try{window.__placeFlora(S,spots,th);}catch(e){console.warn(e);}}
+ // pebbles & moss decals
+ const peb=mk(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:th==='frost'?0x8ea2b6:0x3a3228,roughness:1,flatShading:true}),420);peb.castShadow=false;for(let i=0;i<420;i++){const x=Rn()*WW,y=Rn()*WH;const s=2+Rn()*6;D.position.set(x,s*.2,y);D.scale.set(s*(1+Rn()),s*.5,s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();peb.setMatrixAt(i,D.matrix);}
+ if(th!=='frost'&&th!=='volcano'){const mossT=R.radTex([[0,'rgba(80,220,170,.35)'],[.6,'rgba(40,140,110,.12)'],[1,'rgba(0,0,0,0)']]);for(let i=0;i<40;i++){const x=Rn()*WW,y=Rn()*WH;if(avoid(x,y))continue;const d=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:mossT,transparent:true,depthWrite:false}));const s=120+Rn()*220;d.scale.set(s,s*(.6+Rn()*.6),1);d.rotation.x=-Math.PI/2;d.rotation.z=Rn()*6;d.position.set(x,.3,y);S.add(d);}}
+ // 4) magnetic cloud ceiling with descending field lines (aurora curtains)
+ const cloudT=R.cloudTex||R.radTex([[0,'rgba(255,255,255,.9)'],[.5,'rgba(255,255,255,.35)'],[1,'rgba(255,255,255,0)']]);const cg=new T3.Group();const cc=th==='volcano'?[0x4a2a30,0x803020]:th==='frost'?[0x9fb8d8,0xd8e8ff]:[0x5a4a8a,0x2a8a9a];
+ for(let i=0;i<60;i++){const sp=new T3.Sprite(new T3.SpriteMaterial({map:cloudT,color:cc[i%2],transparent:true,opacity:.13,depthWrite:false,fog:false}));const s=500+Rn()*700;sp.scale.set(s,s*.45,1);sp.position.set(Rn()*WW*1.2-WW*.1,430+Rn()*260,Rn()*WH*1.2-WH*.1);sp.userData={sp:(Rn()-.5)*14};cg.add(sp);}S.add(cg);NAT.clouds=cg;
+ const curT=R.tex(64,256,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'rgba(255,255,255,.0)');gr.addColorStop(.15,'rgba(255,255,255,.55)');gr.addColorStop(.7,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,w,h);for(let x=0;x<w;x+=4){g.fillStyle=`rgba(255,255,255,${Math.random()*.25})`;g.fillRect(x,0,1,h);}});
+ const ac=th==='volcano'?0xff6a3a:th==='frost'?0x9ff6ff:0x7dffd8;for(let i=0;i<7;i++){const w=500+Rn()*700,h=1000;const pl=new T3.Mesh(new T3.PlaneGeometry(w,h,24,1),new T3.MeshBasicMaterial({map:curT,color:i%2?ac:0xb08cff,transparent:true,opacity:.18,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide,fog:false}));pl.position.set(Rn()*WW,h/2+120,Rn()*WH);pl.rotation.y=Rn()*Math.PI;pl.userData={base:pl.geometry.attributes.position.array.slice(),ph:Rn()*6};S.add(pl);NAT.aur.push(pl);}
+ // 5) steam vents across the ground (more around lava)
+ const vR=mulberry(77+(MAP.id||'').length);for(let i=0;i<22;i++){const x=vR()*WW,y=vR()*WH;if(avoid(x,y)&&vR()<.7)continue;NAT.steam.push({x,y,hot:0});}
+ const stT=R.cloudTex||cloudT;NAT.puffs=[];for(let i=0;i<90;i++){const sp=new T3.Sprite(new T3.SpriteMaterial({map:stT,color:th==='volcano'?0x8a7a72:0xe8f0f8,transparent:true,opacity:0,depthWrite:false}));sp.userData={l:0,ml:1,v:null};S.add(sp);NAT.puffs.push(sp);}
+ NAT.on=true;}catch(e){console.warn('naturalize',e);}}
+function natTick(dt){if(!NAT.on||!R3||!R3.envG)return;NAT.t+=dt;const t=NAT.t;
+ if(NAT.clouds)for(const c of NAT.clouds.children){c.position.x+=c.userData.sp*dt;if(c.position.x>WW*1.15)c.position.x=-WW*.1;if(c.position.x<-WW*.15)c.position.x=WW*1.1;}
+ for(const a of NAT.aur){const p=a.geometry.attributes.position,b=a.userData.base;for(let i=0;i<p.count;i++){const x=b[i*3];p.array[i*3+2]=b[i*3+2]+Math.sin(x*.01+t*.8+a.userData.ph)*40;}p.needsUpdate=true;a.material.opacity=.12+.08*Math.sin(t*.6+a.userData.ph);}
+ // steam puffs: rise, expand, fade
+ for(const s of NAT.puffs){const u=s.userData;if(u.l<=0){if(Math.random()<dt*5&&NAT.steam.length){const v=NAT.steam[Math.floor(Math.random()*NAT.steam.length)];u.v=v;u.l=u.ml=3+Math.random()*3;s.position.set(v.x+(Math.random()-.5)*30,8,v.y+(Math.random()-.5)*30);u.vy=30+Math.random()*30;u.dx=(Math.random()-.5)*12;}else{s.material.opacity=0;continue;}}
+  u.l-=dt;const k=1-u.l/u.ml;s.position.y+=u.vy*dt;s.position.x+=u.dx*dt;const sc=30+k*140;s.scale.set(sc,sc,1);s.material.opacity=Math.sin(Math.PI*k)*(u.v&&u.v.hot?.45:.32);}}
+{const inst=setInterval(()=>{try{if(!R3||typeof R3.rebuildEnv!=='function'||R3._natW)return;R3._natW=1;clearInterval(inst);const _rb=R3.rebuildEnv;R3.rebuildEnv=function(){NAT.on=false;NAT.steam=[];NAT.aur=[];NAT.puffs=[];const r=_rb.apply(this,arguments);naturalize();return r;};if(R3.ready&&R3.envG)naturalize();}catch(e){}},300);}
+{const _stN=step;step=function(dt){_stN(dt);try{natTick(dt);}catch(e){}};}
+setInterval(()=>{try{if(!G&&NAT.on)natTick(.05);}catch(e){}},50);
+
+
+// ================= v3.3 : REAL TERRAIN — photographic ground textures with macro blending, surrounding mountains, Meshy rocks & alien flora =================
+const TERRAIN_SET={dune:{base:'t_dune',over:'t_moss',mix:.42,tint:[1,1,1]},frost:{base:'t_frost',over:null,mix:0,tint:[1,1,1.02]},volcano:{base:'t_volcano',over:null,mix:0,tint:[1,1,1]},deep:{base:'t_moss',over:'t_dune',mix:.35,tint:[1,1,1]}};
+const TEXC={};function texLoad(k){if(TEXC[k])return TEXC[k];const T3=window.THREE;const t=new T3.TextureLoader().load('bg/'+k+'.jpg',()=>{try{R3.r&&(t.anisotropy=R3.r.capabilities.getMaxAnisotropy());}catch(e){}});t.wrapS=t.wrapT=T3.RepeatWrapping;t.colorSpace=T3.SRGBColorSpace;TEXC[k]=t;return t;}
+const NEW_ROCKS=['p_rock3','p_mesa','p_boulders'],FLORA=['p_atree','p_atree2','p_bush','p_crystal'],EDGE=['p_cliff','p_ruin'];
+const mdlOk=f=>{try{const c=MC[f];if(!c){mdlGet(f);return false;}return c.st==='ok';}catch(e){return false;}};
+window.__floraReady=()=>FLORA.every(mdlOk);
+let terrWait=null;function terrPreload(){const all=[...NEW_ROCKS,...FLORA,...EDGE];all.forEach(mdlOk);if(terrWait)return;terrWait=setInterval(()=>{if(all.every(mdlOk)){clearInterval(terrWait);try{if(R3&&R3.ready&&R3.envG)R3.rebuildEnv();}catch(e){}}},800);}
+// ---- rocks: varied Meshy formations, half-buried, with debris and a soft contact shadow ----
+{const _ep=window.__envProp;window.__envProp=function(k,S,th){const t=MAP.theme;if(t!=='dune'&&t!=='deep'&&t!=='volcano'&&t!=='frost')return _ep?_ep(k,S,th):false;if(!NEW_ROCKS.every(mdlOk))return _ep?_ep(k,S,th):false;
+ const h=hsh(k.x,k.y);const f=k.r>70?(h<.5?'p_mesa':'p_rock3'):k.r>42?(h<.6?'p_rock3':'p_boulders'):'p_boulders';const big=f==='p_mesa';
+ const i=propInst(f,k.r*(big?2.1:2.6),big?'l':'l',h*6.28);if(!i)return false;i.wrap.position.set(k.x,-k.r*.12,k.y);i.wrap.scale.y*=big?1.25:(.8+h*.5);
+ if(t==='frost'||t==='volcano'){i.wrap.traverse(o=>{if(o.isMesh&&o.material){o.material=o.material.clone();o.material.color=new window.THREE.Color(t==='frost'?0xb8c8d8:0x3a302c);}});}
+ i.wrap.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});S.add(i.wrap);
+ try{const T3=window.THREE;const sh=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:R3.radTex([[0,'rgba(0,0,0,.55)'],[.6,'rgba(0,0,0,.2)'],[1,'rgba(0,0,0,0)']]),transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.scale.set(k.r*3.4,k.r*3,1);sh.position.set(k.x+10,.35,k.y+14);S.add(sh);}catch(e){}
+ return true;};}
+// ---- flora from Meshy models, clustered naturally ----
+window.__placeFlora=function(S,spots,th){const R0=mulberry(91+(MAP.id||'').length);const pickF=()=>{const r=R0();if(th==='frost')return r<.6?'p_crystal':'p_bush';if(th==='volcano')return r<.5?'p_crystal':r<.8?'p_bush':'p_atree';return r<.32?'p_atree':r<.55?'p_atree2':r<.85?'p_bush':'p_crystal';};
+ for(const s of spots){const f=pickF();const size=f==='p_atree'?72:f==='p_atree2'?60:f==='p_crystal'?40:30;const n=f==='p_bush'?3:1;for(let j=0;j<n;j++){const i=propInst(f,size*(.7+R0()*.6)*s[2],'h',R0()*6.28);if(!i)continue;i.wrap.position.set(s[0]+(R0()-.5)*(n>1?70:0),0,s[1]+(R0()-.5)*(n>1?70:0));i.wrap.traverse(o=>{if(o.isMesh){o.castShadow=f!=='p_bush'&&gfxMode()==='high';o.receiveShadow=true;}});S.add(i.wrap);}}};
+// ---- ground: photographic texture + second layer blended by world-space noise, bump relief ----
+function terrainGround(){try{const R=R3,T3=window.THREE;if(!R||!R.envG)return;const th=MAP.theme;const set=TERRAIN_SET[th];if(!set||MAP.space)return;
+ const ground=R.envG.children.find(o=>o.geometry&&o.geometry.type==='PlaneGeometry'&&Math.abs(o.geometry.parameters.width-WW)<1&&Math.abs(o.geometry.parameters.height-WH)<1);if(!ground)return;
+ const base=texLoad(set.base);const rep=WW/520;const mat=new T3.MeshStandardMaterial({map:base,roughness:th==='frost'?.55:.95,metalness:0,bumpMap:base,bumpScale:th==='frost'?.6:1.4});base.repeat.set(rep,rep*WH/WW);
+ const over=set.over?texLoad(set.over):null;mat.onBeforeCompile=sh=>{sh.uniforms.uOver={value:over||base};sh.uniforms.uMix={value:set.mix};sh.uniforms.uRep={value:rep*1.3};
+  sh.vertexShader=sh.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vWP;').replace('#include <worldpos_vertex>','#include <worldpos_vertex>\nvWP=(modelMatrix*vec4(transformed,1.)).xyz;');
+  sh.fragmentShader=sh.fragmentShader.replace('#include <common>',`#include <common>
+varying vec3 vWP;uniform sampler2D uOver;uniform float uMix;uniform float uRep;
+float h21(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float vn(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h21(i),h21(i+vec2(1,0)),f.x),mix(h21(i+vec2(0,1)),h21(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*vn(p);p*=2.03;a*=.5;}return v;}`).replace('#include <map_fragment>',`#include <map_fragment>
+{vec2 wp=vWP.xz;float n=fbm(wp*.0016);float m=smoothstep(.52,.7,n)*uMix;vec4 o=texture2D(uOver,wp/(${WW.toFixed(1)}/uRep));diffuseColor.rgb=mix(diffuseColor.rgb,o.rgb,m);
+ float macro=fbm(wp*.0007+17.);diffuseColor.rgb*=.78+.42*macro;float rot=fbm(wp*.004+3.);diffuseColor.rgb=mix(diffuseColor.rgb,diffuseColor.rgb*vec3(1.05,.95,.88),rot*.25);}`);};
+ mat.needsUpdate=true;ground.material=mat;
+ // outer ground matches, then a ring of mountains closes the horizon
+ const outer=R.envG.children.find(o=>o.geometry&&o.geometry.type==='PlaneGeometry'&&o.geometry.parameters.width>=40000);if(outer){const ot=base.clone();ot.needsUpdate=true;ot.repeat.set(40000/520,40000/520);outer.material=new T3.MeshStandardMaterial({map:ot,roughness:1,color:0x9a8c80});}
+ const N=180,SZ=26000;const g=new T3.PlaneGeometry(SZ,SZ,N,N);g.rotateX(-Math.PI/2);const p=g.attributes.position;const col=new Float32Array(p.count*3);const Rn=mulberry(7);const ph=[Rn()*9,Rn()*9,Rn()*9];
+ const rockC=th==='frost'?[.78,.84,.92]:th==='volcano'?[.2,.17,.16]:[.62,.36,.22],topC=th==='frost'?[.97,.98,1]:th==='volcano'?[.35,.3,.28]:[.85,.62,.42];
+ for(let i=0;i<p.count;i++){const x=p.getX(i)+WW/2,z=p.getZ(i)+WH/2;const dx=Math.max(0,-x,x-WW),dz=Math.max(0,-z,z-WH);const d=Math.hypot(dx,dz);let h=-6;if(d>260){const t=Math.min(1,(d-260)/2600);const ridge=Math.abs(Math.sin(x*.0011+ph[0])*Math.cos(z*.0013+ph[1]))+.5*Math.abs(Math.sin((x+z)*.0027+ph[2]));h=-6+t*t*(700+900*ridge)+Math.sin(x*.004)*Math.cos(z*.005)*60*t;}
+  p.setY(i,h);const k=Math.min(1,Math.max(0,h/1300));col[i*3]=rockC[0]+(topC[0]-rockC[0])*k;col[i*3+1]=rockC[1]+(topC[1]-rockC[1])*k;col[i*3+2]=rockC[2]+(topC[2]-rockC[2])*k;}
+ g.setAttribute('color',new T3.BufferAttribute(col,3));g.computeVertexNormals();const cliffT=texLoad(th==='frost'?'t_frost':th==='volcano'?'t_volcano':'t_cliff').clone();cliffT.needsUpdate=true;cliffT.repeat.set(30,30);
+ const mtn=new T3.Mesh(g,new T3.MeshStandardMaterial({map:cliffT,vertexColors:true,roughness:1,metalness:0}));mtn.position.set(WW/2,0,WH/2);mtn.receiveShadow=true;R.envG.add(mtn);
+ // cliff & ruin props along the map border so the edge feels natural
+ if(EDGE.every(mdlOk)){const Rr=mulberry(33);for(let i=0;i<26;i++){const side=i%4;const t=Rr();const x=side<2?t*WW:(side===2?-120:WW+120),z=side>=2?t*WH:(side===0?-120:WH+120);const f=Rr()<.82?'p_cliff':'p_ruin';const inst=propInst(f,f==='p_cliff'?420:150,f==='p_cliff'?'l':'h',(side<2?0:Math.PI/2)+(Rr()-.5)*.4);if(!inst)continue;inst.wrap.position.set(x,-8,z);R.envG.add(inst.wrap);}}
+ // warmer, hazier light + matching fog so the horizon melts into the sky
+ try{const sc=R.scene;if(sc.fog){sc.fog.color.setHex(th==='frost'?0xbfd0e4:th==='volcano'?0x2a1410:0x7a5040);if(sc.fog.isFog){sc.fog.near=2400;sc.fog.far=9000;}}if(R.sun)R.sun.intensity=th==='volcano'?2.2:3.0;}catch(e){}
+}catch(e){console.warn('terrain',e);}}
+{const inst=setInterval(()=>{try{if(!R3||typeof R3.rebuildEnv!=='function'||R3._terrW)return;R3._terrW=1;clearInterval(inst);terrPreload();const _rb2=R3.rebuildEnv;R3.rebuildEnv=function(){const r=_rb2.apply(this,arguments);terrainGround();return r;};if(R3.ready&&R3.envG)terrainGround();}catch(e){}},300);}
+
+
+// ================= v3.3 : HOME BASES — Meshy HQ towers, cannon turrets, shield pylons, hangar & deploy pad (replacing neon primitive lines) =================
+const BASE_M=['b_core_f','b_core_e','b_turret','b_pylon','b_hangar','b_pad'];
+const bmOk=f=>{try{const c=MC[f];if(!c){mdlGet(f);return false;}return c.st==='ok';}catch(e){return false;}};
+function baseDress(){try{const R=R3,T3=window.THREE;if(!R||!R.mg||!G||MAP.space)return false;if(!BASE_M.every(bmOk))return false;if(R.mg.userData.dressed)return true;R.mg.userData.dressed=1;
+ // pads & the neon hex outline → Meshy deploy pad + a ring of shield pylons
+ for(const o of [...R.mg.children]){if(!o.geometry)continue;const t=o.geometry.type;if(t==='CylinderGeometry'&&o.geometry.parameters.radiusTop===430){o.material=o.material.clone();o.material.color=new T3.Color(0x1c2028);o.material.metalness=.6;o.material.roughness=.55;}if(t==='TorusGeometry'&&Math.abs(o.geometry.parameters.radius-432)<1){o.visible=false;}}
+ for(let t=0;t<2;t++){const b=BASES[t];const pad=propInst('b_pad',300,'l',0);if(pad){pad.wrap.position.set(b.x,4,b.y);R.mg.add(pad.wrap);}
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2+.2;const p=propInst('b_pylon',62,'h',a);if(!p)continue;p.wrap.position.set(b.x+Math.cos(a)*420,4,b.y+Math.sin(a)*420);R.mg.add(p.wrap);}
+  const away=BASES[1-t];const ang=Math.atan2(b.y-away.y,b.x-away.x);const hg=propInst('b_hangar',230,'l',-ang+Math.PI/2);if(hg){hg.wrap.position.set(b.x+Math.cos(ang)*250+Math.cos(ang+Math.PI/2)*190,4,b.y+Math.sin(ang)*250+Math.sin(ang+Math.PI/2)*190);R.mg.add(hg.wrap);}}
+ // wallSwap: the tall dark box walls in front of each base → armored barrier props
+ try{const env=R.envG;const walls=env.children.filter(o=>o.geometry&&o.geometry.type==='BoxGeometry'&&Math.abs((o.geometry.parameters.height||0)-96)<1);for(const w of walls){const len=w.geometry.parameters.width;const n=Math.max(1,Math.round(len/40));for(let i=0;i<n;i++){const p=propInst('p_barrier',44,'l',0);if(!p)break;const off=(i-(n-1)/2)*40;p.wrap.position.set(w.position.x+Math.cos(-w.rotation.y)*off,0,w.position.z+Math.sin(-w.rotation.y)*off);p.wrap.rotation.y=w.rotation.y;env.add(p.wrap);}w.visible=false;}env.children.filter(o=>o.geometry&&o.geometry.type==='BoxGeometry'&&Math.abs((o.geometry.parameters.height||0)-10)<1).forEach(o=>o.visible=false);}catch(e){}
+ // structures: replace the primitive core pylon / turret blocks, keep game logic objects
+ for(const o of R.sobj||[]){const s=o.s;const keep=new Set([o.shield]);const hideIn=(grp)=>grp.traverse(m=>{if((m.isMesh||m.isSprite)&&!keep.has(m))m.visible=false;});
+  if(s.kind==='core'){hideIn(o.gp);const f=s.team===(G.local?G.local.team:0)?'b_core_f':'b_core_e';const m=propInst(s.team===0?'b_core_f':'b_core_e',210,'h',0);if(m){o.gp.add(m.wrap);m.wrap.traverse(x=>{if(x.isMesh){x.castShadow=true;x.receiveShadow=true;}});}
+   const gl=new T3.Sprite(new T3.SpriteMaterial({map:R.radTex([[0,'rgba(255,255,255,.8)'],[1,'rgba(255,255,255,0)']]),color:s.team===0?0x7df9ff:0xff4a5a,transparent:true,blending:T3.AdditiveBlending,depthWrite:false,opacity:.55}));gl.scale.set(90,90,1);gl.position.y=120;o.gp.add(gl);o.coreGlow=gl;}
+  else if(o.head){hideIn(o.gp);const m=propInst('b_turret',58,'l',Math.PI/2);if(m){m.wrap.position.y=-24;o.head.add(m.wrap);m.wrap.traverse(x=>{if(x.isMesh){x.castShadow=true;x.visible=true;}});}}}
+ return true;}catch(e){console.warn('baseDress',e);return false;}}
+{const inst=setInterval(()=>{try{if(!R3||typeof R3.setupMatch!=='function'||R3._bdW)return;R3._bdW=1;clearInterval(inst);BASE_M.forEach(bmOk);const _sm=R3.setupMatch;R3.setupMatch=function(){const r=_sm.apply(this,arguments);let tries=0;const go=()=>{if(baseDress()||++tries>40)return;setTimeout(go,500);};go();return r;};}catch(e){}},300);}
+{const _stG=step;step=function(dt){_stG(dt);try{if(!R3||!R3.sobj)return;const t=performance.now()/1000;for(const o of R3.sobj)if(o.coreGlow&&!o.s.dead)o.coreGlow.material.opacity=.4+.2*Math.sin(t*2);}catch(e){}};}
+
+
+// ================= v3.4 : TENSION & PAYOFF — energy, charged palm laser, game-changing AoE, Imperial strike teams & rival frames, visible rewards =================
+const ENX={max:100,fireDrain:24,regen:26,qCost:28,eCost:12,qCharge:.6};
+const isArk=u=>u&&u.cls==='arkframe'&&G&&G.local&&u===G.local.unit;
+// ---------- energy & charged Q ----------
+{const _li2=localInput;localInput=function(u){const inp=_li2(u);try{if(!isArk(u))return inp;if(u.en==null){u.en=ENX.max;u.oh=0;}
+ if(u.oh>0){inp.fire=false;}else if(inp.fire){if(u.en<=0){u.oh=1.6;inp.fire=false;try{pop(L('과열! 에너지 회복 중','OVERHEAT! Recharging'),'#ff6b6b',false);}catch(e){}}}
+ if(inp.a2&&u.en<ENX.eCost&&!(u.cd2>0)){inp.a2=false;if(!(u.enMsg>G.t)){u.enMsg=G.t+1.2;pop(L('에너지 부족','Low energy'),'#9fcfe8',false);}}
+ if(u.qfire){inp.a1=true;u.qfire=false;}
+ else if(inp.a1){inp.a1=false;if(!(u.qch>0)&&!(u.cd1>0)){if(u.en>=ENX.qCost){u.qch=ENX.qCharge;u.qchA=inp.aim;}else if(!(u.enMsg>G.t)){u.enMsg=G.t+1.2;pop(L('에너지 부족','Low energy'),'#9fcfe8',false);}}}
+ if(u.qch>0){inp.a1=false;}
+ u._wantFire=inp.fire;}catch(e){}return inp;};}
+function qBeam(u){const a=u.aa!=null?u.aa:u.a;const base=60*dmgMul(u)*(1+plv()*.03);const len=980,w=95;let n=0;
+ for(const e of G.units){if(e.dead||e.team===u.team)continue;const dx=e.x-u.x,dy=e.y-u.y;const t=dx*Math.cos(a)+dy*Math.sin(a);if(t<0||t>len)continue;if(Math.abs(dx*Math.sin(a)-dy*Math.cos(a))<w+e.r){hurt(e,base*3.2,G.local,a,'b');n++;if(!e.boss){e.vx=(e.vx||0)+Math.cos(a)*260;e.vy=(e.vy||0)+Math.sin(a)*260;}}}
+ try{swLine(u.x,u.y,a,len,w,base*3.2,G.local);}catch(e){}
+ for(let i=0;i<70;i++){const t=Math.random()*len;part(u.x+Math.cos(a)*t+rnd(-20,20),u.y+Math.sin(a)*t+rnd(-20,20),rnd(-60,60),rnd(-60,60),.4,i%3?'#9ff6ff':'#ffffff',9,40);}
+ try{const T3=window.THREE;if(R3&&R3.scene&&T3){const bm=new T3.Mesh(new T3.CylinderGeometry(14,14,len,10,1,true),new T3.MeshBasicMaterial({color:0x9ff6ff,transparent:true,opacity:.9,blending:T3.AdditiveBlending,depthWrite:false}));const p1=new T3.Vector3(u.x,unitH(u)+46,u.y),p2=new T3.Vector3(u.x+Math.cos(a)*len,unitH(u)+40,u.y+Math.sin(a)*len);bm.position.copy(p1).lerp(p2,.5);bm.lookAt(p2);bm.rotateX(Math.PI/2);R3.scene.add(bm);let t=0;const fade=()=>{t+=.05;bm.material.opacity=.9*(1-t/.35);bm.scale.x=bm.scale.z=1+t*3;if(t<.35)requestAnimationFrame(fade);else{R3.scene.remove(bm);bm.geometry.dispose();}};fade();}}catch(e){}
+ G.hstop=Math.max(G.hstop||0,.06);try{G.shake=Math.max(G.shake||0,9);}catch(e){}}
+{const _stE=step;step=function(dt){_stE(dt);try{const u=G&&G.local&&G.local.unit;if(!isArk(u)||u.dead)return;if(u.en==null)u.en=ENX.max;
+ if(u.oh>0)u.oh-=dt;if(u._wantFire&&u.oh<=0){u.en=Math.max(0,u.en-ENX.fireDrain*dt);u.enIdle=0;}else{u.enIdle=(u.enIdle||0)+dt;u.en=Math.min(ENX.max,u.en+ENX.regen*dt*(u.enIdle>.8?1.4:.6));}
+ const c2=u.cd2||0;if(c2>(u._enc2||0)+.3)u.en=Math.max(0,u.en-ENX.eCost);u._enc2=c2;
+ if(u.qch>0){u.qch-=dt;const a=u.aa!=null?u.aa:u.a;const hx=u.x+Math.cos(a)*40,hy=u.y+Math.sin(a)*40;for(let i=0;i<4;i++){const r=60*(u.qch/ENX.qCharge);const t=Math.random()*6.28;part(hx+Math.cos(t)*r,hy+Math.sin(t)*r,-Math.cos(t)*r*4,-Math.sin(t)*r*4,.15,'#9ff6ff',5,48);}
+  if(u.qch<=0){u.qch=0;u.qfire=true;u.en=Math.max(0,u.en-ENX.qCost);qBeam(u);}}
+ // energy orb shows EN, red while overheated
+ const o=document.getElementById('orbE'),ot=document.getElementById('orbET');if(o){o.style.height=Math.max(0,u.en)+'%';o.style.background=u.oh>0?'radial-gradient(circle at 40% 30%,#ff8a8a,#4a0000)':'radial-gradient(circle at 40% 30%,#5ab4ff,#001a4a)';}if(ot)ot.textContent=u.oh>0?L('과열','HEAT'):Math.round(u.en)+' EN';}catch(e){}};}
+// ---------- R = orbital barrage: the game changer ----------
+{const _stR2=step;step=function(dt){_stR2(dt);try{const u=G&&G.local&&G.local.unit;if(!isArk(u)||u.dead)return;const ul=G.local.ult||0;if((u._orbU||0)>=99&&ul<5)orbital(u);u._orbU=ul;
+ if(G.orb)for(const s of G.orb){s.t-=dt;if(s.t>0){if(Math.random()<.6){const a=Math.random()*6.28;part(s.x+Math.cos(a)*s.r,s.y+Math.sin(a)*s.r,0,0,.12,'#ffd166',5,6);}}else if(!s.done){s.done=1;const base=60*dmgMul(u)*(1+plv()*.03);let n=0;for(const e of G.units){if(e.dead||e.team===u.team)continue;if(d2(e.x,e.y,s.x,s.y)<s.r*s.r){hurt(e,base*6,G.local,0,'x');e.lift=Math.max(e.lift||0,1.2);n++;}}try{n+=swArea(s.x,s.y,s.r,base*6,G.local);}catch(e){}
+  for(let h=0;h<26;h++)part(s.x+rnd(-12,12),s.y+rnd(-12,12),0,0,.35,'#fff3b0',16,h*45);for(let i=0;i<50;i++){const a=Math.random()*6.28;part(s.x,s.y,Math.cos(a)*rnd(200,600),Math.sin(a)*rnd(200,600),.7,i%2?'#ffb000':'#ff6a2a',9,rnd(5,60));}G.parts.push({x:s.x,y:s.y,vx:0,vy:0,l:.6,ml:.6,c:'ring',s:s.r*1.3});try{G.shake=Math.max(G.shake||0,14);}catch(e){}}}
+ if(G.orb)G.orb=G.orb.filter(s=>!s.done||s.t>-1);}catch(e){}};}
+function orbital(u){let cx=u.x,cy=u.y,best=0;const cand=[...G.units.filter(e=>!e.dead&&e.team!==u.team).map(e=>[e.x,e.y])];try{for(const s of (window.__SW?window.__SW.list:[]))cand.push([s.x,s.y]);}catch(e){}
+ for(let i=0;i<cand.length;i+=Math.max(1,Math.floor(cand.length/40))){const c=cand[i];if((c[0]-u.x)**2+(c[1]-u.y)**2>1100*1100)continue;let n=0;for(const d of cand)if((d[0]-c[0])**2+(d[1]-c[1])**2<380*380)n++;if(n>best){best=n;cx=c[0];cy=c[1];}}
+ G.orb=G.orb||[];for(let i=0;i<7;i++){const a=i/7*6.28+Math.random()*.4,r=i?rnd(140,360):0;G.orb.push({x:cx+Math.cos(a)*r,y:cy+Math.sin(a)*r,r:230,t:.9+i*.22});}
+ (window.arAnnounce||announce)('',L('궤도 폭격','ORBITAL BARRAGE'),'',true,'#ffd166');G.hstop=Math.max(G.hstop||0,.25);}
+// E = spinning slash: full circle sweep
+{const _stS3=step;step=function(dt){_stS3(dt);try{const u=G&&G.local&&G.local.unit;if(!isArk(u)||u.dead)return;const c2=u.cd2||0;if(c2>(u._spin||0)+.3){const base=60*dmgMul(u)*(1+plv()*.03);let n=0;for(const e of G.units){if(e.dead||e.team===u.team)continue;if(d2(e.x,e.y,u.x,u.y)<300*300){hurt(e,base*1.6,G.local,Math.atan2(e.y-u.y,e.x-u.x),'x');n++;}}try{n+=swArea(u.x,u.y,300,base*2.4,G.local);}catch(e){}
+  for(let i=0;i<48;i++){const a=i/48*6.28;part(u.x+Math.cos(a)*240,u.y+Math.sin(a)*240,Math.cos(a+1.5)*300,Math.sin(a+1.5)*300,.3,i%2?'#ff7ae0':'#ffffff',7,40);}G.parts.push({x:u.x,y:u.y,vx:0,vy:0,l:.35,ml:.35,c:'ring',s:330});}u._spin=c2;}catch(e){}};}
+// ---------- Imperial strike teams & rival frames ----------
+const EM_KIND={striker:{n:K('제국 돌격 기동전사 「진홍」','Imperial Striker "Crimson"'),skin:'m_striker',hp:.9,spd:1.25},knight:{n:K('제국 중장 기동전사 「흑기사」','Imperial Knight "Black"'),skin:'mech4',hp:1.5,spd:.9},phantom:{n:K('제국 저격 기동전사 「유령」','Imperial Sniper "Phantom"'),skin:'m_phantom',hp:.8,spd:1.05},artillery:{n:K('제국 포격 기동전사 「천둥」','Imperial Artillery "Thunder"'),skin:'m_artillery',hp:1.1,spd:.85}};
+function eOwner(){try{return invOwn();}catch(e){return null;}}
+function spawnEMech(kind,x,y,scale){const K0=EM_KIND[kind];const own=eOwner();if(!own)return null;const u=spawnMinion(own,'arkframe',x,y,99999,0);u.eMech=kind;u.skin=K0.skin;u.slot={...u.slot,name:tx(K0.n)};const me=G.local&&G.local.unit;const base=me?me.mhp:2600;u.mhp=Math.round(base*K0.hp*(scale||1));u.hp=u.mhp;u.st.spd*=K0.spd;u.st.dmg=(u.st.dmg||1)*(.7+.15*(scale||1));u.eT=2+Math.random()*2;
+ (window.arAnnounce||announce)('⚠',L('적 기동전사 접근','HOSTILE FRAME INBOUND'),tx(K0.n),true,'#ff6b6b');return u;}
+function spawnStrike(x,y,lvl,withMech){const own=eOwner();if(!own)return;for(let i=0;i<5;i++){try{const u=spawnMinion(own,CL.robo?'robo':'assault',x+rnd(-90,90),y+rnd(-90,90),99999,0);u.slot={...u.slot,name:L('제국 전투 로봇','Imperial combat robot')};u.mhp=Math.round(u.mhp*(1.4+lvl*.15));u.hp=u.mhp;u.eRobo=1;}catch(e){}}
+ if(withMech)spawnEMech(pick(Object.keys(EM_KIND)),x,y,1+lvl*.08);for(let i=0;i<30;i++)part(x+rnd(-80,80),y+rnd(-80,80),0,-120,.8,'#ff9b9b',6,rnd(20,200));}
+// telegraphed attacks
+function tele(k,o){G.tele=G.tele||[];G.tele.push(Object.assign({k,t:1.1},o));}
+function teleTick(dt){if(!G.tele||!G.tele.length)return;for(const s of G.tele){s.t-=dt;if(s.t>0){if(s.k==='circle'){for(let i=0;i<3;i++){const a=Math.random()*6.28;part(s.x+Math.cos(a)*s.r,s.y+Math.sin(a)*s.r,0,0,.15,'#ff3b47',5,5);}}else if(s.k==='line'){for(let i=0;i<4;i++){const t=Math.random();part(s.x+(s.x2-s.x)*t,s.y+(s.y2-s.y)*t,0,0,.12,'#ff3b47',5,8);}}continue;}
+  if(s.done)continue;s.done=1;const hit=u=>{if(s.k==='circle')return d2(u.x,u.y,s.x,s.y)<s.r*s.r;const dx=s.x2-s.x,dy=s.y2-s.y,L2=dx*dx+dy*dy;const t=clamp(((u.x-s.x)*dx+(u.y-s.y)*dy)/L2,0,1);return d2(u.x,u.y,s.x+dx*t,s.y+dy*t)<(s.w||50)**2;};
+  for(const u of G.units){if(u.dead||u.team!==0)continue;if(hit(u))hurt(u,s.dmg,s.src,0,'x');}
+  if(s.k==='circle'){for(let i=0;i<34;i++){const a=Math.random()*6.28;part(s.x,s.y,Math.cos(a)*rnd(150,420),Math.sin(a)*rnd(150,420),.5,i%2?'#ff6a2a':'#ffd166',8,rnd(5,50));}fx(1,s.x,s.y,0);}else{for(let i=0;i<40;i++){const t=Math.random();part(s.x+(s.x2-s.x)*t,s.y+(s.y2-s.y)*t,rnd(-50,50),rnd(-50,50),.35,'#ff3b47',8,30);}}}
+ G.tele=G.tele.filter(s=>!s.done||s.t>-.5);}
+function mechAI(u){const inp={mx:0,my:0,mz:0,aim:u.aa,fire:false,a1:false,a2:false,ul:false,ab:false,steer:null,thr:1,tx:u.x,ty:u.y};const me=G.local&&G.local.unit;let tg=me&&!me.dead&&d2(me.x,me.y,u.x,u.y)<2200*2200?me:null;if(!tg){let bd=1e12;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=d2(e.x,e.y,u.x,u.y);if(d<bd){bd=d;tg=e;}}}if(!tg)return inp;
+ const d=Math.hypot(tg.x-u.x,tg.y-u.y),a=Math.atan2(tg.y-u.y,tg.x-u.x);inp.aim=a;inp.tx=tg.x;inp.ty=tg.y;const want=u.eMech==='phantom'?620:u.eMech==='artillery'?560:u.eMech==='knight'?320:220;
+ u.strA=(u.strA||(Math.random()<.5?1:-1));if(d>want+80){inp.mx=Math.cos(a);inp.my=Math.sin(a);}else if(d<want-80){inp.mx=-Math.cos(a)*.8;inp.my=-Math.sin(a)*.8;}else{inp.mx=Math.cos(a+u.strA*Math.PI/2)*.7;inp.my=Math.sin(a+u.strA*Math.PI/2)*.7;if(Math.random()<.005)u.strA*=-1;}
+ inp.fire=d<900;u.eT-=1/30;const src=u.slot;const pw=(60+plv()*6)*(u.st.dmg||1);
+ if(u.eT<=0){u.eT=u.eMech==='artillery'?5:6+Math.random()*2;
+  if(u.eMech==='striker'){try{arkCharge(u,tg,true);}catch(e){}tele('circle',{x:tg.x,y:tg.y,r:130,t:.7,dmg:pw*1.6,src});}
+  else if(u.eMech==='knight'){for(let i=0;i<3;i++)tele('circle',{x:tg.x+rnd(-140,140),y:tg.y+rnd(-140,140),r:140,t:1+i*.25,dmg:pw*1.4,src});}
+  else if(u.eMech==='phantom'){const L0=1400;tele('line',{x:u.x,y:u.y,x2:u.x+Math.cos(a)*L0,y2:u.y+Math.sin(a)*L0,w:55,t:1.1,dmg:pw*2.4,src});}
+  else{for(let i=0;i<5;i++){const t=Math.random()*6.28,r=Math.random()*240;tele('circle',{x:tg.x+Math.cos(t)*r,y:tg.y+Math.sin(t)*r,r:120,t:1.2+i*.15,dmg:pw*1.1,src});}}}
+ return inp;}
+{const _bi2=botInput;botInput=function(s,u,dt){try{if(u&&u.eMech)return mechAI(u);}catch(e){}return _bi2(s,u,dt);};}
+// AI battle: the enemy side fields a few rival frames
+{const _pbc2=pickBotClass;pickBotClass=function(s){const c=_pbc2(s);try{if(G&&!G.rpg&&!G.arena&&s.team===1&&!G.inv){const n=G.units.filter(u=>!u.dead&&u.team===1&&u.cls==='arkframe').length;if(n<3&&Math.random()<.18){s.eMechK=pick(Object.keys(EM_KIND));return'arkframe';}}}catch(e){}return c;};}
+{const _su7=spawnUnit;spawnUnit=function(s,cls,sp,opt){const u=_su7(s,cls,sp,opt);try{if(u&&s.eMechK&&cls==='arkframe'){u.eMech=s.eMechK;u.skin=EM_KIND[s.eMechK].skin;u.eT=3;}}catch(e){}return u;};}
+// schedule strike teams in story battles and hunts
+{let t=0;const _stK=step;step=function(dt){_stK(dt);try{if(!G||G.over)return;teleTick(dt);const X=G.rpg;if(!X)return;t-=dt;if(t>0)return;const me=G.local&&G.local.unit;if(!me)return;
+ const field=X.obj&&X.obj.k==='field';const story=!field&&!X.quest;const lvl=(X.diff||0)+(field?(X.obj.zl||1)/10:0);
+ if(story&&X.epi==='e_p'){if(G.t>45&&!X.scoutDone){X.scoutDone=1;const b=BASES[1];spawnEMech('striker',me.x+rnd(500,700),me.y+rnd(-300,300),.55);}t=5;return;}
+ const gap=story?45:70;if(!X.nextStrike)X.nextStrike=story?22:40;if(G.t>=X.nextStrike){X.nextStrike=G.t+gap;const a=Math.random()*6.28;spawnStrike(clamp(me.x+Math.cos(a)*750,80,WW-80),clamp(me.y+Math.sin(a)*750,80,WH-80),lvl,true);}t=2;}catch(e){}};}
+// ---------- rewards you can see ----------
+const KILLV={swarm:1,inf:6,robo:12,elite:45,mech:320,boss:900};
+function rewardPop(x,y,cred,exp,col){try{G.texts.push({h:70,x:x+rnd(-10,10),y:y-20,txt:'+'+cred+'◆',c:col||'#9ff6ff',sz:cred>=100?24:16,l:1.1,L:1.1});}catch(e){}}
+{const _ku=killUnit;killUnit=function(u,src,...a){const was=u&&u.dead;const r=_ku(u,src,...a);try{if(G&&G.rpg&&u&&!was&&u.team!==0&&(src===G.local||(src&&src.ownerSlot===G.local))){const X=G.rpg;const kind=u.boss?'boss':u.eMech?'mech':u.elite?'elite':u.eRobo?'robo':'inf';const c=KILLV[kind];const R0=R();R0.cred+=c;X.earn=X.earn||{cred:0,items:0};X.earn.cred+=c;rewardPop(u.x,u.y,c,0,kind==='mech'||kind==='boss'?'#ffd166':'#9ff6ff');
+  if(kind==='mech'||kind==='boss'||(kind==='elite'&&Math.random()<.3)){const rr=kind==='boss'?Math.min(4,2+Math.floor(Math.random()*2.5)):kind==='mech'?2+Math.floor(Math.random()*2):1+Math.floor(Math.random()*2);try{lootDrop(mkItem(rr,null),u.x,u.y);X.earn.items++;if(kind==='mech'&&Math.random()<.5)lootDrop(mkDrone(null,1+Math.floor(Math.random()*3)),u.x+40,u.y);}catch(e){}}
+  if(kind==='mech'){(window.arAnnounce||announce)('',L('적 기동전사 격파','HOSTILE FRAME DOWN'),'+'+c+'◆',true,'#ffd166');G.hstop=Math.max(G.hstop||0,.2);}saveP();}}catch(e){}return r;};}
+// swarm kills pay a little more and show it
+try{const _sh=swHit;swHit=function(s,dmg,src){const was=s.dead;_sh(s,dmg,src);if(!was&&s.dead&&src===G.local&&G.rpg){const X=G.rpg;X.earn=X.earn||{cred:0,items:0};X.earn.cred+=1;if(Math.random()<.25)rewardPop(s.x,s.y,1);}};}catch(e){}
+// result screen: what you earned
+{const _sr4=showResult;showResult=function(...a){_sr4.apply(this,a);try{const ov=document.getElementById('rpgRs');const X=(window.__rpgRes&&window.__rpgRes.X)||null;const E=X&&X.earn;if(ov&&E){const go=ov.querySelector('#rpgRsGo');const d=document.createElement('div');d.style.cssText='margin:-6px 0 14px;color:#9ff6ff;font-weight:700';d.innerHTML=L('전투 획득: ','Battle earnings: ')+'◆ '+E.cred.toLocaleString()+(E.items?' · '+L('장비 ','gear ')+E.items:'');go.parentElement.insertBefore(d,go);}}catch(e){}};}
+// auto-fire costs the same energy, so standing still with the trigger held runs dry
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
