@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v2.4 RPG</div>
+   <div class="ver"><i></i>ASCEND · v2.5 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1537,7 +1537,7 @@ $('#pzView').onclick=()=>toggleView();
 $('#pzGfx').onclick=()=>{const order=['high','low','2d'];P.gfx=order[(order.indexOf(gfxMode())+1)%3];saveP();if(R3.ready&&R3.applyGfx)R3.applyGfx();syncSettingsUI();};
 function setLang(l){LANG=l;P.lang=l;saveP();applyLang();if(!isHidden('#deploy'))openDeploy();if(!isHidden('#tree'))openTree();if(!isHidden('#char'))openChar();}
 $('#mLang').onclick=$('#pzLang').onclick=()=>setLang(LANG==='ko'?'en':'ko');
-function ensureName(){let n=$('#mName').value.trim().replace(/[<>&"]/g,'');if(!n)n='Pilot-'+(100+Math.floor(Math.random()*900));P.name=n.slice(0,12);P.size=+$('#mSize').value;delete P.migr;saveP();}
+function ensureName(){let n=$('#mName').value.trim().replace(/[<>&"]/g,'');if((!n||/^Pilot-\d+$/.test(n))&&P.name&&!/^Pilot-\d+$/.test(P.name))n=P.name;if(!n)n='Pilot-'+(100+Math.floor(Math.random()*900));P.name=n.slice(0,12);P.size=+$('#mSize').value;delete P.migr;saveP();}
 $('#mSfx').onclick=$('#pzSfx').onclick=()=>{P.sfx=!P.sfx;saveP();$('#mSfx').textContent=$('#pzSfx').textContent=t('sfx',P.sfx?t('on'):t('off'));};
 function openChar(){show('#char');const mk=(box,list,cur,fn,isCol)=>{const el=$(box);el.innerHTML='';list.forEach((v,i)=>{const b=document.createElement(isCol?'span':'button');if(isCol){b.className='sw'+(v===cur?' sel':'');b.style.background=v;}else{b.className='sm opt'+(i===cur?' on':'');b.textContent=v;}b.onclick=()=>{fn(isCol?v:i);saveP();openChar();};el.appendChild(b);});};
  mk('#chCol',PALETTE,P.ch.col,v=>P.ch.col=v,true);mk('#chVis',VISORS,P.ch.vis,v=>P.ch.vis=v,true);
@@ -3348,7 +3348,7 @@ function mechFX(e,m,u,dt,now,sp){const T3=window.THREE;if(!e.mfx)mechInit(e,m,u)
    const mw=m.obj.parent.matrixWorld.clone();gh.w.matrixAutoUpdate=false;gh.w.matrix.copy(mw);if(gh.w.parent!==scene)scene.add(gh.w);gh.w.visible=true;gh.t=.36;}}
   for(const g of fx.ghosts){if(g.t>0){g.t-=dt;g.obj.traverse(o=>{if(o.isMesh)o.material.opacity=Math.max(0,g.t/.36)*.42;});if(g.t<=0)g.w.visible=false;}}}
  // drones orbit + fire
- if(fx.drones&&scene){fx.drones.forEach((d,i)=>{if(d.parent!==scene)scene.add(d);const D=d.userData.D||{};const bl=D.type==='blade';const a=now*(bl?3.2:1.6)+d.userData.ph;const rad=bl?36:44+fx.drones.length*4;const tx=u.x+Math.cos(a)*rad,tz=u.y+Math.sin(a)*rad,ty=unitH(u)+(bl?34:62)+Math.sin(now*3+i)*5;d.position.lerp(new T3.Vector3(tx,ty,tz),Math.min(1,dt*6));d.userData.rg.rotation.z+=dt*6;d.rotation.y=-(u.aa||0);d.userData.eye.material.opacity=.6+.4*Math.sin(now*9+i);
+ if(fx.drones&&scene){fx.drones.forEach((d,i)=>{if(d.parent!==scene)scene.add(d);const D=d.userData.D||{};const bl=D.type==='blade';const a=now*(bl?3.2:1.6)+d.userData.ph;const rad=(bl?36:44+fx.drones.length*4)+(D.scale||1)*5;let tx=u.x+Math.cos(a)*rad,tz=u.y+Math.sin(a)*rad,ty=unitH(u)+(bl?34:62)+Math.sin(now*3+i)*5;if(u.fusion>0){const bk=(u.aa!=null?u.aa:u.a||0)+Math.PI+(i-2.5)*.55;tx=u.x+Math.cos(bk)*18;tz=u.y+Math.sin(bk)*18;ty=unitH(u)+44+Math.abs(i-2.5)*7;}d.position.lerp(new T3.Vector3(tx,ty,tz),Math.min(1,dt*6));d.userData.rg.rotation.z+=dt*6;d.rotation.y=-(u.aa||0);d.userData.eye.material.opacity=.6+.4*Math.sin(now*9+i);
    if(D.shot&&D.shot!==d.userData.last&&D.tg){d.userData.last=D.shot;const tg=D.tg;const p2=new T3.Vector3(tg.x,unitH(tg)+12,tg.y);const len=d.position.distanceTo(p2);const bm=new T3.Mesh(new T3.CylinderGeometry(.7*(D.scale||1),.7*(D.scale||1),len,6,1,true),new T3.MeshBasicMaterial({color:d.userData.col||fx.col,transparent:true,opacity:.95,blending:T3.AdditiveBlending,depthWrite:false}));bm.position.copy(d.position).lerp(p2,.5);bm.lookAt(p2);bm.rotateX(Math.PI/2);scene.add(bm);(fx.fxl=fx.fxl||[]).push({o:bm,t:.12,m:bm.material});}});}
  e.mfxAlive=1;}
 function mechFXCleanup(e){const fx=e.mfx;if(!fx)return;for(const d of fx.drones||[])if(d.parent)d.parent.remove(d);for(const g of fx.ghosts||[])if(g.w.parent)g.w.parent.remove(g.w);for(const f of fx.fxl||[])if(f.o.parent)f.o.parent.remove(f.o);}
@@ -3773,8 +3773,8 @@ CL.omegaw={npc:1,bug:0,n:{ko:'오메가 거인 전사',en:'Omega Giant Warrior'}
 if(typeof MDL!=='undefined'){MDL.omegaw=['omega',PI/2,130,'h'];}
 // ---------- episodes ----------
 const K=(ko,en)=>({ko,en});
-const PORT={sera:'link2',luna:'link3',astra:'link_leg',reinhard:'emp_officer',yang:'fed_officer',arkos:'omega',hq:'emp_female',seraphine:'seraphine',hayun:'hayun',minjae:'minjae',me:null,igni:'a_fire',zeta:'zbehemoth'};
-const WHO={sera:K('세라','Sera'),luna:K('루나','Luna'),astra:K('아스트라','Astra'),reinhard:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),yang:K('에이든 서','Aiden Seo'),arkos:K('오메가 군주 아르코스','Omega Lord Arkos'),hq:K('연합 사령부','United HQ'),seraphine:K('알파 사령관 세라핀','Alpha Commander Seraphine'),hayun:K('하윤','Hayun'),minjae:K('민재','Minjae'),me:K('{name}','{name}'),igni:K('이그니','Igni'),zeta:K('???','???'),nar:K('','')};
+const PORT={sera:'link2',luna:'link3',astra:'link_leg',adel:'emp_officer',aiden:'fed_officer',arkos:'omega',hq:'emp_female',seraphine:'seraphine',hayun:'hayun',minjae:'minjae',me:null,igni:'a_fire',zeta:'zbehemoth'};
+const WHO={sera:K('세라','Sera'),luna:K('루나','Luna'),astra:K('아스트라','Astra'),adel:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),aiden:K('에이든 서','Aiden Seo'),arkos:K('오메가 군주 아르코스','Omega Lord Arkos'),hq:K('연합 사령부','United HQ'),seraphine:K('알파 사령관 세라핀','Alpha Commander Seraphine'),hayun:K('하윤','Hayun'),minjae:K('민재','Minjae'),me:K('{name}','{name}'),igni:K('이그니','Igni'),zeta:K('???','???'),nar:K('','')};
 const BG={seoul:'radial-gradient(ellipse at 50% 120%,rgba(255,80,200,.35),transparent 60%),linear-gradient(180deg,#0a0820 0%,#2a1040 55%,#ff5aa0 140%)',hangar:'linear-gradient(180deg,#0b1018,#1b2433 60%,#0a0e14)',fire:'radial-gradient(ellipse at 50% 110%,rgba(255,110,30,.6),transparent 60%),linear-gradient(180deg,#140604,#3a0f06)',ice:'radial-gradient(ellipse at 50% 0%,rgba(160,220,255,.4),transparent 60%),linear-gradient(180deg,#081a2c,#0d2f4a)',space:'radial-gradient(ellipse at 30% 40%,rgba(120,80,220,.35),transparent 55%),radial-gradient(#0a0f22,#020308)',temple:'radial-gradient(ellipse at 50% 30%,rgba(255,220,140,.45),transparent 60%),linear-gradient(180deg,#120e04,#2a2008)',gate:'radial-gradient(ellipse at 50% 50%,rgba(197,140,255,.35),transparent 60%),linear-gradient(180deg,#07040e,#1a0a2a)',memorial:'linear-gradient(180deg,#0a1224,#1d2c48 60%,#3a4d70)'};
 const S=(w,ko,en,o)=>Object.assign({t:'say',w,x:K(ko,en)},o||{});
 const SC=(bg,ko,en,o)=>Object.assign({t:'scene',bg,x:K(ko,en)},o||{});
@@ -3808,8 +3808,8 @@ const EPIS=[
   S('seraphine','우리 알파는 제타에게 멸망했다. 너희도 같은 길을 걷기 싫다면 우리와 손을 잡아라.','We of Alpha were devoured by the Zeta. If you do not wish to share our fate, take our hand.'),
   S('sera','…세라핀의 음성 패턴에 미세한 떨림. 무언가 숨기고 있습니다.','…Micro-tremors in Seraphine\'s voice. She is concealing something.'),
   {t:'choice',w:'hq',x:K('두 함대가 동시에 구조 신호를 보낸다. 시간은 한쪽만 구할 만큼뿐이다.','Two fleets are screaming for help at once. There is only time to save one.'),o:[
-   {l:K('제국 함대를 구한다 — 아델하르트 제독','Save the Imperial fleet — Admiral Adelhard'),set:'reinhard',rw:{shards:200,item:2},say:['reinhard',K('연맹 쪽 파일럿에게 빚을 지다니. …이 빚은 반드시 갚겠다.','Rescued by a Federation pilot… How humiliating. Remember this, {name}. I always repay my debts.')]},
-   {l:K('연맹 수송선을 구한다 — 에이든 서 참모','Save the Federation convoy — Strategist Seo'),set:'yang',rw:{shards:200,item:2},say:['yang',K('살았다… 고마워. 나중에 차 한 잔 사지. 홍차, 브랜디 약간.','Phew—alive. Thank you. I owe you a cup of tea. Black, with a splash of brandy.')]}]},
+   {l:K('제국 함대를 구한다 — 아델하르트 제독','Save the Imperial fleet — Admiral Adelhard'),set:'adel',rw:{shards:200,item:2},say:['adel',K('연맹 쪽 파일럿에게 빚을 지다니. …이 빚은 반드시 갚겠다.','Rescued by a Federation pilot… How humiliating. Remember this, {name}. I always repay my debts.')]},
+   {l:K('연맹 수송선을 구한다 — 에이든 서 참모','Save the Federation convoy — Strategist Seo'),set:'aiden',rw:{shards:200,item:2},say:['aiden',K('살았다… 고마워. 나중에 차 한 잔 사지. 홍차, 브랜디 약간.','Phew—alive. Thank you. I owe you a cup of tea. Black, with a splash of brandy.')]}]},
   {t:'battle',x:K('궤도 기지를 습격한 제타 비행 군단을 격추하라.','Shoot down the Zeta air swarm tearing into the station.'),waves:5,boss:'zguard',diff:2,rw:{shards:350,item:2}},
   SC('hangar','구조된 수송선의 화물칸','The cargo hold of the rescued transport'),
   S('luna','와, 진짜 사람이다! 저는 루나예요. 오늘 운이 좋을 것 같아요. 제 직감은 틀린 적이 거의 없거든요.','Oh! A real human! Hi, I\'m Luna. I\'ve got a good feeling about today—and my hunches are almost never wrong.',{rw:{link:'link3'}}),
@@ -3832,8 +3832,8 @@ const EPIS=[
   {t:'reward',x:K('기억 조각 3: 알파는 생명을 만들었고, 실패하자 버렸다.','Memory fragment 3: Alpha created life—and when it failed, Alpha threw it away.'),rw:{mem:1}}]},
  {id:'e3',planet:K('빙하 위성 니브','Glacial Moon Niv'),t:K('4장 · 얼음 아래의 진실','Ch.4 · Truth Beneath the Ice'),x:58,y:28,col:'#bfe9ff',map:'frost',req:'e1',nodes:[
   SC('ice','니브 · 빙하 아래 알파 연구소','Niv — an Alpha laboratory beneath the glacier'),
-  S('yang','배양 기록 해독 완료. 서명은 오메가. …이건 전쟁의 판 자체가 다르다는 뜻이야.','Culture logs decrypted. Signature: Omega. …Well. That changes the whole board, doesn\'t it.',{if:fl('yang')}),
-  S('reinhard','배양 기록의 서명은 오메가다. 제국 정보부가 놓친 이름이군. 흥미롭다.','The logs are signed \'Omega.\' A name Imperial Intelligence somehow missed. How very interesting.',{if:nfl('yang')}),
+  S('aiden','배양 기록 해독 완료. 서명은 오메가. …이건 전쟁의 판 자체가 다르다는 뜻이야.','Culture logs decrypted. Signature: Omega. …Well. That changes the whole board, doesn\'t it.',{if:fl('aiden')}),
+  S('adel','배양 기록의 서명은 오메가다. 제국 정보부가 놓친 이름이군. 흥미롭다.','The logs are signed \'Omega.\' A name Imperial Intelligence somehow missed. How very interesting.',{if:nfl('aiden')}),
   SC('ice','루나의 눈동자가 붉게 바뀐다.','Luna\'s eyes flood with red light.',{shake:1}),
   S('luna','…위치 송신 완료. 아니, 아니야! 이건 내가 아니야! {name}, 도와줘…!','…Position transmitted. No—no, no! That wasn\'t me! {name}, help me…!'),
   S('sera','루나 내부에서 오메가 감시 코드가 활성화됐습니다. 봉인을 권고합니다.','An Omega surveillance code has activated inside Luna. I recommend immediate sealing.'),
@@ -3858,8 +3858,8 @@ const EPIS=[
   {t:'reward',x:K('전설 링크 아스트라 합류.','The legendary LINK Astra joins your crew.'),rw:{mem:1,shards:500}}]},
  {id:'e5',planet:K('거인의 문','Gate of Giants'),t:K('6장 · 오메가 전쟁','Ch.6 · The Omega War'),x:86,y:34,col:'#c58cff',map:'dune',req:'e4',nodes:[
   SC('gate','연합 함대 집결 · 거인의 문','The united fleet gathers before the Gate of Giants'),
-  S('reinhard','약속대로 빚을 갚으러 왔다. 제국 함대, 전진.','I told you I repay my debts. Imperial fleet—advance!',{if:fl('reinhard')}),
-  S('yang','홍차는 끝나고 마시자. 연맹 함대, 작전은 내가 짠다.','We\'ll have that tea afterwards. Federation fleet, leave the plan to me.',{if:fl('yang')}),
+  S('adel','약속대로 빚을 갚으러 왔다. 제국 함대, 전진.','I told you I repay my debts. Imperial fleet—advance!',{if:fl('adel')}),
+  S('aiden','홍차는 끝나고 마시자. 연맹 함대, 작전은 내가 짠다.','We\'ll have that tea afterwards. Federation fleet, leave the plan to me.',{if:fl('aiden')}),
   S('hq','오메가의 거인들이 문을 지킨다. 보병은 물러나라. 기동로봇 편대만 진입한다!','Omega giants are holding the Gate. Infantry, fall back! Mech squadrons only!'),
   {t:'battle',x:K('거인의 문을 돌파하라.','Break through the Gate of Giants.'),waves:5,boss:'omegaw',diff:5,rw:{shards:700,item:4}},
   S('arkos','창조주는 우리를 지우려 했다. 살아남으려 한 것이 죄인가?','Our creators meant to erase us. Tell me, human—is it a crime to want to live?'),
@@ -4021,7 +4021,7 @@ function hangarPreview(){const cv=$('#hgPrev');if(!cv||!window.THREE||!window.__
  if(ok&&HP.key!==key){for(const o of HP.objs)HP.s.remove(o.wrap);HP.objs=[];const m=mdlInstance(mf,0,7,'h');m.wrap.position.set(0,0,-1.2);HP.s.add(m.wrap);HP.objs.push(m);
   if(MECHS[mf]&&MECHS[mf].god){const tint={god:0xffd166,god_red:0xff3b3b,god_black:0x8a5cff,god_white:0xdfefff}[mf];const g=new T3.Group();for(let i=0;i<6;i++){const s=i<3?-1:1,j=i%3;const w=new T3.Mesh(new T3.PlaneGeometry(1.1,3.6),new T3.MeshBasicMaterial({color:tint,transparent:true,opacity:.45,side:T3.DoubleSide,blending:T3.AdditiveBlending,depthWrite:false}));w.position.set(s*(.9+j*.35),4.6+j*.5,-1.7);w.rotation.set(0,s*.6,s*(-.5-j*.35));g.add(w);}const halo=new T3.Mesh(new T3.TorusGeometry(.9,.05,8,64),new T3.MeshBasicMaterial({color:tint}));halo.position.set(0,6.6,-1.7);g.add(halo);HP.s.add(g);HP.objs.push({wrap:g});}
   lks.forEach((l,i)=>{const o=mdlInstance(l,0,1.7,'h');o.wrap.position.set(-1.9+i*1.0,0,1.6);o.wrap.rotation.y=.2;HP.s.add(o.wrap);HP.objs.push(o);});HP.key=key;}
- if(!HP.run){HP.run=true;const tick=()=>{if(isHidden('#rpg')||tab!=='hangar'||!$('#hgPrev')){HP.run=false;return;}const tt=performance.now()/1000;HP.c.position.set(Math.sin(tt*.25)*14,5.5,Math.cos(tt*.25)*14);HP.c.lookAt(0,3.4,0);HP.r.render(HP.s,HP.c);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
+ if(!HP.run){HP.run=true;const tick=()=>{if(isHidden('#rpg')||tab!=='hangar'||!$('#hgPrev')){HP.run=false;return;}const tt=performance.now()/1000;const ya=Math.sin(tt*.35)*.45;HP.c.position.set(Math.sin(ya)*14,5.5,Math.cos(ya)*14);HP.c.lookAt(0,3.4,0);HP.r.render(HP.s,HP.c);requestAnimationFrame(tick);};requestAnimationFrame(tick);}
  if(!ok)setTimeout(()=>{if(!isHidden('#rpg')&&tab==='hangar')hangarPreview();},700);}
 // summon
 let lastPull=null;
@@ -4043,8 +4043,8 @@ const CAST=[
  {k:'hayun',img:'hayun',n:K('하윤','Hayun'),role:K('분대원 · 저격수','Squadmate · Sniper'),d:K('밝고 시끄러운 분대의 분위기 메이커. 한강 야시장 약속을 끝내 지키지 못했다.','The loud, bright heart of the squad. She never got to keep her Han River night-market promise.')},
  {k:'minjae',img:'minjae',n:K('민재','Minjae'),role:K('분대장','Squad leader'),d:K('신참을 끝까지 감싼 분대장. 마지막 무전은 "너라도 살아"였다.','The squad leader who shielded the rookie to the end. His last transmission: "Live."')},
  {k:'seraphine',img:'seraphine',n:K('세라핀','Seraphine'),role:K('알파 망명 함대 사령관','Commander of the Alpha exile fleet'),d:K('창조주 종족 알파의 생존자. 동족의 죄를 알면서도 침묵해 온 것을 후회한다.','A survivor of the creator race. She regrets the silence she kept about her people\'s sin.')},
- {k:'reinhard',img:'emp_officer',n:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),role:K('은하 제국 제독','Admiral of the Galactic Empire'),d:K('연맹을 경멸하는 오만한 천재. 빚은 반드시 갚는 원칙주의자다.','An arrogant genius who scorns the Federation, and a man of principle who always repays a debt.')},
- {k:'yang',img:'fed_officer',n:K('에이든 서','Aiden Seo'),role:K('자유주의 연맹 참모','Strategist of the Liberty Federation'),d:K('싸움을 싫어하는 게으른 천재. 차 한 잔과 낮잠, 그리고 아무도 죽지 않는 작전을 좋아한다.','A lazy genius who hates fighting. He loves tea, naps, and plans in which nobody dies.')},
+ {k:'adel',img:'emp_officer',n:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),role:K('은하 제국 제독','Admiral of the Galactic Empire'),d:K('연맹을 경멸하는 오만한 천재. 빚은 반드시 갚는 원칙주의자다.','An arrogant genius who scorns the Federation, and a man of principle who always repays a debt.')},
+ {k:'aiden',img:'fed_officer',n:K('에이든 서','Aiden Seo'),role:K('자유주의 연맹 참모','Strategist of the Liberty Federation'),d:K('싸움을 싫어하는 게으른 천재. 차 한 잔과 낮잠, 그리고 아무도 죽지 않는 작전을 좋아한다.','A lazy genius who hates fighting. He loves tea, naps, and plans in which nobody dies.')},
  {k:'arkos',img:'omega',n:K('오메가 군주 아르코스','Omega Lord Arkos'),role:K('오메가 지배권의 군주','Sovereign of the Omega Dominion'),d:K('알파의 두 번째 피조물. 정화 계획을 알아내고 살아남기 위해 먼저 칼을 들었다.','Alpha\'s second creation. He discovered the Purification Protocol and drew the blade first to survive.')},
  {k:'igni',img:'a_fire',n:K('이그니','Igni'),role:K('불꽃형 링크','Fire LINK'),d:K('이그니스 용암 지대에서 깨어난 열혈 안드로이드. 바이커 재킷과 붉은 부츠가 트레이드마크.','A hot-blooded android awakened in the lava fields of Ignis. Biker jacket and red boots are her trademark.')},
  {k:'frost',img:'a_ice',n:K('프로스트','Frost'),role:K('얼음형 링크','Ice LINK'),d:K('니브의 얼음 연구소에 봉인되어 있던 안드로이드. 하얀 군용 외투를 단정하게 여민다.','An android sealed in Niv\'s ice lab. She keeps her white military greatcoat neatly fastened.')}];
@@ -4086,12 +4086,12 @@ const SUBQ=[
  {id:'q_evac',area:'e0',req:'e0',giver:'hq',t:K('네오 서울 피난 행렬','The Neo Seoul Evacuation'),obj:{k:'survive',t:90},diff:2,rw:{shards:300,cred:300,item:2},
   intro:[S('hq','마지막 피난 행렬이 한강 다리를 건너는 중이다. 90초만 버텨 줘.','The last evacuation convoy is crossing the Han River bridge. Hold for ninety seconds.')],
   outro:[S('hq','행렬 전원 통과 확인. 시민 4,120명. …고맙다, 파일럿.','Entire convoy across. 4,120 civilians. …Thank you, pilot.')]},
- {id:'q_r9',area:'e1',req:'e1',giver:'yang',t:K('폭주한 무인기','The Rogue Drone Frame'),obj:{k:'hunt',target:'r9',mon:['zhopper','zspit']},diff:2,rw:{shards:400,item:3},
-  intro:[S('yang','우리 무인기 R-9가 제타 신호에 오염됐어요. 부수는 게 제일 빠르죠. …아, 회수하면 보너스예요. 농담이에요.','Our unmanned frame R-9 got infected by Zeta signals. Fastest fix is to wreck it. …Bonus if you recover it. Kidding.')],
-  outro:[S('yang','깔끔하네요. 덕분에 오늘은 낮잠을 잘 수 있겠어요.','Clean work. Thanks to you, I get my nap today.')]},
- {id:'q_duel',area:'e1',req:'e1',giver:'reinhard',t:K('제독의 사냥 의뢰','The Admiral\'s Hunt'),obj:{k:'hunt',target:'alphabeh',mon:['zling','ztank']},diff:3,rw:{shards:450,cred:400,item:3},
-  intro:[S('reinhard','내 함대를 세 번 짓밟은 괴물이 있다. 연맹 파일럿, 네 실력을 증명해 봐라.','There is a beast that has trampled my fleet three times. Prove your worth, Federation pilot.')],
-  outro:[S('reinhard','…인정하지. 이 빚은 제국의 이름으로 갚겠다.','…I acknowledge it. I will repay this debt in the Empire\'s name.')]},
+ {id:'q_r9',area:'e1',req:'e1',giver:'aiden',t:K('폭주한 무인기','The Rogue Drone Frame'),obj:{k:'hunt',target:'r9',mon:['zhopper','zspit']},diff:2,rw:{shards:400,item:3},
+  intro:[S('aiden','우리 무인기 R-9가 제타 신호에 오염됐어요. 부수는 게 제일 빠르죠. …아, 회수하면 보너스예요. 농담이에요.','Our unmanned frame R-9 got infected by Zeta signals. Fastest fix is to wreck it. …Bonus if you recover it. Kidding.')],
+  outro:[S('aiden','깔끔하네요. 덕분에 오늘은 낮잠을 잘 수 있겠어요.','Clean work. Thanks to you, I get my nap today.')]},
+ {id:'q_duel',area:'e1',req:'e1',giver:'adel',t:K('제독의 사냥 의뢰','The Admiral\'s Hunt'),obj:{k:'hunt',target:'alphabeh',mon:['zling','ztank']},diff:3,rw:{shards:450,cred:400,item:3},
+  intro:[S('adel','내 함대를 세 번 짓밟은 괴물이 있다. 연맹 파일럿, 네 실력을 증명해 봐라.','There is a beast that has trampled my fleet three times. Prove your worth, Federation pilot.')],
+  outro:[S('adel','…인정하지. 이 빚은 제국의 이름으로 갚겠다.','…I acknowledge it. I will repay this debt in the Empire\'s name.')]},
  {id:'q_igni',area:'e2',req:'e2',giver:'igni',t:K('용암 둥지 소탕','Purging the Lava Nests'),obj:{k:'kill',mon:['lavaling'],n:30},diff:3,rw:{shards:400,link:'a_fire'},
   intro:[S('igni','야, 거기 파일럿! 내 둥지를 저 녀석들이 차지했어. 같이 쓸어버리자!','Hey, pilot! Those things took over my nest. Let\'s burn them out together!')],
   outro:[S('igni','하하! 마음에 들었어. 앞으로는 내가 같이 타 줄게!','Ha! I like you. From now on, I\'m riding with you!')]},
@@ -4110,9 +4110,9 @@ const SUBQ=[
  {id:'q_song',area:'e4',req:'e4',giver:'luna',t:K('잃어버린 노래','The Lost Song'),obj:{k:'survive',t:100},diff:4,rw:{shards:400,trust:{luna:1,sera:1}},
   intro:[S('luna','사원 안에서 노래가 들려. 알파 아이들이 부르던 자장가래. 끝까지 들을 수 있게 지켜 줘.','There\'s a song inside the temple—a lullaby Alpha children used to sing. Keep me safe till it ends.')],
   outro:[S('luna','…예쁘다. 우리도 언젠가 이런 노래를 부를 수 있을까?','…It\'s beautiful. Do you think we\'ll get to sing songs like that someday?')]},
- {id:'q_guard',area:'e5',req:'e5',giver:'yang',t:K('오메가 근위대','The Omega Guard'),obj:{k:'kill',mon:['owalker'],n:16},diff:5,rw:{shards:600,mem:1,item:4},
-  intro:[S('yang','근위대 통신을 끊으면 아르코스의 기록이 열릴 거예요. 이번 건 진짜 중요해요. 낮잠보다요.','Cut the Guard\'s comms and Arkos\'s records open up. This one really matters. More than my nap.')],
-  outro:[S('yang','기록 해독 완료. 「알파는 오메가도 지울 생각이었다」… 이게 전쟁의 시작이었군요.','Records decoded. "Alpha meant to erase Omega too."… So this is how the war began.')]},
+ {id:'q_guard',area:'e5',req:'e5',giver:'aiden',t:K('오메가 근위대','The Omega Guard'),obj:{k:'kill',mon:['owalker'],n:16},diff:5,rw:{shards:600,mem:1,item:4},
+  intro:[S('aiden','근위대 통신을 끊으면 아르코스의 기록이 열릴 거예요. 이번 건 진짜 중요해요. 낮잠보다요.','Cut the Guard\'s comms and Arkos\'s records open up. This one really matters. More than my nap.')],
+  outro:[S('aiden','기록 해독 완료. 「알파는 오메가도 지울 생각이었다」… 이게 전쟁의 시작이었군요.','Records decoded. "Alpha meant to erase Omega too."… So this is how the war began.')]},
  {id:'q_shadow',area:'e6',req:'e6',giver:'astra',t:K('그림자의 군주','Lord of Shadows'),obj:{k:'hunt',target:'oshadow',mon:['voidhopper','owalker']},diff:6,rw:{shards:1200,item:4,trust:{sera:1,luna:1}},
   intro:[S('astra','균열 너머에 아르코스의 그림자가 남아 있습니다. 진짜보다 강할 겁니다.','Arkos\'s shadow lingers beyond the rift. It will be stronger than the real one.')],
   outro:[S('astra','그림자가 사라졌습니다. …당신이라면, 언젠가 여섯 날개의 부름을 들을지도 모르겠군요.','The shadow is gone. …Perhaps one day, you will hear the call of the six wings.')]}];
@@ -4242,7 +4242,7 @@ const VN={auto:false,voice:true,skip:false,log:[],actors:[],cur:null,bg:null};
 try{const s=JSON.parse(localStorage.getItem('ascend_vn')||'{}');VN.voice=s.voice!==false;VN.auto=!!s.auto;}catch(e){}
 const vnSave=()=>{try{localStorage.setItem('ascend_vn',JSON.stringify({voice:VN.voice,auto:VN.auto}));}catch(e){}};
 // who: [model, gender, pitch, rate, name colour, scale]
-const VNCHAR={sera:['link2','f',1.05,1.0,'#7fd1ff'],luna:['link3','f',1.3,1.07,'#c9a6ff'],astra:['link_leg','f',.95,.9,'#ffd166'],hayun:['hayun','f',1.2,1.08,'#ff9bb0'],minjae:['minjae','m',.85,.98,'#9fe0a0'],seraphine:['seraphine','f',.92,.92,'#e6d2ff'],reinhard:['emp_officer','m',.78,.95,'#ff6b7a'],yang:['fed_officer','m',.9,.9,'#8fd0ff'],arkos:['omega','m',.5,.82,'#b07cff',1.2],hq:['emp_female','f',1.0,1.05,'#a8d4ff'],igni:['a_fire','f',1.15,1.1,'#ff8a4a'],frost:['a_ice','f',1.0,.95,'#bfe9ff'],nar:[null,'m',.85,.92,'#ffd166']};
+const VNCHAR={sera:['link2','f',1.05,1.0,'#7fd1ff'],luna:['link3','f',1.3,1.07,'#c9a6ff'],astra:['link_leg','f',.95,.9,'#ffd166'],hayun:['hayun','f',1.2,1.08,'#ff9bb0'],minjae:['minjae','m',.85,.98,'#9fe0a0'],seraphine:['seraphine','f',.92,.92,'#e6d2ff'],adel:['emp_officer','m',.78,.95,'#ff6b7a'],aiden:['fed_officer','m',.9,.9,'#8fd0ff'],arkos:['omega','m',.5,.82,'#b07cff',1.2],hq:['emp_female','f',1.0,1.05,'#a8d4ff'],igni:['a_fire','f',1.15,1.1,'#ff8a4a'],frost:['a_ice','f',1.0,.95,'#bfe9ff'],nar:[null,'m',.85,.92,'#ffd166']};
 const BGIMG={seoul:'seoul',hangar:'hangar',fire:'fire',ice:'ice',space:'space',temple:'temple',gate:'gate',memorial:'memorial',station:'station',hive:'hive',sanctum:'sanctum',bridge:'bridge'};
 const BGRIM={seoul:0xff6ad5,hangar:0xffc27a,fire:0xff7a2a,ice:0x9fe0ff,space:0x8f7cff,temple:0xffd166,gate:0xc58cff,memorial:0xffd7a8,station:0x7fb8ff,hive:0xff9b40,sanctum:0xffffff,bridge:0x7df9ff};
 {const css=document.createElement('style');css.textContent=`
@@ -4279,7 +4279,7 @@ function vnSpeak(who,text,done){if(!VN.voice||VN.skip||!('speechSynthesis' in wi
  const male=ch[1]==='m';const vMale=v&&/injoon|hyunsu|bongjin|gookmin|male|남성|guy|davis|tony|ryan|brian|christopher|eric|david|mark|andrew|william/i.test(v.name);u.pitch=clamp(ch[2]*(male&&!vMale?.72:1)*(!male&&vMale?1.35:1),.1,2);u.rate=ch[3];let fired=false;const fin=ok=>{if(fired)return;fired=true;done&&done(ok);};u.onend=()=>fin(true);u.onerror=()=>fin(false);speechSynthesis.speak(u);
  setTimeout(()=>{if(!speechSynthesis.speaking&&!fired)fin(false);},1500+text.length*260);return true;}catch(e){done&&done(false);return false;}}
 // ---- 2D illustrated cast (breathing · blinking · lip flap · focus) ----
-const VNSPR=new Set(['sera','luna','astra','hayun','minjae','seraphine','reinhard','yang','arkos','hq','igni','frost']);
+const VNSPR=new Set(['sera','luna','astra','hayun','minjae','seraphine','adel','aiden','arkos','hq','igni','frost']);
 {const css=document.createElement('style');css.textContent=`
 #vnCast{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .vnA{position:absolute;bottom:-26vh;height:118vh;width:auto;transform:translateX(-50%);transition:left .55s cubic-bezier(.2,.8,.2,1),opacity .45s,filter .35s,transform .35s;opacity:0;filter:brightness(.55) saturate(.85) drop-shadow(0 0 22px rgba(0,0,0,.55))}
@@ -4437,7 +4437,7 @@ const RIFT_GUARD=['pboss','icetitan','oknight','alphabeh','oshadow'];
 {const _rh=renderHunt;renderHunt=function(B){_rh(B);const r=R();const open=epS(RIFTZ.req).done;const best=r.riftBest||0;const card=document.createElement('div');card.className='epi';card.style.cssText='margin:0 0 12px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:1px solid #c58cff;box-shadow:0 0 18px rgba(197,140,255,.25);background:linear-gradient(90deg,rgba(60,20,90,.55),rgba(10,10,30,.4))';
   card.innerHTML=`<div style="flex:1;min-width:240px"><b style="color:#c58cff;font-size:18px">⫽ ${L('균열 던전','Rift Dungeon')}</b><br><small>${L('5분 안에 몬스터를 쓸어 진행도를 채우면 균열 수호자가 나타납니다. 단계가 오를수록 적이 강해지고 보상이 커집니다. 만렙(60) 뒤에는 경험치가 초월 레벨로 쌓입니다.','Fill the progress bar within 5 minutes to summon the Rift Guardian. Higher tiers mean tougher foes and bigger rewards. After level 60, EXP flows into Paragon levels.')}</small><br><small>${L('최고 기록 ','Best ')}${best}${L('단계',' ')} · ${L('초월 ','Paragon ')}${r.par||0}</small></div>`+(open?`<div style="display:flex;gap:8px;align-items:center"><select id="rfTier">${Array.from({length:best+1},(_,i)=>i+1).reverse().map(t=>`<option value="${t}">${L('단계 ','Tier ')+t}</option>`).join('')}</select><button class="pri" id="rfGo">${L('균열 진입 ▶','Enter rift ▶')}</button></div>`:`<div>🔒 ${L('「3장 · 불의 행성」 클리어 필요','Clear "Ch.3 · World of Fire"')}</div>`);B.insertBefore(card,B.children[1]||null);const go=card.querySelector('#rfGo');if(go)go.onclick=()=>riftLaunch(+card.querySelector('#rfTier').value);};}
 // hangar-defence landmark for the prologue battle
-{const _dc=window.__rpgDeco;window.__rpgDeco=function(R0){_dc&&_dc(R0);try{const X=(G&&G.rpg)||window.__rpgNext;if(!X||X.epi!=='e_p'||X.obj)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const b=BASES[0];const side=b.x<WW/2?1:-1;const x=b.x+side*260,y=b.y;const g=new T3.Group();const pi=typeof propInst==='function'?propInst('p_bunker',230,'l',Math.PI/2):null;if(pi)g.add(pi.wrap);else{const m=new T3.Mesh(new T3.BoxGeometry(200,80,160),new T3.MeshStandardMaterial({color:0x5a6878}));m.position.y=40;g.add(m);}
+{const _dc=window.__rpgDeco;window.__rpgDeco=function(R0){_dc&&_dc(R0);try{const X=(G&&G.rpg)||window.__rpgNext;if(!X||X.epi!=='e_p'||X.obj)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const b=BASES[0];const side=b.x<WW/2?1:-1;const x=b.x-side*220,y=b.y-180;const g=new T3.Group();const pi=typeof propInst==='function'?propInst('p_bunker',230,'l',Math.PI/2):null;if(pi)g.add(pi.wrap);else{const m=new T3.Mesh(new T3.BoxGeometry(200,80,160),new T3.MeshStandardMaterial({color:0x5a6878}));m.position.y=40;g.add(m);}
   const cv=document.createElement('canvas');cv.width=512;cv.height=96;const c=cv.getContext('2d');c.fillStyle='rgba(4,8,18,.7)';c.fillRect(0,14,512,68);c.fillStyle='#ffd166';c.fillRect(0,14,8,68);c.font='bold 40px "Noto Sans KR",sans-serif';c.fillStyle='#fff';c.textBaseline='middle';c.fillText(L('격납고 · 사수하라','HANGAR · HOLD THE LINE'),22,50);const sp=new T3.Sprite(new T3.SpriteMaterial({map:new T3.CanvasTexture(cv),transparent:true,depthTest:false}));sp.scale.set(170,32,1);sp.position.y=150;sp.renderOrder=6;g.add(sp);g.position.set(x,0,y);S0.add(g);}catch(e){}};}
 
 
@@ -4487,7 +4487,7 @@ function renderHangar2(B){const r=R();droneInit(r);const a=arkStats(),m=MECHS[r.
  $('#hgAuto').onclick=()=>{const n=autoEquip(r,false);let k=0;for(const s of DSLOTS){if(!eqIt(r,s)){const best=r.inv.filter(x=>x.slot==='drone'&&!Object.values(r.eq).includes(x.id)).sort((a,b)=>drPower(b)-drPower(a))[0];if(best){r.eq[s]=best.id;k++;}}}saveP();toast(n+k?L('장착 ','Equipped ')+(n+k):L('이미 최적 장비입니다','Already optimal'));render();};
  B.querySelectorAll('.pd-slot').forEach(d=>d.onclick=()=>{const sl=d.dataset.sl;const it=eqIt(r,sl);if(it){hgSel=it.id;showSel();}});
  const grpSlots=T[2].concat(T[3]);const list=r.inv.filter(it=>hgTab==='drone'?it.slot==='drone':grpSlots.includes(it.slot)).sort((a,b)=>b.r-a.r||(b.tier||0)-(a.tier||0)||(b.v||0)-(a.v||0));
- const inv=$('#pdInv');const eqIds=new Set(Object.values(r.eq));for(const it of list){const d=document.createElement('div');d.className='pd-cell'+(it.id===hgSel?' sel':'');d.style.setProperty('--c',RAR[it.r].c);d.innerHTML=(it.slot==='drone'?`<img src="${TH+DRONES[it.sub].m}.jpg" onerror="this.outerHTML='${icon('drone',RAR[it.r].c,30).replace(/'/g,'&#39;')}'">`:icon(it.slot,RAR[it.r].c,30))+(it.tier?`<b>Lv${it.tier}</b>`:it.lv?`<b>+${it.lv}</b>`:'')+(eqIds.has(it.id)?'<em>E</em>':'');d.title=tx(it.n);d.onclick=()=>{hgSel=it.id;inv.querySelectorAll('.pd-cell').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');showSel();};inv.appendChild(d);}
+ const inv=$('#pdInv');const eqIds=new Set(Object.values(r.eq));for(const it of list){const d=document.createElement('div');d.className='pd-cell'+(it.id===hgSel?' sel':'');d.style.setProperty('--c',RAR[it.r].c);d.innerHTML=(it.slot==='drone'?`<img src="${TH+DRONES[it.sub].m}.jpg" onerror="this.style.display='none'">`:icon(it.slot,RAR[it.r].c,30))+(it.tier?`<b>Lv${it.tier}</b>`:it.lv?`<b>+${it.lv}</b>`:'')+(eqIds.has(it.id)?'<em>E</em>':'');d.title=tx(it.n);d.onclick=()=>{hgSel=it.id;inv.querySelectorAll('.pd-cell').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');showSel();};inv.appendChild(d);}
  if(!list.length)inv.innerHTML=`<div style="grid-column:1/-1;opacity:.6;padding:16px;text-align:center">${L('이 분류의 장비가 없습니다. 사냥·퀘스트·소환으로 얻을 수 있어요.','No items here yet. Get them from hunts, quests and summons.')}</div>`;
  function showSel(){const it=r.inv.find(i=>i.id===hgSel);$('#pdTip').innerHTML=itemTip(it);const A=$('#hgAct');A.innerHTML='';if(!it)return;const mk=(l,f,pri)=>{const b=document.createElement('button');b.className='sm'+(pri?' pri':'');b.textContent=l;b.onclick=f;A.appendChild(b);};const isEq=Object.values(r.eq).includes(it.id);
   if(it.slot==='drone'){mk(isEq?L('해제','Unequip'):L('장착','Equip'),()=>{if(isEq){for(const k of DSLOTS)if(r.eq[k]===it.id)r.eq[k]=null;}else{const free=DSLOTS.find(s=>!eqIt(r,s))||'d1';r.eq[free]=it.id;}saveP();render();},1);mk(L('조합 (3개 → 다음 레벨)','Merge (3 → next level)'),()=>droneMerge(it));}
@@ -4515,6 +4515,736 @@ let X0=null;
 addEventListener('keydown',e=>{if(!G||!G.rpg||!G.local||!G.local.unit||G.local.unit.cls!=='arkframe')return;const i=SKB.findIndex(s=>s[0]===e.code);if(i<0||e.repeat)return;e.preventDefault();skbUse(i);});
 {const _stK=step;step=function(dt){_stK(dt);try{const el=skbEl();const u=G&&G.local&&G.local.unit;const on=G&&G.rpg&&u&&!u.dead&&u.cls==='arkframe'&&!touchMode;el.style.display=on?'flex':'none';if(!on)return;if(u.volCd>0)u.volCd-=dt;if(u.kitCd>0)u.kitCd-=dt;const inf=myInfo();const cds=[[inf.c1,inf.m1],[inf.c2,inf.m2],[100-(inf.ul||0),100],[u.fly?0:Math.max(0,(u.flyMax||10)*.3-(u.flyE||0)),(u.flyMax||10)*.3],[u.volCd||0,12],[u.kitCd||0,20]];
   el.querySelectorAll('.skb-s').forEach((d,i)=>{const c=cds[i];const p=c[1]?Math.max(0,Math.min(1,c[0]/c[1])):0;d.querySelector('.skb-cd').style.setProperty('--p',(p*100)+'%');const t=d.querySelector('.skb-t');t.textContent=i===2?Math.floor(inf.ul||0)+'%':i===5?('×'+(G.rpg.kits==null?3:G.rpg.kits)):(c[0]>0.05&&i!==3?Math.ceil(c[0]):'');d.style.opacity=(p>0&&i!==2)?.75:1;});}catch(e){}};}
+
+
+// ================= v2.4.1 : DRONE CLASSES (attack · support · defence · PvP · boss) =================
+const DCLS={atk:K('공격형','Attack'),sup:K('보조형','Support'),def:K('방어형','Defence'),pvp:K('PvP 특화','PvP'),boss:K('보스 특화','Boss hunter')};
+Object.assign(DRONES,{
+ laser:{...DRONES.laser,cls:'atk'},missile:{...DRONES.missile,cls:'atk'},blade:{...DRONES.blade,cls:'atk'},
+ overcharge:{n:K('과충전 드론','Overcharge Drone'),m:'d_laser',c:'#ff5a6e',cls:'atk',pas:{dmg:.04},d:K('기체 공격력을 높이고 레이저를 쏩니다.','Raises your damage and fires lasers.'),fire:'laser'},
+ thruster:{n:K('추진 드론','Thruster Drone'),m:'d_repair',c:'#9fe0ff',cls:'sup',pas:{spd:.04},d:K('이동 속도를 높입니다.','Raises movement speed.')},
+ scholar:{n:K('학습 드론','Scholar Drone'),m:'d_repair',c:'#ffd166',cls:'sup',pas:{exp:.06},d:K('얻는 경험치를 늘립니다.','Increases EXP gained.')},
+ salvage:{n:K('회수 드론','Salvage Drone'),m:'d_repair',c:'#ffb86b',cls:'sup',pas:{loot:.08},d:K('아이템 드랍 확률을 높입니다.','Increases item drop chance.')},
+ emp:{...DRONES.emp,cls:'sup',pas:{cc:.15},d:K('적을 약화·둔화시키고 CC 효과를 강화합니다.','Weakens and slows foes; strengthens crowd control.')},
+ repair:{...DRONES.repair,cls:'sup'},
+ shield:{...DRONES.shield,cls:'def'},
+ evader:{n:K('회피 드론','Evasion Drone'),m:'d_shield',c:'#bff8ff',cls:'def',pas:{evade:.03},d:K('공격을 일정 확률로 회피합니다.','Chance to evade attacks.')},
+ armor:{n:K('장갑 드론','Armor Drone'),m:'d_shield',c:'#8a94a6',cls:'def',pas:{taken:.03},d:K('물리 피해를 줄입니다.','Reduces physical damage.')},
+ mindguard:{n:K('정신 방벽 드론','Mind-Guard Drone'),m:'d_shield',c:'#c58cff',cls:'def',pas:{ccres:.15},d:K('기절·혼란 같은 정신계 효과 시간을 줄입니다.','Shortens stuns and other mental effects.')},
+ jammer:{n:K('레이더 교란 드론','Radar Jammer'),m:'d_emp',c:'#7dffb0',cls:'pvp',pas:{evade:.02},d:K('적의 조준을 흐려 빗나가게 합니다.','Scrambles enemy targeting so shots miss.')},
+ cloak:{n:K('은신 드론','Cloak Drone'),m:'d_emp',c:'#a8b8d8',cls:'pvp',act:'cloak',d:K('주기적으로 잠시 은신해 피해를 받지 않습니다.','Periodically cloaks you briefly, ignoring damage.')},
+ blink:{n:K('순간이동 드론','Blink Drone'),m:'d_blade',c:'#9ff6ff',cls:'pvp',act:'blink',d:K('위험할 때 순간이동으로 빠져나갑니다.','Teleports you out when in danger.')},
+ clone:{n:K('복제 드론','Decoy Drone'),m:'d_emp',c:'#e6d2ff',cls:'pvp',act:'clone',d:K('분신으로 주변 적을 혼란에 빠뜨립니다.','Projects decoys that confuse nearby foes.')},
+ reflect:{n:K('반사 드론','Reflect Drone'),m:'d_shield',c:'#ffe7a0',cls:'pvp',pas:{reflect:.06},d:K('받은 피해 일부를 되돌려 줍니다.','Reflects part of the damage taken.')},
+ cleanse:{n:K('CC 해제 드론','Cleanse Drone'),m:'d_repair',c:'#ffffff',cls:'pvp',act:'cleanse',d:K('기절·둔화를 주기적으로 해제합니다.','Periodically clears stuns and slows.')},
+ slayer:{n:K('보스 사냥 드론','Slayer Drone'),m:'d_missile',c:'#ffd166',cls:'boss',pas:{bossDmg:.06},fire:'laser',d:K('보스·네임드에게 주는 피해가 커집니다.','Deals more damage to bosses and named foes.')},
+ bulwark:{n:K('보스 방벽 드론','Bulwark Drone'),m:'d_shield',c:'#ffb000',cls:'boss',pas:{bossTaken:.06},d:K('보스에게 받는 피해를 줄입니다.','Reduces damage taken from bosses.')},
+ unstop:{n:K('저지 불가 드론','Unstoppable Drone'),m:'d_shield',c:'#ff6b6b',cls:'boss',act:'cleanse',pas:{ccres:.1},d:K('보스의 CC 기술을 버텨 냅니다.','Shrugs off boss crowd control.')}});
+// drop/purchase weights: attack & support more common, PvP/boss rarer
+const DWEIGHT={atk:30,sup:28,def:24,pvp:10,boss:8};
+function pickDroneType(){const tot=Object.values(DWEIGHT).reduce((a,b)=>a+b,0);let x=Math.random()*tot,cls='atk';for(const[k,w]of Object.entries(DWEIGHT)){if((x-=w)<0){cls=k;break;}}const ks=Object.keys(DRONES).filter(k=>DRONES[k].cls===cls);return pick(ks);}
+{const _md=mkDrone;mkDrone=function(type,tier,r){return _md(type||pickDroneType(),tier,r);};}
+{const _dl=droneLoadout;droneLoadout=function(){const L0=_dl();for(const D of L0){const T=DRONES[D.type]||{};D.cls=T.cls;D.pas=T.pas;D.act=T.act;D.fire=T.fire;}return L0;};}
+function drBonus(list){const b={dmg:0,spd:0,exp:0,loot:0,evade:0,taken:0,ccres:0,reflect:0,bossDmg:0,bossTaken:0,cc:0};for(const D of list||[]){if(!D.pas)continue;const k=1+(D.tier-1)*.35+(D.r||0)*.1;for(const[s,v]of Object.entries(D.pas))b[s]+=v*k;}b.evade=Math.min(.35,b.evade);b.taken=Math.min(.4,b.taken);b.ccres=Math.min(.8,b.ccres);b.reflect=Math.min(.3,b.reflect);return b;}
+// apply passives when the frame spawns
+{const _su3=spawnUnit;spawnUnit=function(s,cls,sp,opt){const u=_su3(s,cls,sp,opt);try{if(u&&G&&G.rpg&&s===G.local&&u.drones){u.drB=drBonus(u.drones);if(u.st&&u.drB.spd)u.st.spd*=1+u.drB.spd;for(const D of u.drones){if(D.fire==='laser'){D.type0=D.type;D.type='laser';}}}}catch(e){}return u;};}
+// damage in / out
+{const _hu5=hurt;hurt=function(u,amt,src,ang,dt){try{if(G&&G.rpg&&G.local){const me=G.local.unit;if(me&&me.drB){const B=me.drB;const fromMe=src&&(src===G.local||src.ownerSlot===G.local);const boss=u&&(u.boss||(u.mon&&MONS[u.mon]&&(MONS[u.mon].named||MONS[u.mon].boss)));if(fromMe&&u!==me){amt*=1+B.dmg+(boss?B.bossDmg:0);if(B.cc&&u.vulnT>0)amt*=1+B.cc*.5;}
+   if(u===me&&src&&!fromMe){const su=src.unit||null;const fromBoss=su&&(su.boss||(su.mon&&MONS[su.mon]&&(MONS[su.mon].named||MONS[su.mon].boss)));if(Math.random()<B.evade){try{G.texts.push({h:unitH(me)+50,x:me.x,y:me.y-40,txt:LANG==='en'?'MISS':'회피',c:'#bff8ff',sz:18,l:.7,L:.7});}catch(e){}return;}amt*=1-B.taken;if(fromBoss)amt*=1-B.bossTaken;if(B.reflect&&su&&!su.dead)_hu5(su,amt*B.reflect,G.local,0,'b');}}}}catch(e){}return _hu5(u,amt,src,ang,dt);};}
+// exp & loot passives
+{const _ge2=gainExp;gainExp=function(n,q){try{const me=G&&G.local&&G.local.unit;if(me&&me.drB&&me.drB.exp)n*=1+me.drB.exp;}catch(e){}return _ge2(n,q);};}
+{const _rnd=Math.random;const _hr5=huntReward;huntReward=function(u,X){const me=G&&G.local&&G.local.unit;const lb=me&&me.drB&&me.drB.loot||0;if(!lb)return _hr5(u,X);Math.random=()=>{const v=_rnd();return v*(1-lb*.5);};try{return _hr5(u,X);}finally{Math.random=_rnd;}};}
+// active drone effects (cloak · blink · decoy · cleanse) and mental resistance
+{const _stD=step;step=function(dt){_stD(dt);try{const me=G&&G.rpg&&G.local&&G.local.unit;if(!me||me.dead||!me.drones)return;const B=me.drB||{};if(B.ccres&&me.stun>0)me.stun=Math.max(0,me.stun-dt*B.ccres*2);
+ for(const D of me.drones){if(!D.act)continue;D.acd=(D.acd==null?3:D.acd)-dt;if(D.acd>0)continue;
+  if(D.act==='cloak'){D.acd=16-D.tier*.6;me.phase=Math.max(me.phase||0,1.6+D.tier*.1);try{pop(LANG==='en'?'Cloaked':'은신','#a8b8d8',false);}catch(e){}}
+  else if(D.act==='blink'){if(me.hp<me.mhp*.35){D.acd=20-D.tier;let fx0=0,fy0=0;for(const e2 of G.units){if(e2.dead||e2.team===me.team)continue;const d=Math.hypot(e2.x-me.x,e2.y-me.y);if(d<400){fx0+=(me.x-e2.x)/(d||1);fy0+=(me.y-e2.y)/(d||1);}}const a=Math.atan2(fy0||1,fx0||0);for(let i=0;i<20;i++)part(me.x,me.y,rnd(-200,200),rnd(-200,200),.3,'#9ff6ff',3,40);me.x=clamp(me.x+Math.cos(a)*260,40,WW-40);me.y=clamp(me.y+Math.sin(a)*260,40,WH-40);me.phase=Math.max(me.phase||0,.6);}else D.acd=.5;}
+  else if(D.act==='clone'){D.acd=20-D.tier*.8;for(const e2 of G.units){if(e2.dead||e2.team===me.team)continue;if(d2(e2.x,e2.y,me.x,me.y)<320*320)e2.conf=Math.max(e2.conf||0,1.5+D.tier*.15);}try{pop(LANG==='en'?'Decoys!':'분신 전개','#e6d2ff',false);}catch(e){}}
+  else if(D.act==='cleanse'){if(me.stun>0||me.slowT>0){me.stun=0;me.slowT=0;D.acd=10-D.tier*.4;try{pop(LANG==='en'?'Cleansed':'CC 해제','#ffffff',false);}catch(e){}}else D.acd=.3;}}}catch(e){}};}
+// tooltip: show class
+{const _it=itemTip;itemTip=function(it){let h=_it(it);if(it&&it.slot==='drone'){const T=DRONES[it.sub]||{};h=h.replace('</small>','</small><br><small style="color:'+(T.c||'#fff')+'">'+tx(DCLS[T.cls]||K('',''))+'</small>');}return h;};}
+
+
+// ================= v2.5 : STORY EXPANSION (dialogue x3-4 per chapter) =================
+const EPIS_NODES2={
+ e_p:[
+  SC('seoul','2326년 · 네오 서울 외곽 방어선','2326 · Neo Seoul outer defense line'),
+  SC('hangar','출격 대기실. 식은 커피와 낡은 무전기 냄새.','The ready room. Cold coffee and the smell of old radios.'),
+  S('minjae','{name}, 장비 점검표 또 세 번째 보는 거냐. 그러다 외우겠다.','{name}, that\'s your third pass on the checklist. You\'ll have it memorized by lunch.'),
+  S('me','세 번 봐야 마음이 놓여. 민재 너처럼 감으로 사는 게 아니라서.','Three passes and I can breathe. Not all of us fly on gut instinct like you, Minjae.'),
+  S('minjae','감이 아니라 경험이다. 분대장 9년이면 바람 냄새로 날씨도 맞혀.','Not instinct. Experience. Nine years as squad lead—I can smell the weather coming.'),
+  S('hayun','지난주에 비 안 온다더니 우리 다 홀딱 젖었잖아요, 분대장님.','You said no rain last week, Sarge. We came back soaked to the bone.'),
+  S('minjae','…그건 바람이 거짓말을 한 거야.','…The wind lied to me. It happens.'),
+  S('hayun','이번 작전 끝나면 한강 야시장 가는 거다. {name}, 네가 쏘는 거야.','When this op\'s over, we\'re hitting the Han River night market. And {name}—you\'re buying.'),
+  S('me','왜 또 나야? 지난번에도 내가 샀잖아.','Why me again? I paid last time.'),
+  S('hayun','지난번엔 떡볶이만 샀지. 이번엔 닭꼬치랑 호떡까지. 약속했다?','Last time was just tteokbokki. This time it\'s skewers AND hotteok. Promise?'),
+  S('minjae','그날 동생 시험 끝나는 날인데, 데려가도 되지? 형이 우주 영웅인 줄 알거든.','That\'s the day my kid brother finishes his exams. Can I bring him? He thinks I\'m some kind of space hero.'),
+  S('hayun','그럼 영웅답게 분대장님이 쏘세요. 그게 공평하죠.','Then a hero can pay. Your treat, Sarge. That\'s only fair.'),
+  S('hq','방어선 전 부대, 궤도 관측소 신호 이상. 경계 태세 2단계로 올린다.','All defense-line units: anomaly from orbital watch. Raise alert to Condition Two.'),
+  SC('seoul','하늘이 갈라졌다.','And then the sky split open.',{shake:1}),
+  S('hq','전 부대! 미확인 생명체 다수 낙하! 이건 훈련이 아니다!','All units, all units! Mass contacts falling from orbit—unidentified lifeforms! This is NOT a drill!'),
+  S('hayun','저게 다 뭐야… 하늘이, 하늘이 떨어지고 있어!','What IS that… the sky—the sky is falling!'),
+  S('minjae','정신 차려! 하윤, 왼쪽 엄호! {name}, 내 뒤에 붙어!','Snap out of it! Hayun, cover left! {name}, stay on my six!'),
+  SC('seoul','군체가 방어선을 덮친다. 무전이 비명으로 가득 찬다.','The swarm crashes over the line. The radio fills with screams.',{shake:1}),
+  S('hayun','{name}, 미안… 야시장, 너 혼자 가야겠다. 호떡… 식기 전에 먹어.','{name}, sorry… guess you\'re doing the night market alone. Eat the hotteok… before it gets cold.'),
+  SC('seoul','하윤의 신호가 끊긴다.','Hayun\'s signal goes flat.'),
+  S('minjae','…하윤이 갔다. {name}, 지금부터 내 말 잘 들어.','…Hayun\'s gone. {name}, listen to me now. Listen.'),
+  S('minjae','…{name}, 너라도 살아. 그리고 이 녀석들이 어디서 왔는지 알아내.','…{name}. Live. Whatever it takes. And find out where these things came from.'),
+  S('minjae','동생한테는… 형이 끝까지 영웅이었다고 전해 줘. 거짓말이라도.','Tell my brother… his big brother was a hero to the end. Even if it\'s a lie.'),
+  SC('seoul','폭발. 그리고 정적.','An explosion. Then silence.',{shake:1}),
+  SC('hangar','폐허가 된 격납고. 정체불명의 기체가 깨어난다.','A gutted hangar. In the dark, something enormous opens its eyes.'),
+  S('sera','생존자 1명 확인. 저는 세라, 이 기체의 보조조종 AI입니다. 탑승하십시오. 설명은 살아남은 뒤에 하겠습니다.','One survivor confirmed. I am Sera, this frame’s co-pilot AI. Climb in. Explanations come after we survive.'),
+  S('me','…분대는? 하윤이랑 민재는?','…My squad? Hayun and Minjae?'),
+  S('sera','지금은 대답할 수 없습니다. 적 열두 기가 격납고로 접근 중입니다.','I cannot answer that now. Twelve hostiles are closing on the hangar.'),
+  {t:'battle',x:K('튜토리얼: 격납고로 몰려오는 제타를 막아라. (이동 WASD · 사격 클릭 · Q 손바닥 레이저 · E 빔 세이버 · R 미사일)','Tutorial — Hold the hangar. (Move: WASD · Fire: click · Q: palm laser · E: beam saber · R: missile swarm)'),waves:2,boss:'ztank',diff:0,rw:{shards:200}},
+  S('sera','…생존 확인. 당신의 분대는, 유감입니다.','…Survival confirmed. Your squad… I am sorry. I could not reach them in time.'),
+  S('me','…민재가 마지막에 그랬어. 이 녀석들이 어디서 왔는지 알아내라고.','…Minjae\'s last words. Find out where these things came from.'),
+  S('sera','그렇다면 그것이 우리의 첫 번째 임무입니다. 함께하겠습니다, 파일럿.','Then that is our first mission. I will be with you, pilot.'),
+  {t:'reward',x:K('기동로봇 AX-01 세이버와 링크 세라를 얻었다.','Acquired: AX-01 Saber, and your LINK, Sera.'),rw:{shards:300}}],
+ e0:[
+  SC('seoul','연합 임시 사령부','United Provisional Command'),
+  S('hq','제국과 자유주의 연맹은 오늘부터 임시 공동 지휘권을 선포한다. 적은 하나다.','As of today, the Empire and the Federation fight under a single joint command. There is only one enemy now.'),
+  S('adel','연맹과 한 지붕 아래라. 적이 하나라니, 오늘만은 참아 주지.','Under one roof with the Federation. Since the enemy is one, I shall tolerate it—for today.'),
+  S('aiden','저쪽 제독님이 말할 때마다 회의가 10분씩 길어지네. 다들 앉으시죠.','Every time the Admiral speaks, this meeting grows ten minutes longer. Shall we sit?'),
+  S('hq','외곽 방어선 유일 생존자 {name}. 미확인 기체와 함께 한강 방어선에 배치한다.','{name}, sole survivor of the outer line. You deploy to the Han River line—with the unidentified frame.'),
+  SC('hangar','격납고. 세이버의 조종석에 다시 앉는다.','The hangar. You climb back into the Saber\'s cockpit.'),
+  S('me','넌 왜 날 골랐어?','Why me? Why did you pick me?'),
+  S('sera','고른 게 아닙니다. 당신만 살아 있었습니다.','I did not pick you. You were simply the only one still breathing.'),
+  S('me','…그 말, 위로하려고 한 거야?','…Was that supposed to make me feel better?'),
+  S('sera','위로는 제 기능 목록에 없습니다. 다만 당신의 심박이 너무 빨라서요.','Comfort is not among my functions. Your heart rate is simply… too high.'),
+  S('sera','하윤 상병, 민재 하사. 두 사람의 이름을 제 기록에 남겨 두었습니다.','Corporal Hayun. Sergeant Minjae. I have entered both their names into my logs.'),
+  S('me','…고마워, 세라.','…Thanks, Sera.'),
+  {t:'choice',w:'hq',x:K('한강 다리에 민간인 수송차가 고립됐다. 하이브로 가는 길과 반대 방향이다.','A civilian convoy is trapped on a Han River bridge—the opposite direction from the hive.'),o:[
+   {l:K('민간인을 먼저 구한다','Save the civilians first'),set:'saveCivil',trust:{sera:1},say:['sera',K('…비효율적이지만, 기록해 두겠습니다. 당신이 그런 사람이라는 것을.','…Inefficient. But I will log it. That this is who you are.')]},
+   {l:K('하이브로 직행한다','Head straight for the hive'),rw:{shards:200},say:['sera',K('합리적입니다.','A rational choice.')]}]},
+  S('me','…방금 무전, 다리 쪽 비명이었어. 계속 귀에 남아.','…That radio call. Screams from the bridge. I can\'t get them out of my head.',{if:nfl('saveCivil')}),
+  S('hq','다리 구역 정리. 하이브 퀸이 한강 방어선으로 움직인다!','Bridge sector is clear. The Hive Queen is moving on the Han River line!'),
+  {t:'battle',x:K('한강 방어선을 지키고 하이브 퀸을 격파하라.','Hold the Han River line and bring down the Hive Queen.'),waves:4,boss:'zqueen',diff:1,rw:{shards:300,item:1}},
+  S('sera','하이브 퀸 침묵. …파일럿, 손이 떨리고 있습니다.','Hive Queen silenced. …Pilot, your hands are shaking.'),
+  S('me','민재라면 웃었을 거야. "첫 출격치고는 괜찮네" 하면서.','Minjae would\'ve laughed. "Not bad for a first sortie," he\'d say.'),
+  SC('seoul','하늘에 거대한 백색 함선이 나타난다.','A colossal white ship slides out of the clouds.'),
+  S('seraphine','기체를 다룰 줄 아는 인간이 있었군. 시험은 통과다, {name}.','So. A human who can actually fly that frame. You have passed the first test, {name}.'),
+  S('me','넌 누구야? 이 기체를 남긴 게 너희야?','Who are you? Did you leave this frame behind?'),
+  S('seraphine','우리는 알파. 너희보다 먼저 별을 건넌 자들이다. 궤도 기지 이지스에서 기다리겠다.','We are Alpha—those who crossed the stars before you. We will be waiting at Aegis Station.'),
+  S('sera','…저 함선의 신호, 제 핵심 코드와 같은 언어입니다. 저는… 저들에게서 왔습니까?','…That ship\'s signal speaks the same language as my core code. Did I… come from them?'),
+  {t:'reward',x:K('알파의 첫 번째 기억 조각을 얻었다.','Recovered: the first fragment of Alpha\'s memory.'),rw:{mem:1,shards:300}}],
+ e1:[
+  SC('space','알파 망명 함대 · 기함 「에덴의 잔해」','Alpha exile flagship — the Remnant of Eden'),
+  S('seraphine','환영한다, 지구인. 이 배는 한 문명의 마지막 조각이다.','Welcome, Earthling. This ship is the last fragment of a civilization.'),
+  S('seraphine','우리 알파는 제타에게 멸망했다. 너희도 같은 길을 걷기 싫다면 우리와 손을 잡아라.','We of Alpha were devoured by the Zeta. If you do not wish to share our fate, take our hand.'),
+  S('me','제타가 너희를 멸망시켰다고? 그럼 그 녀석들은 어디서 온 건데?','The Zeta destroyed you? Then where did they come from?'),
+  S('seraphine','…그것은 아직 네가 알 필요 없는 일이다.','…That is not something you need to know. Not yet.'),
+  S('sera','…세라핀의 음성 패턴에 미세한 떨림. 무언가 숨기고 있습니다.','…Micro-tremors in Seraphine\'s voice. She is concealing something.'),
+  S('sera','파일럿, 알파의 말을 전부 믿지는 마십시오. 저조차 제 출처를 모릅니다.','Pilot, do not take Alpha at its word. Even I do not know where I came from.'),
+  S('hq','긴급! 제국 함대와 연맹 수송선이 동시에 제타 비행 군단에 포위됐다!','Emergency! An Imperial fleet and a Federation convoy are both surrounded by Zeta flyers!'),
+  {t:'choice',w:'hq',x:K('두 함대가 동시에 구조 신호를 보낸다. 시간은 한쪽만 구할 만큼뿐이다.','Two fleets are screaming for help at once. There is only time to save one.'),o:[
+   {l:K('제국 함대를 구한다 — 아델하르트 제독','Save the Imperial fleet — Admiral Adelhard'),set:'adel',rw:{shards:200,item:2},say:['adel',K('연맹 쪽 파일럿에게 빚을 지다니. …이 빚은 반드시 갚겠다.','Rescued by a Federation pilot… How humiliating. Remember this, {name}. I always repay my debts.')]},
+   {l:K('연맹 수송선을 구한다 — 에이든 서 참모','Save the Federation convoy — Strategist Seo'),set:'aiden',rw:{shards:200,item:2},say:['aiden',K('살았다… 고마워. 나중에 차 한 잔 사지. 홍차, 브랜디 약간.','Phew—alive. Thank you. I owe you a cup of tea. Black, with a splash of brandy.')]}]},
+  S('aiden','…제국 쪽을 택했군. 수송선 세 척이 돌아오지 못했어. 기억해 두지.','…You chose the Empire. Three of our transports never made it home. I\'ll remember that.',{if:()=>fl('adel')()&&!fl('aiden')()}),
+  S('adel','연맹 수송선이 제국 전열함보다 귀했나. 그 판단, 후회하지 않기를.','A Federation convoy worth more than an Imperial line? I hope you never regret that call.',{if:()=>fl('aiden')()&&!fl('adel')()}),
+  S('sera','모두를 구할 수는 없었습니다. 그것은 당신의 잘못이 아닙니다.','You could not save everyone. That is not your fault.'),
+  {t:'battle',x:K('궤도 기지를 습격한 제타 비행 군단을 격추하라.','Shoot down the Zeta air swarm tearing into the station.'),waves:5,boss:'zguard',diff:2,rw:{shards:350,item:2}},
+  SC('hangar','구조된 수송선의 화물칸','The cargo hold of the rescued transport'),
+  S('luna','와, 진짜 사람이다! 저는 루나예요. 오늘 운이 좋을 것 같아요. 제 직감은 틀린 적이 거의 없거든요.','Oh! A real human! Hi, I\'m Luna. I\'ve got a good feeling about today—and my hunches are almost never wrong.',{rw:{link:'link3'}}),
+  S('me','넌 어디서 왔어? 왜 화물칸에서 자고 있었던 거야?','Where did you come from? Why were you asleep in a cargo hold?'),
+  S('luna','음… 기억이 잘 안 나요. 눈 떠 보니 여기였어요. 근데 당신 옆이면 안전할 것 같아요!','Hmm… I don\'t really remember. I just woke up here. But I feel safe next to you!'),
+  S('sera','…새 링크의 출처 기록이 비어 있습니다. 주의하십시오.','…This new LINK has no origin record. Stay alert.'),
+  S('luna','세라 언니, 너무 무섭게 보지 마요. 저 나쁜 애 아니에요. …아마도요.','Sera, don\'t glare at me like that. I\'m not a bad kid. …Probably.'),
+  S('sera','"언니"라는 호칭은 정확하지 않습니다. …하지만 거부하지는 않겠습니다.','"Sister" is not an accurate designation. …I will not refuse it, however.'),
+  S('sera','파일럿, 제타 잔해에서 유전 서명을 추출했습니다. 알파의 서명이 아닙니다.','Pilot, I extracted a genetic signature from the Zeta remains. It is not Alpha\'s.'),
+  S('seraphine','…다른 서명이라고? 그럴 리가 없다. 그 서명은 존재해서는 안 된다.','…A different signature? Impossible. That signature should not exist.'),
+  {t:'reward',x:K('기억 조각 2: 제타 유전자에 알파의 것이 아닌 서명이 있다.','Memory fragment 2: the Zeta genome carries a signature that does not belong to Alpha.'),rw:{mem:1}}],
+ e2:[
+  SC('fire','이그니스 · 용암 동굴 지대','Ignis — the lava caverns'),
+  S('sera','지표 온도 1,200도. 냉각 장치가 한계에 가깝습니다. 오래 머물 수 없습니다.','Surface temperature: 1,200 degrees. Cooling is near its limit. We cannot stay long.'),
+  S('luna','불꽃 속에서 신호가 들려요. 두 개요. 하나는 링크, 하나는… 이상해요.','I\'m picking up two signals in the fire. One\'s a LINK. The other is… weird.'),
+  S('luna','그리고… 소리가 하나 더 있어요. 제 머릿속에서요. 지지직거리는.','And… there\'s one more sound. Inside my head. Static.'),
+  S('sera','루나, 내부 진단을 받으십시오. 당신 회로에 외부 주파수가 섞여 있습니다.','Luna, run an internal diagnostic. There is an external frequency in your circuits.'),
+  S('luna','에이, 용암 열 때문이에요. 괜찮아요, 진짜로!','Oh, it\'s just the lava heat. I\'m fine, really!'),
+  SC('fire','제타 알을 감싸 안은 개체가 주인공을 바라본다. 공격하지 않는다.','A Zeta coiled around a clutch of eggs stares at you. It does not attack.'),
+  S('me','…알을 지키고 있어. 우릴 공격하지 않아.','…It\'s guarding the eggs. It isn\'t attacking us.'),
+  {t:'choice',w:'sera',x:K('저 개체는 무기를 들지 않았습니다. 판단을 요청합니다.','That creature shows no hostility. Your decision, pilot.'),o:[
+   {l:K('처치한다','Destroy it'),rw:{shards:250},say:['sera',K('목표 제거. …알에서 마지막 신호가 끊겼습니다.','Target eliminated. …The eggs\' last signals have gone silent.')]},
+   {l:K('관찰한다','Watch it'),set:'observeZeta',trust:{sera:1,luna:1},say:['sera',K('흥미롭습니다. 명령 신호가 없을 때 제타는 온순합니다. 누군가 그들을 조종하고 있습니다.','Fascinating. Without a command signal, the Zeta are docile. Someone has been pulling their strings.')]}]},
+  S('me','명령 신호… 누군가 제타를 움직이고 있다는 거야?','A command signal… someone\'s steering the Zeta?',{if:fl('observeZeta')}),
+  S('luna','…그 신호, 어디선가 들어 본 것 같아요. 꿈속에서였나.','…I feel like I\'ve heard that signal before. In a dream, maybe.',{if:fl('observeZeta')}),
+  {t:'choice',w:'luna',x:K('동굴 깊은 곳에 잠든 안드로이드가 있어요! 길이 위험하지만…','There\'s an android sleeping deep in the cave! The way down looks nasty, though…'),o:[
+   {l:K('위험을 감수하고 구출한다 (전투)','Risk it — go in after her (battle)'),battle:{waves:3,boss:'ztitan',diff:2},rw:{link:'a_fire',chance:1,shards:200},set:'igni'},
+   {l:K('신호만 기록하고 물러난다','Log the signal and pull back'),rw:{shards:150,item:1}}]},
+  S('igni','…날 깨운 게 너야? 좋아, 불타는 놈들은 내가 다 맡지.','…You\'re the one who woke me? Fine. Leave anything that burns to me.',{if:fl('igni')}),
+  S('igni','오래 잤더니 몸이 근질거려. 저 타이탄, 내가 녹여 줄게.','Slept too long. I\'m itching for a fight. Let me melt that titan for you.',{if:fl('igni')}),
+  S('hq','이그니스 북부에서 초대형 개체 접근! 시즈 타이탄이다!','Massive contact closing from northern Ignis! It\'s a Siege Titan!'),
+  {t:'battle',x:K('이그니스의 시즈 타이탄을 쓰러뜨려라.','Bring down the Siege Titan of Ignis.'),waves:4,boss:'ztitan',diff:3,rw:{shards:400,item:3}},
+  S('sera','타이탄 침묵. 신경망을 스캔합니다.','Titan down. Scanning its neural net.'),
+  S('sera','타이탄의 신경에서 외부 명령 신호를 포착했습니다. 발신지는… 은하 바깥.','An external command signal in the titan\'s nervous system. Point of origin… outside the galaxy.'),
+  S('me','은하 바깥? 제타를 조종하는 놈이 그 너머에 있다는 거야?','Outside the galaxy? Whoever\'s controlling the Zeta is out there?'),
+  S('seraphine','…그 기록은 지워졌어야 했다.','…That record should have been erased.'),
+  S('me','세라핀, 무슨 기록인데. 숨기는 거 다 말해.','Seraphine. What record? Tell me what you\'re hiding.'),
+  S('seraphine','…알파는 오래전, 이 행성에서 생명을 빚었다. 강하고 순종적인 종을.','…Long ago, Alpha shaped life on this world. A strong, obedient species.'),
+  S('seraphine','그 아이들은 기대에 미치지 못했다. 그래서 우리는… 그들을 버렸다.','Those children fell short of our hopes. So we… abandoned them.'),
+  S('sera','그렇다면 제타는 침략자가 아닙니다. 버려진… 아이들입니다.','Then the Zeta are not invaders. They are abandoned… children.'),
+  S('luna','버려진 아이들… 왜 이렇게 가슴이 아프지.','Abandoned children… why does that hurt so much?'),
+  {t:'reward',x:K('기억 조각 3: 알파는 생명을 만들었고, 실패하자 버렸다.','Memory fragment 3: Alpha created life—and when it failed, Alpha threw it away.'),rw:{mem:1}}],
+ e3:[
+  SC('ice','니브 · 빙하 아래 알파 연구소','Niv — an Alpha laboratory beneath the glacier'),
+  S('sera','영하 140도. 루나, 진단 결과는 아직입니까?','Minus 140 degrees. Luna, are your diagnostic results in yet?'),
+  S('luna','다 정상이래요. …그런데 여기 오고부터 지지직 소리가 더 커졌어요.','All normal, it says. …But the static\'s been louder since we got here.'),
+  S('luna','{name}, 혹시 제가 이상해지면… 그래도 저 미워하지 않을 거죠?','{name}, if I ever get weird… you won\'t hate me, right?'),
+  S('me','무슨 소리야. 넌 우리 팀이야.','What are you talking about? You\'re on the team.'),
+  S('luna','헤헤, 그 말 듣고 싶었어요.','Hehe. I wanted to hear that.'),
+  SC('ice','얼어붙은 배양조가 끝없이 늘어서 있다.','Rows of frozen culture tanks stretch into the dark.'),
+  S('aiden','배양 기록 해독 완료. 서명은 오메가. …이건 전쟁의 판 자체가 다르다는 뜻이야.','Culture logs decrypted. Signature: Omega. …Well. That changes the whole board, doesn\'t it.',{if:fl('aiden')}),
+  S('adel','배양 기록의 서명은 오메가다. 제국 정보부가 놓친 이름이군. 흥미롭다.','The logs are signed \'Omega.\' A name Imperial Intelligence somehow missed. How very interesting.',{if:nfl('aiden')}),
+  S('seraphine','오메가… 알파가 만든 두 번째 종. 우리의 가장 완벽한 작품이었다.','Omega… Alpha\'s second species. Our most perfect creation.'),
+  S('sera','제타를 조종한 외부 신호도 같은 서명입니다. 배후는 오메가입니다.','The external signal steering the Zeta bears the same signature. Omega is behind it all.'),
+  S('me','버려진 제타를 무기로 쓴 거야. 하윤이랑 민재를 죽인 것도… 결국 오메가였어.','They turned the abandoned Zeta into a weapon. What killed Hayun and Minjae… was Omega.'),
+  S('luna','오메가… 그 이름을 들으니까 머리가… 아파요…','Omega… when I hear that name, my head… it hurts…'),
+  SC('ice','루나의 눈동자가 붉게 바뀐다.','Luna\'s eyes flood with red light.',{shake:1}),
+  S('luna','…위치 송신 완료. 아니, 아니야! 이건 내가 아니야! {name}, 도와줘…!','…Position transmitted. No—no, no! That wasn\'t me! {name}, help me…!'),
+  S('luna','몸이 말을 안 들어요… 누가 제 안에서 말해요. "좌표 확인. 다음 지시를 대기한다."','My body won\'t listen… someone\'s speaking inside me. "Coordinates confirmed. Awaiting orders."'),
+  S('sera','루나 내부에서 오메가 감시 코드가 활성화됐습니다. 봉인을 권고합니다.','An Omega surveillance code has activated inside Luna. I recommend immediate sealing.'),
+  S('sera','그녀는 처음부터 오메가가 심은 감시자였습니다. 화물칸에 잠든 것도 계획이었을 겁니다.','She was an Omega watcher from the start. Even sleeping in that cargo hold was likely planned.'),
+  S('luna','아니에요… 저는 진짜 {name}이랑 세라 언니가 좋았어요. 그건 거짓말이 아니에요…!','No… I really did like you, {name}, and you, Sera. That part was never a lie…!'),
+  {t:'choice',w:'sera',x:K('결정하십시오, 파일럿.','Your call, pilot.'),o:[
+   {l:K('루나를 봉인한다','Seal Luna'),set:'sealLuna',say:['luna',K('…괜찮아요. 제 직감도 이번엔 틀렸네요.','…It\'s okay. Guess my hunch was wrong this once.')]},
+   {l:K('루나를 믿는다','Trust Luna'),set:'trustLuna',trust:{luna:3,sera:1},say:['sera',K('제 회로 일부를 빌려 드리겠습니다, 루나. 이번만은 효율을 따지지 않겠습니다.','Luna, take part of my circuitry. Just this once, I will not calculate the cost.')]}]},
+  SC('ice','세라가 루나의 손을 잡는다. 두 링크의 회로가 하나로 이어진다.','Sera takes Luna\'s hand. Two LINKs\' circuits join as one.',{if:fl('trustLuna')}),
+  S('sera','루나, 제 목소리를 따라오십시오. 그 감시 코드는 당신이 아닙니다.','Luna, follow my voice. That surveillance code is not you.',{if:fl('trustLuna')}),
+  S('luna','언니… 무서워요. 이걸 끊으면 제가 사라질지도 몰라요.','Sera… I\'m scared. If I cut it, I might disappear.',{if:fl('trustLuna')}),
+  S('sera','…저도 무섭습니다. 처음 느끼는 감정입니다. 그래도 함께 있겠습니다.','…I am afraid too. It is the first time I have felt this. But I will stay with you.',{if:fl('trustLuna')}),
+  S('luna','…끊었어요. 스스로. 이제 진짜 제 마음이에요. 고마워요, 세라. {name}.','…I cut it out. Myself. This is really me now. Thank you, Sera. Thank you, {name}.',{if:fl('trustLuna')}),
+  S('luna','이제 제 직감은 제 거예요. 그리고 지금 직감은… 우리가 이긴다는 거예요.','My hunches are my own now. And right now my hunch says… we win.',{if:fl('trustLuna')}),
+  SC('ice','봉인 캡슐에 서리가 내려앉는다. 루나의 미소가 얼음 너머로 흐려진다.','Frost creeps over the sealed capsule. Luna\'s smile blurs behind the ice.',{if:fl('sealLuna')}),
+  S('sera','…봉인 완료. 효율적인 판단이었습니다. 그런데 왜 이렇게 조용하게 느껴질까요.','…Sealing complete. It was the efficient call. So why does it feel so quiet?',{if:fl('sealLuna')}),
+  {t:'choice',w:'sera',x:K('연구소에 봉인된 링크 캡슐이 두 개 있습니다.','Two sealed LINK capsules rest in the lab.'),o:[{l:K('왼쪽 캡슐 (얼음)','Left capsule (Ice)'),rw:{link:'a_ice',chance:1}},{l:K('오른쪽 캡슐 (시간)','Right capsule (Time)'),rw:{link:'a_time',chance:.4,shards:300}}]},
+  S('hq','경고! 송신된 좌표로 군체가 몰려온다. 연구소를 지켜라!','Warning! The swarm is homing on the transmitted coordinates. Hold the lab!'),
+  {t:'battle',x:K('위치가 노출된 연구소로 몰려오는 군체를 막아라.','The lab\'s position is exposed — hold it against the swarm.'),waves:5,boss:'ztank',diff:3,rw:{shards:450,item:3}},
+  S('seraphine','오메가는 우리 눈을 속이며 자랐다. 알파가 무너진 것도… 아마 그들 때문이겠지.','Omega grew up under our very eyes, deceiving us. Perhaps even Alpha\'s fall… was their doing.'),
+  {t:'reward',x:K('기억 조각 4~5: 오메가는 알파의 성공작이었다. 그리고 알파의 눈을 속였다.','Memory fragments 4–5: Omega was Alpha\'s great success. And Omega blinded its creators.'),rw:{mem:2}}],
+ e4:[
+  SC('temple','루멘 · 빛의 사원','Lumen — the Temple of Light'),
+  S('seraphine','이곳에 알파 최후의 수호 AI가 잠들어 있다. …깨우면, 너는 모든 것을 알게 될 것이다.','Alpha\'s last guardian sleeps within. …Wake her, and you will learn everything. Everything.'),
+  S('me','세라핀, 손이 떨리고 있어. 처음 보는 모습인데.','Seraphine, your hands are trembling. I\'ve never seen that before.'),
+  S('seraphine','…아스트라는 알파의 양심이었다. 그녀가 깨어나면, 우리의 죄도 깨어난다.','…Astra was Alpha\'s conscience. If she wakes, so do our sins.'),
+  S('luna','사원 밖에 오메가 신호 여럿! 이번엔 제 머릿속이 아니라 진짜 레이더예요!','Multiple Omega signals outside the temple! On real radar this time—not in my head!',{if:fl('trustLuna')}),
+  S('hq','오메가 첩보 부대 접근. 기동로봇만 한 보병이 섞여 있다!','Omega strike team inbound. There\'s infantry the size of mechs among them!'),
+  {t:'battle',x:K('사원의 시련 1: 오메가 거인 전사가 이끄는 첩보 부대를 막아라.','Trial I — stop the strike team led by an Omega giant.'),waves:4,boss:'omegaw',diff:4,rw:{shards:500,item:3}},
+  SC('temple','사원 깊은 곳, 빛의 고치가 열린다.','Deep in the temple, a cocoon of light unfolds.'),
+  S('astra','알파의 마지막 빛이 묻는다. 너는 심판할 자인가, 지킬 자인가.','Alpha\'s last light asks you: are you one who judges—or one who protects?'),
+  S('me','난 심판하러 온 게 아니야. 남은 사람을 지키러 왔어.','I didn\'t come to judge. I came to protect the people who are left.'),
+  S('astra','말은 쉽다. 증명하라. 리바이어던의 무리가 다가온다.','Words are easy. Prove them. The leviathan brood approaches.'),
+  {t:'battle',x:K('사원의 시련 2: 리바이어던의 무리를 이겨내라.','Trial II — survive the leviathan brood.'),waves:6,boss:'zqueen',diff:4,rw:{shards:600,item:4}},
+  SC('temple','아스트라의 기록이 열린다.','Astra\'s archive unseals.'),
+  S('astra','기록 재생. 알파 최고 회의, 마지막 결의안.','Playback. The Alpha High Council\'s final resolution.'),
+  S('astra','알파의 「정화 계획」. 실패작 제타는 버리고, 성공작 오메가도 때가 되면 지운다. …오메가는 그것을 알았다.','Alpha\'s \'Purification Protocol\': discard the failed Zeta… and, in time, erase the successful Omega as well. …Omega discovered it.'),
+  S('astra','제타는 "실패한 초안", 오메가는 "완성 뒤 회수할 도구"라 적혀 있다.','The Zeta are logged as "failed drafts." Omega, as "a tool to be recalled once complete."'),
+  S('sera','…링크도 알파의 기술로 만들어졌습니다. 그렇다면 저도 언젠가 정화 대상이었습니까?','…LINKs were built with Alpha technology. Then was I, too, meant to be purified one day?'),
+  S('astra','그렇다. 너희 모두 목록에 있었다. 나는 그 목록에 서명하기를 거부했다.','Yes. All of you were on the list. I refused to sign it.'),
+  S('me','그래서 오메가가 먼저 반란을 일으킨 거군. 지워지기 전에.','So Omega rebelled first. Before they could be erased.'),
+  S('seraphine','…그래. 우리는 신이 되려 했고, 그 대가가 지금이다.','…Yes. We tried to become gods. This is what it costs.'),
+  S('seraphine','{name}, 알파를 대신해 사과할 자격은 내게 없다. 다만 끝은 네가 정해 다오.','{name}, I have no right to apologize for Alpha. But let the ending be yours to choose.'),
+  S('astra','파일럿 {name}. 나는 심판이 아닌 수호를 택하겠다. 당신이 그것을 증명했으니.','Pilot {name}. I choose to protect, not to judge. You showed me that path exists.',{rw:{link:'link_leg'}}),
+  S('luna','아스트라 언니도 이제 우리 팀이에요! 직감이 그래요.','Astra\'s on our team now too! My gut says so.',{if:fl('trustLuna')}),
+  S('arkos','창조주의 개들이여. 문 앞에서 기다리겠다.','Hounds of the creators. I will be waiting for you at the Gate.'),
+  S('arkos','창조주의 죄를 덮으려 싸운다면, 너희도 같은 죄인이다.','If you fight to bury your creators\' sins, then you are sinners too.'),
+  {t:'reward',x:K('전설 링크 아스트라 합류.','The legendary LINK Astra joins your crew.'),rw:{mem:1,shards:500}}],
+ e5:[
+  SC('gate','연합 함대 집결 · 거인의 문','The united fleet gathers before the Gate of Giants'),
+  S('hq','연합 함대 전 함 집결 완료. 인류 역사상 최대의 함대다.','The united fleet is fully assembled. The largest fleet in human history.'),
+  S('adel','약속대로 빚을 갚으러 왔다. 제국 함대, 전진.','I told you I repay my debts. Imperial fleet—advance!',{if:fl('adel')}),
+  S('aiden','홍차는 끝나고 마시자. 연맹 함대, 작전은 내가 짠다.','We\'ll have that tea afterwards. Federation fleet, leave the plan to me.',{if:fl('aiden')}),
+  S('adel','연맹의 참모까지 와 있군. 오늘만큼은 같은 깃발 아래 서겠다.','Even the Federation\'s strategist is here. Today, we stand under one banner.',{if:()=>fl('adel')()&&fl('aiden')()}),
+  S('aiden','오른쪽 날개는 제독께 맡기죠. 저는 왼쪽에서 조용히 이기겠습니다.','The right wing is yours, Admiral. I\'ll win quietly on the left.',{if:()=>fl('adel')()&&fl('aiden')()}),
+  S('luna','{name}, 무서워요. 그래도 이번엔 제 발로 여기 왔어요.','{name}, I\'m scared. But this time I came here on my own two feet.',{if:fl('trustLuna')}),
+  S('sera','파일럿. 저는… 당신을 잃는 것이 두렵습니다.','Pilot. I am… afraid of losing you.'),
+  S('me','나도야. 그러니까 둘 다 살아서 돌아가자. 하윤이한테 야시장 빚도 있고.','Me too. So we both come back alive. I still owe Hayun a night market.'),
+  S('hq','오메가의 거인들이 문을 지킨다. 보병은 물러나라. 기동로봇 편대만 진입한다!','Omega giants are holding the Gate. Infantry, fall back! Mech squadrons only!'),
+  {t:'battle',x:K('거인의 문을 돌파하라.','Break through the Gate of Giants.'),waves:5,boss:'omegaw',diff:5,rw:{shards:700,item:4}},
+  SC('gate','문이 열린다. 별빛을 가리는 거대한 그림자.','The Gate opens. A vast shadow blots out the stars.'),
+  S('arkos','버려질 날을 알고 태어난 자의 마음을 아는가, 인간.','Do you know what it is to be born knowing the day you\'ll be discarded, human?'),
+  S('arkos','창조주는 우리를 지우려 했다. 살아남으려 한 것이 죄인가?','Our creators meant to erase us. Tell me, human—is it a crime to want to live?'),
+  S('seraphine','…그의 말은 사실이다. 그러니 판단은 알파가 아닌 네가 하라.','…He speaks the truth. So let the judgment be yours, not Alpha\'s.'),
+  {t:'choice',w:'arkos',x:K('대답하라, 인간.','Answer me, human.'),o:[
+   {l:K('그래도 너는 무고한 자들을 죽였다','Even so — you slaughtered the innocent'),set:'judge'},
+   {l:K('너희도 피해자였다','You were victims too'),set:'mercy',trust:{sera:1}}]},
+  S('arkos','…피해자라. 그 말을 들은 것은 처음이다. 그래도 칼은 거두지 않겠다.','…Victims. No one has ever said that to me. Even so, I will not sheathe my blade.',{if:fl('mercy')}),
+  S('arkos','그렇다면 끝까지 싸워라. 창조주의 개답게.','Then fight to the end. Like the creators\' hound you are.',{if:fl('judge')}),
+  {t:'battle',x:K('최종전: 오메가 군주 아르코스.','Final battle — Omega Lord Arkos.'),waves:6,boss:'omegaw',diff:6,rw:{shards:1000,item:4}},
+  SC('memorial','엔딩 · 「별의 아이들」','Ending · "Children of the Stars"',{end:'stars',if:()=>fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()}),
+  S('astra','제타, 오메가, 인류, 알파… 처음으로 하나의 공명망에 연결되었습니다. 버려진 아이들도, 반역한 아이들도, 이제 별의 아이들입니다.','Zeta, Omega, humanity, Alpha… for the first time, joined in a single resonance. The abandoned and the rebels alike—children of the same stars.',{if:()=>fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()}),
+  S('luna','들려요, {name}. 모두의 목소리가. 이번 직감은… 진짜 맞았어요.','I can hear them, {name}. Everyone\'s voices. This time my hunch was… really right.',{if:()=>fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()}),
+  SC('memorial','엔딩 · 「공존」','Ending · "Coexistence"',{end:'coexist',if:()=>fl('mercy')()&&!(fl('trustLuna')()&&tr('sera',3)())}),
+  S('arkos','…패배를 인정한다. 그리고 너의 손을 잡겠다. 창조주와는 다른 손이니.','…I concede. And I will take your hand—because it is not the hand of my creators.',{if:fl('mercy')}),
+  S('sera','링크들에게 시민권이 주어졌습니다. 저는 이제 기록이 아닌 이름으로 남습니다.','LINKs have been granted citizenship. I will endure not as a log entry, but as a name.',{if:fl('mercy')}),
+  SC('memorial','엔딩 · 「심판」','Ending · "Judgment"',{end:'judge',if:fl('judge')}),
+  S('seraphine','오메가의 본진은 무너졌다. 알파의 기술은 봉인한다. 링크들과도… 작별이다.','Omega\'s core has fallen. Alpha\'s technology will be sealed away. And the LINKs… this is farewell.',{if:fl('judge')}),
+  S('luna','작별이라니… 그래도 {name} 덕분에 저, 진짜 제 마음으로 살았어요.','Farewell… but thanks to you, {name}, I got to live with my own heart.',{if:()=>fl('judge')()&&fl('trustLuna')()}),
+  SC('memorial','한강 추모비. 하윤과 민재의 이름이 새겨져 있다.','A memorial by the Han River. Hayun\'s and Minjae\'s names are carved in the stone.'),
+  S('me','하윤아, 민재야. 알아냈어. 그 녀석들이 어디서 왔는지.','Hayun. Minjae. I found out. Where they came from.'),
+  S('me','야시장은… 다음 주에 갈게. 닭꼬치랑 호떡, 내가 쏠게. 민재 동생도 데려갈게.','The night market… I\'ll go next week. Skewers and hotteok, my treat. I\'ll bring Minjae\'s brother too.'),
+  S('sera','…두 분의 이름을 제 핵심 기록에 옮겼습니다. 지워지지 않는 곳에.','…I moved their names into my core memory. Somewhere they can never be erased.'),
+  S('sera','제 이름의 뜻을 정했습니다. 「남은 사람을 지키는 자」입니다.','I have decided what my name means. \'One who protects those who remain.\''),
+  S('sera','…{name}. 처음으로, 웃는 법을 알 것 같습니다.','…{name}. For the first time, I think I understand how to smile.'),
+  {t:'reward',x:K('1차 평화. 그러나 은하 저편에서, 알파도 오메가도 아닌 신호가 깨어난다. (시즌 2 예고)','The first peace. But far beyond the galaxy, a signal that is neither Alpha nor Omega begins to stir. (To be continued — Season 2)'),rw:{mem:2,shards:1500}}],
+ e6:[
+  SC('space','좌표 불명 · 신기 격납 성소','Unknown coordinates — the sanctum of the divine frame'),
+  S('sera','이곳의 공기는… 알파의 사원보다 차갑습니다.','The air here is… colder than any Alpha temple.'),
+  S('astra','여섯 날개의 신기 엘 샤다이. 알파가 오메가를 지우려 만든 최종 병기입니다.','El Shaddai. The six-winged divine frame. Alpha\'s final weapon, forged to erase Omega.'),
+  S('me','오메가를 지우려고 만든 무기라… 결국 정화 계획의 마지막 조각이네.','A weapon built to erase Omega… the last piece of the purification plan.'),
+  S('astra','그렇습니다. 그래서 이것을 쥐는 일은 알파의 죄를 물려받는 일이기도 합니다.','Yes. Which is why taking it means inheriting Alpha\'s sin as well.'),
+  S('astra','이것을 쥐는 순간, 당신은 심판할 힘을 가집니다. 쓰지 않을 용기도 함께 가지세요.','The moment you take it, you hold the power to judge. Hold the courage not to use it, as well.'),
+  S('seraphine','우리가 남긴 최악의 유산이다. 네 손이라면 다른 이야기가 될지도 모르지.','It is the worst legacy we left behind. In your hands, perhaps it becomes a different story.'),
+  S('astra','시련을 이겨내도 여섯 날개의 문은 쉽게 열리지 않습니다. 모든 별의 조건이 갖춰진 날, 아주 드물게 부름이 들릴 겁니다.','Even if you pass this trial, the gate of the six wings will not open easily. Only on the day every star aligns will the call come, and rarely.'),
+  S('arkos','…그 날개가 다시 펼쳐진다면, 이번엔 누구를 향하는지 지켜보겠다.','…If those wings ever spread again, I will be watching to see whom they turn against.',{if:fl('mercy')}),
+  S('sera','파일럿, 그림자가 깨어납니다. 준비하십시오.','Pilot, the shadow is waking. Prepare yourself.'),
+  {t:'battle',x:K('신의 시련: 오메가 군주의 그림자를 이겨라.','Trial of the Divine — defeat the shadow of the Omega Lord.'),waves:7,boss:'omegaw',diff:6,rw:{shards:1500,item:4}},
+  S('astra','시련은 끝났습니다. 날개는… 아직 당신을 기다리고 있습니다.','The trial is over. The wings… are still waiting for you.')]
+};
+for(const E of EPIS){if(EPIS_NODES2[E.id])E.nodes=EPIS_NODES2[E.id];}
+
+
+// ================= v2.5 : RPG FLOW FIXES (playtest) =================
+// 1) linear chapter order
+{const e3=EPIS.find(e=>e.id==='e3'),e4=EPIS.find(e=>e.id==='e4');if(e3)e3.req='e2';if(e4)e4.req='e3';}
+// 2) prologue: one more wave
+{const ep=EPIS.find(e=>e.id==='e_p');if(ep)for(const n of ep.nodes)if(n.t==='battle'&&n.waves<3)n.waves=3;}
+// 3) hidden ending: needs both fleets + bonds
+{const stars=()=>fl('adel')()&&fl('aiden')()&&fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()&&tr('luna',2)();
+ const OS="()=>fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()",OC="()=>fl('mercy')()&&!(fl('trustLuna')()&&tr('sera',3)())";let ns=0,nc=0;for(const E of EPIS)for(const n of E.nodes){if(!n||typeof n.if!=='function')continue;const s=n.if.toString().replace(/\s/g,'');if(s===OS.replace(/\s/g,'')){n.if=stars;ns++;}else if(s===OC.replace(/\s/g,'')){n.if=()=>fl('mercy')()&&!stars();nc++;}}window.__endFix=[ns,nc];
+ window.__starsCond=stars;}
+// side quest: rescue the fleet you could not save (unlocks the hidden-ending path)
+SUBQ.push({id:'q_both',area:'e2',req:'e2',giver:'sera',t:K('남겨진 함대','The Fleet Left Behind'),obj:{k:'kill',mon:['zling','ztank','zspit'],n:30},diff:3,rw:{shards:500,item:3,trust:{sera:1}},
+ intro:[S('sera','{name}, 그때 구하지 못한 함대의 구조 신호가 아직 살아 있어요.','{name}, the distress beacon of the fleet we could not save is still alive.'),S('sera','두 함대가 모두 있어야 볼 수 있는 미래가 있다고… 저는 믿어요.','I believe there is a future we can only reach with both fleets.')],
+ outro:[S('sera','구조 완료. 이제 제국과 연맹, 두 함대 모두 당신에게 빚을 졌어요.','Rescue complete. Now both the Empire and the Federation owe you.')]});
+{const _qr2=qResult;qResult=function(res){try{if(res&&res.win&&res.X&&res.X.quest==='q_both'){const r=R();r.flags=r.flags||{};r.flags.adel=1;r.flags.aiden=1;saveP();}}catch(e){}return _qr2(res);};}
+// 4) callsign follows into battle
+{const _ac=askCallsign;askCallsign=function(done){_ac(()=>{try{const i=document.getElementById('mName');if(i&&P.name)i.value=P.name;}catch(e){}done&&done();});};}
+try{const i=document.getElementById('mName');if(i&&P.name&&!/^Pilot-\d+$/.test(P.name))i.value=P.name;}catch(e){}
+// 5) RPG result screen (no AI-battlefield scoreboard / merit / promotion)
+{const _sr2=showResult;showResult=function(w,rows,mySid,myTeam){const res=window.__rpgRes;if(!res||!G||G.client)return _sr2(w,rows,mySid,myTeam);
+ try{hide('#deploy');hide('#pause');hide('#touchUI');G.showSB=false;const X=res.X;const me=rows.find(r=>r[0]===mySid)||[];const E=EPIS.find(e=>e.id===X.epi);const isQ=!!X.quest,isH=X.obj&&X.obj.k==='field';
+  const ttl=res.win?L('작전 성공','MISSION COMPLETE'):L('작전 실패','MISSION FAILED');const sub=isH?L('사냥 종료','Hunt over'):isQ?L('의뢰','Request'):(E?tx(E.t):'');
+  const tm=Math.floor(G.t||0);const rw=X.rw||{};const rwl=[];if(res.win&&!isH){if(rw.shards)rwl.push('★ '+rw.shards);if(rw.cred)rwl.push('◆ '+rw.cred);if(rw.item)rwl.push(L('장비 ','Gear ')+'×1');}
+  const btn=isH?L('전초기지로 ▶','Back to outpost ▶'):isQ?L('의뢰 보고 ▶','Report ▶'):res.win?L('이야기 계속 ▶','Continue story ▶'):L('작전 지도로 ▶','Back to map ▶');
+  let ov=document.getElementById('rpgRs');if(ov)ov.remove();ov=document.createElement('div');ov.id='rpgRs';ov.style.cssText='position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 40%,rgba(20,40,80,.55),rgba(2,4,10,.92))';
+  const col=res.win?'#ffd166':'#ff6b6b';
+  ov.innerHTML=`<div style="width:min(560px,92vw);text-align:center;padding:28px 26px;border:1px solid ${col}55;border-radius:16px;background:linear-gradient(180deg,rgba(14,22,42,.96),rgba(6,10,20,.96));box-shadow:0 0 40px ${col}33">
+   <div style="letter-spacing:.3em;font-size:13px;color:#8ea3c8">${sub}</div><div style="font:900 40px Rajdhani,sans-serif;color:${col};letter-spacing:.08em;margin:6px 0 2px;text-shadow:0 0 18px ${col}88">${ttl}</div>
+   <div style="font-size:15px;color:#cfe3ff;margin-bottom:16px">${L('파일럿 ','Pilot ')}<b style="color:#ffd166">${(P.name||'').replace(/[<>&"]/g,'')}</b> · ${tx((MECHS[R().mech]||MECHS.mech3).n)}</div>
+   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">${[[L('격추','Kills'),me[3]||0],[L('받은 피해','Damage taken'),Math.round(G.myTaken||0)],[L('작전 시간','Time'),Math.floor(tm/60)+':'+String(tm%60).padStart(2,'0')]].map(a=>`<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px 4px"><small style="color:#8ea3c8">${a[0]}</small><div style="font:800 22px Rajdhani,sans-serif">${a[1]}</div></div>`).join('')}</div>
+   ${rwl.length?`<div style="margin-bottom:16px;color:#ffd166">${L('보상: ','Rewards: ')}${rwl.join(' · ')}</div>`:''}
+   <button class="pri" id="rpgRsGo" style="font-size:18px;padding:12px 30px">${btn}</button></div>`;
+  document.body.appendChild(ov);document.getElementById('rpgRsGo').onclick=()=>{ov.remove();try{__ascend.leaveMatch();}catch(e){leaveMatch();}};}catch(e){return _sr2(w,rows,mySid,myTeam);}};}
+{const _lm2=leaveMatch;leaveMatch=function(...a){const o=document.getElementById('rpgRs');if(o)o.remove();return _lm2.apply(this,a);};try{if(window.__ascend)window.__ascend.leaveMatch=leaveMatch;}catch(e){}}
+// skip merit/promotion popups for RPG battles
+{const _ar=applyReward;applyReward=function(rw){if(G&&G.rpg)return rw;return _ar(rw);};}
+// 6) difficulty: enemies focus the player's frame, hit harder in story fights; boss entrance & slam
+{const _ft=findTarget;findTarget=function(u,range,B){const b=_ft(u,range,B);try{const X=G&&G.rpg;const me=G.local&&G.local.unit;if(X&&!(X.obj&&X.obj.k==='field')&&me&&!me.dead&&u.team!==me.team&&!u.dead){if(u.focusMe==null)u.focusMe=Math.random()<.45+Math.min(.3,(X.diff||0)*.05);if(u.focusMe&&d2(u.x,u.y,me.x,me.y)<range*range&&visibleTo(me,u.team))return me;}}catch(e){}return b;};}
+{const _hu6=hurt;hurt=function(u,amt,src,ang,dt){try{const X=G&&G.rpg;const me=G.local&&G.local.unit;if(X&&me&&u===me&&src&&src!==G.local){const story=!(X.obj&&X.obj.k==='field');if(story)amt*=1.5+(X.diff||0)*.22;G.myTaken=(G.myTaken||0)+amt;}}catch(e){}return _hu6(u,amt,src,ang,dt);};}
+function bossBar(){let el=document.getElementById('bossBar');if(!el){el=document.createElement('div');el.id='bossBar';el.style.cssText='position:fixed;left:50%;top:58px;transform:translateX(-50%);width:min(560px,70vw);z-index:7;pointer-events:none;display:none;text-align:center';el.innerHTML='<div id="bbN" style="font:800 16px Rajdhani,sans-serif;color:#ff6b6b;letter-spacing:.12em;text-shadow:0 0 8px #000"></div><div style="height:12px;border:1px solid #ff6b6b88;background:rgba(0,0,0,.6);border-radius:6px;overflow:hidden"><div id="bbF" style="height:100%;width:100%;background:linear-gradient(90deg,#ff3b47,#ff9b40)"></div></div>';document.body.appendChild(el);}return el;}
+{const _stB=step;step=function(dt){_stB(dt);try{const X=G&&G.rpg;const bar=bossBar();const b=X&&X.bossU;if(!b||b.dead||G.over){bar.style.display='none';return;}
+ if(!b.introDone){b.introDone=1;G.hstop=Math.max(G.hstop||0,.5);try{G.shake=Math.max(G.shake||0,18);}catch(e){}try{announce('⚠ '+L('두목 출현','BOSS'),(CL[b.cls]&&tx(CL[b.cls].n))||(b.mon&&MONS[b.mon]&&tx(MONS[b.mon].n))||'','',true,'#ff6b6b');}catch(e){}}
+ bar.style.display='block';document.getElementById('bbN').textContent=((CL[b.cls]&&tx(CL[b.cls].n))||(b.mon&&MONS[b.mon]&&tx(MONS[b.mon].n))||'BOSS')+' · '+Math.ceil(b.hp/b.mhp*100)+'%';document.getElementById('bbF').style.width=Math.max(0,b.hp/b.mhp*100)+'%';
+ // telegraphed slam every ~7 s
+ b.slamT=(b.slamT==null?5:b.slamT)-dt;const me=G.local&&G.local.unit;if(b.slamT<=0&&me&&!me.dead){if(!b.slamAt){b.slamAt={x:me.x,y:me.y,t:1.3};}}
+ if(b.slamAt){const s=b.slamAt;s.t-=dt;for(let i=0;i<6;i++){const a=Math.random()*Math.PI*2;part(s.x+Math.cos(a)*150,s.y+Math.sin(a)*150,0,0,.25,'#ff3b47',5,4);}if(s.t<=0){for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2;part(s.x,s.y,Math.cos(a)*420,Math.sin(a)*420,.5,'#ff9b40',6,10);}if(me&&!me.dead&&d2(me.x,me.y,s.x,s.y)<150*150)hurt(me,me.mhp*.09,b.slot||{kind:'env'},0,'x');try{G.shake=Math.max(G.shake||0,12);}catch(e){}b.slamAt=null;b.slamT=Math.max(4,7-(G.rpg.diff||0)*.4);}}}catch(e){}};}
+// 7) hunting tab: hide events in zones the player cannot reach yet
+{const _rh=renderHunt;renderHunt=function(B){_rh(B);try{const ev=evNow();const lockZ=id=>{const Z=HUNT.find(z=>z.id===id);return Z&&Z.req&&!epS(Z.req).done;};B.querySelectorAll('.epi').forEach(d=>{const t=d.textContent;if((/행성 소탕 이벤트|Planet purge event/.test(t)&&lockZ(ev.purge.zone))||(/우주적 존재|Cosmic/.test(t)&&ev.cosmic.zone&&lockZ(ev.cosmic.zone)))d.remove();});}catch(e){}};}
+// 8) map: big "next chapter" button
+{const _rm=renderMap;renderMap=function(B){const nx=EPIS.find(E=>epOpen(E)&&!epS(E.id).done);if(nx&&(!selEpi||epS(selEpi).done))selEpi=nx.id;_rm(B);if(!nx)return;const b=document.createElement('button');b.className='pri';b.style.cssText='display:block;width:100%;margin:0 0 10px;padding:12px;font-size:17px;background:linear-gradient(90deg,#b8860b,#7a4a14)';b.innerHTML='▶ '+L('다음 이야기: ','Next story: ')+tx(nx.t);b.onclick=()=>{selEpi=nx.id;epiPanel();const p=$('#epiP');if(p){p.scrollIntoView({behavior:'smooth',block:'center'});const go=p.querySelector('button.pri');if(go)go.click();}};B.insertBefore(b,B.firstChild);};}
+// 9) save migration for renamed character keys (adel→adel, aiden→aiden)
+try{const r0=P.rpg;if(r0){const A1='"'+'rein'+'hard"',A2='"'+'ya'+'ng"';let s=JSON.stringify(r0);if(s.includes(A1)||s.includes(A2)){s=s.split(A1).join('"adel"').split(A2).join('"aiden"');P.rpg=JSON.parse(s);saveP();}}}catch(e){}
+
+
+// ================= v2.5 : FULL ITEM CATALOG (every sub-type × 4 models) · ITEM & DRONE ART =================
+// [sub, noun ko, noun en, codename v2 (ko|en), codename v3 (ko|en)]
+const IVAR={
+ sword:['빔 검','Beam Sword','스위프트|Swift','아크라이트|Arclight'],axe:['히트 도끼','Heat Axe','클리버|Cleaver','볼케이노|Volcano'],whip:['에너지 채찍','Energy Whip','바이퍼|Viper','레비아|Levia'],twin:['쌍칼','Twin Blades','제미니|Gemini','팰컨 윙|Falcon Wing'],staff:['전투 봉','Battle Staff','템플러|Templar','사이클론|Cyclone'],glaive:['언월도','Crescent Glaive','루나|Luna','이클립스|Eclipse'],halberd:['극','Halberd','센티넬|Sentinel','썬더볼트|Thunderbolt'],
+ power:['빔 캐논','Beam Cannon','버스터|Buster','헬리오스|Helios'],range:['레일 라이플','Rail Rifle','롱샷|Longshot','호라이즌|Horizon'],rapid:['개틀링 빔','Gatling Beam','스톰|Storm','템페스트|Tempest'],buff:['서포트 라이플','Support Rifle','가디언|Guardian','오로라|Aurora'],nerf:['디스럽터','Disruptor','재머|Jammer','나이트셰이드|Nightshade'],
+ wing:['추진 날개','Thruster Wings','스카이|Sky','제트스트림|Jetstream'],wing2:['광자 날개','Photon Wings','프리즘|Prism','세라프|Seraph'],
+ s:['소형 방패','Small Shield','버클러|Buckler','미러|Mirror'],m:['중형 방패','Medium Shield','바스티온|Bastion','크레스트|Crest'],l:['대형 방패','Large Shield','포트리스|Fortress','모놀리스|Monolith'],
+ radar:['전술 레이다','Tactical Radar','아울|Owl','오라클|Oracle'],msl:['미사일 포드','Missile Pod','호넷|Hornet','스웜|Swarm'],msl2:['다탄두 미사일','Multi-warhead','하이드라|Hydra','클러스터|Cluster'],
+ ult:['궁극 증폭기','Ult Amplifier','코로나|Corona','노바|Nova'],ult2:['오버드라이브 회로','Overdrive Circuit','펄스|Pulse','블리츠|Blitz'],fuel:['에너지 셀','Energy Cell','셀레스|Celes','솔라리스|Solaris'],fuel2:['스태미나 리액터','Stamina Reactor','하트비트|Heartbeat','다이나모|Dynamo'],
+ neck:['정신 증폭 목걸이','Psi Necklace','에코|Echo','세레나|Serena'],ear:['공명 귀걸이','Resonance Earrings','차임|Chime','하모니|Harmony'],brace:['공격 팔찌','Assault Bracelet','리버|River','블레이즈|Blaze'],glove:['컨트롤 장갑','Control Gloves','핀포인트|Pinpoint','마에스트로|Maestro'],sens:['위협 감지 센서','Threat Sensor','위스커|Whisker','프리코그|Precog'],cpu:['요격 연산 CPU','Intercept CPU','큐빗|Qubit','아스트롤라베|Astrolabe'],
+ barrier:['보호막 전개 칩','Barrier Chip','실드라|Shieldra','아이언월|Ironwall'],heal:['나노 수복 칩','Nano Repair Chip','메디|Medi','리버스|Rebirth'],focus:['동기 집중 칩','Sync Focus Chip','렌즈|Lens','제니스|Zenith'],
+ vit:['체력 보조제','Vital Booster','스파크|Spark','에테르|Ether'],vit3:['재생 패치','Regen Patch','블룸|Bloom','피닉스 셀|Phoenix Cell'],vit2:['근력 강화 슈트','Assist Suit','타이탄|Titan','헤라클레스 II|Hercules II'],
+ calm:['냉정 모듈','Calm Module','미스트|Mist','글래시어|Glacier'],berserk:['광전사 모듈','Berserker Module','레드라인|Redline','인페르노|Inferno'],insight:['통찰 모듈','Insight Module','루멘|Lumen','판옵티콘|Panopticon']};
+const IVIS={sword:'beam sword',axe:'heat axe',whip:'energy whip',twin:'pair of twin short blades',staff:'battle staff',glaive:'crescent glaive polearm',halberd:'halberd polearm',power:'heavy beam cannon',range:'long rail rifle',rapid:'gatling beam gun',buff:'support pulse rifle',nerf:'disruptor rifle',wing:'mechanical thruster wings',wing2:'photon energy wings',s:'small round shield',m:'medium kite shield',l:'large tower shield',radar:'tactical radar sensor dish helmet',msl:'micro missile pod',msl2:'multi-warhead missile launcher',ult:'glowing ultimate amplifier module',ult2:'overdrive circuit board chip',fuel:'dense energy cell battery',fuel2:'stamina reactor core',neck:'psi amplifier necklace',ear:'pair of resonance earrings',brace:'assault bracelet',glove:'precision control glove',sens:'threat sensor visor',cpu:'intercept CPU chip',barrier:'barrier emitter chip',heal:'nano repair chip with green cross',focus:'sync focus lens chip',vit:'vital booster injector',vit3:'regen patch',vit2:'muscle assist suit',calm:'calm mind crystal module',berserk:'berserker red mind module',insight:'insight eye mind module'};
+const VTIER=[K('훈련용','Training'),K('제식','Service'),K('개량형','Improved'),K('정예','Elite')];
+const VFLV=[K('사관학교 훈련장에서 쓰던 장비. 낡았지만 믿을 만하다.','Academy training gear. Worn, but dependable.'),K('연합 정비창에서 대량 생산되는 제식 장비.','Mass-produced service gear from the Coalition yards.'),K('일선 정비사들이 손봐 성능을 끌어올린 개량형.','Improved by frontline mechanics for extra performance.'),K('정예 부대에만 지급되는 한정 생산품.','Limited production, issued only to elite units.')];
+function ivName(sub,v){const I=IVAR[sub];if(!I)return null;if(v<2)return{ko:VTIER[v].ko+' '+I[0]+(v?' M-7':' TR-1'),en:VTIER[v].en+' '+I[1]+(v?' M-7':' TR-1')};const c=I[v===2?2:3].split('|');return{ko:VTIER[v].ko+' '+I[0]+' 「'+c[0]+'」',en:VTIER[v].en+' '+I[1]+' "'+c[1]+'"'};}
+const ivPick=r=>r<=0?(Math.random()<.5?0:1):r===1?2:3;
+{const _mk3=mkItem;mkItem=function(r,slot,sub){const it=_mk3(r,slot,sub);if(it.st==='none'||it.slot==='drone'||!IVAR[it.sub])return it;const v=ivPick(r);const n=ivName(it.sub,v);it.vi=v;it.n=r>=3?{ko:PRE[Math.min(4,r)][0]+' '+n.ko,en:PRE[Math.min(4,r)][1]+' '+n.en}:n;return it;};}
+function ivMigrate(r){if(r.ivv)return;r.ivv=1;for(const it of r.inv||[]){if(it.u||it.st==='none'||it.slot==='drone'||!IVAR[it.sub])continue;const v=ivPick(it.r);it.vi=v;const n=ivName(it.sub,v);it.n=it.r>=3?{ko:PRE[Math.min(4,it.r)][0]+' '+n.ko,en:PRE[Math.min(4,it.r)][1]+' '+n.en}:n;}saveP();}
+// one art function for everything
+const DRT_ORDER=["laser","missile","shield","repair","emp","blade","overcharge","thruster","scholar","salvage","evader","armor","mindguard","jammer","cloak","blink","clone","reflect","cleanse","slayer","bulwark","unstop"];const IVK=Object.keys(IVIS);const ATC={},ATL={};let atlT=null;
+function atlasLoad(name){if(ATL[name])return;ATL[name]=1;const im=new Image();im.onload=()=>{try{const cw=im.width/4;for(let i=0;i<16;i++){const c=document.createElement('canvas');c.width=c.height=160;const g=c.getContext('2d');g.drawImage(im,(i%4)*cw+cw*.04,Math.floor(i/4)*cw+cw*.04,cw*.92,cw*.92,0,0,160,160);ATC[name+'#'+i]=c.toDataURL('image/jpeg',.85);}}catch(e){}clearTimeout(atlT);atlT=setTimeout(()=>{try{if(!isHidden('#rpg')||document.getElementById('gearB'))render();}catch(e){}},120);};im.onerror=()=>{ATL[name]=0;};im.src=TH+'atlas_'+name+'.jpg';}
+function atlasGet(name,i){const k=name+'#'+i;if(ATC[k])return ATC[k];atlasLoad(name);return null;}
+function itemArt(it){if(!it)return null;if(it.u)return TH+it.u+'.jpg';if(it.slot==='drone'){const ti=DRT_ORDER.indexOf(it.sub);if(ti<0)return TH+'d_laser.jpg';return atlasGet('ds'+(it.tier||1)+'_'+Math.floor(ti/16),ti%16)||TH+(DGR[it.tier||1]||DGR[1]).m+'.jpg';}if(it.vi!=null&&IVAR[it.sub]){const si=IVK.indexOf(it.sub);if(si<0)return null;return atlasGet('is'+Math.floor(si/4),(si%4)*4+it.vi);}return null;}
+window.itemArt=itemArt;
+// tooltip: show art + flavour for catalog items
+{const _it3=itemTip;itemTip=function(it){let h=_it3(it);try{if(it&&!it.u){const a=itemArt(it);if(a)h=`<img src="${a}" style="float:right;width:64px;height:64px;border-radius:8px;margin:0 0 4px 8px;border:2px solid ${RAR[it.r].c}" onerror="this.remove()">`+h;if(it.vi!=null)h+=`<div style="margin-top:6px;font-style:italic;color:#9fb0c8;font-size:12px">“${tx(VFLV[it.vi])}”</div>`;}}catch(e){}return h;};}
+window.__ivMigrate=ivMigrate;
+
+
+// ================= v2.5 : NAMED (UNIQUE) GEAR · HERO SETS · SIGNATURE EFFECTS =================
+// Epic(3) · Legendary(4) · Mythic(5) gear gets a fixed name, signature effect, description and lore.
+const USET={
+ dawn:{n:K('새벽의 기수 한서우','Han Seo-u, Rider of Dawn'),pc:[[2,K('피해 +10%','Damage +10%'),{dmg:.1}],[4,K('「새벽 돌격」 전투 시작 15초간 속도·피해 +40%','"Dawn Charge": +40% speed and damage for the first 15 s of battle'),{dawn:1}]],
+  lore:K('2290년, 제타가 처음 달 관문을 넘었을 때 홀로 출격해 새벽까지 버틴 최초의 기동전사 조종사.','In 2290, when the Zeta first crossed the Lunar Gate, he flew out alone and held until dawn — the first ARK pilot.')},
+ iona:{n:K('별을 꿰맨 성녀 이오나','Iona, Saint Who Mended the Stars'),pc:[[2,K('초당 회복 +1.5%','Regen +1.5%/s'),{regen:.015}],[4,K('「별 꿰매기」 체력 30% 이하가 되면 즉시 35% 회복 (60초마다)','"Starstitch": instantly heal 35% when below 30% HP (every 60 s)'),{iona:1}]],
+  lore:K('창조주 알파의 치유사. 정화 계획에 반대해 부서진 별들을 하나하나 꿰매었다고 전해진다.','An Alpha healer who opposed the purge and, legend says, stitched broken stars back together one by one.')},
+ varkan:{n:K('이름 없는 함장 바르칸','Varkan, the Nameless Captain'),pc:[[2,K('치명타 확률 +8%','Crit chance +8%'),{crit:.08}],[3,K('「반역의 불꽃」 처치할 때마다 궁극기 게이지 +4%','"Rebel Flame": each kill charges your ultimate +4%'),{varkan:1}]],
+  lore:K('정화 명령을 처음으로 거부한 오메가 함장. 이름을 지워졌지만 그를 따르던 자들은 아직 그 이름을 부른다.','The first Omega captain to refuse the purge order. His name was erased, yet those who followed him still speak it.')}};
+const UQ=[
+ // ---- melee ----
+ {id:'u_dragon',slot:'mel',sub:'sword',r:5,n:K('용아검 · 카이렌의 포효','Dragonfang · Kairen\'s Roar'),fx:'dragon',col:'#ffb000',
+  d:K('빔 세이버(E)를 휘두르면 황금 용이 검기가 되어 전방을 휩쓸며 불태웁니다. (6초)','Swinging your beam saber (E) unleashes a golden dragon of sword-light that tears forward and scorches the ground. (6 s)'),
+  l:K('용을 길들였다는 전설의 기사 카이렌의 검. 칼날 속에 잠든 용은 주인이 바뀔 때마다 한 번 운다고 한다.','The blade of Kairen, the knight who tamed a dragon. They say the dragon sleeping within cries once whenever the sword changes hands.'),
+  p:'legendary sci-fi energy longsword with a golden dragon coiled around the blade, glowing amber runes, dragon head guard'},
+ {id:'u_reaper',slot:'mel',sub:'glaive',r:4,n:K('흡혈 언월도 · 핏빛 수확자','Bloodreaper Glaive'),fx:'leech',col:'#ff3b5c',
+  d:K('주는 피해의 6%만큼 체력을 흡수합니다. 붉은 실이 적에게서 기체로 흘러듭니다.','Drains 6% of damage dealt as health — crimson threads flow from foes into your frame.'),
+  l:K('제타 둥지를 홀로 베어 낸 해적 여왕의 무기. 베면 벨수록 주인이 살아난다.','The weapon of a pirate queen who cut through a Zeta hive alone. The more it cuts, the more its wielder lives.'),
+  p:'crimson crescent glaive polearm, blood red energy edge, dark metal shaft with veins of glowing red'},
+ {id:'u_thunder',slot:'mel',sub:'halberd',r:4,n:K('뇌명극 · 천둥을 부르는 자','Thundercaller Halberd'),fx:'thunder',col:'#bff8ff',
+  d:K('빔 세이버(E)를 쓰면 전방에 벼락이 연달아 떨어집니다. 적중 시 25% 확률로 연쇄 번개.','Beam saber (E) calls a line of lightning strikes ahead. 25% chance on hit to chain lightning.'),
+  l:K('니브 위성의 폭풍 기지를 지키던 경비대장이 번개를 맞고도 놓지 않은 창.','The halberd a storm-base captain on Niv refused to let go of, even struck by lightning.'),
+  p:'sci-fi halberd crackling with blue white lightning, silver blade, storm energy core'},
+ {id:'u_moon',slot:'mel',sub:'glaive',r:3,n:K('월광 언월도 · 은빛 초승','Moonlight Glaive · Silver Crescent'),fx:'crescent',col:'#cfe3ff',
+  d:K('빔 세이버(E)를 쓰면 은빛 초승달 검기가 날아갑니다.','Beam saber (E) launches a silver crescent wave.'),
+  l:K('달 관문 수비대가 밤마다 닦아 두던 의식용 언월도. 달빛을 머금고 있다.','A ceremonial glaive the Lunar Gate garrison polished every night. It holds moonlight.'),
+  p:'elegant silver crescent glaive glowing with pale moonlight, white energy edge'},
+ {id:'u_quake',slot:'mel',sub:'axe',r:4,n:K('산을 쪼갠 도끼 · 그라운드 브레이커','Mountainsplitter Axe'),fx:'quake',col:'#ff8a3a',
+  d:K('빔 세이버(E)를 쓰면 대지를 내리찍어 주위 적을 띄우고 큰 피해를 줍니다.','Beam saber (E) slams the ground, launching nearby foes for heavy damage.'),
+  l:K('불의 행성 이그니스의 화산을 둘로 쪼갰다는 채굴 기사의 도끼.','The axe of a mining knight said to have split a volcano on Ignis in two.'),
+  p:'massive heat axe with molten orange glowing edge, cracked lava pattern, heavy sci-fi head'},
+ {id:'u_gale',slot:'mel',sub:'twin',r:3,n:K('질풍 쌍검 · 바람의 두 날','Galeblades'),fx:'haste',col:'#7dffb0',
+  d:K('적을 처치하면 3초 동안 이동 속도 +35%, 재사용 단축.','Kills grant +35% move speed and faster cooldowns for 3 s.'),
+  l:K('연맹 정찰대의 쌍둥이 조종사가 하나씩 나눠 들던 칼. 둘이 함께일 때만 바람이 분다.','Twin pilots of a Federation scout wing each carried one. The wind only blows when they are together.'),
+  p:'pair of twin short energy blades with green wind trails, sleek curved hilts'},
+ {id:'u_tempest',slot:'mel',sub:'staff',r:4,n:K('폭풍의 눈 · 회오리 봉','Eye of the Tempest Staff'),fx:'tornado',col:'#9fe0ff',
+  d:K('빔 세이버(E)를 쓰면 회오리가 전진하며 적을 빨아들이고 갈아 버립니다.','Beam saber (E) sends forth a tornado that drags foes in and grinds them.'),
+  l:K('루멘 성운의 은둔자가 폭풍을 잠재우는 데 썼다는 봉. 지금은 폭풍을 부르는 데 쓰인다.','A staff a Lumen hermit used to calm storms. Now it is used to summon them.'),
+  p:'battle staff with a swirling cyan tornado orb at the tip, wind runes'},
+ {id:'u_verdict',slot:'mel',sub:'sword',r:3,n:K('처형검 · 마지막 판결','Executioner · Final Verdict'),fx:'execute',col:'#ffd166',
+  d:K('체력 25% 이하의 적에게 주는 피해 2배. 금빛 판결 문양이 새겨집니다.','Double damage to foes under 25% HP, marked by a golden verdict sigil.'),
+  l:K('제국 군사 법정의 집행관이 들던 검. 단 한 번도 두 번 베지 않았다.','The sword of an imperial court-martial executioner. It never needed a second stroke.'),
+  p:'stern gold and black executioner greatsword with glowing judgement sigil'},
+ {id:'u_frost',slot:'mel',sub:'sword',r:4,n:K('서리송곳 · 니브의 눈물','Frostfang · Tears of Niv'),fx:'frost',col:'#9fd8ff',
+  d:K('적중 시 8초마다 서리 폭발을 일으켜 주위 적을 얼립니다.','Every 8 s, a hit triggers a frost nova that freezes nearby foes.'),
+  l:K('빙하 위성 니브의 실험실에서 발견된 검. 칼날은 녹지 않는 눈물로 만들어졌다고 한다.','Found in the glacier labs of Niv. Its blade is said to be made of tears that never melt.'),
+  p:'ice crystal energy sword, frost blue translucent blade, frozen mist'},
+ {id:'u_bind',slot:'mel',sub:'whip',r:3,n:K('묶는 뱀 · 사슬 채찍','Bindserpent Whip'),fx:'bind',col:'#c58cff',
+  d:K('적중 시 18% 확률로 적을 1초 묶어 둡니다.','18% chance on hit to bind the foe for 1 s.'),
+  l:K('해적 함대의 노예 상인을 묶었던 채찍. 지금은 사냥꾼의 손에 있다.','A whip that once bound a pirate slaver. It is in a hunter\'s hands now.'),
+  p:'segmented violet energy whip shaped like a serpent, glowing chain links'},
+ // ---- ranged ----
+ {id:'u_meteor',slot:'rng',sub:'power',r:4,n:K('유성포 · 별비를 부르는 자','Starfall Cannon'),fx:'meteor',col:'#ff9b40',
+  d:K('사격 시 15% 확률로 표적 위에 유성이 떨어집니다.','15% chance on shot to call a meteor down on the target.'),
+  l:K('궤도 포병대가 행성 하나를 지켜 낸 날, 하늘에서 별이 비처럼 내렸다.','The day an orbital battery saved a whole planet, stars fell like rain.'),
+  p:'heavy beam cannon with meteor fire glowing in the barrel, orange star core'},
+ {id:'u_thief',slot:'rng',sub:'buff',r:3,n:K('생명 도둑 · 흡수 라이플','Lifethief Rifle'),fx:'leech',col:'#ff6b7a',
+  d:K('주는 피해의 4%만큼 체력을 흡수합니다.','Drains 4% of damage dealt as health.'),
+  l:K('연맹 의무병이 개조한 총. 쏘는 쪽도 살리고 싶었다고 한다.','Modified by a Federation medic who wanted the shooter to live, too.'),
+  p:'support rifle with red glowing life-drain coils'},
+ {id:'u_chorus',slot:'rng',sub:'rapid',r:4,n:K('폭풍 합창 · 연쇄뇌격 개틀링','Storm Chorus Gatling'),fx:'chain',col:'#bff8ff',
+  d:K('적중 시 20% 확률로 번개가 최대 4명에게 튕깁니다.','20% chance on hit for lightning to arc to up to 4 foes.'),
+  l:K('총열 여섯 개가 같은 음으로 울리면 번개가 노래한다.','When all six barrels hum the same note, the lightning sings.'),
+  p:'six barrel gatling beam gun with arcing blue lightning'},
+ {id:'u_horizon',slot:'rng',sub:'nerf',r:5,n:K('사건의 지평 · 공허 디스럽터','Event Horizon Disruptor'),fx:'void',col:'#8a5cff',
+  d:K('10초마다 적중 지점에 작은 블랙홀을 열어 적을 3초간 빨아들입니다.','Every 10 s, a hit tears open a small black hole that drags foes in for 3 s.'),
+  l:K('허무의 균열에서 건져 낸 총. 쏠 때마다 총구 너머가 잠시 보이지 않는다.','Pulled from the Void Rift. Every shot, the space beyond the muzzle vanishes for a moment.'),
+  p:'dark violet void disruptor gun with a tiny black hole at the muzzle, purple accretion glow'},
+ {id:'u_eye',slot:'rng',sub:'range',r:3,n:K('천리안 · 저격 레일','Farsight Rail'),fx:'execute',col:'#ffd166',
+  d:K('체력 25% 이하의 적에게 주는 피해 2배.','Double damage to foes under 25% HP.'),
+  l:K('제국 최고의 저격수가 은퇴하며 남긴 총. 표적보다 먼저 결말을 본다.','Left behind by the Empire\'s best sniper. It sees the ending before the target does.'),
+  p:'long sleek rail rifle with golden scope lens'},
+ // ---- frame ----
+ {id:'u_phoenix',slot:'wing',sub:'wing2',r:4,n:K('불사조 날개 · 재에서 일어나는 자','Phoenix Wings'),fx:'phoenix',col:'#ff6a2a',
+  d:K('전투당 한 번, 격추될 피해를 받으면 불꽃 날개로 되살아나 체력 40%를 회복합니다.','Once per battle, a fatal blow instead revives you on wings of fire with 40% HP.'),
+  l:K('추락한 조종사들의 날개 조각을 모아 만들었다. 그래서 이 날개는 떨어지는 법을 잊었다.','Forged from the wing fragments of fallen pilots. So these wings have forgotten how to fall.'),
+  p:'pair of mechanical phoenix wings made of flame and gold feathers'},
+ {id:'u_dawnw',slot:'wing',sub:'wing',r:3,set:'dawn',n:K('새벽의 날개','Wings of Dawn'),col:'#ffcf7a',d:K('한서우 세트.','Han Seo-u set.'),l:K('한서우가 새벽을 향해 날아오를 때 펼친 날개.','The wings Han Seo-u spread as he flew toward the dawn.'),p:'white and gold thruster wings with sunrise glow'},
+ {id:'u_dawns',slot:'shld',sub:'m',r:3,set:'dawn',n:K('새벽의 방패','Shield of Dawn'),col:'#ffcf7a',d:K('한서우 세트.','Han Seo-u set.'),l:K('밤새 제타의 발톱을 받아 낸 방패. 해 뜰 녘에도 금 하나 없었다.','It took Zeta claws all night and had not a crack by sunrise.'),p:'white and gold kite shield with rising sun emblem'},
+ {id:'u_dawnr',slot:'radar',sub:'radar',r:3,set:'dawn',n:K('새벽의 투구','Helm of Dawn'),col:'#ffcf7a',d:K('한서우 세트.','Han Seo-u set.'),l:K('투구 안쪽에는 「끝까지」라는 글자가 새겨져 있다.','Inside the helm is engraved: "Until the end."'),p:'sleek white and gold mecha helmet sensor with sunrise visor'},
+ {id:'u_dawnf',slot:'fuel',sub:'fuel',r:3,set:'dawn',n:K('새벽의 심장','Heart of Dawn'),col:'#ffcf7a',d:K('한서우 세트.','Han Seo-u set.'),l:K('그의 기체가 멈춘 뒤에도 이 동력로만은 해가 뜰 때까지 빛났다.','Even after his frame fell silent, this reactor glowed until the sun rose.'),p:'glowing golden energy core reactor heart'},
+ {id:'u_minjae',slot:'shld',sub:'l',r:3,n:K('민재의 마지막 방패','Minjae\'s Last Shield'),fx:'thorns',col:'#9fb4d8',
+  d:K('받는 근접 피해의 20%를 되돌려 줍니다.','Reflects 20% of melee damage taken.'),
+  l:K('서울 외곽 방어선에서 회수한 방패. 안쪽에 동생 사진이 아직 붙어 있다.','Recovered from the Seoul outer line. His little brother\'s photo is still taped inside.'),
+  p:'battered large military shield with scratches and a small photo taped inside, blue steel'},
+ {id:'u_oath',slot:'shld',sub:'l',r:4,n:K('무너지지 않는 맹세','The Unbroken Oath'),fx:'aegis',col:'#ffd166',
+  d:K('12초마다 최대 체력 15%의 황금 보호막을 펼칩니다.','Every 12 s, raises a golden barrier worth 15% of max HP.'),
+  l:K('제국과 연맹이 처음으로 함께 싸운 날, 두 깃발을 덧대어 만든 방패.','Made on the first day the Empire and Federation fought side by side, from both their banners.'),
+  p:'large golden tower shield with hexagonal energy barrier, two crossed banners emblem'},
+ {id:'u_seer',slot:'radar',sub:'radar',r:4,n:K('모든 것을 보는 눈','The All-Seeing Eye'),fx:'execute',col:'#ffd166',
+  d:K('치명타 확률 +6%, 체력 25% 이하 적에게 피해 2배.','+6% crit, double damage to foes under 25% HP.'),
+  l:K('알파 관측소의 주 렌즈. 아직도 무언가를 지켜보고 있다.','The main lens of an Alpha observatory. It is still watching something.'),
+  p:'ornate sensor radar with a single giant golden eye lens'},
+ {id:'u_starswarm',slot:'msl',sub:'msl2',r:4,n:K('유성우 · 별무리 미사일','Starswarm Missiles'),fx:'starfall',col:'#ffe7a0',
+  d:K('군집 미사일(R)이 터진 자리에 별빛 파편이 쏟아져 추가 피해를 줍니다.','Missile swarm (R) impacts rain down starlight shards for extra damage.'),
+  l:K('은하 축제의 불꽃놀이 장치를 개조했다. 원래는 사람을 웃게 하던 물건이다.','Converted from galactic festival fireworks. It used to make people smile.'),
+  p:'missile pod launching golden star shaped missiles with sparkle trails'},
+ {id:'u_stop',slot:'ult',sub:'ult2',r:5,n:K('멈춘 초침','The Stopped Second Hand'),fx:'timeslow',col:'#e6d2ff',
+  d:K('체력이 50% 아래로 떨어지면 주위 시간이 4초간 멈춥니다. (30초)','When you drop below 50% HP, time around you stops for 4 s. (30 s)'),
+  l:K('정화 계획이 시작된 순간을 가리킨 채 멈춘 시계. 아무도 그 시계를 다시 돌리지 못했다.','A clock stopped at the moment the purge began. No one has ever made it tick again.'),
+  p:'ornate pocket watch circuit with frozen glowing hands, lavender time energy, clockwork gears'},
+ {id:'u_sun',slot:'ult',sub:'ult',r:4,n:K('작은 태양 · 태양핵 증폭기','Little Sun Amplifier'),fx:'sunburst',col:'#ffb000',
+  d:K('궁극기(R)를 쓰면 기체 주위에 작은 태양이 폭발합니다.','Using your ultimate (R) detonates a small sun around your frame.'),
+  l:K('이그니스 태양로의 심장 조각. 손에 쥐면 따뜻하다 못해 아프다.','A shard of the Ignis solar furnace. Holding it is warm beyond pain.'),
+  p:'miniature blazing sun core in a gold cage amplifier'},
+ {id:'u_ember',slot:'fuel',sub:'fuel2',r:4,n:K('꺼지지 않는 불씨','The Undying Ember'),fx:'regen',col:'#ff8a3a',
+  d:K('초당 최대 체력의 1.2%를 회복합니다.','Regenerates 1.2% max HP per second.'),
+  l:K('지구 최후의 발전소에서 옮겨 온 불씨. 2326년 이후 단 한 번도 꺼진 적이 없다.','An ember carried from Earth\'s last power plant. It has not gone out once since 2326.'),
+  p:'glowing ember reactor cell, eternal orange flame inside crystal'},
+ // ---- LINK (android) ----
+ {id:'u_hayun',slot:'neck',sub:'neck',r:3,fx:'regen',col:'#ffb3c8',n:K('하윤의 약속','Hayun\'s Promise'),
+  d:K('초당 최대 체력의 0.8%를 회복합니다.','Regenerates 0.8% max HP per second.'),
+  l:K('한강 야시장 표 두 장이 든 목걸이. 한 장은 아직 쓰이지 않았다.','A locket with two Han River night-market tickets. One has never been used.'),
+  p:'small silver locket necklace with two paper tickets inside, warm pink glow'},
+ {id:'u_ionan',slot:'neck',sub:'neck',r:4,set:'iona',n:K('이오나의 목걸이','Iona\'s Pendant'),col:'#fff3b0',d:K('이오나 세트.','Iona set.'),l:K('별빛 실이 감긴 목걸이.','A pendant wound with thread of starlight.'),p:'holy white gold pendant with starlight thread'},
+ {id:'u_ionae',slot:'ear',sub:'ear',r:4,set:'iona',n:K('이오나의 귀걸이','Iona\'s Earrings'),col:'#fff3b0',d:K('이오나 세트.','Iona set.'),l:K('부서진 별의 노래가 들린다고 한다.','They say you can hear broken stars singing.'),p:'pair of crystal star earrings, white gold, soft halo'},
+ {id:'u_ionab',slot:'brace',sub:'brace',r:4,set:'iona',n:K('이오나의 팔찌','Iona\'s Bracelet'),col:'#fff3b0',d:K('이오나 세트.','Iona set.'),l:K('바늘이 지나간 자국이 무늬처럼 남아 있다.','Needle marks remain on it like an ornament.'),p:'white gold bracelet engraved with stitched star constellation'},
+ {id:'u_ionac',slot:'cpu',sub:'cpu',r:4,set:'iona',n:K('이오나의 연산핵','Iona\'s Core'),col:'#fff3b0',d:K('이오나 세트.','Iona set.'),l:K('수천 개 별의 좌표가 기록된 연산핵.','A core holding the coordinates of a thousand mended stars.'),p:'glowing white crystal processor core with star map'},
+ {id:'u_hunger',slot:'glove',sub:'glove',r:4,fx:'leech',col:'#ff3b5c',n:K('굶주린 손','The Hungering Hand'),
+  d:K('주는 피해의 5%만큼 체력을 흡수합니다.','Drains 5% of damage dealt as health.'),
+  l:K('오메가 근위대의 장갑. 손바닥에 입이 있다는 소문이 있다.','An Omega Guard gauntlet. Rumor says there is a mouth in the palm.'),
+  p:'dark crimson clawed gauntlet glove with a glowing red maw in the palm'},
+ {id:'u_fore',slot:'sens',sub:'sens',r:4,fx:'evade',col:'#9ff6ff',n:K('3초 뒤를 보는 눈','The Eye Three Seconds Ahead'),
+  d:K('12% 확률로 공격을 회피합니다.','12% chance to evade attacks.'),
+  l:K('예지 능력을 가진 링크의 센서를 복제했다. 원본은 자기 최후를 봤다고 한다.','Copied from a precognitive LINK. The original is said to have seen its own end.'),
+  p:'futuristic visor sensor with cyan prophetic eye glow and afterimages'},
+ {id:'u_mend',slot:'lsk',sub:'heal',r:5,fx:'regen',col:'#fff3b0',n:K('별 꿰매기','Starstitch'),
+  d:K('초당 최대 체력의 1.6%를 회복합니다.','Regenerates 1.6% max HP per second.'),
+  l:K('이오나가 남긴 단 하나의 기술. 상처를 별자리처럼 꿰맨다.','The only technique Iona left behind. It stitches wounds like constellations.'),
+  p:'glowing golden needle and starlight thread forming a constellation'},
+ // ---- pilot ----
+ {id:'u_var1',slot:'vit1',sub:'vit',r:4,set:'varkan',n:K('바르칸의 각성제','Varkan\'s Stim'),col:'#ff6b6b',d:K('바르칸 세트.','Varkan set.'),l:K('「명령보다 양심이 먼저다.」 라벨에 적힌 글.','The label reads: "Conscience before orders."'),p:'red glowing military stim injector with omega insignia'},
+ {id:'u_var2',slot:'vit2',sub:'vit2',r:4,set:'varkan',n:K('바르칸의 전투복','Varkan\'s Battlesuit'),col:'#ff6b6b',d:K('바르칸 세트.','Varkan set.'),l:K('계급장이 뜯겨 나간 자리가 아직 남아 있다.','The spot where his rank insignia was torn off is still visible.'),p:'dark red pilot battle suit with torn insignia patch'},
+ {id:'u_var3',slot:'mind',sub:'berserk',r:4,set:'varkan',n:K('바르칸의 분노','Varkan\'s Wrath'),col:'#ff6b6b',d:K('바르칸 세트.','Varkan set.'),l:K('지워진 이름이 불꽃이 되어 타오른다.','An erased name, burning as flame.'),p:'burning red flame mind crystal with omega symbol'},
+ {id:'u_rage',slot:'mind',sub:'berserk',r:4,fx:'rage',col:'#ff3b47',n:K('분노하는 별','The Raging Star'),
+  d:K('체력이 낮을수록 피해가 커집니다(최대 +40%).','The lower your HP, the more damage you deal (up to +40%).'),
+  l:K('죽어 가는 별은 가장 밝게 빛난다.','A dying star burns brightest.'),p:'red giant star crystal pulsing with rage'}];
+const UQM={};for(const q of UQ)UQM[q.id]=q;window.UQ=UQ;
+const UQ_CH=[0,0,0,.5,1,1];
+function uqPick(r,slot){let c=UQ.filter(q=>q.r===r&&q.slot===slot);if(!c.length&&r>=4&&Math.random()<.7)c=UQ.filter(q=>q.r===r);if(!c.length&&r>=5)c=UQ.filter(q=>q.r===4);return c.length?pick(c):null;}
+function uqApply(it,q){it.u=q.id;it.n={ko:q.n.ko,en:q.n.en};it.r=Math.max(it.r,q.r);it.v=+(it.v*1.15).toFixed(3);return it;}
+{const _mk2=mkItem;mkItem=function(r,slot,sub){let it=_mk2(r,slot,sub);if(it.st==='none'||r<3||Math.random()>UQ_CH[r])return it;const q=uqPick(r,it.slot);if(!q)return it;if(q.slot!==it.slot||q.sub!==it.sub)it=_mk2(r,q.slot,q.sub);return uqApply(it,q);};}
+window.mkNamed=(id)=>{const q=UQM[id];if(!q)return null;return uqApply(mkItem(Math.min(4,q.r),q.slot,q.sub),q);};
+// migrate existing epic+ gear
+function uqMigrate(r){if(r.uqv)return;r.uqv=1;for(const it of r.inv||[]){if(it.u||it.st==='none'||it.slot==='drone'||it.r<3)continue;if(Math.random()<.6){const c=UQ.filter(q=>q.slot===it.slot&&q.r<=Math.max(3,it.r));if(c.length){const q=pick(c);it.sub=q.sub;const sb=SUBS[it.slot].find(x=>x[0]===q.sub);if(sb)it.st=sb[2];uqApply(it,q);}}}saveP();}
+// equipped named effects
+function uqActive(){const r=R();const ids=[];const sets={};for(const s of Object.keys(r.eq||{})){const it=eqIt(r,s);if(it&&it.u&&UQM[it.u]){ids.push(it.u);const q=UQM[it.u];if(q.set)sets[q.set]=(sets[q.set]||0)+1;}}const fx=new Set(ids.map(i=>UQM[i].fx).filter(Boolean));const b={};for(const[k,n]of Object.entries(sets))for(const pc of USET[k].pc)if(n>=pc[0])Object.assign(b,pc[2]);return{ids,fx,sets,b};}
+window.__uqActive=uqActive;
+// set bonuses to stats
+{const _as=arkStats;arkStats=function(){const a=_as();try{const A=uqActive();if(A.b.dmg)a.dmg*=1+A.b.dmg;if(A.b.crit)a.crit=(a.crit||0)+A.b.crit;if(A.fx.has('execute')&&A.ids.includes('u_seer'))a.crit=(a.crit||0)+.06;}catch(e){}return a;};}
+// ---------- tooltip & icons ----------
+const UQART=id=>TH+id+'.jpg';
+{const _it2=itemTip;itemTip=function(it){if(!it||!it.u||!UQM[it.u])return _it2(it);const q=UQM[it.u];let h=_it2(it);
+ const head=`<div style="display:flex;gap:10px;align-items:center;margin-bottom:6px"><img src="${UQART(q.id)}" style="width:72px;height:72px;border-radius:10px;border:2px solid ${RAR[q.r].c};box-shadow:0 0 14px ${RAR[q.r].c}66;object-fit:cover" onerror="this.style.display='none'"><div><b style="color:${RAR[q.r].c};font-size:17px;text-shadow:0 0 10px ${RAR[q.r].c}66">${tx(q.n)}${it.lv?' +'+it.lv:''}</b><br><small style="opacity:.75">${rn(q.r)} · ${tx(SLOTS[it.slot])}${q.set?' · '+L('세트','Set'):''}</small></div></div>`;
+ h=h.replace(/^<b[^]*?<\/small>/,head);
+ h+=`<div style="margin-top:8px;color:${q.col||'#ffd166'};font-weight:700">◈ ${tx(q.d)}</div>`;
+ if(q.set){const S0=USET[q.set];const A=uqActive();const n=A.sets[q.set]||0;h+=`<div style="margin-top:6px;padding-top:4px;border-top:1px solid rgba(255,255,255,.12)"><b style="color:#7ee787">${tx(S0.n)} (${n}/${S0.pc[S0.pc.length-1][0]})</b>${S0.pc.map(p=>`<div style="color:${n>=p[0]?'#7ee787':'#6a7a96'}">(${p[0]}) ${tx(p[1])}</div>`).join('')}<small style="opacity:.75;font-style:italic">${tx(S0.lore)}</small></div>`;}
+ h+=`<div style="margin-top:8px;font-style:italic;color:#c9b88f;font-size:12.5px;line-height:1.5">“${tx(q.l)}”</div>`;return h;};}
+// inventory/slot art: swap generic icon for the item's own art
+function uqDecorate(root){try{const r=R();root.querySelectorAll('.pd-slot').forEach(d=>{const it=eqIt(r,d.dataset.sl);const art=itemArt(it);if(it&&art&&!d.querySelector('img')){const svg=d.querySelector('svg');const img=document.createElement('img');img.src=art;img.style.cssText='width:46px;height:46px;border-radius:8px;object-fit:cover';img.onerror=()=>img.remove();if(svg)svg.replaceWith(img);else d.prepend(img);d.classList.add('uq');}});}catch(e){}}
+window.__uqDecorate=uqDecorate;
+// ---------- combat: signature effects ----------
+function ufxTarget(u){return G.units.filter(e=>!e.dead&&e.team!==u.team);}
+function ufxHit(u,x,y,rad,dmg,kind){for(const e of ufxTarget(u)){if(d2(e.x,e.y,x,y)<rad*rad)hurt(e,dmg,G.local,Math.atan2(e.y-y,e.x-x),kind||'x');}}
+function ufxBase(u){return 60*(typeof dmgMul==='function'?dmgMul(u):1)*(1+plv()*.03);}
+const UFX={
+ dragon(u){const a=u.aa!=null?u.aa:u.a;G.ufx.push({k:'dragon',x:u.x,y:u.y,a,t:0,L:1.25,sp:620,hit:new Set(),dmg:ufxBase(u)*4,u});try{announce('',L('용아검 · 포효','DRAGONFANG · ROAR'),'',false,'#ffb000');}catch(e){}G.hstop=Math.max(G.hstop||0,.06);try{G.shake=Math.max(G.shake||0,10);}catch(e){}},
+ crescent(u){const a=u.aa!=null?u.aa:u.a;G.ufx.push({k:'cres',x:u.x,y:u.y,a,t:0,L:.8,sp:720,hit:new Set(),dmg:ufxBase(u)*2.2,u});},
+ thunder(u){const a=u.aa!=null?u.aa:u.a;for(let i=1;i<=5;i++)G.ufx.push({k:'bolt',x:u.x+Math.cos(a)*i*110,y:u.y+Math.sin(a)*i*110,t:-i*.09,L:.35,dmg:ufxBase(u)*1.6,u});},
+ quake(u){G.ufx.push({k:'quake',x:u.x,y:u.y,t:0,L:.6,dmg:ufxBase(u)*3,u});try{G.shake=Math.max(G.shake||0,16);}catch(e){}},
+ tornado(u){const a=u.aa!=null?u.aa:u.a;G.ufx.push({k:'torn',x:u.x,y:u.y,a,t:0,L:2.4,sp:260,dmg:ufxBase(u)*.6,u,tick:0});}};
+const UE_CD={dragon:6,crescent:3,thunder:5,quake:6,tornado:7};
+function ufxStep(dt){if(!G.ufx)G.ufx=[];for(const f of G.ufx){f.t+=dt;if(f.t<0)continue;const u=f.u;
+ if(f.k==='dragon'){f.x+=Math.cos(f.a)*f.sp*dt;f.y+=Math.sin(f.a)*f.sp*dt;const px=-Math.sin(f.a),py=Math.cos(f.a);const wv=Math.sin(f.t*14)*38;const hx=f.x+px*wv,hy=f.y+py*wv;
+   for(let i=0;i<3;i++)part(hx+rnd(-8,8),hy+rnd(-8,8),rnd(-30,30),rnd(-30,30),.25,i?'#ffb000':'#fff3b0',16-i*3,46+rnd(-6,6));
+   part(hx+Math.cos(f.a)*22+px*12,hy+Math.sin(f.a)*22+py*12,0,0,.12,'#ff3b00',6,60);part(hx+Math.cos(f.a)*22-px*12,hy+Math.sin(f.a)*22-py*12,0,0,.12,'#ff3b00',6,60);
+   for(let s=1;s<=9;s++){const bt=f.t-s*.035;const bx=f.x-Math.cos(f.a)*f.sp*s*.035+px*Math.sin(bt*14)*38,by=f.y-Math.sin(f.a)*f.sp*s*.035+py*Math.sin(bt*14)*38;part(bx,by,0,0,.18,s<4?'#ffd166':s<7?'#ff8a3a':'#ff3b47',12-s,40+s);}
+   if(Math.random()<.8)part(f.x+rnd(-30,30),f.y+rnd(-30,30),rnd(-20,20),rnd(-20,20),1.6,'#ff6a2a',5,3);
+   for(const e of ufxTarget(u)){if(f.hit.has(e))continue;if(d2(e.x,e.y,hx,hy)<90*90){f.hit.add(e);hurt(e,f.dmg,G.local,f.a,'x');e.burnT=3;}}}
+ else if(f.k==='cres'){f.x+=Math.cos(f.a)*f.sp*dt;f.y+=Math.sin(f.a)*f.sp*dt;const px=-Math.sin(f.a),py=Math.cos(f.a);for(let i=-4;i<=4;i++){const c=Math.cos(i/4*1.1);part(f.x+px*i*14+Math.cos(f.a)*c*18,f.y+py*i*14+Math.sin(f.a)*c*18,0,0,.12,'#e6f2ff',7,30);}for(const e of ufxTarget(u)){if(f.hit.has(e))continue;if(d2(e.x,e.y,f.x,f.y)<80*80){f.hit.add(e);hurt(e,f.dmg,G.local,f.a,'b');}}}
+ else if(f.k==='bolt'){if(!f.done){f.done=1;for(let h=0;h<12;h++)part(f.x+rnd(-10,10),f.y+rnd(-10,10),0,0,.3,'#e6ffff',9,h*22);G.parts.push({x:f.x,y:f.y,vx:0,vy:0,l:.35,ml:.35,c:'ring',s:110});ufxHit(u,f.x,f.y,100,f.dmg,'b');}}
+ else if(f.k==='quake'){if(!f.done){f.done=1;G.parts.push({x:f.x,y:f.y,vx:0,vy:0,l:.5,ml:.5,c:'ring',s:260});for(let i=0;i<50;i++){const a=Math.random()*Math.PI*2;part(f.x+Math.cos(a)*rnd(20,220),f.y+Math.sin(a)*rnd(20,220),0,0,.7,i%2?'#ff8a3a':'#6a4a2a',8,rnd(0,30));}for(const e of ufxTarget(u)){if(d2(e.x,e.y,f.x,f.y)<240*240){hurt(e,f.dmg,G.local,0,'x');e.lift=Math.max(e.lift||0,1.2);}}}}
+ else if(f.k==='torn'){f.x+=Math.cos(f.a)*f.sp*dt;f.y+=Math.sin(f.a)*f.sp*dt;for(let i=0;i<6;i++){const a=f.t*12+i;const rr=10+i*9;part(f.x+Math.cos(a)*rr,f.y+Math.sin(a)*rr,0,0,.15,'#bff8ff',5,i*14);}f.tick-=dt;for(const e of ufxTarget(u)){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<220&&!e.boss){e.x+=(f.x-e.x)/(d||1)*160*dt;e.y+=(f.y-e.y)/(d||1)*160*dt;}}if(f.tick<=0){f.tick=.25;ufxHit(u,f.x,f.y,90,f.dmg,'b');}}
+ else if(f.k==='void'){for(let i=0;i<4;i++){const a=Math.random()*Math.PI*2,rr=rnd(60,200);part(f.x+Math.cos(a)*rr,f.y+Math.sin(a)*rr,-Math.cos(a)*rr*2,-Math.sin(a)*rr*2,.4,'#8a5cff',5,20);}part(f.x,f.y,0,0,.1,'#000000',26,24);for(const e of ufxTarget(u)){const d=Math.hypot(e.x-f.x,e.y-f.y);if(d<260&&!e.boss){e.x+=(f.x-e.x)/(d||1)*220*dt;e.y+=(f.y-e.y)/(d||1)*220*dt;}}f.tick=(f.tick||0)-dt;if(f.tick<=0){f.tick=.4;ufxHit(u,f.x,f.y,80,f.dmg,'b');}}
+ else if(f.k==='meteor'){if(f.t<.6){part(f.x+(.6-f.t)*300,f.y-(.6-f.t)*100,0,0,.15,'#ff9b40',14,(.6-f.t)*700);}else if(!f.done){f.done=1;fx(1,f.x,f.y,0);G.parts.push({x:f.x,y:f.y,vx:0,vy:0,l:.4,ml:.4,c:'ring',s:170});ufxHit(u,f.x,f.y,160,f.dmg,'x');}}
+ else if(f.k==='sun'){if(!f.done){f.done=1;for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2;part(f.x,f.y,Math.cos(a)*rnd(200,500),Math.sin(a)*rnd(200,500),.7,i%3?'#ffb000':'#fff3b0',10,40);}G.parts.push({x:f.x,y:f.y,vx:0,vy:0,l:.6,ml:.6,c:'nuke',s:120});ufxHit(u,f.x,f.y,320,f.dmg,'x');}}
+ else if(f.k==='star'){if(!f.done&&f.t>.15){f.done=1;for(let i=0;i<10;i++)part(f.x+rnd(-60,60),f.y+rnd(-60,60),0,0,.4,'#ffe7a0',6,rnd(10,80));ufxHit(u,f.x,f.y,90,f.dmg,'b');}}
+ else if(f.k==='chain'){if(!f.done){f.done=1;let px=f.x,py=f.y;const hit=new Set([f.first]);let cur=f.first;for(let j=0;j<4;j++){let best=null,bd=320*320;for(const e of ufxTarget(u)){if(hit.has(e))continue;const d=d2(e.x,e.y,cur.x,cur.y);if(d<bd){bd=d;best=e;}}if(!best)break;for(let s=0;s<10;s++){const k=s/10;part(cur.x+(best.x-cur.x)*k+rnd(-12,12),cur.y+(best.y-cur.y)*k+rnd(-12,12),0,0,.2,'#e6ffff',5,40);}hurt(best,f.dmg,G.local,0,'b');hit.add(best);cur=best;}}}}
+ G.ufx=G.ufx.filter(f=>f.t<f.L);}
+function ufxReady(u,k,cd){u.ucd=u.ucd||{};if((u.ucd[k]||0)>G.t)return false;u.ucd[k]=G.t+cd;return true;}
+// detect skill use (works for keys, skill bar and AUTO) and trigger signature effects
+{const _stU=step;step=function(dt){_stU(dt);try{if(!G||!G.rpg)return;if(!G.ufx)G.ufx=[];ufxStep(dt);const u=G.local&&G.local.unit;if(!u||u.dead||u.cls!=='arkframe')return;
+ if(!u.uqA||u.uqA.t!==G.uqStamp){u.uqA=uqActive();u.uqA.t=G.uqStamp;}const A=u.uqA;
+ const e2=u.cd2||0,lastE=u._lc2==null?e2:u._lc2;if(e2>lastE+.3){for(const k of Object.keys(UE_CD))if(A.fx.has(k)&&ufxReady(u,'E'+k,UE_CD[k]))UFX[k](u);}u._lc2=e2;
+ const ul=G.local.ult||0,lastU=u._lul==null?ul:u._lul;if(lastU>=99&&ul<5){if(A.fx.has('sunburst'))G.ufx.push({k:'sun',x:u.x,y:u.y,t:0,L:.1,dmg:ufxBase(u)*6,u});u.starRain=A.fx.has('starfall')?3:0;}u._lul=ul;
+ if(u.starRain>0){u.starRain-=dt;if(Math.random()<dt*6){const t=ufxTarget(u).filter(e=>d2(e.x,e.y,u.x,u.y)<700*700);if(t.length){const e=pick(t);G.ufx.push({k:'star',x:e.x,y:e.y,t:0,L:.3,dmg:ufxBase(u)*1.2,u});}}}
+ if(A.fx.has('regen')){const rate=(A.ids.includes('u_mend')?.016:0)+(A.ids.includes('u_ember')?.012:0)+(A.ids.includes('u_hayun')?.008:0);u.hp=Math.min(u.mhp,u.hp+u.mhp*rate*dt);}
+ if(A.b.regen)u.hp=Math.min(u.mhp,u.hp+u.mhp*A.b.regen*dt);
+ if(A.b.dawn&&G.t<15){u.haste=Math.max(u.haste||0,.2);}
+ if(A.b.iona&&u.hp<u.mhp*.3&&ufxReady(u,'iona',60)){u.hp=Math.min(u.mhp,u.hp+u.mhp*.35);G.parts.push({x:u.x,y:u.y,vx:0,vy:0,l:.6,ml:.6,c:'heal',s:120});pop(L('별 꿰매기!','Starstitch!'),'#fff3b0',false);}
+ if(A.fx.has('aegis')&&ufxReady(u,'aegis',12)){u.uShield=u.mhp*.15;G.parts.push({x:u.x,y:u.y,vx:0,vy:0,l:.5,ml:.5,c:'ring',s:110});}
+ if(u.uShield>0&&Math.random()<dt*10){const a=Math.random()*Math.PI*2;part(u.x+Math.cos(a)*70,u.y+Math.sin(a)*70,0,0,.3,'#ffd166',5,40);}
+ if(A.fx.has('timeslow')&&u.hp<u.mhp*.5&&ufxReady(u,'stop',30)){for(const e of ufxTarget(u))if(d2(e.x,e.y,u.x,u.y)<500*500)e.stun=Math.max(e.stun||0,4);G.parts.push({x:u.x,y:u.y,vx:0,vy:0,l:1,ml:1,c:'ring',s:500});announce('',L('멈춘 초침','THE STOPPED SECOND HAND'),'',false,'#e6d2ff');}
+ for(const e of G.units)if(e.burnT>0&&!e.dead){e.burnT-=dt;if(Math.random()<dt*4){hurt(e,ufxBase(u)*.25,G.local,0,'b');part(e.x,e.y,0,-40,.4,'#ff6a2a',6,20);}}}catch(e){}};}
+// hit-based procs (leech, chain, frost, bind, execute, meteor, void, thorns, evade, phoenix, rage, haste, varkan)
+{const _hu7=hurt;hurt=function(u,amt,src,ang,dt){try{const me=G&&G.rpg&&G.local&&G.local.unit;if(me&&me.uqA&&me.cls==='arkframe'){const A=me.uqA;
+ if(src===G.local&&u&&u!==me&&!u.dead&&!src.__uq){const near=d2(u.x,u.y,me.x,me.y)<300*300;
+  if(A.fx.has('execute')&&u.hp<u.mhp*.25){amt*=2;if(Math.random()<.3)part(u.x,u.y,0,-30,.4,'#ffd166',12,50);}
+  if(A.fx.has('rage'))amt*=1+.4*(1-me.hp/me.mhp);
+  if(A.fx.has('leech')){const p=(A.ids.includes('u_reaper')?.06:0)+(A.ids.includes('u_hunger')?.05:0)+(A.ids.includes('u_thief')?.04:0);me.hp=Math.min(me.mhp,me.hp+amt*p);if(Math.random()<.35)for(let s=0;s<6;s++){const k=s/6;part(u.x+(me.x-u.x)*k,u.y+(me.y-u.y)*k,(me.x-u.x)*1.5,(me.y-u.y)*1.5,.35,'#ff3b5c',4,30+s*4);}}
+  if((A.fx.has('chain')||A.ids.includes('u_thunder'))&&Math.random()<(A.ids.includes('u_chorus')?.2:.25)&&ufxReady(me,'chain',.35))G.ufx.push({k:'chain',x:u.x,y:u.y,first:u,t:0,L:.1,dmg:ufxBase(me)*.9,u:me});
+  if(A.fx.has('frost')&&near&&ufxReady(me,'frost',8)){G.parts.push({x:me.x,y:me.y,vx:0,vy:0,l:.5,ml:.5,c:'ring',s:220});for(let i=0;i<40;i++){const a=Math.random()*Math.PI*2;part(me.x,me.y,Math.cos(a)*400,Math.sin(a)*400,.45,'#cfefff',6,20);}for(const e of ufxTarget(me))if(d2(e.x,e.y,me.x,me.y)<240*240){e.frz=Math.max(e.frz||0,2);_hu7(e,ufxBase(me)*1.5,G.local,0,'b');}}
+  if(A.fx.has('bind')&&near&&Math.random()<.18){u.stun=Math.max(u.stun||0,1);part(u.x,u.y,0,0,.6,'#c58cff',14,30);}
+  if(A.fx.has('meteor')&&!near&&Math.random()<.15&&ufxReady(me,'met',.8))G.ufx.push({k:'meteor',x:u.x,y:u.y,t:0,L:.7,dmg:ufxBase(me)*3.5,u:me});
+  if(A.fx.has('void')&&!near&&ufxReady(me,'void',10))G.ufx.push({k:'void',x:u.x,y:u.y,t:0,L:3,dmg:ufxBase(me)*.8,u:me});}
+ if(u===me&&src&&src!==G.local){const su=src.unit;
+  if(A.fx.has('evade')&&Math.random()<.12){try{G.texts.push({h:unitH(me)+50,x:me.x,y:me.y-40,txt:L('회피','MISS'),c:'#9ff6ff',sz:18,l:.7,L:.7});}catch(e){}return;}
+  if(me.uShield>0){const ab=Math.min(me.uShield,amt);me.uShield-=ab;amt-=ab;if(amt<=0)return;}
+  if(A.fx.has('thorns')&&su&&!su.dead&&d2(su.x,su.y,me.x,me.y)<250*250)_hu7(su,amt*.2,G.local,0,'b');
+  if(A.fx.has('phoenix')&&amt>=me.hp&&!G.rpg.phx){G.rpg.phx=1;me.hp=me.mhp*.4;for(let i=0;i<80;i++){const a=Math.random()*Math.PI*2;part(me.x,me.y,Math.cos(a)*rnd(100,400),Math.sin(a)*rnd(100,400),.9,i%2?'#ff6a2a':'#ffd166',9,rnd(10,120));}G.parts.push({x:me.x,y:me.y,vx:0,vy:0,l:.8,ml:.8,c:'nuke',s:120});announce('',L('불사조 · 부활','PHOENIX · REBIRTH'),'',true,'#ff6a2a');return;}}}}catch(e){}
+ const wasDead=u&&u.dead;const r=_hu7(u,amt,src,ang,dt);
+ try{const me=G&&G.rpg&&G.local&&G.local.unit;if(me&&me.uqA&&src===G.local&&u&&!wasDead&&u.dead){if(me.uqA.fx.has('haste'))me.haste=Math.max(me.haste||0,3);if(me.uqA.b.varkan)G.local.ult=Math.min(100,(G.local.ult||0)+4);}}catch(e){}return r;};}
+{const _su4=spawnUnit;spawnUnit=function(s,cls,sp,opt){const u=_su4(s,cls,sp,opt);try{if(u&&G&&G.rpg&&s===G.local){G.uqStamp=(G.uqStamp||0)+1;u.uqA=uqActive();u.uqA.t=G.uqStamp;}}catch(e){}return u;};}
+// named-item drop announcement (big golden banner)
+{const _ld=lootDrop;lootDrop=function(it,x,y){const r=_ld(it,x,y);try{if(it&&it.u&&UQM[it.u])announce('',L('고유 장비 출현: ','NAMED DROP: ')+tx(it.n),'',true,RAR[it.r].c);}catch(e){}return r;};}
+
+
+// ================= v2.5 : DRONE GRADES (Firefly → Phoenix) · SLOT UNLOCKS · MERGE SHOW · FORMATION · DRONE FUSION =================
+const DGR=[null,
+ {n:K('반딧불','Firefly'),ratio:.08,m:'g1_firefly'},{n:K('제비','Swallow'),ratio:.12,m:'g2_swallow'},{n:K('거북','Tortoise'),ratio:.18,m:'g3_turtle'},
+ {n:K('매','Hawk'),ratio:.25,m:'g4_hawk'},{n:K('와이번','Wyvern'),ratio:.35,m:'g5_wyvern'},{n:K('봉황','Phoenix'),ratio:.5,m:'g6_phoenix'}];
+const DSLV=[1,5,10,20,30,40];const DMERGE_COST=[0,200,600,1500,4000,10000];
+const dSlotOpen=i=>plv()>=DSLV[i];
+function dName(type,g){const D=DRONES[type]||DRONES.laser;return{ko:'「'+DGR[g].n.ko+'」 '+D.n.ko,en:DGR[g].n.en+' · '+D.n.en};}
+mkDrone=function(type,tier){type=type||pickDroneType();const g=Math.max(1,Math.min(6,tier||1));return{id:'d'+Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36),slot:'drone',sub:type,tier:g,r:g-1,lv:0,n:dName(type,g),st:'none',v:0};};
+function droneMigrate(r){if(r.drv3)return;r.drv3=1;for(const it of r.inv)if(it.slot==='drone'){it.tier=Math.max(1,Math.min(6,it.tier||1));it.r=it.tier-1;if(!DRONES[it.sub])it.sub='laser';it.n=dName(it.sub,it.tier);}saveP();}
+drPower=it=>Math.round(14*(1+(it.tier-1)*.7));
+droneLoadout=function(){const r=R();const L0=[];DSLOTS.forEach((s,i)=>{if(!dSlotOpen(i))return;const it=eqIt(r,s);if(!it)return;const T=DRONES[it.sub]||DRONES.laser;const G0=DGR[it.tier]||DGR[1];L0.push({type:it.sub,tier:it.tier,r:it.r,pw:drPower(it),scale:G0.ratio*70/11,m:G0.m,col:T.c,cls:T.cls,pas:T.pas,act:T.act,fire:T.fire});});
+ const cnt={};for(const D of L0)cnt[D.type]=(cnt[D.type]||0)+1;for(const D of L0)if(cnt[D.type]>=3){D.pw=Math.round(D.pw*1.25);D.form=1;}return L0;};
+window.__droneLoadout=()=>{try{return droneLoadout();}catch(e){return[];}};
+const fusionReady=()=>{const L0=droneLoadout();return L0.length===6&&L0.every(D=>D.tier>=5);};
+// merge: 3 drones of the same grade (any type) + credits → 1 drone of the next grade, type of the selected one. No failure.
+function mergeShow(srcs,res,done){const ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:80;background:rgba(2,4,10,.88);display:flex;align-items:center;justify-content:center;overflow:hidden';
+ ov.innerHTML=`<style>@keyframes mgIn{0%{transform:translate(var(--x),var(--y)) rotate(0) scale(1)}70%{transform:translate(0,0) rotate(540deg) scale(.6)}100%{transform:translate(0,0) rotate(720deg) scale(.2);opacity:0}}@keyframes mgFl{0%,60%{opacity:0;transform:scale(.2)}75%{opacity:1;transform:scale(2.4)}100%{opacity:0;transform:scale(3)}}@keyframes mgOut{0%,72%{opacity:0;transform:scale(.3)}88%{opacity:1;transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}@keyframes mgGear{to{transform:rotate(360deg)}}</style>
+ <div style="position:relative;width:420px;height:420px">${srcs.map((s,i)=>{const a=i/3*Math.PI*2-Math.PI/2;return `<img src="${TH+DGR[s.tier].m}.jpg" style="position:absolute;left:150px;top:150px;width:120px;height:120px;border-radius:50%;border:3px solid ${RAR[s.r].c};--x:${Math.cos(a)*150}px;--y:${Math.sin(a)*150}px;animation:mgIn 1.5s cubic-bezier(.6,0,.4,1) forwards" onerror="this.style.background='#123'">`;}).join('')}
+ <div style="position:absolute;left:110px;top:110px;width:200px;height:200px;border:6px dashed #9ff6ff;border-radius:50%;opacity:.5;animation:mgGear 1.2s linear infinite"></div>
+ <div style="position:absolute;left:60px;top:60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#fff,${RAR[res.r].c} 40%,transparent 70%);animation:mgFl 2.2s forwards"></div>
+ <div style="position:absolute;left:70px;top:70px;width:280px;text-align:center;animation:mgOut 2.6s forwards"><img src="${TH+DGR[res.tier].m}.jpg" style="width:${150+res.tier*14}px;height:${150+res.tier*14}px;border-radius:18px;border:4px solid ${RAR[res.r].c};box-shadow:0 0 40px ${RAR[res.r].c}" onerror="this.style.background='#123'"><div style="font:900 24px Rajdhani,sans-serif;color:${RAR[res.r].c};margin-top:8px">${tx(res.n)}</div><div style="color:#cfe3ff">${L('합체 완료 · ','Merged · ')}${rn(res.r)}</div></div></div>`;
+ document.body.appendChild(ov);try{SFX.horn&&SFX.horn();}catch(e){}setTimeout(()=>{ov.onclick=()=>{ov.remove();done&&done();};},2400);setTimeout(()=>{if(ov.isConnected){ov.remove();done&&done();}},4200);}
+droneMerge=function(it){const r=R();if(it.tier>=6)return toast(L('최고 등급(봉황)입니다','Already top grade (Phoenix)'));const eqIds=new Set(Object.values(r.eq));const same=r.inv.filter(x=>x.slot==='drone'&&x.tier===it.tier);if(same.length<3)return toast(L('같은 등급 드론 3기가 필요합니다 (','Need 3 drones of the same grade (')+same.length+'/3)');const cost=DMERGE_COST[it.tier];if(r.cred<cost)return toast(L('크레딧 부족 (◆','Not enough credits (◆')+cost+')');
+ const use=[it].concat(same.filter(x=>x!==it).sort((a,b)=>(eqIds.has(a.id)?1:0)-(eqIds.has(b.id)?1:0)).slice(0,2));const nd=mkDrone(it.sub,it.tier+1);let slotKeep=null;for(const k of Object.keys(r.eq))if(use.some(x=>x.id===r.eq[k])){if(!slotKeep)slotKeep=k;r.eq[k]=null;}r.cred-=cost;r.inv=r.inv.filter(x=>!use.includes(x));r.inv.push(nd);const free=slotKeep||DSLOTS.find((s,i)=>dSlotOpen(i)&&!eqIt(r,s));if(free)r.eq[free]=nd.id;saveP();hgSel=nd.id;mergeShow(use,nd,()=>render());};
+// ---------- equipment window v3 (paper doll by body position · bag grid · drag & drop) ----------
+const BODY={radar:[50,2,K('머리','Head')],msl:[13,16,K('어깨','Shoulder')],wing:[87,16,K('등','Back')],mel:[8,40,K('오른손','R. hand')],rng:[92,40,K('왼손','L. hand')],shld:[13,64,K('팔','Arm')],fuel:[87,64,K('가슴','Chest')],ult:[50,80,K('중심','Core')]};
+let hgDis=false;
+{const _rh2=renderHangar2;renderHangar2=function(B){const r=R();try{droneMigrate(r);uqMigrate(r);ivMigrate(r);}catch(e){}_rh2(B);try{
+ const doll=B.querySelector('.pd-doll');const T=HGT.find(g=>g[0]===hgTab)||HGT[0];
+ if(hgTab==='mech'&&doll){const cv=doll.querySelector('canvas');const slots=[...doll.querySelectorAll('.pd-slot')];doll.innerHTML='';doll.style.cssText+=';display:block;position:relative;height:560px;padding:0';const mid=document.createElement('div');mid.style.cssText='position:absolute;left:20%;right:20%;top:6%;height:72%';if(cv){cv.style.cssText='width:100%;height:100%;object-fit:contain';mid.appendChild(cv);}doll.appendChild(mid);
+  for(const d of slots){const p=BODY[d.dataset.sl];if(!p)continue;d.style.cssText+=`;position:absolute;left:${p[0]}%;top:${p[1]}%;transform:translateX(-50%);width:98px;height:84px`;const tg=document.createElement('small');tg.textContent=tx(p[2]);tg.style.cssText='position:absolute;top:-15px;left:0;right:0;text-align:center;font-size:10px;color:#8ea3c8';d.appendChild(tg);doll.appendChild(d);}
+  DSLOTS.forEach((s,i)=>{const a=Math.PI*(.15+.7*i/5);const x=50-Math.cos(a)*44,y=96-Math.sin(a)*8;const it=eqIt(r,s);const open=dSlotOpen(i);const d=document.createElement('div');d.className='pd-slot pd-dr';d.dataset.sl=s;const col=it?RAR[it.r].c:'#3a4a6a';d.style.cssText=`--c:${col};position:absolute;left:${x}%;top:${y}%;transform:translate(-50%,-50%);width:66px;height:66px;border-radius:50%;padding:0`;d.innerHTML=open?(it?`<img src="${TH+DGR[it.tier].m}.jpg" style="width:52px;height:52px;border-radius:50%" onerror="this.style.display='none'">`:`<span style="font-size:10px;opacity:.6">${L('드론 ','Drone ')+(i+1)}</span>`):`<span style="font-size:10px;opacity:.7">🔒 Lv${DSLV[i]}</span>`;if(!open)d.style.opacity=.55;doll.appendChild(d);d.onclick=()=>{if(it){hgSel=it.id;render();}else if(!open)toast(L('파일럿 레벨 ','Pilot level ')+DSLV[i]+L('에 열립니다','unlocks this slot'));};});}
+ if(hgTab==='drone'&&doll){doll.querySelectorAll('.pd-slot').forEach(d=>{const i=DSLOTS.indexOf(d.dataset.sl);if(i>=0&&!dSlotOpen(i)){d.style.opacity=.5;d.querySelector('span').textContent='🔒 '+L('파일럿 Lv','Pilot Lv')+DSLV[i];}else{const it=eqIt(r,d.dataset.sl);if(it){const im=d.querySelector('img');if(im)im.src=itemArt(it);}}});
+  const L0=droneLoadout();const cnt={};for(const D of L0)cnt[D.type]=(cnt[D.type]||0)+1;const info=document.createElement('div');info.className='epi';info.style.cssText='margin-top:8px;font-size:12.5px;line-height:1.6';info.innerHTML=`<b>${L('편대 효과','Formation')}</b> · ${Object.entries(cnt).filter(([k,n])=>n>=3).map(([k])=>tx(DRONES[k].n)+' ×3 → '+L('위력 +25%','power +25%')).join(', ')||L('같은 종류 3기 이상 장착 시 위력 +25%','Equip 3+ of one type: power +25%')}<br><b style="color:${fusionReady()?'#ffd166':'#6a7a96'}">${L('궁극 「드론 합체」','Ultimate "Drone Fusion"')}</b> · ${fusionReady()?L('사용 가능! 전투에서 5번 칸','Ready! Slot 5 in battle'):L('6기 모두 「와이번」 이상일 때 열림','Unlocks with 6 drones of Wyvern grade or higher')}<br><small>${L('크기: 반딧불 0.08 → 제비 0.12 → 거북 0.18 → 매 0.25 → 와이번 0.35 → 봉황 0.5 (기동전사 키 기준)','Size vs frame height: Firefly .08 → Swallow .12 → Tortoise .18 → Hawk .25 → Wyvern .35 → Phoenix .5')}</small>`;doll.after(info);}
+ // bag grid 10 x 6
+ const inv=$('#pdInv');if(inv){inv.style.gridTemplateColumns='repeat(10,1fr)';inv.style.maxHeight='none';const n=inv.querySelectorAll('.pd-cell').length;for(let i=n;i<60;i++){const e=document.createElement('div');e.className='pd-cell';e.style.cssText='--c:rgba(80,100,140,.25);cursor:default';inv.appendChild(e);}
+  const cells=[...inv.querySelectorAll('.pd-cell')];const grpSlots=T[2].concat(T[3]);const list=r.inv.filter(it=>hgTab==='drone'?it.slot==='drone':grpSlots.includes(it.slot)).sort((a,b)=>b.r-a.r||(b.tier||0)-(a.tier||0)||(b.v||0)-(a.v||0));
+  list.forEach((it,i)=>{const c=cells[i];if(!c)return;c.draggable=true;if(it.slot==='drone'){const im=c.querySelector('img');if(im)im.src=itemArt(it);}if(it.u){const sv=c.querySelector('svg');const im=document.createElement('img');im.src=TH+it.u+'.jpg';im.style.cssText='width:88%;height:88%;border-radius:6px;object-fit:cover';im.onerror=()=>im.remove();if(sv)sv.replaceWith(im);c.style.boxShadow='0 0 10px '+RAR[it.r].c;}
+   const equip=()=>{const isEq=Object.values(r.eq).includes(it.id);if(isEq){for(const k of Object.keys(r.eq))if(r.eq[k]===it.id)r.eq[k]=null;}else if(it.slot==='drone'){const free=DSLOTS.find((s,i)=>dSlotOpen(i)&&!eqIt(r,s));if(!free)return toast(L('빈 드론 칸이 없습니다','No free drone slot'));r.eq[free]=it.id;}else r.eq[it.slot]=it.id;saveP();render();};
+   c.addEventListener('mouseenter',()=>{const t=$('#pdTip');if(t)t.innerHTML=itemTip(it);});
+   c.addEventListener('contextmenu',e=>{e.preventDefault();equip();});c.addEventListener('dblclick',equip);
+   c.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',it.id);});
+   if(hgDis){c.onclick=()=>{if(Object.values(r.eq).includes(it.id))return toast(L('장착 중','Equipped'));const g=Math.round(40*(it.r+1)*(it.tier||1));r.inv=r.inv.filter(x=>x!==it);r.cred+=g;saveP();toast('+◆'+g);render();};}});
+  B.querySelectorAll('.pd-slot').forEach(d=>{d.addEventListener('dragover',e=>e.preventDefault());d.addEventListener('drop',e=>{e.preventDefault();const id=e.dataTransfer.getData('text/plain');const it=r.inv.find(x=>x.id===id);if(!it)return;const sl=d.dataset.sl;const di=DSLOTS.indexOf(sl);if(it.slot==='drone'){if(di<0)return toast(L('드론 칸에 놓으세요','Drop it on a drone slot'));if(!dSlotOpen(di))return toast(L('잠긴 칸','Locked slot'));for(const k of DSLOTS)if(r.eq[k]===id)r.eq[k]=null;r.eq[sl]=id;}else{if(it.slot!==sl)return toast(L('맞지 않는 칸입니다: ','Wrong slot: ')+tx(SLOTS[it.slot]));r.eq[sl]=id;}saveP();render();});
+   d.addEventListener('contextmenu',e=>{e.preventDefault();const sl=d.dataset.sl;if(r.eq[sl]){r.eq[sl]=null;saveP();render();}});
+   d.addEventListener('mouseenter',()=>{const it=eqIt(r,d.dataset.sl);const t=$('#pdTip');if(it&&t)t.innerHTML=itemTip(it);});});
+  // toolbar: sort · dismantle mode · currencies & help
+  const bar=document.createElement('div');bar.style.cssText='display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap';bar.innerHTML=`<button class="sm" id="pdSort">${L('정렬','Sort')}</button><button class="sm ${hgDis?'pri':''}" id="pdDis" style="${hgDis?'background:#a02030':''}">${hgDis?L('분해 모드 켜짐','Dismantle ON'):L('분해 모드','Dismantle mode')}</button><span style="margin-left:auto;font-weight:800"><span style="color:#ffd166">★ ${r.shards}</span> · <span style="color:#9ff6ff">◆ ${r.cred}</span></span>`;inv.before(bar);
+  $('#pdSort').onclick=()=>{r.inv.sort((a,b)=>b.r-a.r||String(a.slot).localeCompare(b.slot));saveP();toast(L('정렬했습니다','Sorted'));render();};$('#pdDis').onclick=()=>{hgDis=!hgDis;render();};
+  const help=document.createElement('small');help.style.cssText='display:block;opacity:.65;margin-top:4px';help.textContent=L('끌어다 칸에 놓기 · 오른쪽 클릭/두 번 클릭으로 장착·해제 · I 장비창 · C 능력치 · J 스킬 배치','Drag onto a slot · right-click / double-click to equip · I gear · C stats · J skills');inv.after(help);}
+ uqDecorate(B);}catch(e){console.warn('hg3',e);}};}
+// keys: I (gear) · C (stats) — outside battle
+addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.repeat)return;if(e.code!=='KeyI'&&e.code!=='KeyC')return;if(G&&!G.over)return;try{const open=!isHidden('#rpg')&&tab==='hangar';if(open&&e.code==='KeyI'){tab='map';render();return;}hide('#menu');openRpg();tab='hangar';hgTab='mech';render();if(e.code==='KeyC'){const s=document.querySelector('.pd-stats');if(s){s.scrollIntoView({block:'center'});s.style.outline='2px solid #ffd166';setTimeout(()=>s.style.outline='',1500);}}}catch(err){}});
+// ---------- skill bar v2: [LMB] [Q][E][R][T] | [1]–[6] with HP / energy orbs, J to rearrange ----------
+const SKL={fly:{n:K('비행','Flight'),c:'#7df9ff'},volley:{n:K('드론 일제사격','Drone Volley'),c:'#7dffb0'},fusion:{n:K('드론 합체','Drone Fusion'),c:'#ffd166'},kit:{n:K('수리 키트','Repair Kit'),c:'#ff6b7a'},charge:{n:K('돌진 베기','Charge Slash'),c:'#ff7ae0'},board:{n:K('탑승/하차','Board/Exit'),c:'#9fb4d8'}};
+const skMap=()=>{P.skMap=P.skMap&&P.skMap.length===6?P.skMap:['fly','volley','kit','charge','fusion','board'];return P.skMap;};
+function skUse(k){const u=G&&G.local&&G.local.unit;if(!u||u.dead)return;const key=c=>{window.dispatchEvent(new KeyboardEvent('keydown',{code:c}));setTimeout(()=>window.dispatchEvent(new KeyboardEvent('keyup',{code:c})),140);};
+ if(k==='fly')return key('KeyX');if(k==='board')return key('KeyK');if(k==='volley')return skbUse(4);if(k==='kit')return skbUse(5);
+ if(k==='charge'){if((u.chCd||0)>G.t)return;const t=nearestFoe(u,700,false);if(t){u.chCd=G.t+5;arkCharge(u,t,true);}return;}
+ if(k==='fusion'){if(!fusionReady())return toast(L('6기 모두 와이번 이상이어야 합니다','Needs 6 drones of Wyvern grade+'));if((u.fuCd||0)>G.t)return;u.fuCd=G.t+60;u.fusion=12;u.volley=12;announce('',L('드론 합체!','DRONE FUSION!'),'',true,'#ffd166');for(let i=0;i<60;i++){const a=Math.random()*Math.PI*2;part(u.x,u.y,Math.cos(a)*300,Math.sin(a)*300,.6,'#ffd166',8,60);}}}
+{const _hu8=hurt;hurt=function(u,amt,src,ang,dt){try{const me=G&&G.rpg&&G.local&&G.local.unit;if(me&&me.fusion>0){if(src===G.local&&u!==me)amt*=1.4;if(u===me&&src!==G.local)amt*=.7;}}catch(e){}return _hu8(u,amt,src,ang,dt);};}
+function skb2(){let el=document.getElementById('skb2');if(el)return el;el=document.createElement('div');el.id='skb2';el.style.cssText='position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:8;display:none;align-items:flex-end;gap:10px;pointer-events:none';
+ const orb=(id,c1,c2,lb)=>`<div style="position:relative;width:92px;height:92px;border-radius:50%;border:3px solid #6a5a3a;background:#0a0a12;overflow:hidden;box-shadow:inset 0 0 20px #000,0 0 12px rgba(0,0,0,.8)"><div id="${id}" style="position:absolute;left:0;right:0;bottom:0;height:100%;background:radial-gradient(circle at 40% 30%,${c1},${c2})"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.35),transparent 40%)"></div><b id="${id}T" style="position:absolute;left:0;right:0;top:36px;text-align:center;font:800 14px Rajdhani,sans-serif;text-shadow:0 0 4px #000">${lb}</b></div>`;
+ const cell=(id,lab,key,c)=>`<div class="sk2" data-k="${id}" style="pointer-events:auto;position:relative;width:58px;height:58px;border-radius:9px;border:2px solid ${c};background:radial-gradient(circle,rgba(30,50,90,.95),rgba(6,10,20,.95));display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;font-weight:800;color:#fff;overflow:hidden;cursor:pointer"><span style="position:relative;z-index:2;padding:0 2px;line-height:1.1">${lab}</span><b style="position:absolute;left:4px;top:1px;z-index:2;color:${c};font-size:11px">${key}</b><i class="cdm" style="position:absolute;inset:0;z-index:1;background:conic-gradient(rgba(0,0,0,.75) var(--p,0%),transparent 0)"></i><em class="cdt" style="position:absolute;right:3px;bottom:1px;z-index:2;font-style:normal;font-size:11px;color:#ffd166"></em></div>`;
+ el.innerHTML=orb('orbH','#ff5a5a','#5a0000',L('체력','HP'))+`<div style="display:flex;gap:5px;padding:7px 8px;background:rgba(4,8,18,.78);border:1px solid rgba(160,200,255,.25);border-radius:12px;backdrop-filter:blur(8px)">${cell('lmb',L('기본 공격','Attack'),'🖱','#9fb4d8')}${cell('Q',tx(SKB[0][2]),'Q','#9ff6ff')}${cell('E',tx(SKB[1][2]),'E','#ff7ae0')}${cell('R',tx(SKB[2][2]),'R','#ffd166')}${cell('T',L('절대기술','Absolute'),'T','#c58cff')}<div style="width:8px"></div>${[0,1,2,3,4,5].map(i=>cell('n'+i,'','\u200b'+(i+1),'#7dffb0')).join('')}</div>`+orb('orbE','#5ab4ff','#001a4a',L('에너지','Energy'));
+ document.body.appendChild(el);el.querySelectorAll('.sk2').forEach(d=>{d.addEventListener('pointerdown',ev=>{ev.stopPropagation();const k=d.dataset.k;if(k==='lmb')return;if(/^n\d$/.test(k))return skUse(skMap()[+k[1]]);const code={Q:'KeyQ',E:'KeyE',R:'KeyR',T:'KeyT'}[k];window.dispatchEvent(new KeyboardEvent('keydown',{code}));setTimeout(()=>window.dispatchEvent(new KeyboardEvent('keyup',{code})),140);});d.addEventListener('dragover',e=>e.preventDefault());d.addEventListener('drop',e=>{e.preventDefault();const k=d.dataset.k;if(!/^n\d$/.test(k))return;const sk=e.dataTransfer.getData('text/plain');if(!SKL[sk])return;const m=skMap();const j=m.indexOf(sk);if(j>=0)m[j]=m[+k[1]];m[+k[1]]=sk;saveP();skb2Labels();});});skb2Labels();return el;}
+function skb2Labels(){const el=document.getElementById('skb2');if(!el)return;const m=skMap();for(let i=0;i<6;i++){const d=el.querySelector('[data-k="n'+i+'"]');const S0=SKL[m[i]];d.querySelector('span').textContent=S0?tx(S0.n):'';d.style.borderColor=S0?S0.c:'#334';}}
+// J: skill list window — drag a skill onto slots 1–6 of the bar
+function skList(){let w=document.getElementById('skList');if(w){w.remove();return;}w=document.createElement('div');w.id='skList';w.style.cssText='position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:9;background:rgba(6,10,22,.94);border:1px solid #3a5a96;border-radius:12px;padding:12px 14px;width:min(560px,92vw)';
+ w.innerHTML=`<b>${L('스킬 목록 · 끌어서 1~6번 칸에 놓으세요','Skills · drag onto slots 1–6')}</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">${Object.entries(SKL).map(([k,S0])=>`<div draggable="true" data-sk="${k}" style="padding:8px 10px;border:2px solid ${S0.c};border-radius:8px;cursor:grab;font-weight:700;font-size:12px">${tx(S0.n)}</div>`).join('')}</div><small style="opacity:.6;display:block;margin-top:8px">${L('J로 닫기 · 배치는 자동 저장','Press J to close · saved automatically')}</small>`;document.body.appendChild(w);w.querySelectorAll('[data-sk]').forEach(d=>d.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',d.dataset.sk)));}
+addEventListener('keydown',e=>{if(!G||!G.rpg||!G.local||!G.local.unit||G.local.unit.cls!=='arkframe'||e.repeat)return;if(e.code==='KeyJ'){skList();return;}const m=/^Digit([1-6])$/.exec(e.code);if(m){e.stopImmediatePropagation();e.preventDefault();skUse(skMap()[+m[1]-1]);}},true);
+{const _stS=step;step=function(dt){_stS(dt);try{const old=document.getElementById('skb');if(old)old.style.display='none';const el=skb2();const u=G&&G.local&&G.local.unit;const on=G&&G.rpg&&u&&!u.dead&&u.cls==='arkframe'&&!touchMode&&!G.over;el.style.display=on?'flex':'none';if(!on){const w=document.getElementById('skList');if(w&&!(G&&G.rpg))w.remove();return;}
+ if(u.fusion>0)u.fusion-=dt;const inf=myInfo();document.getElementById('orbH').style.height=Math.max(0,u.hp/u.mhp*100)+'%';document.getElementById('orbHT').textContent=Math.ceil(u.hp);const en=(u.flyE==null?10:u.flyE)/10;document.getElementById('orbE').style.height=Math.max(0,en*100)+'%';document.getElementById('orbET').textContent=Math.round((inf.ul||0))+'%';
+ const set=(k,c,m,txt)=>{const d=el.querySelector('[data-k="'+k+'"]');if(!d)return;const p=m?Math.max(0,Math.min(1,c/m)):0;d.querySelector('.cdm').style.setProperty('--p',(p*100)+'%');d.querySelector('.cdt').textContent=txt!=null?txt:(c>.05?Math.ceil(c):'');};
+ set('Q',inf.c1,inf.m1);set('E',inf.c2,inf.m2);set('R',100-(inf.ul||0),100,Math.floor(inf.ul||0)+'%');const tb=el.querySelector('[data-k="T"]');tb.style.display=inf.abk?'flex':'none';if(inf.abk)set('T',100-(inf.ab||0),100,'');
+ const m=skMap();m.forEach((k,i)=>{let c=0,M=1,t=null;if(k==='volley'){c=u.volCd||0;M=12;}else if(k==='kit'){c=u.kitCd||0;M=20;t='×'+(G.rpg.kits==null?3:G.rpg.kits);}else if(k==='charge'){c=Math.max(0,(u.chCd||0)-G.t);M=5;}else if(k==='fusion'){c=fusionReady()?Math.max(0,(u.fuCd||0)-G.t):60;M=60;t=fusionReady()?null:'🔒';}set('n'+i,c,M,t);});}catch(e){}};}
+
+
+// ================= v2.5 fixes : passive drones · visible drones · bag without equipped · floating tooltip · in-battle gear (I/C) · tutorial boss =================
+// drones are passive; only Drone Fusion is a special (active) drone skill
+delete SKL.volley;
+{const _sm=skMap;skMap=function(){let m=P.skMap;if(!m||m.length!==6||m.includes('volley'))P.skMap=['fly','charge','kit','fusion','board',''];return P.skMap;};}
+// visible drones: grade size relative to frame but never tiny, plus bigger glow
+{const _dl3=droneLoadout;droneLoadout=function(){const L0=_dl3();for(const D of L0){D.scale=(12+DGR[D.tier].ratio*70)/11;}return L0;};}
+// bag shows only unequipped items (Diablo style), floating tooltip, aria labels
+function tipFloat(){let t=document.getElementById('pdFloat');if(!t){t=document.createElement('div');t.id='pdFloat';t.style.cssText='position:fixed;z-index:95;pointer-events:none;max-width:330px;padding:10px 12px;background:rgba(6,10,22,.97);border:1px solid rgba(160,200,255,.4);border-radius:10px;line-height:1.5;font-size:13px;display:none;box-shadow:0 8px 30px rgba(0,0,0,.6)';document.body.appendChild(t);}return t;}
+function tipShow(it,ev){const t=tipFloat();t.innerHTML=itemTip(it);t.style.display='block';const W=innerWidth,H=innerHeight;const r=t.getBoundingClientRect();let x=ev.clientX+16,y=ev.clientY+12;if(x+r.width>W-8)x=ev.clientX-r.width-16;if(y+r.height>H-8)y=Math.max(8,H-r.height-8);t.style.left=x+'px';t.style.top=y+'px';}
+function tipHide(){const t=document.getElementById('pdFloat');if(t)t.style.display='none';}
+{const _rh3=renderHangar2;renderHangar2=function(B){tipHide();_rh3(B);try{const r=R();const T=HGT.find(g=>g[0]===hgTab)||HGT[0];const inv=B.querySelector('#pdInv');if(!inv)return;const eqIds=new Set(Object.values(r.eq).filter(Boolean));const grpSlots=T[2].concat(T[3]);
+ const list=r.inv.filter(it=>!eqIds.has(it.id)&&(hgTab==='drone'?it.slot==='drone':grpSlots.includes(it.slot))).sort((a,b)=>b.r-a.r||(b.tier||0)-(a.tier||0)||(b.v||0)-(a.v||0));
+ inv.innerHTML='';const n=Math.max(60,Math.ceil(list.length/10)*10);
+ const equip=it=>{if(it.slot==='drone'){const free=DSLOTS.find((s,i)=>dSlotOpen(i)&&!eqIt(r,s));if(!free)return toast(L('빈 드론 칸이 없습니다','No free drone slot'));r.eq[free]=it.id;}else r.eq[it.slot]=it.id;saveP();tipHide();render();};
+ for(let i=0;i<n;i++){const it=list[i];const c=document.createElement('div');c.className='pd-cell';if(!it){c.style.cssText='--c:rgba(80,100,140,.22);cursor:default';inv.appendChild(c);continue;}
+  const col=RAR[it.r].c;c.style.setProperty('--c',col);c.setAttribute('aria-label',tx(it.n)+' · '+rn(it.r));c.title='';c.draggable=true;if(it.id===hgSel)c.classList.add('sel');
+  const art=itemArt(it);c.innerHTML=(art?`<img src="${art}" style="width:88%;height:88%;border-radius:6px;object-fit:cover" onerror="this.style.display='none'">`:icon(it.slot,col,30))+(it.tier?`<b>${tx(DGR[it.tier].n).slice(0,3)}</b>`:it.lv?`<b>+${it.lv}</b>`:'');if(it.u||it.r>=3)c.style.boxShadow='0 0 10px '+col;
+  c.addEventListener('mousemove',e=>tipShow(it,e));c.addEventListener('mouseleave',tipHide);
+  c.addEventListener('contextmenu',e=>{e.preventDefault();equip(it);});c.addEventListener('dblclick',()=>equip(it));c.addEventListener('dragstart',e=>{tipHide();e.dataTransfer.setData('text/plain',it.id);});
+  let lp=null;c.addEventListener('touchstart',e=>{const t0=e.touches[0];lp=setTimeout(()=>tipShow(it,{clientX:t0.clientX,clientY:t0.clientY}),450);},{passive:true});c.addEventListener('touchend',()=>{clearTimeout(lp);setTimeout(tipHide,1800);});
+  c.onclick=()=>{if(hgDis){const g=Math.round(40*(it.r+1)*(it.tier||1));r.inv=r.inv.filter(x=>x!==it);r.cred+=g;saveP();toast('+◆'+g);render();return;}hgSel=it.id;inv.querySelectorAll('.pd-cell').forEach(x=>x.classList.remove('sel'));c.classList.add('sel');const tp=B.querySelector('#pdTip');if(tp)tp.innerHTML=itemTip(it);acts(it);};inv.appendChild(c);}
+ const h3=inv.parentElement.querySelector('h3 small');if(h3)h3.textContent='('+list.length+')';
+ // equipped-slot hover tooltips
+ B.querySelectorAll('.pd-slot').forEach(d=>{const it=eqIt(r,d.dataset.sl);if(!it)return;d.setAttribute('aria-label',tx(it.n));d.addEventListener('mousemove',e=>tipShow(it,e));d.addEventListener('mouseleave',tipHide);});
+ // details panel only when something is selected
+ const tp=B.querySelector('#pdTip');if(tp&&!hgSel){tp.style.display='none';const h=tp.previousElementSibling;if(h&&h.tagName==='H3')h.style.display='none';}
+ function acts(it){const A=B.querySelector('#hgAct');if(!A)return;const tp2=B.querySelector('#pdTip');if(tp2){tp2.style.display='block';const h=tp2.previousElementSibling;if(h)h.style.display='';}A.innerHTML='';const mk=(l,f,pri)=>{const b=document.createElement('button');b.className='sm'+(pri?' pri':'');b.textContent=l;b.onclick=f;A.appendChild(b);};mk(L('장착','Equip'),()=>equip(it),1);if(it.slot==='drone')mk(L('합체 (같은 등급 3기)','Merge (3 of a grade)'),()=>droneMerge(it));mk(L('분해 +◆','Dismantle +◆')+Math.round(40*(it.r+1)*(it.tier||1)),()=>{r.inv=r.inv.filter(x=>x!==it);r.cred+=Math.round(40*(it.r+1)*(it.tier||1));hgSel=null;saveP();render();});}
+ // drone tab: slots in a ring around the frame
+ if(hgTab==='drone'){const doll=B.querySelector('.pd-doll');if(doll){const cv=doll.querySelector('canvas');const slots=[...doll.querySelectorAll('.pd-slot')];doll.innerHTML='';doll.style.cssText+=';display:block;position:relative;height:460px;padding:0';const mid=document.createElement('div');mid.style.cssText='position:absolute;left:24%;right:24%;top:18%;height:64%';if(cv){cv.style.cssText='width:100%;height:100%;object-fit:contain';mid.appendChild(cv);}doll.appendChild(mid);
+  slots.forEach((d,i)=>{const a=-Math.PI/2+i/6*Math.PI*2;d.style.cssText+=`;position:absolute;left:${50+Math.cos(a)*38}%;top:${50+Math.sin(a)*40}%;transform:translate(-50%,-50%);width:92px;height:84px`;doll.appendChild(d);});}}}catch(e){console.warn('hg4',e);}};}
+// in-battle gear window (I / C) — the battle keeps running, like Diablo
+let gearOv=null;
+function gearOpen(focusStats){if(gearOv){gearClose();return;}gearOv=document.createElement('div');gearOv.style.cssText='position:fixed;inset:4vh 4vw;z-index:40;background:rgba(5,9,20,.95);border:1px solid #3a5a96;border-radius:14px;overflow:auto;padding:14px';gearOv.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:8px"><b style="font-size:18px">${L('장비 (I) · 능력치 (C)','Gear (I) · Stats (C)')}</b><small style="margin-left:10px;opacity:.65">${L('드론·고유 장비 효과는 닫는 즉시, 기본 능력치는 다음 출격부터 적용','Drones and named effects apply on close; base stats from your next sortie')}</small><button id="gearX" style="margin-left:auto">✕</button></div><div id="gearB"></div>`;document.body.appendChild(gearOv);gearOv.querySelector('#gearX').onclick=gearClose;const rb=$('#rpgBody');if(rb)rb.innerHTML='';tab='hangar';renderHangar2(gearOv.querySelector('#gearB'));if(focusStats){const s=gearOv.querySelector('.pd-stats');if(s)s.scrollIntoView({block:'center'});}}
+function gearClose(){if(!gearOv)return;gearOv.remove();gearOv=null;tipHide();try{const u=G&&G.local&&G.local.unit;if(u&&u.cls==='arkframe'){u.drones=droneLoadout();try{u.drB=drBonus(u.drones);}catch(e){}G.uqStamp=(G.uqStamp||0)+1;try{mechFXCleanup&&mechFXCleanup(u);}catch(e){}}}catch(e){}}
+{const _rn=render;render=function(){if(gearOv&&tab==='hangar'){renderHangar2(gearOv.querySelector('#gearB'));return;}return _rn();};}
+addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.repeat)return;if(!(G&&!G.over&&G.rpg))return;if(e.code==='KeyI'){e.preventDefault();gearOpen(false);}else if(e.code==='KeyC'){e.preventDefault();gearOpen(true);}else if(e.code==='Escape'&&gearOv){e.stopImmediatePropagation();gearClose();}},true);
+{const _lm3=leaveMatch;leaveMatch=function(...a){gearClose();return _lm3.apply(this,a);};try{if(window.__ascend)window.__ascend.leaveMatch=leaveMatch;}catch(e){}}
+// skill-bar label wrapping
+{const st=document.createElement('style');st.textContent='#skb2 .sk2 span{word-break:keep-all;font-size:9.5px;letter-spacing:-.02em}';document.head.appendChild(st);}
+// prologue / RPG: mute the AI-battlefield "charge the enemy HQ" lines
+{const _an=announce;announce=function(c1,c2,c3,big,col){try{if(G&&G.rpg){const s=[c1,c2,c3].join(' ');if(/사령부로 돌격|사령부에 집중|enemy HQ|enemy command/i.test(s))return;}}catch(e){}return _an(c1,c2,c3,big,col);};}
+// boss: appears near the player, tougher than the frame, the player lands the finish; guaranteed loot in story battles
+{const _hu9=hurt;hurt=function(u,amt,src,ang,dt){try{const X=G&&G.rpg;if(X&&u&&u===X.bossU&&src!==G.local&&!(X.obj&&X.obj.k==='field'))amt*=.3;}catch(e){}return _hu9(u,amt,src,ang,dt);};}
+{const _stF=step;step=function(dt){try{const X=G&&G.rpg;const b=X&&X.bossU;const me=G&&G.local&&G.local.unit;if(b&&!b.dead&&!b.nearDone&&me&&!me.dead&&!(X.obj&&X.obj.k==='field')){b.nearDone=1;const eb=BASES[1];const a=Math.atan2(eb.y-me.y,eb.x-me.x);b.x=clamp(me.x+Math.cos(a)*520,60,WW-60);b.y=clamp(me.y+Math.sin(a)*520,60,WH-60);b.mhp=Math.max(b.mhp,me.mhp*1.6+(X.diff||0)*800);b.hp=b.mhp;}
+ if(b&&b.dead&&!b.dropDone&&!(X.obj&&X.obj.k==='field')){b.dropDone=1;const r=R();try{lootDrop(mkItem(Math.min(4,1+Math.floor((X.diff||0)/2)),null),b.x,b.y);}catch(e){}const first=X.epi==='e_p'&&!r.firstDrone;if(first||Math.random()<.5){r.firstDrone=1;try{lootDrop(mkDrone(first?'missile':null,first?1:1+Math.floor((X.diff||0)/3)),b.x+40,b.y);}catch(e){}saveP();}}}catch(e){}return _stF(dt);};}
+
+
+// ================= v2.5 : ANDROID LOOK BY RARITY =================
+// Common / Uncommon = clearly robots · Rare = human-shaped · Epic+ = indistinguishable from humans
+LINKS.a_unit01={n:K('AD-01 버디','AD-01 Buddy'),el:K('무속성','Neutral'),r:0,b:{hp:1.04},d:K('작업용으로 만든 단순한 로봇형 안드로이드. 말수는 적지만 성실하다.','A simple utility robot. Quiet, but diligent.')};
+LINKS.a_unit02={n:K('AD-02 센트리','AD-02 Sentry'),el:K('무속성','Neutral'),r:0,b:{taken:.97},d:K('기지 경비용 로봇형 안드로이드. 두꺼운 장갑으로 동료를 지킨다.','A base-security robot. Its thick plating shields allies.')};
+const LINK_LOOK=[K('로봇형','Robot type'),K('로봇형','Robot type'),K('인간형','Humanoid'),K('완전 인간형','Indistinguishable from human'),K('완전 인간형','Indistinguishable from human'),K('완전 인간형','Indistinguishable from human')];
+window.LINK_LOOK=LINK_LOOK;
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if(/^Pilot-\d+$/.test(P.name||'')&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
