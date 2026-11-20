@@ -4356,7 +4356,7 @@ function jumpTo(h){travelLeave();const ov=document.createElement('canvas');ov.st
   const pr=Math.min(W,H)*(t<1.2?t/1.2*.18:.18+(t-1.2)*.5);g.save();g.translate(cx,cy);for(let k=0;k<3;k++){g.rotate(t*(1.5+k));g.strokeStyle=['#7df9ff','#c58cff','#ffd166'][k];g.lineWidth=3;g.shadowColor=g.strokeStyle;g.shadowBlur=20;g.beginPath();for(let i=0;i<=48;i++){const a=i/48*6.283;const rr=pr*(1+.08*Math.sin(a*6+t*8));g.lineTo(Math.cos(a)*rr,Math.sin(a)*rr*.82);}g.stroke();}g.restore();
   g.fillStyle='#fff';g.font='900 '+Math.round(Math.min(W,H)*.05)+'px "Noto Sans KR",sans-serif';g.textAlign='center';g.globalAlpha=Math.min(1,t/.6);g.fillText(L('공간 접기 점프','SPACE-FOLD JUMP'),cx,H*.18);g.font='700 '+Math.round(Math.min(W,H)*.03)+'px sans-serif';g.fillStyle='#9ff6ff';g.fillText('→ '+lbl,cx,H*.18+Math.min(W,H)*.06);g.globalAlpha=1;
   if(t>2.3){g.fillStyle='rgba(255,255,255,'+Math.min(1,(t-2.3)/.3)+')';g.fillRect(0,0,W,H);}if(t<2.75)requestAnimationFrame(fr);else{ov.remove();huntLaunch(h);}};fr();}
-function flyTo(h){travelLeave();const ov=document.createElement('canvas');ov.style.cssText='position:fixed;inset:0;z-index:60;width:100%;height:100%;background:#02030a;cursor:crosshair';document.body.appendChild(ov);const W=ov.width=innerWidth,H=ov.height=innerHeight,g=ov.getContext('2d');const cx=W/2,cy=H/2;
+function flyTo(h){travelLeave();try{setTimeout(()=>{window.__onFlyTo&&window.__onFlyTo(h);},30);}catch(e){}const ov=document.createElement('canvas');ov.style.cssText='position:fixed;inset:0;z-index:60;width:100%;height:100%;background:#02030a;cursor:crosshair';document.body.appendChild(ov);const W=ov.width=innerWidth,H=ov.height=innerHeight,g=ov.getContext('2d');const cx=W/2,cy=H/2;
  const st=[];for(let i=0;i<500;i++)st.push({x:(Math.random()-.5)*4000,y:(Math.random()-.5)*4000,z:Math.random()*4000});
  const obs=[];let px=0,py=0,tx2=0,ty2=0,hull=100,got=0,t0=performance.now(),last=t0,done=false,flash=0;const DUR=32;const keys={};const kd=e=>{keys[e.code]=e.type==='keydown';};addEventListener('keydown',kd);addEventListener('keyup',kd);ov.addEventListener('pointermove',e=>{tx2=(e.clientX-cx)/cx*700;ty2=(e.clientY-cy)/cy*450;});
  const kinds=[['rock','#8a7a6a',90],['rock','#6e6458',140],['debris','#9aa6b8',70],['frag','#b05030',260],['cell','#7df9ff',40]];
@@ -7712,6 +7712,6 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
-<script src="lib/transform.js?v=319"></script>
+<script src="lib/transform.js?v=3191"></script>
 </body>
 </html>
