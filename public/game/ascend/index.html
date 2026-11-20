@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v2.7 RPG</div>
+   <div class="ver"><i></i>ASCEND · v2.8 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3265,7 +3265,7 @@ function mdlUse(){return typeof gfxMode==='function'?gfxMode()!=='2d':true;}
 function mdlGet(f){const c=MC[f];if(c)return c.st==='ok'?c:null;const X=window.__TX||{};if(!X.GLTFLoader)return null;MC[f]={st:'ld'};new X.GLTFLoader().load(MDL_BASE+f+'.glb',g=>{const T3=window.THREE;g.scene.updateMatrixWorld(true);const b=new T3.Box3().setFromObject(g.scene);MC[f]={st:'ok',g,box:b,size:b.getSize(new T3.Vector3()),skinned:(()=>{let s=false;g.scene.traverse(o=>{if(o.isSkinnedMesh)s=true;});return s;})()};mVer++;if(R3)R3._mver=mVer;},undefined,()=>{MC[f]={st:'fail'};});return null;}
 function mdlInstance(f,yaw,size,axis){const c=mdlGet(f);if(!c)return null;const T3=window.THREE,X=window.__TX;const obj=c.skinned&&X.SkeletonUtils?X.SkeletonUtils.clone(c.g.scene):c.g.scene.clone(true);
  const k=size/(axis==='h'?c.size.y:Math.max(c.size.x,c.size.z));const wrap=new T3.Group();const inner=new T3.Group();inner.rotation.y=yaw;wrap.add(inner);obj.scale.setScalar(k);const ctr=c.box.getCenter(new T3.Vector3());obj.position.set(-ctr.x*k,-c.box.min.y*k,-ctr.z*k);inner.add(obj);
- obj.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=!o.isSkinnedMesh;}});
+ obj.traverse(o=>{if(o.isMesh){o.castShadow=size>=60;o.receiveShadow=true;o.frustumCulled=!o.isSkinnedMesh;}});
  let mx=null;if(c.g.animations&&c.g.animations.length){const mixer=new T3.AnimationMixer(obj);const acts={};for(const cl of c.g.animations){acts[normClip(cl.name)]=mixer.clipAction(cl);}const first=acts.idle||acts.hover||acts.walk||Object.values(acts)[0];if(first){first.play();if(!acts.idle&&!acts.hover)first.timeScale=0;}mx={mixer,acts,cur:first};}
  return{wrap,inner,obj,mx,k};}
 function hideProc(e){e.root.traverse(o=>{if((o.isMesh||o.isSprite||o.isPoints)&&o!==e.ring&&o!==e.blob&&o!==e.jet&&!o.userData.keep)o.visible=false;});if(e.flames)for(const f of e.flames)f.visible=false;}
@@ -5556,6 +5556,39 @@ try{document.addEventListener('click',e=>{if(e.target&&(e.target.id==='mGfx'||e.
 // ---- galaxy map: prologue label clear of the region name ----
 {const a=EPIS.find(e=>e.id==='e_p'),b=EPIS.find(e=>e.id==='e0');if(a&&b){a.x=b.x+9;a.y=b.y+12;}}
 window.__T={endMatch:(w)=>endMatch(w),leaveMatch:()=>leaveMatch(),get G(){return G;},hardSkip,get curE(){return curE;}};
+
+
+// ================= v2.8 : PERFORMANCE (LOD, shadows, resolution) · fair start · honest radio · faster menus · UI polish =================
+// ---- LOD: only the nearest detailed models are drawn; far / excess units fall back to the light procedural body ----
+{const _hp=hideProc;hideProc=function(e){try{const list=[];e.root.traverse(o=>{if((o.isMesh||o.isSprite||o.isPoints)&&o!==e.ring&&o!==e.blob&&o!==e.jet&&!o.userData.keep&&o.visible)list.push(o);});e.procList=list;}catch(err){}return _hp(e);};}
+const LOD={max:34,far:1900,t:0};
+function lodTick(dt){LOD.t-=dt;if(LOD.t>0||!R3||!R3.units||!G)return;LOD.t=.3;const me=G.local&&G.local.unit;const cx=me?me.x:cam.x,cy=me?me.y:cam.y;const arr=[];
+ for(const u of G.units){if(u.dead)continue;const e=R3.units.get(u.id);if(!e||!e.mdl||!e.procList)continue;const big=(MDL[u.cls]&&MDL[u.cls][2]>=60)||u===me||u.boss;if(big){if(e.lod){e.lod=0;e.mdl.wrap.visible=true;for(const o of e.procList)o.visible=false;}continue;}arr.push([Math.hypot(u.x-cx,u.y-cy),e]);}
+ arr.sort((a,b)=>a[0]-b[0]);const lim=gfxMode()==='high'?LOD.max:Math.round(LOD.max*.6);arr.forEach(([d,e],i)=>{const low=i>=lim||d>LOD.far;if(low&&!e.lod){e.lod=1;e.mdl.wrap.visible=false;for(const o of e.procList)o.visible=true;}else if(!low&&e.lod){e.lod=0;e.mdl.wrap.visible=true;for(const o of e.procList)o.visible=false;}});}
+{const _stL2=step;step=function(dt){_stL2(dt);try{lodTick(dt);}catch(e){}};}
+// ---- resolution: lighter pixel ratio on high, adaptive drop when frames are slow ----
+{const _ag=R3.applyGfx;R3.applyGfx=function(){const r=_ag.apply(this,arguments);try{if(this.r){this.pr=gfxMode()==='high'?Math.min(1.25,window.devicePixelRatio||1):1;this.r.setPixelRatio(this.pr);if(this.composer&&this.composer.setPixelRatio)this.composer.setPixelRatio(this.pr);}}catch(e){}return r;};}
+{let fsum=0,fn=0,tAcc=0,dropped=false;const _stD2=step;step=function(dt){_stD2(dt);try{if(!G||G.over){fsum=fn=tAcc=0;dropped=false;return;}tAcc+=dt;fn++;if(tAcc>=4){const fps=fn/tAcc;fn=0;tAcc=0;if(fps<38&&!dropped&&R3.r&&R3.pr>1){dropped=true;R3.pr=1;R3.r.setPixelRatio(1);if(R3.composer&&R3.composer.setPixelRatio)R3.composer.setPixelRatio(1);R3.resize&&R3.resize();}if(fps<30&&LOD.max>18)LOD.max-=6;}}catch(e){}};}
+try{R3.applyGfx&&R3.ready&&R3.applyGfx();}catch(e){}
+// ---- fair start for new commanders: the nearest point starts friendly, first waves lighter ----
+{const _nm2=newMatch;newMatch=function(size,mode){_nm2(size,mode);try{if(G&&!G.rpg&&G.pts&&G.pts.length&&!MAP.siege){const b=BASES[0];const near=G.pts.slice().sort((a,c)=>Math.hypot(a.x-b.x,a.y-b.y)-Math.hypot(c.x-b.x,c.y-b.y))[0];near.owner=0;near.prog=1;}}catch(e){}};}
+try{const _sw=spawnWave;spawnWave=function(n){if(G&&G.inv&&!G.rpg&&(P.rank||0)<3&&n<=3){const sv=G.size;G.size=Math.round(sv*.7);try{return _sw(n);}finally{G.size=sv;}}return _sw(n);};}catch(e){}
+// ---- honest radio: a point we never held is "taken by the enemy", not "lost" ----
+{let quiet=false;const _hq2=COMMS.hq;COMMS.hq=function(k,...a){if(quiet&&k==='capLost')return;return _hq2.call(this,k,...a);};
+ const _pop2=pop;pop=function(txt,c,big){if(quiet&&typeof txt==='string'&&/상실|lost/i.test(txt))return;
+  if(typeof txt==='string'&&/현상수배|BOUNTY|bounty/.test(txt)&&G){const now=G.t;if(now-(G.lastBounty||-99)<25)big=false;else G.lastBounty=now;if(!/저지|stopped|shut/i.test(txt))big=false;}
+  return _pop2(txt,c,big);};
+ const _cap2=captured;captured=function(p,team){const lt=G.local.team;const held=p._held===lt;quiet=team!==lt&&!held;try{_cap2(p,team);}finally{quiet=false;}if(team!==lt&&!held)pop(L('적이 ','Enemy took ')+p.n+L(' 거점을 점령했다',''),'#ff9b9b',false);p._held=team;};}
+{const _stO=step;step=function(dt){_stO(dt);try{if(G&&G.pts)for(const p of G.pts)if(p.owner>=0&&p._held==null)p._held=p.owner;}catch(e){}};}
+// ---- hangar: reuse one WebGL preview instead of building a new renderer on every click ----
+{const _rh7=renderHangar2;renderHangar2=function(B){const keep=(typeof HP!=='undefined'&&HP.cv&&HP.r)?HP.cv:null;_rh7(B);try{const nc=B.querySelector('#hgPrev');if(keep&&nc&&nc!==keep){keep.style.cssText=nc.style.cssText;keep.id='hgPrev';nc.replaceWith(keep);if(!HP.run)hangarPreview();}}catch(e){}};}
+// ---- UI polish ----
+{const st=document.createElement('style');st.textContent=`
+body .gmap .pl.lock small{display:none!important}body .gmap .pl.lock b{opacity:.55}body .gmap .pl.lock b::before{content:'🔒 ';font-size:.8em}
+body #dpGo,body #epiGo,body #rpgRsGo,body #fgOk,body #idOk,body .chc-go{background:linear-gradient(180deg,#eef6fb,#b9d6e6)!important;color:#0a1424!important;border:1px solid #eef6fb!important;font-weight:900!important;box-shadow:0 6px 22px rgba(143,196,220,.28)!important;text-shadow:none!important}
+body #dpGo:hover,body #epiGo:hover,body #rpgRsGo:hover,body #fgOk:hover,body #idOk:hover,body .chc-go:hover{background:linear-gradient(180deg,#ffffff,#cfe6f2)!important}
+body #dpGo:disabled{background:rgba(255,255,255,.08)!important;color:#8ea3c8!important;border-color:rgba(255,255,255,.15)!important;box-shadow:none!important}
+body #cine{top:16%!important}`;document.head.appendChild(st);}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
