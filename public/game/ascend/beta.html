@@ -3316,8 +3316,8 @@ function mechInit(e,m,u){const T3=window.THREE;const fx={gears:[],lights:[],flam
 function mechFX(e,m,u,dt,now,sp){const T3=window.THREE;if(!e.mfx)mechInit(e,m,u);const fx=e.mfx;const nowS=performance.now()/1000;const scene=e.root.parent;const fly=!!u.fly;if(!fly)u.flyH=0;
  const shotAge=nowS-(e.shotAt||0);const charge=clamp(shotAge/0.9,0,1);
  // hover bob + lean + bank
- const pa=e.pyaw==null?e.byaw:e.pyaw;const tr=ANGD(pa||0,e.byaw||0)/Math.max(dt,.001);e.pyaw=e.byaw;e.bank=lerp(e.bank||0,clamp(tr*.06,-.28,.28),Math.min(1,dt*5));e.lean=lerp(e.lean||0,clamp(sp/520,0,.3)*(fly?1.4:1),Math.min(1,dt*4));
- m.wrap.position.y=(fly?6:5)+Math.sin(now*2.3+u.id)*1.3;m.wrap.rotation.z=-e.lean;m.wrap.rotation.x=e.bank;
+ const pa=e.pyaw==null?e.byaw:e.pyaw;const tr=ANGD(pa||0,e.byaw||0)/Math.max(dt,.001);e.pyaw=e.byaw;e.mbank=lerp(e.mbank||0,clamp(tr*.06,-.28,.28),Math.min(1,dt*5));e.lean=lerp(e.lean||0,clamp(sp/520,0,.3)*(fly?1.4:1),Math.min(1,dt*4));
+ m.wrap.position.y=(fly?6:5)+Math.sin(now*2.3+u.id)*1.3;m.wrap.rotation.z=-e.lean;m.wrap.rotation.x=e.mbank;
  // boarding / exiting: crouch, hatch light, tractor beam lifts the pilot
  if((u.boardT>0||u.exitT>0)&&scene){const brd=u.boardT>0;const p=brd?1-u.boardT/2.4:1-u.exitT/1.6;const crouch=Math.sin(clamp(p*1.15,0,1)*Math.PI)*14;m.wrap.position.y-=crouch;m.wrap.rotation.z-=crouch*.014;
   if(!fx.pil&&typeof mdlGet==='function'&&mdlGet('pilot')){const pi=mdlInstance('pilot',PI/2,16,'h');if(pi){fx.pil=pi;scene.add(pi.wrap);}}
@@ -3383,10 +3383,17 @@ addEventListener('keydown',e=>{if(e.code==='KeyK'&&!e.repeat&&G&&G.local&&G.loca
  const lu=G.local&&G.local.unit;const tf=$('#tFly');if(tf)tf.style.display=(touchMode&&lu&&lu.cls==='arkframe')?'':'none';};}
 
 
-function thumbWrap(){if(typeof R3==='undefined'||!R3||!R3.ready||R3._tw||!R3.thumb)return;R3._tw=1;const ot=R3.thumb;R3.thumb=function(cls,ch,w,h){try{const T3=window.THREE;if(this.initThumb)this.initThumb();if(!this._thL&&this.ts){this._thL=1;this.ts.add(new T3.HemisphereLight(0xe8f0ff,0x3a3448,1.7));const d=new T3.DirectionalLight(0xffffff,2.6);d.position.set(3,5,4);this.ts.add(d);const d2b=new T3.DirectionalLight(0x9fd0ff,1.8);d2b.position.set(-4,3,-3);this.ts.add(d2b);try{if(window.__TX&&window.__TX.RoomEnvironment&&this.tr){const pm=new T3.PMREMGenerator(this.tr);this.ts.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}}catch(e){}}
-  const c=CL[cls];const key=c&&c.arm==='inf'&&!c.bug?INF_M[P.faction==='emp'?'emp':'fed'][INF_ROLE[cls]||'t']:(MDL[cls]&&MDL[cls][0]);if(key&&mdlUse()&&!mdlGet(key)){const before=new Set(Object.keys(this.thumbCache));const out=ot.call(this,cls,ch,w,h);for(const k of Object.keys(this.thumbCache))if(!before.has(k))delete this.thumbCache[k];return out;}}catch(e){}return ot.call(this,cls,ch,w,h);};}
+function thumbWrap(){if(typeof R3==='undefined'||!R3||!R3.ready||R3._tw||!R3.thumb)return;R3._tw=1;const ot=R3.thumb;R3.thumb=function(cls,ch,w,h){try{const T3=window.THREE;const c=CL[cls];const key=c&&c.arm==='inf'&&!c.bug?INF_M[P.faction==='emp'?'emp':'fed'][INF_ROLE[cls]||'t']:(MDL[cls]&&MDL[cls][0]);
+  if(!key||!mdlUse())return ot.call(this,cls,ch,w,h);if(!mdlGet(key)){const before=new Set(Object.keys(this.thumbCache));const out=ot.call(this,cls,ch,w,h);for(const k of Object.keys(this.thumbCache))if(!before.has(k))delete this.thumbCache[k];return out;}
+  const ck='M|'+cls+'|'+key+'|'+w+'x'+h;let src=this.thumbCache[ck];
+  if(!src){this.initThumb();if(!this._thL&&this.ts){this._thL=1;this.ts.add(new T3.HemisphereLight(0xe8f0ff,0x3a3448,1.8));const d=new T3.DirectionalLight(0xffffff,2.8);d.position.set(3,5,4);this.ts.add(d);const d2b=new T3.DirectionalLight(0x9fd0ff,2.0);d2b.position.set(-4,3,-3);this.ts.add(d2b);try{if(window.__TX&&window.__TX.RoomEnvironment&&this.tr){const pm=new T3.PMREMGenerator(this.tr);this.ts.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}}catch(e){}}
+   const inst=c.arm==='inf'?mdlInstance(key,PI/2,24,'h'):mdlInstance(key,MDL[cls][1],MDL[cls][2],MDL[cls][3]);if(!inst)return ot.call(this,cls,ch,w,h);const root=new T3.Group();root.add(inst.wrap);root.rotation.y=.6;if(inst.mx){inst.mx.mixer.update(.4);}this.ts.add(root);root.updateMatrixWorld(true);
+   const box=new T3.Box3().setFromObject(root);const sz=box.getSize(new T3.Vector3()),ct=box.getCenter(new T3.Vector3());const fov=this.tc.fov*Math.PI/180;const asp=w/h;const need=Math.max(sz.y,Math.max(sz.x,sz.z)/asp)*.6/Math.tan(fov/2)+Math.max(sz.x,sz.z)*.5;
+   this.tr.setPixelRatio(1);this.tr.setSize(w,h,false);this.tc.aspect=asp;this.tc.updateProjectionMatrix();this.tc.position.set(ct.x+need*.5,ct.y+need*.28,ct.z+need*.82);this.tc.lookAt(ct);const ex=this.tr.toneMappingExposure;this.tr.toneMappingExposure=1.25;this.tr.setClearColor(0x15213a,1);this.tr.render(this.ts,this.tc);this.tr.toneMappingExposure=ex;
+   src=document.createElement('canvas');src.width=w;src.height=h;src.getContext('2d').drawImage(this.tr.domElement,0,0);this.ts.remove(root);this.thumbCache[ck]=src;}
+  const out=document.createElement('canvas');out.width=w;out.height=h;out.getContext('2d').drawImage(src,0,0);return out;}catch(e){console.warn('thumb',e);return ot.call(this,cls,ch,w,h);}};}
 let _mdlOk=0;function mdlPreload(){if(typeof mdlUse!=='function'||!mdlUse()||!window.__TX||!window.__TX.GLTFLoader)return;const keys=new Set(['pilot']);for(const f of Object.values(INF_M))for(const k of Object.values(f))keys.add(k);if(MDL.arkframe)keys.add(MDL.arkframe[0]);for(const k of keys)mdlGet(k);
- let n=0;for(const k in MC)if(MC[k].st==='ok')n++;if(n!==_mdlOk){_mdlOk=n;if(R3&&R3.thumbCache)R3.thumbCache={};const dp=$('#deploy');if(dp&&!dp.classList.contains('hidden')&&typeof openDeploy==='function'){clearTimeout(mdlPreload.t);mdlPreload.t=setTimeout(()=>{try{if(!$('#deploy').classList.contains('hidden'))openDeploy();}catch(e){}},400);}}}
+ let n=0;for(const k in MC)if(MC[k].st==='ok')n++;if(n!==_mdlOk){_mdlOk=n;const dp=$('#deploy');if(dp&&!dp.classList.contains('hidden')&&typeof openDeploy==='function'){clearTimeout(mdlPreload.t);mdlPreload.t=setTimeout(()=>{try{if(!$('#deploy').classList.contains('hidden'))openDeploy();}catch(e){}},500);}}}
 setInterval(()=>{try{thumbWrap();mdlPreload();}catch(e){}},1000);
 
 // new Zeta giants
@@ -4051,7 +4058,7 @@ const BGRIM={seoul:0xff6ad5,hangar:0xffc27a,fire:0xff7a2a,ice:0x9fe0ff,space:0x8
 #vnVig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.55) 100%)}
 #vnLB1,#vnLB2{position:absolute;left:0;right:0;height:0;background:#000;transition:height .5s;z-index:3}#vnLB1{top:0}#vnLB2{bottom:0}#rpgDlg.cine #vnLB1,#rpgDlg.cine #vnLB2{height:9vh}
 #vn3d{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
-#rpgDlg .box{z-index:2;width:100%!important;max-width:none;margin:0!important;border:none!important;border-radius:0!important;background:linear-gradient(180deg,rgba(3,6,14,0),rgba(3,6,14,.78) 26%,rgba(3,6,14,.93))!important;padding:46px max(6vw,22px) 30px!important;min-height:24vh;box-shadow:none!important}
+#rpgDlg .box{z-index:2;box-sizing:border-box;width:100%!important;max-width:none;margin:0!important;border:none!important;border-radius:0!important;background:linear-gradient(180deg,rgba(3,6,14,0),rgba(3,6,14,.78) 26%,rgba(3,6,14,.93))!important;padding:46px max(6vw,22px) 30px!important;min-height:24vh;box-shadow:none!important}
 #rpgDlg .who{margin:0 0 10px!important;padding:5px 16px 5px 12px!important;border-radius:4px!important;background:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,0))!important;border-left:4px solid var(--wc,#7fd1ff);font-size:clamp(16px,1.5vw,20px);letter-spacing:.06em;text-shadow:0 0 12px var(--wc,#7fd1ff)}
 #dlgTx{font-size:clamp(16px,1.55vw,21px)!important;line-height:1.75!important;text-shadow:0 2px 6px rgba(0,0,0,.8);max-width:1100px}
 #vnNext{position:absolute;right:max(6vw,22px);bottom:22px;color:#9ff6ff;font-size:18px;animation:vnBlink 1s infinite;display:none}@keyframes vnBlink{50%{opacity:.2;transform:translateY(3px)}}
