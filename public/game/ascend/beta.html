@@ -3424,6 +3424,9 @@ setInterval(()=>{try{if(typeof R3==='undefined'||!R3||!R3.ready||R3._meA)return;
 // quick battle: deploy infantry part-way toward the front during the opening minutes
 {const _suF=spawnUnit;spawnUnit=function(s,cls,sp,opt){const u=_suF(s,cls,sp,opt);try{if(u&&G&&!G.rpg&&!G.client&&!MAP.space&&s===G.local&&(sp==null||sp===-1||sp==='base')&&!(opt&&opt.x!=null)&&CL[cls]&&CL[cls].arm==='inf'&&G.t<240){const b=BASES[u.team];const k=.36;u.x=clamp(b.x+(WW/2-b.x)*k+rnd(-60,60),40,WW-40);u.y=clamp(b.y+(WH/2-b.y)*k+rnd(-60,60),40,WH-40);u.spawnProt=Math.max(u.spawnProt||0,2);}}catch(e){}return u;};}
 
+// anonymous play counters (shared account script)
+setTimeout(()=>{try{const _smT=startMatch;startMatch=function(...a){const r=_smT.apply(this,a);try{if(!window.__auto&&window.HKAccount&&HKAccount.track)HKAccount.track('start');}catch(e){}return r;};const _emT=endMatch;endMatch=function(...a){const was=G&&G.over;const r=_emT.apply(this,a);try{if(G&&!was&&G.over&&!window.__auto&&window.HKAccount&&HKAccount.track)HKAccount.track('finish');}catch(e){}return r;};}catch(e){}},0);
+
 
 // ================= v2.2 : CLEAN HOME SCREEN (key art · right action stack · drawers) =================
 function homeRedesign(){const M=document.getElementById('menu');if(!M||M.dataset.v2)return;const rpg=document.getElementById('mRpg'),solo=document.getElementById('mSolo');if(!rpg||!solo)return;M.dataset.v2=1;
