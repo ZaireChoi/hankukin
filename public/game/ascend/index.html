@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.17 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.18 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -7427,7 +7427,7 @@ addEventListener('keydown',e=>{if(e.code==='KeyG'&&!e.repeat&&G&&G.local&&!G.ove
 // the new Saber body already carries its red armour texture: no palette remap / glow map on top of it
 {const _cgS=custGet;custGet=function(){const c=_cgS();try{const k=(typeof myMechKey==='function')?myMechKey():'';if(k==='mech3'){c.mix=0;c.tint=Math.min(c.tint==null?.25:c.tint,.25);c.emis='#140000';c.glow=c.glow==='#ffffff'?'#ff6a5a':c.glow;}}catch(e){}return c;};}
 
-try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>rotW(b,q),part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE()};}catch(e){window.__axErr=String(e);}
+try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>rotW(b,q),part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE(),mdlGet:(f)=>mdlGet(f),mc:(f)=>MC[f]};}catch(e){window.__axErr=String(e);}
 
 // ================= v3.15b : Saber's back panels become real wings — split from the skin at load, hinged on the upper spine; left opens clockwise, right counter-clockwise, then thrust =================
 const WSPLIT={mech3:{zc:.205,zg:.27,yLock:.86,yTop:.97,yBot:.25,hingeY:.86,open:1.7}};
@@ -7699,6 +7699,6 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
-<script src="lib/transform.js?v=3172"></script>
+<script src="lib/transform.js?v=318"></script>
 </body>
 </html>
