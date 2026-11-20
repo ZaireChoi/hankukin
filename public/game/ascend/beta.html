@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.12 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.13 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6907,7 +6907,7 @@ function eqTick(e,m,u,dt){const T3=window.THREE;const scene=e.root.parent;const 
  // models that were still loading: retry every second
  if(e.eq.missing&&e.eq.missing.length&&(e.eq.retry=(e.eq.retry||0)-dt)<0){e.eq.retry=1;e.eq.key='';}
  const O=e.eq.o;const ya=e.byaw||0;const aim=u.aa!=null?u.aa:ya;const fw=new T3.Vector3(Math.cos(ya),0,Math.sin(ya));const up=new T3.Vector3(0,1,0);
- const v=new T3.Vector3(),v2=new T3.Vector3();const meleeNow=u.melT>0||u.slashT>0||!!u.lunge||!!u.melSw;e._swapT=lerp(e._swapT||0,meleeNow?1:0,Math.min(1,dt*(meleeNow?18:4)));
+ const v=new T3.Vector3(),v2=new T3.Vector3();const meleeNow=u.melT>0||u.slashT>0||!!u.lunge||!!u.melSw||!!u.melSw2;e._swapT=lerp(e._swapT||0,meleeNow?1:0,Math.min(1,dt*(meleeNow?18:4)));
  const place=(obj,pos,yaw,pitch,roll)=>{if(!obj)return;obj.position.copy(pos);obj.rotation.set(roll||0,-yaw,pitch||0,'YXZ');};
  // right hand gun (aims where you shoot); hides while the blade is out
  if(O.gun){(B.RightHand||B.RightForeArm).getWorldPosition(v);const rc=e._recoil||0;v.addScaledVector(new T3.Vector3(Math.cos(aim),0,Math.sin(aim)),H*.08-rc*H*.06);place(O.gun,v,aim,0);O.gun.visible=e._swapT<.5;if(O.gun.userData&&O.gun.userData.spin!=null){}}
@@ -6954,6 +6954,186 @@ function fxFlash(p,col,size,life){try{const T3=window.THREE;const s=new T3.Sprit
 // ---- melee: swing whoosh, blade hum, metal clang on hit; shield block clang ----
 {const _msS=meleeSwing;meleeSwing=function(u,tg){const S=styleOf(u);SFX2.swing(!!S.heavy);if(Math.random()<.4)SFX2.hum();const hp0=tg&&tg.hp;_msS(u,tg);try{if(tg&&tg.hp<hp0)SFX2.clang();}catch(e){}};}
 {const _huB=hurt;hurt=function(t,amt,src,ang,dt){try{const me=G&&G.local&&G.local.unit;if(t===me&&me&&src&&src!==G.local){const e=myE();if(e&&e.eq&&e.eq.o.shield){const sa=src.unit?Math.atan2(src.unit.y-me.y,src.unit.x-me.x):null;if(sa!=null&&Math.abs(ANGD(me.aa||0,sa))<.9){amt*=.6;if(!(me._blkT>G.t)){me._blkT=G.t+.25;SFX2.block();const p=e.eq.o.shield.position.clone();fxFlash(p,'#9fd0ff',30,.12);for(let i=0;i<8;i++)part(p.x,p.z,rnd(-160,160),rnd(-160,160),.3,'#e8f6ff',4,p.y);}}}}}catch(e){}return _huB(t,amt,src,ang,dt);};}
+
+// ================= v3.13 : real gripping hands — Meshy armored fist replaces the open hand and holds the weapon; arm raises to aim =================
+window.__GRIP=window.__GRIP||{rx:0,ry:0,rz:0,fs:.15,off:.02,flip:1};
+function gripTick(e,m,u,dt){const T3=window.THREE;const B=motBones(m);const scene=e.root.parent;if(!B||!B.RightHand||!B.RightForeArm||!scene||!e.eq)return;const H=(e.wg&&e.wg.H)||90;const O=e.eq.o;const GP=window.__GRIP;const fx=e.mfx;
+ // build the fists once (right always; left when twin pistols or two-handed)
+ if(!e.grip){const fr=eqModel('wm_fist',H*GP.fs,'x');if(!fr)return;const wrapR=new T3.Group();const innerR=new T3.Group();innerR.add(fr);wrapR.add(innerR);scene.add(wrapR);let wrapL=null,innerL=null;if(e.eq.pl.gun2){const fl=eqModel('wm_fist',H*GP.fs,'x');if(fl){wrapL=new T3.Group();innerL=new T3.Group();fl.scale.x*=-1;innerL.add(fl);wrapL.add(innerL);scene.add(wrapL);}}
+  e.grip={wrapR,innerR,wrapL,innerL};
+}
+ if(fx){for(const k of['saber','orb','blade']){const o=fx[k];if(o&&!o.userData.freed){if(o.parent)o.parent.remove(o);scene.add(o);o.userData.freed=1;}else if(o&&o.parent!==scene){scene.add(o);}}}
+ if(e.eq.key!==e.grip.key){e.grip.key=e.eq.key;}
+ const meleeNow=u.melT>0||u.slashT>0||!!u.lunge||!!u.melSw||!!u.melSw2||e.eq.pl.meleeOnly;const gunHeld=O.gun&&!meleeNow;
+ // aim pose: raise the gun arm toward the target when shooting
+ const nowS=performance.now()/1000;const shooting=gunHeld&&((nowS-(e.shotAt||0)<.8)||u._wantFire||(G.autoT&&!G.autoT.dead));e._aimK=lerp(e._aimK||0,shooting?1:0,Math.min(1,dt*(shooting?10:4)));
+ const aim=u.aa!=null?u.aa:(e.byaw||0);const aimV=new T3.Vector3(Math.cos(aim),-.08,Math.sin(aim)).normalize();
+ if(e._aimK>.02&&B.RightArm){const a=new T3.Vector3(),h=new T3.Vector3();B.RightArm.getWorldPosition(a);B.RightHand.getWorldPosition(h);const cur=h.sub(a).normalize();const q=new T3.Quaternion().setFromUnitVectors(cur,aimV);rotW(B.RightArm,new T3.Quaternion().slerp(q,.9*e._aimK));
+  if(e.eq.pl.gun2&&B.LeftArm){const a2=new T3.Vector3(),h2=new T3.Vector3();B.LeftArm.getWorldPosition(a2);B.LeftHand.getWorldPosition(h2);const c2=h2.sub(a2).normalize();rotW(B.LeftArm,new T3.Quaternion().slerp(new T3.Quaternion().setFromUnitVectors(c2,aimV),.9*e._aimK));}}
+ // shrink the open hands so the armored fists replace them
+ B.RightHand.scale.setScalar(.02);B.RightHand.updateMatrixWorld(true);if(e.grip.wrapL&&B.LeftHand){B.LeftHand.scale.setScalar(.02);B.LeftHand.updateMatrixWorld(true);}
+ const place=(wrap,inner,hand,fore,side)=>{const wp=new T3.Vector3(),fp=new T3.Vector3();hand.getWorldPosition(wp);fore.getWorldPosition(fp);const Y=wp.clone().sub(fp).normalize();// forearm direction (wrist → knuckles)
+  // grip axis: perpendicular to the forearm, leaning toward the frame's forward
+  const fw=new T3.Vector3(Math.cos(e.byaw||0),0,Math.sin(e.byaw||0));let X=fw.clone().sub(Y.clone().multiplyScalar(fw.dot(Y)));if(X.lengthSq()<1e-4)X.set(0,1,0).sub(Y.clone().multiplyScalar(Y.y));X.normalize();const Z=new T3.Vector3().crossVectors(X,Y).normalize();
+  const M=new T3.Matrix4().makeBasis(X,Y,Z);wrap.quaternion.setFromRotationMatrix(M);wrap.position.copy(wp).addScaledVector(Y,H*GP.off);inner.rotation.set(GP.rx,GP.ry,GP.rz);return{wp:wrap.position.clone(),X,Y,Z};};
+ const R0=place(e.grip.wrapR,e.grip.innerR,B.RightHand,B.RightForeArm,1);let L0=null;if(e.grip.wrapL)L0=place(e.grip.wrapL,e.grip.innerL,B.LeftHand,B.LeftForeArm,-1);
+ // weapon in the fist
+ const setAlong=(obj,p,dir,up,shift)=>{if(!obj)return;const X=dir.clone().normalize();let Yv=up.clone().sub(X.clone().multiplyScalar(up.dot(X)));if(Yv.lengthSq()<1e-4)Yv.set(0,1,0);Yv.normalize();const Zv=new T3.Vector3().crossVectors(X,Yv);obj.quaternion.setFromRotationMatrix(new T3.Matrix4().makeBasis(X,Yv,Zv));obj.position.copy(p).addScaledVector(X,shift||0);};
+ if(gunHeld){setAlong(O.gun,R0.wp,aimV,new T3.Vector3(0,1,0),(O.gun.userData.len||H*.5)*.22);O.gun.visible=true;if(O.gun2&&L0){setAlong(O.gun2,L0.wp,aimV,new T3.Vector3(0,1,0),(O.gun2.userData.len||H*.3)*.22);O.gun2.visible=true;}}
+ else{if(O.gun)O.gun.visible=false;if(O.gun2)O.gun2.visible=false;}
+ // melee weapon: Meshy model in the fist along the grip axis (blade out of the thumb side)
+ if(!O.melH&&e.eq.pl.mel){O.melH=eqModel(e.eq.pl.mel,H*e.eq.pl.melLen,'x');if(O.melH)scene.add(O.melH);}
+ const bladeDir=R0.X.clone().multiplyScalar(GP.flip);
+ if(O.melH){O.melH.visible=meleeNow;if(meleeNow)setAlong(O.melH,R0.wp,bladeDir,R0.Y,(O.melH.userData.len||H*.6)*.38);}
+ if(O.melB)O.melB.visible=!meleeNow;
+ // energy blade (procedural saber) rides the same grip: base at the fist, along the blade direction
+ if(fx&&fx.saber&&fx.saber.userData.freed){const s=fx.saber;const isSaberStyle=!e.eq.pl.mel;s.visible=meleeNow||isSaberStyle;const q=new T3.Quaternion().setFromUnitVectors(new T3.Vector3(0,1,0),bladeDir.clone().normalize());s.quaternion.copy(q);s.position.copy(R0.wp);const ws=H/(fx.H||H);s.scale.setScalar(isSaberStyle?ws*1:ws*.95);if(!isSaberStyle&&s.userData.glow){s.userData.glow.material.opacity=Math.min(s.userData.glow.material.opacity,.25);if(s.userData.core)s.userData.core.visible=false;}}
+ if(fx&&fx.orb&&fx.orb.userData.freed){fx.orb.position.copy(R0.wp);fx.orb.scale.setScalar(H*.06);}
+ if(fx&&fx.blade&&fx.blade.userData.freed){fx.blade.visible=false;}
+ e.muzzle=gunHeld&&O.gun?R0.wp.clone().addScaledVector(aimV,(O.gun.userData.len||H*.5)*.75):e.muzzle;if(gunHeld&&O.gun2&&L0)e.muzzle2=L0.wp.clone().addScaledVector(aimV,(O.gun2.userData.len||H*.3)*.75);}
+{const _maG=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maG(e,m,u,dt,now);try{if(u&&u.cls==='arkframe'&&G&&G.local&&u===G.local.unit&&m&&m.obj&&e.eq)gripTick(e,m,u,dt);}catch(er){if(!window.__gripErr)window.__gripErr=String(er&&er.stack||er).slice(0,300);}};}
+
+
+// ================= v3.13b : melee choreography — wind-up → strike → follow-through per weapon, step-in, impact sparks, heavy ground slams =================
+const SWING_KIND=S=>S.thrust?'thrust':S.heavy?'slam':S===MSTYLE.staff?'twirl':S.twin?'cross':'slash';
+{const _msC=meleeSwing;meleeSwing=function(u,tg){const before=new Map();for(const e of G.units){if(!e.dead&&e.team!==u.team)before.set(e,e.hp);}
+ _msC(u,tg);try{const S=styleOf(u);const sw=u.melSw;if(sw){u.melSw2={t:0,T:Math.max(.2,S.rate*.95),i:sw.i,fin:sw.fin,kind:SWING_KIND(S),dir:(sw.i%2?1:-1)};u.melSw=null;}
+  // step into the blow
+  const a=u.aa||0;const step=S.thrust?55:S.heavy?20:28;u.x=clamp(u.x+Math.cos(a)*step,30,WW-30);u.y=clamp(u.y+Math.sin(a)*step,30,WH-30);
+  // impact sparks on everything that was cut
+  let hits=0;for(const [e,hp0] of before){if(e.hp<hp0||e.dead){hits++;if(hits>6)break;const h=(unitH(e)||0)+30;const col=S.col?('#'+new window.THREE.Color(S.col).getHexString()):'#ffffff';for(let i=0;i<(window.__phone?6:12);i++){const b=a+rnd(-1.2,1.2);part(e.x,e.y,Math.cos(b)*rnd(160,420),Math.sin(b)*rnd(160,420),.28,i%3?'#ffd59a':col,i%3?3:5,h);}
+   try{fxFlash(new window.THREE.Vector3(e.x,h,e.y),'#ffffff',sw&&sw.fin?46:30,.08);slashMark(e.x,e.y,h,a+(sw&&sw.i%2?.7:-.7),S.col);}catch(er){}}}
+  if(hits){G.hstop=Math.max(G.hstop||0,sw&&sw.fin?.1:.045);}
+  // heavy finisher: shockwave + cracks + dust
+  if(sw&&sw.fin&&S.heavy){const x=u.x+Math.cos(a)*120,y=u.y+Math.sin(a)*120;shockRing(x,y,S.col);for(let k=0;k<3;k++)try{scorchMark(x,y,a+k*1.05,200,true);}catch(er){}for(let i=0;i<(window.__phone?14:30);i++){const b=Math.random()*6.28;part(x,y,Math.cos(b)*rnd(120,380),Math.sin(b)*rnd(120,380),.8,i%2?'#b9a78c':'#8a7a66',9,rnd(4,40));}try{SFX2.thump();}catch(er){}cam.shake=Math.max(cam.shake||0,13);}
+ }catch(er){}};}
+// short crossing slash flash at the target
+function slashMark(x,y,h,ang,col){try{const T3=window.THREE;const g=new T3.PlaneGeometry(150,10);const m=new T3.Mesh(g,new T3.MeshBasicMaterial({color:col||0xffffff,transparent:true,opacity:.95,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.position.set(x,h,y);m.rotation.set(-Math.PI/2+.4,0,-ang);R3.scene.add(m);const core=new T3.Mesh(new T3.PlaneGeometry(150,3),new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:1,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));core.position.copy(m.position);core.rotation.copy(m.rotation);R3.scene.add(core);let t=0;const f=()=>{t+=1/60;const k=t/.16;m.scale.set(1+k*.6,1-k*.7,1);core.scale.set(1+k*.6,1,1);m.material.opacity=.95*(1-k);core.material.opacity=1-k;if(k<1)requestAnimationFrame(f);else{for(const o of[m,core]){R3.scene.remove(o);o.geometry.dispose();o.material.dispose();}}};f();}catch(e){}}
+function shockRing(x,y,col){try{const T3=window.THREE;const m=new T3.Mesh(new T3.RingGeometry(20,34,48),new T3.MeshBasicMaterial({color:col||0xffc070,transparent:true,opacity:.85,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.rotation.x=-Math.PI/2;m.position.set(x,3,y);R3.scene.add(m);let t=0;const f=()=>{t+=1/60;const k=t/.45;m.scale.setScalar(1+k*11);m.material.opacity=.85*(1-k);if(k<1)requestAnimationFrame(f);else{R3.scene.remove(m);m.geometry.dispose();m.material.dispose();}};f();}catch(e){}}
+// ---- the pose: wind-up → strike → follow-through, per weapon kind ----
+{const ease=x=>1-Math.pow(1-x,3);const _maM=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maM(e,m,u,dt,now);try{if(!u||u.cls!=='arkframe'||!u.melSw2)return;const sw=u.melSw2;sw.t+=dt;if(sw.t>sw.T+.1){u.melSw2=null;return;}const B=motBones(m);if(!B||!B.RightArm)return;const T3=window.THREE;
+ const p=clamp(sw.t/sw.T,0,1);const ya=e.byaw||0;const up=new T3.Vector3(0,1,0);const side=new T3.Vector3(-Math.sin(ya),0,Math.cos(ya));const fwd=new T3.Vector3(Math.cos(ya),0,Math.sin(ya));
+ // phase curve: -1 wind-up … +1 full strike, then settle
+ const wind=.22,hit=.5;let s;if(p<wind)s=-ease(p/wind);else if(p<hit)s=-1+2*ease((p-wind)/(hit-wind));else s=1-.35*((p-hit)/(1-hit));
+ const R=(b,axis,ang)=>{if(b&&ang)rotW(b,new T3.Quaternion().setFromAxisAngle(axis,ang));};
+ if(sw.kind==='slash'){const d=sw.dir;if(sw.fin){R(B.RightArm,side,-1.1*s);R(B.Spine01,up,.35*s*d);}else{R(B.RightArm,up,1.35*s*d);R(B.Spine01,up,.45*s*d);R(B.Hips,up,.12*s*d);}}
+ else if(sw.kind==='cross'){R(B.RightArm,up,1.2*s);R(B.LeftArm,up,-1.2*s);R(B.Spine01,up,.25*s*(sw.i%2?1:-1));}
+ else if(sw.kind==='slam'){const a=p<wind?-2.3*ease(p/wind):p<hit?-2.3+3.4*ease((p-wind)/(hit-wind)):1.1;R(B.RightArm,side,a);if(B.LeftArm)R(B.LeftArm,side,a*.8);R(B.Spine01,side,a*.12);}
+ else if(sw.kind==='thrust'){const k=p<wind?-.4*ease(p/wind):p<hit?-.4+1.7*ease((p-wind)/(hit-wind)):1.3;R(B.RightArm,side,-k*1.1);R(B.Spine01,up,-.25*k);}
+ else if(sw.kind==='twirl'){R(B.Hips,up,6.283*ease(p));R(B.RightArm,side,-.9);}
+ // the blade glows hottest at the strike
+ const fx=e.mfx;if(fx&&fx.saber&&fx.saber.userData.glow){const hot=p>wind&&p<hit+.1;fx.saber.userData.glow.material.opacity=Math.min(1,fx.saber.userData.glow.material.opacity+(hot?.35:0));}
+ if(p>wind&&!sw.snd){sw.snd=1;try{SFX2.swing(sw.kind==='slam');}catch(er){}}}catch(er){}};}
+// equipment / grip logic should treat the new swing state as "melee now"
+{const _stM2=step;step=function(dt){_stM2(dt);try{const u=G&&G.local&&G.local.unit;if(u&&u.melSw2&&!u.melSw)u._melVis=1;else if(u)u._melVis=0;}catch(e){}};}
+
+
+// ================= v3.13c : brutal melee — severed limbs, stuck blades, same-spot combos, dash→thrust, shields (block & counter), android defense arts, weapon arts, clip motions =================
+// ---- clip playback through the "slash" slot (Meshy motions merged into the frame model) ----
+function clipPlay(u,name,dur){u.clipReq={n:name,t:dur||.9,T:dur||.9};}
+{const _maK=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){try{if(u&&u.cls==='arkframe'&&m&&m.mx&&m.mx.acts){const A=m.mx.acts;if(u.clipReq&&A[u.clipReq.n]){if(!A._slash0)A._slash0=A.slash||null;const ac=A[u.clipReq.n];if(A.slash!==ac){A.slash=ac;try{const d=ac.getClip().duration||2;ac.timeScale=d/Math.max(.3,u.clipReq.T);}catch(er){}}u.slashT=Math.max(u.slashT||0,.06);u.clipReq.t-=dt;if(u.clipReq.t<=0){u.clipReq=null;}}else if(A._slash0!==undefined&&A.slash!==A._slash0){A.slash=A._slash0;}}}catch(er){}_maK(e,m,u,dt,now);};}
+const hasClip=(u,n)=>{try{const e=R3.units.get(u.id);return!!(e&&e.mdl&&e.mdl.mx&&e.mdl.mx.acts&&e.mdl.mx.acts[n]);}catch(e){return false;}};
+// ---- severed limbs ----
+const LIMBS=[['LeftArm','arm'],['RightArm','arm'],['LeftUpLeg','leg'],['RightUpLeg','leg']];
+function limbDebris(p,col,big){try{const T3=window.THREE;const g=new T3.Group();const mat=new T3.MeshStandardMaterial({color:col||0x8a909a,metalness:.8,roughness:.45});const a=new T3.Mesh(new T3.BoxGeometry(big?20:14,big?46:34,big?18:13),mat);g.add(a);const j=new T3.Mesh(new T3.CylinderGeometry(7,7,8,10),new T3.MeshStandardMaterial({color:0x2a2f38,metalness:.9,roughness:.4}));j.position.y=(big?23:17);g.add(j);const glow=new T3.Mesh(new T3.SphereGeometry(5,8,6),new T3.MeshBasicMaterial({color:0xffa040}));glow.position.y=(big?26:20);g.add(glow);
+ g.position.copy(p);R3.scene.add(g);const v=new T3.Vector3(rnd(-160,160),rnd(160,260),rnd(-160,160));const w=new T3.Vector3(rnd(-8,8),rnd(-8,8),rnd(-8,8));let t=0;let ground=false;const f=()=>{const dt=1/60;t+=dt;if(!ground){v.y-=620*dt;g.position.addScaledVector(v,dt);g.rotation.x+=w.x*dt;g.rotation.y+=w.y*dt;g.rotation.z+=w.z*dt;if(g.position.y<6){g.position.y=6;if(Math.abs(v.y)>120){v.y*=-.35;v.x*=.5;v.z*=.5;}else ground=true;}if(Math.random()<.5)part(g.position.x,g.position.z,rnd(-40,40),rnd(-40,40),.4,Math.random()<.5?'#ffb36b':'#555a63',4,g.position.y);}
+  if(t<6)requestAnimationFrame(f);else{R3.scene.remove(g);g.traverse(o=>{if(o.geometry)o.geometry.dispose();});mat.dispose();}};f();}catch(e){}}
+function sever(e,pref){try{if(!e||e.dead)return false;const re=R3.units.get(e.id);if(!re||!re.mdl||!re.mdl.obj)return false;const B=motBones(re.mdl);if(!B)return false;e.sev=e.sev||{};const opts=LIMBS.filter(([b])=>B[b]&&!e.sev[b]&&(!pref||LIMBS.find(x=>x[0]===b)[1]===pref));if(!opts.length)return false;const [bn,kind]=pick(opts);e.sev[bn]=1;
+ const p=new window.THREE.Vector3();(B[bn.replace('UpLeg','Leg').replace('Arm','ForeArm')]||B[bn]).getWorldPosition(p);let col=0x8a909a;try{re.mdl.obj.traverse(o=>{if(o.isMesh&&o.material&&o.material.color&&!o.userData.keep&&col===0x8a909a)col=o.material.color.getHex();});}catch(er){}limbDebris(p,col,kind==='leg');
+ for(let i=0;i<22;i++){const b=Math.random()*6.28;part(p.x,p.z,Math.cos(b)*rnd(100,300),Math.sin(b)*rnd(100,300),.5,i%3?'#ffd59a':'#ff7a3c',i%3?3:6,p.y);}fxFlash(p,'#ffb36b',40,.12);try{SFX2.clang();SFX2.noise(.4,.3,900,200);}catch(er){}
+ if(kind==='arm'){e.st.dmg=(e.st.dmg||1)*.55;}else{e.st.spd*=.5;}pop(L(kind==='arm'?'팔 절단!':'다리 절단!',kind==='arm'?'ARM SEVERED!':'LEG SEVERED!'),'#ffb36b',false);return true;}catch(er){return false;}}
+// keep severed bones collapsed (the mixer would restore them) and let the stump spark
+{const _maSv=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maSv(e,m,u,dt,now);try{if(u&&u.sev&&m&&m.obj){const B=motBones(m);if(!B)return;for(const bn in u.sev){const b=B[bn];if(b){b.scale.setScalar(.01);}if(Math.random()<.35&&b){const p=new window.THREE.Vector3();b.getWorldPosition(p);part(p.x,p.z,rnd(-60,60),rnd(-60,60),.25,Math.random()<.6?'#ffd59a':'#ff8a3c',3,p.y);}}}}catch(er){}};}
+// melee kill on a frame/robot: it bursts apart
+{const _kuB=killUnit;killUnit=function(u,src,...a){const was=u&&u.dead;const r=_kuB(u,src,...a);try{const me=G&&G.local&&G.local.unit;if(!was&&u&&me&&src===G.local&&(me.melT>0||me.melSw2||me.lunge)&&(u.cls==='arkframe'||u.cls==='mech'||u.eRobo||u.eMech)){const h=(unitH(u)||0)+30;const p=new window.THREE.Vector3(u.x,h,u.y);for(let i=0;i<4;i++)limbDebris(p.clone().add(new window.THREE.Vector3(rnd(-20,20),rnd(0,30),rnd(-20,20))),0x6a707a,i<2);for(let i=0;i<40;i++){const b=Math.random()*6.28;part(u.x,u.y,Math.cos(b)*rnd(150,500),Math.sin(b)*rnd(150,500),.7,i%2?'#ffb36b':'#ffffff',7,h);}shockRing(u.x,u.y,0xffb36b);try{SFX2.thump();}catch(er){}}}catch(er){}return r;};}
+// ---- per-hit rules on top of the existing melee: same spot, dash→thrust, stuck blade, sever, enemy shields ----
+{const _msX=meleeSwing;meleeSwing=function(u,tg){const now=G.t;const S=styleOf(u);
+ // dash → thrust: a swing right after a lunge becomes a piercing thrust
+ const dashThrust=(u._lungeEnd&&now-u._lungeEnd<.45);
+ // same target again and again: each hit bites deeper
+ if(tg&&tg===u._lastTg&&now-(u._lastTgT||0)<1.5)u._same=Math.min(6,(u._same||0)+1);else u._same=0;u._lastTg=tg;u._lastTgT=now;
+ const mm0=u.melMul||1;u.melMul=mm0*(1+.12*u._same)*(dashThrust?1.6:1);
+ // enemy knights raise a shield against frontal cuts
+ let blocked=false;if(tg&&!tg.dead&&(tg.eMech==='knight'||tg.shieldE)&&Math.random()<.3){const fa=Math.atan2(u.y-tg.y,u.x-tg.x);if(Math.abs(ANGD(tg.aa||tg.a||0,fa))<1){blocked=true;}}
+ const hp0=tg&&tg.hp;if(blocked){const s=tg.hp;_msX(u,tg);tg.hp=Math.min(tg.mhp,s-(s-tg.hp)*.2);const h=(unitH(tg)||0)+40;fxFlash(new window.THREE.Vector3(tg.x,h,tg.y),'#ff5a5a',40,.12);for(let i=0;i<14;i++)part(tg.x,tg.y,rnd(-200,200),rnd(-200,200),.3,'#ffe0c0',4,h);try{SFX2.block();}catch(er){}pop(L('적 방패 방어!','Blocked!'),'#ff8a8a',false);try{tele('circle',{x:u.x,y:u.y,r:110,t:.35,dmg:(60+plv()*6),src:tg.slot});}catch(er){}u.melMul=mm0;return;}
+ _msX(u,tg);u.melMul=mm0;if(dashThrust&&u.melSw2){u.melSw2.kind='thrust';u._lungeEnd=0;}
+ try{if(!tg||tg.dead||!(tg.hp<hp0))return;const big=tg.cls==='arkframe'||tg.cls==='mech'||tg.eRobo||tg.eMech||tg.boss;const fin=u.melSw2&&u.melSw2.fin;
+  if(big){let ch=.08+.06*u._same+(S.heavy?.08:0)+(fin?.08:0)+(tg.hp<tg.mhp*.5?.06:0);if(tg.boss)ch*=.35;if(Math.random()<ch)sever(tg);}
+  // the blade bites in and must be ripped out
+  if(big&&(fin||dashThrust)&&!u.stuck&&Math.random()<.18){u.stuck={tg,t:0,T:.75};if(hasClip(u,'pull'))clipPlay(u,'pull',.75);pop(L('칼날이 박혔다!','Blade stuck!'),'#ffd59a',false);try{SFX2.clang();}catch(er){}}}catch(er){}};}
+{const _stSt=step;step=function(dt){_stSt(dt);try{const u=G&&G.local&&G.local.unit;if(!u)return;if(u._hadLunge&&!u.lunge)u._lungeEnd=G.t;u._hadLunge=!!u.lunge;
+ const s=u.stuck;if(s){s.t+=dt;const tg=s.tg;if(tg&&!tg.dead){const h=(unitH(tg)||0)+40;if(Math.random()<.8)part(tg.x,tg.y,rnd(-120,120),rnd(-120,120),.25,Math.random()<.5?'#ffd59a':'#ff7a3c',4,h);u.aa=Math.atan2(tg.y-u.y,tg.x-u.x);tg.vx=0;tg.vy=0;}
+  if(s.t>=s.T){u.stuck=null;if(tg&&!tg.dead){const base=60*dmgMul(u)*(1+plv()*.03);hurt(tg,base*4.5,G.local,u.aa,'x');if(!tg.boss){tg.vx=Math.cos(u.aa)*520;tg.vy=Math.sin(u.aa)*520;}const h=(unitH(tg)||0)+40;fxFlash(new window.THREE.Vector3(tg.x,h,tg.y),'#ffffff',70,.14);for(let i=0;i<30;i++){const b=u.aa+rnd(-1,1);part(tg.x,tg.y,Math.cos(b)*rnd(200,520),Math.sin(b)*rnd(200,520),.5,i%2?'#ffd59a':'#ff7a3c',6,h);}if(Math.random()<.5)sever(tg);G.hstop=Math.max(G.hstop||0,.14);cam.shake=Math.max(cam.shake||0,12);try{SFX2.clang();SFX2.thump();}catch(er){}pop(L('뽑아내기!','RIP OUT!'),'#ffd166',false);}}}}catch(er){}};}
+{const _liSt=localInput;localInput=function(u){const inp=_liSt(u);try{if(u&&u.stuck){inp.mx=0;inp.my=0;inp.fire=false;inp.a1=false;inp.a2=false;}if(u&&u.blockT>0){inp.mx*=.3;inp.my*=.3;}}catch(e){}return inp;};}
+// ---- shields: block frontal hits, then shield-bash + slash counter ----
+function hasShieldEq(){try{const e=myE();return!!(e&&e.eq&&e.eq.o.shield);}catch(er){return false;}}
+// ---- android (LINK) defense arts: better androids unlock more ----
+function linkTier(){try{const r=R();const ks=(r.links3&&r.links3.length?r.links3:[r.links&&r.links[0]]).filter(Boolean);let t=0;for(const k of ks){const Lk=LINKS[k];if(Lk)t=Math.max(t,Lk.r||1);}return t;}catch(e){return 0;}}
+function linkName(){try{const r=R();const k=(r.links3&&r.links3[0])||(r.links&&r.links[0]);return LINKS[k]?tx(LINKS[k].n):'LINK';}catch(e){return'LINK';}}
+const DEF={parry:{t:1,ch:.22,cd:4,n:K('패링','Parry')},dodge:{t:2,ch:.14,cd:5,n:K('회피 스텝','Side-step')},barrier:{t:2,cd:16,n:K('에너지 방벽','Energy barrier')},cut:{t:3,ch:.25,cd:3,n:K('탄환 절단','Bullet cut')},flip:{t:3,ch:.3,cd:10,n:K('긴급 백플립','Evasive flip')},reflect:{t:4,ch:.16,cd:6,n:K('반사 장막','Reflect')},phase:{t:5,cd:60,n:K('순간 위상','Phase shift')}};
+window.__DEF=DEF;
+function defCall(u,k){u.defCd=u.defCd||{};u.defCd[k]=G.t+DEF[k].cd;try{(window.radio||pop)(linkName()+': '+tx(DEF[k].n)+'!','#9ff6ff',false);}catch(er){pop(linkName()+': '+tx(DEF[k].n)+'!','#9ff6ff',false);}}
+const defReady=(u,k)=>linkTier()>=DEF[k].t&&!((u.defCd&&u.defCd[k])>G.t);
+{const _huD=hurt;hurt=function(t,amt,src,ang,dt){try{const me=G&&G.local&&G.local.unit;if(t===me&&me&&!me.dead&&src&&src!==G.local&&amt>0){const su=src.unit||null;const fromA=su?Math.atan2(su.y-me.y,su.x-me.x):null;const front=fromA!=null&&Math.abs(ANGD(me.aa||0,fromA))<.95;const proj=dt==='b'||dt==='k';const hp=me.hp;
+ // phase shift: lethal hit → blink behind the attacker and strike
+ if(amt>=hp&&defReady(me,'phase')&&su){defCall(me,'phase');kTele(me,su.x-Math.cos(fromA)*90,su.y-Math.sin(fromA)*90);me.aa=Math.atan2(su.y-me.y,su.x-me.x);me.spawnProt=Math.max(me.spawnProt||0,1);try{meleeSwing(me,su);}catch(er){}return;}
+ // shield block (+ counter)
+ if(front&&hasShieldEq()&&!(me._blkCd>G.t)&&Math.random()<.45){me._blkCd=G.t+.6;me.blockT=.35;amt*=.25;if(hasClip(me,'block'))clipPlay(me,'block',.45);try{SFX2.block();}catch(er){}const e=myE();if(e&&e.eq&&e.eq.o.shield){const p=e.eq.o.shield.position.clone();fxFlash(p,'#9fd0ff',46,.14);for(let i=0;i<14;i++)part(p.x,p.z,rnd(-220,220),rnd(-220,220),.3,'#e8f6ff',4,p.y);}
+  if(!(me._ctrCd>G.t)&&su&&!su.dead&&Math.hypot(su.x-me.x,su.y-me.y)<380){me._ctrCd=G.t+2.2;setTimeout(()=>{try{if(me.dead||su.dead)return;if(hasClip(me,'counter'))clipPlay(me,'counter',.6);const a=Math.atan2(su.y-me.y,su.x-me.x);me.aa=a;kLunge(me,a,Math.max(40,Math.hypot(su.x-me.x,su.y-me.y)-110),.12,0);setTimeout(()=>{try{kCircle(me.x+Math.cos(a)*90,me.y+Math.sin(a)*90,150,kbase(me)*1.6,'#9fd0ff',.7,420);pop(L('방패 반격!','SHIELD COUNTER!'),'#9fd0ff',false);meleeSwing(me,su);}catch(er){}},130);}catch(er){}},180);}
+  return _huD(t,amt,src,ang,dt);}
+ if(proj&&front&&defReady(me,'reflect')&&Math.random()<DEF.reflect.ch){defCall(me,'reflect');if(su){try{hurt(su,amt*1.2,G.local,fromA+Math.PI,'b');}catch(er){}}const p=new window.THREE.Vector3(me.x,(unitH(me)||0)+50,me.y);fxFlash(p,'#b48cff',50,.15);return;}
+ if(proj&&front&&defReady(me,'cut')&&Math.random()<DEF.cut.ch){defCall(me,'cut');me.slashT=.15;const p=new window.THREE.Vector3(me.x+Math.cos(fromA)*60,(unitH(me)||0)+50,me.y+Math.sin(fromA)*60);fxFlash(p,'#ffffff',36,.1);try{slashMark(p.x,p.z,p.y,fromA+1.57,0x9ff6ff);SFX2.zap();}catch(er){}return;}
+ if(!proj&&front&&defReady(me,'parry')&&Math.random()<DEF.parry.ch){defCall(me,'parry');if(hasClip(me,'parry'))clipPlay(me,'parry',.5);try{SFX2.clang();}catch(er){}if(su&&!su.boss){su.stun=Math.max(su.stun||0,.6);su.vx=Math.cos(fromA)*300;su.vy=Math.sin(fromA)*300;}const p=new window.THREE.Vector3(me.x+Math.cos(fromA)*50,(unitH(me)||0)+50,me.y+Math.sin(fromA)*50);fxFlash(p,'#ffe28a',44,.12);for(let i=0;i<16;i++)part(p.x,p.z,rnd(-240,240),rnd(-240,240),.3,'#ffe9b0',4,p.y);return;}
+ if(amt>me.mhp*.08&&defReady(me,'flip')&&Math.random()<DEF.flip.ch){defCall(me,'flip');if(hasClip(me,'backflip'))clipPlay(me,'backflip',.6);const a=fromA!=null?fromA+Math.PI:(me.aa||0)+Math.PI;kLunge(me,a,260,.3,0);me.spawnProt=Math.max(me.spawnProt||0,.5);return;}
+ if(defReady(me,'dodge')&&Math.random()<DEF.dodge.ch){defCall(me,'dodge');if(hasClip(me,'dodge'))clipPlay(me,'dodge',.4);const a=(fromA!=null?fromA:(me.aa||0))+(Math.random()<.5?1.57:-1.57);kLunge(me,a,170,.18,0);me.spawnProt=Math.max(me.spawnProt||0,.3);return;}
+ if(me.hp<me.mhp*.5&&defReady(me,'barrier')){defCall(me,'barrier');me.kArmor=Math.max(me.kArmor||0,3);const T3=window.THREE;try{const s=new T3.Mesh(new T3.IcosahedronGeometry(70,1),new T3.MeshBasicMaterial({color:0x7fe8ff,wireframe:true,transparent:true,opacity:.6,blending:T3.AdditiveBlending,depthWrite:false}));R3.scene.add(s);let tt=0;const f=()=>{tt+=1/60;s.position.set(me.x,(unitH(me)||0)+45,me.y);s.rotation.y+=.03;s.material.opacity=.6*(tt<2.6?1:(3-tt)/.4);if(tt<3)requestAnimationFrame(f);else{R3.scene.remove(s);s.geometry.dispose();s.material.dispose();}};f();}catch(er){}}}}catch(er){}return _huD(t,amt,src,ang,dt);};}
+// ---- weapon arts (Z / touch ART): every weapon has its own signature move ----
+const ART={saber:{n:K('난도','Flurry'),cd:8,clip:'combo'},katana:{n:K('연속 발도','Triple Draw'),cd:8,clip:'thrust'},twin:{n:K('쌍인 난무','Twin Tempest'),cd:8,clip:'combo'},axe:{n:K('회전 분쇄','Whirl Breaker'),cd:9,clip:'slam'},hammer:{n:K('지진 강타','Quake Hammer'),cd:9,clip:'slam'},mace:{n:K('지진 강타','Quake Hammer'),cd:9,clip:'slam'},lance:{n:K('돌격 관통','Lance Charge'),cd:8,clip:'thrust'},dagger:{n:K('그림자 연격','Shadow Chain'),cd:8,clip:'combo'},staff:{n:K('선풍','Cyclone Staff'),cd:9,clip:'staff'},great:{n:K('천붕참','Sky Splitter'),cd:10,clip:'slam'},whip:{n:K('휘감기','Coil Lash'),cd:8,clip:'whip'},glaive:{n:K('반월참','Half-moon Reap'),cd:8,clip:'staff'}};
+window.__ART=ART;
+function artKey(u){try{const r=R();const id=r.eq&&r.eq.mel;const it=id&&r.inv.find(x=>x.id===id);if(it&&(it.sub==='whip'))return'whip';if(it&&(it.sub==='glaive'||it.sub==='halberd'))return'glaive';}catch(e){}const S=styleOf(u);return Object.keys(MSTYLE).find(k=>MSTYLE[k]===S)||'saber';}
+function weaponArt(u){if(!u||u.dead||u.stuck)return;const k=artKey(u);const A=ART[k]||ART.saber;if((u.artCd||0)>G.t){return;}if(u.en!=null&&u.en<25){pop(L('에너지 부족','Low energy'),'#9fcfe8',false);return;}u.artCd=G.t+A.cd;if(u.en!=null)u.en-=25;const base=kbase(u)*(u.melMul||1);const a=u.aa||0;const S=styleOf(u);
+ if(hasClip(u,A.clip))clipPlay(u,A.clip,k==='saber'||k==='twin'?1:.8);(window.arAnnounce||announce)('',tx(A.n),'',true,'#ffd166');try{SFX2.charge(.25);}catch(er){}
+ const sl=(i,n,fin)=>kLater(i,()=>{u.melSw2={t:0,T:.12,i:n,fin,kind:SWING_KIND(S),dir:n%2?1:-1};slashFx(u,S,n%2,fin);try{SFX2.swing(!!S.heavy);}catch(er){}kHitUnits(e=>{const d=Math.hypot(e.x-u.x,e.y-u.y);return d<S.range*1.1&&Math.abs(ANGD(u.aa,Math.atan2(e.y-u.y,e.x-u.x)))<1.3;},base*(fin?3.2:1.1),u.aa,fin?380:60);try{swArea(u.x+Math.cos(u.aa)*110,u.y+Math.sin(u.aa)*110,150,base,G.local);}catch(er){}});
+ if(k==='saber'){for(let i=0;i<8;i++)sl(i*.09,i,i===7);kLater(.8,()=>{for(const d of[.8,-.8])try{slashMark(u.x+Math.cos(a)*120,u.y+Math.sin(a)*120,60,a+d,0xff5ad8);}catch(er){}});}
+ else if(k==='twin'||k==='dagger'){const ts=foesNear(u,600,k==='dagger'?3:1);for(let i=0;i<12;i++)kLater(i*.07,()=>{const t=ts[i%Math.max(1,ts.length)];if(k==='dagger'&&t&&!t.dead&&i%4===0){kTele(u,t.x-Math.cos(a)*60,t.y-Math.sin(a)*60);u.aa=Math.atan2(t.y-u.y,t.x-u.x);}u.melSw2={t:0,T:.08,i,fin:i===11,kind:'cross',dir:1};slashFx(u,S,i%2,i===11);kHitUnits(e=>Math.hypot(e.x-u.x,e.y-u.y)<220,base*(i===11?2.6:.8),u.aa,50);});}
+ else if(k==='katana'){for(let i=0;i<3;i++)kLater(i*.28,()=>{const t=foesNear(u,600,1)[0];const aa=t?Math.atan2(t.y-u.y,t.x-u.x):u.aa;const sx=u.x,sy=u.y;kLunge(u,aa,380,.1,0);kLater(.11,()=>{kLine(u,sx,sy,aa,420,70,base*3,'#dff4ff',140);slashFx(u,S,i%2,true);});});}
+ else if(k==='axe'){for(let i=0;i<10;i++)kLater(i*.08,()=>{u.melSw2={t:0,T:.1,i,fin:false,kind:'twirl',dir:1};kCircle(u.x,u.y,260,base*1.1,'#ffa040',0,180);});kLater(.85,()=>{shockRing(u.x,u.y,0xffa040);for(let q=0;q<4;q++)scorchMark(u.x,u.y,q*.8,300,true);});}
+ else if(k==='hammer'||k==='mace'||k==='great'){u.kJump=.55;kLater(.55,()=>{const x=u.x+Math.cos(a)*(k==='great'?60:0),y=u.y+Math.sin(a)*(k==='great'?60:0);kCircle(x,y,k==='great'?220:360,base*(k==='great'?3:4),'#ffc070',1,420);shockRing(x,y,0xffc070);for(let q=0;q<5;q++)scorchMark(x,y,q*1.25,320,true);if(k==='great')kLine(u,u.x,u.y,a,760,90,base*4.5,'#ffe28a',300);G.hstop=.16;cam.shake=16;try{SFX2.thump();}catch(er){}});}
+ else if(k==='lance'){kLunge(u,a,620,.3,base*2.6);u.spawnProt=Math.max(u.spawnProt||0,.45);kLater(.32,()=>{kCircle(u.x+Math.cos(a)*60,u.y+Math.sin(a)*60,160,base*2.4,'#9ff6ff',.4,400);});}
+ else if(k==='staff'||k==='glaive'){for(let i=0;i<14;i++)kLater(i*.06,()=>{u.melSw2={t:0,T:.1,i,fin:false,kind:'twirl',dir:1};for(const e of G.units){if(e.dead||e.team===u.team||e.boss)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<420&&d>60){e.vx=(e.vx||0)+(u.x-e.x)/d*90;e.vy=(e.vy||0)+(u.y-e.y)/d*90;}}kCircle(u.x,u.y,k==='glaive'?300:230,base*.7,k==='glaive'?'#ff9be8':'#b48cff',0,0);});}
+ else if(k==='whip'){const t=foesNear(u,620,1)[0];if(t){for(let j=0;j<10;j++)part(u.x+(t.x-u.x)*j/10,u.y+(t.y-u.y)*j/10,0,0,.3,'#ff5ad8',5,60);kLater(.25,()=>{if(t.dead)return;const aa=Math.atan2(t.y-u.y,t.x-u.x);t.x=u.x+Math.cos(aa)*120;t.y=u.y+Math.sin(aa)*120;t.stun=Math.max(t.stun||0,.8);hurt(t,base*2.2,G.local,aa,'x');kLater(.2,()=>{kCircle(u.x+Math.cos(aa)*120,u.y+Math.sin(aa)*120,150,base*2.6,'#ff5ad8',.5,300);slashFx(u,S,1,true);});});}}
+ }
+addEventListener('keydown',e=>{if(e.code==='KeyZ'&&!e.repeat&&G&&G.local&&G.local.unit&&G.local.unit.cls==='arkframe')weaponArt(G.local.unit);});
+{const tb=document.createElement('div');tb.className='tb';tb.id='tArt';tb.style.cssText='display:none;border-color:#ffd166;width:40px;height:40px;font-size:8.5px';tb.textContent='ART';const host=document.getElementById('touchUI');if(host)host.appendChild(tb);tb.addEventListener('touchstart',e=>{e.preventDefault();try{weaponArt(G.local.unit);}catch(er){}},{passive:false});
+ setInterval(()=>{try{const lu=G&&G.local&&G.local.unit;tb.style.display=(touchMode&&lu&&lu.cls==='arkframe'&&!G.over)?'':'none';if(lu){const k=artKey(lu);const A=ART[k]||ART.saber;const cd=Math.max(0,(lu.artCd||0)-G.t);const t=cd>0?Math.ceil(cd)+'s':tx(A.n);if(tb.textContent!==t)tb.textContent=t;}}catch(e){}},300);
+ const st=document.createElement('style');st.textContent='html body #touchUI #tArt{right:168px!important;bottom:104px!important;border-radius:50%!important;display:flex;align-items:center;justify-content:center;transform:none!important}';document.head.appendChild(st);}
+// auto-battle also uses the weapon art when foes are close
+{const _ahA=autoHuntInput;autoHuntInput=function(u){const inp=_ahA(u);try{if(inp&&!(u.artCd>G.t)&&foesNear(u,260,3).length>=2)weaponArt(u);}catch(e){}return inp;};}
+// frame kits get matching motions where the clip exists
+{for(const [k,clip] of Object.entries({flash:'thrust',fivecut:'combo',bladefall:'slam',iaido:'thrust',tenzan:'combo',crimson:'combo',titanfall:'slam',quake:'slam',bash:'counter',gale:'thrust',cyclone:'staff',dive:'slam',execute:'combo'})){const f=SK[k];if(typeof f!=='function')continue;SK[k]=function(u){try{if(hasClip(u,clip))clipPlay(u,clip,.8);}catch(e){}return f(u);};}}
+
+
+// ================= v3.13d : skill combinations — chain inputs inside a short window to unleash a linked finisher =================
+const CHAIN={hist:[]};
+const COMBOS=[
+ {seq:['D','Z'],n:K('돌진 연참','Dash Slash Chain'),fn:u=>{const S=styleOf(u);const a=u.aa||0;for(let i=0;i<3;i++)kLater(.12+i*.1,()=>{kLine(u,u.x,u.y,a+(i-1)*.35,420,60,kbase(u)*2.2,'#ff9be8',160);slashFx(u,S,i%2,i===2);});}},
+ {seq:['Q','D'],n:K('섬광 추격','Flash Pursuit'),fn:u=>{const t=foesNear(u,900,1)[0];if(!t)return;kLater(.05,()=>{const a=Math.atan2(t.y-u.y,t.x-u.x);kTele(u,t.x-Math.cos(a)*80,t.y-Math.sin(a)*80);u.aa=a;if(hasClip(u,'thrust'))clipPlay(u,'thrust',.5);for(let i=0;i<3;i++)kLater(.08+i*.09,()=>{meleeSwing(u,t);});});}},
+ {seq:['F','Z'],n:K('낙하 일격','Meteor Strike'),fn:u=>{u.kJump=.5;if(hasClip(u,'slam'))clipPlay(u,'slam',.6);kLater(.5,()=>{if(u.fly){try{arkFly(u,false);}catch(e){}}kCircle(u.x,u.y,380,kbase(u)*5,'#ffe28a',1,480);shockRing(u.x,u.y,0xffe28a);for(let q=0;q<6;q++)scorchMark(u.x,u.y,q*1.05,340,true);cam.shake=18;G.hstop=.18;try{SFX2.thump();}catch(e){}});}},
+ {seq:['B','Z'],n:K('역습 난도','Riposte Flurry'),fn:u=>{if(hasClip(u,'counter'))clipPlay(u,'counter',.5);for(let i=0;i<6;i++)kLater(i*.07,()=>{kHitUnits(e=>Math.hypot(e.x-u.x,e.y-u.y)<240,kbase(u)*1.4,u.aa,80,i===5?.8:0);slashFx(u,styleOf(u),i%2,i===5);});}},
+ {seq:['C','D','E'],n:K('포화 돌격','Barrage Charge'),fn:u=>{const a=u.aa||0;kLater(.1,()=>{kLine(u,u.x,u.y,a,520,110,kbase(u)*3,'#ffd166',260);for(let i=0;i<6;i++){const x=u.x+Math.cos(a)*(120+i*80),y=u.y+Math.sin(a)*(120+i*80);kLater(.15+i*.05,()=>kCircle(x,y,120,kbase(u)*1.6,'#ff9a3c',.2,120),x,y,120);}});}},
+ {seq:['Z','R'],n:K('필살 연계','Ultimate Link'),fn:u=>{G.hstop=Math.max(G.hstop||0,.3);cam.shake=Math.max(cam.shake||0,10);u.kOD=Math.max(u.kOD||0,4);for(let i=0;i<16;i++){const b=i/16*6.28;part(u.x+Math.cos(b)*60,u.y+Math.sin(b)*60,Math.cos(b)*500,Math.sin(b)*500,.6,'#ffd166',8,60);}shockRing(u.x,u.y,0xffd166);}},
+ {seq:['E','Q'],n:K('베고 쏘기','Cut & Blast'),fn:u=>{const a=u.aa||0;kLater(.2,()=>{kLine(u,u.x,u.y,a,1100,70,kbase(u)*3.4,'#9ff6ff',240);fxFlash(new window.THREE.Vector3(u.x+Math.cos(a)*60,(unitH(u)||0)+50,u.y+Math.sin(a)*60),'#ffffff',70,.15);});}}];
+window.__COMBOS=COMBOS;
+function chainPush(tok){try{const u=G&&G.local&&G.local.unit;if(!u||u.dead||u.cls!=='arkframe'||G.over)return;const now=G.t;CHAIN.hist=CHAIN.hist.filter(h=>now-h.t<1.8);CHAIN.hist.push({k:tok,t:now});
+ for(const c of COMBOS){const n=c.seq.length;if(CHAIN.hist.length<n)continue;const tail=CHAIN.hist.slice(-n);if(tail.every((h,i)=>h.k===c.seq[i])&&tail[n-1].t-tail[0].t<1.8){CHAIN.hist=[];if((u.comboCd||0)>now)return;u.comboCd=now+3;(window.arAnnounce||announce)('',L('연계: ','LINK: ')+tx(c.n),c.seq.join(' → '),true,'#ff9be8');try{SFX2.charge(.2);SFX2.clang();}catch(e){}try{c.fn(u);}catch(e){}try{mAdd&&mAdd('skills');}catch(e){}return;}}}catch(e){}}
+window.chainPush=chainPush;
+addEventListener('keydown',e=>{if(e.repeat)return;const m={KeyQ:'Q',KeyE:'E',KeyR:'R',KeyZ:'Z',Space:'D',ShiftLeft:'D',KeyC:'C',KeyX:'F'}[e.code];if(m)chainPush(m);});
+setInterval(()=>{try{for(const [id,tok] of[['tA1','Q'],['tA2','E'],['tUl','R'],['tArt','Z'],['tDash','D'],['tMsl','C'],['tFly','F']]){const b=document.getElementById(id);if(b&&!b._chain){b._chain=1;b.addEventListener('touchstart',()=>chainPush(tok),{passive:true});}}}catch(e){}},1500);
+// a successful shield block counts as a chain step
+{const _stCB=step;step=function(dt){_stCB(dt);try{const u=G&&G.local&&G.local.unit;if(u&&u.blockT>0&&!u._blkPushed){u._blkPushed=1;chainPush('B');}if(u&&!(u.blockT>0))u._blkPushed=0;if(u&&u.blockT>0)u.blockT-=dt;}catch(e){}};}
+// combo list in the customize/frame panel
+{const _coC=custOpen;custOpen=function(){_coC();try{const box=[...document.querySelectorAll('#custOv b')].find(b=>/기체 특성|Frame traits/.test(b.textContent));if(box){const d=box.parentElement;d.innerHTML+='<br><b style="color:#ff9be8">'+L('연계기','Combos')+'</b><br>'+COMBOS.map(c=>c.seq.join('→').replace(/D/g,L('대시','Dash')).replace(/F/g,L('비행','Fly')).replace(/B/g,L('방패막기','Block'))+' '+tx(c.n)).join('<br>')+'<br><span style="opacity:.7">'+L('Z: 무기 고유기 ','Z: weapon art ')+'</span>';}}catch(e){}};window.custOpen=custOpen;}
+
 
 
 
