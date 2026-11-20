@@ -10,5 +10,17 @@
         "94:D7:EE:CD:76:9F:3F:1D:42:C2:EE:99:FE:7C:1B:63:A9:D2:53:FE:F3:3A:A4:28:D9:D7:AB:5E:E0:C6:CB:4A"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hankukin.ascend",
+      "sha256_cert_fingerprints": [
+        "5A:19:44:18:E0:3F:8A:DF:11:B4:18:3A:8E:A7:6F:55:91:63:99:57:44:B5:BF:01:85:F8:14:EF:4D:4A:BE:B4"
+      ]
+    }
   }
 ]
