@@ -17,7 +17,7 @@ import {
   sendEmailVerification, sendPasswordResetEmail, signOut, setPersistence, browserLocalPersistence
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
-  getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp, query, orderBy, limit
+  getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp, query, orderBy, limit, increment
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // ── Firebase 설정 (공개해도 되는 값. 보안은 Firestore 규칙이 맡는다) ──
@@ -36,6 +36,58 @@ const EMBED_NOLOGIN = (() => { const hit = /[?&]src=crazygames\b/i.test(location
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// ── 이용 기록: 하루 단위 익명 집계 (stats/{한국날짜}) ──
+// 개인을 알아볼 수 있는 값은 저장하지 않는다. 숫자만 더한다.
+// 우리 쪽 시험 방문은 빼기: 주소에 ?internal=1 로 한 번 열면 그 브라우저는 계속 제외 (?internal=0 으로 해제)
+const STAT_SRCS = ['direct', 'dc', 'dc_dev', 'ruliweb', 'reddit', 'youtube', 'itch', 'crazygames', 'kakao', 'facebook', 'x', 'threads', 'search', 'other'];
+function kstDay() { return new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); }
+const INTERNAL = (() => { try { const q = new URLSearchParams(location.search); if (q.get('internal') === '1') localStorage.setItem('hk_internal', '1'); if (q.get('internal') === '0') localStorage.removeItem('hk_internal'); const s = (q.get('src') || '').toLowerCase(); return localStorage.getItem('hk_internal') === '1' || ['video', 'shot', 'test', 'qa'].includes(s); } catch (e) { return false; } })();
+function trafficSrc() {
+  try {
+    let s = sessionStorage.getItem('hk_src2'); if (s) return s;
+    const q = (new URLSearchParams(location.search).get('src') || '').toLowerCase().replace(/[^a-z_]/g, '');
+    if (q) s = STAT_SRCS.includes(q) ? q : (q.startsWith('dc') ? 'dc' : 'other');
+    else {
+      let h = ''; try { h = new URL(document.referrer).hostname; } catch (e) {}
+      if (!h || /hankuk-in\.com$/.test(h)) s = 'direct';
+      else if (/itch\.(io|zone)$/.test(h)) s = 'itch';
+      else if (/crazygames/.test(h)) s = 'crazygames';
+      else if (/dcinside/.test(h)) s = 'dc';
+      else if (/ruliweb/.test(h)) s = 'ruliweb';
+      else if (/reddit/.test(h)) s = 'reddit';
+      else if (/youtube|youtu\.be/.test(h)) s = 'youtube';
+      else if (/google\.|bing\.|naver\.|daum\.|yahoo\./.test(h)) s = 'search';
+      else if (/facebook|fb\./.test(h)) s = 'facebook';
+      else if (/kakao/.test(h)) s = 'kakao';
+      else if (/(^|\.)x\.com$|twitter|^t\.co$/.test(h)) s = 'x';
+      else if (/threads/.test(h)) s = 'threads';
+      else s = 'other';
+    }
+    sessionStorage.setItem('hk_src2', s); return s;
+  } catch (e) { return 'other'; }
+}
+const STAT_GAME = MODE === 'portal' ? 'portal' : (['anibrix', 'ascend'].includes(GAME) ? GAME : 'other');
+function bumpStats(keys) {
+  if (INTERNAL || !keys.length) return;
+  const data = {}; for (const k of keys) data[k] = increment(1);
+  setDoc(doc(db, 'stats', kstDay()), data, { merge: true }).catch(() => {});
+}
+function onceToday(name) { try { const k = 'hk_seen_' + name + '_' + kstDay(); if (localStorage.getItem(k)) return false; localStorage.setItem(k, '1'); return true; } catch (e) { return false; } }
+function trackVisit() {
+  try {
+    try { const today = kstDay(); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k && k.startsWith('hk_seen_') && !k.endsWith(today)) localStorage.removeItem(k); } } catch (e) {}
+    const g = STAT_GAME, keys = [g + '_visit'];
+    if (onceToday(g)) { keys.push(g + '_users', g + '_src_' + trafficSrc(), g + '_dev_' + (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop')); }
+    bumpStats(keys);
+  } catch (e) {}
+}
+function trackEvent(type) {
+  if (!['start', 'finish'].includes(type)) return;
+  const g = STAT_GAME, keys = [g + '_' + type];
+  if (type === 'start' && onceToday(g + '_play')) keys.push(g + '_players');
+  bumpStats(keys);
+}
 setPersistence(auth, browserLocalPersistence).catch(() => {});
 // 로그인 상태가 처음 확인될 때까지 기다리는 약속 (주간 순위 등에서 사용)
 const authReady = new Promise(res => { const un = onAuthStateChanged(auth, u => { un(); res(u); }); });
@@ -423,6 +475,8 @@ window.HKAccount = {
 };
 
 if (EMBED_NOLOGIN) { window.HKAccount.disabled = true; window.HKAccount.openLogin = window.HKAccount.openSignup = () => {}; }
+window.HKAccount.track = (type) => { try { trackEvent(type); } catch (e) {} };
+trackVisit();
 let firstState = true;
 onAuthStateChanged(auth, async user => {
   listeners.forEach(fn => { try { fn(user); } catch (e) {} });
