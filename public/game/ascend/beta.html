@@ -5492,7 +5492,7 @@ function firstGift(){const r=R();if(r.gift1)return false;r.gift1=Date.now();r.sh
 const autoHuntOn=()=>!!(G&&P.autoHunt&&!G.client&&G.local&&G.local.unit&&G.local.unit.cls==='arkframe');
 {const _ta=toggleAuto;toggleAuto=function(){if(G&&G.local&&G.local.unit&&G.local.unit.cls==='arkframe'){P.autoHunt=!P.autoHunt;saveP();toast(P.autoHunt?L('자동 사냥 켜짐 · 이동·기술·줍기 자동 [F]','Auto-hunt ON · moves, skills, loot [F]'):L('자동 사냥 꺼짐 [F]','Auto-hunt OFF [F]'));return;}return _ta();};}
 let ahWp=null,ahT=0;
-function autoHuntInput(u){const k=keys;if(k.KeyW||k.KeyA||k.KeyS||k.KeyD||(TS.L&&TS.L.id!==null))return null;
+function autoHuntInput(u){const k=keys;if(k.KeyW||k.KeyA||k.KeyS||k.KeyD||(TS.L&&TS.L.id!==null&&(TS.L.mag||0)>.12))return null;
  const inp={mx:0,my:0,mz:0,aim:u.aa,fire:false,a1:false,a2:false,ul:false,ab:false,steer:null,thr:1,tx:u.x,ty:u.y};
  let foe=null,fd=1e9;for(const e of G.units){if(e.dead||e.team===u.team)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<fd&&d<1700){fd=d;foe=e;}}
  let loot=null,ld=1e9;for(const o of (G.loot||[])){if(o.got)continue;const d=Math.hypot(o.x-u.x,o.y-u.y);if(d<ld&&d<900){ld=d;loot=o;}}
@@ -5500,7 +5500,10 @@ function autoHuntInput(u){const k=keys;if(k.KeyW||k.KeyA||k.KeyS||k.KeyD||(TS.L&
  if(loot&&(!foe||fd>380)){go(loot.x,loot.y);}
  if(foe){inp.aim=Math.atan2(foe.y-u.y,foe.x-u.x);inp.tx=foe.x;inp.ty=foe.y;inp.fire=fd<950;if(!(loot&&fd>380)){if(fd>430)go(foe.x,foe.y);else if(fd<170)go(u.x*2-foe.x,u.y*2-foe.y,.6);else{const a=Math.atan2(foe.y-u.y,foe.x-u.x)+Math.PI/2;inp.mx=Math.cos(a)*.35;inp.my=Math.sin(a)*.35;}}
   inp.a1=fd<820;inp.a2=fd<240;inp.ul=(G.local.ult||0)>=100&&fd<750;if(u.hp<u.mhp*.4&&(u.kitCd||0)<=0)try{skbUse(5);}catch(e){}}
- else if(!loot){ahT-=1/30;if(!ahWp||ahT<=0||Math.hypot(ahWp.x-u.x,ahWp.y-u.y)<120){ahWp={x:WW*(.25+Math.random()*.5),y:WH*(.25+Math.random()*.5)};ahT=8;}go(ahWp.x,ahWp.y,.85);}
+ else if(!loot){// no foe nearby: head for the fight — an enemy-held or contested point, else the enemy base
+   let best=null,bd=1e9;for(const p of (G.pts||[])){if(p.owner===u.team&&!(p.prog&&Math.abs(p.prog)<1))continue;const d=Math.hypot(p.x-u.x,p.y-u.y);if(d<bd){bd=d;best=p;}}
+   if(!best&&!G.rpg){const b=BASES[1-u.team];if(b)best={x:b.x,y:b.y};}
+   if(best&&!G.rpg){go(best.x,best.y,.9);}else{ahT-=1/30;if(!ahWp||ahT<=0||Math.hypot(ahWp.x-u.x,ahWp.y-u.y)<120){ahWp={x:WW*(.25+Math.random()*.5),y:WH*(.25+Math.random()*.5)};ahT=8;}go(ahWp.x,ahWp.y,.85);}}
  return inp;}
 {const _li=localInput;localInput=function(u){try{if(autoHuntOn()&&u===G.local.unit&&!G.paused&&!isOverlay()){const a=autoHuntInput(u);if(a)return a;}}catch(e){}return _li(u);};}
 // auto-hunt badge
@@ -7433,6 +7436,9 @@ addEventListener('keydown',e=>{if(e.code==='KeyG'&&!e.repeat&&G&&G.local&&!G.ove
  const special=u=>!!(u.boss||u.named||u.ace||u.hero||u.eMech==='ace'||(u.slot&&u.slot.ace));
  const _maG2=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maG2(e,m,u,dt,now);try{if(!u||!m||!m.obj||!G||!G.local)return;if(u===G.local.unit||u.team===G.local.team||special(u))return;const c=CL[u.cls]||{};if(!(u.cls==='arkframe'||u.eMech||c.arm==='heavy'&&c.layer===0))return;
   if(m._ws&&!m._wsG){m._wsG=1;for(const S of[m._ws.L,m._ws.R])if(S&&S.mesh)S.mesh.material=grayMat(S.mesh.material);}if(e._grayK===e._iff&&e._grayD)return;e._grayD=1;e._grayK=e._iff;m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;if(Array.isArray(o.material))o.material=o.material.map(grayMat);else if(!o.material.userData.grayFoe)o.material=grayMat(o.material);});if(e.mfx&&e.mfx.saber)e.mfx.saber.traverse&&e.mfx.saber.traverse(o=>{if(o.material&&o.material.color)o.material.color.set('#e8eef6');});}catch(er){}};}
+
+// auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
+try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
 
 try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>rotW(b,q),part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE(),mdlGet:(f)=>mdlGet(f),mc:(f)=>MC[f]};}catch(e){window.__axErr=String(e);}
 
