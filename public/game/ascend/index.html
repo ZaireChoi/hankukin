@@ -3394,7 +3394,7 @@ function thumbWrap(){if(typeof R3==='undefined'||!R3||!R3.ready||R3._tw||!R3.thu
   const out=document.createElement('canvas');out.width=w;out.height=h;out.getContext('2d').drawImage(src,0,0);return out;}catch(e){console.warn('thumb',e);return ot.call(this,cls,ch,w,h);}};}
 let _mdlOk=0;function mdlPreload(){if(typeof mdlUse!=='function'||!mdlUse()||!window.__TX||!window.__TX.GLTFLoader)return;const keys=new Set(['pilot']);for(const f of Object.values(INF_M))for(const k of Object.values(f))keys.add(k);if(MDL.arkframe)keys.add(MDL.arkframe[0]);for(const k of keys)mdlGet(k);
  let n=0;for(const k in MC)if(MC[k].st==='ok')n++;if(n!==_mdlOk){_mdlOk=n;const dp=$('#deploy');if(dp&&!dp.classList.contains('hidden')&&typeof openDeploy==='function'){clearTimeout(mdlPreload.t);mdlPreload.t=setTimeout(()=>{try{if(!$('#deploy').classList.contains('hidden'))openDeploy();}catch(e){}},500);}}}
-setInterval(()=>{try{thumbWrap();mdlPreload();}catch(e){}},1000);
+setInterval(()=>{try{thumbWrap();mdlPreload();const el=document.getElementById('lbLoad');const mn=document.getElementById('menu');if(el&&(!mn||mn.classList.contains('hidden')||(typeof G!=='undefined'&&G)))el.remove();}catch(e){}},500);
 
 // new Zeta giants
 Object.assign(STR.ko,{ztitan:'시즈 타이탄',zsled:'스카이 슬레드',levi:'리바이어던 출현! 하늘을 올려다봐라'});Object.assign(STR.en,{ztitan:'Siege Titan',zsled:'Sky Sled',levi:'Leviathan inbound! Look to the sky'});
