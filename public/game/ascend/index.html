@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.14 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.15 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -7167,58 +7167,66 @@ function loadoutOf2(u){const k=myMechKey();let L0=Object.assign({},LOADOUT[k]||L
 eqPlan=function(u){const L0=loadoutOf2(u);const pm=(window.__PRIM[myMechKey()]||{m:'rifle'}).m;const gunKind=L0.kind==='gun1'||L0.kind==='gun2';
  return{gun:gunKind?L0.main:null,gun2:null,mel:(!gunKind&&L0.main!=='beamsaber')?L0.main:null,melLen:L0.kind==='sword2'?1:L0.kind==='pole2'?1.15:.8,shield:L0.off==='shield'?'wm_tshield':null,shieldBig:true,podR:true,podL:false,how:!!L0.how,pm,meleeOnly:!gunKind,L0};};
 // grip: places fists, the one weapon, the off-hand (palm laser / shield / second hand / second blade)
-gripTick=function(e,m,u,dt){const T3=window.THREE;const B=motBones(m);const scene=e.root.parent;if(!B||!B.RightHand||!B.RightForeArm||!scene||!e.eq)return;const H=(e.wg&&e.wg.H)||90;const O=e.eq.o;const GP=window.__GRIP;const fx=e.mfx;const L0=e.eq.pl.L0||loadoutOf2(u);
- if(!e.grip||e.grip.ref!==e.eq){if(e.grip){for(const o of[e.grip.wrapR,e.grip.wrapL,e.grip.blade2,e.grip.palm])if(o&&o.parent)o.parent.remove(o);}
-  const mk=(mir)=>{const f=eqModel('wm_fist',H*GP.fs,'x');if(!f)return null;const w=new T3.Group(),i=new T3.Group();if(mir)f.scale.x*=-1;i.add(f);w.add(i);scene.add(w);return{w,i};};const R1=mk(false);if(!R1)return;const L1=(L0.off==='grip'||L0.off==='blade'||L0.off==='shield')?mk(true):null;
-  let blade2=null;if(L0.off==='blade'){blade2=eqModel(L0.main==='beamsaber'?'w_saber':L0.main,H*.7,'x');if(blade2)scene.add(blade2);}
-  let palm=null;if(L0.off==='palm'){palm=new T3.Sprite(new T3.SpriteMaterial({map:R3.glowTex||null,color:0x9ff6ff,transparent:true,opacity:.8,blending:T3.AdditiveBlending,depthWrite:false}));palm.scale.setScalar(H*.08);scene.add(palm);}
-  let hilt=null,sgun=null;if(L0.main==='beamsaber'){hilt=eqModel('wm_hilt',H*.24,'x');sgun=eqModel('wm_sgun',H*.3,'x');for(const o of[hilt,sgun])if(o){scene.add(o);o.userData.s0=o.scale.x;}}
-  e.grip={ref:e.eq,wrapR:R1.w,innerR:R1.i,wrapL:L1&&L1.w,innerL:L1&&L1.i,blade2,palm,hilt,sgun};}
- if(L0.main==='beamsaber'&&(!e.grip.hilt||!e.grip.sgun)){if(!e.grip.hilt){e.grip.hilt=eqModel('wm_hilt',H*.24,'x');if(e.grip.hilt){scene.add(e.grip.hilt);e.grip.hilt.userData.s0=e.grip.hilt.scale.x;}}if(!e.grip.sgun){e.grip.sgun=eqModel('wm_sgun',H*.3,'x');if(e.grip.sgun){scene.add(e.grip.sgun);e.grip.sgun.userData.s0=e.grip.sgun.scale.x;}}}
+gripTick=function(e,m,u,dt){const T3=window.THREE;const B=motBones(m);const scene=e.root.parent;if(!B||!B.RightHand||!B.RightForeArm||!scene||!e.eq)return;const H=(e.wg&&e.wg.H)||90;const O=e.eq.o;const fx=e.mfx;const L0=e.eq.pl.L0||loadoutOf2(u);
+ const V=()=>new T3.Vector3();const wpos=b=>{const v=V();b.getWorldPosition(v);return v;};
+ // the fist is sized from the real forearm and sits ON the wrist (cuff over the wrist joint), so it never floats apart from the arm
+ const foreLen=Math.max(H*.08,wpos(B.RightHand).distanceTo(wpos(B.RightForeArm)));const FL=foreLen*.62;
+ const twoHand=L0.off==='grip'||L0.kind==='gun2';
+ if(!e.grip||e.grip.ref!==e.eq){if(e.grip){for(const o of[e.grip.wrapR,e.grip.wrapL,e.grip.blade2,e.grip.palm,e.grip.hilt,e.grip.sgun])if(o&&o.parent)o.parent.remove(o);}
+  const mk=(mir)=>{const f=eqModel('wm_fist',FL,'x');if(!f)return null;try{f.userData.rot.rotation.set(0,0,0);}catch(er){}if(mir)f.scale.x*=-1;const w=new T3.Group();w.add(f);scene.add(w);f.traverse(o=>{if(o.isMesh&&o.material){o.material=o.material.clone();o.material.color&&o.material.color.multiplyScalar(.75);}});return{w};};
+  const useFist=!!window.__USE_FIST;const R1=useFist?mk(false):{w:new T3.Group()};if(!R1)return;const L1=(twoHand||L0.off==='blade')?(useFist?mk(true):{w:new T3.Group()}):null;
+  let blade2=null;if(L0.off==='blade'){blade2=eqModel(L0.main==='beamsaber'?'w_saber':L0.main,H*.6,'x');if(blade2)scene.add(blade2);}
+  let palm=null;if(L0.off==='palm'){palm=new T3.Sprite(new T3.SpriteMaterial({map:R3.glowTex||null,color:0x9ff6ff,transparent:true,opacity:.7,blending:T3.AdditiveBlending,depthWrite:false}));palm.scale.setScalar(H*.06);scene.add(palm);}
+  e.grip={ref:e.eq,wrapR:R1.w,wrapL:L1&&L1.w,blade2,palm,hilt:null,sgun:null};}
+ if(L0.main==='beamsaber'){if(!e.grip.hilt){e.grip.hilt=eqModel('wm_hilt',H*.2,'x');if(e.grip.hilt){scene.add(e.grip.hilt);e.grip.hilt.userData.s0=e.grip.hilt.scale.x;}}if(!e.grip.sgun){e.grip.sgun=eqModel('wm_sgun',H*.26,'x');if(e.grip.sgun){scene.add(e.grip.sgun);e.grip.sgun.userData.s0=e.grip.sgun.scale.x;}}}
  if(fx){for(const k of['saber','orb','blade']){const o=fx[k];if(o&&!o.userData.freed){if(o.parent)o.parent.remove(o);scene.add(o);o.userData.freed=1;}}}
  const meleeNow=u.melT>0||u.slashT>0||!!u.lunge||!!u.melSw||!!u.melSw2;const gunHeld=!!O.gun;
  const nowS=performance.now()/1000;const shooting=(nowS-(e.shotAt||0)<.8)||u._wantFire||(G.autoT&&!G.autoT.dead);
- const aim=u.aa!=null?u.aa:(e.byaw||0);const aimV=new T3.Vector3(Math.cos(aim),-.06,Math.sin(aim)).normalize();
- // aim pose: gun arm (and the palm arm) rises toward the target
+ const aim=u.aa!=null?u.aa:(e.byaw||0);const aimV=new T3.Vector3(Math.cos(aim),-.06,Math.sin(aim)).normalize();const fw=new T3.Vector3(Math.cos(e.byaw||0),0,Math.sin(e.byaw||0));const up=new T3.Vector3(0,1,0);
+ // arm poses: raise the gun arm to aim; on two-handers the left arm reaches for the shaft
  e._aimK=lerp(e._aimK||0,shooting&&!meleeNow?1:0,Math.min(1,dt*(shooting?10:4)));
- const raise=(arm,hand,k)=>{if(!arm||!hand||k<.02)return;const a=new T3.Vector3(),h=new T3.Vector3();arm.getWorldPosition(a);hand.getWorldPosition(h);const cur=h.sub(a).normalize();rotW(arm,new T3.Quaternion().slerp(new T3.Quaternion().setFromUnitVectors(cur,aimV),.9*k));};
- if(gunHeld||L0.main==='beamsaber')raise(B.RightArm,B.RightHand,e._aimK);if(L0.off==='palm')raise(B.LeftArm,B.LeftHand,e._aimK);if(L0.kind==='gun2'&&B.LeftArm)raise(B.LeftArm,B.LeftHand,e._aimK*.8);
- B.RightHand.scale.setScalar(.02);B.RightHand.updateMatrixWorld(true);if(e.grip.wrapL&&B.LeftHand){B.LeftHand.scale.setScalar(.02);B.LeftHand.updateMatrixWorld(true);}
- const frame=(hand,fore)=>{const wp=new T3.Vector3(),fp=new T3.Vector3();hand.getWorldPosition(wp);fore.getWorldPosition(fp);const Y=wp.clone().sub(fp).normalize();const fw=new T3.Vector3(Math.cos(e.byaw||0),0,Math.sin(e.byaw||0));let X=fw.clone().sub(Y.clone().multiplyScalar(fw.dot(Y)));if(X.lengthSq()<1e-4)X.set(0,1,0);X.normalize();const Z=new T3.Vector3().crossVectors(X,Y).normalize();return{wp,X,Y,Z};};
- const placeFist=(w,i,F)=>{w.quaternion.setFromRotationMatrix(new T3.Matrix4().makeBasis(F.X,F.Y,F.Z));w.position.copy(F.wp).addScaledVector(F.Y,H*GP.off);i.rotation.set(GP.rx,GP.ry,GP.rz);};
- const setAlong=(obj,p,dir,up,shift)=>{if(!obj)return;const X=dir.clone().normalize();let Yv=up.clone().sub(X.clone().multiplyScalar(up.dot(X)));if(Yv.lengthSq()<1e-4)Yv.set(0,1,0);Yv.normalize();const Zv=new T3.Vector3().crossVectors(X,Yv);obj.quaternion.setFromRotationMatrix(new T3.Matrix4().makeBasis(X,Yv,Zv));obj.position.copy(p).addScaledVector(X,shift||0);};
- const RF=frame(B.RightHand,B.RightForeArm);placeFist(e.grip.wrapR,e.grip.innerR,RF);
- // main weapon direction: guns aim; blades come out of the thumb side; two-handers rest diagonally across the body when idle
- let dir;const len=(O.gun||O.melH)?(((O.gun||O.melH).userData.len)||H*.6):H*.6;
- if(gunHeld)dir=aimV.clone();else{dir=RF.X.clone().multiplyScalar(GP.flip);if((L0.kind==='pole2'||L0.kind==='sword2')&&!meleeNow){dir=new T3.Vector3(Math.cos(e.byaw||0),.9,Math.sin(e.byaw||0)).normalize();}}
- if(O.gun){setAlong(O.gun,RF.wp,dir,new T3.Vector3(0,1,0),len*(L0.kind==='gun2'?.05:.22));O.gun.visible=true;}
+ const pointArm=(arm,hand,dirW,k)=>{if(!arm||!hand||k<.02)return;const cur=wpos(hand).sub(wpos(arm)).normalize();rotW(arm,new T3.Quaternion().slerp(new T3.Quaternion().setFromUnitVectors(cur,dirW.clone().normalize()),k));};
+ if(gunHeld||L0.main==='beamsaber')pointArm(B.RightArm,B.RightHand,aimV,.9*e._aimK);if(L0.off==='palm')pointArm(B.LeftArm,B.LeftHand,aimV,.9*e._aimK);
+ if(window.__USE_FIST){B.RightHand.scale.setScalar(.02);B.RightHand.updateMatrixWorld(true);if(e.grip.wrapL&&B.LeftHand){B.LeftHand.scale.setScalar(.02);B.LeftHand.updateMatrixWorld(true);}}
+ // fist basis: Z = forearm→hand, X = grip bar (the weapon axis), Y = Z×X. Returns where the grip bar is.
+ const fist=(w,hand,fore,want)=>{const wr=wpos(hand),Z=wr.clone().sub(wpos(fore)).normalize();let X=want.clone().sub(Z.clone().multiplyScalar(want.dot(Z)));if(X.lengthSq()<1e-4){X=new T3.Vector3().crossVectors(Z,up);if(X.lengthSq()<1e-4)X.set(1,0,0);}X.normalize();const Y=new T3.Vector3().crossVectors(Z,X).normalize();w.quaternion.setFromRotationMatrix(new T3.Matrix4().makeBasis(X,Y,Z));w.position.copy(wr).addScaledVector(Z,FL*.36);return{bar:wr.clone().addScaledVector(Z,window.__USE_FIST?FL*.62:foreLen*(window.__PALM||.32)),X,Y,Z};};
+ const setAlong=(obj,p,dir,upv,shift)=>{if(!obj)return;const X=dir.clone().normalize();let Yv=upv.clone().sub(X.clone().multiplyScalar(upv.dot(X)));if(Yv.lengthSq()<1e-4)Yv.set(0,1,0);Yv.normalize();const Zv=new T3.Vector3().crossVectors(X,Yv);obj.quaternion.setFromRotationMatrix(new T3.Matrix4().makeBasis(X,Yv,Zv));obj.position.copy(p).addScaledVector(X,shift||0);};
+ const len=(O.gun||O.melH)?(((O.gun||O.melH).userData.len)||H*.6):H*.6;
+ // desired weapon direction
+ let want;if(gunHeld)want=up.clone().negate();// pistol grip: bar points down, barrel follows the forearm
+ else if((L0.kind==='pole2'||L0.kind==='sword2')&&!meleeNow)want=fw.clone().add(up.clone().multiplyScalar(.9)).normalize();
+ else want=fw.clone().add(up.clone().multiplyScalar(.25)).normalize();
+ if(twoHand&&meleeNow&&!gunHeld){const sw=u.melSw2;const ph=sw?clamp(sw.t/(sw.T||.3),0,1):.5;const a0=(sw&&sw.dir<0)?-1.4:1.4;const ang=lerp(a0,-a0,ph*ph*(3-2*ph));const sd=fw.clone().applyAxisAngle(up,ang*.6).add(up.clone().multiplyScalar(lerp(.9,-.3,ph))).normalize();pointArm(B.RightArm,B.RightHand,sd,.8);want=sd.clone();}
+ const RF=fist(e.grip.wrapR,B.RightHand,B.RightForeArm,want);
+ if(O.gun){const barrel=RF.Z.clone();setAlong(O.gun,RF.bar.clone().addScaledVector(RF.X,-len*.07),barrel,RF.X.clone().negate(),len*(L0.kind==='gun2'?.1:.18));O.gun.visible=true;}
  if(!O.melH&&e.eq.pl.mel){O.melH=eqModel(e.eq.pl.mel,H*e.eq.pl.melLen,'x');if(O.melH)scene.add(O.melH);}
- if(O.melH){O.melH.visible=true;setAlong(O.melH,RF.wp,dir,RF.Y,len*(L0.kind==='pole2'?.1:.38));}
- // off hand
- if(e.grip.wrapL){if(L0.off==='grip'){// second fist on the shaft/handle
-   const p=RF.wp.clone().addScaledVector(dir,-len*(L0.kind==='gun2'?-.18:.16));const F={wp:p,X:dir.clone(),Y:RF.Y.clone(),Z:new T3.Vector3().crossVectors(dir,RF.Y).normalize()};placeFist(e.grip.wrapL,e.grip.innerL,F);}
-  else{const LF=frame(B.LeftHand,B.LeftForeArm);placeFist(e.grip.wrapL,e.grip.innerL,LF);if(e.grip.blade2){const d2v=LF.X.clone().multiplyScalar(-GP.flip);setAlong(e.grip.blade2,LF.wp,d2v,LF.Y,(e.grip.blade2.userData.len||H*.6)*.38);}}}
- if(e.grip.palm&&B.LeftHand){const p=new T3.Vector3();B.LeftHand.getWorldPosition(p);e.grip.palm.position.copy(p);const pulse=.7+.3*Math.sin(nowS*8)+(shooting?.6:0);e.grip.palm.scale.setScalar(H*.06*pulse);e.palmPos=p.clone();}
- // transforming saber: shooting retracts the beam, the hilt folds out into a pistol; when the shooting stops it folds back and the beam re-ignites
+ if(O.melH){O.melH.visible=true;setAlong(O.melH,RF.bar,RF.X,RF.Y,len*(L0.kind==='pole2'?.12:.36));}
+ const wdir=gunHeld?RF.Z:RF.X;
+ // left hand: on two-handers it takes the shaft (arm reaches toward it, fist on its own wrist)
+ if(e.grip.wrapL&&B.LeftHand&&B.LeftForeArm){if(twoHand){const tgt=RF.bar.clone().addScaledVector(wdir,gunHeld?len*.25:-len*.22);pointArm(B.LeftArm,B.LeftHand,tgt.clone().sub(wpos(B.LeftArm)),.85);B.LeftHand.updateMatrixWorld(true);fist(e.grip.wrapL,B.LeftHand,B.LeftForeArm,gunHeld?up.clone().negate():wdir);}
+  else{const LF=fist(e.grip.wrapL,B.LeftHand,B.LeftForeArm,want);if(e.grip.blade2)setAlong(e.grip.blade2,LF.bar,LF.X,LF.Y,(e.grip.blade2.userData.len||H*.6)*.36);}}
+ if(e.grip.palm&&B.LeftHand){const p=wpos(B.LeftHand);e.grip.palm.position.copy(p);const pulse=.6+.25*Math.sin(nowS*8)+(shooting?.4:0);e.grip.palm.scale.setScalar(H*.05*pulse);e.palmPos=p.clone();}
+ // transforming saber: shooting retracts the beam and the hilt folds out into a pistol; afterwards it folds back and the beam re-ignites
  let gunK=0;if(L0.main==='beamsaber'){const wantG=shooting&&!meleeNow?1:0;if(wantG)e._gHold=nowS+1.1;const tgt=(wantG||(e._gHold>nowS&&!meleeNow))?1:0;e._gunK=clamp((e._gunK||0)+(tgt?dt*6:-dt*4),0,1);gunK=e._gunK;
-  if(tgt!==e._gTgt){e._gTgt=tgt;try{SFX2.hatch();}catch(er){}for(let i=0;i<10;i++)part(RF.wp.x,RF.wp.z,rnd(-120,120),rnd(-120,120),.25,tgt?'#9ff6ff':'#ffd59a',3,RF.wp.y);if(!tgt)setTimeout(()=>{try{SFX2.hum();}catch(er){}},180);}
-  const hk=clamp(1-gunK*2,0,1),gk=clamp((gunK-.35)/.65,0,1),ge=gk*gk*(3-2*gk);const gdir=dir.clone().lerp(aimV,ge).normalize();
-  if(e.grip.hilt){const h=e.grip.hilt;h.visible=hk>.02;if(h.visible){setAlong(h,RF.wp,dir,RF.Y,(h.userData.len||H*.24)*.18);h.rotateX(gunK*9);h.scale.setScalar(h.userData.s0*Math.max(.05,hk));}}
-  if(e.grip.sgun){const g=e.grip.sgun;g.visible=gk>.02;if(g.visible){setAlong(g,RF.wp,gdir,new T3.Vector3(0,1,0),(g.userData.len||H*.3)*.12);g.rotateX((1-ge)*2.4);g.scale.setScalar(g.userData.s0*Math.max(.05,ge));}}}
- if(fx&&fx.saber&&fx.saber.userData.freed){const s=fx.saber;const beam=L0.main==='beamsaber';const bk=clamp(1-gunK*5,0,1);s.visible=beam&&bk>.02;if(s.visible){s.quaternion.copy(new T3.Quaternion().setFromUnitVectors(new T3.Vector3(0,1,0),dir.clone().normalize()));const hl=e.grip.hilt?(e.grip.hilt.userData.len||H*.24)*.45:0;s.position.copy(RF.wp).addScaledVector(dir,hl);const sc=H/(fx.H||H);s.scale.set(sc,sc*bk,sc);if(s.userData.core)s.userData.core.visible=true;}}
- // shield: gripped in the left fist (not strapped to the forearm)
- if(O.shield&&e.grip.wrapL&&L0.off==='shield'){const LF=frame(B.LeftHand,B.LeftForeArm);placeFist(e.grip.wrapL,e.grip.innerL,LF);const fw=new T3.Vector3(Math.cos(e.byaw||0),0,Math.sin(e.byaw||0));O.shield.position.copy(LF.wp).addScaledVector(fw,H*.07);}
+  if(tgt!==e._gTgt){e._gTgt=tgt;try{SFX2.hatch();}catch(er){}if(!tgt)setTimeout(()=>{try{SFX2.hum();}catch(er){}},180);}
+  const hk=clamp(1-gunK*2,0,1),gk=clamp((gunK-.35)/.65,0,1),ge=gk*gk*(3-2*gk);
+  if(e.grip.hilt){const h=e.grip.hilt;h.visible=hk>.02;if(h.visible){setAlong(h,RF.bar,RF.X,RF.Y,(h.userData.len||H*.2)*.1);h.rotateX(gunK*9);h.scale.setScalar(h.userData.s0*Math.max(.05,hk));}}
+  if(e.grip.sgun){const g=e.grip.sgun;g.visible=gk>.02;if(g.visible){const gl=g.userData.len||H*.26;setAlong(g,RF.bar.clone().addScaledVector(RF.Y,gl*.12),RF.Z,RF.Y,gl*.2);g.rotateX((1-ge)*2.4);g.scale.setScalar(g.userData.s0*Math.max(.05,ge));}}}
+ if(fx&&fx.saber&&fx.saber.userData.freed){const s=fx.saber;const beam=L0.main==='beamsaber';const bk=clamp(1-gunK*5,0,1);s.visible=beam&&bk>.02;if(s.visible){s.quaternion.copy(new T3.Quaternion().setFromUnitVectors(up,RF.X));const hl=e.grip.hilt?(e.grip.hilt.userData.len||H*.2)*.5:H*.05;s.position.copy(RF.bar).addScaledVector(RF.X,hl);const sc=H/(fx.H||H);s.scale.set(sc,sc*bk,sc);if(s.userData.core)s.userData.core.visible=true;}}
  // howitzer: folded away, rises over the shoulder only to fire
  if(O.how){const fireH=(e._howRc||0)>0||(shooting&&!meleeNow);e._howK=clamp((e._howK||0)+(fireH?dt*5:-dt*2),0,1);if(fireH)e._howHold=nowS+1.5;if(e._howHold>nowS)e._howK=Math.max(e._howK,.999);if(!O.how.userData.s0)O.how.userData.s0=O.how.scale.x;const hk2=e._howK;O.how.visible=hk2>.03;O.how.scale.setScalar(O.how.userData.s0*Math.max(.05,hk2));O.how.position.y-=(1-hk2)*H*.12;}
  if(fx&&fx.orb&&fx.orb.userData.freed)fx.orb.visible=false;if(fx&&fx.blade)fx.blade.visible=false;
- // muzzle: gun tip, or the open palm for palm-laser loadouts
- if(gunK>.7&&e.grip.sgun){e.muzzle=RF.wp.clone().addScaledVector(aimV,(e.grip.sgun.userData.len||H*.3)*.62);e.muzzle2=null;return;}
- e.muzzle=gunHeld&&O.gun?RF.wp.clone().addScaledVector(aimV,len*.75):(L0.off==='palm'&&e.palmPos?e.palmPos.clone().addScaledVector(aimV,H*.05):null);e.muzzle2=null;};
+ if(gunK>.7&&e.grip.sgun){e.muzzle=RF.bar.clone().addScaledVector(RF.Z,(e.grip.sgun.userData.len||H*.26)*.7);e.muzzle2=null;return;}
+ e.muzzle=gunHeld&&O.gun?RF.bar.clone().addScaledVector(RF.Z,len*.7):(L0.off==='palm'&&e.palmPos?e.palmPos.clone().addScaledVector(aimV,H*.05):null);e.muzzle2=null;};
+
 // shots of palm-laser loadouts visibly leave the left palm: a beam streak from the palm to the aim
 {const _stPl=step;step=function(dt){_stPl(dt);try{const u=G&&G.local&&G.local.unit;if(!u||u.dead||u.cls!=='arkframe')return;const e=myE();if(!e||!e.grip||!e.grip.palm)return;const ft=u.fireT||0;if(ft>(u._plF||0)+.01&&e.palmPos){const a=u.aa||0;for(let i=0;i<6;i++)part(e.palmPos.x+Math.cos(a)*i*18,e.palmPos.z+Math.sin(a)*i*18,Math.cos(a)*900,Math.sin(a)*900,.12,i%2?'#9ff6ff':'#ffffff',4,e.palmPos.y);}u._plF=ft;}catch(er){}};}
 
 // re-dress when the loadout changes (gear swap), and keep the large shield large
 {const _stLo=step;step=function(dt){_stLo(dt);try{const u=G&&G.local&&G.local.unit;if(!u||u.cls!=='arkframe')return;const e=myE();if(!e||!e.eq)return;const L0=loadoutOf2(u);const sig=myMechKey()+'|'+L0.main+'|'+L0.kind+'|'+L0.off;if(e._loSig&&e._loSig!==sig){for(const o of Object.values(e.eq.o))if(o&&o.parent)o.parent.remove(o);e.eq=null;}e._loSig=sig;}catch(er){}};}
+
+// two-handed weapons: Meshy two-hand swing motions when the frame carries them
+{const _msP=meleeSwing;meleeSwing=function(u,tg){try{if(G&&G.local&&u===G.local.unit){const L0=loadoutOf2(u);if(L0.kind==='pole2'||L0.kind==='sword2'){const seq=L0.kind==='pole2'?['pole_sweep','pole_overhead','pole_spin']:['great_twohand','pole_overhead'];u._2hI=((u._2hI||0)+1)%seq.length;const c=seq[u._2hI];if(hasClip(u,c))clipPlay(u,c,.6);}}}catch(e){}return _msP(u,tg);};}
 window.loadoutOf2=loadoutOf2;
 
 // ================= v3.13f : speed — static instancing (same prop drawn once), dynamic resolution, particle cap =================
@@ -7273,7 +7281,8 @@ function wing2Build(T3,H,col){const W={g:new T3.Group(),sides:[],H,col};for(cons
 
 
 // ================= v3.14 : Diablo-style expedition — clean screen, no big centre text, small squad, link co-pilot corner, expedition-first menu, instant skills =================
-const RC=()=>{try{return !!(G&&G.rpg&&!(P&&P.rpgFull));}catch(e){return false;}};window.__RC=RC;
+try{if(P&&P.rpgClean===undefined)P.rpgClean=false;}catch(e){}
+const RC=()=>{try{return !!(G&&G.rpg&&P&&P.rpgClean);}catch(e){return false;}};window.__RC=RC;
 window.__D={launch:(a,b)=>launch(a,b),get EPIS(){return EPIS;}};
 // ---- instant skills: a key tap is never lost between frames, and charge-up delays are gone ----
 try{ENX.qCharge=.01;}catch(e){}
@@ -7318,29 +7327,35 @@ try{mdlGet('zling_sw');}catch(e){}
 {const _smR=swMesh;swMesh=function(){const M=_smR();try{if(M&&!SW.real)M.visible=false;if(M&&SW.real){M.visible=true;if(M.material&&M.material.emissiveIntensity>.3){M.material.emissive.setHex(0x3a0a10);M.material.emissiveIntensity=.25;}}}catch(e){}return M;};}
 // ---- screen chrome during expeditions ----
 {const st=document.createElement('style');st.textContent='body.rpgC #rdTog,body.rpgC #hudView,body.rpgC #m3Btn,body.rpgC #ntBtn{display:none!important}body.rpgC #autoBtn{top:auto!important;bottom:14px!important;right:auto!important;left:12px!important;transform:scale(.85);transform-origin:left bottom;opacity:.75}body.rpgC #zmBar{top:12px!important;left:12px!important;opacity:.6}'+
- '#menu #mRpg{order:-1}#menu .lb-nav{display:flex;flex-direction:column}body:not(.fieldOpen) #menu #mSolo,body:not(.fieldOpen) #menu #mArena,body:not(.fieldOpen) #menu #mOnline,body:not(.fieldOpen) #menu .ops{display:none!important}#mField{margin-top:6px;opacity:.85}';document.head.appendChild(st);}
+ 'body.rpgClean #menu #mRpg{order:-1}body.rpgClean #menu .lb-nav{display:flex;flex-direction:column}body.rpgClean:not(.fieldOpen) #menu #mSolo,body.rpgClean:not(.fieldOpen) #menu #mArena,body.rpgClean:not(.fieldOpen) #menu #mOnline,body.rpgClean:not(.fieldOpen) #menu .ops{display:none!important}#mField{margin-top:6px;opacity:.85}';document.head.appendChild(st);}
 // ---- menu: the expedition first; quick battle, 5v5 and online live under one "Battlefield" button ----
 function menuTidy(){try{const nav=document.querySelector('#menu .lb-nav');const rpg=document.getElementById('mRpg');if(!nav||!rpg)return false;if(nav.firstElementChild!==rpg)nav.insertBefore(rpg,nav.firstChild);rpg.classList.add('pri');const solo=document.getElementById('mSolo');if(solo)solo.classList.remove('pri');
  if(!document.getElementById('mField')){const b=document.createElement('button');b.className='nav';b.id='mField';b.innerHTML='<span class="tx"><span>'+L('전장','Battlefield')+'</span><small>'+L('즉시 출격 · 5:5 · 온라인 대전','Quick battle · 5v5 · Online')+'</small></span>';b.onclick=()=>{document.body.classList.toggle('fieldOpen');};const row=nav.querySelector('.lb-row');nav.insertBefore(b,row||null);}return true;}catch(e){return false;}}
-{let n=0;const iv=setInterval(()=>{if(menuTidy()||++n>40)clearInterval(iv);},500);try{const _rmR=refreshMenu;refreshMenu=function(...a){const r=_rmR.apply(this,a);menuTidy();return r;};}catch(e){}}
+{let n=0;const iv=setInterval(()=>{if(!(P&&P.rpgClean)||menuTidy()||++n>40)clearInterval(iv);},500);try{const _rmR=refreshMenu;refreshMenu=function(...a){const r=_rmR.apply(this,a);if(P&&P.rpgClean)menuTidy();return r;};}catch(e){}}
+
+try{document.body.classList.toggle('rpgClean',!!(P&&P.rpgClean));}catch(e){}
 
 // ---- loot: thin light column and a small name tag on the ground (no giant plates) ----
 {const _ldR=lootDrop;lootDrop=function(it,x,y){const r=_ldR(it,x,y);try{const o=G.loot[G.loot.length-1];if(o&&o.g){o.g.traverse(c=>{if(c.isSprite){c.material.sizeAttenuation=false;c.scale.set(.13,.0165,1);c.position.y=22;}});if(o.beam){o.beam.material.opacity=.3;o.beam.scale.set(.55,1,.55);}if(o.gem&&o.gem.material){o.gem.material.emissiveIntensity=.9;}}}catch(e){}return r;};}
 
+// ---- lasers: average reach 400 (each laser 10% longer or shorter), drawn as short bolts ----
+try{const LR={laser:420,slaser:380,ilaser:440,beamrifle:400};for(const [k,v] of Object.entries(LR))if(W[k])W[k].range=v;}catch(e){}
+window.__LASER_LEN=()=>400*(.9+Math.random()*.2);
+
 // ================= v3.14b : lasers fly as bolts (no screen-long lines) · calmer, shorter effects =================
 const BOLTS=[];window.__BOLTS=BOLTS;
-function boltFire(u,a,o){o=o||{};const T3=window.THREE;const h=(unitH(u)||0)+(o.h||44);const sp=o.spd||2600,len=o.len||980,w=o.w||60,col=o.col||0x9ff6ff;const b={x:u.x+Math.cos(a)*40,y:u.y+Math.sin(a)*40,a,sp,left:len,w,dmg:o.dmg||50,hit:new Set(),src:G.local,team:u.team,h,kb:o.kb||200};
+function boltFire(u,a,o){o=o||{};const T3=window.THREE;const h=(unitH(u)||0)+(o.h||44);const sp=o.spd||2600,len=o.len||window.__LASER_LEN(),w=o.w||60,col=o.col||0x9ff6ff;const b={x:u.x+Math.cos(a)*40,y:u.y+Math.sin(a)*40,a,sp,left:len,w,dmg:o.dmg||50,hit:new Set(),src:G.local,team:u.team,h,kb:o.kb||200};
  try{if(R3&&R3.scene&&T3){const g=new T3.Group();const L=o.vis||70,r=o.r||5;const core=new T3.Mesh(new T3.CapsuleGeometry?new T3.CapsuleGeometry(r*.55,L,4,8):new T3.CylinderGeometry(r*.55,r*.55,L,8),new T3.MeshBasicMaterial({color:0xffffff}));const glow=new T3.Mesh(new T3.CylinderGeometry(r*1.5,r*.6,L*1.25,10,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.55,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));core.rotation.z=glow.rotation.z=Math.PI/2;g.add(core);g.add(glow);g.rotation.y=-a;g.position.set(b.x,h,b.y);g.traverse(x=>{x.userData.keep=1;x.frustumCulled=false;});R3.scene.add(g);b.g=g;}}catch(e){}
  BOLTS.push(b);try{const e=myE();if(e&&e.muzzle)fxFlash(e.muzzle,'#'+new T3.Color(col).getHexString(),26,.06);}catch(e){}return b;}
 window.boltFire=boltFire;
 {const _stBo=step;step=function(dt){_stBo(dt);try{for(const b of BOLTS){if(b.dead)continue;const d=Math.min(b.left,b.sp*dt);const ca=Math.cos(b.a),sa=Math.sin(b.a);const x0=b.x,y0=b.y;b.x+=ca*d;b.y+=sa*d;b.left-=d;
   for(const e of G.units){if(e.dead||e.team===b.team||b.hit.has(e))continue;const dx=e.x-x0,dy=e.y-y0;const t=dx*ca+dy*sa;if(t<-10||t>d+10)continue;if(Math.abs(dx*sa-dy*ca)<b.w*.5+(e.r||10)){b.hit.add(e);hurt(e,b.dmg,b.src,b.a,'b');if(!e.boss){e.vx=(e.vx||0)+ca*b.kb;e.vy=(e.vy||0)+sa*b.kb;}part(e.x,e.y,rnd(-90,90),rnd(-90,90),.25,'#ffffff',4,b.h);}}
-  try{swLine(x0,y0,b.a,d,b.w*.5,b.dmg,b.src);}catch(e){}
-  if(b.g){b.g.position.set(b.x,b.h,b.y);}if(Math.random()<.5)part(b.x-ca*30,b.y-sa*30,0,0,.12,'#bff6ff',3,b.h);
+  if(b.team===G.local.team){try{swLine(x0,y0,b.a,d,b.w*.5,b.dmg,b.src);}catch(e){}}
+  if(b.g){b.g.position.set(b.x,b.h,b.y);}if(Math.random()<.5)part(b.x-ca*30,b.y-sa*30,0,0,.12,b.team===G.local.team?'#bff6ff':'#ffb0b0',3,b.h);
   if(b.left<=0||solidAt(b.x,b.y,4)){b.dead=1;if(b.g){R3.scene.remove(b.g);b.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});}part(b.x,b.y,0,0,.15,'#ffffff',6,b.h);}}
  for(let i=BOLTS.length-1;i>=0;i--)if(BOLTS[i].dead)BOLTS.splice(i,1);}catch(e){window.__boltErr=String(e&&e.stack||e).slice(0,200);}};}
 // palm laser (Q): a quick burst of three piercing bolts instead of one screen-long beam
-{qBeam=function(u){const a=u.aa!=null?u.aa:u.a;const base=60*dmgMul(u)*(1+plv()*.03);boltFire(u,a,{dmg:base*1.6,w:80,vis:90,r:7});setTimeout(()=>{try{if(!u.dead)boltFire(u,(u.aa!=null?u.aa:a)+rnd(-.03,.03),{dmg:base*1.1,w:60,vis:70,r:5});}catch(e){}},60);setTimeout(()=>{try{if(!u.dead)boltFire(u,(u.aa!=null?u.aa:a)+rnd(-.03,.03),{dmg:base*1.1,w:60,vis:70,r:5});}catch(e){}},120);try{SFX2.zap();}catch(e){}G.hstop=Math.max(G.hstop||0,.03);};}
+{qBeam=function(u){const a=u.aa!=null?u.aa:u.a;const base=60*dmgMul(u)*(1+plv()*.03);boltFire(u,a,{dmg:base*1.6,w:80,vis:60,r:6});setTimeout(()=>{try{if(!u.dead)boltFire(u,(u.aa!=null?u.aa:a)+rnd(-.03,.03),{dmg:base*1.1,w:60,vis:50,r:5});}catch(e){}},60);setTimeout(()=>{try{if(!u.dead)boltFire(u,(u.aa!=null?u.aa:a)+rnd(-.03,.03),{dmg:base*1.1,w:60,vis:50,r:5});}catch(e){}},120);try{SFX2.zap();}catch(e){}G.hstop=Math.max(G.hstop||0,.03);};}
 // skill lines: fewer, smaller sparks along the path (the hit itself is unchanged)
 {const _klC=kLine;kLine=function(u,x,y,a,len,w,dmg,col,kb){const keep=G.parts.length;const n=_klC(u,x,y,a,len,w,dmg,col,kb);try{const add=G.parts.splice(keep);for(let i=0;i<add.length;i+=4){const p=add[i];p.s=Math.min(p.s,4);p.l*=.7;G.parts.push(p);}}catch(e){}return n;};}
 // calmer effects everywhere: smaller flashes, fewer and smaller sparks, thinner slash arcs
@@ -7350,6 +7365,65 @@ window.boltFire=boltFire;
 {const _srC=shockRing;shockRing=function(x,y,col){const n0=R3&&R3.scene?R3.scene.children.length:0;_srC(x,y,col);try{const kids=R3.scene.children;for(let i=n0;i<kids.length;i++){const o=kids[i];if(o.material&&o.material.opacity!=null)o.material.opacity*=.45;}}catch(e){}};}
 // shorter tracer streaks for every gun
 try{for(const k in TRC){TRC[k][1]=Math.min(TRC[k][1],22);}}catch(e){}
+
+// ================= v3.15a : shared motion engine — one motion library drives every frame (same skeleton names), enemy lasers as bolts =================
+// Every Meshy-rigged frame shares bone names (Hips, Spine, LeftArm, RightForeArm …). Clips from the library frame are bound by bone name,
+// so a motion made once (two-hand swing, block, dodge …) plays on all frames. Only rotations are shared, so body sizes never stretch.
+const MOTLIB={src:'mech3',clips:null};window.__MOTLIB=MOTLIB;
+function motLibClips(){if(MOTLIB.clips)return MOTLIB.clips;try{const c=MC[MOTLIB.src];if(!c||c.st!=='ok'||!c.g||!c.g.animations)return null;const T3=window.THREE;const out={};for(const a of c.g.animations){const tr=a.tracks.filter(t=>/\.quaternion$/.test(t.name));if(!tr.length)continue;out[a.name]=new T3.AnimationClip(a.name,a.duration,tr);}MOTLIB.clips=out;return out;}catch(e){return null;}}
+try{mdlGet(MOTLIB.src);}catch(e){}
+{const _maL=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){try{if(window.__MOTLIB_ON&&u&&u.cls==='arkframe'&&m&&m.mx&&m.mx.acts&&m.mx.mixer&&!m.mx._lib){const L=motLibClips();if(L){m.mx._lib=1;for(const [n,clip] of Object.entries(L)){if(m.mx.acts[n])continue;try{m.mx.acts[n]=m.mx.mixer.clipAction(clip);}catch(er){}}}}}catch(er){}return _maL(e,m,u,dt,now);};}
+// ---- every laser in the field flies as a bolt: enemy beam attacks too (no screen-long lines) ----
+function boltAt(x,y,a,o){const T3=window.THREE;const b={x,y,a,sp:o.spd||2300,left:o.len||1400,w:o.w||60,dmg:o.dmg||0,hit:new Set(),src:o.src||null,team:o.team,h:o.h||46,kb:o.kb||120};
+ try{if(R3&&R3.scene&&T3){const g=new T3.Group();const L=o.vis||80,r=o.r||6;const col=o.col||(o.team===G.local.team?0x9ff6ff:0xff5a5a);const core=new T3.Mesh(new T3.CylinderGeometry(r*.5,r*.5,L,8),new T3.MeshBasicMaterial({color:0xffffff}));const glow=new T3.Mesh(new T3.CylinderGeometry(r*1.5,r*.6,L*1.25,10,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.55,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));core.rotation.z=glow.rotation.z=Math.PI/2;g.add(core);g.add(glow);g.rotation.y=-a;g.position.set(x,b.h,y);g.traverse(q=>{q.userData.keep=1;q.frustumCulled=false;});R3.scene.add(g);b.g=g;}}catch(e){}
+ window.__BOLTS.push(b);return b;}
+window.boltAt=boltAt;
+{const _stPB=step;step=function(dt){_stPB(dt);try{if(!G||!G.pend)return;for(let i=G.pend.length-1;i>=0;i--){const p=G.pend[i];if(p.k!=='beam'||p._bolt)continue;p._bolt=1;G.pend.splice(i,1);const a=Math.atan2(p.y2-p.y,p.x2-p.x),len=Math.hypot(p.x2-p.x,p.y2-p.y);const ou=p.owner&&p.owner.unit;const delay=Math.min(.35,(p.t||.5)*.35);
+  // a short glow at the muzzle, then the bolts fly (damage travels with them)
+  if(ou){for(let k=0;k<6;k++)part(ou.x+Math.cos(a)*30,ou.y+Math.sin(a)*30,rnd(-40,40),rnd(-40,40),delay+.1,p.team===G.local.team?'#bff6ff':'#ff8a8a',4,50);}
+  setTimeout(()=>{try{if(!G||G.over)return;const sx=ou&&!ou.dead?ou.x:p.x,sy=ou&&!ou.dead?ou.y:p.y;const n=Math.max(1,Math.min(3,Math.round((p.r||60)/30)));for(let k=0;k<n;k++)setTimeout(()=>{try{boltAt(sx,sy,a+rnd(-.02,.02),{team:p.team,dmg:(p.dmg||0)/n,src:p.owner,len:window.__LASER_LEN(),w:(p.r||60)*1.4,vis:60,r:k===0?7:5,kb:200});}catch(er){}},k*55);}catch(er){}},delay*1000);}}catch(e){}};}
+// ---- aim guide: a short pointer near the frame instead of a long dashed line across the screen ----
+try{const _agR=drawAimGuide;drawAimGuide=function(info,now){if(window.__RC&&window.__RC())return;return _agR(info,now);};}catch(e){}
+
+// ================= v3.15b : Saber's back panels become real wings — split from the skin at load, hinged on the upper spine; left opens clockwise, right counter-clockwise, then thrust =================
+const WSPLIT={mech3:{zc:.205,zg:.27,yLock:.86,yTop:.97,yBot:.25,hingeY:.86,open:1.7}};
+{const _miW=mdlInstance;mdlInstance=function(f,...a){const r=_miW(f,...a);try{if(r){r.mf=f;if(r.wrap)r.wrap.userData.mf=f;}}catch(e){}return r;};}window.__WSPLIT=WSPLIT;
+function wingSplit(e,m,u){if(m._ws!==undefined)return m._ws;m._ws=null;try{const cfg=WSPLIT[m.mf||(m.wrap&&m.wrap.userData&&m.wrap.userData.mf)];if(!cfg)return null;const T3=window.THREE;let sm=null;m.obj.traverse(o=>{if(o.isSkinnedMesh&&!sm)sm=o;});if(!sm||!sm.geometry.index)return null;
+ const geo=sm.geometry;const P=geo.attributes.position,N=geo.attributes.normal,UV=geo.attributes.uv;geo.computeBoundingBox();const bb=geo.boundingBox;const H=bb.max.y-bb.min.y,D=bb.max.z-bb.min.z;
+ const isC=new Uint8Array(P.count);{// weld split vertices, then grow the back panel from clear seeds so its inner face and folds come along
+  const wid=new Int32Array(P.count);const km=new Map();for(let i=0;i<P.count;i++){const k=Math.round(P.getX(i)*200/H*18)+','+Math.round(P.getY(i)*200/H*18)+','+Math.round(P.getZ(i)*200/H*18);let w=km.get(k);if(w===undefined){w=km.size;km.set(k,w);}wid[i]=w;}
+  const W=km.size;const zn=new Float32Array(W),yn=new Float32Array(W);for(let i=0;i<P.count;i++){zn[wid[i]]=(P.getZ(i)-bb.min.z)/D;yn[wid[i]]=(P.getY(i)-bb.min.y)/H;}
+  const ix=geo.index.array;const deg=new Int32Array(W+1);for(let t=0;t<ix.length;t+=3)for(let q=0;q<3;q++){deg[wid[ix[t+q]]+1]+=2;}for(let i=0;i<W;i++)deg[i+1]+=deg[i];const adj=new Int32Array(deg[W]);const fill=deg.slice(0,W);for(let t=0;t<ix.length;t+=3){const a=wid[ix[t]],b=wid[ix[t+1]],c=wid[ix[t+2]];adj[fill[a]++]=b;adj[fill[a]++]=c;adj[fill[b]++]=a;adj[fill[b]++]=c;adj[fill[c]++]=a;adj[fill[c]++]=b;}
+  const cw=new Uint8Array(W);const st=[];for(let w=0;w<W;w++){if(zn[w]<cfg.zc-.015&&yn[w]<cfg.yTop&&yn[w]>cfg.yBot){cw[w]=1;st.push(w);}}
+  while(st.length){const w=st.pop();for(let k=deg[w];k<deg[w+1];k++){const v=adj[k];if(cw[v])continue;if(zn[v]<cfg.zg&&yn[v]>cfg.yBot-.05&&(zn[v]<cfg.zc||yn[v]<cfg.yLock)){cw[v]=1;st.push(v);}}}
+  for(let i=0;i<P.count;i++)if(cw[wid[i]])isC[i]=1;}
+ const bones=sm.skeleton.bones;const bi=bones.findIndex(b=>b.name==='Spine');if(bi<0)return null;const bone=bones[bi];const toL=new T3.Matrix4().multiplyMatrices(sm.skeleton.boneInverses[bi],sm.bindMatrix);const nrm=new T3.Matrix3().getNormalMatrix(toL);
+ let tri=geo.userData.wsTri;if(!tri){const idx=geo.index.array;const keep=[];tri={L:[],R:[]};for(let t=0;t<idx.length;t+=3){const a=idx[t],b=idx[t+1],c=idx[t+2];if(isC[a]+isC[b]+isC[c]>=2){const cx=(P.getX(a)+P.getX(b)+P.getX(c))/3;tri[cx>=0?'L':'R'].push(a,b,c);}else keep.push(a,b,c);}
+  if(tri.L.length<30||tri.R.length<30)return null;geo.setIndex(keep);geo.userData.wsTri=tri;}
+ const mat0=Array.isArray(sm.material)?sm.material[0]:sm.material;const mat=mat0.clone();mat.side=T3.DoubleSide;const v=new T3.Vector3();
+ const build=(list,side)=>{const n=list.length;const pos=new Float32Array(n*3),nor=new Float32Array(n*3),uv=new Float32Array(n*2);let top=null,topY=-1e9,inX=0;for(let k=0;k<n;k++){const i=list[k];v.fromBufferAttribute(P,i).applyMatrix4(toL);pos.set([v.x,v.y,v.z],k*3);if(N){v.fromBufferAttribute(N,i).applyMatrix3(nrm).normalize();nor.set([v.x,v.y,v.z],k*3);}if(UV){uv[k*2]=UV.getX(i);uv[k*2+1]=UV.getY(i);}
+   const my=P.getY(i);if(my>topY-H*.02&&Math.abs(P.getX(i))<H*.06){if(my>topY)topY=my;}}
+  const g=new T3.BufferGeometry();g.setAttribute('position',new T3.BufferAttribute(pos,3));if(N)g.setAttribute('normal',new T3.BufferAttribute(nor,3));if(UV)g.setAttribute('uv',new T3.BufferAttribute(uv,2));
+  // hinge: top inner corner of the panel (mesh space) → bone space
+  const hy=bb.min.y+H*cfg.hingeY;let hz=-1e9,hxm=1e9;for(const i of list){if(Math.abs(P.getY(i)-hy)<H*.04){hz=Math.max(hz,P.getZ(i));hxm=Math.min(hxm,Math.abs(P.getX(i)));}}if(hz<-1e8){hz=bb.min.z+D*.2;hxm=H*.01;}const hinge=new T3.Vector3(side*hxm,hy,hz).applyMatrix4(toL);
+  const mesh=new T3.Mesh(g,mat);mesh.position.copy(hinge).negate();mesh.userData.keep=1;mesh.castShadow=false;const piv=new T3.Group();piv.position.copy(hinge);piv.add(mesh);bone.add(piv);
+  // axes in bone space: back (-z mesh) and down (-y mesh)
+  const back=new T3.Vector3(0,0,-1).applyMatrix3(nrm).normalize();const down=new T3.Vector3(0,-1,0).applyMatrix3(nrm).normalize();const side3=new T3.Vector3(side,0,0).applyMatrix3(nrm).normalize();
+  // thruster: two flame cones along the inner edge, pointing down/back
+  const HB=H*toL.getMaxScaleOnAxis();const fl=new T3.Group();bone.add(fl);const mkF=(r,l,c,o)=>{const cg=new T3.ConeGeometry(r,l,12,1,true);cg.translate(0,-l/2,0);const cm=new T3.Mesh(cg,new T3.MeshBasicMaterial({color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));cm.userData.keep=1;cm.frustumCulled=false;fl.add(cm);return cm;};
+  const fo=mkF(HB*.03,HB*.3,0xffb070,.5),fc=mkF(HB*.014,HB*.2,0xffffff,.85);fl.position.copy(hinge).add(side3.clone().multiplyScalar(HB*.05)).add(back.clone().multiplyScalar(HB*.02)).add(down.clone().multiplyScalar(HB*.05));fl.quaternion.setFromUnitVectors(new T3.Vector3(0,-1,0),back.clone().add(down.clone().multiplyScalar(.7)).normalize());fl.visible=false;
+  return{piv,mesh,back,down,side3,side,fl,fo,fc,H};};
+ m._ws={L:build(tri.L,1),R:build(tri.R,-1),cfg};return m._ws;}catch(er){window.__wsErr=String(er&&er.stack||er).slice(0,300);return null;}}
+{const _maW=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maW(e,m,u,dt,now);try{if(u&&u.illu&&e.mfx&&e.mfx.saber)e.mfx.saber.visible=false;if(!u||u.cls!=='arkframe'||!m||!m.obj)return;const W=wingSplit(e,m,u);if(!W)return;const T3=window.THREE;
+  // the Meshy back panels replace the extra wing parts on this frame
+  if(e.wg2)e.wg2.g.visible=false;if(e.wg)e.wg.g.visible=false;
+  const want=u.dead?0:u.fly?1:(u.dashT>0||u.lunge)?.55:0;e._wsK=(e._wsK||0)+clamp(want-(e._wsK||0),-dt*2.2,dt*3.2);const k=e._wsK,ke=k*k*(3-2*k);const t=performance.now()/1000;
+  for(const S of[W.L,W.R]){if(!S)continue;
+   // left wing: clockwise seen from behind; right wing: counter-clockwise → both swing up and outward around the back axis, then sweep back a little
+   const q=new T3.Quaternion().setFromAxisAngle(S.back,-S.side*W.cfg.open*ke);const q2=new T3.Quaternion().setFromAxisAngle(S.side3.clone().cross(S.back).normalize(),.25*ke+Math.sin(t*3+S.side)*.03*ke);S.piv.quaternion.copy(q.multiply(q2));
+   const thr=ke>.6;S.fl.visible=thr;if(thr){const sp=Math.hypot(u.vx||0,u.vy||0);const p=(.7+Math.min(1,sp/600)*.5)*((u.dashT>0||u.lunge)?1.4:1)*(1+Math.random()*.2);S.fo.scale.set(1,p,1);S.fc.scale.set(1,p*.9,1);
+    if(Math.random()<.4){const wp=new T3.Vector3();S.fl.getWorldPosition(wp);part(wp.x,wp.z,rnd(-30,30),rnd(-30,30),.25,Math.random()<.5?'#ffd2a0':'#ffffff',4,wp.y-8);}}}
+  if(k>.92&&!e._wsOpen){e._wsOpen=1;try{SFX2.launch();}catch(er){}}if(k<.1&&e._wsOpen){e._wsOpen=0;try{SFX2.hatch();}catch(er){}}}catch(er){if(!window.__wsErr)window.__wsErr=String(er&&er.stack||er).slice(0,300);}};}
 
 
 
