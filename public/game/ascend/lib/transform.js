@@ -61,7 +61,7 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=functi
   var c=seg(k,0,.18),l=seg(k,.1,.42),a=seg(k,.25,.52),pt=seg(k,.4,.7),pa=seg(k,.68,.92),ig=seg(k,.9,1);
   var dip=c*(1-pt);
   // 1 crouch → 4 body pitches level; altitude rises with the pitch
-  m.wrap.rotation.x+=pt*p.pitch;m.wrap.position.y+=-H*.08*dip+p.alt*pt;
+  m.wrap.rotation.z+=(window.__TFSIGN||-1)*pt*p.pitch;m.wrap.position.y+=-H*.08*dip+p.alt*pt;
   // 2 legs fold back into a tail (thighs together and straight back, knees locked)
   var fwd=new T.Vector3(0,0,1),upv=new T.Vector3(0,1,0);
   var qL=function(bone,axis,ang){if(!bone||!ang)return;bone.quaternion.multiply(new T.Quaternion().setFromAxisAngle(axis,ang));};
@@ -74,6 +74,7 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=functi
   var o=parts(e,m,H,p);if(o){scaleLocal(o.nose,pa,H);o.nose.position.z=(1-pa)*-H*.05;for(var i=0;i<o.fins.length;i++){var fg=o.fins[i];fg.scale.set(Math.max(.001,pa),1,Math.max(.001,pa));fg.rotation.y=fg.userData.side*(1-pa)*1.2;}for(var j=0;j<o.thr.length;j++)scaleLocal(o.thr[j],pa,H);
    // 7 ignition
    var sp=Math.hypot(u.vx||0,u.vy||0);for(var q=0;q<o.fl.length;q++){var fl=o.fl[q];fl.visible=ig>.02;fl.scale.set(1,ig*(.7+Math.min(1,sp/900)*.8)*(1+Math.random()*.15),1);}
+   if(k>.45){try{if(e.eq&&e.eq.o)for(var n in e.eq.o){var eo=e.eq.o[n];if(eo&&eo.isObject3D)eo.visible=false;}if(e.grip)['hilt','sgun','blade2','palm'].forEach(function(n2){if(e.grip[n2])e.grip[n2].visible=false;});if(e.mfx&&e.mfx.saber)e.mfx.saber.visible=false;}catch(er){}}
    var vis=k>.01;o.nose.visible=vis;o.fins.forEach(function(f){f.visible=vis;});o.thr.forEach(function(t){t.visible=vis;});}
  }catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
 // ---------- skill bar: rightmost cell + phone button ----------
