@@ -2597,7 +2597,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
  drawMinimap(info,mob);
  if(touchMode&&u){for(const s of[TS.L,TS.R]){if(s.id===null)continue;c.beginPath();c.arc(s.ox,s.oy,60,0,6.28);c.strokeStyle='rgba(120,200,255,.35)';c.lineWidth=3;c.stroke();c.beginPath();c.arc(s.ox+s.dx*60,s.oy+s.dy*60,24,0,6.28);c.fillStyle='rgba(120,200,255,.28)';c.fill();}}
  if(G.showSB)drawSB();};
-function drawMinimap(info,mob){const c=ctx,w=mob?140:228,h=w*WH/WW,x=VW-w-14;const yy=mob&&touchMode?(VH-h-110):VH-h-14;
+function drawMinimap(info,mob){const PL=window.__phoneLand&&window.__phoneLand();const c=ctx,w=PL?118:(mob?140:228),h=w*WH/WW,x=VW-w-14;const yy=PL&&touchMode?58:(mob&&touchMode?(VH-h-110):VH-h-14);
  plate(x-6,yy-6,w+12,h+12,10,'rgba(5,9,18,.88)','rgba(90,140,220,.6)');const sc=w/WW,lt=G.local.team;c.save();c.beginPath();c.rect(x,yy,w,h);c.clip();
  c.strokeStyle='rgba(90,140,220,.1)';c.lineWidth=1;for(let i=1;i<8;i++){c.beginPath();c.moveTo(x+w*i/8,yy);c.lineTo(x+w*i/8,yy+h);c.stroke();}for(let i=1;i<5;i++){c.beginPath();c.moveTo(x,yy+h*i/5);c.lineTo(x+w,yy+h*i/5);c.stroke();}
  for(let tm=0;tm<2;tm++){const b=BASES[tm];c.beginPath();c.arc(x+b.x*sc,yy+b.y*sc,430*sc,0,6.28);c.fillStyle=tm===lt?'rgba(61,220,151,.1)':'rgba(255,79,79,.1)';c.fill();}
@@ -3095,7 +3095,7 @@ function drawFun(info,now){const S=G&&G.story;if(!S)return;const c=ctx;c.setTran
  for(const d of S.drops||[]){const D=DROPS[d.k];if(!D)continue;const p=scrPt(d.x,d.y,(d.z||0)+14);if(!p||p.x<-30||p.x>VW+30||p.y<-30||p.y>VH+30)continue;const bob=Math.sin(now*3+(d.ph||0))*4;const rr=13;
   c.save();c.translate(p.x,p.y+bob);c.shadowColor=D.c;c.shadowBlur=16;c.fillStyle='rgba(6,11,22,.85)';c.beginPath();c.arc(0,0,rr,0,6.28);c.fill();c.lineWidth=2.5;c.strokeStyle=D.c;c.stroke();c.shadowBlur=0;
   c.fillStyle=D.c;c.font='bold 15px sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(D.ic,0,1);c.textBaseline='alphabetic';if(d.t!=null&&d.t<6&&Math.floor(now*4)%2)c.globalAlpha=.4;c.restore();c.globalAlpha=1;}
- if(S.ms&&!G.client&&!G.over){const x=14,y0=mob?(VH*.42):(VH*.42);c.font=typeof fnt==='function'?fnt(11,800,1):'bold 11px sans-serif';c.textAlign='left';c.fillStyle='rgba(140,170,220,.85)';c.fillText('◢ '+t('missions'),x,y0);
+ if(S.ms&&!G.client&&!G.over&&!(window.__phoneLand&&window.__phoneLand())){const x=14,y0=mob?(VH*.42):(VH*.42);c.font=typeof fnt==='function'?fnt(11,800,1):'bold 11px sans-serif';c.textAlign='left';c.fillStyle='rgba(140,170,220,.85)';c.fillText('◢ '+t('missions'),x,y0);
   S.ms.forEach((m,i)=>{const yy=y0+8+i*21;c.fillStyle=m.done?'rgba(40,90,50,.75)':'rgba(6,11,22,.7)';c.fillRect(x-4,yy,mob?170:230,18);c.fillStyle=m.done?'#7ee787':'#ffd166';c.fillRect(x-4,yy,2,18);
    c.font=typeof fnt==='function'?fnt(12,m.done?800:600):'12px sans-serif';c.fillStyle=m.done?'#7ee787':'#e9f0ff';c.fillText((m.done?'✓ ':'')+t('m_'+m.k,m.n),x+3,yy+13);c.textAlign='right';c.fillStyle=m.done?'#7ee787':'#8ea3c8';c.fillText(m.done?'+'+m.merit:Math.floor(m.v)+'/'+m.n,x+(mob?162:222),yy+13);c.textAlign='left';});}
  const me=G.local;if(me&&me.cs&&info.u){const k=me.cs,w=150,x=VW/2-w/2,y=VH-(mob?130:150);c.fillStyle=`rgba(90,62,8,${.75+.2*Math.sin(now*6)})`;c.fillRect(x,y,w,24);c.strokeStyle='#ffd166';c.lineWidth=1.5;c.strokeRect(x,y,w,24);
@@ -5323,6 +5323,62 @@ function skRefresh(el){el.querySelectorAll('.sk2').forEach(d=>{const k=skKeyOf(d
 {const st=document.createElement('style');st.textContent='#skb2 .sk2{width:54px!important;height:54px!important;border-width:2px!important}#skb2 .sk2 .cdt{text-shadow:0 0 3px #000,0 0 3px #000;font-weight:800}#skb2>div:nth-child(2){background:linear-gradient(180deg,rgba(30,22,10,.92),rgba(10,8,4,.95))!important;border:1px solid #6a5022!important;border-radius:8px!important}';document.head.appendChild(st);}
 // J list: icons with names (Lineage skill book look)
 {const _sl=skList;skList=function(){_sl();const w=document.getElementById('skList');if(!w)return;w.style.background='linear-gradient(180deg,rgba(30,22,10,.97),rgba(10,8,4,.97))';w.style.borderColor='#8a6a2a';w.querySelectorAll('[data-sk]').forEach(d=>{const k=d.dataset.sk;const src=atlasGet('skills',SKI[k]);d.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px;width:72px;padding:6px 4px;border:1px solid #6a5022;border-radius:6px;cursor:grab;font-size:11px;font-weight:700;text-align:center;color:#e8dcc0';d.innerHTML=(src?`<img src="${src}" style="width:48px;height:48px;border-radius:6px;border:1px solid #8a6a2a" draggable="false">`:'')+`<span>${skName(k)}</span>`;d.title=SKD[k]&&SKD[k][1]?tx(SKD[k][1]):'';});};}
+
+
+// ================= v2.5 : PHONE LANDSCAPE LAYOUT · PWA (service worker, apple-touch-icon) =================
+{const st=document.createElement('style');st.id='mob25';st.textContent=`
+@media (max-height:520px) and (orientation:landscape){
+ /* home */
+ body #menu .lb-top{top:8px!important;left:16px!important;right:16px!important}
+ body #menu .lb-top .sm{padding:4px 10px!important;font-size:11px!important;height:28px!important}
+ body #menu .lb-left{left:22px!important;top:40px!important;width:46vw!important}
+ body #menu .lb-left .logo h1{font-size:42px!important;line-height:1!important;margin:2px 0!important}
+ body #menu .lb-left .logo .motto,#menu .lb-left .logo .sub{display:none!important}
+ body .hm-stack{left:auto!important;right:14px!important;top:46px!important;bottom:auto!important;width:min(360px,44vw)!important;gap:6px!important}
+ body .hm-stack .nav{padding:8px 12px!important;min-height:0!important}
+ body .hm-stack #mRpg{padding:10px 12px!important}
+ body body .hm-stack .nav .tx>span{font-size:14px!important}body .hm-stack #mRpg .tx>span{font-size:16px!important}
+ body .hm-stack .nav small{display:none!important}
+ body body .hm-stack .lb-row{gap:6px!important}body .hm-stack .lb-row .nav{padding:6px 2px!important;font-size:11px!important;gap:2px!important}.hm-stack .lb-row .nav svg{width:16px!important;height:16px!important}
+ body #menu .lb-right{display:block!important;position:absolute!important;left:22px!important;top:auto!important;bottom:44px!important;width:min(300px,42vw)!important}
+ body #menu .lb-right>*:not(.pcard){display:none!important}
+ body #menu .pcard{padding:8px 12px!important;font-size:12px!important}
+ body #homeArt .ha-c1{left:30vw!important;height:118vh!important;bottom:-22vh!important;opacity:.9!important}#homeArt .ha-c2{display:none!important}
+ body #menu .lb-foot{padding:4px 16px!important;font-size:11px!important}body #menu .lb-foot .news{display:none!important}
+ /* galaxy expedition: one-line header, vertical tabs on the left */
+ body #rpg .panel{position:fixed!important;inset:0!important;margin:0!important;border-radius:0!important;padding:0!important;max-width:none!important;width:auto!important;height:auto!important}
+ body #rpg .rh{position:fixed!important;left:0;right:0;top:0;height:42px;display:flex!important;flex-wrap:nowrap!important;align-items:center;gap:6px!important;padding:0 8px!important;margin:0!important;background:rgba(4,8,18,.95);border-bottom:1px solid rgba(255,255,255,.08);z-index:6}
+ body #rpg .rh #rpgT{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ body #rpg .rh button{padding:4px 10px!important;font-size:11px!important;height:30px!important;min-height:0!important;white-space:nowrap}
+ body #rpg .rh .rcur{display:flex!important;gap:4px!important}body #rpg .rh .rcur span{padding:2px 6px!important}
+ body #rpg #rpgBack{order:9}
+ #rpgT,#rpgS,#rpgC,#rpgM{font-size:11px!important;padding:3px 8px!important}
+ #rpg h2{font-size:16px!important;margin:0!important}
+ body #rpg #rpgTabs{position:fixed!important;left:0;top:42px;bottom:0;width:86px;flex-direction:column!important;overflow-y:auto;gap:2px!important;padding:6px 4px!important;background:rgba(4,8,18,.92);border-right:1px solid rgba(255,255,255,.08);z-index:5;display:flex!important}
+ body #rpg #rpgTabs button{font-size:12px!important;padding:8px 4px!important;text-align:center;border-radius:6px!important}
+ body #rpg #rpgBody{position:fixed!important;left:88px!important;right:0!important;top:42px!important;bottom:0!important;margin:0!important;padding:8px 10px!important;max-height:none!important;overflow:auto!important}
+ .gmap{height:58vh!important}
+ .chc{grid-template-columns:1fr 220px!important;min-height:0!important}.chc-art{min-height:200px!important;padding:14px 18px 36px!important}.chc-ti{font-size:24px!important}.chc-sy{font-size:12px!important;line-height:1.5!important}.chc-side{padding:12px!important;gap:6px!important}
+ .pd{grid-template-columns:1fr 1fr!important;gap:8px!important}.pd-doll{min-height:0!important}
+ /* battle: mission list, radio and big banners smaller */
+ #toast{top:8%!important;font-size:12px!important;padding:6px 12px!important}
+ #touchUI .tb{width:52px!important;height:52px!important;font-size:10px!important}
+ #touchUI .tb.s{width:44px!important;height:32px!important;font-size:10px!important}
+ #bossBar{top:40px!important;width:46vw!important}
+ body #touchUI #tA1{right:150px!important;bottom:16px!important}body #touchUI #tA2{right:84px!important;bottom:66px!important}body #touchUI #tUl{right:16px!important;bottom:118px!important}body #touchUI #tAb{right:150px!important;bottom:78px!important}
+ body #touchUI #tFly{right:16px!important;bottom:178px!important;width:52px!important;height:52px!important}body #touchUI #tCs{right:84px!important;bottom:128px!important}
+ body #touchUI #tAuto{right:14px!important;bottom:240px!important}body #touchUI #tSq{right:64px!important;bottom:240px!important}
+ body #touchUI #tSB{left:12px!important;top:176px!important}body #touchUI #tPause{left:62px!important;top:176px!important}body #touchUI #tView{left:112px!important;top:176px!important}
+ body #touchUI #tArk{bottom:70px!important;width:70px!important;height:70px!important}
+ body #cine .c1,body #cine .c2{font-size:22px!important;letter-spacing:.06em!important}body #cine .c3{font-size:12px!important}
+}`;document.head.appendChild(st);}
+// compact header row for phone landscape (move currency chips + back into one line)
+function mobHdr(){try{if(!(innerHeight<=520&&innerWidth>innerHeight))return;const R0=$('#rpg');if(!R0)return;}catch(e){}}
+// touch HUD: keep the tactical map clear of skill buttons in phone landscape (canvas HUD reads this flag)
+window.__phoneLand=()=>innerHeight<=520&&innerWidth>innerHeight;
+// PWA: service worker + iOS home-screen icon
+try{if(!document.querySelector('link[rel=apple-touch-icon]')){const l=document.createElement('link');l.rel='apple-touch-icon';l.href='icon-192.png';document.head.appendChild(l);}}catch(e){}
+try{if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});}catch(e){}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if(/^Pilot-\d+$/.test(P.name||'')&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
