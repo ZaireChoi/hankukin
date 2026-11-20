@@ -47,6 +47,11 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;fl
 .tags{display:flex;gap:6px;flex-wrap:wrap}
 .tags span{font-size:12px;padding:4px 9px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:#cbd6f2}
 .play{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:17px;padding:14px;border-radius:14px;color:#fff}
+a.thumb{display:block}
+.btns{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+.btns .play{margin-top:0}
+.world{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:800;font-size:15px;padding:12px;border-radius:14px;color:#dfe8ff;border:1px solid rgba(143,180,255,.55);background:rgba(60,90,180,.18);transition:background .2s}
+.world:hover{background:rgba(80,120,220,.35)}
 .asc .play{background:linear-gradient(90deg,#3b82f6,#8b5cf6)}
 .ani .play{background:linear-gradient(90deg,#ffb84d,#ff8a00);color:#2a1300}
 .asc h2{background:linear-gradient(90deg,#6cc4ff,#c58cff,#ff7a7a);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -78,12 +83,12 @@ footer a{color:#a9bbe6}
     <div class="tags"><span data-t="aniT1">퍼즐 대전</span><span data-t="aniT2">친구 초대</span><span data-t="aniT3">보스 스테이지</span><span data-t="aniT4">4개 언어</span></div>
     <span class="play" data-t="playBtn">지금 플레이 ▶</span></div>
   </a>
-  <a class="game asc" href="/game/ascend/">
-   <div class="thumb" style="background-image:url(/game/ascend/og.jpg)"><span class="badge" data-t="newBadge">NEW v2.5 · 은하 원정 RPG</span></div>
-   <div class="body"><h2>ASCEND</h2><p data-t="ascDesc">기동전사를 타고 은하를 누비는 3D 핵앤슬래시 RPG. 이야기 8장과 엔딩 3종, 사냥터 7곳, 이름과 사연이 있는 고유 장비, 6등급으로 커지는 드론 6기, 기동전사 합체까지. 100명 AI 전장과 친구 방 대전도 그대로 즐길 수 있어요.</p>
+  <div class="game asc">
+   <a class="thumb" href="/game/ascend/" style="background-image:url(/game/ascend/og.jpg)"><span class="badge" data-t="newBadge">NEW v2.5 · 은하 원정 RPG</span></a>
+   <div class="body"><h2><a href="/game/ascend/">ASCEND</a></h2><p data-t="ascDesc">기동전사를 타고 은하를 누비는 3D 핵앤슬래시 RPG. 이야기 8장과 엔딩 3종, 사냥터 7곳, 이름과 사연이 있는 고유 장비, 6등급으로 커지는 드론 6기, 기동전사 합체까지. 100명 AI 전장과 친구 방 대전도 그대로 즐길 수 있어요.</p>
     <div class="tags"><span data-t="ascT1">이야기 RPG</span><span data-t="ascT2">핵앤슬래시 사냥</span><span data-t="ascT3">고유 장비·드론</span><span data-t="ascT4">100명 전장</span></div>
-    <span class="play" data-t="ascPlay">지금 출격 ▶</span></div>
-  </a>
+    <div class="btns"><a class="play" href="/game/ascend/" data-t="ascPlay">지금 출격 ▶</a><a class="world" href="/game/ascend/world" data-t="ascWorld">세계관 · 기동전사 도감 📖</a></div></div>
+  </div>
  </section>
  <section class="how">
   <div><b data-t="w1t">1. 게임 고르기</b><small data-t="w1d">카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.</small></div>
@@ -94,22 +99,22 @@ footer a{color:#a9bbe6}
 </div>
 <script>
 const S={
- ko:{h1:'설치 없이 <span>바로 플레이</span>',lead:'브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.',p1:'무료',p2:'설치 없음',p3:'PC · 모바일',p4:'한국어 · English',
+ ko:{ascWorld:'세계관 · 기동전사 도감 📖',h1:'설치 없이 <span>바로 플레이</span>',lead:'브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.',p1:'무료',p2:'설치 없음',p3:'PC · 모바일',p4:'한국어 · English',
   newBadge:'NEW v2.5 · 은하 원정 RPG',hotBadge:'추천 · 휴대폰 OK',playBtn:'지금 플레이 ▶',ascPlay:'지금 출격 ▶',
   ascDesc:'기동전사를 타고 은하를 누비는 3D 핵앤슬래시 RPG. 이야기 8장과 엔딩 3종, 사냥터 7곳, 이름과 사연이 있는 고유 장비, 6등급으로 커지는 드론 6기, 기동전사 합체까지. 100명 AI 전장과 친구 방 대전도 그대로 즐길 수 있어요.',ascT1:'이야기 RPG',ascT2:'핵앤슬래시 사냥',ascT3:'고유 장비·드론',ascT4:'100명 전장',
   aniDesc:'귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.',aniT1:'퍼즐 대전',aniT2:'친구 초대',aniT3:'보스 스테이지',aniT4:'4개 언어',
   w1t:'1. 게임 고르기',w1d:'카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.',w2t:'2. 친구와 함께',w2d:'방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.',w3t:'3. 성장 기록',w3d:'이메일로 가입하면 경험치, 게임머니, 기술, 계급이 계정에 저장돼서 다른 기기에서도 이어서 할 수 있어요.',rights:'모든 권리 보유',guide:'한국 여행 가이드 보기 →'},
- en:{h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
+ en:{ascWorld:'Story world · Mech guide 📖',h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
   newBadge:'NEW v2.5 · Galaxy RPG',hotBadge:'Top pick · Mobile OK',playBtn:'Play now ▶',ascPlay:'Launch now ▶',
   ascDesc:'A 3D hack-and-slash mech RPG across the galaxy. Eight story chapters with three endings, seven hunting zones, named gear with its own lore, six drones that grow through six grades, and mech fusion. The 100-player AI battlefield and room-code battles are still here.',ascT1:'Story RPG',ascT2:'Hack & slash',ascT3:'Named gear · drones',ascT4:'100-player battles',
   aniDesc:'Cute animal block battle. Clear lines, attack friends, and meet new animals and bosses every 12 stages.',aniT1:'Puzzle battle',aniT2:'Invite friends',aniT3:'Boss stages',aniT4:'4 languages',
   w1t:'1. Pick a game',w1d:'Tap a card and you are in. No sign-up, just choose a nickname.',w2t:'2. Play with friends',w2d:'Create a room and share the 6-digit code to bring friends into the same battle.',w3t:'3. Keep progress',w3d:'Sign up with email and your XP, coins, skills and rank are saved to your account, on any device.',rights:'All rights reserved',guide:'Korea travel guide →'},
- ja:{h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
+ ja:{ascWorld:'世界観・機動戦士図鑑 📖',h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
   newBadge:'NEW v2.5 · 銀河RPG',hotBadge:'おすすめ・スマホOK',playBtn:'今すぐプレイ ▶',ascPlay:'今すぐ出撃 ▶',
   ascDesc:'機動戦士で銀河を駆ける3DハクスラRPG。全8章のストーリーと3つのエンディング、狩場7か所、名前と物語を持つ固有装備、6段階で大きくなるドローン。100人AI戦場もそのまま遊べます。(英語・韓国語)',ascT1:'大規模戦闘',ascT2:'昇進・分隊',ascT3:'見下ろし / TPS',ascT4:'ルームコード対戦',
   aniDesc:'かわいい動物ブロックを消して友だちと対戦！12ステージごとに新しい動物とボスが登場。',aniT1:'パズル対戦',aniT2:'友だち招待',aniT3:'ボス戦',aniT4:'4言語',
   w1t:'1. ゲームを選ぶ',w1d:'カードをタップするだけ。登録不要、ニックネームを決めるだけ。',w2t:'2. 友だちと遊ぶ',w2d:'ルームを作って6桁のコードを送れば同じ戦場に参加できます。',w3t:'3. 記録を残す',w3d:'メールで登録すると、経験値・コイン・スキル・階級がアカウントに保存されます。',rights:'All rights reserved',guide:'韓国旅行ガイド →'},
- zh:{h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
+ zh:{ascWorld:'世界观 · 机动战士图鉴 📖',h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
   newBadge:'NEW v2.5 · 银河RPG',hotBadge:'推荐 · 手机可玩',playBtn:'立即开玩 ▶',ascPlay:'立即出击 ▶',
   ascDesc:'驾驶机动战士纵横银河的3D砍杀RPG。8章剧情与3种结局、7个狩猎场、拥有名字与故事的专属装备、6阶成长的无人机。100人AI战场依然可玩。（英文·韩文）',ascT1:'大规模战斗',ascT2:'晋升·小队',ascT3:'俯视 / 第三人称',ascT4:'房间码对战',
   aniDesc:'消除可爱的动物方块与好友对战！每12关出现新的动物和Boss。',aniT1:'益智对战',aniT2:'邀请好友',aniT3:'Boss关卡',aniT4:'4种语言',
