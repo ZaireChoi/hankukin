@@ -1,0 +1,1121 @@
+{
+ "zling": {
+  "bytes": 1550188,
+  "tris": 26015,
+  "size": [
+   1.47,
+   1.9,
+   1.76
+  ],
+  "anims": []
+ },
+ "zspit": {
+  "bytes": 1575312,
+  "tris": 25863,
+  "size": [
+   0.98,
+   1.9,
+   1.17
+  ],
+  "anims": []
+ },
+ "zbehemoth": {
+  "bytes": 2431800,
+  "tris": 25957,
+  "size": [
+   1.59,
+   1.45,
+   1.9
+  ],
+  "anims": []
+ },
+ "zwing": {
+  "bytes": 1499524,
+  "tris": 24300,
+  "size": [
+   1.9,
+   1.42,
+   0.2
+  ],
+  "anims": []
+ },
+ "zqueen": {
+  "bytes": 2349680,
+  "tris": 26051,
+  "size": [
+   1.19,
+   1.9,
+   1.31
+  ],
+  "anims": []
+ },
+ "v_bike": {
+  "bytes": 2184232,
+  "tris": 25596,
+  "size": [
+   1.9,
+   0.9,
+   0.79
+  ],
+  "anims": []
+ },
+ "v_tank": {
+  "bytes": 1763448,
+  "tris": 23736,
+  "size": [
+   1.9,
+   0.9,
+   1.04
+  ],
+  "anims": []
+ },
+ "v_railtank": {
+  "bytes": 2109396,
+  "tris": 24865,
+  "size": [
+   1.9,
+   0.74,
+   1.15
+  ],
+  "anims": []
+ },
+ "v_mlrs": {
+  "bytes": 1992164,
+  "tris": 24986,
+  "size": [
+   1.9,
+   1.02,
+   0.91
+  ],
+  "anims": []
+ },
+ "v_siege": {
+  "bytes": 2062028,
+  "tris": 25606,
+  "size": [
+   1.9,
+   0.83,
+   1.05
+  ],
+  "anims": []
+ },
+ "v_aa": {
+  "bytes": 1894592,
+  "tris": 24628,
+  "size": [
+   1.9,
+   0.79,
+   1.6
+  ],
+  "anims": []
+ },
+ "v_goliath": {
+  "bytes": 2004360,
+  "tris": 24891,
+  "size": [
+   1.08,
+   1.9,
+   1.42
+  ],
+  "anims": []
+ },
+ "a_fighter": {
+  "bytes": 1676860,
+  "tris": 24816,
+  "size": [
+   1.9,
+   0.38,
+   1.44
+  ],
+  "anims": []
+ },
+ "a_interceptor": {
+  "bytes": 1703604,
+  "tris": 24091,
+  "size": [
+   1.9,
+   0.5,
+   1.8
+  ],
+  "anims": []
+ },
+ "a_bomber": {
+  "bytes": 1712112,
+  "tris": 24813,
+  "size": [
+   1.9,
+   0.41,
+   1.52
+  ],
+  "anims": []
+ },
+ "a_heli": {
+  "bytes": 1849864,
+  "tris": 25056,
+  "size": [
+   1.85,
+   0.59,
+   1.9
+  ],
+  "anims": []
+ },
+ "a_dropship": {
+  "bytes": 1765832,
+  "tris": 23835,
+  "size": [
+   1.9,
+   0.91,
+   0.87
+  ],
+  "anims": []
+ },
+ "s_frigate": {
+  "bytes": 2107152,
+  "tris": 23971,
+  "size": [
+   1.9,
+   0.43,
+   0.85
+  ],
+  "anims": []
+ },
+ "s_destroyer": {
+  "bytes": 1960040,
+  "tris": 24467,
+  "size": [
+   1.9,
+   0.91,
+   1.11
+  ],
+  "anims": []
+ },
+ "s_carrier": {
+  "bytes": 2728652,
+  "tris": 25234,
+  "size": [
+   1.9,
+   1.49,
+   1.61
+  ],
+  "anims": []
+ },
+ "s_battleship": {
+  "bytes": 2598952,
+  "tris": 24849,
+  "size": [
+   1.9,
+   0.69,
+   1.46
+  ],
+  "anims": []
+ },
+ "w_laserrifle": {
+  "bytes": 1546196,
+  "tris": 23554,
+  "size": [
+   1.9,
+   0.94,
+   0.23
+  ],
+  "anims": []
+ },
+ "w_plasmacannon": {
+  "bytes": 1540712,
+  "tris": 24399,
+  "size": [
+   1.9,
+   0.61,
+   0.39
+  ],
+  "anims": []
+ },
+ "w_rocket": {
+  "bytes": 1483536,
+  "tris": 24292,
+  "size": [
+   1.9,
+   1.03,
+   0.54
+  ],
+  "anims": []
+ },
+ "w_railsniper": {
+  "bytes": 1575732,
+  "tris": 23487,
+  "size": [
+   1.9,
+   0.56,
+   0.14
+  ],
+  "anims": []
+ },
+ "w_emp": {
+  "bytes": 1477824,
+  "tris": 25268,
+  "size": [
+   1.67,
+   1.9,
+   1.74
+  ],
+  "anims": []
+ },
+ "w_acid": {
+  "bytes": 1831136,
+  "tris": 25345,
+  "size": [
+   1.9,
+   1.39,
+   1.06
+  ],
+  "anims": []
+ },
+ "w_shield": {
+  "bytes": 1506004,
+  "tris": 22958,
+  "size": [
+   1.77,
+   1.9,
+   0.87
+  ],
+  "anims": []
+ },
+ "w_saber": {
+  "bytes": 1476476,
+  "tris": 23906,
+  "size": [
+   0.33,
+   1.9,
+   0.15
+  ],
+  "anims": []
+ },
+ "w_axe": {
+  "bytes": 1488000,
+  "tris": 25323,
+  "size": [
+   1.75,
+   1.9,
+   0.37
+  ],
+  "anims": []
+ },
+ "z_leviathan": {
+  "bytes": 2317840,
+  "tris": 30827,
+  "size": [
+   1.19,
+   1.08,
+   1.9
+  ],
+  "anims": []
+ },
+ "z_mothership": {
+  "bytes": 2529036,
+  "tris": 31163,
+  "size": [
+   1.19,
+   1.48,
+   1.9
+  ],
+  "anims": []
+ },
+ "z_sled": {
+  "bytes": 2125744,
+  "tris": 31222,
+  "size": [
+   1.34,
+   1.9,
+   1.34
+  ],
+  "anims": []
+ },
+ "z_titan": {
+  "bytes": 2746224,
+  "tris": 31127,
+  "size": [
+   1.88,
+   1.51,
+   1.77
+  ],
+  "anims": []
+ },
+ "z_broodlord": {
+  "bytes": 1698344,
+  "tris": 30909,
+  "size": [
+   1.9,
+   1.21,
+   1.33
+  ],
+  "anims": []
+ },
+ "mech3": {
+  "bytes": 6308596,
+  "tris": 40763,
+  "size": [
+   4.09,
+   4.67,
+   4.28
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "mech4": {
+  "bytes": 3864972,
+  "tris": 41202,
+  "size": [
+   3.43,
+   4.58,
+   3.92
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "link2": {
+  "bytes": 3537860,
+  "tris": 41294,
+  "size": [
+   0.24,
+   0.44,
+   0.27
+  ],
+  "anims": [
+   "idle",
+   "talk",
+   "talk2",
+   "bow",
+   "shrug"
+  ]
+ },
+ "emp_officer": {
+  "bytes": 3026296,
+  "tris": 30943,
+  "size": [
+   0.72,
+   0.67,
+   0.57
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "talk2",
+   "angry"
+  ]
+ },
+ "link3": {
+  "bytes": 3626456,
+  "tris": 41123,
+  "size": [
+   0.26,
+   0.42,
+   0.41
+  ],
+  "anims": [
+   "sway",
+   "talk3",
+   "wave",
+   "cheer",
+   "talk"
+  ]
+ },
+ "omega": {
+  "bytes": 4371992,
+  "tris": 41342,
+  "size": [
+   5.22,
+   6.9,
+   6.47
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "angry",
+   "talk",
+   "slash"
+  ]
+ },
+ "emp_female": {
+  "bytes": 2633268,
+  "tris": 30977,
+  "size": [
+   0.27,
+   0.43,
+   0.35
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "talk"
+  ]
+ },
+ "emp_trooper": {
+  "bytes": 2800228,
+  "tris": 30902,
+  "size": [
+   0.36,
+   0.43,
+   0.33
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run"
+  ]
+ },
+ "fed_officer": {
+  "bytes": 2990436,
+  "tris": 30962,
+  "size": [
+   0.3,
+   0.43,
+   0.27
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "talk",
+   "shrug"
+  ]
+ },
+ "fed_female": {
+  "bytes": 2895752,
+  "tris": 31030,
+  "size": [
+   0.32,
+   0.39,
+   0.34
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "talk"
+  ]
+ },
+ "fed_trooper": {
+  "bytes": 2829344,
+  "tris": 31047,
+  "size": [
+   0.38,
+   0.45,
+   0.51
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run"
+  ]
+ },
+ "pilot": {
+  "bytes": 3664620,
+  "tris": 40438,
+  "size": [
+   0.43,
+   0.39,
+   0.53
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "p_rock1": {
+  "bytes": 537988,
+  "tris": 6012,
+  "size": [
+   1.9,
+   1.11,
+   1.77
+  ],
+  "anims": []
+ },
+ "p_rock2": {
+  "bytes": 441820,
+  "tris": 6099,
+  "size": [
+   0.96,
+   1.9,
+   0.97
+  ],
+  "anims": []
+ },
+ "p_ice": {
+  "bytes": 491716,
+  "tris": 6251,
+  "size": [
+   1.63,
+   1.15,
+   1.9
+  ],
+  "anims": []
+ },
+ "p_lava": {
+  "bytes": 559840,
+  "tris": 6129,
+  "size": [
+   1.9,
+   0.53,
+   1.81
+  ],
+  "anims": []
+ },
+ "p_barrier": {
+  "bytes": 514084,
+  "tris": 4972,
+  "size": [
+   1.9,
+   0.95,
+   1.03
+  ],
+  "anims": []
+ },
+ "p_cover": {
+  "bytes": 711124,
+  "tris": 5791,
+  "size": [
+   1.9,
+   1.38,
+   0.72
+  ],
+  "anims": []
+ },
+ "p_wreck": {
+  "bytes": 1434484,
+  "tris": 11699,
+  "size": [
+   1.85,
+   0.85,
+   1.52
+  ],
+  "anims": []
+ },
+ "p_crates": {
+  "bytes": 497160,
+  "tris": 5752,
+  "size": [
+   1.89,
+   1.9,
+   1.65
+  ],
+  "anims": []
+ },
+ "p_bunker": {
+  "bytes": 584588,
+  "tris": 4989,
+  "size": [
+   1.9,
+   1.46,
+   1.86
+  ],
+  "anims": []
+ },
+ "p_tower": {
+  "bytes": 1491996,
+  "tris": 11151,
+  "size": [
+   1.09,
+   1.9,
+   1.18
+  ],
+  "anims": []
+ },
+ "link_leg": {
+  "bytes": 4459232,
+  "tris": 40840,
+  "size": [
+   0.55,
+   0.55,
+   0.68
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "bow",
+   "talk",
+   "talk3"
+  ]
+ },
+ "m_striker": {
+  "bytes": 4395780,
+  "tris": 41202,
+  "size": [
+   3.43,
+   4.58,
+   3.92
+  ],
+  "anims": [
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_ranger": {
+  "bytes": 5342748,
+  "tris": 41149,
+  "size": [
+   5.58,
+   6.1,
+   5.06
+  ],
+  "anims": [
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_guardian": {
+  "bytes": 5888752,
+  "tris": 41104,
+  "size": [
+   6.03,
+   7.52,
+   6.01
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "m_artillery": {
+  "bytes": 4529044,
+  "tris": 40960,
+  "size": [
+   4.03,
+   4.88,
+   4.32
+  ],
+  "anims": [
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_wizard": {
+  "bytes": 4665208,
+  "tris": 41006,
+  "size": [
+   7.57,
+   7.86,
+   6.24
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_phantom": {
+  "bytes": 3934588,
+  "tris": 41292,
+  "size": [
+   6.39,
+   8.06,
+   9.63
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_titan": {
+  "bytes": 4517048,
+  "tris": 40905,
+  "size": [
+   6.68,
+   7.98,
+   6.92
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_sky": {
+  "bytes": 5461684,
+  "tris": 40884,
+  "size": [
+   12.71,
+   8.46,
+   5.35
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_origin": {
+  "bytes": 4130444,
+  "tris": 41310,
+  "size": [
+   4.81,
+   5.16,
+   6.49
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_samurai": {
+  "bytes": 4443044,
+  "tris": 41085,
+  "size": [
+   3.26,
+   5.74,
+   4.64
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "mech_leg": {
+  "bytes": 5875088,
+  "tris": 45847,
+  "size": [
+   17.11,
+   11.41,
+   7.43
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "a_fire": {
+  "bytes": 3682176,
+  "tris": 41346,
+  "size": [
+   0.33,
+   0.39,
+   0.39
+  ],
+  "anims": [
+   "idle",
+   "talk3",
+   "cheer",
+   "angry",
+   "talk"
+  ]
+ },
+ "a_ice": {
+  "bytes": 4146624,
+  "tris": 41352,
+  "size": [
+   0.25,
+   0.38,
+   0.26
+  ],
+  "anims": [
+   "idle",
+   "talk",
+   "bow",
+   "talk2",
+   "shrug"
+  ]
+ },
+ "a_thunder": {
+  "bytes": 3707108,
+  "tris": 41232,
+  "size": [
+   0.43,
+   0.51,
+   0.41
+  ],
+  "anims": [
+   "idle",
+   "sway",
+   "talk3",
+   "cheer"
+  ]
+ },
+ "a_wind": {
+  "bytes": 4458812,
+  "tris": 41163,
+  "size": [
+   0.76,
+   0.66,
+   0.39
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "a_dark": {
+  "bytes": 3824568,
+  "tris": 40516,
+  "size": [
+   0.63,
+   0.68,
+   0.85
+  ],
+  "anims": [
+   "idle",
+   "talk2",
+   "talk",
+   "shrug"
+  ]
+ },
+ "a_time": {
+  "bytes": 3748412,
+  "tris": 41468,
+  "size": [
+   0.3,
+   0.42,
+   0.31
+  ],
+  "anims": [
+   "idle",
+   "bow",
+   "talk",
+   "sway"
+  ]
+ },
+ "a_void": {
+  "bytes": 3550976,
+  "tris": 41099,
+  "size": [
+   0.24,
+   0.41,
+   0.26
+  ],
+  "anims": [
+   "idle",
+   "talk2",
+   "talk",
+   "shrug"
+  ]
+ },
+ "a_earth": {
+  "bytes": 3488296,
+  "tris": 41194,
+  "size": [
+   0.26,
+   0.39,
+   0.28
+  ],
+  "anims": [
+   "idle",
+   "sway",
+   "talk",
+   "wave"
+  ]
+ },
+ "god": {
+  "bytes": 7010768,
+  "tris": 51328,
+  "size": [
+   18.91,
+   11.94,
+   4.67
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "god_red": {
+  "bytes": 6679728,
+  "tris": 51328,
+  "size": [
+   18.84,
+   12.95,
+   6.25
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "god_black": {
+  "bytes": 6679580,
+  "tris": 51328,
+  "size": [
+   18.23,
+   10.02,
+   5.34
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "god_white": {
+  "bytes": 7032852,
+  "tris": 51328,
+  "size": [
+   18.45,
+   13.44,
+   4.88
+  ],
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "a_wind2": {
+  "bytes": 3960884,
+  "tris": 41277,
+  "size": [
+   0.53,
+   0.42,
+   0.38
+  ],
+  "anims": [
+   "walk",
+   "run"
+  ]
+ },
+ "hayun": {
+  "bytes": 3622280,
+  "anims": [
+   "idle",
+   "sway",
+   "talk3",
+   "wave",
+   "cheer"
+  ]
+ },
+ "seraphine": {
+  "bytes": 4454572,
+  "anims": [
+   "idle",
+   "talk",
+   "bow",
+   "shrug",
+   "angry"
+  ]
+ },
+ "minjae": {
+  "bytes": 3501136,
+  "anims": [
+   "idle",
+   "talk",
+   "talk2",
+   "shrug",
+   "wave"
+  ]
+ }
+}

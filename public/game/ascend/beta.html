@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v1.5 RPG</div>
+   <div class="ver"><i></i>ASCEND · v1.7 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -849,6 +849,7 @@ function localInput(u){const inp={mx:0,my:0,mz:0,aim:u.aa,fire:false,a1:false,a2
    if(u.layer===0||CL[u.cls].aimT){inp.aim=la;if(dd<rng)inp.fire=true;}
    else{const ad=Math.abs(angDiff(u.a,la));if(ad<.3&&dd<rng)inp.fire=true;const manual=touchMode&&TS.L.id!==null&&TS.L.mag>.12;if(touchMode&&!manual&&!chase)inp.steer=la;}
    if((u.cls==='fighter'||u.cls==='rocket'||u.cls==='mech')&&(u.cd1||0)<=0&&dd<950)inp.a1=true;
+   if(u.cls==='arkframe'){let near=0;for(const e2 of G.units){if(!e2.dead&&e2.team!==u.team&&d2(e2.x,e2.y,u.x,u.y)<520*520)near++;}if(dd<210){if((u.cd2||0)<=0)inp.a2=true;}else{if((u.cd1||0)<=0&&dd<1100)inp.a1=true;}if(near>=5)inp.ul=true;if(!u.fly&&dd>1150&&(u.flyE||0)>6)arkFly(u,true);else if(u.fly&&dd<420)arkFly(u,false);}
    if(touchMode){inp.tx=tg.x;inp.ty=tg.y;}
    if(MAP.space&&!inp.mz&&tg.z!=null){const dz=tg.z-(u.z||0);if(Math.abs(dz)>40)inp.mz=clamp(dz/160,-1,1);}}}
  return inp;}
@@ -1006,7 +1007,7 @@ function ultimate(u,inp){const c=CL[u.cls],st=u.st,s=u.slot;let key=c.ul;if(key=
  case'minefield':for(let i=0;i<8;i++){const a=i/8*6.283;layMine(u,u.x+Math.cos(a)*90,u.y+Math.sin(a)*90);}break;
  case'clusterB':{const p=clampTo(u,inp.tx,inp.ty,1000);for(let i=0;i<3;i++)fireCluster(u,{x:p.x+rnd(-120,120),y:p.y+rnd(-120,120)},6,55*st.splash*dmgMul(u,1));break;}
  case'overdrive':u.od=8;break;
- case'mswarm':salvo(u,10,45*st.missile*dmgMul(u,1),u.a,1.2,1300,.12);break;
+ case'mswarm':u.barT=1.6;salvo(u,10,45*st.missile*dmgMul(u,1),u.a,1.2,1300,.12);break;
  case'empbomb':G.pend.push({k:'empb',x:u.x+Math.cos(u.a)*220,y:u.y+Math.sin(u.a)*220,t:.9,mt:.9,team:u.team,r:350*st.empR,owner:s,emp:{dur:6+st.empDur,stun:1.5},dmg:80*dmgMul(u,1)});break;
  case'thermo':G.pend.push({k:'thermo',x:u.x+Math.cos(u.a)*240,y:u.y+Math.sin(u.a)*240,t:1,mt:1,team:u.team,dmg:380*st.splash*dmgMul(u,1),r:330*st.splash,owner:s,sm:1.5});break;
  case'firestorm':for(let i=0;i<24;i++)shoot(u,u.aa+rnd(-.3,.3),{dmg:30*dmgMul(u,1),spd:rnd(650,850),range:rnd(500,820),kind:8,dt:'x',splash:45,rad:4});break;
@@ -2044,7 +2045,7 @@ R.syncUnits=function(dt,now){const lt=G.local.team;const chase=P.view==='chase';
   e.seen=fr;const far=d2(u.x,u.y,cx,cz)>cull;if(far){if(e.root.parent)this.scene.remove(e.root);continue;}else if(!e.root.parent)this.scene.add(e.root);const hid=u.team!==lt&&!visibleTo(u,lt);const near=chase&&rel!==0&&d2(u.x,u.y,this.cam.position.x,this.cam.position.z)<75*75&&u.layer===0;e.root.visible=!hid&&!near&&!(u.spawnProt>0&&Math.floor(now*10)%2);if(hid)continue;
   const ghost=((u.cloak>0||u.illu)&&u.team===lt)||u.phase>0;if(ghost!==!!e.ghost){e.ghost=ghost;this.setGhost(e,ghost);}
   e.root.position.set(u.x,unitH(u),u.y);this.animate(e,u,dt,now);}
- for(const[id,e]of this.units)if(e.seen!==fr){this.scene.remove(e.root);this.units.delete(id);}};
+ for(const[id,e]of this.units)if(e.seen!==fr){this.scene.remove(e.root);if(typeof mechFXCleanup==='function')mechFXCleanup(e);this.units.delete(id);}};
 R.recoil=function(u){const e=this.units.get(u.id);if(e)e.rec=1;};
 R.status=function(e,u,now){const hh=headH(u);
  if(e.jet)e.jet.scale.setScalar(12+Math.random()*6+Math.abs(u.vz||0)*.04);
@@ -3265,7 +3266,7 @@ function mdlGet(f){const c=MC[f];if(c)return c.st==='ok'?c:null;const X=window._
 function mdlInstance(f,yaw,size,axis){const c=mdlGet(f);if(!c)return null;const T3=window.THREE,X=window.__TX;const obj=c.skinned&&X.SkeletonUtils?X.SkeletonUtils.clone(c.g.scene):c.g.scene.clone(true);
  const k=size/(axis==='h'?c.size.y:Math.max(c.size.x,c.size.z));const wrap=new T3.Group();const inner=new T3.Group();inner.rotation.y=yaw;wrap.add(inner);obj.scale.setScalar(k);const ctr=c.box.getCenter(new T3.Vector3());obj.position.set(-ctr.x*k,-c.box.min.y*k,-ctr.z*k);inner.add(obj);
  obj.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;o.frustumCulled=!o.isSkinnedMesh;}});
- let mx=null;if(c.g.animations&&c.g.animations.length){const mixer=new T3.AnimationMixer(obj);const acts={};for(const cl of c.g.animations){acts[cl.name]=mixer.clipAction(cl);}const first=acts.walk||Object.values(acts)[0];if(first){first.play();first.timeScale=0;}mx={mixer,acts,cur:first};}
+ let mx=null;if(c.g.animations&&c.g.animations.length){const mixer=new T3.AnimationMixer(obj);const acts={};for(const cl of c.g.animations){acts[normClip(cl.name)]=mixer.clipAction(cl);}const first=acts.idle||acts.hover||acts.walk||Object.values(acts)[0];if(first){first.play();if(!acts.idle&&!acts.hover)first.timeScale=0;}mx={mixer,acts,cur:first};}
  return{wrap,inner,obj,mx,k};}
 function hideProc(e){e.root.traverse(o=>{if((o.isMesh||o.isSprite||o.isPoints)&&o!==e.ring&&o!==e.blob&&o!==e.jet&&!o.userData.keep)o.visible=false;});if(e.flames)for(const f of e.flames)f.visible=false;}
 function modelWrap(){if(!R3||!R3.ready||R3._mw)return;R3._mw=1;const ob=R3.build;
@@ -3273,14 +3274,119 @@ function modelWrap(){if(!R3||!R3.ready||R3._mw)return;R3._mw=1;const ob=R3.build
    if(c&&c.arm==='inf'&&!c.bug){isInf=true;inst=mdlInstance(infModel(u),PI/2,24,'h');}
    else if(MDL[u.cls]){const m=MDL[u.cls];inst=mdlInstance(m[0],m[1],m[2],m[3]);if(inst)inst.bob=m[4];}
    if(inst){hideProc(e);(e.bank||e.root).add(inst.wrap);e.mdl=inst;
-    if(isInf){const wk=INF_W[u.cls]||'w_laserrifle';const w=mdlInstance(wk,PI,u.cls==='recon'?20:u.cls==='heavy'||u.cls==='rocket'?18:14,'l');if(w){e.root.add(w.wrap);e.mdlW=w;let hb=null;inst.obj.traverse(o=>{if(o.isBone&&!hb&&/right.?hand/i.test(o.name))hb=o;});e.mdlHand=hb;}}}}catch(err){console.warn('mdl',err);}return e;};
- const oa=R3.animate;R3.animate=function(e,u,dt,now){oa.call(this,e,u,dt,now);const m=e.mdl;if(!m)return;
-  if(m.mx){const sp=Math.hypot(u.vx||0,u.vy||0);const A=m.mx.acts;const want=sp>150&&A.run?A.run:A.walk||m.mx.cur;if(want!==m.mx.cur){want.reset().play();if(m.mx.cur)m.mx.cur.crossFadeTo(want,.2,false);m.mx.cur=want;}
-   want.timeScale=sp<6?0:want===A.run?sp/240:sp/90;m.mx.mixer.update(dt);}
+    if(isInf){const wk=INF_W[u.cls]||'w_laserrifle';const w=mdlInstance(wk,PI,u.cls==='recon'?20:u.cls==='heavy'||u.cls==='rocket'?18:14,'l');if(w){e.root.add(w.wrap);e.mdlW=w;let hb=null;inst.obj.traverse(o=>{if(o.isBone&&!hb&&/right.?hand/i.test(o.name))hb=o;});e.mdlHand=hb;}}}else{e.mdlWant=isInf?infModel(u):(MDL[u.cls]&&MDL[u.cls][0]);}}catch(err){console.warn('mdl',err);}return e;};
+ const orc=R3.recoil;R3.recoil=function(u){orc.call(this,u);const e=this.units.get(u.id);if(e)e.shotAt=performance.now()/1000;};
+ const oa=R3.animate;R3.animate=function(e,u,dt,now){oa.call(this,e,u,dt,now);const m=e.mdl;if(!m){if(e.mdlWant&&mdlGet(e.mdlWant)&&u.id!=null){try{this.scene.remove(e.root);mechFXCleanup(e);this.units.delete(u.id);}catch(_){}}return;}
+  if(m.mx)mdlAnimate(e,m,u,dt,now);
   if(m.bob){m.inner.position.y=Math.abs(Math.sin(now*6+u.id))*1.2*Math.min(1,Math.hypot(u.vx||0,u.vy||0)/60);m.inner.rotation.z=Math.sin(now*3+u.id)*.03;}
   if(e.mdlW){const T3=window.THREE;const w=e.mdlW;let p;if(e.mdlHand){p=e.mdlHand.getWorldPosition(new T3.Vector3());e.root.worldToLocal(p);}else p=new T3.Vector3(4,13,3);w.wrap.position.set(p.x+3,p.y-1,p.z);w.wrap.rotation.set(0,0,0);w.wrap.position.x-=(e.rec||0)*2;}};
  const os=R3.syncUnits;R3.syncUnits=function(dt,now){if(!this._envSet&&this.scene&&window.__TX&&window.__TX.RoomEnvironment){try{const pm=new window.THREE.PMREMGenerator(this.r);this.scene.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}catch(e){}this._envSet=1;}return os.call(this,dt,now);};}
 {const _stM=step;step=function(dt){try{modelWrap();}catch(e){}_stM(dt);};}
+
+// ================= v1.7 : LIVING MODELS · ROBOTIC ARK FRAMES =================
+const ANGD=(a,b)=>{let d=b-a;while(d>Math.PI)d-=Math.PI*2;while(d<-Math.PI)d+=Math.PI*2;return d;};
+const CLIPN=[[/^idle$/i,'idle'],[/happy.?sway/i,'sway'],[/walk.?fight.?forward|casual.?walk|walking.?woman/i,'walk'],[/walk.?forward.?while.?shooting/i,'shoot'],[/run.?and.?shoot/i,'run'],[/double.?combo|^attack$/i,'slash'],[/hands.?open/i,'talk'],[/hand.?on.?hip/i,'talk2'],[/hand.?raised/i,'talk3'],[/angry/i,'angry'],[/bow/i,'bow'],[/shrug/i,'shrug'],[/wave/i,'wave'],[/cheer/i,'cheer']];
+function normClip(n){for(const[re,k]of CLIPN)if(re.test(n))return k;return n;}
+const MECH_KEYS=new Set(['mech3','mech4','m_striker','m_ranger','m_guardian','m_artillery','m_wizard','m_phantom','m_titan','m_sky','m_origin','m_samurai','mech_leg','god','god_red','god_black','god_white']);
+// glow sprite texture
+let _glowTex=null;function glowTex(){if(_glowTex)return _glowTex;const T3=window.THREE;const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');const gr=g.createRadialGradient(32,32,0,32,32,32);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.8)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,64,64);_glowTex=new T3.CanvasTexture(c);return _glowTex;}
+function glowSpr(col,s){const T3=window.THREE;const sp=new T3.Sprite(new T3.SpriteMaterial({map:glowTex(),color:col,transparent:true,blending:T3.AdditiveBlending,depthWrite:false}));sp.scale.setScalar(s);sp.userData.keep=1;return sp;}
+function mkGear(r,col){const T3=window.THREE;const g=new T3.Group();const met=new T3.MeshStandardMaterial({color:0x8a94a6,metalness:.9,roughness:.32});const body=new T3.Mesh(new T3.CylinderGeometry(r,r,r*.35,14),met);body.rotation.x=Math.PI/2;g.add(body);
+ for(let i=0;i<10;i++){const t=new T3.Mesh(new T3.BoxGeometry(r*.28,r*.3,r*.3),met);const a=i/10*Math.PI*2;t.position.set(Math.cos(a)*r,Math.sin(a)*r,0);t.rotation.z=a;g.add(t);}
+ const ring=new T3.Mesh(new T3.TorusGeometry(r*.55,r*.09,6,20),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.95,blending:T3.AdditiveBlending}));ring.position.z=r*.2;g.add(ring);g.userData.ring=ring;g.traverse(o=>o.userData.keep=1);return g;}
+function mkFlame(len,rad,col){const T3=window.THREE;const g=new T3.Group();const m1=new T3.Mesh(new T3.ConeGeometry(rad,len,10,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.75,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m1.rotation.x=Math.PI;m1.position.y=-len/2;g.add(m1);const m2=new T3.Mesh(new T3.ConeGeometry(rad*.5,len*.6,8,1,true),new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,blending:T3.AdditiveBlending,depthWrite:false}));m2.rotation.x=Math.PI;m2.position.y=-len*.3;g.add(m2);g.add(glowSpr(col,rad*4));g.traverse(o=>o.userData.keep=1);return g;}
+function mkWing(col,side){const T3=window.THREE;const sh=new T3.Shape();sh.moveTo(0,0);sh.lineTo(side*36,22);sh.lineTo(side*58,10);sh.lineTo(side*40,-2);sh.lineTo(side*50,-16);sh.lineTo(side*20,-8);sh.lineTo(0,-4);const m=new T3.Mesh(new T3.ShapeGeometry(sh),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.0,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;return m;}
+function boneFind(obj,re,not){let b=null;obj.traverse(o=>{if(!b&&o.isBone&&re.test(o.name)&&!(not&&not.test(o.name)))b=o;});return b;}
+function mechInit(e,m,u){const T3=window.THREE;const fx={gears:[],lights:[],flames:[],wings:[],ghosts:[],gT:0};e.mfx=fx;const obj=m.obj;
+ const H=CL[u.cls]&&MDL[u.cls]?MDL[u.cls][2]:74;const ws=new T3.Vector3();obj.getWorldScale(ws);const inv=1/(ws.y||1);fx.inv=inv;
+ const col=(u.cls==='arkframe'&&typeof R==='function'&&R().mech&&/^god/.test(R().mech))?0xffd166:0x7df9ff;fx.col=col;
+ const at=(re,not)=>boneFind(obj,re,not);
+ const joints=[[/left.?fore.?arm/i],[/right.?fore.?arm/i],[/left.?leg$|left.?shin|leftleg/i,/up/i],[/right.?leg$|right.?shin|rightleg/i,/up/i],[/left.?arm$|leftarm$/i,/fore/i],[/right.?arm$|rightarm$/i,/fore/i],[/left.?up.?leg/i],[/right.?up.?leg/i]];
+ for(const[re,not]of joints){const b=at(re,not);if(!b)continue;const g=mkGear(H*.045*inv,col);g.position.x=H*.03*inv;b.add(g);fx.gears.push(g);const l=glowSpr(col,H*.07*inv);b.add(l);fx.lights.push(l);}
+ fx.chest=at(/spine0?2|chest|spine1/i);if(fx.chest){const core=glowSpr(col,H*.16*inv);core.position.z=H*.05*inv;fx.chest.add(core);fx.core=core;
+   for(const s of[-1,1]){const w=mkWing(col,s);w.scale.setScalar(H/74*inv);w.position.z=-H*.06*inv;w.rotation.y=Math.PI;fx.chest.add(w);fx.wings.push(w);}
+   for(const s of[-1,1]){const f=mkFlame(H*.18*inv,H*.035*inv,0x7df9ff);f.position.set(s*H*.05*inv,0,-H*.07*inv);f.rotation.x=-.6;fx.chest.add(f);fx.flames.push(f);}}
+ for(const re of[/left.?foot/i,/right.?foot/i]){const b=at(re);if(!b)continue;const f=mkFlame(H*.14*inv,H*.03*inv,0x8ad8ff);b.add(f);fx.flames.push(f);}
+ fx.hand=at(/right.?hand/i);if(fx.hand){const orb=glowSpr(0xbff8ff,H*.05*inv);fx.hand.add(orb);fx.orb=orb;const blade=new T3.Mesh(new T3.CylinderGeometry(H*.012*inv,H*.02*inv,H*.62*inv,8),new T3.MeshBasicMaterial({color:0xff7ae0,transparent:true,opacity:.92,blending:T3.AdditiveBlending,depthWrite:false}));blade.position.y=H*.31*inv;blade.visible=false;blade.userData.keep=1;fx.hand.add(blade);fx.blade=blade;}
+ // companion drones (only for ark frames)
+ if(u.cls==='arkframe'){fx.drones=[];for(let i=0;i<2;i++){const d=new T3.Group();const body=new T3.Mesh(new T3.OctahedronGeometry(4.2),new T3.MeshStandardMaterial({color:0xdfe6f2,metalness:.85,roughness:.25}));body.scale.y=.55;d.add(body);const rg=new T3.Mesh(new T3.TorusGeometry(6,.6,6,24),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.9,blending:T3.AdditiveBlending}));rg.rotation.x=Math.PI/2;d.add(rg);const eye=glowSpr(col,7);d.add(eye);d.userData={rg,eye,ph:i*Math.PI};d.traverse(o=>o.userData.keep=1);fx.drones.push(d);}}
+ // afterimage ghosts
+ if(u.cls==='arkframe'&&window.__TX&&window.__TX.SkeletonUtils){const src=[];obj.traverse(o=>{if(o.isBone)src.push(o);});fx.srcB=src;for(let i=0;i<5;i++){const gobj=window.__TX.SkeletonUtils.clone(obj);const bones=[];gobj.traverse(o=>{if(o.isBone)bones.push(o);if(o.isMesh){o.material=new T3.MeshBasicMaterial({color:col,transparent:true,opacity:0,blending:T3.AdditiveBlending,depthWrite:false});o.frustumCulled=false;o.userData.keep=1;}});const gw=new T3.Group();gw.add(gobj);gw.visible=false;fx.ghosts.push({w:gw,obj:gobj,bones,t:0});}}
+}
+function mechFX(e,m,u,dt,now,sp){const T3=window.THREE;if(!e.mfx)mechInit(e,m,u);const fx=e.mfx;const nowS=performance.now()/1000;const scene=e.root.parent;const fly=u.layer===1||u.fly;
+ const shotAge=nowS-(e.shotAt||0);const charge=clamp(shotAge/0.9,0,1);
+ // hover bob + lean + bank
+ const pa=e.pyaw==null?e.byaw:e.pyaw;const tr=ANGD(pa||0,e.byaw||0)/Math.max(dt,.001);e.pyaw=e.byaw;e.bank=lerp(e.bank||0,clamp(tr*.06,-.28,.28),Math.min(1,dt*5));e.lean=lerp(e.lean||0,clamp(sp/520,0,.3)*(fly?1.4:1),Math.min(1,dt*4));
+ m.wrap.position.y=(fly?6:5)+Math.sin(now*2.3+u.id)*1.3;m.wrap.rotation.z=-e.lean;m.wrap.rotation.x=e.bank;
+ // boarding / exiting: crouch, hatch light, tractor beam lifts the pilot
+ if((u.boardT>0||u.exitT>0)&&scene){const brd=u.boardT>0;const p=brd?1-u.boardT/2.4:1-u.exitT/1.6;const crouch=Math.sin(clamp(p*1.15,0,1)*Math.PI)*14;m.wrap.position.y-=crouch;m.wrap.rotation.z-=crouch*.014;
+  if(!fx.pil&&typeof mdlGet==='function'&&mdlGet('pilot')){const pi=mdlInstance('pilot',PI/2,16,'h');if(pi){fx.pil=pi;scene.add(pi.wrap);}}
+  if(!fx.tb){fx.tb=new T3.Mesh(new T3.CylinderGeometry(6,11,1,18,1,true),new T3.MeshBasicMaterial({color:0x9ff6ff,transparent:true,opacity:.35,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));scene.add(fx.tb);}
+  const cp=fx.chest?fx.chest.getWorldPosition(new T3.Vector3()):new T3.Vector3(u.x,unitH(u)+50,u.y);const fa=e.byaw||0;const gp=new T3.Vector3(u.x+Math.cos(fa)*34,unitH(u),u.y+Math.sin(fa)*34);const hp2=cp.clone();hp2.x+=Math.cos(fa)*10;hp2.z+=Math.sin(fa)*10;
+  const k=brd?clamp((p-.2)/.55,0,1):clamp(1-(p-.1)/.6,0,1);const open=p>.12&&p<.88;
+  if(fx.pil){fx.pil.wrap.position.lerpVectors(gp,hp2,k);fx.pil.wrap.rotation.y=-fa+Math.PI;fx.pil.wrap.visible=brd?(k<.98):(k<.98&&p>.1);}
+  fx.tb.visible=open;fx.tb.position.lerpVectors(gp,hp2,.5);fx.tb.scale.y=Math.max(1,hp2.y-gp.y);fx.tb.material.opacity=.22+.15*Math.sin(now*20);
+  if(fx.core){fx.core.scale.setScalar((fx.core.userData.s0||fx.core.scale.x)*(open?2.6:1));fx.core.material.color.setHex(open?0xffffff:fx.col);}
+ } else if(fx.pil||fx.tb){if(fx.pil&&fx.pil.wrap.parent)fx.pil.wrap.parent.remove(fx.pil.wrap);if(fx.tb&&fx.tb.parent)fx.tb.parent.remove(fx.tb);fx.pil=null;fx.tb=null;if(fx.core)fx.core.material.color.setHex(fx.col);}
+ // gears spin, joint lights pulse
+ const spin=(1.5+sp/40+(shotAge<.3?8:0))*dt;fx.gears.forEach((g,i)=>{g.rotation.z+=spin*(i%2?1:-1);g.userData.ring.material.opacity=.55+.4*Math.sin(now*7+i);});
+ fx.lights.forEach((l,i)=>{l.material.opacity=.45+.35*Math.sin(now*5+i*1.7)+(shotAge<.25?.4:0);});
+ if(fx.core){fx.core.material.opacity=.7+.3*Math.sin(now*3);fx.core.scale.setScalar(fx.core.userData.s0||(fx.core.userData.s0=fx.core.scale.x));fx.core.scale.multiplyScalar(1+(u.ultC||0)*0);}
+ // thrusters
+ const thr=clamp(.25+sp/260+(fly?.9:0),0,1.8);fx.flames.forEach((f,i)=>{const k=thr*(.85+Math.random()*.3);f.scale.set(1,k,1);f.visible=thr>.3;});
+ // light wings unfold in flight / dash
+ const wv=fly?1:sp>220?.5:0;fx.wings.forEach((w,i)=>{const o=w.material.opacity;w.material.opacity=lerp(o,wv*.55,Math.min(1,dt*4));w.visible=w.material.opacity>.02;w.rotation.z=(i?-1:1)*(.2-wv*.2+Math.sin(now*3)*.05);});
+ // charge orb + shot flash + beam
+ if(fx.orb){const s0=fx.orb.userData.s0||(fx.orb.userData.s0=fx.orb.scale.x);const fl=shotAge<.12?(1-shotAge/.12)*5:0;fx.orb.scale.setScalar(s0*(.5+charge*1.6+fl));fx.orb.material.opacity=.35+charge*.6;fx.orb.material.color.setHex(charge>.95?0xffffff:0x9ff6ff);
+  if(charge>.8&&Math.random()<.35&&typeof part==='function'){const hp=fx.hand.getWorldPosition(new T3.Vector3());part(hp.x+rnd(-4,4),hp.z+rnd(-4,4),rnd(-30,30),rnd(-30,30),.18,'#bff8ff',2,hp.y+rnd(-3,3));}}
+ if(e.shotAt&&e.shotAt!==fx.lastShot&&fx.hand&&scene){fx.lastShot=e.shotAt;const hp=fx.hand.getWorldPosition(new T3.Vector3());const a=u.aa!=null?u.aa:u.a;const L=Math.min(900,(u.w&&u.w.range)||600);const beam=new T3.Mesh(new T3.CylinderGeometry(1.4,2.6,L,8,1,true),new T3.MeshBasicMaterial({color:0x9ff6ff,transparent:true,opacity:.95,blending:T3.AdditiveBlending,depthWrite:false}));beam.rotation.z=Math.PI/2;const bw=new T3.Group();bw.add(beam);beam.position.x=L/2;bw.position.copy(hp);bw.rotation.y=-a;scene.add(bw);const core=glowSpr(0xffffff,26);core.position.copy(hp);scene.add(core);(fx.fxl=fx.fxl||[]).push({o:bw,t:.14,m:beam.material},{o:core,t:.14,m:core.material});}
+ if(fx.fxl){for(const f of fx.fxl){f.t-=dt;f.m.opacity=Math.max(0,f.t/.14);if(f.t<=0&&f.o.parent){f.o.parent.remove(f.o);}}fx.fxl=fx.fxl.filter(f=>f.t>0);}
+ // beam saber blade during slash
+ if(fx.blade)fx.blade.visible=u.slashT>0;
+ // afterimages
+ if(fx.ghosts.length&&scene){fx.gT-=dt;if((sp>170||fly&&sp>60||u.slashT>0)&&fx.gT<=0){fx.gT=.06;const gh=fx.ghosts.find(g=>g.t<=0);if(gh){for(let i=0;i<gh.bones.length&&i<fx.srcB.length;i++){gh.bones[i].position.copy(fx.srcB[i].position);gh.bones[i].quaternion.copy(fx.srcB[i].quaternion);gh.bones[i].scale.copy(fx.srcB[i].scale);}m.obj.updateWorldMatrix(true,false);gh.obj.position.copy(m.obj.position);gh.obj.scale.copy(m.obj.scale);gh.obj.quaternion.copy(m.obj.quaternion);
+   const mw=m.obj.parent.matrixWorld.clone();gh.w.matrixAutoUpdate=false;gh.w.matrix.copy(mw);if(gh.w.parent!==scene)scene.add(gh.w);gh.w.visible=true;gh.t=.36;}}
+  for(const g of fx.ghosts){if(g.t>0){g.t-=dt;g.obj.traverse(o=>{if(o.isMesh)o.material.opacity=Math.max(0,g.t/.36)*.42;});if(g.t<=0)g.w.visible=false;}}}
+ // drones orbit + fire
+ if(fx.drones&&scene){fx.drones.forEach((d,i)=>{if(d.parent!==scene)scene.add(d);const a=now*1.6+d.userData.ph;const tx=u.x+Math.cos(a)*48,tz=u.y+Math.sin(a)*48,ty=unitH(u)+62+Math.sin(now*3+i)*5;d.position.lerp(new T3.Vector3(tx,ty,tz),Math.min(1,dt*6));d.userData.rg.rotation.z+=dt*6;d.rotation.y=-(u.aa||0);d.userData.eye.material.opacity=.6+.4*Math.sin(now*9+i);
+   if(u.droneShot&&u.droneShot!==d.userData.last&&u.droneTg){d.userData.last=u.droneShot;const tg=u.droneTg;const p2=new T3.Vector3(tg.x,unitH(tg)+12,tg.y);const len=d.position.distanceTo(p2);const bm=new T3.Mesh(new T3.CylinderGeometry(.7,.7,len,6,1,true),new T3.MeshBasicMaterial({color:fx.col,transparent:true,opacity:.95,blending:T3.AdditiveBlending,depthWrite:false}));bm.position.copy(d.position).lerp(p2,.5);bm.lookAt(p2);bm.rotateX(Math.PI/2);scene.add(bm);(fx.fxl=fx.fxl||[]).push({o:bm,t:.12,m:bm.material});}});}
+ e.mfxAlive=1;}
+function mechFXCleanup(e){const fx=e.mfx;if(!fx)return;for(const d of fx.drones||[])if(d.parent)d.parent.remove(d);for(const g of fx.ghosts||[])if(g.w.parent)g.w.parent.remove(g.w);for(const f of fx.fxl||[])if(f.o.parent)f.o.parent.remove(f.o);}
+function mdlAnimate(e,m,u,dt,now){const A=m.mx.acts;const sp=Math.hypot(u.vx||0,u.vy||0);const isM=!!(A.hover||A.glide);const nowS=performance.now()/1000;
+ if(A.idle||A.hover){const aim=u.aa!=null?u.aa:u.a;const acting=(nowS-(e.shotAt||0)<.7)||u.slashT>0||u.barT>0||u.palmT>0;const mvA=Math.atan2(u.vy||0,u.vx||0);let tgt=acting?aim:(sp>25?mvA:(e.byaw!=null?e.byaw:aim));if(e.byaw==null)e.byaw=tgt;const rate=(isM?5:10)*dt;e.byaw+=clamp(ANGD(e.byaw,tgt),-rate,rate);e.root.rotation.y=-e.byaw;}
+ let want;const shooting=nowS-(e.shotAt||0)<.45||u.palmT>0;
+ if(u.boardT>0&&A.hover)want=A.hover;else if(u.slashT>0&&A.slash)want=A.slash;else if(u.barT>0&&(A.barrage||A.fire))want=A.barrage||A.fire;else if(shooting&&(A.fire||A.shoot))want=isM?(A.fire||A.shoot):(sp>150&&A.run?A.run:A.shoot);else if(isM)want=sp>40?(A.glide||A.walk):(A.hover||A.idle);else if(sp<15&&A.idle)want=A.idle;else want=sp>170&&A.run?A.run:(A.walk||m.mx.cur);
+ if(want&&want!==m.mx.cur){const once=want===A.slash||want===A.barrage;want.reset();want.setLoop(once?window.THREE.LoopOnce:window.THREE.LoopRepeat);want.clampWhenFinished=once;want.play();if(m.mx.cur)m.mx.cur.crossFadeTo(want,.22,false);m.mx.cur=want;}
+ if(want){want.timeScale=(!isM&&(want===A.walk||want===A.run))?clamp(sp/(want===A.run?230:85),.45,1.7):(want===A.walk&&sp<6?0:1);}
+ m.mx.mixer.update(dt);
+ if(u.slashT>0)u.slashT-=dt;if(u.barT>0)u.barT-=dt;if(u.palmT>0)u.palmT-=dt;
+ if(isM&&(u.cls==='arkframe'||u.cls==='mech'))mechFX(e,m,u,dt,now,sp);}
+// ark frame flight (wings): toggle with X / touch
+function arkFly(u,on){if(!u||u.cls!=='arkframe'||u.dead)return;if(on==null)on=!u.fly;if(on&&(u.flyE||0)<1.5)return;u.fly=on;u.layer=on?1:0;if(u.st){if(on&&!u._spd0){u._spd0=u.st.spd;u.st.spd*=1.35;}if(!on&&u._spd0){u.st.spd=u._spd0;u._spd0=0;}}
+ for(let i=0;i<24;i++){const a=Math.random()*6.28;part(u.x+Math.cos(a)*30,u.y+Math.sin(a)*30,Math.cos(a)*160,Math.sin(a)*160,.4,on?'#9ff6ff':'#c9d4ea',3,8);}if(isLocal(u.slot))pop(on?L2t('비행 모드 · 날개 전개','Flight mode · wings deployed'):L2t('착지','Landing'),'#9ff6ff',false);}
+const L2t=(ko,en)=>LANG==='en'?en:ko;
+addEventListener('keydown',e=>{if(e.code==='KeyX'&&!e.repeat&&G&&!G.client&&G.local&&G.local.unit)arkFly(G.local.unit);});
+{const tb=document.createElement('div');tb.className='tb';tb.id='tFly';tb.style.cssText='right:120px;bottom:230px;display:none;border-color:#9ff6ff;width:64px;height:64px;font-size:11px';tb.textContent='FLY';const host=$('#touchUI');if(host)host.appendChild(tb);tb.addEventListener('pointerdown',ev=>{ev.stopPropagation();if(G&&G.local)arkFly(G.local.unit);});}
+// boarding / exiting cinematic
+function exitArk(){const s=G&&G.local,u=s&&s.unit;if(!u||u.cls!=='arkframe'||u.exitT>0||u.boardT>0)return;u.exitT=1.6;u.fly&&arkFly(u,false);announce(L2t('해치 개방','Hatch open'),L2t('파일럿 하차','Pilot disembarking'),'',false,'#9ff6ff');}
+{const _ba=boardArk;boardArk=function(){const before=G&&G.local&&G.local.unit;_ba();const u=G&&G.local&&G.local.unit;if(u&&u!==before&&u.cls==='arkframe'){u.boardT=2.4;u.bx=u.x;u.by=u.y;u.flyE=10;}};}
+addEventListener('keydown',e=>{if(e.code==='KeyK'&&!e.repeat&&G&&G.local&&G.local.unit&&G.local.unit.cls==='arkframe'&&!(G.local.unit.boardT>0))exitArk();});
+{const _st=step;step=function(dt){_st(dt);if(!G||G.client)return;for(const u of G.units){if(u.dead||u.cls!=='arkframe')continue;
+  if(u.boardT>0){u.boardT-=dt;u.x=u.bx;u.y=u.by;u.vx=u.vy=0;u.spawnProt=Math.max(u.spawnProt||0,.3);}
+  if(u.exitT>0){u.exitT-=dt;u.vx=u.vy=0;if(u.exitT<=0){const s=u.slot;const x=u.x,y=u.y;u.dead=true;u.hp=0;s.unit=null;try{const nu=spawnUnit(s,P.lastCls&&CL[P.lastCls]&&CL[P.lastCls].arm==='inf'?P.lastCls:'assault',null,{x:x+40,y:y+20});nu.spawnProt=1.5;}catch(err){}G.arkOn=0;G.arkCd=Math.max(G.arkCd||0,8);}}
+  // flight energy
+  u.flyE=u.flyE==null?10:u.flyE;if(u.fly){u.flyE-=dt;if(u.flyE<=0)arkFly(u,false);}else u.flyE=Math.min(10,u.flyE+dt*.8);
+  // companion drones attack
+  u.drT=(u.drT||0)-dt;if(u.drT<=0){u.drT=.85;let best=null,bd=700*700;for(const e2 of G.units){if(e2.dead||e2.team===u.team)continue;const d=d2(e2.x,e2.y,u.x,u.y);if(d<bd){bd=d;best=e2;}}if(best){hurt(best,22*dmgMul(u),u.slot,Math.atan2(best.y-u.y,best.x-u.x),'b');u.droneShot=G.t;u.droneTg=best;}}}
+ const lu=G.local&&G.local.unit;const tf=$('#tFly');if(tf)tf.style.display=(touchMode&&lu&&lu.cls==='arkframe')?'':'none';};}
+
+
+function thumbWrap(){if(typeof R3==='undefined'||!R3||!R3.ready||R3._tw||!R3.thumb)return;R3._tw=1;const ot=R3.thumb;R3.thumb=function(cls,ch,w,h){try{const T3=window.THREE;if(this.initThumb)this.initThumb();if(!this._thL&&this.ts){this._thL=1;this.ts.add(new T3.HemisphereLight(0xe8f0ff,0x3a3448,1.7));const d=new T3.DirectionalLight(0xffffff,2.6);d.position.set(3,5,4);this.ts.add(d);const d2b=new T3.DirectionalLight(0x9fd0ff,1.8);d2b.position.set(-4,3,-3);this.ts.add(d2b);try{if(window.__TX&&window.__TX.RoomEnvironment&&this.tr){const pm=new T3.PMREMGenerator(this.tr);this.ts.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}}catch(e){}}
+  const c=CL[cls];const key=c&&c.arm==='inf'&&!c.bug?INF_M[P.faction==='emp'?'emp':'fed'][INF_ROLE[cls]||'t']:(MDL[cls]&&MDL[cls][0]);if(key&&mdlUse()&&!mdlGet(key)){const before=new Set(Object.keys(this.thumbCache));const out=ot.call(this,cls,ch,w,h);for(const k of Object.keys(this.thumbCache))if(!before.has(k))delete this.thumbCache[k];return out;}}catch(e){}return ot.call(this,cls,ch,w,h);};}
+let _mdlOk=0;function mdlPreload(){if(typeof mdlUse!=='function'||!mdlUse()||!window.__TX||!window.__TX.GLTFLoader)return;const keys=new Set(['pilot']);for(const f of Object.values(INF_M))for(const k of Object.values(f))keys.add(k);if(MDL.arkframe)keys.add(MDL.arkframe[0]);for(const k of keys)mdlGet(k);
+ let n=0;for(const k in MC)if(MC[k].st==='ok')n++;if(n!==_mdlOk){_mdlOk=n;if(R3&&R3.thumbCache)R3.thumbCache={};const dp=$('#deploy');if(dp&&!dp.classList.contains('hidden')&&typeof openDeploy==='function'){clearTimeout(mdlPreload.t);mdlPreload.t=setTimeout(()=>{try{if(!$('#deploy').classList.contains('hidden'))openDeploy();}catch(e){}},400);}}}
+setInterval(()=>{try{thumbWrap();mdlPreload();}catch(e){}},1000);
+
 // new Zeta giants
 Object.assign(STR.ko,{ztitan:'시즈 타이탄',zsled:'스카이 슬레드',levi:'리바이어던 출현! 하늘을 올려다봐라'});Object.assign(STR.en,{ztitan:'Siege Titan',zsled:'Sky Sled',levi:'Leviathan inbound! Look to the sky'});
 CL.ztitan={...ZB,n:{ko:'시즈 타이탄',en:'Siege Titan'},role:'armor',cat:3,arm:'heavy',layer:0,r:58,hp:5200,spd:44,wpns:['zqueen'],a1:'shock',cd:[8,10],xp:1600,d:{ko:'거대한 공성 괴수',en:'Colossal siege beast'}};
@@ -3333,10 +3439,10 @@ if(typeof MDL!=='undefined')MDL.arkframe=['mech3',PI/2,74,'h'];
 const linkName=()=>({link2:LANG==='en'?'Sera':'세라',link3:LANG==='en'?'Luna':'루나',link_leg:LANG==='en'?'Astra':'아스트라'})[P.linkM]||'Sera';
 function linkSay(key){try{COMMS.say('sq',linkName(),t(key,linkName()),{pri:1});}catch(e){}}
 {const _ab=ability;ability=function(u,n,inp){const c=CL[u.cls];const key=c&&c['a'+n];if(u.cls!=='arkframe')return _ab(u,n,inp);const s=u.slot,st=u.st;
-  if(key==='palmlaser'){const p=clampTo(u,inp.tx,inp.ty,1100);const a=Math.atan2(p.y-u.y,p.x-u.x);G.pend.push({k:'beam',x:u.x,y:u.y,x2:u.x+Math.cos(a)*1100,y2:u.y+Math.sin(a)*1100,t:.9,mt:.9,team:u.team,dmg:420*dmgMul(u),r:46,owner:s});if(isLocal(s))pop(t('a_palmlaser')+' …','#9ff6ff',false);}
-  else if(key==='saberslash'){const a0=u.aa;let hit=0;for(const e of G.units){if(e.dead||e.team===u.team)continue;const dx=e.x-u.x,dy=e.y-u.y,d=Math.hypot(dx,dy);if(d>170+e.r)continue;if(Math.abs(angDiff(a0,Math.atan2(dy,dx)))>1.0)continue;hurt(e,(isMech(e.cls)?300:220)*dmgMul(u),s,Math.atan2(dy,dx),'x');hit++;if(!e.dead&&e.layer===0&&e.cls!=='sentry'){e.x+=dx/(d||1)*40;e.y+=dy/(d||1)*40;}}
+  if(key==='palmlaser'){u.palmT=.8;const p=clampTo(u,inp.tx,inp.ty,1100);const a=Math.atan2(p.y-u.y,p.x-u.x);G.pend.push({k:'beam',x:u.x,y:u.y,x2:u.x+Math.cos(a)*1100,y2:u.y+Math.sin(a)*1100,t:.9,mt:.9,team:u.team,dmg:420*dmgMul(u),r:46,owner:s});if(isLocal(s))pop(t('a_palmlaser')+' …','#9ff6ff',false);}
+  else if(key==='saberslash'){u.slashT=.9;const a0=u.aa;let hit=0;for(const e of G.units){if(e.dead||e.team===u.team)continue;const dx=e.x-u.x,dy=e.y-u.y,d=Math.hypot(dx,dy);if(d>170+e.r)continue;if(Math.abs(angDiff(a0,Math.atan2(dy,dx)))>1.0)continue;hurt(e,(isMech(e.cls)?300:220)*dmgMul(u),s,Math.atan2(dy,dx),'x');hit++;if(!e.dead&&e.layer===0&&e.cls!=='sentry'){e.x+=dx/(d||1)*40;e.y+=dy/(d||1)*40;}}
    for(let i=0;i<26;i++){const aa=a0+(i/25-.5)*2;part(u.x+Math.cos(aa)*130,u.y+Math.sin(aa)*130,Math.cos(aa)*80,Math.sin(aa)*80,.35,i%2?'#ff7ae0':'#ffffff',4,40);}fx(1,u.x+Math.cos(a0)*110,u.y+Math.sin(a0)*110,0);if(hit)G.hitm=.15;}
-  else if(key==='mswarm'){const tg=lockTargets(u,1100,3.2,u.aa);for(let i=0;i<16;i++)shoot(u,u.aa+(i-7.5)*.14,{dmg:72*dmgMul(u),spd:700,range:1300,kind:6,dt:'at',rad:5,home:tg.length?tg[i%tg.length]:null,turn:4.2,mis:1});}
+  else if(key==='mswarm'){u.barT=1.6;const tg=lockTargets(u,1100,3.2,u.aa);for(let i=0;i<16;i++)shoot(u,u.aa+(i-7.5)*.14,{dmg:72*dmgMul(u),spd:700,range:1300,kind:6,dt:'at',rad:5,home:tg.length?tg[i%tg.length]:null,turn:4.2,mis:1});}
   else return _ab(u,n,inp);
   setCd(u,n,c.cd[n-1]*st.cd);};}
 {const _ul=ultimate;ultimate=function(u,inp){if(u.cls!=='arkframe')return _ul(u,inp);const tg=lockTargets(u,1200,3.2,u.aa);for(let i=0;i<16;i++)shoot(u,u.aa+(i-7.5)*.14,{dmg:80*dmgMul(u),spd:700,range:1300,kind:6,dt:'at',rad:5,home:tg.length?tg[i%tg.length]:null,turn:4.2,mis:1});if(isLocal(u.slot))pop(t('a_mswarm'),'#ffd27a',true);};}
@@ -3389,21 +3495,21 @@ function envExtras(R){const T3=window.THREE;const S=R.envG;if(!S||MAP.space)retu
  if(!propsReady)return;const R2=mulberry((MAP.seed||1)+7);const safe=(x,y,r)=>{if(x<120||y<120||x>WW-120||y>WH-120)return false;for(const k of ROCKS)if(Math.hypot(k.x-x,k.y-y)<k.r+r+20)return false;for(const p of POINTS)if(Math.hypot(p.x-x,p.y-y)<PR+r+40)return false;for(const l of LAVA)if(Math.hypot(l.x-x,l.y-y)<l.r+r)return false;return true;};
  const place=(f,size,n,near)=>{let tries=0,done=0;while(done<n&&tries<120){tries++;let x,y;if(near){const b=BASES[done%2];const q=bOff(b,rnd(-60,420),rnd(-420,420));x=q.x;y=q.y;}else{x=R2()*WW;y=R2()*WH;}if(!safe(x,y,size*.5))continue;const i=propInst(f,size,'l',R2()*6.28);if(!i)return;i.wrap.position.set(x,0,y);S.add(i.wrap);done++;}};
  place('p_bunker',90,4,true);place('p_crates',40,10,true);place('p_crates',36,8,false);place('p_wreck',160,MAP.theme==='seoul'?2:3,false);}
-function envWrap(){if(!R3||!R3.ready||R3._ew)return;R3._ew=1;const ob=R3.buildEnv;R3.buildEnv=function(){ob.call(this);try{envExtras(this);}catch(e){console.warn('env',e);}};
+function envWrap(){if(!R3||!R3.ready||R3._ew)return;R3._ew=1;const ob=R3.buildEnv;R3.buildEnv=function(){ob.call(this);try{envExtras(this);if(window.__rpgDeco)window.__rpgDeco(this);}catch(e){console.warn('env',e);}};
  const os=R3.syncUnits;R3.syncUnits=function(dt,now){os.call(this,dt,now);if(!MAP.space&&Math.random()<.6)for(const l of LAVA){if(d2(l.x,l.y,cam.x,cam.y)>1300*1300)continue;const a=Math.random()*6.28,r=Math.random()*l.r;part(l.x+Math.cos(a)*r,l.y+Math.sin(a)*r,rnd(-10,10),rnd(-10,10),1.2,Math.random()<.5?'#ff8a2a':'#ffd27a',3,4+Math.random()*10);}};
  try{R3.rebuildEnv();}catch(e){}}
 setInterval(()=>{try{envWrap();}catch(e){}},500);
 // ===== ASCEND universe map renderer (shared by game + artifact) =====
 window.ASCEND_GALAXY={
  regions:[
-  {k:'emp',n:{ko:'은하 제국',en:'Galactic Empire'},c:'255,70,90',pts:[[8,6],[46,4],[54,16],[44,30],[30,34],[14,30],[6,18]]},
-  {k:'fed',n:{ko:'자유주의 연맹',en:'Liberty Federation'},c:'80,170,255',pts:[[3,46],[22,42],[34,52],[30,78],[18,96],[3,94]]},
-  {k:'neu',n:{ko:'중립 회랑',en:'Neutral Corridor'},c:'160,220,255',pts:[[22,40],[34,32],[42,40],[36,50],[26,48]]},
-  {k:'zeta',n:{ko:'제타 확산 지대',en:'Zeta Expanse'},c:'255,150,40',pts:[[40,52],[56,44],[70,62],[64,88],[44,92],[36,74]]},
-  {k:'alpha',n:{ko:'알파 망명 항로',en:'Alpha Exile Route'},c:'197,140,255',pts:[[50,6],[74,4],[80,20],[66,32],[54,24]]},
-  {k:'lumen',n:{ko:'루멘 성운',en:'Lumen Nebula'},c:'255,210,110',pts:[[66,48],[80,46],[84,64],[72,72],[64,62]]},
-  {k:'omega',n:{ko:'오메가 지배권',en:'Omega Dominion'},c:'150,60,220',pts:[[84,14],[99,8],[99,60],[90,52],[82,36]]},
-  {k:'void',n:{ko:'허무의 균열',en:'Void Rift'},c:'255,90,110',pts:[[86,68],[99,66],[99,96],[84,94]]}],
+  {k:'emp',lx:34,ly:11,n:{ko:'은하 제국',en:'Galactic Empire'},c:'255,70,90',pts:[[8,6],[46,4],[54,16],[44,30],[30,34],[14,30],[6,18]]},
+  {k:'fed',lx:17,ly:90,n:{ko:'자유주의 연맹',en:'Liberty Federation'},c:'80,170,255',pts:[[3,46],[22,42],[34,52],[30,78],[18,96],[3,94]]},
+  {k:'neu',lx:39.5,ly:44,n:{ko:'중립 회랑',en:'Neutral Corridor'},c:'160,220,255',pts:[[22,40],[34,32],[42,40],[36,50],[26,48]]},
+  {k:'zeta',lx:61,ly:67,n:{ko:'제타 확산 지대',en:'Zeta Expanse'},c:'255,150,40',pts:[[40,52],[56,44],[70,62],[64,88],[44,92],[36,74]]},
+  {k:'alpha',lx:61,ly:9,n:{ko:'알파 망명 항로',en:'Alpha Exile Route'},c:'197,140,255',pts:[[50,6],[74,4],[80,20],[66,32],[54,24]]},
+  {k:'lumen',lx:79,ly:69,n:{ko:'루멘 성운',en:'Lumen Nebula'},c:'255,210,110',pts:[[66,48],[80,46],[84,64],[72,72],[64,62]]},
+  {k:'omega',lx:92,ly:47,n:{ko:'오메가 지배권',en:'Omega Dominion'},c:'150,60,220',pts:[[84,14],[99,8],[99,60],[90,52],[82,36]]},
+  {k:'void',lx:92.5,ly:91,n:{ko:'허무의 균열',en:'Void Rift'},c:'255,90,110',pts:[[86,68],[99,66],[99,96],[84,94]]}],
  places:[
   {id:'earth',n:{ko:'지구 · 네오 서울',en:'Earth · Neo Seoul'},x:12,y:72,c:'#5ad1ff',r:1.5},
   {id:'capital_e',n:{ko:'제국 수도 성계 발할라',en:'Imperial Capital Valhalla'},x:18,y:20,c:'#ff6b7a',r:1.3},
@@ -3431,9 +3537,9 @@ window.ASCEND_GALAXY={
   g.strokeStyle='rgba(120,170,255,.06)';g.lineWidth=1;for(let i=0;i<=20;i++){g.beginPath();g.moveTo(X(i*5),0);g.lineTo(X(i*5),H);g.stroke();g.beginPath();g.moveTo(0,Y(i*5));g.lineTo(W,Y(i*5));g.stroke();}
   // territories
   for(const R of this.regions){g.beginPath();R.pts.forEach((p,i)=>{const x=X(p[0]),y=Y(p[1]);if(i)g.lineTo(x,y);else g.moveTo(x,y);});g.closePath();const cx=R.pts.reduce((a,p)=>a+p[0],0)/R.pts.length,cy=R.pts.reduce((a,p)=>a+p[1],0)/R.pts.length;const rg=g.createRadialGradient(X(cx),Y(cy),0,X(cx),Y(cy),S*28);rg.addColorStop(0,`rgba(${R.c},.22)`);rg.addColorStop(1,`rgba(${R.c},.04)`);g.fillStyle=rg;g.fill();g.setLineDash([S*.9,S*.6]);g.strokeStyle=`rgba(${R.c},.65)`;g.lineWidth=Math.max(1.2,S*.18);g.stroke();g.setLineDash([]);
-   if(opt.labels!==false){g.font=`800 ${Math.round(S*2.1)}px "Noto Sans KR",sans-serif`;g.textAlign='center';g.fillStyle=`rgba(${R.c},.85)`;g.shadowColor='#000';g.shadowBlur=6;g.fillText(R.n[L],X(cx),Y(cy)-S*4.5);if(L==='ko'){g.font=`600 ${Math.round(S*1.2)}px sans-serif`;g.fillStyle=`rgba(${R.c},.6)`;g.fillText(R.n.en.toUpperCase(),X(cx),Y(cy)-S*2.9);}g.shadowBlur=0;}}
+   if(opt.labels!==false){g.font=`800 ${Math.round(S*2.1)}px "Noto Sans KR",sans-serif`;g.textAlign='center';g.fillStyle=`rgba(${R.c},.85)`;g.shadowColor='#000';g.shadowBlur=6;g.fillText(R.n[L],X(R.lx),Y(R.ly));if(L==='ko'){g.font=`600 ${Math.round(S*1.2)}px sans-serif`;g.fillStyle=`rgba(${R.c},.6)`;g.fillText(R.n.en.toUpperCase(),X(R.lx),Y(R.ly)+S*1.6);}g.shadowBlur=0;}}
   // hyperlanes
-  const P=Object.fromEntries(this.places.map(p=>[p.id,p]));g.lineWidth=Math.max(1,S*.14);for(const[a,b]of this.lanes){const A=P[a],B=P[b];const gr=g.createLinearGradient(X(A.x),Y(A.y),X(B.x),Y(B.y));gr.addColorStop(0,A.c+'aa');gr.addColorStop(1,B.c+'aa');g.strokeStyle=gr;g.setLineDash([S*.5,S*.5]);g.beginPath();g.moveTo(X(A.x),Y(A.y));g.lineTo(X(B.x),Y(B.y));g.stroke();}g.setLineDash([]);
+  const P=Object.fromEntries(this.places.map(p=>[p.id,p]));g.lineWidth=Math.max(1,S*.14);if(opt.lanes!==false)for(const[a,b]of this.lanes){const A=P[a],B=P[b];const gr=g.createLinearGradient(X(A.x),Y(A.y),X(B.x),Y(B.y));gr.addColorStop(0,A.c+'aa');gr.addColorStop(1,B.c+'aa');g.strokeStyle=gr;g.setLineDash([S*.5,S*.5]);g.beginPath();g.moveTo(X(A.x),Y(A.y));g.lineTo(X(B.x),Y(B.y));g.stroke();}g.setLineDash([]);
   // places
   if(opt.places!==false)for(const p of this.places){if(p.id==='core'||(opt.skip&&opt.skip.includes(p.id)))continue;const x=X(p.x),y=Y(p.y),r=S*p.r;const pg=g.createRadialGradient(x,y,0,x,y,r*4);pg.addColorStop(0,p.c+'cc');pg.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=pg;g.fillRect(x-r*4,y-r*4,r*8,r*8);const bg=g.createRadialGradient(x-r*.4,y-r*.4,r*.1,x,y,r);bg.addColorStop(0,'#fff');bg.addColorStop(.35,p.c);bg.addColorStop(1,'#111');g.fillStyle=bg;g.beginPath();g.arc(x,y,r,0,6.28);g.fill();
    g.font=`700 ${Math.round(S*1.45)}px "Noto Sans KR",sans-serif`;g.textAlign='center';g.fillStyle='#fff';g.shadowColor='#000';g.shadowBlur=5;g.fillText(p.n[L],x,y+r+S*2.1);g.shadowBlur=0;}
@@ -3489,7 +3595,7 @@ function arkStats(){const r=R(),m=MECHS[r.mech]||MECHS.mech3;const s={hp:m.hp,dm
  const seats=m.god?3:1;for(const lk of (r.links3||[]).slice(0,seats)){const L=LINKS[lk];if(!L)continue;const aw2=1+.04*(r.aw[lk]||0);for(const[k,v]of Object.entries(L.b)){if(k==='cd'||k==='taken')s[k]*=Math.pow(v,aw2);else s[k]*=1+(v-1)*aw2;}}return s;}
 function pilotStats(){const r=R();const s={hp:1,dmg:1,cd:1};for(const sl of['suit','helm','gear']){const it=r.inv.find(i=>i.id===r.eq[sl]);if(!it)continue;const v=itemVal(it);if(it.st==='cd')s.cd*=1-v;else s[it.st]*=1+v;}return s;}
 window.__rpgStats={arkStats,pilotStats};
-window.__rpgHud=()=>{const X=G.rpg,I=G.inv;if(!X||!I)return'';if(X.bossU&&!X.bossU.dead)return L('보스 ','BOSS ')+tx(CL[X.boss].n)+' · '+Math.ceil(X.bossU.hp/X.bossU.mhp*100)+'%';if(I.wave<X.waves)return L('원정 · 파상공격 ','Expedition · wave ')+I.wave+'/'+X.waves+' · '+L('다음 ','next ')+Math.max(0,Math.ceil(I.waveT))+L('초','s');return L('보스 출현 임박!','Boss incoming!');};
+window.__rpgHud=()=>{const X=G.rpg,I=G.inv;if(!X||!I)return'';if(X.obj)return qHud(X);if(X.bossU&&!X.bossU.dead)return L('보스 ','BOSS ')+tx(CL[X.boss].n)+' · '+Math.ceil(X.bossU.hp/X.bossU.mhp*100)+'%';if(I.wave<X.waves)return L('원정 · 파상공격 ','Expedition · wave ')+I.wave+'/'+X.waves+' · '+L('다음 ','next ')+Math.max(0,Math.ceil(I.waveT))+L('초','s');return L('보스 출현 임박!','Boss incoming!');};
 // apply to battles: mech model + stats
 function syncArkModel(){const r=R();if(typeof MDL!=='undefined'&&MDL.arkframe){MDL.arkframe[0]=r.mech;MDL.arkframe[2]=(MECHS[r.mech]&&MECHS[r.mech].god)?84:74;}}
 {const _su=spawnUnit;spawnUnit=function(s,cls,sp,opt){if(G&&G.rpg&&s===G.local&&CL[cls]&&CL[cls].arm==='inf')cls='arkframe';if(cls==='arkframe')syncArkModel();const u=_su(s,cls,sp,opt);
@@ -3520,7 +3626,7 @@ if(typeof MDL!=='undefined'){MDL.omegaw=['omega',PI/2,130,'h'];}
 // ---------- episodes ----------
 const K=(ko,en)=>({ko,en});
 const PORT={sera:'link2',luna:'link3',astra:'link_leg',reinhard:'emp_officer',yang:'fed_officer',arkos:'omega',hq:'emp_female',seraphine:'seraphine',hayun:'hayun',minjae:'minjae',me:null,igni:'a_fire',zeta:'zbehemoth'};
-const WHO={sera:K('세라','Sera'),luna:K('루나','Luna'),astra:K('아스트라','Astra'),reinhard:K('라인하르트 폰 에스트라','Reinhard von Estra'),yang:K('양 위렌','Yang Wiren'),arkos:K('오메가 군주 아르코스','Omega Lord Arkos'),hq:K('연합 사령부','United HQ'),seraphine:K('알파 사령관 세라핀','Alpha Commander Seraphine'),hayun:K('하윤','Hayun'),minjae:K('민재','Minjae'),me:K('{name}','{name}'),igni:K('이그니','Igni'),zeta:K('???','???'),nar:K('','')};
+const WHO={sera:K('세라','Sera'),luna:K('루나','Luna'),astra:K('아스트라','Astra'),reinhard:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),yang:K('에이든 서','Aiden Seo'),arkos:K('오메가 군주 아르코스','Omega Lord Arkos'),hq:K('연합 사령부','United HQ'),seraphine:K('알파 사령관 세라핀','Alpha Commander Seraphine'),hayun:K('하윤','Hayun'),minjae:K('민재','Minjae'),me:K('{name}','{name}'),igni:K('이그니','Igni'),zeta:K('???','???'),nar:K('','')};
 const BG={seoul:'radial-gradient(ellipse at 50% 120%,rgba(255,80,200,.35),transparent 60%),linear-gradient(180deg,#0a0820 0%,#2a1040 55%,#ff5aa0 140%)',hangar:'linear-gradient(180deg,#0b1018,#1b2433 60%,#0a0e14)',fire:'radial-gradient(ellipse at 50% 110%,rgba(255,110,30,.6),transparent 60%),linear-gradient(180deg,#140604,#3a0f06)',ice:'radial-gradient(ellipse at 50% 0%,rgba(160,220,255,.4),transparent 60%),linear-gradient(180deg,#081a2c,#0d2f4a)',space:'radial-gradient(ellipse at 30% 40%,rgba(120,80,220,.35),transparent 55%),radial-gradient(#0a0f22,#020308)',temple:'radial-gradient(ellipse at 50% 30%,rgba(255,220,140,.45),transparent 60%),linear-gradient(180deg,#120e04,#2a2008)',gate:'radial-gradient(ellipse at 50% 50%,rgba(197,140,255,.35),transparent 60%),linear-gradient(180deg,#07040e,#1a0a2a)',memorial:'linear-gradient(180deg,#0a1224,#1d2c48 60%,#3a4d70)'};
 const S=(w,ko,en,o)=>Object.assign({t:'say',w,x:K(ko,en)},o||{});
 const SC=(bg,ko,en,o)=>Object.assign({t:'scene',bg,x:K(ko,en)},o||{});
@@ -3556,8 +3662,8 @@ const EPIS=[
   S('seraphine','우리 알파는 제타에게 멸망했다. 너희도 같은 길을 걷기 싫다면 우리와 손을 잡아라.','We of Alpha were devoured by the Zeta. If you do not wish to share our fate, take our hand.'),
   S('sera','…세라핀의 음성 패턴에 미세한 떨림. 무언가 숨기고 있습니다.','…Micro-tremors in Seraphine\'s voice. She is concealing something.'),
   {t:'choice',w:'hq',x:K('두 함대가 동시에 구조 신호를 보낸다. 시간은 한쪽만 구할 만큼뿐이다.','Two fleets are screaming for help at once. There is only time to save one.'),o:[
-   {l:K('제국 함대를 구한다 — 라인하르트 제독','Save the Imperial fleet — Admiral Reinhard'),set:'reinhard',rw:{shards:200,item:2},say:['reinhard',K('연맹 쪽 파일럿에게 빚을 지다니. …이 빚은 반드시 갚겠다.','Rescued by a Federation pilot… How humiliating. Remember this, {name}. I always repay my debts.')]},
-   {l:K('연맹 수송선을 구한다 — 양 위렌 참모','Save the Federation convoy — Strategist Yang'),set:'yang',rw:{shards:200,item:2},say:['yang',K('살았다… 고마워. 나중에 차 한 잔 사지. 홍차, 브랜디 약간.','Phew—alive. Thank you. I owe you a cup of tea. Black, with a splash of brandy.')]}]},
+   {l:K('제국 함대를 구한다 — 아델하르트 제독','Save the Imperial fleet — Admiral Adelhard'),set:'reinhard',rw:{shards:200,item:2},say:['reinhard',K('연맹 쪽 파일럿에게 빚을 지다니. …이 빚은 반드시 갚겠다.','Rescued by a Federation pilot… How humiliating. Remember this, {name}. I always repay my debts.')]},
+   {l:K('연맹 수송선을 구한다 — 에이든 서 참모','Save the Federation convoy — Strategist Seo'),set:'yang',rw:{shards:200,item:2},say:['yang',K('살았다… 고마워. 나중에 차 한 잔 사지. 홍차, 브랜디 약간.','Phew—alive. Thank you. I owe you a cup of tea. Black, with a splash of brandy.')]}]},
   {t:'battle',x:K('궤도 기지를 습격한 제타 비행 군단을 격추하라.','Shoot down the Zeta air swarm tearing into the station.'),waves:5,boss:'zguard',diff:2,rw:{shards:350,item:2}},
   SC('hangar','구조된 수송선의 화물칸','The cargo hold of the rescued transport'),
   S('luna','와, 진짜 사람이다! 저는 루나예요. 오늘 운이 좋을 것 같아요. 제 직감은 틀린 적이 거의 없거든요.','Oh! A real human! Hi, I\'m Luna. I\'ve got a good feeling about today—and my hunches are almost never wrong.',{rw:{link:'link3'}}),
@@ -3629,8 +3735,8 @@ const EPIS=[
   SC('space','좌표 불명 · 신기 격납 성소','Unknown coordinates — the sanctum of the divine frame'),
   S('astra','여섯 날개의 신기 엘 샤다이. 알파가 오메가를 지우려 만든 최종 병기입니다.','El Shaddai. The six-winged divine frame. Alpha\'s final weapon, forged to erase Omega.'),
   S('astra','이것을 쥐는 순간, 당신은 심판할 힘을 가집니다. 쓰지 않을 용기도 함께 가지세요.','The moment you take it, you hold the power to judge. Hold the courage not to use it, as well.'),
-  S('astra','한 서버에 단 세 대. 이미 주인이 있다면, 문은 다시 열리지 않습니다.','Only three exist on each server. Once all have masters, this gate will never open again.'),
-  {t:'battle',x:K('신의 시련: 오메가 군주의 그림자를 이겨라.','Trial of the Divine — defeat the shadow of the Omega Lord.'),waves:7,boss:'omegaw',diff:6,rw:{god:1,shards:1500,item:4}}]},
+  S('astra','시련을 이겨내도 여섯 날개의 문은 쉽게 열리지 않습니다. 모든 별의 조건이 갖춰진 날, 아주 드물게 부름이 들릴 겁니다.','Even if you pass this trial, the gate of the six wings will not open easily. Only on the day every star aligns will the call come, and rarely.'),
+  {t:'battle',x:K('신의 시련: 오메가 군주의 그림자를 이겨라.','Trial of the Divine — defeat the shadow of the Omega Lord.'),waves:7,boss:'omegaw',diff:6,rw:{shards:1500,item:4}}]},
 ];
 const EDIFF={e_p:1,e0:1,e1:2,e2:3,e3:3,e4:4,e5:5,e6:6};
 const epS=id=>R().epi[id]||(R().epi[id]={n:0,done:false});
@@ -3640,20 +3746,15 @@ function giveRw(rw,log){const r=R();if(!rw)return;if(rw.shards){r.shards+=rw.sha
  if(rw.item){const n=rw.item>=3?2:1;for(let i=0;i<n;i++){const rr=Math.min(4,Math.max(0,rw.item-1+(Math.random()<.3?1:0)-(Math.random()<.3?1:0)));const it=mkItem(rr);r.inv.push(it);log.push('<span style="color:'+RAR[it.r].c+'">'+tx(it.n)+'</span>');}}
  if(rw.link&&Math.random()<(rw.chance==null?1:rw.chance)){addUnit(rw.link,1,log);}
  if(rw.flag){r.flags=r.flags||{};r.flags[rw.flag]=1;}
- if(rw.god){log.push(tx(K('신기 소유권 확인 중…','Verifying divine frame ownership…')));setTimeout(godAfter,800);}
+ if(rw.god&&!R().mythic){log.push(tx(K('신기 엘 샤다이 해방!','Divine El Shaddai unsealed!')));setTimeout(godAfter,800);}
  saveP();}
 function addUnit(k,isLink,log){const r=R();const arr=isLink?r.links:r.mechs;const C=isLink?LINKS[k]:MECHS[k];if(!C)return;if(arr.includes(k)){r.aw[k]=Math.min(5,(r.aw[k]||0)+1);log&&log.push(tx(C.n)+' · '+tx(K('각성','Awaken'))+' '+r.aw[k]);}else{arr.push(k);log&&log.push('<b style="color:'+RAR[C.r].c+'">NEW '+tx(C.n)+'</b>');}}
-// server-unique divine frames via shared account backend if present
-const GODS=['god','god_red','god_black'];const GBASE=1790000000000;
-async function claimGodAsync(){const r=R();if(r.mythic)return{c:r.mythic};const A=window.HKAccount;if(!A||!A.user)return{need:'login'};const me=A.user;
- if(me.email==='suyol1974@gmail.com'){r.mythic='god_white';addUnit('god_white');saveP();return{c:'god_white'};}
- for(const c of GODS){let ok=false;try{if(A.claimUnique){const res=await A.claimUnique('ascend_'+c,{name:P.name||'Pilot'});if(res.ok)ok=true;else if(!(res.err&&/permission/i.test(res.err)))continue;}
-   if(!ok){const top=await A.topScores('ascend_'+c,1);if(top.length&&top[0].id!==me.uid)continue;if(!top.length){await A.submitScore('ascend_'+c,99999999-Math.floor((Date.now()-GBASE)/1000),P.name||'Pilot');const t2=await A.topScores('ascend_'+c,1);ok=!!(t2.length&&t2[0].id===me.uid);}else ok=true;}}catch(e){}
-  if(ok){r.mythic=c;addUnit(c);saveP();return{c};}}return{c:null};}
-async function godStatus(){const A=window.HKAccount;const out={};for(const c of GODS){let o=null;try{if(A&&A.getUnique)o=await A.getUnique('ascend_'+c);if(!o&&A&&A.topScores){const t=await A.topScores('ascend_'+c,1);if(t.length)o={name:t[0].name};}}catch(e){}out[c]=o;}return out;}
-function godAfter(){claimGodAsync().then(res=>{if(res.need==='login'){showDlg('astra',L('신기의 소유권은 서버 전체에 단 하나씩만 기록됩니다. 계정으로 로그인한 뒤 다시 시련을 마치세요.','Ownership of a divine frame is recorded server-wide. Log in to your account, then finish the trial again.'),[{l:L('로그인','Log in'),pri:1,f:()=>{try{window.HKAccount.openLogin();}catch(e){}}},{l:'OK',f:()=>{}}]);R().godPending=1;saveP();}
-  else if(res.c)showDlg('astra','<b style="color:#ffd166">'+tx(MECHS[res.c].n)+'</b><br><br>'+L('이 신기는 이제 당신의 것입니다. 이 서버에서 영원히.','This divine frame is yours now — on this server, forever.'),[{l:'OK',pri:1,f:()=>{render();}}]);
-  else showDlg('astra',L('세 대의 신기는 이미 모두 주인이 있습니다… 문은 닫혔습니다.','All three divine frames already have masters… the gate has closed.'),[{l:'OK',pri:1,f:()=>{}}]);});}
+// divine frames: reward for clearing the Trial of the Divine (no server-wide cap)
+const GODS=['god','god_red','god_black'];
+function godAfter(){const r=R();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!(r.mechs||[]).includes('god_white'))addUnit('god_white');}catch(e){}
+ if(r.mythic){saveP();return;}
+ const pickG=c=>{r.mythic=c;addUnit(c);saveP();render();showDlg('astra','<b style="color:#ffd166">'+tx(MECHS[c].n)+'</b><br><br>'+L('이 신기는 이제 당신의 것입니다. 그 힘을 지키는 데 쓰세요.','This divine frame is yours now. Use its power to protect.'),[{l:'OK',pri:1,f:()=>{}}]);};
+ showDlg('astra',L('시련을 이겨낸 자여. 당신의 빛을 고르십시오. 한 번 고른 빛은 바뀌지 않습니다.','You who passed the trial—choose your light. Once chosen, it cannot be changed.'),GODS.map(c=>({l:tx(MECHS[c].n),pri:c==='god',f:()=>pickG(c)})));}
 // ---------- gacha ----------
 const BANNERS={mech:{n:K('기동전사 소환','Mech Summon'),cost:300,rates:[50,30,14,5,1],pity:100,soft:90},link:{n:K('링크 각성','LINK Awakening'),cost:300,rates:[50,30,14.5,4.8,.7],pity:100,soft:90},gear:{n:K('장비 보급','Gear Supply'),cost:100,rates:[45,32,16,6,1],pity:0}};
 function rollR(b){const B=BANNERS[b];const r=R();if(B.pity){r.pity[b]=(r.pity[b]||0)+1;const p=r.pity[b];if(p>=B.pity)return 4;let leg=B.rates[4];if(p>B.soft)leg+=6*(p-B.soft);const x=Math.random()*100;if(x<leg)return 4;const rest=100-leg,base=100-B.rates[4];let acc=0;const y=Math.random()*rest;for(let i=0;i<4;i++){acc+=B.rates[i]*rest/base;if(y<acc)return i;}return 3;}
@@ -3690,9 +3791,9 @@ const scr=document.createElement('div');scr.id='rpg';scr.className='screen solid
 const dlg=document.createElement('div');dlg.id='rpgDlg';dlg.innerHTML='<div id="vnBg"></div><div id="vnStars"></div><div id="vnTitle"></div><img id="dlgImg" alt=""><div class="box"><div class="who" id="dlgWho"></div><div id="dlgTx"></div><div class="opts" id="dlgOpts"></div></div>';dlg.addEventListener('click',()=>{if(vnShow.typing&&vnShow.finish)vnShow.finish();});document.body.appendChild(dlg);
 let tab='map',selEpi='e_p';
 const L=(ko,en)=>LANG==='en'?en:ko;
-function hdr(){const r=R();$('#rpgT').textContent=L('은하 원정','Galaxy Expedition');$('#rpgS').textContent='★ '+r.shards;$('#rpgC').textContent='◆ '+r.cred;$('#rpgM').textContent=L('기억 ','Memory ')+r.mem;$('#rpgBack').textContent=t('back');
- const tb=$('#rpgTabs');tb.innerHTML='';for(const[k,ko,en]of[['map','은하 지도','Galaxy map'],['hangar','정비소','Hangar'],['summon','소환','Summon'],['dex','도감','Collection'],['arc','기록 보관소','Archive']]){const b=document.createElement('button');b.textContent=L(ko,en);b.className=tab===k?'on':'';b.onclick=()=>{tab=k;render();};tb.appendChild(b);}}
-function render(){hdr();dailyBtn();const B=$('#rpgBody');if(tab==='map')renderMap(B);else if(tab==='hangar')renderHangar(B);else if(tab==='summon')renderSummon(B);else if(tab==='arc')renderArc(B);else renderDex(B);}
+function hdr(){const r=R();$('#rpgT').textContent=L('은하 원정','Galaxy Expedition');$('#rpgS').textContent='★ '+r.shards;$('#rpgC').textContent='◆ '+r.cred;$('#rpgM').textContent=L('기억 ','Memory ')+r.mem;$('#rpgBack').textContent=t('back');if(!$('#rpgLang')){const lb=document.createElement('button');lb.id='rpgLang';lb.style.cssText='margin-right:8px';lb.onclick=()=>setLang(LANG==='ko'?'en':'ko');$('#rpgBack').parentNode.insertBefore(lb,$('#rpgBack'));}$('#rpgLang').textContent=LANG==='ko'?'EN':'한국어';
+ const tb=$('#rpgTabs');tb.innerHTML='';for(const[k,ko,en]of[['map','은하 지도','Galaxy map'],['quest','퀘스트','Quests'],['hangar','정비소','Hangar'],['summon','소환','Summon'],['dex','도감','Collection'],['arc','기록 보관소','Archive']]){const b=document.createElement('button');b.textContent=L(ko,en);b.className=tab===k?'on':'';b.onclick=()=>{tab=k;render();};tb.appendChild(b);}}
+function render(){hdr();dailyBtn();const B=$('#rpgBody');if(tab==='map')renderMap(B);else if(tab==='quest')renderQuest(B);else if(tab==='hangar')renderHangar(B);else if(tab==='summon')renderSummon(B);else if(tab==='arc')renderArc(B);else renderDex(B);}
 const MEMS=[K('알파는 별들 사이에 생명을 뿌린 창조자 문명이었다. 그들은 스스로를 「정원사」라 불렀다.','Alpha was a creator civilization that seeded life among the stars. They called themselves "the Gardeners."'),
  K('제타의 유전자에는 알파의 것이 아닌 두 번째 서명이 새겨져 있었다.','A second signature, not Alpha\'s, was written into the Zeta genome.'),
  K('제타는 알파의 첫 피조물이었다. 통제되지 않자, 알파는 그들을 먼 행성에 버렸다.','The Zeta were Alpha\'s first creation. When they could not be controlled, Alpha abandoned them on a distant world.'),
@@ -3701,18 +3802,18 @@ const MEMS=[K('알파는 별들 사이에 생명을 뿌린 창조자 문명이�
  K('알파의 「정화 계획」: 피조물이 창조주를 넘어서기 전에, 때가 되면 오메가도 지운다.','Alpha\'s "Purification Protocol": before a creation surpasses its makers, erase Omega too.'),
  K('오메가는 정화 계획을 알아냈다. 그리고 살아남기 위해 먼저 칼을 들었다.','Omega discovered the protocol—and raised the blade first, to survive.'),
  K('아스트라는 알파 최후의 수호 AI. 심판과 수호 사이에서 스스로 선택하도록 설계되었다.','Astra is Alpha\'s last guardian AI, designed to choose for herself between judgment and protection.'),
- K('엘 샤다이: 오메가를 지우기 위해 만든 알파의 최종 병기. 날개 여섯, 서버마다 단 세 대.','El Shaddai: Alpha\'s final weapon, forged to erase Omega. Six wings. Three per server.'),
+ K('엘 샤다이: 오메가를 지우기 위해 만든 알파의 최종 병기. 날개 여섯, 네 가지 빛.','El Shaddai: Alpha\'s final weapon, forged to erase Omega. Six wings, four lights.'),
  K('은하 바깥에서, 알파도 오메가도 아닌 무언가의 신호가 깨어나고 있다.','Beyond the galaxy, a signal from something neither Alpha nor Omega is waking.')];
 const ENDS={stars:K('별의 아이들','Children of the Stars'),coexist:K('공존','Coexistence'),judge:K('심판','Judgment')};
-function renderArc(B){const r=R();let h='<div class="hg"><div><h3>'+L('알파의 기억 조각','Alpha memory fragments')+' ('+Math.min(r.mem,MEMS.length)+'/'+MEMS.length+')</h3>';MEMS.forEach((m,i)=>{const o=i<r.mem;h+='<div class="epi" style="margin:6px 0;'+(o?'':'opacity:.4')+'"><b style="color:#c58cff">#'+(i+1)+'</b> '+(o?tx(m):L('잠김 — 원정을 진행해 기억을 되찾으세요.','Locked — continue the expedition to recover it.'))+'</div>';});
+function renderArc(B){if(arcSub!=='mem'){B.innerHTML=arcNav()+'<div>'+(arcSub==='cast'?renderCast():arcSub==='mon'?renderMon():renderTerr())+'</div>';arcBind(B);return;}const r=R();let h='<div class="hg"><div><h3>'+L('알파의 기억 조각','Alpha memory fragments')+' ('+Math.min(r.mem,MEMS.length)+'/'+MEMS.length+')</h3>';MEMS.forEach((m,i)=>{const o=i<r.mem;h+='<div class="epi" style="margin:6px 0;'+(o?'':'opacity:.4')+'"><b style="color:#c58cff">#'+(i+1)+'</b> '+(o?tx(m):L('잠김 — 원정을 진행해 기억을 되찾으세요.','Locked — continue the expedition to recover it.'))+'</div>';});
  h+='</div><div><h3>'+L('엔딩','Endings')+'</h3>';for(const[k,n]of Object.entries(ENDS)){const o=r.endings&&r.endings[k];h+='<div class="epi" style="margin:6px 0;'+(o?'':'opacity:.45')+'">'+(o?'✦ <b style="color:#ffd166">'+tx(n)+'</b>':'??? '+L('미달성','not reached'))+'</div>';}
  h+='<h3>'+L('링크 유대','LINK bonds')+'</h3><div class="epi">'+[['sera','link2'],['luna','link3']].map(([k,l])=>tx(LINKS[l].n)+' '+'♥'.repeat(Math.min(5,(r.trust||{})[k]||0))+'<span style="opacity:.3">'+'♥'.repeat(Math.max(0,5-((r.trust||{})[k]||0)))+'</span>').join('<br>')+'</div>';
- h+='<h3>'+L('은하 전도','Galaxy map')+'</h3><canvas id="arcMap" style="width:100%;border-radius:10px"></canvas></div></div>';B.innerHTML=h;const cv=$('#arcMap');if(cv&&window.ASCEND_GALAXY){cv.width=1600;cv.height=1000;window.ASCEND_GALAXY.draw(cv,{lang:LANG==='en'?'en':'ko'});}}
+ h+='<h3>'+L('은하 전도','Galaxy map')+'</h3><canvas id="arcMap" style="width:100%;border-radius:10px"></canvas></div></div>';B.innerHTML=arcNav()+h;arcBind(B);const cv=$('#arcMap');if(cv&&window.ASCEND_GALAXY){cv.width=1600;cv.height=1000;window.ASCEND_GALAXY.draw(cv,{lang:LANG==='en'?'en':'ko'});}}
 function dailyBtn(){const r=R();const today=new Date().toISOString().slice(0,10);const el=$('#rpgDaily');if(el)el.remove();if(r.daily===today)return;const b=document.createElement('button');b.id='rpgDaily';b.className='pri';b.textContent=L('일일 보급 받기 ★300 ◆200','Daily supply ★300 ◆200');b.onclick=()=>{r.daily=today;r.shards+=300;r.cred+=200;saveP();toast(L('일일 보급 수령!','Daily supply received!'));render();};const rc=$('.rcur');if(rc)rc.parentNode.insertBefore(b,rc);}
 function renderMap(B){let h='<div class="gmap" id="gmap"><canvas id="gcv" style="position:absolute;inset:0;width:100%;height:100%"></canvas>';
  h+='<svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 100 100" preserveAspectRatio="none">';for(const E of EPIS){if(!E.req)continue;const A=EPIS.find(x=>x.id===E.req);h+=`<line x1="${A.x}" y1="${A.y}" x2="${E.x}" y2="${E.y}" stroke="rgba(120,180,255,.35)" stroke-width=".3" stroke-dasharray="1 1"/>`;}h+='</svg>';
  for(const E of EPIS){const s=epS(E.id),op=epOpen(E);h+=`<div class="pl ${op?'':'lock'} ${s.done?'done':''}" data-e="${E.id}" style="left:${E.x}%;top:${E.y}%;--c:${E.col}"><div class="orb"></div><b>${tx(E.planet)}</b><small>${op?tx(E.t):'🔒 '+lockMsg(E)}</small></div>`;}h+='</div><div class="epi" id="epiP"></div>';B.innerHTML=h;
- {const cv=$('#gcv');if(cv&&window.ASCEND_GALAXY){const r=cv.getBoundingClientRect();cv.width=Math.max(800,Math.round(r.width*Math.min(2,devicePixelRatio||1)));cv.height=Math.max(450,Math.round(r.height*Math.min(2,devicePixelRatio||1)));window.ASCEND_GALAXY.draw(cv,{lang:LANG==='en'?'en':'ko',skip:['earth','aegis','ignis','niv','lumen','gate','sanctum'],title:false,legend:false});}}
+ {const cv=$('#gcv');if(cv&&window.ASCEND_GALAXY){const r=cv.getBoundingClientRect();cv.width=Math.max(800,Math.round(r.width*Math.min(2,devicePixelRatio||1)));cv.height=Math.max(450,Math.round(r.height*Math.min(2,devicePixelRatio||1)));window.ASCEND_GALAXY.draw(cv,{lang:LANG==='en'?'en':'ko',skip:['earth','aegis','ignis','niv','lumen','gate','sanctum'],title:false,legend:false,lanes:false});}}
  B.querySelectorAll('.pl').forEach(el=>el.onclick=()=>{const E=EPIS.find(x=>x.id===el.dataset.e);if(!epOpen(E)){toast(lockMsg(E));return;}selEpi=E.id;epiPanel();});epiPanel();}
 function lockMsg(E){if(E.req&&!epS(E.req).done)return L('이전 장 클리어 필요','Clear the previous chapter');if(E.mem&&R().mem<E.mem)return L('기억 조각 '+E.mem+'개 필요','Need '+E.mem+' memories');if(E.link&&!own(E.link,1))return L('전설 링크 아스트라 필요','Requires Astra');return '';}
 function epiPanel(){const E=EPIS.find(x=>x.id===selEpi);const s=epS(E.id);const P2=$('#epiP');if(!P2)return;let h=`<h3 style="margin:0 0 4px">${tx(E.t)} · <span style="color:${E.col}">${tx(E.planet)}</span></h3>`;
@@ -3725,7 +3826,7 @@ function vnShow(o){const D=$('#rpgDlg');D.style.display='flex';$('#vnBg').style.
  $('#dlgWho').textContent=o.who&&WHO[o.who]?fmtN(tx(WHO[o.who])):'';$('#dlgWho').style.display=$('#dlgWho').textContent?'':'none';$('#vnTitle').textContent=o.title||'';$('#vnTitle').style.display=o.title?'block':'none';
  const T=$('#dlgTx');const full=fmtN(o.text||'');let i=0;T.innerHTML='';const O=$('#dlgOpts');O.innerHTML='';clearInterval(vnShow.tm);
  const done=()=>{clearInterval(vnShow.tm);T.innerHTML=full;vnShow.typing=false;O.innerHTML='';for(const b of o.opts||[]){const e=document.createElement('button');e.className=b.pri?'pri':'';e.innerHTML=b.l;e.onclick=(ev)=>{ev.stopPropagation();D.style.display='none';b.f();};O.appendChild(e);}};
- vnShow.typing=true;vnShow.tm=setInterval(()=>{i+=2;T.textContent=full.slice(0,i);if(i>=full.length)done();},22);vnShow.finish=done;}
+ vnShow.typing=true;vnShow.finish=done;const plain=full.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'');T.style.whiteSpace='pre-line';vnShow.tm=setInterval(()=>{i+=2;T.textContent=plain.slice(0,i);if(i>=plain.length)done();},22);}
 function showDlg(who,txt,opts){vnShow({who,text:txt,opts});}
 function runNode(E){const s=epS(E.id);let n=E.nodes[s.n];while(n&&n.if&&!n.if()){s.n++;n=E.nodes[s.n];}if(!n){s.done=true;s.replay=0;saveP();render();$('#rpgDlg').style.display='none';return;}
  const next=()=>{s.n++;if(s.n>=E.nodes.length){s.done=true;s.replay=0;}saveP();render();if(!s.done)runNode(E);else $('#rpgDlg').style.display='none';};
@@ -3738,17 +3839,17 @@ function runNode(E){const s=epS(E.id);let n=E.nodes[s.n];while(n&&n.if&&!n.if())
    if(o.say)vnShow({who:o.say[0],text:tx(o.say[1])+(log.length?'<br><br><small>'+log.join(' · ')+'</small>':''),opts:[{l:NX,pri:1,f:next}]});else if(log.length)vnShow({who:'sera',text:log.join('<br>'),opts:[{l:NX,pri:1,f:next}]});else next();}}))});
  else if(n.t==='battle')vnShow({who:'hq',text:tx(n.x)+'<br><br><small>'+L('파상공격 ','Waves ')+n.waves+' · '+L('보스: ','Boss: ')+tx(CL[n.boss].n)+'</small>',opts:[{l:L('출격 (기동로봇)','Launch (mech)'),pri:1,f:()=>launch(E,n)},{l:L('나중에','Later'),f:()=>{}}]});}
 let keepP=null;
-function launch(E,n){keepP={mode:P.mode,map:P.map,size:P.size};window.__rpgNext={epi:E.id,map:E.map,waves:n.waves,boss:n.boss,diff:n.diff,rw:n.rw,choice:n.t!=='battle',patrol:!!n.patrol};P.mode='inv';P.map=E.map;P.size=20;hide('#rpg');ensureName&&ensureName();P.mode='inv';P.map=E.map;P.size=20;NET.mode='solo';startMatch('solo');}
+function launch(E,n){keepP={mode:P.mode,map:P.map,size:P.size};window.__rpgNext={epi:E.id,map:E.map,waves:n.waves,boss:n.boss,diff:n.diff,rw:n.rw,choice:n.t!=='battle',patrol:!!n.patrol,quest:n.quest||null,obj:n.obj||null};P.mode='inv';P.map=E.map;P.size=20;hide('#rpg');ensureName&&ensureName();P.mode='inv';P.map=E.map;P.size=20;NET.mode='solo';startMatch('solo');}
 {const _nm=newMatch;newMatch=function(size,mode){const X=window.__rpgNext;if(X){P.map=X.map;}_nm(size,mode);if(X&&G){window.__rpgNext=null;G.rpg=X;invTeams(true);G.pops.length=0;G.cfl={cine:1};if(G.inv){G.inv.joined=1;G.inv.act=1;G.inv.wave=0;G.inv.waveT=6;}G.tLimit=720;G.tk[1]=G.tkMax;G.tk[0]=Math.max(G.tk[0],160);
    setTimeout(()=>{if(G&&G.rpg){announce(tx(EPIS.find(e=>e.id===X.epi).t),tx(K('보스를 쓰러뜨려라','Defeat the boss')),tx(EPIS.find(e=>e.id===X.epi).planet),true,'#ffd166');hide('#deploy');if(!G.local.unit)spawnUnit(G.local,'arkframe','base');}},500);}};}
-{const _ss=storyStep;storyStep=function(dt){if(!(G&&G.rpg))return _ss(dt);const X=G.rpg,I=G.inv;if(!I||G.over)return;if(G.tk[1]<G.tkMax*.4)G.tk[1]=Math.round(G.tkMax*.4);
-  I.waveT-=dt;if(I.wave<X.waves&&I.waveT<=0){I.wave++;I.waveT=Math.max(14,26-X.diff*2);const save=G.size;G.size=Math.round(20+X.diff*6);spawnWave(I.wave+X.diff);G.size=save;}
+{const _ss=storyStep;storyStep=function(dt){if(!(G&&G.rpg))return _ss(dt);const X=G.rpg,I=G.inv;if(!I||G.over)return;qTerrStep(X,dt);if(X.obj){qStep(X,I,dt);return;}if(G.tk[1]<G.tkMax*.4)G.tk[1]=Math.round(G.tkMax*.4);
+  I.waveT-=dt;if(I.wave<X.waves&&I.waveT<=0){I.wave++;I.waveT=Math.max(14,26-X.diff*2);const save=G.size;G.size=Math.round(20+X.diff*6);spawnWave(I.wave+X.diff);G.size=save;{const A=AREA[X.epi];if(A){const b=BASES[1];for(let i=0;i<2+X.diff;i++)qMonSpawn(A.mon[i%A.mon.length],b.x-220+rnd(-180,180),b.y+rnd(-300,300),X.diff);}}}
   if(I.wave>=X.waves&&!X.bossU&&I.waveT<=0){const b=BASES[1];X.bossU=invSpawn(X.boss,b.x-420,b.y,99999);X.bossU.boss=1;X.bossU.mhp*=1+X.diff*.35;X.bossU.hp=X.bossU.mhp;announce('⚠',tx(CL[X.boss].n),'',true,'#ff6b6b');}
   if(X.bossU&&X.bossU.dead&&!X.won){X.won=1;endMatch(0);}};}
 {const _em=endMatch;endMatch=function(w){if(G&&G.rpg&&!G.over){const X=G.rpg;window.__rpgRes={win:w===0,X};}return _em(w);};}
 {const _lm=leaveMatch;leaveMatch=function(...a){const res=window.__rpgRes;window.__rpgRes=null;const r=_lm.apply(this,a);if(keepP){P.mode=keepP.mode;P.map=keepP.map;P.size=keepP.size;keepP=null;saveP();}
-  if(res){hide('#menu');openRpg();const E=EPIS.find(e=>e.id===res.X.epi);const s=epS(E.id);if(res.win&&res.X.patrol){const log=[];giveRw(res.X.rw,log);saveP();render();showDlg('sera','<b>'+L('순찰 완료!','Patrol complete!')+'</b><br><br>'+log.join('<br>'),[{l:'OK',pri:1,f:()=>{}}]);}
-   else if(res.win){const log=[];giveRw(s.replay?{shards:Math.round(((res.X.rw&&res.X.rw.shards)||200)/3),item:1}:res.X.rw,log);s.n++;if(s.n>=E.nodes.length){s.done=true;s.replay=0;}saveP();render();showDlg('sera','<b>'+L('작전 성공!','Mission complete!')+'</b><br><br>'+log.join('<br>'),[{l:L('계속 ▶','Next ▶'),pri:1,f:()=>{if(!s.done)runNode(E);}}]);}
+  if(res){hide('#menu');openRpg();if(res.X.quest){qResult(res);return r;}const E=EPIS.find(e=>e.id===res.X.epi);const s=epS(E.id);if(res.win&&res.X.patrol){const log=[];giveRw(res.X.rw,log);saveP();render();showDlg('sera','<b>'+L('순찰 완료!','Patrol complete!')+'</b><br><br>'+log.join('<br>'),[{l:'OK',pri:1,f:()=>{divCheck();}}]);}
+   else if(res.win){const log=[];giveRw(s.replay?{shards:Math.round(((res.X.rw&&res.X.rw.shards)||200)/3),item:1}:res.X.rw,log);s.n++;if(s.n>=E.nodes.length){s.done=true;s.replay=0;}saveP();render();showDlg('sera','<b>'+L('작전 성공!','Mission complete!')+'</b><br><br>'+log.join('<br>'),[{l:L('계속 ▶','Next ▶'),pri:1,f:()=>{if(!s.done)runNode(E);else divCheck();}}]);}
    else showDlg('sera',L('작전 실패… 정비 후 다시 도전해요. 장비를 강화하거나 소환으로 전력을 보강해 보세요.','Mission failed… Refit and try again. Upgrade gear or summon reinforcements.'),[{l:'OK',pri:1,f:()=>{}}]);}return r;};}
 // hangar
 let hgSel=null;
@@ -3786,8 +3887,236 @@ function renderSummon(B){const r=R();let h='<div class="ban">';for(const[b,B2]of
  if(lastPull){const pr=$('#pullRes');lastPull.forEach((o,i)=>{const d=document.createElement('div');d.className='cd';d.style.borderColor=RAR[o.r].c;d.style.boxShadow=o.r>=3?'0 0 16px '+RAR[o.r].c:'';d.style.animation='rise .35s ease-out '+(i*.06)+'s both';d.innerHTML=(o.k?`<img src="${TH+o.k}.jpg">`:`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,${RAR[o.r].c}33,#060a14 70%);border-radius:6px">${icon(o.item?o.item.slot:'core',RAR[o.r].c,64)}</div>`)+`<b style="color:${RAR[o.r].c}">${tx(o.n)}</b><small>${rn(o.r)}${o.dup?' · '+L('각성','Awaken'):''}${o.item?' · '+tx(SLOTS[o.item.slot]):''}</small>`;pr.appendChild(d);});}}
 function renderDex(B){const r=R();let h=`<h3>${L('기동전사','Mechs')} (${r.mechs.length}/${Object.keys(MECHS).length})</h3><div class="cards">`;for(const[k,C]of Object.entries(MECHS)){const o=r.mechs.includes(k);if(k==='god_white'&&!o)continue;h+=`<div class="cd ${o?'':'lock'}"><img src="${TH+k}.jpg"><b style="color:${RAR[C.r].c}">${o?tx(C.n):'???'}</b><small>${rn(C.r)} · ${tx(C.ty)}</small></div>`;}
  h+=`</div><h3>${L('링크 안드로이드','LINK androids')} (${r.links.length}/${Object.keys(LINKS).length})</h3><div class="cards">`;for(const[k,C]of Object.entries(LINKS)){const o=r.links.includes(k);h+=`<div class="cd ${o?'':'lock'}"><img src="${TH+k}.jpg"><b style="color:${RAR[C.r].c}">${o?tx(C.n):'???'}</b><small>${rn(C.r)} · ${tx(C.el)}</small></div>`;}h+='</div>';
- h+=`<h3>${L('신기 엘 샤다이 (서버당 3대 + 관리자 1대)','Divine El Shaddai (3 per server + 1 admin)')}</h3><div class="small" id="godSt">${L('서버 기록 확인 중…','Checking server records…')}</div>`;B.innerHTML=h;godStatus().then(st=>{const el=$('#godSt');if(el)el.innerHTML=GODS.map(c=>'<b>'+tx(MECHS[c].n)+'</b>: '+(st[c]?L('주인 ','owner ')+(st[c].name||'?'):L('미발견','unclaimed'))).join('<br>');});}
-function openRpg(){R();show('#rpg');render();if(R().godPending&&!R().mythic&&window.HKAccount&&window.HKAccount.user){R().godPending=0;saveP();godAfter();}}window.openRpg=openRpg;
+ h+=`<h3>${L('신기 엘 샤다이 · 숨겨진 퀘스트 「여섯 날개의 부름」','Divine El Shaddai · Hidden quest "Call of the Six Wings"')}</h3><div class="small">${GODS.map(c=>'<b>'+tx(MECHS[c].n)+'</b>: '+(R().mythic===c?L('보유','owned'):L('미보유','not owned'))).join('<br>')}<br>${L('조건 6가지를 모두 갖춘 뒤 승리할 때마다 0.2% 확률로 부름이 옵니다. 사도를 쓰러뜨리면 세 빛깔 중 하나를 고릅니다. 기회는 한 번뿐입니다.','After meeting all six conditions, each victory has a 0.2% chance to trigger the call. Defeat the Apostle to choose one of three lights. One chance only.')}</div>`;B.innerHTML=h;}
+// ================= v1.6 : CAST · BESTIARY · TERRAIN · QUESTS =================
+const CAST=[
+ {k:'me',img:'pilot',n:K('{name}','{name}'),role:K('주인공 · 연합 아크 프레임 파일럿','Protagonist · United ARK frame pilot'),d:K('프롤로그에서 분대를 잃고 홀로 살아남은 신참 에이스. 링크와 함께 은하를 가로지르며 제타의 기원을 쫓는다.','A rookie ace, the lone survivor of a vanished squad, who crosses the galaxy with a LINK to trace the origin of the Zeta.')},
+ {k:'sera',img:'link2',n:K('세라','Sera'),role:K('얼음형 링크 · 첫 번째 파트너','Ice LINK · First partner'),d:K('연맹 장교복을 입은 차분한 안드로이드. 효율을 따지지만 사람을 구하는 선택을 조용히 기록해 둔다.','A calm android in a Federation officer\'s uniform. She talks efficiency, yet quietly records every choice that saves a life.')},
+ {k:'luna',img:'link3',n:K('루나','Luna'),role:K('바람형 링크 · 오메가의 감시자','Wind LINK · Omega\'s watcher'),d:K('무대 의상 같은 옷을 즐겨 입는 장난꾸러기. 그녀의 회로에는 오메가가 심어 둔 감시 프로토콜이 잠들어 있다.','A playful android who dresses like an idol. A watcher protocol planted by Omega sleeps in her circuits.')},
+ {k:'astra',img:'link_leg',n:K('아스트라','Astra'),role:K('전설 링크 · 알파 최후의 수호 AI','Legendary LINK · Alpha\'s last guardian AI'),d:K('심판과 수호 사이에서 스스로 선택하도록 만들어진 존재. 여섯 날개의 비밀을 알고 있다.','Built to choose for herself between judgment and protection. She knows the secret of the six wings.')},
+ {k:'hayun',img:'hayun',n:K('하윤','Hayun'),role:K('분대원 · 저격수','Squadmate · Sniper'),d:K('밝고 시끄러운 분대의 분위기 메이커. 한강 야시장 약속을 끝내 지키지 못했다.','The loud, bright heart of the squad. She never got to keep her Han River night-market promise.')},
+ {k:'minjae',img:'minjae',n:K('민재','Minjae'),role:K('분대장','Squad leader'),d:K('신참을 끝까지 감싼 분대장. 마지막 무전은 "너라도 살아"였다.','The squad leader who shielded the rookie to the end. His last transmission: "Live."')},
+ {k:'seraphine',img:'seraphine',n:K('세라핀','Seraphine'),role:K('알파 망명 함대 사령관','Commander of the Alpha exile fleet'),d:K('창조주 종족 알파의 생존자. 동족의 죄를 알면서도 침묵해 온 것을 후회한다.','A survivor of the creator race. She regrets the silence she kept about her people\'s sin.')},
+ {k:'reinhard',img:'emp_officer',n:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),role:K('은하 제국 제독','Admiral of the Galactic Empire'),d:K('연맹을 경멸하는 오만한 천재. 빚은 반드시 갚는 원칙주의자다.','An arrogant genius who scorns the Federation, and a man of principle who always repays a debt.')},
+ {k:'yang',img:'fed_officer',n:K('에이든 서','Aiden Seo'),role:K('자유주의 연맹 참모','Strategist of the Liberty Federation'),d:K('싸움을 싫어하는 게으른 천재. 차 한 잔과 낮잠, 그리고 아무도 죽지 않는 작전을 좋아한다.','A lazy genius who hates fighting. He loves tea, naps, and plans in which nobody dies.')},
+ {k:'arkos',img:'omega',n:K('오메가 군주 아르코스','Omega Lord Arkos'),role:K('오메가 지배권의 군주','Sovereign of the Omega Dominion'),d:K('알파의 두 번째 피조물. 정화 계획을 알아내고 살아남기 위해 먼저 칼을 들었다.','Alpha\'s second creation. He discovered the Purification Protocol and drew the blade first to survive.')},
+ {k:'igni',img:'a_fire',n:K('이그니','Igni'),role:K('불꽃형 링크','Fire LINK'),d:K('이그니스 용암 지대에서 깨어난 열혈 안드로이드. 바이커 재킷과 붉은 부츠가 트레이드마크.','A hot-blooded android awakened in the lava fields of Ignis. Biker jacket and red boots are her trademark.')},
+ {k:'frost',img:'a_ice',n:K('프로스트','Frost'),role:K('얼음형 링크','Ice LINK'),d:K('니브의 얼음 연구소에 봉인되어 있던 안드로이드. 하얀 군용 외투를 단정하게 여민다.','An android sealed in Niv\'s ice lab. She keeps her white military greatcoat neatly fastened.')}];
+const MONS={
+ zling:{b:'zling',th:'zling',f:'zeta',n:K('제타 워리어','Zeta Warrior'),hab:K('전 지역','Everywhere'),w:K('범위 공격','Splash damage'),hp:1,d:K('칼날 다리로 돌진하는 제타의 기본 보병. 떼로 몰려온다.','Basic Zeta infantry that charges on scythe legs, always in swarms.')},
+ zspit:{b:'zspit',th:'zspit',f:'zeta',n:K('산성 스피터','Acid Spitter'),hab:K('전 지역','Everywhere'),w:K('근접 돌격','Close assault'),hp:1,d:K('멀리서 산성 덩어리를 뱉는 사격형 제타.','A ranged Zeta that spits globs of acid.')},
+ zhopper:{b:'zhopper',th:'zwing',f:'zeta',n:K('호퍼','Hopper'),hab:K('궤도 · 성운','Orbit · Nebula'),w:K('대공 사격','Anti-air fire'),hp:1,d:K('짧은 날개로 뛰어오르는 공습형 제타.','An airborne Zeta that leaps on short wings.')},
+ zplasma:{b:'zplasma',th:'zbehemoth',f:'zeta',n:K('플라즈마 버그','Plasma Bug'),hab:K('이그니스 · 하이브','Ignis · Hive'),w:K('측면 공격','Flank attacks'),hp:1,d:K('등에 플라즈마 낭을 단 중형 포격 제타.','A mid-sized Zeta artillery beast with plasma sacs on its back.')},
+ ztank:{b:'ztank',th:'zbehemoth',f:'zeta',n:K('탱커 버그','Tanker Bug'),hab:K('전 지역','Everywhere'),w:K('관통 무기','Piercing weapons'),hp:1,d:K('두꺼운 갑각으로 전선을 밀어붙이는 돌격 제타.','An armoured Zeta that bulldozes the front line.')},
+ zguard:{b:'zguard',th:'z_broodlord',f:'zeta',n:K('브루드 가드','Brood Guard'),hab:K('하늘','Skies'),w:K('대공 미사일','AA missiles'),hp:1,d:K('공중에서 작은 제타를 떨어뜨리는 비행 모함.','A flying brood carrier that drops smaller Zeta.')},
+ ztitan:{b:'ztitan',th:'z_titan',f:'zeta',n:K('시즈 타이탄','Siege Titan'),hab:K('하이브 · 전선','Hive · Front'),w:K('집중 사격','Focused fire'),hp:1,d:K('요새를 부수는 거대 공성 제타.','A colossal siege Zeta that topples fortresses.')},
+ zqueen:{b:'zqueen',th:'zqueen',f:'zeta',n:K('하이브 퀸','Hive Queen'),hab:K('하이브','Hive'),w:K('호위 먼저 제거','Kill escorts first'),hp:1,boss:1,d:K('제타 군체를 지휘하는 여왕. 쓰러지면 군체가 흩어진다.','The queen that commands the swarm. When she falls, the swarm scatters.')},
+ lavaling:{b:'zling',th:'zling',f:'zeta',var:1,n:K('용암 워리어','Lava Warrior'),hab:K('화산 행성 이그니스','Ignis'),w:K('냉각 · 얼음 링크','Cooling · Ice LINK'),hp:1.5,col:'#ff7a2a',d:K('용암에 적응해 갑각이 붉게 달아오른 워리어 변종.','A warrior variant adapted to lava, its carapace glowing red-hot.')},
+ frostspit:{b:'zspit',th:'zspit',f:'zeta',var:1,n:K('서리 스피터','Frost Spitter'),hab:K('빙하 위성 니브','Niv'),w:K('화염 · 불 링크','Fire · Fire LINK'),hp:1.5,col:'#bfe9ff',d:K('산성 대신 얼음 결정을 쏘는 니브의 변종.','A Niv variant that spits ice shards instead of acid.')},
+ voidhopper:{b:'zhopper',th:'zwing',f:'zeta',var:1,n:K('공허 호퍼','Void Hopper'),hab:K('허무의 균열','Void Rift'),w:K('빛 속성','Light element'),hp:1.8,col:'#c58cff',d:K('균열 너머에서 넘어온, 반쯤 투명한 호퍼.','A half-transparent hopper that crossed over from the rift.')},
+ alphabeh:{b:'ztank',th:'zbehemoth',f:'zeta',var:1,named:1,n:K('★ 베헤모스 알파','★ Behemoth Alpha'),hab:K('궤도 기지 이지스 외곽','Outer Aegis'),w:K('후방 갑각','Rear carapace'),hp:6,col:'#ffd166',d:K('제독의 함대를 세 번 격파한 전설적인 탱커 버그.','A legendary Tanker Bug that has broken the Admiral\'s fleet three times.')},
+ icetitan:{b:'ztitan',th:'z_titan',f:'zeta',var:1,named:1,n:K('★ 빙하 거대충','★ Glacier Colossus'),hab:K('빙하 위성 니브','Niv'),w:K('불 속성','Fire element'),hp:1.6,col:'#bfe9ff',d:K('얼음 속에서 수백 년을 잠들어 있던 고대 시즈 타이탄.','An ancient Siege Titan that slept for centuries beneath the ice.')},
+ r9:{b:'mech',th:'mech3',f:'rogue',named:1,n:K('★ 폭주 무인기 R-9','★ Rogue Drone Frame R-9'),hab:K('궤도 기지 이지스','Aegis'),w:K('EMP','EMP'),hp:3,col:'#ff6b6b',d:K('제타 신경 신호에 오염된 연맹의 무인 기동로봇.','A Federation unmanned frame corrupted by Zeta neural signals.')},
+ lumen:{b:'walker',th:'m_guardian',f:'ancient',n:K('루멘 수호상','Lumen Guardian'),hab:K('빛의 사원 루멘','Temple of Lumen'),w:K('어둠 속성','Dark element'),hp:2.2,col:'#ffd166',d:K('알파가 사원을 지키려고 남긴 빛의 자동 병기.','A light-forged automaton Alpha left to guard the temple.')},
+ owalker:{b:'walker',th:'omega',f:'omega',n:K('오메가 근위 보행기','Omega Guard Walker'),hab:K('거인의 문 · 아르케','Gate · Arche'),w:K('기동전','Mobile warfare'),hp:2,col:'#9a5cff',d:K('오메가 근위대가 모는 다리 넷 달린 강습기.','A four-legged assault walker piloted by the Omega Guard.')},
+ owarrior:{b:'omegaw',th:'omega',f:'omega',n:K('오메가 거인 전사','Omega Giant Warrior'),hab:K('거인의 문','Gate of Giants'),w:K('거리 유지','Keep your distance'),hp:1,boss:1,d:K('기동로봇만 한 키의 오메가 보병.','Omega infantry as tall as a mech.')},
+ oshadow:{b:'omegaw',th:'omega',f:'omega',named:1,n:K('★ 오메가 군주의 그림자','★ Shadow of the Omega Lord'),hab:K('??? 신기 성소','??? Divine Sanctum'),w:K('없음','None'),hp:2.4,col:'#c58cff',boss:1,d:K('아르코스의 의지가 남긴 잔상. 진짜보다 강하다는 소문이 있다.','An afterimage of Arkos\'s will. Rumoured to be stronger than the real one.')},
+ apostle:{b:'omegaw',th:'god',f:'divine',named:1,n:K('★ 여섯 날개의 사도','★ Apostle of Six Wings'),hab:K('???','???'),w:K('???','???'),hp:4,col:'#ffffff',boss:1,secret:1,d:K('신기를 지키는 마지막 문지기. 만난 자는 거의 없다.','The last gatekeeper of the divine frames. Almost no one has met it.')}};
+const AREA={e_p:{mon:['zling','zspit'],terr:'seoul'},e0:{mon:['zling','zspit','zhopper'],terr:'seoul'},e1:{mon:['zhopper','zspit'],terr:'station'},e2:{mon:['lavaling','zplasma'],terr:'volcano'},e3:{mon:['frostspit','ztank'],terr:'frost'},e4:{mon:['lumen','zhopper'],terr:'temple'},e5:{mon:['owalker','ztank'],terr:'gate'},e6:{mon:['voidhopper','owalker'],terr:'rift'}};
+const TERR={
+ seoul:[{k:'ruin',n:K('붕괴된 고가도로','Collapsed overpass'),e:K('엄폐물. 총탄을 막아 준다.','Cover that blocks gunfire.'),c:'#a8b8d8'},{k:'shelter',n:K('피난민 대피소','Evacuee shelter'),e:K('지켜야 할 거점.','A point to protect.'),c:'#5ad1ff'}],
+ station:[{k:'reactor',n:K('반응로 코어','Reactor core'),e:K('가까이 있으면 에너지 보호막이 내구도를 서서히 회복시킨다.','Its energy field slowly restores durability nearby.'),c:'#7df9ff'}],
+ volcano:[{k:'vent',n:K('마그마 분출구','Magma vent'),e:K('주변에 있으면 지속 피해를 입는다.','Deals damage over time nearby.'),c:'#ff6a2a'}],
+ frost:[{k:'spire',n:K('얼음 첨탑','Ice spire'),e:K('시야를 가리는 거대한 엄폐물.','Huge cover that blocks sight.'),c:'#bfe9ff'},{k:'lab',n:K('동결 연구소','Frozen lab'),e:K('알파의 기록이 잠든 곳.','Where Alpha\'s records sleep.'),c:'#9fe0ff'}],
+ temple:[{k:'well',n:K('빛의 우물','Well of Light'),e:K('안에 있으면 내구도가 회복된다.','Restores durability while inside.'),c:'#ffd166'},{k:'pillar',n:K('고대 기둥','Ancient pillar'),e:K('엄폐물.','Cover.'),c:'#ffe7a0'}],
+ gate:[{k:'monolith',n:K('거인의 비석','Monolith of Giants'),e:K('비석의 공명이 주변 아군의 내구도를 서서히 회복시킨다.','Its resonance slowly restores nearby allies\' durability.'),c:'#c58cff'}],
+ rift:[{k:'rift',n:K('허무의 균열','Void rift'),e:K('주변에 있으면 이동 속도가 느려지고 피해를 입는다.','Slows and damages nearby units.'),c:'#ff5a6e'}]};
+const TERR_BASE=[[K('용암','Lava'),K('밟으면 큰 피해','Heavy damage on contact'),'#ff6a2a'],[K('진흙','Mud'),K('이동 속도 감소','Slows movement'),'#6fbf6a'],[K('고지대','High ground'),K('사거리·명중 보너스','Range and accuracy bonus'),'#ffd166'],[K('안개','Fog'),K('시야 감소, 매복에 유리','Reduced vision, good for ambush'),'#a8b8d8'],[K('블랙홀','Black hole'),K('주변 유닛을 끌어당김','Pulls nearby units'),'#c58cff'],[K('웜홀','Wormhole'),K('연결된 곳으로 순간 이동','Teleports to its pair'),'#7df9ff'],[K('이온 폭풍','Ion storm'),K('비행체를 밀어냄','Pushes aircraft'),'#9fe0ff']];
+const SUBQ=[
+ {id:'q_tags',area:'e_p',req:'e_p',giver:'hq',t:K('남겨진 인식표','The Dog Tags Left Behind'),obj:{k:'kill',mon:['zling','zspit'],n:25},diff:1,rw:{shards:250,item:2,trust:{sera:1}},
+  intro:[S('hq','서울 외곽 폐허에서 실종 분대의 인식표 신호가 잡혔다. 제타가 아직 그 구역을 점거하고 있다.','We\'ve picked up dog-tag beacons from the missing squad in the Seoul ruins. The Zeta still hold that sector.'),S('sera','회수해 오죠. …당신에게 필요한 일 같으니까요.','We\'ll recover them. …I think you need this.')],
+  outro:[S('sera','하윤, 민재. 두 개 다 찾았어요. 녹슬었지만 이름은 또렷해요.','Hayun. Minjae. Both found. Rusted, but the names are still clear.'),S('hayun','(인식표 뒷면에 적힌 글씨) 「한강 야시장, 네가 쏘는 거야」','(Scratched on the back of the tag) "Han River night market. You\'re buying."')]},
+ {id:'q_evac',area:'e0',req:'e0',giver:'hq',t:K('네오 서울 피난 행렬','The Neo Seoul Evacuation'),obj:{k:'survive',t:90},diff:2,rw:{shards:300,cred:300,item:2},
+  intro:[S('hq','마지막 피난 행렬이 한강 다리를 건너는 중이다. 90초만 버텨 줘.','The last evacuation convoy is crossing the Han River bridge. Hold for ninety seconds.')],
+  outro:[S('hq','행렬 전원 통과 확인. 시민 4,120명. …고맙다, 파일럿.','Entire convoy across. 4,120 civilians. …Thank you, pilot.')]},
+ {id:'q_r9',area:'e1',req:'e1',giver:'yang',t:K('폭주한 무인기','The Rogue Drone Frame'),obj:{k:'hunt',target:'r9',mon:['zhopper','zspit']},diff:2,rw:{shards:400,item:3},
+  intro:[S('yang','우리 무인기 R-9가 제타 신호에 오염됐어요. 부수는 게 제일 빠르죠. …아, 회수하면 보너스예요. 농담이에요.','Our unmanned frame R-9 got infected by Zeta signals. Fastest fix is to wreck it. …Bonus if you recover it. Kidding.')],
+  outro:[S('yang','깔끔하네요. 덕분에 오늘은 낮잠을 잘 수 있겠어요.','Clean work. Thanks to you, I get my nap today.')]},
+ {id:'q_duel',area:'e1',req:'e1',giver:'reinhard',t:K('제독의 사냥 의뢰','The Admiral\'s Hunt'),obj:{k:'hunt',target:'alphabeh',mon:['zling','ztank']},diff:3,rw:{shards:450,cred:400,item:3},
+  intro:[S('reinhard','내 함대를 세 번 짓밟은 괴물이 있다. 연맹 파일럿, 네 실력을 증명해 봐라.','There is a beast that has trampled my fleet three times. Prove your worth, Federation pilot.')],
+  outro:[S('reinhard','…인정하지. 이 빚은 제국의 이름으로 갚겠다.','…I acknowledge it. I will repay this debt in the Empire\'s name.')]},
+ {id:'q_igni',area:'e2',req:'e2',giver:'igni',t:K('용암 둥지 소탕','Purging the Lava Nests'),obj:{k:'kill',mon:['lavaling'],n:30},diff:3,rw:{shards:400,link:'a_fire'},
+  intro:[S('igni','야, 거기 파일럿! 내 둥지를 저 녀석들이 차지했어. 같이 쓸어버리자!','Hey, pilot! Those things took over my nest. Let\'s burn them out together!')],
+  outro:[S('igni','하하! 마음에 들었어. 앞으로는 내가 같이 타 줄게!','Ha! I like you. From now on, I\'m riding with you!')]},
+ {id:'q_fire',area:'e2',req:'e2',giver:'luna',t:K('불의 기억','Memory of Fire'),obj:{k:'survive',t:120},diff:3,rw:{shards:350,mem:1,trust:{luna:1}},
+  intro:[S('luna','용암 아래에서 알파의 기록 신호가 들려. 해독하는 동안 2분만 지켜 줄래?','I\'m hearing an Alpha record signal under the lava. Can you cover me for two minutes while I decode it?')],
+  outro:[S('luna','…찾았어. 「제타의 유전자를 다시 쓴 손은 알파가 아니었다」. 이게 무슨 뜻일까.','…Got it. "The hand that rewrote the Zeta genome was not Alpha\'s." What does that mean?')]},
+ {id:'q_lab',area:'e3',req:'e3',giver:'seraphine',t:K('얼음 속 연구 일지','The Journal in the Ice'),obj:{k:'kill',mon:['frostspit'],n:25},diff:3,rw:{shards:450,item:3},
+  intro:[S('seraphine','동결 연구소에 내 동족의 연구 일지가 남아 있어. 서리 스피터가 길을 막고 있다.','My people\'s research journal is still in the frozen lab. Frost Spitters block the way.')],
+  outro:[S('seraphine','…「실험체 Z는 실패작. 폐기한다.」 우리가 이렇게 썼구나.','…"Specimen Z: failure. Dispose." So this is what we wrote.')]},
+ {id:'q_frost',area:'e3',req:'e3',giver:'sera',t:K('프로스트의 부탁','Frost\'s Request'),obj:{k:'hunt',target:'icetitan',mon:['frostspit','ztank']},diff:4,rw:{shards:500,link:'a_ice',trust:{sera:1}},
+  intro:[S('sera','연구소 깊은 곳에 같은 얼음형 안드로이드가 봉인돼 있어요. 깨우려면 저 거대충부터 치워야 해요.','There\'s an ice-type android sealed deep in the lab. To wake her, we have to clear that colossus first.')],
+  outro:[S('sera','프로스트, 일어나요. 이제 혼자가 아니에요.','Frost, wake up. You\'re not alone anymore.')]},
+ {id:'q_trial',area:'e4',req:'e4',giver:'astra',t:K('수호상의 시험','Trial of the Guardians'),obj:{k:'kill',mon:['lumen'],n:12},diff:4,rw:{shards:550,item:4},
+  intro:[S('astra','사원의 수호상들은 자격을 시험합니다. 열둘을 쓰러뜨리면 인정받을 겁니다.','The temple guardians test the worthy. Fell twelve and you will be acknowledged.')],
+  outro:[S('astra','수호상들이 고개를 숙였습니다. 당신은 자격이 있습니다.','The guardians bow their heads. You are worthy.')]},
+ {id:'q_song',area:'e4',req:'e4',giver:'luna',t:K('잃어버린 노래','The Lost Song'),obj:{k:'survive',t:100},diff:4,rw:{shards:400,trust:{luna:1,sera:1}},
+  intro:[S('luna','사원 안에서 노래가 들려. 알파 아이들이 부르던 자장가래. 끝까지 들을 수 있게 지켜 줘.','There\'s a song inside the temple—a lullaby Alpha children used to sing. Keep me safe till it ends.')],
+  outro:[S('luna','…예쁘다. 우리도 언젠가 이런 노래를 부를 수 있을까?','…It\'s beautiful. Do you think we\'ll get to sing songs like that someday?')]},
+ {id:'q_guard',area:'e5',req:'e5',giver:'yang',t:K('오메가 근위대','The Omega Guard'),obj:{k:'kill',mon:['owalker'],n:16},diff:5,rw:{shards:600,mem:1,item:4},
+  intro:[S('yang','근위대 통신을 끊으면 아르코스의 기록이 열릴 거예요. 이번 건 진짜 중요해요. 낮잠보다요.','Cut the Guard\'s comms and Arkos\'s records open up. This one really matters. More than my nap.')],
+  outro:[S('yang','기록 해독 완료. 「알파는 오메가도 지울 생각이었다」… 이게 전쟁의 시작이었군요.','Records decoded. "Alpha meant to erase Omega too."… So this is how the war began.')]},
+ {id:'q_shadow',area:'e6',req:'e6',giver:'astra',t:K('그림자의 군주','Lord of Shadows'),obj:{k:'hunt',target:'oshadow',mon:['voidhopper','owalker']},diff:6,rw:{shards:1200,item:4,trust:{sera:1,luna:1}},
+  intro:[S('astra','균열 너머에 아르코스의 그림자가 남아 있습니다. 진짜보다 강할 겁니다.','Arkos\'s shadow lingers beyond the rift. It will be stronger than the real one.')],
+  outro:[S('astra','그림자가 사라졌습니다. …당신이라면, 언젠가 여섯 날개의 부름을 들을지도 모르겠군요.','The shadow is gone. …Perhaps one day, you will hear the call of the six wings.')]}];
+const DIVQ={id:'q_divine',area:'e6',giver:'astra',t:K('여섯 날개의 부름','Call of the Six Wings'),obj:{k:'hunt',target:'apostle',mon:['voidhopper','owalker','oshadow']},diff:8,rw:{shards:3000},
+ intro:[SC('gate','하늘이 하얗게 갈라졌다. 여섯 장의 날개가 별을 가렸다.','The sky split white. Six wings blotted out the stars.',{shake:1}),S('astra','…부름입니다. 모든 조건을 갖춘 자에게만, 아주 드물게 들리는 소리.','…It is the call. A sound heard only rarely, and only by one who meets every condition.'),S('astra','사도를 쓰러뜨리십시오. 기회는 단 한 번. 실패하면 부름은 다시 침묵합니다.','Defeat the Apostle. You have one chance. Fail, and the call falls silent again.')],
+ outro:[S('astra','사도가 무릎을 꿇었습니다. 여섯 날개가 당신을 주인으로 인정합니다.','The Apostle kneels. The six wings accept you as their master.')]};
+const DIV_P=0.002;
+const qS=id=>{const r=R();r.quests=r.quests||{};return r.quests[id]||(r.quests[id]={st:0});};
+const qOpen=Q=>!Q.req||epS(Q.req).done;
+function divConds(){const r=R();const tr2=k=>((r.trust||{})[k]||0);return[
+ [L('종장 「신의 시련」 클리어','Clear the finale "Trial of the Divine"'),epS('e6').done],
+ [L('진엔딩 「별의 아이들」 달성','Reach the true ending "Children of the Stars"'),!!(r.endings&&r.endings.stars)],
+ [L('알파의 기억 조각 10개 모두 회수','Recover all 10 Alpha memory fragments'),r.mem>=10],
+ [L('서브 퀘스트 12개 모두 완료','Complete all 12 side quests'),SUBQ.every(q=>qS(q.id).st===2)],
+ [L('전설 링크 아스트라와 전설 기동전사 세라핌 프라임 보유','Own the legendary LINK Astra and the legendary mech Seraphim Prime'),own('link_leg',1)&&own('mech_leg')],
+ [L('세라·루나 유대 ♥5','Sera and Luna bonds at ♥5'),tr2('sera')>=5&&tr2('luna')>=5]];}
+function divRoll(){const r=R();if(r.mythic||r.divine)return false;if(!divConds().every(c=>c[1]))return false;if(Math.random()>=DIV_P)return false;r.divine=1;saveP();return true;}
+function playLines(lines,done){let i=0;const nx=()=>{const n=lines[i++];if(!n){done&&done();return;}if(n.t==='scene')vnShow({bg:n.bg,title:fmtN(tx(n.x)),text:'',shake:n.shake,opts:[{l:L('계속 ▶','Next ▶'),pri:1,f:nx}]});else vnShow({who:n.w,text:tx(n.x),opts:[{l:L('계속 ▶','Next ▶'),pri:1,f:nx}]});};nx();}
+function qLaunch(Q){const E=EPIS.find(e=>e.id===Q.area);launch(E,{waves:0,boss:null,diff:Q.diff,rw:Q.rw,quest:Q.id,obj:Q.obj});}
+function qStart(Q){vnBg={e2:'fire',e3:'ice',e4:'temple',e5:'gate',e6:'sanctum'}[Q.area]||'seoul';const s=qS(Q.id);if(s.st===0){s.st=1;saveP();}
+ playLines(Q.intro,()=>vnShow({who:Q.giver,text:'<b>'+L('목표','Objective')+'</b> · '+qObjTxt(Q),opts:[{l:L('출격','Deploy'),pri:1,f:()=>qLaunch(Q)},{l:L('나중에','Later'),f:()=>{render();}}]}));}
+function qObjTxt(Q){const o=Q.obj;if(o.k==='kill')return o.mon.map(m=>tx(MONS[m].n)).join(' / ')+' '+o.n+L('마리 처치',' kills');if(o.k==='survive')return o.t+L('초 동안 버티기','s survival');return tx(MONS[o.target].n)+L(' 처치',' — defeat');}
+function qRwTxt(rw){const a=[];if(rw.shards)a.push('★'+rw.shards);if(rw.cred)a.push('◆'+rw.cred);if(rw.item)a.push(L('장비','Gear')+' '+rn(Math.min(4,rw.item)));if(rw.mem)a.push(L('기억 조각 +','Memory +')+rw.mem);if(rw.link)a.push(L('링크 ','LINK ')+tx(LINKS[rw.link].n));if(rw.trust)a.push(L('유대 ♥','Bond ♥'));return a.join(' · ');}
+function qMonSpawn(k,x,y,diff){const M=MONS[k];if(!M||!CL[M.b])return null;let u;try{u=invSpawn(M.b,x,y,9999);}catch(e){return null;}if(!u)return null;u.mhp=Math.round(u.mhp*M.hp*(1+(diff||1)*.12));u.hp=u.mhp;u.mon=k;if(u.slot)u.slot.name=tx(M.n);const r=R();r.seen=r.seen||{};r.seen[k]=1;return u;}
+function qWave(X){const b=BASES[1];const lanes=[[b.x-200,b.y],[WW*.62,WH*.15],[WW*.62,WH*.85]];const pool=X.obj.mon||['zling'];const n=Math.min(16,4+X.diff*2);for(let i=0;i<n;i++){const L2=lanes[i%3];qMonSpawn(pool[i%pool.length],L2[0]+rnd(-150,150),L2[1]+rnd(-150,150),X.diff);}}
+function qStep(X,I,dt){X.t=(X.t||0)+dt;X.wt=(X.wt==null?3:X.wt)-dt;if(G.tk[1]<G.tkMax*.4)G.tk[1]=Math.round(G.tkMax*.4);
+ const live=G.units?G.units.filter(u=>!u.dead&&u.mon).length:0;if(X.wt<=0&&live<40){qWave(X);X.wt=Math.max(9,18-X.diff);}
+ const o=X.obj;if(o.k==='hunt'&&!X.bossU&&X.t>8){const b=BASES[1];X.bossU=qMonSpawn(o.target,b.x-420,b.y,X.diff);if(X.bossU){X.bossU.boss=1;announce('⚠',tx(MONS[o.target].n),'',true,'#ff6b6b');}}
+ if(!X.won&&((o.k==='kill'&&(X.kc||0)>=o.n)||(o.k==='survive'&&X.t>=o.t)||(o.k==='hunt'&&X.bossU&&X.bossU.dead))){X.won=1;endMatch(0);}}
+function qHud(X){const o=X.obj;if(o.k==='kill')return L('퀘스트 · 처치 ','Quest · kills ')+Math.min(o.n,X.kc||0)+'/'+o.n;if(o.k==='survive')return L('퀘스트 · 버티기 ','Quest · survive ')+Math.max(0,Math.ceil(o.t-(X.t||0)))+L('초','s');if(X.bossU&&!X.bossU.dead)return tx(MONS[o.target].n)+' · '+Math.ceil(X.bossU.hp/X.bossU.mhp*100)+'%';return L('목표 출현 임박!','Target incoming!');}
+function qResult(res){const X=res.X;const Q=X.quest==='q_divine'?DIVQ:SUBQ.find(q=>q.id===X.quest);if(!Q)return;const r=R();
+ if(Q===DIVQ){r.divine=0;saveP();if(res.win){playLines(Q.outro,()=>godAfter());}else showDlg('astra',L('…부름이 침묵했습니다. 여섯 날개는 다시 깊은 잠에 들었습니다.','…The call has fallen silent. The six wings sleep once more.'),[{l:'OK',pri:1,f:()=>{render();}}]);return;}
+ if(!res.win){showDlg(Q.giver,L('작전 실패… 정비하고 다시 도전해요.','Mission failed… Refit and try again.'),[{l:'OK',pri:1,f:()=>{}}]);return;}
+ const s=qS(Q.id);const first=s.st!==2;s.st=2;const log=[];if(first){giveRw(Q.rw,log);if(Q.rw.trust){r.trust=r.trust||{};for(const[k,v]of Object.entries(Q.rw.trust))r.trust[k]=Math.min(5,(r.trust[k]||0)+v);log.push(L('유대 상승 ♥','Bond up ♥'));}}else giveRw({shards:Math.round((Q.rw.shards||200)/3)},log);saveP();render();
+ playLines(first?Q.outro:[],()=>showDlg('sera','<b>'+L('퀘스트 완료!','Quest complete!')+'</b> '+tx(Q.t)+'<br><br>'+log.join('<br>'),[{l:'OK',pri:1,f:()=>{divCheck();}}]));}
+function divCheck(){if(divRoll()){render();playLines([S('astra','…들리십니까? 어딘가에서 날개 소리가.','…Do you hear it? Wings, somewhere far away.')],()=>{tab='quest';render();});}}
+function renderQuest(B){const r=R();let h='<div class="hg"><div><h3>'+L('메인 퀘스트','Main quests')+'</h3>';
+ for(const E of EPIS){const s=epS(E.id),op=epOpen(E);h+=`<div class="epi" style="margin:6px 0;display:flex;align-items:center;gap:10px;${op?'':'opacity:.45'}"><b style="color:${E.col};min-width:22px">${s.done?'✔':op?'▶':'🔒'}</b><div style="flex:1"><b>${tx(E.t)}</b><br><small>${tx(E.planet)} · ${s.done?L('완료','Complete'):op?L('진행 가능','Available'):lockMsg(E)}</small></div>${op&&!s.done?`<button class="pri" data-mq="${E.id}">${L('이동','Go')}</button>`:''}</div>`;}
+ h+='</div><div><h3>'+L('서브 퀘스트','Side quests')+' ('+SUBQ.filter(q=>qS(q.id).st===2).length+'/'+SUBQ.length+')</h3>';
+ if(r.divine&&!r.mythic){const Q=DIVQ;h+=`<div class="epi" style="margin:6px 0;border:1px solid #ffd166;box-shadow:0 0 18px rgba(255,209,102,.35)"><b style="color:#ffd166">✦ ${L('숨겨진 퀘스트','Hidden quest')} · ${tx(Q.t)}</b><br><small>${qObjTxt(Q)} · ${L('기회는 단 한 번','One chance only')}</small><div style="margin-top:6px"><button class="pri" data-sq="q_divine">${L('부름에 응한다','Answer the call')}</button></div></div>`;}
+ for(const Q of SUBQ){const s=qS(Q.id),op=qOpen(Q);const pk=PORT[Q.giver];h+=`<div class="epi" style="margin:6px 0;display:flex;gap:10px;align-items:center;${op?'':'opacity:.45'}">${pk?`<img src="models/portraits/${pk}.png" style="width:52px;height:52px;object-fit:cover;object-position:top;border-radius:10px;background:#0b1020">`:''}<div style="flex:1"><b>${s.st===2?'✔ ':''}${tx(Q.t)}</b> <small style="opacity:.7">· ${fmtN(tx(WHO[Q.giver]))}</small><br><small>${op?qObjTxt(Q)+'<br>'+L('보상: ','Reward: ')+qRwTxt(Q.rw):L('🔒 「','🔒 "')+tx(EPIS.find(e=>e.id===Q.req).t)+L('」 클리어 필요','" required')}</small></div>${op?`<button class="${s.st===2?'':'pri'}" data-sq="${Q.id}">${s.st===2?L('다시 하기','Replay'):s.st===1?L('계속','Resume'):L('수락','Accept')}</button>`:''}</div>`;}
+ const dc=divConds();const met=dc.filter(c=>c[1]).length;h+=`<h3 style="margin-top:14px">${L('전설 · 여섯 날개의 부름','Legend · Call of the Six Wings')}</h3><div class="epi small">${r.mythic?L('✦ 신기를 얻었습니다.','✦ You have obtained a divine frame.'):L('모든 조건을 갖춘 파일럿이 승리할 때마다, 극히 낮은 확률(0.2%)로 부름이 들린다고 한다. 전설 소환 확률보다도 낮다.','When a pilot who meets every condition wins a battle, the call is said to come at an extremely low chance (0.2%)—lower than a legendary summon.')}<br>${L('조건 ','Conditions ')}${met}/${dc.length}<br>${dc.map(c=>(c[1]?'✔ ':'· ')+c[0]).join('<br>')}</div>`;
+ h+='</div></div>';B.innerHTML=h;B.querySelectorAll('[data-mq]').forEach(b=>b.onclick=()=>{selEpi=b.dataset.mq;tab='map';render();});B.querySelectorAll('[data-sq]').forEach(b=>b.onclick=()=>{const id=b.dataset.sq;const Q=id==='q_divine'?DIVQ:SUBQ.find(q=>q.id===id);if(Q===DIVQ)playLines(Q.intro,()=>qLaunch(Q));else qStart(Q);});}
+let arcSub='mem';
+function renderCast(){return CAST.map(c=>`<div class="epi" style="margin:6px 0;display:flex;gap:12px;align-items:center"><img src="${c.img==='pilot'?TH+'mech3.jpg':'models/portraits/'+c.img+'.png'}" onerror="this.src='${TH}${c.img}.jpg'" style="width:76px;height:76px;object-fit:cover;object-position:top;border-radius:12px;background:#0b1020"><div><b style="color:#ffd166">${fmtN(tx(c.n))}</b> <small style="opacity:.75">${tx(c.role)}</small><br><small>${fmtN(tx(c.d))}</small></div></div>`).join('');}
+function renderMon(){const r=R();const fac={zeta:L('제타 군체','Zeta Swarm'),rogue:L('폭주 기계','Rogue machines'),ancient:L('알파 유산','Alpha relics'),omega:L('오메가 지배권','Omega Dominion'),divine:L('???','???')};let h='';for(const[k,M]of Object.entries(MONS)){const seen=(r.seen||{})[k]||!M.var&&!M.named&&!M.secret;if(M.secret&&!seen)continue;h+=`<div class="epi" style="margin:6px 0;display:flex;gap:12px;align-items:center;${seen?'':'opacity:.5'}"><img src="${TH}${M.th}.jpg" style="width:70px;height:70px;object-fit:cover;border-radius:12px;background:#0b1020;${M.col?'box-shadow:0 0 0 2px '+M.col:''}${seen?'':';filter:brightness(0)'}"><div><b style="color:${M.col||'#ff9b5a'}">${seen?tx(M.n):'???'}</b> <small style="opacity:.75">${fac[M.f]}${M.boss?' · '+L('보스','Boss'):''}</small><br><small>${seen?tx(M.d)+'<br>'+L('서식지: ','Habitat: ')+tx(M.hab)+' · '+L('약점: ','Weakness: ')+tx(M.w)+' · '+L('처치 ','Kills ')+((r.kills||{})[k]||0):L('아직 마주치지 않았다.','Not yet encountered.')}</small></div></div>`;}return h;}
+function renderTerr(){let h='<h3>'+L('행성별 지형지물','Landmarks by world')+'</h3>';const nm={seoul:L('지구 · 네오 서울','Earth · Neo Seoul'),station:L('궤도 기지 이지스','Aegis Station'),volcano:L('화산 행성 이그니스','Ignis'),frost:L('빙하 위성 니브','Niv'),temple:L('빛의 사원 루멘','Lumen'),gate:L('거인의 문','Gate of Giants'),rift:L('허무의 균열','Void Rift')};
+ for(const[k,arr]of Object.entries(TERR))h+=`<div class="epi" style="margin:6px 0"><b>${nm[k]}</b><br>${arr.map(f=>`<span style="color:${f.c}">■</span> <b>${tx(f.n)}</b> — <small>${tx(f.e)}</small>`).join('<br>')}</div>`;
+ h+='<h3>'+L('공통 전장 지형','Common battlefield features')+'</h3><div class="epi">'+TERR_BASE.map(t2=>`<span style="color:${t2[2]}">■</span> <b>${tx(t2[0])}</b> — <small>${tx(t2[1])}</small>`).join('<br>')+'</div>';return h;}
+// terrain landmarks in RPG battles (visual + effect)
+window.__rpgDeco=function(R0){try{const X=(G&&G.rpg)||window.__rpgNext;if(!X)return;const A=AREA[X.epi];if(!A)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const list=TERR[A.terr]||[];X.terr=[];const R2=mulberry(77+(X.epi||'').length);
+ const lbl=(txt,col,x,z,y)=>{const cv=document.createElement('canvas');cv.width=512;cv.height=96;const g=cv.getContext('2d');g.fillStyle='rgba(4,8,18,.62)';g.fillRect(0,14,512,68);g.fillStyle=col;g.fillRect(0,14,8,68);g.font='bold 40px "Noto Sans KR",sans-serif';g.fillStyle='#fff';g.textBaseline='middle';g.fillText(txt,22,50);const tx2=new T3.CanvasTexture(cv);tx2.colorSpace=T3.SRGBColorSpace;const sp=new T3.Sprite(new T3.SpriteMaterial({map:tx2,transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(150,28,1);sp.position.set(x,y,z);sp.renderOrder=5;S0.add(sp);};
+ const glowMat=(c,o)=>new T3.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:o||1.4,roughness:.4,metalness:.3});
+ for(const f of list){const n=f.k==='well'||f.k==='reactor'||f.k==='rift'?2:f.k==='vent'?4:3;for(let i=0;i<n;i++){const x=WW*(.3+R2()*.4),y=WH*(.15+R2()*.7);const g=new T3.Group();const col=new T3.Color(f.c);
+   if(f.k==='well'){const ring=new T3.Mesh(new T3.TorusGeometry(80,4,8,48),glowMat(col,2));ring.rotation.x=Math.PI/2;ring.position.y=3;g.add(ring);const col2=new T3.Mesh(new T3.CylinderGeometry(70,70,260,32,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.12,side:T3.DoubleSide,depthWrite:false}));col2.position.y=130;g.add(col2);X.terr.push({k:'well',x,y,r:85});}
+   else if(f.k==='pillar'||f.k==='monolith'){const h=f.k==='monolith'?260:180;const m=new T3.Mesh(f.k==='monolith'?new T3.BoxGeometry(34,h,14):new T3.CylinderGeometry(14,18,h,10),new T3.MeshStandardMaterial({color:f.k==='monolith'?0x14101e:0xd8c89a,roughness:.7,metalness:.2}));m.position.y=h/2;g.add(m);const ln=new T3.Mesh(new T3.BoxGeometry(f.k==='monolith'?36:30,4,f.k==='monolith'?16:30),glowMat(col,2.2));ln.position.y=h*.7;g.add(ln);if(f.k==='monolith')X.terr.push({k:'monolith',x,y,r:110});}
+   else if(f.k==='reactor'){const m=new T3.Mesh(new T3.CylinderGeometry(30,38,120,16),new T3.MeshStandardMaterial({color:0x2a3240,metalness:.8,roughness:.3}));m.position.y=60;g.add(m);const c2=new T3.Mesh(new T3.CylinderGeometry(18,18,130,16),glowMat(col,2.5));c2.position.y=65;g.add(c2);X.terr.push({k:'reactor',x,y,r:110});}
+   else if(f.k==='vent'){const m=new T3.Mesh(new T3.ConeGeometry(46,60,10,1,true),new T3.MeshStandardMaterial({color:0x2b1a12,roughness:.9}));m.position.y=30;g.add(m);const c2=new T3.Mesh(new T3.CircleGeometry(22,16),glowMat(col,3));c2.rotation.x=-Math.PI/2;c2.position.y=59;g.add(c2);X.terr.push({k:'vent',x,y,r:75});}
+   else if(f.k==='spire'){for(let j=0;j<3;j++){const m=new T3.Mesh(new T3.ConeGeometry(16+j*4,140+j*50,6),new T3.MeshStandardMaterial({color:0xcfefff,roughness:.15,metalness:.1,transparent:true,opacity:.88}));m.position.set((j-1)*22,(140+j*50)/2,(j%2)*16);g.add(m);}}
+   else if(f.k==='rift'){const ring=new T3.Mesh(new T3.TorusGeometry(70,6,8,48),glowMat(col,2.6));ring.rotation.x=Math.PI/2;ring.position.y=4;g.add(ring);const d=new T3.Mesh(new T3.CircleGeometry(66,32),new T3.MeshBasicMaterial({color:0x07020c}));d.rotation.x=-Math.PI/2;d.position.y=2;g.add(d);X.terr.push({k:'rift',x,y,r:90});}
+   else if(f.k==='lab'||f.k==='shelter'){const f2=f.k==='lab'?'p_bunker':'p_bunker';const pi=typeof propInst==='function'?propInst(f2,110,'l',R2()*6):null;if(pi)g.add(pi.wrap);else{const m=new T3.Mesh(new T3.BoxGeometry(90,40,70),new T3.MeshStandardMaterial({color:0x6a7c8a}));m.position.y=20;g.add(m);}}
+   else if(f.k==='ruin'){const pi=typeof propInst==='function'?propInst('p_wreck',150,'l',R2()*6):null;if(pi)g.add(pi.wrap);}
+   g.position.set(x,0,y);S0.add(g);if(i===0)lbl(tx(f.n),f.c,x,y,f.k==='monolith'?300:f.k==='well'?160:150);}}}catch(e){console.warn('rpgDeco',e);}};
+function qTerrStep(X,dt){const u=G.local&&G.local.unit;if(!u||u.dead||!X.terr)return;for(const T0 of X.terr){if(Math.hypot(u.x-T0.x,u.y-T0.y)>T0.r)continue;if(T0.k==='well')u.hp=Math.min(u.mhp,u.hp+u.mhp*.03*dt);else if(T0.k==='vent')u.hp=Math.max(1,u.hp-u.mhp*.025*dt);else if(T0.k==='rift')u.hp=Math.max(1,u.hp-u.mhp*.02*dt);else if(T0.k==='reactor'||T0.k==='monolith')u.hp=Math.min(u.mhp,u.hp+u.mhp*.015*dt);}}
+{const _ku=killUnit;killUnit=function(u,src){const was=u&&u.dead;const r=_ku(u,src);try{if(!was&&G&&G.rpg&&G.local&&u.team!==G.local.team){const X=G.rpg,R1=R();const k=u.mon||(MONS[u.cls]?u.cls:null);if(k){R1.kills=R1.kills||{};R1.kills[k]=(R1.kills[k]||0)+1;R1.seen=R1.seen||{};R1.seen[k]=1;}if(X.obj&&X.obj.k==='kill'&&(!X.obj.mon||X.obj.mon.includes(k)))X.kc=(X.kc||0)+1;}}catch(e){}return r;};}
+
+function arcNav(){return '<div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">'+[['mem',L('기억 · 엔딩','Memories · Endings')],['cast',L('인물','Characters')],['mon',L('몬스터','Bestiary')],['terr',L('지형지물','Terrain')]].map(([k,n])=>'<button class="'+(arcSub===k?'pri':'')+'" data-arc="'+k+'">'+n+'</button>').join('')+'</div>';}
+function arcBind(B){B.querySelectorAll('[data-arc]').forEach(b=>b.onclick=()=>{arcSub=b.dataset.arc;render();});}
+
+
+// ================= v1.7 : CINEMATIC STORY MODE (backgrounds · living 3D cast · voices · subtitles) =================
+const VN={auto:false,voice:true,skip:false,log:[],actors:[],cur:null,bg:null};
+try{const s=JSON.parse(localStorage.getItem('ascend_vn')||'{}');VN.voice=s.voice!==false;VN.auto=!!s.auto;}catch(e){}
+const vnSave=()=>{try{localStorage.setItem('ascend_vn',JSON.stringify({voice:VN.voice,auto:VN.auto}));}catch(e){}};
+// who: [model, gender, pitch, rate, name colour, scale]
+const VNCHAR={sera:['link2','f',1.05,1.0,'#7fd1ff'],luna:['link3','f',1.3,1.07,'#c9a6ff'],astra:['link_leg','f',.95,.9,'#ffd166'],hayun:['hayun','f',1.2,1.08,'#ff9bb0'],minjae:['minjae','m',.85,.98,'#9fe0a0'],seraphine:['seraphine','f',.92,.92,'#e6d2ff'],reinhard:['emp_officer','m',.78,.95,'#ff6b7a'],yang:['fed_officer','m',.9,.9,'#8fd0ff'],arkos:['omega','m',.5,.82,'#b07cff',1.2],hq:['emp_female','f',1.0,1.05,'#a8d4ff'],igni:['a_fire','f',1.15,1.1,'#ff8a4a'],frost:['a_ice','f',1.0,.95,'#bfe9ff'],nar:[null,'m',.85,.92,'#ffd166']};
+const BGIMG={seoul:'seoul',hangar:'hangar',fire:'fire',ice:'ice',space:'space',temple:'temple',gate:'gate',memorial:'memorial',station:'station',hive:'hive',sanctum:'sanctum',bridge:'bridge'};
+const BGRIM={seoul:0xff6ad5,hangar:0xffc27a,fire:0xff7a2a,ice:0x9fe0ff,space:0x8f7cff,temple:0xffd166,gate:0xc58cff,memorial:0xffd7a8,station:0x7fb8ff,hive:0xff9b40,sanctum:0xffffff,bridge:0x7df9ff};
+{const css=document.createElement('style');css.textContent=`
+#rpgDlg{align-items:flex-end}#vnBg{background-size:cover!important;background-position:center!important;animation:vnKB 38s ease-in-out infinite alternate}@keyframes vnKB{from{transform:scale(1.04) translate(0,0)}to{transform:scale(1.13) translate(-1.6%,-1.2%)}}
+#vnVig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.55) 100%)}
+#vnLB1,#vnLB2{position:absolute;left:0;right:0;height:0;background:#000;transition:height .5s;z-index:3}#vnLB1{top:0}#vnLB2{bottom:0}#rpgDlg.cine #vnLB1,#rpgDlg.cine #vnLB2{height:9vh}
+#vn3d{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+#rpgDlg .box{z-index:2;width:100%!important;max-width:none;margin:0!important;border:none!important;border-radius:0!important;background:linear-gradient(180deg,rgba(3,6,14,0),rgba(3,6,14,.78) 26%,rgba(3,6,14,.93))!important;padding:46px max(6vw,22px) 30px!important;min-height:24vh;box-shadow:none!important}
+#rpgDlg .who{margin:0 0 10px!important;padding:5px 16px 5px 12px!important;border-radius:4px!important;background:linear-gradient(90deg,rgba(255,255,255,.14),rgba(255,255,255,0))!important;border-left:4px solid var(--wc,#7fd1ff);font-size:clamp(16px,1.5vw,20px);letter-spacing:.06em;text-shadow:0 0 12px var(--wc,#7fd1ff)}
+#dlgTx{font-size:clamp(16px,1.55vw,21px)!important;line-height:1.75!important;text-shadow:0 2px 6px rgba(0,0,0,.8);max-width:1100px}
+#vnNext{position:absolute;right:max(6vw,22px);bottom:22px;color:#9ff6ff;font-size:18px;animation:vnBlink 1s infinite;display:none}@keyframes vnBlink{50%{opacity:.2;transform:translateY(3px)}}
+#rpgDlg .opts{align-items:center}#rpgDlg .opts button{min-width:min(520px,86vw);background:linear-gradient(90deg,rgba(20,40,80,.85),rgba(10,20,44,.9));border:1px solid #4a7ad0;border-radius:8px;padding:11px 18px;font-size:16px}
+#rpgDlg .opts button.pri{background:linear-gradient(90deg,#1f6fd0,#123a7a)}
+#vnCtl{position:absolute;top:14px;right:16px;z-index:4;display:flex;gap:8px}#vnCtl button{background:rgba(6,12,26,.6);border:1px solid rgba(160,200,255,.35);color:#cfe0ff;border-radius:6px;padding:6px 12px;font-size:12.5px;font-weight:800;letter-spacing:.06em}#vnCtl button.on{background:rgba(31,111,208,.75);color:#fff;border-color:#9ff6ff}
+#vnLog{position:absolute;inset:8vh 10vw;z-index:5;background:rgba(4,8,18,.94);border:1px solid #3a5a96;border-radius:12px;padding:18px 22px;overflow:auto;display:none;line-height:1.7}
+#vnTitle{z-index:3;text-shadow:0 0 30px rgba(0,0,0,.9),0 0 24px rgba(90,209,255,.6)!important}
+@media(max-width:700px){#rpgDlg .box{padding:34px 16px 22px!important}#vnCtl button{padding:5px 8px;font-size:11px}}`;document.head.appendChild(css);}
+{const D=$('#rpgDlg');const vig=document.createElement('div');vig.id='vnVig';D.insertBefore(vig,$('#vnTitle'));for(const id of['vnLB1','vnLB2']){const b=document.createElement('div');b.id=id;D.appendChild(b);}
+ const ctl=document.createElement('div');ctl.id='vnCtl';ctl.innerHTML='<button id="vnAuto">AUTO</button><button id="vnVoice">VOICE</button><button id="vnSkip">SKIP</button><button id="vnLogB">LOG</button>';D.appendChild(ctl);
+ const lg=document.createElement('div');lg.id='vnLog';D.appendChild(lg);const nx=document.createElement('div');nx.id='vnNext';nx.textContent='▼';$('#rpgDlg .box').appendChild(nx);
+ const sync=()=>{$('#vnAuto').classList.toggle('on',VN.auto);$('#vnVoice').classList.toggle('on',VN.voice);$('#vnVoice').textContent=VN.voice?L('음성 ON','VOICE ON'):L('음성 OFF','VOICE OFF');};sync();
+ ctl.addEventListener('click',e=>e.stopPropagation());
+ $('#vnAuto').onclick=()=>{VN.auto=!VN.auto;vnSave();sync();if(VN.auto&&VN.ready)vnAdvance();};$('#vnVoice').onclick=()=>{VN.voice=!VN.voice;vnSave();sync();if(!VN.voice&&'speechSynthesis' in window)speechSynthesis.cancel();};
+ $('#vnSkip').onclick=()=>{VN.skip=true;if('speechSynthesis' in window)speechSynthesis.cancel();if(vnShow.typing&&vnShow.finish)vnShow.finish();else vnAdvance();};
+ $('#vnLogB').onclick=()=>{const el=$('#vnLog');if(el.style.display==='block'){el.style.display='none';return;}el.innerHTML=VN.log.slice(-80).map(l=>`<div style="margin:6px 0"><b style="color:${l.c}">${l.w}</b> ${l.t}</div>`).join('')||'—';el.style.display='block';el.scrollTop=1e9;};
+ $('#vnLog').addEventListener('click',e=>{e.stopPropagation();$('#vnLog').style.display='none';});
+ D.addEventListener('click',()=>{if(!vnShow.typing&&VN.ready&&VN.single)vnAdvance();});
+ if('speechSynthesis' in window){try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{};}catch(e){}}}
+function vnAdvance(){if(!VN.single||!VN.ready)return;VN.ready=false;if('speechSynthesis' in window)speechSynthesis.cancel();const f=VN.single;VN.single=null;$('#rpgDlg').style.display='none';f();}
+// ---- voices ----
+function vnPickVoice(g,lang){if(!('speechSynthesis' in window))return null;const vs=speechSynthesis.getVoices().filter(v=>(v.lang||'').toLowerCase().startsWith(lang));if(!vs.length)return null;const F=/sunhi|heami|yuna|seoyeon|jimin|sun-hi|female|여성|zira|aria|jenny|samantha|ava|emma|sonia|libby|michelle|natasha|clara/i,M=/injoon|hyunsu|bongjin|gookmin|in-joon|male|남성|guy|davis|tony|ryan|brian|christopher|eric|david|mark|andrew|william/i;
+ const sc=v=>{let s=0;if(/natural|online|neural/i.test(v.name))s+=6;if(/google/i.test(v.name))s+=3;if(g==='f'&&F.test(v.name))s+=4;if(g==='m'&&M.test(v.name))s+=4;if(g==='f'&&M.test(v.name))s-=4;if(g==='m'&&F.test(v.name)&&!M.test(v.name))s-=3;return s;};return vs.slice().sort((a,b)=>sc(b)-sc(a))[0];}
+function vnSpeak(who,text,done){if(!VN.voice||VN.skip||!('speechSynthesis' in window)||!text){done&&done(false);return false;}try{speechSynthesis.cancel();const ch=VNCHAR[who]||VNCHAR.nar;const lang=LANG==='en'?'en':'ko';const u=new SpeechSynthesisUtterance(text);const v=vnPickVoice(ch[1],lang);if(v)u.voice=v;u.lang=lang==='en'?'en-US':'ko-KR';
+ const male=ch[1]==='m';const vMale=v&&/injoon|hyunsu|bongjin|gookmin|male|남성|guy|davis|tony|ryan|brian|christopher|eric|david|mark|andrew|william/i.test(v.name);u.pitch=clamp(ch[2]*(male&&!vMale?.72:1)*(!male&&vMale?1.35:1),.1,2);u.rate=ch[3];let fired=false;const fin=ok=>{if(fired)return;fired=true;done&&done(ok);};u.onend=()=>fin(true);u.onerror=()=>fin(false);speechSynthesis.speak(u);
+ setTimeout(()=>{if(!speechSynthesis.speaking&&!fired)fin(false);},1500+text.length*260);return true;}catch(e){done&&done(false);return false;}}
+// ---- 3D stage ----
+function vnStage(){if(VN.r)return true;const T3=window.THREE;if(!T3||!window.__TX)return false;try{const cv=document.createElement('canvas');cv.id='vn3d';const D=$('#rpgDlg');D.insertBefore(cv,$('#vnTitle'));
+ const r=new T3.WebGLRenderer({canvas:cv,alpha:true,antialias:true});r.setPixelRatio(Math.min(2,devicePixelRatio||1));r.outputColorSpace=T3.SRGBColorSpace;r.toneMapping=T3.ACESFilmicToneMapping;r.toneMappingExposure=1.15;
+ const sc=new T3.Scene();if(window.__TX.RoomEnvironment){const pm=new T3.PMREMGenerator(r);sc.environment=pm.fromScene(new window.__TX.RoomEnvironment(),.04).texture;}
+ const cam=new T3.PerspectiveCamera(28,1,.1,60);cam.position.set(0,1.3,4.6);cam.lookAt(0,1.08,0);
+ sc.add(new T3.HemisphereLight(0xe6eeff,0x2a2236,.9));const key=new T3.DirectionalLight(0xfff0e0,2.0);key.position.set(1.6,3.2,4);sc.add(key);const rim=new T3.DirectionalLight(0x88ccff,3.2);rim.position.set(-2.4,2.6,-3);sc.add(rim);const rim2=new T3.DirectionalLight(0x88ccff,2.2);rim2.position.set(2.6,2.2,-2.6);sc.add(rim2);
+ VN.r=r;VN.sc=sc;VN.cam=cam;VN.rim=rim;VN.rim2=rim2;VN.key=key;let last=performance.now();
+ const loop=()=>{requestAnimationFrame(loop);if($('#rpgDlg').style.display==='none')return;const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*r.getPixelRatio())||cv.height!==Math.round(h*r.getPixelRatio())){r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}
+  const narrow=w<700;for(const a of VN.actors){vnBuild(a);if(!a.obj)continue;a.x=lerp(a.x,a.tx*(narrow?.55:1),Math.min(1,dt*5));a.obj.position.x=a.x;a.obj.position.z=lerp(a.obj.position.z,a.talk?.15:-.25,Math.min(1,dt*4));a.obj.rotation.y=lerp(a.obj.rotation.y,a.tx<-.1?.32:a.tx>.1?-.32:0,Math.min(1,dt*4));
+   if(a.onceT>0){a.onceT-=dt;if(a.onceT<=0)vnPlay(a,a.talk?vnTalkClip(a):'idle');}else if(a.talk&&a.cur===a.idle)vnPlay(a,vnTalkClip(a));else if(!a.talk&&a.cur&&a.cur!==a.idle&&!a.once)vnPlay(a,'idle');
+   a.mixer&&a.mixer.update(dt);const dim=a.talk?1:.55;a.lv=lerp(a.lv||1,dim,Math.min(1,dt*4));a.obj.traverse(o=>{if(o.isMesh&&o.material&&o.material.color){if(!o.userData.c0)o.userData.c0=o.material.color.clone();o.material.color.copy(o.userData.c0).multiplyScalar(a.lv);}});
+   if(a.out){a.obj.position.x+=(a.tx<0?-1:1)*dt*6;if(Math.abs(a.obj.position.x)>4){sc.remove(a.obj);a.dead=1;}}}
+  VN.actors=VN.actors.filter(a=>!a.dead);const ny=1.08+Math.sin(now/2600)*.02;cam.position.x=Math.sin(now/5200)*.08;cam.lookAt(0,ny,0);r.render(sc,cam);};loop();return true;}catch(e){console.warn('vn3d',e);return false;}}
+function vnTalkClip(a){const c=['talk','talk2','talk3'].filter(k=>a.acts[k]);return c.length?c[(Math.random()*c.length)|0]:'idle';}
+function vnPlay(a,name,once){const T3=window.THREE;const ac=name==='idle'?a.idle:a.acts[name];if(!ac||a.cur===ac)return;ac.reset();ac.setLoop(once?T3.LoopOnce:T3.LoopRepeat);ac.clampWhenFinished=!!once;ac.play();if(a.cur)a.cur.crossFadeTo(ac,.4,false);a.cur=ac;a.once=!!once;a.onceT=once?Math.max(.6,ac.getClip().duration-.35):0;}
+function vnBuild(a){if(a.obj||!a.key||typeof mdlGet!=='function')return;const c=mdlGet(a.key);if(!c)return;const T3=window.THREE,X=window.__TX;const obj=c.skinned&&X.SkeletonUtils?X.SkeletonUtils.clone(c.g.scene):c.g.scene.clone(true);obj.traverse(o=>{if(o.isMesh){o.frustumCulled=false;if(o.material){o.material=o.material.clone();}}});
+ const s=1.72*(VNCHAR[a.who][5]||1)/(c.size.y||1);obj.scale.setScalar(s);const ctr=c.box.getCenter(new T3.Vector3());obj.position.set(-ctr.x*s,-c.box.min.y*s,-ctr.z*s);const w=new T3.Group();w.add(obj);VN.sc.add(w);a.obj=w;a.x=a.tx+(a.tx<=0?-2.6:2.6);w.position.x=a.x;
+ a.mixer=new T3.AnimationMixer(obj);a.acts={};for(const cl of (c.g.animations||[]))a.acts[normClip(cl.name)]=a.mixer.clipAction(cl);a.idle=a.acts.idle||a.acts.sway||Object.values(a.acts)[0]||null;if(a.idle){a.idle.play();a.cur=a.idle;}}
+function vnCast(who){const ch=VNCHAR[who];VN.actors.forEach(a=>a.talk=false);if(!ch||!ch[0])return null;let a=VN.actors.find(x=>x.who===who&&!x.out);if(!a){const live=VN.actors.filter(x=>!x.out);if(live.length>=2){const old=live.find(x=>x.who!==VN.lastWho)||live[0];old.out=1;}
+  const others=VN.actors.filter(x=>!x.out);a={who,key:ch[0],tx:0,obj:null};if(others.length===1){const o=others[0];if(Math.abs(o.tx)<.1)o.tx=-.82;a.tx=o.tx<0?.82:-.82;}VN.actors.push(a);}
+ a.talk=true;VN.lastWho=who;return a;}
+function vnClear(){for(const a of VN.actors)a.out=1;}
+function vnGesture(a,text){if(!a||!a.acts)return;const t2=text||'';if(/안녕|반가|Hello|Hi[ ,!]/i.test(t2)&&a.acts.wave)vnPlay(a,'wave',1);else if(/!{1,}|！/.test(t2)&&(a.acts.angry&&/reinhard|arkos/.test(a.who)))vnPlay(a,'angry',1);else if(/고맙|감사|Thank/i.test(t2)&&a.acts.bow)vnPlay(a,'bow',1);else if(/하하|좋아|Ha!|yay|최고/i.test(t2)&&a.acts.cheer)vnPlay(a,'cheer',1);else if(/…|\.\.\./.test(t2)&&a.acts.shrug&&Math.random()<.35)vnPlay(a,'shrug',1);}
+vnShow=function(o){const D=$('#rpgDlg');D.style.display='flex';$('#vnLog').style.display='none';const bk=o.bg||vnBg;const im=BGIMG[bk];const bgEl=$('#vnBg');if(VN.bg!==bk){VN.bg=bk;bgEl.style.background=(im?`url(bg/${im}.jpg) center/cover no-repeat, `:'')+(BG[bk]||BG.space);if(VN.rim){const c=BGRIM[bk]||0x88ccff;VN.rim.color.setHex(c);VN.rim2.color.setHex(c);}}
+ D.classList.toggle('shake',!!o.shake);setTimeout(()=>D.classList.remove('shake'),500);const has3d=vnStage();
+ if(o.title){vnClear();D.classList.add('cine');}else D.classList.remove('cine');
+ const ch=o.who&&VNCHAR[o.who];const act=o.who?vnCast(o.who):null;if(!o.who)VN.actors.forEach(a=>a.talk=false);
+ const img=$('#dlgImg');const pk=o.who&&PORT[o.who];img.style.display='none';if(pk&&(!has3d||!ch||!ch[0])){img.src='models/portraits/'+pk+'.png';img.style.display='block';img.classList.remove('in');void img.offsetWidth;img.classList.add('in');}
+ if(act&&has3d){clearTimeout(VN.fbT);VN.fbT=setTimeout(()=>{if(!act.obj&&pk&&$('#rpgDlg').style.display!=='none'&&VN.lastWho===o.who){img.src='models/portraits/'+pk+'.png';img.style.display='block';}},2600);}
+ const wn=o.who&&WHO[o.who]?fmtN(tx(WHO[o.who])):'';$('#dlgWho').textContent=wn;$('#dlgWho').style.display=wn?'':'none';$('#dlgWho').style.setProperty('--wc',(ch&&ch[4])||'#7fd1ff');$('#vnTitle').textContent=o.title||'';$('#vnTitle').style.display=o.title?'block':'none';
+ const T=$('#dlgTx');const full=fmtN(o.text||'');const plain=full.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'');T.style.whiteSpace='pre-line';T.innerHTML='';const O=$('#dlgOpts');O.innerHTML='';$('#vnNext').style.display='none';clearInterval(vnShow.tm);
+ const opts=o.opts||[];const single=opts.length===1&&!/<|출격|Deploy|로그인|Log in/.test(opts[0].l)?opts[0]:null;VN.single=null;VN.ready=false;
+ if(plain||o.title)VN.log.push({w:wn||'',t:(o.title||plain).slice(0,400),c:(ch&&ch[4])||'#ffd166'});
+ let spoke=false,spokeDone=false,typed=false;const tryAuto=()=>{if(!(typed&&(spokeDone||!spoke)))return;if(act)act.talk=false;if(single&&(VN.auto||VN.skip)){setTimeout(()=>{if(VN.single===single.f2&&VN.ready)vnAdvance();},VN.skip?120:(spoke?500:1500+plain.length*35));}};
+ const done=()=>{clearInterval(vnShow.tm);T.innerHTML=full;vnShow.typing=false;typed=true;O.innerHTML='';if(single){VN.single=single.f2=()=>single.f();VN.ready=true;$('#vnNext').style.display='block';}else{if(VN.skip)VN.skip=false;for(const b of opts){const e=document.createElement('button');e.className=b.pri?'pri':'';e.innerHTML=b.l;e.onclick=(ev)=>{ev.stopPropagation();if('speechSynthesis' in window)speechSynthesis.cancel();D.style.display='none';b.f();};O.appendChild(e);}}tryAuto();};
+ const say=(o.title||plain).replace(/[★✦◆♥]/g,'');spoke=vnSpeak(o.who||'nar',say,()=>{spokeDone=true;if(act)act.talk=false;tryAuto();});if(act){act.talk=true;vnGesture(act,plain);}
+ vnShow.typing=true;vnShow.finish=done;if(VN.skip||!plain){done();return;}let i=0;const cps=spoke?16:48;vnShow.tm=setInterval(()=>{i+=Math.max(1,Math.round(cps/30));T.textContent=plain.slice(0,i);if(i>=plain.length)done();},33);};
+
+{const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
+function openRpg(){R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
 $('#rpgBack').onclick=()=>{hide('#rpg');show('#menu');refreshMenu();};
 // lobby button
 {const pri=$('#mSolo');if(pri){const b=document.createElement('button');b.className='nav pri';b.id='mRpg';b.style.cssText='background:linear-gradient(90deg,#b8860b,#7a4a14 70%,rgba(122,74,20,.55));border-color:#ffd166;border-left-color:#fff';b.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span class="tx"><span id="mRpgT"></span><small id="mRpgS"></small></span>';pri.parentNode.insertBefore(b,pri.nextSibling);b.onclick=()=>{ensureName();hide('#menu');openRpg();};}}
