@@ -7427,6 +7427,13 @@ addEventListener('keydown',e=>{if(e.code==='KeyG'&&!e.repeat&&G&&G.local&&!G.ove
 // the new Saber body already carries its red armour texture: no palette remap / glow map on top of it
 {const _cgS=custGet;custGet=function(){const c=_cgS();try{const k=(typeof myMechKey==='function')?myMechKey():'';if(k==='mech3'){c.mix=0;c.tint=Math.min(c.tint==null?.25:c.tint,.25);c.emis='#140000';c.glow=c.glow==='#ffffff'?'#ff6a5a':c.glow;}}catch(e){}return c;};}
 
+// ---- world rule: red (and other signature colours) belong to named aces; ordinary enemy frames are white / grey ----
+{const GRAY=new Map();const grayMat=m=>{if(!m||!m.isMaterial)return m;let g=GRAY.get(m);if(g)return g;g=m.clone();g.userData.grayFoe=1;if(g.color)g.color.setRGB(1,1,1);if(g.emissive){g.emissive.setRGB(0,0,0);g.emissiveIntensity=0;}if('metalness'in g){g.metalness=Math.min(.6,g.metalness==null?.5:g.metalness);g.roughness=Math.max(.35,g.roughness==null?.4:g.roughness);}
+  g.onBeforeCompile=sh=>{sh.fragmentShader=sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float lum=dot(diffuseColor.rgb,vec3(.299,.587,.114));float t=smoothstep(.04,.6,lum);diffuseColor.rgb=mix(vec3(.16,.17,.19),vec3(.86,.87,.89),t);}');};g.customProgramCacheKey=()=>'grayFoe';g.needsUpdate=true;GRAY.set(m,g);return g;};
+ const special=u=>!!(u.boss||u.named||u.ace||u.hero||u.eMech==='ace'||(u.slot&&u.slot.ace));
+ const _maG2=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maG2(e,m,u,dt,now);try{if(!u||!m||!m.obj||!G||!G.local)return;if(u===G.local.unit||u.team===G.local.team||special(u))return;const c=CL[u.cls]||{};if(!(u.cls==='arkframe'||u.eMech||c.arm==='heavy'&&c.layer===0))return;
+  if(m._ws&&!m._wsG){m._wsG=1;for(const S of[m._ws.L,m._ws.R])if(S&&S.mesh)S.mesh.material=grayMat(S.mesh.material);}if(e._grayK===e._iff&&e._grayD)return;e._grayD=1;e._grayK=e._iff;m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;if(Array.isArray(o.material))o.material=o.material.map(grayMat);else if(!o.material.userData.grayFoe)o.material=grayMat(o.material);});if(e.mfx&&e.mfx.saber)e.mfx.saber.traverse&&e.mfx.saber.traverse(o=>{if(o.material&&o.material.color)o.material.color.set('#e8eef6');});}catch(er){}};}
+
 try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>rotW(b,q),part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE(),mdlGet:(f)=>mdlGet(f),mc:(f)=>MC[f]};}catch(e){window.__axErr=String(e);}
 
 // ================= v3.15b : Saber's back panels become real wings — split from the skin at load, hinged on the upper spine; left opens clockwise, right counter-clockwise, then thrust =================
