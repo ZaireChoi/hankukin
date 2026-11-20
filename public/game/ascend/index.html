@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.9.4 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.10 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6797,6 +6797,57 @@ window.__noHQBand=true;
 {const st=document.createElement('style');st.textContent='body #cine::before,body #cine::after{display:none!important}body #cine .c1,body #cine .c2{font-size:clamp(16px,2.2vw,26px)!important;letter-spacing:.1em!important;opacity:.85}body #cine .c3{font-size:11px!important;opacity:.7}body #cine{top:12%!important;gap:4px!important}#rdTog{position:fixed;z-index:31;left:8px;padding:2px 8px;border-radius:6px;border:1px solid rgba(140,170,220,.35);background:rgba(6,11,22,.45);color:#9fb4d8;font:700 10.5px var(--fd,sans-serif);cursor:pointer}';document.head.appendChild(st);}
 try{STR.ko.battleStart='전투 개시! 기체로 거점을 점령하세요';STR.en.battleStart='Battle start! Take the points with your frame';}catch(e){}
 {let b=null;setInterval(()=>{try{const on=!!(G&&G.local&&!G.over);if(!b){b=document.createElement('button');b.id='rdTog';b.onclick=()=>{P.commsHide=!P.commsHide;saveP();};document.body.appendChild(b);}b.style.display=on?'':'none';if(!on)return;const mob=(VW<700||VH<520);b.style.top=(mob?92:56)+'px';const t=(P.commsHide?L('무전 ▸','Radio ▸'):L('무전 ▾','Radio ▾'));if(b.textContent!==t)b.textContent=t;}catch(e){}},400);}
+
+
+// ================= v3.10 : every frame's main weapon handles differently; Origin gets its own kit =================
+const PRIM={
+ mech3:{m:'rifle',n:K('빔 라이플 · 정확한 연사','Beam Rifle · steady fire')},
+ mech4:{m:'twin',n:K('쌍권총 · 좌우 교차 속사','Twin Blasters · alternating rapid fire')},
+ m_ranger:{m:'charge',n:K('레일 저격총 · 누르고 있다가 떼면 관통 사격','Rail Sniper · hold to charge, release to pierce')},
+ m_artillery:{m:'mortar',n:K('곡사포 · 조준한 자리에 포탄이 떨어짐','Howitzer · shells land where you aim')},
+ m_guardian:{m:'shotgun',n:K('산탄 캐논 · 가까울수록 강함','Scatter Cannon · stronger up close')},
+ m_titan:{m:'gatling',n:K('회전 기관포 · 누를수록 빨라짐','Rotary Cannon · spins up while held')},
+ m_sky:{m:'homing',n:K('유도 미사일 · 조준 근처 적을 자동 추적','Homing Missiles · seek foes near the aim')},
+ m_striker:{m:'melee',n:K('근접 전용 · 공격 버튼이 돌진 베기','Melee only · attack lunges and slashes')},
+ m_wizard:{m:'bits',n:K('비트 레이저 · 조준점 적을 비트가 저격','Bit Lasers · bits snipe the target')},
+ m_phantom:{m:'burst',n:K('소음 소총 · 정밀 3점사','Silenced Rifle · precise 3-round burst')},
+ m_origin:{m:'beam',n:K('알파 빔 · 누르고 있는 동안 계속 지지는 광선','Alpha Beam · continuous ray while held')},
+ m_samurai:{m:'melee',n:K('근접 전용 · 공격 버튼이 발도 돌진','Melee only · attack is a drawing dash')},
+ mech_leg:{m:'feather',n:K('광익 깃털 · 3갈래 빛 날개','Light Feathers · three-way volley')}};
+window.__PRIM=PRIM;
+function primOf(u){if(!u||u.cls!=='arkframe'||!G||!G.local||u!==G.local.unit||G.arena)return null;const k=myMechKey();if(/^god/.test(k))return null;return PRIM[k]||PRIM.mech3;}
+// Origin: its own kit instead of the Saber defaults
+KIT.m_origin=Object.assign({},KIT.m_origin,{q:['alphanova',7,K('알파 노바','Alpha Nova')],e:['blink',5,K('위상 이동','Phase Shift')],r:['overdrive',0,K('알파 오버드라이브','Alpha Overdrive')]});
+SK.alphanova=u=>{kCircle(u.x,u.y,330,kbase(u)*3.6,'#ffe28a',.3,320);G.hstop=Math.max(G.hstop||0,.08);cam.shake=Math.max(cam.shake||0,8);};
+SK.blink=u=>{const p=aimPt(u,460);const a=Math.atan2(p.y-u.y,p.x-u.x);const d=Math.min(460,Math.hypot(p.x-u.x,p.y-u.y));let x=u.x+Math.cos(a)*d,y=u.y+Math.sin(a)*d;try{if(solidAt(x,y,u.r)){const f=freeSpot({x,y,r:u.r},a);if(f){x=f.x;y=f.y;}}}catch(e){}kTele(u,x,y);u.spawnProt=Math.max(u.spawnProt||0,.4);kCircle(u.x,u.y,150,kbase(u)*1.6,'#ffe28a',.4,200);};
+SK.overdrive=u=>{u.kOD=8;pop(L('오버드라이브 · 8초','Overdrive · 8s'),'#ffe28a',false);};
+{const _stOD=step;step=function(dt){_stOD(dt);try{const u=G&&G.local&&G.local.unit;if(u&&u.kOD>0){u.kOD-=dt;if(u.cd1>0)u.cd1-=dt*1.5;if(u.cd2>0)u.cd2-=dt*1.5;if(Math.random()<.4)part(u.x+rnd(-30,30),u.y+rnd(-30,30),0,-80,.4,'#ffe28a',5,rnd(20,90));}}catch(e){}};}
+{const _huOD=hurt;hurt=function(t,amt,src,ang,dt){try{const me=G&&G.local&&G.local.unit;if(me&&me.kOD>0&&src===G.local)amt*=1.4;}catch(e){}return _huOD(t,amt,src,ang,dt);};}
+// ---- weapon profiles handled by the base firing code ----
+{const _stPW=step;step=function(dt){_stPW(dt);try{const u=G&&G.local&&G.local.unit;const P0=primOf(u);if(!P0||!u.w)return;if(u._pwFor===myMechKey())return;const b=u._w0||u.w;let w=null;
+ if(P0.m==='twin')w=Object.assign({},b,{rate:b.rate*.55,dmg:Math.round(b.dmg*.62),spr:.05});
+ else if(P0.m==='shotgun')w=Object.assign({},b,{rate:b.rate*3.4,dmg:Math.round(b.dmg*.75),pel:7,spr:.32,range:b.range*.5});
+ else if(P0.m==='gatling')w=Object.assign({},b,{rate:b.rate*.36,dmg:Math.round(b.dmg*.42),spr:.08});
+ else if(P0.m==='burst')w=Object.assign({},b,{rate:b.rate*2.8,dmg:Math.round(b.dmg*1.15),burst:3,bi:.06,spr:.01,range:b.range*1.15});
+ if(w){u.w=w;u._pwW=w;}else{u._pwW=u.w;}u._pwFor=myMechKey();
+ if(P0.m==='gatling'){u._gat=1;}}catch(e){}};}
+{const _stGt=step;step=function(dt){_stGt(dt);try{const u=G&&G.local&&G.local.unit;const P0=primOf(u);if(!P0||P0.m!=='gatling'||!u._pwW)return;if(u._wantFire)u._gsp=Math.min(1,(u._gsp||0)+dt/0.8);else u._gsp=Math.max(0,(u._gsp||0)-dt*2);const b=u._w0||u.w;u.w.rate=b.rate*.36*(1+(1-u._gsp)*1.6);}catch(e){}};}
+// ---- custom fire modes ----
+{const _liP=localInput;localInput=function(u){const inp=_liP(u);try{const P0=primOf(u);if(!P0||u.dead)return inp;const m=P0.m;let held=!!inp.fire;u._pHeld=held;
+ if(m==='melee'){if(held){inp.fire=false;u._wantFire=false;if(!(u.melT>0)){const a=u.aa!=null?u.aa:u.a;let tg=null,bd=1e9;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2||e.layer>0)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);if(d>540)continue;const da=Math.abs(ANGD(a,Math.atan2(e.y-u.y,e.x-u.x)));if(da>1.1)continue;const sc=d+da*300;if(sc<bd){bd=sc;tg=e;}}
+   if(tg&&Math.hypot(tg.x-u.x,tg.y-u.y)>MEL.range*.9&&!(u.pmCd>0)&&!u.lunge){const aa=Math.atan2(tg.y-u.y,tg.x-u.x);kLunge(u,aa,Math.max(80,Math.hypot(tg.x-u.x,tg.y-u.y)-90),.16,kbase(u)*1.2);u.pmCd=.75;}else if(!tg||Math.hypot(tg.x-u.x,tg.y-u.y)<=MEL.range*.9){meleeSwing(u,tg);}}}return inp;}
+ if(m==='charge'){inp.fire=false;if(held&&(u.pch||0)>=1.2){u.pch=1.2;held=false;}if(held){u.pch=Math.min(1.2,(u.pch||0)+1/60);if(Math.random()<.6){const a=u.aa||0;part(u.x+Math.cos(a)*40,u.y+Math.sin(a)*40,rnd(-30,30),rnd(-30,30),.15,'#9ff6ff',3+u.pch*4,50);}}else if((u.pch||0)>.12){const k=u.pch/1.2;u.pch=0;const a=u.aa||0;kLine(u,u.x,u.y,a,900+700*k,26+30*k,kbase(u)*(1.2+4.6*k),'#9ff6ff',120*k);cam.shake=Math.max(cam.shake||0,2+6*k);try{SFX.noise(.25,.2+.2*k,3000);}catch(e){}}else u.pch=0;return inp;}
+ if(m==='mortar'){if(held){inp.fire=false;if(!(u.pwT>0)){u.pwT=.8;const p=aimPt(u,1100);const x=p.x+rnd(-30,30),y=p.y+rnd(-30,30);for(let i=0;i<8;i++)part(u.x,u.y,rnd(-40,40),rnd(-40,40),.4,'#ffb36b',5,60+i*10);kLater(.6,()=>{kCircle(x,y,125,kbase(u)*1.9,'#ff9a3c',.15,90);},x,y,125);}}return inp;}
+ if(m==='homing'){if(held){inp.fire=false;if(!(u.pwT>0)){u.pwT=.55;const p=aimPt(u,1000);const ts=G.units.filter(e=>!e.dead&&e.team!==u.team&&e.team!==2&&d2(e.x,e.y,p.x,p.y)<520*520).sort((a,b)=>d2(a.x,a.y,p.x,p.y)-d2(b.x,b.y,p.x,p.y)).slice(0,2);G.hm=G.hm||[];const base=kbase(u)*1.1;(ts.length?ts:[null]).forEach((tg,i)=>{for(let k=0;k<(ts.length>1?1:2);k++){const a=(u.aa||0)+rnd(-.9,.9);G.hm.push({x:u.x,y:u.y,vx:Math.cos(a)*500,vy:Math.sin(a)*500,tg:tg||{x:p.x,y:p.y,r:20,dead:false,hp:1},t:0,dmg:base,delay:i*.08+k*.06});}});}}return inp;}
+ if(m==='bits'){if(held){inp.fire=false;if(!(u.pwT>0)){u.pwT=.2;const p=aimPt(u,900);let tg=null,bd=700*700;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=d2(e.x,e.y,p.x,p.y);if(d<bd){bd=d;tg=e;}}u._bitI=((u._bitI||0)+1)%3;const ba=(u._bitI/3)*6.28+G.t*3;const sx=u.x+Math.cos(ba)*70,sy=u.y+Math.sin(ba)*70;const tx2=tg?tg.x:p.x,ty2=tg?tg.y:p.y;for(let j=0;j<9;j++)part(sx+(tx2-sx)*j/9,sy+(ty2-sy)*j/9,0,0,.12,'#b48cff',4,70);if(tg)hurt(tg,kbase(u)*.62,G.local,Math.atan2(ty2-sy,tx2-sx),'b');else try{swArea(p.x,p.y,40,kbase(u)*.5,G.local);}catch(e){}}}return inp;}
+ if(m==='beam'){if(held){inp.fire=false;if(!(u.pwT>0)){u.pwT=.1;const a=u.aa||0;kLine(u,u.x,u.y,a,720,20,kbase(u)*.42,'#ffe28a',0);if(u.en!=null)u.en=Math.max(0,u.en-1.2);}}return inp;}
+ if(m==='feather'){if(held){inp.fire=false;if(!(u.pwT>0)){u.pwT=.34;const a0=u.aa||0;for(const da of[-.16,0,.16]){const a=a0+da;addBullet({x:u.x,y:u.y,vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,life:.75,kind:3,team:u.team,dmg:kbase(u)*.75,owner:G.local,dt:'b',h:60,splash:0});}}}return inp;}
+}catch(e){}return inp;};}
+{const _stPT=step;step=function(dt){_stPT(dt);try{const u=G&&G.local&&G.local.unit;if(!u)return;if(u.pwT>0)u.pwT-=dt;if(u.pmCd>0)u.pmCd-=dt;}catch(e){}};}
+// melee-only frames hit harder with the blade
+{const _msP=meleeSwing;meleeSwing=function(u,tg){const P0=primOf(u);if(P0&&P0.m==='melee'){const s=u.melMul||1;u.melMul=s*1.15;try{return _msP(u,tg);}finally{u.melMul=s;}}return _msP(u,tg);};}
+// show the main weapon + kit in the customize / frame panel
+{const _co=custOpen;custOpen=function(){_co();try{const mk=myMechKey();const P0=PRIM[mk];const k=KIT[mk];const box=[...document.querySelectorAll('#custOv b')].find(b=>/기체 특성|Frame traits/.test(b.textContent));if(box&&P0){const d=box.parentElement;d.innerHTML='<b style="color:#ffd166">'+L('기체 특성','Frame traits')+'</b><br>'+tx(k.pass)+'<br>'+L('주무기: ','Main weapon: ')+tx(P0.n)+'<br>'+(k.q?'Q '+tx(k.q[2])+' · E '+tx(k.e[2])+' · R '+tx(k.r[2]):L('Q 손바닥 레이저 · E 회전 베기 · R 궤도 폭격','Q Palm Laser · E Spin Slash · R Orbital'));}}catch(e){}};window.custOpen=custOpen;}
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
