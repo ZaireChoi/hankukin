@@ -7,7 +7,8 @@
       "namespace": "android_app",
       "package_name": "com.hankukin.anibrix",
       "sha256_cert_fingerprints": [
-        "94:D7:EE:CD:76:9F:3F:1D:42:C2:EE:99:FE:7C:1B:63:A9:D2:53:FE:F3:3A:A4:28:D9:D7:AB:5E:E0:C6:CB:4A"
+        "94:D7:EE:CD:76:9F:3F:1D:42:C2:EE:99:FE:7C:1B:63:A9:D2:53:FE:F3:3A:A4:28:D9:D7:AB:5E:E0:C6:CB:4A",
+        "22:37:60:26:DF:F1:D8:7B:85:65:D2:34:E3:DD:92:FD:A9:BB:C1:15:60:44:88:59:83:90:C8:62:13:A2:4D:D7"
       ]
     }
   },
