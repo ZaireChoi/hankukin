@@ -40,7 +40,7 @@ const db = getFirestore(app);
 // ── 이용 기록: 하루 단위 익명 집계 (stats/{한국날짜}) ──
 // 개인을 알아볼 수 있는 값은 저장하지 않는다. 숫자만 더한다.
 // 우리 쪽 시험 방문은 빼기: 주소에 ?internal=1 로 한 번 열면 그 브라우저는 계속 제외 (?internal=0 으로 해제)
-const STAT_SRCS = ['direct', 'dc', 'dc_dev', 'ruliweb', 'reddit', 'youtube', 'itch', 'crazygames', 'kakao', 'facebook', 'x', 'threads', 'search', 'other'];
+const STAT_SRCS = ['direct', 'dc', 'dc_dev', 'ruliweb', 'reddit', 'youtube', 'itch', 'crazygames', 'kakao', 'facebook', 'x', 'threads', 'search', 'other', 'app'];
 function kstDay() { return new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); }
 const INTERNAL = (() => { try { const q = new URLSearchParams(location.search); if (q.get('internal') === '1') localStorage.setItem('hk_internal', '1'); if (q.get('internal') === '0') localStorage.removeItem('hk_internal'); const s = (q.get('src') || '').toLowerCase(); return localStorage.getItem('hk_internal') === '1' || ['video', 'shot', 'test', 'qa'].includes(s); } catch (e) { return false; } })();
 function trafficSrc() {
