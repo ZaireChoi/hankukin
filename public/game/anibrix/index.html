@@ -1263,6 +1263,7 @@ function setLang(l){if(!I18N[l])return;LANG=l;L=I18N[l];store.set('lang',l);appl
 
 function startMatch(mode,level,seed){
   if(mode==='ai'&&chapterGate(level||1))return;
+  try{if(mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('start');}catch(e){}
   Snd.init();hideOv();
   if(mode!=='online')leaveOnline();
   if(seed===undefined||seed===null)seed=(Math.random()*2147483647)|0;
@@ -1351,7 +1352,8 @@ function showHelp(){
   <button class="btn gray" onclick="showMenu()">${tr('back')}</button></div>`);
 }
 function showResult(w){
-  if(!G.players)return;const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
+  if(!G.players)return;
+  try{if(G.mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('finish');}catch(e){}const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
   if(G.mode==='ai'){
     const c=b.ai.cfg;
     if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
