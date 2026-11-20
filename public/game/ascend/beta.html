@@ -3261,7 +3261,7 @@ const INF_ROLE={assault:'t',heavy:'t',rocket:'t',engineer:'t',medic:'f',emp:'f',
 const INF_W={assault:'w_laserrifle',medic:'w_laserrifle',engineer:'w_laserrifle',emp:'w_laserrifle',heavy:'w_plasmacannon',rocket:'w_rocket',recon:'w_railsniper'};
 function infModel(u){const fac=G&&G.inv?((u.slot&&u.slot.sid||u.id)%2?'emp':'fed'):(u.team===1?'emp':'fed');return INF_M[fac][INF_ROLE[u.cls]||'t'];}
 const MC={};let mVer=0;
-function mdlUse(){return typeof gfxMode==='function'?gfxMode()!=='low':true;}
+function mdlUse(){return typeof gfxMode==='function'?gfxMode()!=='2d':true;}
 function mdlGet(f){const c=MC[f];if(c)return c.st==='ok'?c:null;const X=window.__TX||{};if(!X.GLTFLoader)return null;MC[f]={st:'ld'};new X.GLTFLoader().load(MDL_BASE+f+'.glb',g=>{const T3=window.THREE;g.scene.updateMatrixWorld(true);const b=new T3.Box3().setFromObject(g.scene);MC[f]={st:'ok',g,box:b,size:b.getSize(new T3.Vector3()),skinned:(()=>{let s=false;g.scene.traverse(o=>{if(o.isSkinnedMesh)s=true;});return s;})()};mVer++;if(R3)R3._mver=mVer;},undefined,()=>{MC[f]={st:'fail'};});return null;}
 function mdlInstance(f,yaw,size,axis){const c=mdlGet(f);if(!c)return null;const T3=window.THREE,X=window.__TX;const obj=c.skinned&&X.SkeletonUtils?X.SkeletonUtils.clone(c.g.scene):c.g.scene.clone(true);
  const k=size/(axis==='h'?c.size.y:Math.max(c.size.x,c.size.z));const wrap=new T3.Group();const inner=new T3.Group();inner.rotation.y=yaw;wrap.add(inner);obj.scale.setScalar(k);const ctr=c.box.getCenter(new T3.Vector3());obj.position.set(-ctr.x*k,-c.box.min.y*k,-ctr.z*k);inner.add(obj);
