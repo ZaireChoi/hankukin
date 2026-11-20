@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.9.3 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.9.4 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6618,7 +6618,7 @@ function slashFx(u,S,dir,fin){try{const T3=window.THREE;if(!R3||!R3.scene||!T3)r
 // auto-hunt everywhere for frames (F or the AUTO button): moves, fights with melee & kit skills, grabs loot, takes points
 {const _ahi=autoHuntInput;autoHuntInput=function(u){const inp=_ahi(u);try{if(inp&&!G.rpg&&G.pts&&G.pts.length){let foe=foesNear(u,900,1)[0];if(!foe){const p=G.pts.filter(p=>p.owner!==u.team).sort((a,b)=>d2(a.x,a.y,u.x,u.y)-d2(b.x,b.y,u.x,u.y))[0];if(p){const dx=p.x-u.x,dy=p.y-u.y,mm=Math.hypot(dx,dy)||1;if(mm>60){inp.mx=dx/mm;inp.my=dy/mm;}else{inp.mx=inp.my=0;}}}}
  if(inp){const f=foesNear(u,260,1)[0];if(f){const dx=f.x-u.x,dy=f.y-u.y,mm=Math.hypot(dx,dy)||1;if(mm>150){inp.mx=dx/mm;inp.my=dy/mm;}inp.fire=true;}}}catch(e){}return inp;};}
-{let btn=null;const _stAb=step;step=function(dt){_stAb(dt);try{const u=G&&G.local&&G.local.unit;const show=!!(u&&u.cls==='arkframe'&&!G.over);if(!btn){btn=document.createElement('button');btn.id='autoBtn';btn.style.cssText=touchMode?'position:fixed;left:180px;top:150px;z-index:30;height:19px;padding:0 7px;border-radius:5px;font:800 9.5px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff':'position:fixed;right:14px;top:62px;z-index:30;padding:7px 14px;border-radius:99px;font:800 13px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff;cursor:pointer';{const s=document.createElement('style');s.textContent='#ahBadge{display:none!important}';document.head.appendChild(s);}btn.onclick=()=>{P.autoHunt=!P.autoHunt;saveP();};document.body.appendChild(btn);}
+{let btn=null;const _stAb=step;step=function(dt){_stAb(dt);try{const u=G&&G.local&&G.local.unit;const show=!!(u&&u.cls==='arkframe'&&!G.over);if(!btn){btn=document.createElement('button');btn.id='autoBtn';btn.style.cssText=touchMode?'position:fixed;left:262px;top:52px;z-index:30;height:18px;padding:0 6px;border-radius:5px;font:800 9px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff':'position:fixed;right:14px;top:62px;z-index:30;padding:7px 14px;border-radius:99px;font:800 13px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff;cursor:pointer';{const s=document.createElement('style');s.textContent='#ahBadge{display:none!important}';document.head.appendChild(s);}btn.onclick=()=>{P.autoHunt=!P.autoHunt;saveP();};document.body.appendChild(btn);}
  btn.style.display=show?'':'none';if(show){const on=!!P.autoHunt;const t=(on?L('자동 전투 ON','AUTO ON'):L('자동 전투','AUTO'))+(touchMode?'':' [F]');if(btn.textContent!==t)btn.textContent=t;btn.style.background=on?'rgba(40,140,90,.85)':'rgba(10,20,40,.75)';btn.style.color=on?'#eafff2':'#cfe8ff';}}catch(e){}};}
 
 
@@ -6764,17 +6764,19 @@ Object.assign(STR.ko,{news:'v3.9 — 일일 임무 · 7일 출석 · 업적 · �
 // ================= v3.9.3 : phone landscape — skill buttons in a thumb arc, no overlaps =================
 {const st=document.createElement('style');st.textContent=`
 html body #touchUI :is(#tA1,#tA2,#tUl,#tAb,#tCs,#tDash,#tMsl,#tFly){transform:none!important;box-sizing:border-box!important;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05!important;white-space:normal!important;overflow:hidden!important;padding:2px!important;border-radius:50%!important;font-weight:800!important;word-break:keep-all}
-html body #touchUI #tUl{right:16px!important;bottom:16px!important;width:66px!important;height:66px!important;font-size:10px!important;border-width:2px!important}
-html body #touchUI #tA1{right:96px!important;bottom:14px!important;width:54px!important;height:54px!important;font-size:9px!important}
-html body #touchUI #tA2{right:86px!important;bottom:80px!important;width:54px!important;height:54px!important;font-size:9px!important}
-html body #touchUI #tAb{right:20px!important;bottom:94px!important;width:54px!important;height:54px!important;font-size:9px!important}
-html body #touchUI #tCs{right:162px!important;bottom:24px!important;width:46px!important;height:46px!important;font-size:8.5px!important}
-html body #touchUI #tDash{right:150px!important;bottom:84px!important;width:50px!important;height:50px!important;font-size:10px!important}
-html body #touchUI #tMsl{right:96px!important;bottom:146px!important;width:46px!important;height:46px!important;font-size:10px!important}
-html body #touchUI #tFly{right:24px!important;bottom:160px!important;width:46px!important;height:46px!important;font-size:10px!important}
+html body #touchUI #tUl{right:12px!important;bottom:12px!important;width:56px!important;height:56px!important;font-size:9px!important;border-width:2px!important}
+html body #touchUI #tA1{right:74px!important;bottom:10px!important;width:46px!important;height:46px!important;font-size:8.5px!important}
+html body #touchUI #tA2{right:70px!important;bottom:62px!important;width:46px!important;height:46px!important;font-size:8.5px!important}
+html body #touchUI #tAb{right:12px!important;bottom:74px!important;width:46px!important;height:46px!important;font-size:8.5px!important}
+html body #touchUI #tCs{right:126px!important;bottom:10px!important;width:40px!important;height:40px!important;font-size:7.5px!important}
+html body #touchUI #tDash{right:122px!important;bottom:58px!important;width:40px!important;height:40px!important;font-size:8.5px!important}
+html body #touchUI #tMsl{right:64px!important;bottom:114px!important;width:40px!important;height:40px!important;font-size:8.5px!important}
+html body #touchUI #tFly{right:12px!important;bottom:126px!important;width:40px!important;height:40px!important;font-size:8.5px!important}
+html body #touchUI #tSB{left:146px!important;top:52px!important}html body #touchUI #tPause{left:184px!important;top:52px!important}html body #touchUI #tView{left:222px!important;top:52px!important}
+html body #touchUI :is(#tSB,#tPause,#tView){width:34px!important;height:18px!important;font-size:9px!important;padding:0!important;line-height:18px!important;opacity:.85}
 html body #touchUI #tAuto{right:12px!important;top:146px!important;bottom:auto!important;width:auto!important;height:22px!important;padding:0 8px!important;border-radius:6px!important;font-size:10px!important}
 html body #touchUI #tSq{right:62px!important;top:146px!important;bottom:auto!important;width:auto!important;height:22px!important;padding:0 8px!important;border-radius:6px!important;font-size:10px!important}
-@media (max-height:360px){html body #touchUI #tMsl{bottom:136px!important}html body #touchUI #tFly{bottom:146px!important}}`;document.head.appendChild(st);}
+`;document.head.appendChild(st);}
 
 // perkCompact: level-up picks as a slim translucent strip near the bottom, the battlefield stays visible
 {const st=document.createElement('style');st.textContent=`
