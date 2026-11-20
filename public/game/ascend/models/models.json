@@ -350,7 +350,7 @@
   "anims": []
  },
  "mech3": {
-  "bytes": 7203524,
+  "bytes": 6308596,
   "tris": 40763,
   "size": [
    4.09,
@@ -358,12 +358,19 @@
    4.28
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "mech4": {
-  "bytes": 4100124,
+  "bytes": 3864972,
   "tris": 41202,
   "size": [
    3.43,
@@ -371,12 +378,19 @@
    3.92
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "link2": {
-  "bytes": 3856936,
+  "bytes": 3537860,
   "tris": 41294,
   "size": [
    0.24,
@@ -384,12 +398,15 @@
    0.27
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "talk",
+   "talk2",
+   "bow",
+   "shrug"
   ]
  },
  "emp_officer": {
-  "bytes": 3430920,
+  "bytes": 3026296,
   "tris": 30943,
   "size": [
    0.72,
@@ -397,12 +414,16 @@
    0.57
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "talk2",
+   "angry"
   ]
  },
  "link3": {
-  "bytes": 4566588,
+  "bytes": 3626456,
   "tris": 41123,
   "size": [
    0.26,
@@ -410,12 +431,15 @@
    0.41
   ],
   "anims": [
-   "walk",
-   "run"
+   "sway",
+   "talk3",
+   "wave",
+   "cheer",
+   "talk"
   ]
  },
  "omega": {
-  "bytes": 4886036,
+  "bytes": 4371992,
   "tris": 41342,
   "size": [
    5.22,
@@ -423,12 +447,15 @@
    6.47
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "angry",
+   "talk",
+   "slash"
   ]
  },
  "emp_female": {
-  "bytes": 3250240,
+  "bytes": 2633268,
   "tris": 30977,
   "size": [
    0.27,
@@ -436,12 +463,15 @@
    0.35
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "talk"
   ]
  },
  "emp_trooper": {
-  "bytes": 3200544,
+  "bytes": 2800228,
   "tris": 30902,
   "size": [
    0.36,
@@ -449,12 +479,14 @@
    0.33
   ],
   "anims": [
+   "idle",
    "walk",
+   "shoot",
    "run"
   ]
  },
  "fed_officer": {
-  "bytes": 3652852,
+  "bytes": 2990436,
   "tris": 30962,
   "size": [
    0.3,
@@ -462,12 +494,16 @@
    0.27
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "talk",
+   "shrug"
   ]
  },
  "fed_female": {
-  "bytes": 3593724,
+  "bytes": 2895752,
   "tris": 31030,
   "size": [
    0.32,
@@ -475,12 +511,15 @@
    0.34
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "talk"
   ]
  },
  "fed_trooper": {
-  "bytes": 3251524,
+  "bytes": 2829344,
   "tris": 31047,
   "size": [
    0.38,
@@ -488,7 +527,9 @@
    0.51
   ],
   "anims": [
+   "idle",
    "walk",
+   "shoot",
    "run"
   ]
  },
@@ -606,7 +647,7 @@
   "anims": []
  },
  "link_leg": {
-  "bytes": 5483284,
+  "bytes": 4459232,
   "tris": 40840,
   "size": [
    0.55,
@@ -614,12 +655,35 @@
    0.68
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "bow",
+   "talk",
+   "talk3"
   ]
  },
  "m_striker": {
-  "bytes": 5385536,
+  "bytes": 4395780,
+  "tris": 41202,
+  "size": [
+   3.43,
+   4.58,
+   3.92
+  ],
+  "anims": [
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
+  ]
+ },
+ "m_ranger": {
+  "bytes": 5342748,
   "tris": 41149,
   "size": [
    5.58,
@@ -627,21 +691,15 @@
    5.06
   ],
   "anims": [
-   "walk",
-   "run"
-  ]
- },
- "m_ranger": {
-  "bytes": 4320744,
-  "tris": 40960,
-  "size": [
-   4.03,
-   4.88,
-   4.32
-  ],
-  "anims": [
-   "walk",
-   "run"
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_guardian": {
@@ -658,20 +716,27 @@
   ]
  },
  "m_artillery": {
-  "bytes": 5770364,
-  "tris": 41010,
+  "bytes": 4529044,
+  "tris": 40960,
   "size": [
-   5.2,
-   6.4,
-   7.97
+   4.03,
+   4.88,
+   4.32
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "Walk_Fight_Forward",
+   "Walk_Forward_While_Shooting",
+   "Run_and_Shoot",
+   "Double_Combo_Attack",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_wizard": {
-  "bytes": 5131636,
+  "bytes": 4665208,
   "tris": 41006,
   "size": [
    7.57,
@@ -679,12 +744,19 @@
    6.24
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_phantom": {
-  "bytes": 4187764,
+  "bytes": 3934588,
   "tris": 41292,
   "size": [
    6.39,
@@ -692,12 +764,19 @@
    9.63
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_titan": {
-  "bytes": 4956480,
+  "bytes": 4517048,
   "tris": 40905,
   "size": [
    6.68,
@@ -705,12 +784,19 @@
    6.92
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_sky": {
-  "bytes": 6087288,
+  "bytes": 5461684,
   "tris": 40884,
   "size": [
    12.71,
@@ -718,12 +804,19 @@
    5.35
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_origin": {
-  "bytes": 4433596,
+  "bytes": 4130444,
   "tris": 41310,
   "size": [
    4.81,
@@ -731,12 +824,19 @@
    6.49
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "m_samurai": {
-  "bytes": 4855864,
+  "bytes": 4443044,
   "tris": 41085,
   "size": [
    3.26,
@@ -744,12 +844,19 @@
    4.64
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "mech_leg": {
-  "bytes": 6631860,
+  "bytes": 5875088,
   "tris": 45847,
   "size": [
    17.11,
@@ -757,12 +864,19 @@
    7.43
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "a_fire": {
-  "bytes": 4105584,
+  "bytes": 3682176,
   "tris": 41346,
   "size": [
    0.33,
@@ -770,12 +884,15 @@
    0.39
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "talk3",
+   "cheer",
+   "angry",
+   "talk"
   ]
  },
  "a_ice": {
-  "bytes": 3833916,
+  "bytes": 4146624,
   "tris": 41352,
   "size": [
    0.25,
@@ -783,12 +900,15 @@
    0.26
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "talk",
+   "bow",
+   "talk2",
+   "shrug"
   ]
  },
  "a_thunder": {
-  "bytes": 4151444,
+  "bytes": 3707108,
   "tris": 41232,
   "size": [
    0.43,
@@ -796,8 +916,10 @@
    0.41
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "sway",
+   "talk3",
+   "cheer"
   ]
  },
  "a_wind": {
@@ -814,7 +936,7 @@
   ]
  },
  "a_dark": {
-  "bytes": 5335728,
+  "bytes": 3824568,
   "tris": 40516,
   "size": [
    0.63,
@@ -822,12 +944,14 @@
    0.85
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "talk2",
+   "talk",
+   "shrug"
   ]
  },
  "a_time": {
-  "bytes": 4288108,
+  "bytes": 3748412,
   "tris": 41468,
   "size": [
    0.3,
@@ -835,12 +959,14 @@
    0.31
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "bow",
+   "talk",
+   "sway"
   ]
  },
  "a_void": {
-  "bytes": 4229724,
+  "bytes": 3550976,
   "tris": 41099,
   "size": [
    0.24,
@@ -848,12 +974,14 @@
    0.26
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "talk2",
+   "talk",
+   "shrug"
   ]
  },
  "a_earth": {
-  "bytes": 4008304,
+  "bytes": 3488296,
   "tris": 41194,
   "size": [
    0.26,
@@ -861,12 +989,14 @@
    0.28
   ],
   "anims": [
-   "walk",
-   "run"
+   "idle",
+   "sway",
+   "talk",
+   "wave"
   ]
  },
  "god": {
-  "bytes": 8094536,
+  "bytes": 7010768,
   "tris": 51328,
   "size": [
    18.91,
@@ -874,12 +1004,19 @@
    4.67
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "god_red": {
-  "bytes": 7668796,
+  "bytes": 6679728,
   "tris": 51328,
   "size": [
    18.84,
@@ -887,12 +1024,19 @@
    6.25
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "god_black": {
-  "bytes": 7669212,
+  "bytes": 6679580,
   "tris": 51328,
   "size": [
    18.23,
@@ -900,12 +1044,19 @@
    5.34
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "god_white": {
-  "bytes": 8126020,
+  "bytes": 7032852,
   "tris": 51328,
   "size": [
    18.45,
@@ -913,8 +1064,15 @@
    4.88
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "shoot",
+   "run",
+   "slash",
+   "hover",
+   "glide",
+   "fire",
+   "barrage"
   ]
  },
  "a_wind2": {
@@ -928,6 +1086,136 @@
   "anims": [
    "walk",
    "run"
+  ]
+ },
+ "hayun": {
+  "bytes": 3622280,
+  "anims": [
+   "idle",
+   "sway",
+   "talk3",
+   "wave",
+   "cheer"
+  ]
+ },
+ "seraphine": {
+  "bytes": 4454572,
+  "anims": [
+   "idle",
+   "talk",
+   "bow",
+   "shrug",
+   "angry"
+  ]
+ },
+ "minjae": {
+  "bytes": 3501136,
+  "anims": [
+   "idle",
+   "talk",
+   "talk2",
+   "shrug",
+   "wave"
+  ]
+ },
+ "c_pirate": {
+  "bytes": 3196588,
+  "anims": [
+   "idle",
+   "shoot",
+   "run",
+   "walk",
+   "Gunshot_Reaction"
+  ]
+ },
+ "c_boss": {
+  "bytes": 3463160,
+  "anims": [
+   "idle",
+   "walk",
+   "shoot",
+   "slash",
+   "Charged_Ground_Slam"
+  ]
+ },
+ "h_alpha": {
+  "bytes": 3359072,
+  "anims": [
+   "idle",
+   "walk",
+   "slash",
+   "Stand_Dodge",
+   "slash_4"
+  ]
+ },
+ "h_priest": {
+  "bytes": 3680116,
+  "anims": [
+   "idle",
+   "walk",
+   "Charged_Spell_Cast",
+   "mage_soell_cast",
+   "Block1"
+  ]
+ },
+ "o_knight": {
+  "bytes": 3398036,
+  "anims": [
+   "idle",
+   "walk",
+   "slash",
+   "Charged_Ground_Slam",
+   "Block1"
+  ]
+ },
+ "n_mechanic": {
+  "bytes": 2787036,
+  "anims": [
+   "idle",
+   "talk",
+   "shrug",
+   "wave",
+   "talk2"
+  ]
+ },
+ "n_broker": {
+  "bytes": 2831432,
+  "anims": [
+   "idle",
+   "talk2",
+   "shrug",
+   "talk",
+   "wave"
+  ]
+ },
+ "n_merchant": {
+  "bytes": 3621572,
+  "anims": [
+   "idle",
+   "talk",
+   "talk2",
+   "wave",
+   "bow"
+  ]
+ },
+ "n_bounty": {
+  "bytes": 3216280,
+  "anims": [
+   "idle",
+   "talk2",
+   "talk",
+   "bow",
+   "angry"
+  ]
+ },
+ "n_nav": {
+  "bytes": 3183652,
+  "anims": [
+   "idle",
+   "talk",
+   "bow",
+   "wave",
+   "talk3"
   ]
  }
 }
