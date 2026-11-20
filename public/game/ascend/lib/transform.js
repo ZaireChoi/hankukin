@@ -58,6 +58,8 @@ function parts(e,m,H,p){if(e._tfP)return e._tfP;var T=T3();var B=AX().motBones(m
 function scaleLocal(obj,s,H){obj.scale.setScalar(Math.max(.001,s));}
 function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=function(e,m,u,dt,now){ma(e,m,u,dt,now);try{if(!u||!u.tf||!m||!m.obj||!m.wrap)return;var A=AX();var B=A.motBones&&A.motBones(m);if(!B)return;var T=T3();var k=u.tf.k||0;var p=prof(A.myMechKey?A.myMechKey():'');
   var H=(e.wg&&e.wg.H)||((e.mfx&&e.mfx.H)||90);
+  var jk=jetKey();var mcj=jk&&A.mc?A.mc(jk):null;if(jk&&!mcj){try{A.mdlGet&&A.mdlGet(jk);}catch(er){}}
+  var shellOK=!!(mcj&&mcj.st==='ok');
   var c=seg(k,0,.18),l=seg(k,.1,.42),a=seg(k,.25,.52),pt=seg(k,.4,.7),pa=seg(k,.68,.92),ig=seg(k,.9,1);
   var dip=c*(1-pt);
   // 2 legs fold back into a tail (thighs together and straight back, knees locked)
@@ -75,10 +77,52 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=functi
    // 7 ignition
    var sp=Math.hypot(u.vx||0,u.vy||0);for(var q=0;q<o.fl.length;q++){var fl=o.fl[q];fl.visible=ig>.02;fl.scale.set(1,ig*(.7+Math.min(1,sp/900)*.8)*(1+Math.random()*.15),1);}
    if(k>.45){try{if(e.eq&&e.eq.o)for(var n in e.eq.o){var eo=e.eq.o[n];if(eo&&eo.isObject3D)eo.visible=false;}if(e.grip)['hilt','sgun','blade2','palm'].forEach(function(n2){if(e.grip[n2])e.grip[n2].visible=false;});if(e.mfx&&e.mfx.saber)e.mfx.saber.visible=false;}catch(er){}}
-   var vis=k>.01;o.nose.visible=vis;
+   var vis=k>.01&&!shellOK;o.nose.visible=vis;if(shellOK){o.fl.forEach(function(f){f.visible=false;});}
+   if(shellOK){if(m._ws0==null)m._ws0=m.wrap.scale.x;m.wrap.scale.setScalar(m._ws0);shellPose(e,m,u,k,p,H,B);}else if(e._jet){e._jet.grp.visible=false;m.wrap.visible=true;}
    // keep the hips over the unit at flight height (pitching about the feet would push the body ahead of the frame)
    if(B.Hips&&e.root&&pt>0){m.wrap.updateMatrixWorld(true);var hp=new T.Vector3();B.Hips.getWorldPosition(hp);var rp=new T.Vector3();e.root.getWorldPosition(rp);var tgt=new T.Vector3(rp.x,rp.y+H*.5+p.alt*pt,rp.z);var par=m.wrap.parent;if(par){var a1=par.worldToLocal(hp.clone());var a2=par.worldToLocal(hp.clone().lerp(tgt,pt));m.wrap.position.add(a2.sub(a1));m.wrap.updateMatrixWorld(true);}}o.fins.forEach(function(f){f.visible=vis;});o.thr.forEach(function(t){t.visible=vis;});}
  }catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
+
+// ================= v2: "shell" transform — a Meshy jet model split into armour pieces; each piece launches from the robot part it comes from and locks into the jet =================
+var JETM={mech3:'saberjet'};
+function jetKey(){var k=AX().myMechKey?AX().myMechKey():'';return JETM[k]||null;}
+var JC={};// split cache per jet model
+function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);if(!c||c.st!=='ok'||!c.g)return null;var src=c.g.scene;src.updateMatrixWorld(true);var tris=[];var mat=null;var box=new T.Box3();
+ src.traverse(function(o){if(!o.isMesh)return;mat=mat||(Array.isArray(o.material)?o.material[0]:o.material);var g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();g.applyMatrix4(o.matrixWorld);var P=g.attributes.position,N=g.attributes.normal,U=g.attributes.uv;for(var i=0;i<P.count;i+=3){var t={p:[],n:[],u:[]};for(var j=0;j<3;j++){t.p.push(P.getX(i+j),P.getY(i+j),P.getZ(i+j));if(N)t.n.push(N.getX(i+j),N.getY(i+j),N.getZ(i+j));if(U)t.u.push(U.getX(i+j),U.getY(i+j));box.expandByPoint(new T.Vector3(P.getX(i+j),P.getY(i+j),P.getZ(i+j)));}tris.push(t);}});
+ var sz=box.getSize(new T.Vector3()),ctr=box.getCenter(new T.Vector3());
+ // length axis = longest horizontal; the nose end is the narrower end
+ var LX=sz.x>=sz.z;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
+ var wA=0,wB=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var a=ax(t.p,i)/len,s=Math.abs(sd(t.p,i))/wid;if(a>.35)wA=Math.max(wA,s);if(a<-.35)wB=Math.max(wB,s);}});var noseSign=wA<wB?1:-1;
+ var groups={nose:[],body:[],wingL:[],wingR:[],tailL:[],tailR:[]};
+ tris.forEach(function(t){var a=0,s=0;for(var i=0;i<9;i+=3){a+=ax(t.p,i);s+=sd(t.p,i);}a=a/3/len*noseSign;s=s/3/wid;var key;if(a>.22)key='nose';else if(Math.abs(s)>.2&&a>-.3)key=s>0?'wingL':'wingR';else if(a<-.18)key=s>=0?'tailL':'tailR';else key='body';groups[key].push(t);});
+ // build part meshes in a frame where +X is the nose, +Y up, scaled to unit length
+ var parts={};var scl=1/len;
+ for(var k in groups){var L=groups[k];if(!L.length)continue;var n=L.length*3;var pos=new Float32Array(n*3),nor=new Float32Array(n*3),uv=new Float32Array(n*2);var cen=new T.Vector3();
+  L.forEach(function(t,ti){for(var j=0;j<3;j++){var px=t.p[j*3]-ctr.x,py=t.p[j*3+1]-ctr.y,pz=t.p[j*3+2]-ctr.z;var X,Z;if(LX){X=px*noseSign;Z=pz*noseSign;}else{X=pz*noseSign;Z=-px*noseSign;}var o=(ti*3+j);pos[o*3]=X*scl;pos[o*3+1]=py*scl;pos[o*3+2]=Z*scl;cen.x+=X*scl;cen.y+=py*scl;cen.z+=Z*scl;if(t.n.length){var nx=t.n[j*3],ny=t.n[j*3+1],nz=t.n[j*3+2];var NX,NZ;if(LX){NX=nx*noseSign;NZ=nz*noseSign;}else{NX=nz*noseSign;NZ=-nx*noseSign;}nor[o*3]=NX;nor[o*3+1]=ny;nor[o*3+2]=NZ;}if(t.u.length){uv[o*2]=t.u[j*2];uv[o*2+1]=t.u[j*2+1];}}});
+  cen.multiplyScalar(1/n);for(var q=0;q<n;q++){pos[q*3]-=cen.x;pos[q*3+1]-=cen.y;pos[q*3+2]-=cen.z;}
+  var g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));g.setAttribute('normal',new T.BufferAttribute(nor,3));g.setAttribute('uv',new T.BufferAttribute(uv,2));g.computeBoundingSphere();parts[k]={g:g,home:cen.clone()};}
+ JC[f]={parts:parts,mat:mat};return JC[f];}
+// where each jet piece comes from on the robot
+var SRC={nose:'Head',body:'Spine',wingL:'LeftArm',wingR:'RightArm',tailL:'LeftFoot',tailR:'RightFoot'};
+var ORDER={body:0,wingL:.12,wingR:.12,nose:.24,tailL:.32,tailR:.32};
+function shellBuild(e,f,H){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,S.mat);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
+ // engine flames at the tail
+ var fl=[];for(var s=-1;s<=1;s+=2){var cg=new T.ConeGeometry(len*.035,len*.32,10,1,true);cg.rotateZ(Math.PI/2);cg.translate(-len*.16,0,0);var fm=new T.Mesh(cg,new T.MeshBasicMaterial({color:0xff7a4a,transparent:true,opacity:.65,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fm.position.set(-len*.5,len*.0,s*len*.06);fm.userData.keep=1;fm.frustumCulled=false;grp.add(fm);fl.push(fm);}
+ grp.userData.keep=1;e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len};return e._jet;}
+function shellPose(e,m,u,k,p,H,B){var T=T3();var J=shellBuild(e,jetKey(),H);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
+ // jet frame: same place/heading as the robot, lifted to flight height (robot wrap faces +X)
+ var lift=seg(k,.35,.9);J.grp.position.set(m.wrap.position.x,H*.45+p.alt*lift,m.wrap.position.z);J.grp.rotation.set(0,m.wrap.rotation.y,0);J.grp.visible=k>.02;J.grp.updateMatrixWorld(true);
+ var inv=new T.Matrix4().copy(J.grp.matrixWorld).invert();var wp=new T.Vector3();
+ for(var key in J.pcs){var pc=J.pcs[key];var st=ORDER[key]||0;var kk=seg(k,.18+st,.62+st);var src=B[SRC[key]]||B.Spine||B.Hips;src.getWorldPosition(wp);var from=wp.clone().applyMatrix4(inv);
+  pc.hold.position.copy(from).lerp(pc.home,kk);var ov=Math.sin(kk*Math.PI)*.18;pc.hold.position.y+=ov*J.len*.15;
+  pc.hold.rotation.set(pc.spin.x*(1-kk),pc.spin.y*(1-kk),pc.spin.z*(1-kk));pc.hold.scale.setScalar(J.len*(.25+.75*kk));pc.hold.visible=kk>.01;
+  if(kk>=.999&&!pc.locked){pc.locked=1;try{AX().SFX2&&AX().SFX2.clang();}catch(er){}var P2=AX().part;if(P2){var w=pc.hold.getWorldPosition(new T.Vector3());for(var i=0;i<6;i++){var b=Math.random()*6.28;P2(w.x,w.z,Math.cos(b)*160,Math.sin(b)*160,.2,'#ffe2c0',3,w.y);}}}
+  if(kk<.9)pc.locked=0;}
+ // the robot folds and shrinks into the hull, then hides inside it
+ var hide=seg(k,.55,.92);m.wrap.scale.setScalar((m._ws0||1)*(1-.55*hide));m.wrap.visible=k<.93;
+ var ig=seg(k,.9,1);var sp=Math.hypot(u.vx||0,u.vy||0);J.fl.forEach(function(f){f.visible=ig>.02;f.scale.set(1,ig*(.7+Math.min(1,sp/900)*.9)*(1+Math.random()*.15),1);});
+ return true;}
+
 // ---------- skill bar: rightmost cell + phone button ----------
 function addCell(){var bar=document.getElementById('skb2');if(!bar||document.getElementById('skTF'))return;var row=bar.querySelector('div[style*="display:flex"]')||bar;var d=document.createElement('div');d.className='sk2';d.id='skTF';d.dataset.k='TF';d.title='변신 / Transform [Y]';
  d.style.cssText='position:relative;width:52px;height:52px;border-radius:8px;border:1px solid rgba(255,140,110,.6);background:linear-gradient(160deg,#2a0d10,#120609);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto';
