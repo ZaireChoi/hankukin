@@ -214,7 +214,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.10 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.11 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2558,7 +2558,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
   const sts=[];if(info.stun)sts.push([t('stun'),'#ffe066']);else if(info.jam)sts.push([t('jam'),'#7df9ff']);if(u.fog)sts.push([t('fog'),'#c58cff']);if(u.cloak&&!u.fog)sts.push([t('hidden'),'#9fb4d8']);if(low&&Math.floor(now*3)%2)sts.push([t('lowHp'),'#ff5b64']);if(u.mc>0)sts.push([t('stMc'),'#ff6bd6']);if(u.frz>0)sts.push([t('stFrz'),'#fff3b0']);if(u.conf>0)sts.push([t('stConf'),'#d9a6ff']);if(u.haste>0)sts.push([t('stHaste'),'#ffe066']);if(u.phase>0)sts.push([t('stPhase'),'#c58cff']);if(MAP.space)sts.push([t('alt',Math.round(u.z||0))+(touchMode?'':'  [Space ▲ / C ▼]'),'#9fd0ff']);if(G.cjam&&G.cjam[lt]>0)sts.push([t('commsDown',''),'#66e0ff']);
   sts.forEach((s,i)=>{c.font=fnt(13);c.textAlign='left';c.fillStyle=s[1];c.fillText(s[0],x,y-38-i*17);});
   plate(x-10,y-(mob?24:30),w+20,mob?40:62,10);const cl=CL[info.cls];
-  c.fillStyle='#fff';c.font=fnt(mob?11:14);c.textAlign='left';const nm=tx(cl.n);c.fillText(nm,x,y-11);const nw=c.measureText(nm).width;c.font=fnt(12,500);c.fillStyle='#8ea3c8';if(info.wk&&W[info.wk])c.fillText('· '+fitText(c,tx(W[info.wk].n),w-nw-110),x+nw+6,y-11);
+  c.fillStyle='#fff';c.font=fnt(mob?11:14);c.textAlign='left';const nm=mob?fitText(c,tx(cl.n),w-96):tx(cl.n);/*nmFitMob*/c.fillText(nm,x,y-11);const nw=c.measureText(nm).width;c.font=fnt(12,500);c.fillStyle='#8ea3c8';if(info.wk&&W[info.wk])c.fillText('· '+fitText(c,tx(W[info.wk].n),w-nw-110),x+nw+6,y-11);
   c.textAlign='right';c.font=fnt(mob?13:17,800,1);c.fillStyle=low?'#ff5b64':'#fff';const hs=String(Math.ceil(info.hp));c.fillText(hs,x+w-44,y-10);c.font=fnt(11,600);c.fillStyle='#8ea3c8';c.textAlign='left';c.fillText('/ '+Math.round(info.mhp),x+w-40,y-11);
   drawHUD.gh=drawHUD.uid===u.id?Math.max(hpF,lerp(drawHUD.gh||hpF,hpF,Math.min(1,hdt*2.5))):hpF;drawHUD.uid=u.id;
   pgram(x,y-2,w,11,4);c.fillStyle='rgba(255,255,255,.08)';c.fill();c.save();pgram(x,y-2,w,11,4);c.clip();c.fillStyle='rgba(255,255,255,.75)';c.fillRect(x,y-2,w*drawHUD.gh,11);
@@ -2875,16 +2875,16 @@ function drawAimGuide(info,now){const u=info.u;if(!u||G.over)return;const c=ctx;
   const e=scrPt(u.x+Math.cos(a)*rg,u.y+Math.sin(a)*rg,h);if(e){c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=1.6;c.beginPath();c.arc(e.x,e.y,8,0,6.28);c.moveTo(e.x-13,e.y);c.lineTo(e.x-5,e.y);c.moveTo(e.x+5,e.y);c.lineTo(e.x+13,e.y);c.stroke();}
   if(G.autoT&&!G.autoT.dead){const tp=scrPt(G.autoT.x,G.autoT.y,(G.autoT.layer!=null?unitH(G.autoT):0)+16),mp=scrPt(u.x,u.y,h);if(tp&&mp){c.strokeStyle='rgba(255,91,100,.55)';c.lineWidth=1.5;c.beginPath();c.moveTo(mp.x,mp.y);c.lineTo(tp.x,tp.y);c.stroke();}}
   c.restore();}
- const list=[];for(const e of G.units){if(e.dead||e.team===lt||!visibleTo(e,lt))continue;const dd=Math.hypot(e.x-u.x,e.y-u.y);if(dd<1400)list.push([dd,e]);}
+ const list=[];for(const e of G.units){if(e.dead||e.team===lt||!visibleTo(e,lt))continue;const dd=Math.hypot(e.x-u.x,e.y-u.y);if(dd<2200)list.push([dd,e]);}/*arrowBig*/
  list.sort((p,q)=>p[0]-q[0]);let shown=0;const m=30,cx=VW/2,cy=VH/2;
  for(const it of list){if(shown>=8)break;const dd=it[0],e=it[1];const p=scrPt(e.x,e.y,unitH(e)+10);let ang;
   if(p&&!chase){if(p.x>m&&p.x<VW-m&&p.y>m+50&&p.y<VH-m)continue;ang=Math.atan2(p.y-cy,p.x-cx);}
   else if(chase){if(p&&p.x>m&&p.x<VW-m&&p.y>m&&p.y<VH-m)continue;ang=Math.atan2(e.y-u.y,e.x-u.x)-(G.yaw||0)-Math.PI/2;}
   else ang=Math.atan2(e.y-u.y,e.x-u.x);
-  shown++;const ex=cx+Math.cos(ang)*(VW/2-m),ey=cy+Math.sin(ang)*(VH/2-m);const al=clamp(1.25-dd/1400,.35,1);const tgt=G.autoT===e;const big=e.layer===2||isMech(e.cls);
-  c.save();c.translate(ex,ey);c.rotate(ang);c.globalAlpha=al;c.fillStyle=tgt?'#ffd166':ENEMY;c.shadowColor='rgba(0,0,0,.7)';c.shadowBlur=4;const s=big?1.35:1;
+  shown++;const ex=cx+Math.cos(ang)*(VW/2-m),ey=cy+Math.sin(ang)*(VH/2-m);const al=clamp(1.3-dd/2200,.45,1);const tgt=G.autoT===e;const big=e.layer===2||isMech(e.cls);
+  c.save();c.translate(ex,ey);c.rotate(ang);c.globalAlpha=al;c.fillStyle=tgt?'#ffd166':'#ff3b47';c.shadowColor='rgba(0,0,0,.8)';c.shadowBlur=5;const s=(big?1.35:1)*(touchMode?1.5:1.1);
   c.beginPath();c.moveTo(15*s,0);c.lineTo(-7*s,-10*s);c.lineTo(-2*s,0);c.lineTo(-7*s,10*s);c.closePath();c.fill();c.restore();
-  c.globalAlpha=al;c.fillStyle='#fff';c.font=typeof fnt==='function'?fnt(11,700):'bold 11px sans-serif';c.textAlign='center';c.fillText(Math.round(dd/10)+'m',ex-Math.cos(ang)*24,ey-Math.sin(ang)*24+4);c.globalAlpha=1;}}
+  c.globalAlpha=al;c.fillStyle='#fff';c.font=typeof fnt==='function'?fnt(touchMode?12.5:11.5,800):'bold 12px sans-serif';c.textAlign='center';c.fillText(Math.round(dd/10)+'m',ex-Math.cos(ang)*(touchMode?32:26),ey-Math.sin(ang)*(touchMode?32:26)+4);c.globalAlpha=1;}}
 function syncViewBtn(){const b=$('#hudView');if(!b)return;const show=!!G&&!G.over&&!touchMode;const txt=(use3D()?t('viewIs',(P.view==='chase'?t('viewChase'):P.view==='top'?t('viewTop'):t('viewIso'))):'2D')+'  '+t('viewHint');
  if(b._s!==show){b._s=show;b.classList.toggle('hidden',!show);}if(b.textContent!==txt)b.textContent=txt;}
 $('#hudView').onclick=()=>{if(gfxMode()==='2d'&&R3.ready){P.gfx='high';saveP();R3.applyGfx&&R3.applyGfx();syncSettingsUI();}toggleView();syncViewBtn();};
@@ -6424,9 +6424,9 @@ const CUST_PRESET=[
 const CUST_BODY=[null,'#e9edf2','#9aa3b0','#2a2d36','#2c4a8c','#3a6fd8','#3fbfae','#7d8a52','#b49a6a','#d9b45a','#f2c6d8','#8a5ad8'];
 const CUST_GLOW=['#7fe8ff','#5ab4ff','#7dffe0','#c8ff7a','#ffe28a','#ffb36b','#ff9be8','#b48cff','#ffffff'];
 function custGet(){return Object.assign({},CUST_DEF,P.cust||{});}
-function custMat(base,c,T3){const m=base.clone();m.userData.iffBase=base;if(c.body&&m.color){const tint=new T3.Color(1,1,1).lerp(new T3.Color(c.body),.55);m.color.copy(base.color).multiply(tint);}
+function custMat(base,c,T3){const m=base.clone();m.userData.iffBase=base;if(c.body&&m.color){const tint=new T3.Color(1,1,1).lerp(new T3.Color(c.body),.88);m.color.copy(base.color).multiply(tint);}
  if('roughness'in m){if(c.finish==='matte'){m.roughness=Math.max(.75,m.roughness||0);m.metalness=Math.min(.15,m.metalness||0);}else if(c.finish==='metal'){m.roughness=.28;m.metalness=.9;}else{m.roughness=Math.min(.38,m.roughness==null?.38:m.roughness);}}
- if(m.emissive){m.emissive.set(c.glow);m.emissiveIntensity=.22;}return m;}
+ if(m.emissive){if(c.body){m.emissive.set(c.body).multiplyScalar(.22);m.emissiveIntensity=1;}else{m.emissive.set(c.glow);m.emissiveIntensity=.06;}}return m;}
 // battle: after the friend/foe paint, my own frame gets the custom look (gold foot ring stays)
 {const _ip=iffPaint;iffPaint=function(e,m,u){const k=iffOf(u);const ck=k==='me'?JSON.stringify(custGet()):'';if(e._iff===k&&e._cust===ck)return;if(k==='me'&&e._cust!==ck)e._iff=null;_ip(e,m,u);if(k!=='me')return;e._cust=ck;const c=custGet();const T3=window.THREE;
  m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;const mats=Array.isArray(o.material)?o.material:[o.material];const nm=mats.map(mt=>{const base=mt.userData.iffBase||mt;const r=custMat(base,c,T3);if(u.illu){r.transparent=true;r.opacity=.42;r.depthWrite=false;}return r;});o.material=Array.isArray(o.material)?nm:nm[0];});
@@ -6619,11 +6619,12 @@ function slashFx(u,S,dir,fin){try{const T3=window.THREE;if(!R3||!R3.scene||!T3)r
 {const _ahi=autoHuntInput;autoHuntInput=function(u){const inp=_ahi(u);try{if(inp&&!G.rpg&&G.pts&&G.pts.length){let foe=foesNear(u,900,1)[0];if(!foe){const p=G.pts.filter(p=>p.owner!==u.team).sort((a,b)=>d2(a.x,a.y,u.x,u.y)-d2(b.x,b.y,u.x,u.y))[0];if(p){const dx=p.x-u.x,dy=p.y-u.y,mm=Math.hypot(dx,dy)||1;if(mm>60){inp.mx=dx/mm;inp.my=dy/mm;}else{inp.mx=inp.my=0;}}}}
  if(inp){const f=foesNear(u,260,1)[0];if(f){const dx=f.x-u.x,dy=f.y-u.y,mm=Math.hypot(dx,dy)||1;if(mm>150){inp.mx=dx/mm;inp.my=dy/mm;}inp.fire=true;}}}catch(e){}return inp;};}
 {let btn=null;const _stAb=step;step=function(dt){_stAb(dt);try{const u=G&&G.local&&G.local.unit;const show=!!(u&&u.cls==='arkframe'&&!G.over);if(!btn){btn=document.createElement('button');btn.id='autoBtn';btn.style.cssText=touchMode?'position:fixed;left:262px;top:52px;z-index:30;height:18px;padding:0 6px;border-radius:5px;font:800 9px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff':'position:fixed;right:14px;top:62px;z-index:30;padding:7px 14px;border-radius:99px;font:800 13px var(--fd,sans-serif);border:1px solid rgba(127,232,255,.5);background:rgba(10,20,40,.75);color:#cfe8ff;cursor:pointer';{const s=document.createElement('style');s.textContent='#ahBadge{display:none!important}';document.head.appendChild(s);}btn.onclick=()=>{P.autoHunt=!P.autoHunt;saveP();};document.body.appendChild(btn);}
- btn.style.display=show?'':'none';if(show){const on=!!P.autoHunt;const t=(on?L('자동 전투 ON','AUTO ON'):L('자동 전투','AUTO'))+(touchMode?'':' [F]');if(btn.textContent!==t)btn.textContent=t;btn.style.background=on?'rgba(40,140,90,.85)':'rgba(10,20,40,.75)';btn.style.color=on?'#eafff2':'#cfe8ff';}}catch(e){}};}
+ btn.style.display=show?'':'none';if(show){const on=!!P.autoHunt;const t=touchMode?(on?L('자동 ON','AUTO ON'):L('자동','AUTO')):(on?L('자동 전투 ON','AUTO ON'):L('자동 전투','AUTO'))+' [F]';if(btn.textContent!==t)btn.textContent=t;btn.style.background=on?'rgba(40,140,90,.85)':'rgba(10,20,40,.75)';btn.style.color=on?'#eafff2':'#cfe8ff';}}catch(e){}};}
 
 
 // ================= v3.8b : factory paint per frame + colour variants from summons =================
 const PAINTS={
+ phoenix:{n:K('불사조 레드','Phoenix Red'),body:'#b3141f',glow:'#ffb347',saber:'#ff7a3c',fin:'gloss',t:0},
  white:{n:K('순백','Pure White'),body:null,glow:'#7fe8ff',fin:'gloss',t:0},
  navy:{n:K('심해 남색','Abyss Navy'),body:'#2c4a8c',glow:'#5ab4ff',fin:'gloss',t:0},
  olive:{n:K('연맹 올리브','Federation Olive'),body:'#7d8a52',glow:'#c8ff7a',fin:'matte',t:0},
@@ -6640,7 +6641,7 @@ const PAINTS={
  chrome:{n:K('크롬 미러','Chrome Mirror'),body:'#dfe6ee',glow:'#ffffff',fin:'metal',t:2},
  prism:{n:K('프리즘','Prism'),body:'#b8c8ff',glow:'#ff9bff',fin:'metal',t:2}};
 const PTIER=[K('일반','Common'),K('희귀','Rare'),K('특급','Special')];const PTIER_COL=['#c9d4ea','#7fb2ff','#ffd166'];
-const FACTORY={mech3:'white',mech4:'navy',m_ranger:'olive',m_artillery:'desert',m_guardian:'gunmetal',m_titan:'gunmetal',m_sky:'sky',m_striker:'ember',m_wizard:'violet',m_phantom:'obsidian',m_origin:'chrome',m_samurai:'lacquer',mech_leg:'gold'};
+const FACTORY={mech3:'phoenix',mech4:'navy',m_ranger:'olive',m_artillery:'desert',m_guardian:'gunmetal',m_titan:'gunmetal',m_sky:'sky',m_striker:'ember',m_wizard:'violet',m_phantom:'obsidian',m_origin:'chrome',m_samurai:'lacquer',mech_leg:'gold'};
 function paintsOf(mk){const r=R();r.paints=r.paints||{};const f=FACTORY[mk]||'white';if(!r.paints[mk])r.paints[mk]=[f];if(!r.paints[mk].includes(f))r.paints[mk].unshift(f);return r.paints[mk];}
 function paintSel(mk){const r=R();r.psel=r.psel||{};const own=paintsOf(mk);return own.includes(r.psel[mk])?r.psel[mk]:own[0];}
 function rollPaint(mk){const x=Math.random()*100;const tier=x<5?2:x<30?1:0;const own=paintsOf(mk);let pool=Object.keys(PAINTS).filter(k=>PAINTS[k].t===tier&&!own.includes(k));if(!pool.length)pool=Object.keys(PAINTS).filter(k=>PAINTS[k].t===tier);const id=pick(pool);const isNew=!own.includes(id);if(isNew)own.push(id);return{id,isNew};}
@@ -6649,7 +6650,7 @@ function rollPaint(mk){const x=Math.random()*100;const tier=x<5?2:x<30?1:0;const
 // rates disclosure for paints (added to the summon info text when present)
 window.__paintRates=L('도색: 일반 70% · 희귀 25% · 특급 5% (같은 기체를 다시 뽑으면 새 도색 우선)','Paint: Common 70% · Rare 25% · Special 5% (duplicates favour new paints)');
 // customization now reads the selected paint
-custGet=function(){const mk=myMechKey();const p=PAINTS[paintSel(mk)]||PAINTS.white;const u=P.cust||{};return{body:p.body,finish:p.fin,glow:u.glow||p.glow,saber:u.saber||CUST_DEF.saber,jet:u.jet||p.glow,paint:paintSel(mk)};};
+custGet=function(){const mk=myMechKey();const p=PAINTS[paintSel(mk)]||PAINTS.white;const u=P.cust||{};return{body:p.body,finish:p.fin,glow:u.glow||p.glow,saber:u.saber||p.saber||CUST_DEF.saber,jet:u.jet||p.glow,paint:paintSel(mk)};};
 custOpen=function(){let ov=document.getElementById('custOv');if(ov)ov.remove();ov=document.createElement('div');ov.id='custOv';ov.style.cssText='position:fixed;inset:0;z-index:9000;background:rgba(3,6,14,.82);display:flex;align-items:center;justify-content:center;padding:12px';
  const mk=myMechKey();const own=paintsOf(mk);let cur=custGet();const k=KIT[mk];
  const sw=(arr,key)=>arr.map(v=>`<button data-k="${key}" data-v="${v}" style="width:32px;height:32px;border-radius:50%;padding:0;border:2px solid rgba(255,255,255,.18);background:${v};box-shadow:0 0 10px ${v}"></button>`).join('');
@@ -6678,6 +6679,10 @@ custOpen=function(){let ov=document.getElementById('custOv');if(ov)ov.remove();o
 window.custOpen=custOpen;
 // preview uses the player's current frame model
 {const _cp=custPreview;custPreview=function(cv){const sk=P.skin;P.skin=myMechKey();try{return _cp(cv);}finally{P.skin=sk;}};}
+
+// Saber's factory look: Phoenix Red, nickname "Phoenix"
+try{MECHS.mech3.n={ko:'AX-01 세이버 「불사조」',en:'AX-01 Saber "Phoenix"'};}catch(e){}
+setTimeout(()=>{try{if(!P.phoenixMig){P.phoenixMig=1;const r=R();r.psel=r.psel||{};paintsOf('mech3');r.psel.mech3='phoenix';if(P.cust){delete P.cust.glow;delete P.cust.jet;delete P.cust.saber;}saveP();}}catch(e){}},800);
 
 
 // ================= v3.9 : daily missions, 7-day attendance, achievements, in-game notices & patch notes, bug report =================
@@ -6848,6 +6853,40 @@ SK.overdrive=u=>{u.kOD=8;pop(L('오버드라이브 · 8초','Overdrive · 8s'),'
 {const _msP=meleeSwing;meleeSwing=function(u,tg){const P0=primOf(u);if(P0&&P0.m==='melee'){const s=u.melMul||1;u.melMul=s*1.15;try{return _msP(u,tg);}finally{u.melMul=s;}}return _msP(u,tg);};}
 // show the main weapon + kit in the customize / frame panel
 {const _co=custOpen;custOpen=function(){_co();try{const mk=myMechKey();const P0=PRIM[mk];const k=KIT[mk];const box=[...document.querySelectorAll('#custOv b')].find(b=>/기체 특성|Frame traits/.test(b.textContent));if(box&&P0){const d=box.parentElement;d.innerHTML='<b style="color:#ffd166">'+L('기체 특성','Frame traits')+'</b><br>'+tx(k.pass)+'<br>'+L('주무기: ','Main weapon: ')+tx(P0.n)+'<br>'+(k.q?'Q '+tx(k.q[2])+' · E '+tx(k.e[2])+' · R '+tx(k.r[2]):L('Q 손바닥 레이저 · E 회전 베기 · R 궤도 폭격','Q Palm Laser · E Spin Slash · R Orbital'));}}catch(e){}};window.custOpen=custOpen;}
+
+
+// ================= v3.11 : zoom — pinch on phones, +/− buttons, 5 saved steps, auto zoom-out in big fights =================
+const ZLV=[.45,.62,.8,1,1.25];// camera closeness (1 = v3.10 distance; smaller = farther)
+const zIsPhone=()=>!!(window.__phone||touchMode);
+function zKey(){return zIsPhone()?'zLvM':'zLvD';}
+function zLv(){const k=zKey();if(P[k]==null)P[k]=zIsPhone()?1:3;return clamp(P[k],0,ZLV.length-1);}
+let zCur=null,zPinch=null,zAuto=1;
+function zTarget(){return zPinch?zPinch.f:ZLV[zLv()];}
+function zSet(i){P[zKey()]=clamp(i,0,ZLV.length-1);saveP();zShow();}
+{const _stZm=step;step=function(dt){_stZm(dt);try{if(!G||!G.local)return;const u=G.local.unit;
+ // auto zoom-out when a boss is around or many foes are near
+ let want=1;if(P.autoZoom!==false&&u&&!u.dead){let n=0;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;if(d2(e.x,e.y,u.x,u.y)<700*700)n++;}try{for(const s of (window.__SW?window.__SW.list:[]))if(!s.dead&&d2(s.x,s.y,u.x,u.y)<600*600)n+=.25;}catch(e){}
+  const boss=(G.arc&&G.arc.boss&&!G.arc.boss.dead)||G.units.some(e=>e.boss&&!e.dead&&d2(e.x,e.y,u.x,u.y)<1400*1400);if(boss)want=.8;else if(n>14)want=.84;else if(n>8)want=.92;}
+ zAuto=lerp(zAuto,want,Math.min(1,dt*(want<zAuto?1.2:.5)));
+ const tgt=zTarget()*zAuto;zCur=zCur==null?tgt:lerp(zCur,tgt,Math.min(1,dt*(zPinch?14:4)));
+ if(u&&u.cls==='arkframe'&&typeof CAMZ!=='undefined')CAMZ.arkframe*=zCur;}catch(e){}};}
+// ---- pinch (two fingers starting together, not on buttons) ----
+{const onBtn=t=>{const el=document.elementFromPoint(t.clientX,t.clientY);return !!(el&&el.closest&&el.closest('#touchUI .tb,button,.tb,#perkPick,.m3ov,#custOv'));};let firstAt=0;
+ const dist=(a,b)=>Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+ addEventListener('touchstart',e=>{try{if(!G||!G.local||G.over)return;if(e.touches.length===1){firstAt=performance.now();return;}if(e.touches.length===2&&!zPinch){const a=e.touches[0],b=e.touches[1];if(onBtn(a)||onBtn(b))return;if(performance.now()-firstAt>350)return;// second finger long after the first = joystick in use → ignore
+   zPinch={d0:dist(a,b),f0:zCur||ZLV[zLv()],f:zCur||ZLV[zLv()]};try{if(TS){for(const k of['L','R'])if(TS[k]){TS[k].id=null;TS[k].mag=0;TS[k].dx=0;TS[k].dy=0;}}}catch(er){}e.stopImmediatePropagation();e.preventDefault();}}catch(er){}},{capture:true,passive:false});
+ addEventListener('touchmove',e=>{if(!zPinch)return;try{if(e.touches.length>=2){const d=dist(e.touches[0],e.touches[1]);zPinch.f=clamp(zPinch.f0*(d/Math.max(20,zPinch.d0)),ZLV[0],ZLV[ZLV.length-1]);}e.stopImmediatePropagation();e.preventDefault();}catch(er){}},{capture:true,passive:false});
+ const end=e=>{if(!zPinch)return;try{if(e.touches.length<2){let bi=0,bd=9;ZLV.forEach((v,i)=>{const d=Math.abs(v-zPinch.f);if(d<bd){bd=d;bi=i;}});zPinch=null;zSet(bi);e.stopImmediatePropagation();}}catch(er){}};
+ addEventListener('touchend',end,{capture:true,passive:false});addEventListener('touchcancel',end,{capture:true,passive:false});}
+// keyboard: - / = keys step the zoom on PC (wheel zoom stays as before)
+addEventListener('keydown',e=>{if(!G||!G.local||G.over)return;if(e.code==='Minus'||e.code==='NumpadSubtract')zSet(zLv()-1);if(e.code==='Equal'||e.code==='NumpadAdd')zSet(zLv()+1);});
+// ---- +/− buttons ----
+let zBox=null;function zShow(){if(!zBox)return;const t=zBox.querySelector('i');if(t)t.textContent=(zLv()+1)+'/'+ZLV.length;}
+{const st=document.createElement('style');st.textContent='#zBox{position:fixed;z-index:31;display:flex;gap:3px;align-items:center}#zBox button{width:22px;height:20px;padding:0;border-radius:5px;border:1px solid rgba(127,232,255,.45);background:rgba(10,20,40,.7);color:#cfe8ff;font:800 13px/18px var(--fd,sans-serif);cursor:pointer}#zBox i{font:700 9px var(--fd,sans-serif);color:#9fb4d8;font-style:normal;min-width:20px;text-align:center}';document.head.appendChild(st);
+ setInterval(()=>{try{const on=!!(G&&G.local&&G.local.unit&&G.local.unit.cls==='arkframe'&&!G.over);if(!zBox){zBox=document.createElement('div');zBox.id='zBox';zBox.innerHTML='<button data-z="-1" title="멀리">−</button><i></i><button data-z="1" title="가까이">+</button>';zBox.querySelectorAll('button').forEach(b=>b.onclick=ev=>{ev.stopPropagation();zSet(zLv()+(+b.dataset.z));});document.body.appendChild(zBox);zShow();}
+  zBox.style.display=on?'flex':'none';if(!on)return;if(touchMode){zBox.style.left='298px';zBox.style.top='52px';zBox.style.right='';const ii=zBox.querySelector('i');if(ii)ii.style.display='none';}else{zBox.style.right='150px';zBox.style.top='66px';zBox.style.left='';}zShow();}catch(e){}},500);}
+// ---- pause menu: auto zoom on/off ----
+setInterval(()=>{try{const pz=document.querySelector('#pause .col');if(pz&&!document.getElementById('pzZoom')){const b=document.createElement('button');b.id='pzZoom';b.onclick=()=>{P.autoZoom=P.autoZoom===false?true:false;saveP();b.textContent=L('자동 줌아웃: ','Auto zoom-out: ')+(P.autoZoom===false?L('꺼짐','OFF'):L('켜짐','ON'));};b.textContent=L('자동 줌아웃: ','Auto zoom-out: ')+(P.autoZoom===false?L('꺼짐','OFF'):L('켜짐','ON'));pz.insertBefore(b,document.getElementById('pzLeave'));}}catch(e){}},1500);
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
 function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
