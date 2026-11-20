@@ -52,6 +52,14 @@ th,td{padding:10px 10px;border-bottom:1px solid var(--line);vertical-align:top;t
 th{color:var(--gold);font-weight:700;white-space:nowrap}
 td:first-child{white-space:nowrap;color:#fff;font-weight:700}
 .tw{overflow-x:auto}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:16px}
+.mcard{display:flex;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+.mimg{flex:none;width:170px;height:170px;border-radius:12px;overflow:hidden;background:radial-gradient(circle at 50% 40%,#1a2438,#070b14);border:1px solid var(--line)}
+.mimg img{width:100%;height:100%;object-fit:contain}
+.mbody h4{margin:0 0 4px;font-size:19px;color:#fff}.mbody p{margin:6px 0}.spec{color:var(--dim);font-size:13px}
+.pilot{margin:8px 0;padding:8px 12px;background:rgba(111,201,214,.07);border-radius:10px}.pilot span{color:var(--dim);font-size:14px}
+.rec ul{margin:4px 0 0 18px;padding:0}.rec li{margin:2px 0}
+@media(max-width:640px){.mgrid{grid-template-columns:1fr}.mcard{flex-direction:column}.mimg{width:100%;height:220px}}
 .mech{display:flex;gap:14px;align-items:flex-start}
 .mech img,.person img{width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0b111d;flex:none}
 .person{display:flex;gap:14px;align-items:flex-start}
@@ -76,7 +84,7 @@ footer{max-width:1080px;margin:0 auto;padding:24px 22px 50px;color:var(--dim);fo
 </div></header>
 
 <nav class="toc"><div class="in">
- <a href="#intro">소개</a><a href="#history">연표</a><a href="#geo">지리·기후</a><a href="#factions">세력·문화</a><a href="#tech">기술</a><a href="#mechs">기동전사</a><a href="#links">링크</a><a href="#people">인물</a><a href="#story">줄거리</a><a href="#glossary">용어</a>
+ <a href="#intro">소개</a><a href="#history">연표</a><a href="#geo">지리·기후</a><a href="#factions">세력·문화</a><a href="#tech">기술</a><a href="#mechs">기동전사 도감</a><a href="#links">링크</a><a href="#people">인물</a><a href="#story">줄거리</a><a href="#glossary">용어</a>
 </div></nav>
 
 <main>
@@ -128,8 +136,8 @@ footer{max-width:1080px;margin:0 auto;padding:24px 22px 50px;color:var(--dim);fo
  <div class="tw"><table>
   <tr><th>지역</th><th>환경과 기후</th><th>사람들의 삶</th></tr>
   <tr><td>지구 · 네오 서울</td><td>온난하지만 대기 정화탑 없이는 숨쉬기 어렵다. 한강 위 네온 스카이브리지, 남산 타워와 잠실 메가타워 사이의 마천루 숲.</td><td>인구 4천만의 중립 도시. 야시장, 노포 식당, 지하 정비창이 공존한다. 어느 세력에도 속하지 않은 사람들의 마지막 고향.</td></tr>
-  <tr><td>은하 제국 영역</td><td>인공 기후 행성이 많다. 계절이 법령으로 정해진다.</td><td>귀족 가문과 군 관료가 다스린다. 질서, 명예, 가문을 중시한다.</td></tr>
-  <tr><td>자유주의 연맹 영역</td><td>개척 행성 그대로의 거친 기후. 사막, 습지, 고원 도시가 많다.</td><td>선거로 뽑힌 의회가 다스린다. 상인 조합과 기술자 협회의 힘이 세다.</td></tr>
+  <tr><td>은하 제국 영역</td><td>수도 성계 「아우렐리아」. 인공 기후 행성이 많다. 계절이 법령으로 정해진다.</td><td>귀족 가문과 군 관료가 다스린다. 질서, 명예, 가문을 중시한다.</td></tr>
+  <tr><td>자유주의 연맹 영역</td><td>수도 「리베르타스」. 개척 행성 그대로의 거친 기후. 사막, 습지, 고원 도시가 많다.</td><td>선거로 뽑힌 의회가 다스린다. 상인 조합과 기술자 협회의 힘이 세다.</td></tr>
   <tr><td>중립 회랑</td><td>소행성대와 낡은 우주 정거장이 이어진 길.</td><td>상인, 용병, 해적, 정보상이 모인다. 법보다 거래가 앞선다.</td></tr>
   <tr><td>궤도 기지 이지스</td><td>지구 궤도의 거대 방어 기지. 무중력 구역과 인공 중력 구역이 섞여 있다.</td><td>두 세력 공동 관리의 유일한 군사 시설. 출격 패드와 격납고가 끝없이 이어진다.</td></tr>
   <tr><td>화산 행성 이그니스</td><td>지표 60℃, 용암 강과 유황 비. 낮에는 붉고 밤에는 더 붉다.</td><td>내열 돔 속 채굴 도시. 광부들은 "불의 신"에게 무사 귀환을 빈다.</td></tr>
@@ -193,22 +201,177 @@ footer{max-width:1080px;margin:0 auto;padding:24px 22px 50px;color:var(--dim);fo
 </section>
 
 <section id="mechs">
- <h2><small>MOBILE SUITS</small>기동전사</h2>
- <div class="grid g2">
-  <div class="card mech"><img src="/game/ascend/models/thumbs/mech3.jpg" alt="AX-01 세이버" loading="lazy" onerror="this.remove()"><div><div class="role">균형형</div><h4>AX-01 세이버 「불사조」</h4><p>주인공이 격납고에서 처음 만난 붉은 기체. 빔 세이버와 빔 라이플로 근접과 사격을 모두 해내는 만능형. 알파 기술이 섞인 시제기라는 소문이 있다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/mech4.jpg" alt="NX-04 나이트" loading="lazy" onerror="this.remove()"><div><div class="role">기동형</div><h4>NX-04 나이트</h4><p>빠른 발과 날렵한 장갑. 전선 사이를 누비며 빈틈을 찌른다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_ranger.jpg" alt="RX-12 레인저" loading="lazy" onerror="this.remove()"><div><div class="role">저격형</div><h4>RX-12 레인저</h4><p>충전형 레일 저격포. 멀리서 한 방에 거대 개체를 쓰러뜨린다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_artillery.jpg" alt="AT-09 아틸러리" loading="lazy" onerror="this.remove()"><div><div class="role">포격형</div><h4>AT-09 아틸러리</h4><p>어깨 위 장거리 곡사포. 뒤에서 적 대열을 통째로 흔든다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_guardian.jpg" alt="GD-03 가디언" loading="lazy" onerror="this.remove()"><div><div class="role">방어형</div><h4>GD-03 가디언</h4><p>거대한 방패와 두꺼운 장갑. 아군 AI 대열의 앞을 막아 주는 벽.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_titan.jpg" alt="TT-99 타이탄" loading="lazy" onerror="this.remove()"><div><div class="role">초중량형</div><h4>TT-99 타이탄</h4><p>느리지만 무너지지 않는 거체. 회전 기관포로 몰려오는 물량을 쓸어 낸다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_sky.jpg" alt="SK-21 스카이" loading="lazy" onerror="this.remove()"><div><div class="role">비행형</div><h4>SK-21 스카이</h4><p>관절식 날개로 하늘을 난다. 공중의 제타를 상대한다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_striker.jpg" alt="AX-07 크림슨 스트라이커" loading="lazy" onerror="this.remove()"><div><div class="role">근접형</div><h4>AX-07 크림슨 스트라이커</h4><p>날카로운 진홍 장갑과 쌍칼. 적 대열 한가운데로 뛰어드는 돌격기.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_wizard.jpg" alt="WZ-05 위저드" loading="lazy" onerror="this.remove()"><div><div class="role">비트형</div><h4>WZ-05 위저드</h4><p>비트 드론을 흩뿌려 사방에서 동시에 쏜다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_phantom.jpg" alt="PH-00 팬텀" loading="lazy" onerror="this.remove()"><div><div class="role">은신형</div><h4>PH-00 팬텀</h4><p>광학 은신과 근접 암살. 적의 지휘 개체를 노린다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_samurai.jpg" alt="SM-08 무사" loading="lazy" onerror="this.remove()"><div><div class="role">근접형</div><h4>SM-08 무사</h4><p>언월도와 극. 한 번의 베기로 무리를 가른다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/m_origin.jpg" alt="OR-A 오리진" loading="lazy" onerror="this.remove()"><div><div class="role">알파 원형기</div><h4>OR-A 오리진</h4><p>고대 문명 알파가 남긴 원형 기체. 위상 이동과 「알파 노바」를 쓴다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/mech_leg.jpg" alt="세라핌 프라임" loading="lazy" onerror="this.remove()"><div><div class="role">전설</div><h4>세라핌 프라임</h4><p>빛의 날개를 펼친 수호 기체. 전설의 링크와 공명한다고 전해진다.</p></div></div>
-  <div class="card mech"><img src="/game/ascend/models/thumbs/god.jpg" alt="신기 엘 샤다이" loading="lazy" onerror="this.remove()"><div><div class="role">신화</div><h4>신기(神機) 엘 샤다이</h4><p>여섯 날개의 신기. 한 서버에 황금, 진홍, 흑요 세 대뿐이다. 그 기원은 이야기의 마지막에 밝혀진다.</p></div></div>
+ <h2><small>MOBILE SUITS</small>기동전사 도감</h2>
+ <p>키 18~22m의 인간형 병기. 기체마다 만든 곳, 탄 사람, 남긴 전적이 다르다. 모든 기동전사는 행성 사이를 오갈 때 비행 형태로 변신한다.</p>
+ <div class="mgrid">
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/mech3.jpg" alt="AX-01 세이버 「불사조」" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">균형형 · 희귀</div><h4>AX-01 세이버 「불사조」</h4>
+    <p class="spec">전고 18.2m · 중량 46t · 출처 불명 (궤도 기지 이지스 지하 격납고에서 발견)</p>
+    <p>근접과 사격을 모두 해내는 만능형. 다른 기체에서는 볼 수 없는 신경 동기화 회로가 들어 있어, 링크와 함께 탔을 때 반응 속도가 크게 오른다. 알파 기술이 섞인 시제기라는 소문이 있다.</p>
+    <p><b>주요 무장</b> 빔 세이버, 빔 라이플, 손바닥 레이저, 군집 미사일, 등판 가변 날개</p>
+    <div class="pilot"><b>탑승 파일럿</b> 주인공 (플레이어) · 링크 세라 동승<br><span>첫 출격에서 분대를 모두 잃은 신참 파일럿. 콜사인은 직접 정한다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2326 네오 서울 격납고 방어전: 제타 1파를 단기로 저지, 거대 개체 베헤모스 격파</li><li>2326 한강 방어선: 하이브 퀸 격파, 연합 전선의 첫 승리</li></ul></div>
+    <blockquote>"설명은 살아남은 뒤에 하겠습니다." (세라)</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/mech4.jpg" alt="NX-04 나이트" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">기동형 · 희귀</div><h4>NX-04 나이트</h4>
+    <p class="spec">전고 17.6m · 중량 38t · 자유주의 연맹 리베르타스 기동공창</p>
+    <p>연맹 기동대의 표준 고속기. 장갑을 깎아 낸 대신 추진력이 높아, 전선 사이를 누비며 빈틈을 찌른다.</p>
+    <p><b>주요 무장</b> 고출력 빔 라이플, 경량 빔 랜스, 추진 날개</p>
+    <div class="pilot"><b>탑승 파일럿</b> 한서진 소령 · 연맹 제7기동대 「블루 랜서」 대장<br><span>속도라면 누구에게도 지지 않는 쾌활한 에이스. 대원들의 생일을 하나도 빼먹지 않는다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2319 연맹 수도 리베르타스 궤도 강하전: 제국 방어선을 단기로 돌파</li><li>연맹 기동대 최단 시간 거점 탈환 기록 보유</li></ul></div>
+    <blockquote>"따라올 수 있으면 따라와 봐."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_ranger.jpg" alt="RX-12 레인저" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">저격형 · 고급</div><h4>RX-12 레인저</h4>
+    <p class="spec">전고 18.0m · 중량 41t · 자유주의 연맹 정찰기술국</p>
+    <p>충전형 레일 저격포로 멀리서 한 방에 거대 개체를 쓰러뜨린다. 저격 자세에서는 다리를 땅에 고정해 반동을 받아 낸다.</p>
+    <p><b>주요 무장</b> 충전형 레일 저격포, 단거리 빔 권총, 광학 위장 망토</p>
+    <div class="pilot"><b>탑승 파일럿</b> 미라 오스틴 중위 · 연맹 정찰대 저격수<br><span>말수가 적고 기다림에 익숙하다. 한 발을 쏘기 위해 열 시간을 엎드려 있던 적도 있다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2324 사막 행성 전투: 14km 밖 제국 지휘 기체 저격</li><li>제타 침공 중 스파인 스로어 31기 원거리 처치</li></ul></div>
+    <blockquote>"한 발이면 충분해."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_artillery.jpg" alt="AT-09 아틸러리" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">포격형 · 고급</div><h4>AT-09 아틸러리</h4>
+    <p class="spec">전고 18.4m · 중량 58t · 지구 방위군 정비창</p>
+    <p>어깨 위 장거리 곡사포로 뒤에서 적 대열을 통째로 흔든다. 포격 때는 하체를 낮춰 지지대를 펼친다.</p>
+    <p><b>주요 무장</b> 어깨 장거리 곡사포 2문, 근접 방어 기관포, 포탄 탄창 배낭</p>
+    <div class="pilot"><b>탑승 파일럿</b> 박철호 원사 · 지구 방위군 포병대<br><span>은퇴를 석 달 앞두고 제타 침공을 맞은 노장 포병. 젊은 파일럿들에게 "아저씨"로 불린다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2326 잠실 하이브 외곽 포격: 연합군 진격로 확보</li><li>네오 서울 방어전 내내 포격 지원 한 번도 끊기지 않음</li></ul></div>
+    <blockquote>"좌표만 불러. 나머지는 내가 한다."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_guardian.jpg" alt="GD-03 가디언" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">방어형 · 희귀</div><h4>GD-03 가디언</h4>
+    <p class="spec">전고 19.0m · 중량 72t · 지구 방위군 · 궤도 기지 이지스 공동 개발</p>
+    <p>거대한 방패와 두꺼운 장갑. 아군 AI 대열의 앞을 막아 주는 벽이다. 방패를 땅에 박으면 반투명 방어막이 펼쳐진다.</p>
+    <p><b>주요 무장</b> 대형 방패 2장, 방패 내장 빔 포, 충격파 발생기</p>
+    <div class="pilot"><b>탑승 파일럿</b> 오세린 대위 · 지구 방위군 방호대<br><span>"방패의 성녀"라는 별명을 쑥스러워한다. 구하지 못한 사람의 이름을 수첩에 적어 둔다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2326 한강 다리 민간인 수송차 엄호: 시민 1,200명 대피</li><li>이지스 격납고 붕괴 사고 때 정비병 40명을 방패로 지켜 냄</li></ul></div>
+    <blockquote>"내 뒤에 있으면 안전해요."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_titan.jpg" alt="TT-99 타이탄" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">초중량형 · 희귀</div><h4>TT-99 타이탄</h4>
+    <p class="spec">전고 21.5m · 중량 110t · 자유주의 연맹 이그니스 중공업</p>
+    <p>느리지만 무너지지 않는 거체. 회전 기관포로 몰려오는 물량을 쓸어 낸다. 원래 화산 행성 채굴용 작업 기체를 군용으로 바꾼 것이다.</p>
+    <p><b>주요 무장</b> 회전 기관포, 중장갑 주먹, 열 차폐 장갑</p>
+    <div class="pilot"><b>탑승 파일럿</b> 브루노 카르사 · 연맹 의용 기갑대<br><span>이그니스 광부 출신의 거구. 군인이 아니라서 경례를 자주 틀린다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2325 이그니스 채굴 도시 방어: 해적단 「붉은 갈고리」 격퇴</li><li>제타 침공 중 한 번의 교전으로 스웜링 600마리 이상 소탕</li></ul></div>
+    <blockquote>"내 동네는 내가 지킨다."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_sky.jpg" alt="SK-21 스카이" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">비행형 · 희귀</div><h4>SK-21 스카이</h4>
+    <p class="spec">전고 17.2m · 날개 폭 34m · 중량 33t · 자유주의 연맹 항공우주국</p>
+    <p>관절식 날개로 하늘을 난다. 공중의 제타를 상대하는 기체로, 비행 형태에서 가장 빠르다.</p>
+    <p><b>주요 무장</b> 날개 빔 캐논, 공대공 미사일, 관절식 추진 날개</p>
+    <div class="pilot"><b>탑승 파일럿</b> 아이라 문 대위 · 연맹 항공대<br><span>원래 화물선 조종사였다. 하늘에 있을 때만 말이 많아진다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2326 궤도 기지 이지스 방어: 제타 비행 군단 요격, 글레이브 윙 52기 격추</li><li>이지스-지구 보급로를 사흘 밤낮 홀로 엄호</li></ul></div>
+    <blockquote>"하늘은 내 구역이야."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_striker.jpg" alt="AX-07 크림슨 스트라이커" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">근접형 · 영웅</div><h4>AX-07 크림슨 스트라이커</h4>
+    <p class="spec">전고 18.6m · 중량 44t · 은하 제국 아우렐리아 황실 공창</p>
+    <p>날카로운 진홍 장갑과 쌍칼. 적 대열 한가운데로 뛰어드는 제국의 돌격기. 제국 기사단만 탈 수 있다.</p>
+    <p><b>주요 무장</b> 쌍 빔 블레이드, 손목 단검, 돌진용 추진기</p>
+    <div class="pilot"><b>탑승 파일럿</b> 카시안 드라크 · 은하 제국 진홍 기사단장<br><span>아델하르트 제독의 오른팔. 연맹을 적으로만 알던 그가 처음으로 연맹 파일럿에게 등을 맡긴다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2320 중립 회랑 전투: 연맹 기체 47기 격추</li><li>제타 침공 연합 이후 제국 기사단 최초로 연맹과 공동 작전</li></ul></div>
+    <blockquote>"진홍은 물러서지 않는다."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_wizard.jpg" alt="WZ-05 위저드" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">비트형 · 영웅</div><h4>WZ-05 위저드</h4>
+    <p class="spec">전고 18.1m · 중량 39t · 자유주의 연맹 기술자 협회</p>
+    <p>비트 드론을 흩뿌려 사방에서 동시에 쏜다. 드론 12기를 한 사람이 다루려면 특별한 뇌파 동기화가 필요하다.</p>
+    <p><b>주요 무장</b> 비트 드론 12기, 빔 지팡이, 전자전 장치</p>
+    <div class="pilot"><b>탑승 파일럿</b> 노아 린 · 연맹 기술자 협회 시험 파일럿<br><span>열아홉 살의 천재 설계자. 자기가 만든 기체를 자기가 시험한다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>비트 12기 동시 제어 기록 최초 달성</li><li>2326 네오 서울 전투: 전자전으로 제타 군체 통신을 3분간 마비</li></ul></div>
+    <blockquote>"계산은 끝났어. 이제 쏘기만 하면 돼."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_phantom.jpg" alt="PH-00 팬텀" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">은신형 · 영웅</div><h4>PH-00 팬텀</h4>
+    <p class="spec">전고 17.9m · 중량 35t · 기록 없음</p>
+    <p>광학 은신과 근접 암살. 적의 지휘 개체를 노린다. 어느 세력의 공창에도 설계도가 남아 있지 않다.</p>
+    <p><b>주요 무장</b> 광학 은신 장갑, 단분자 블레이드, 무음 권총</p>
+    <div class="pilot"><b>탑승 파일럿</b> 코드명 「셰이드」 · 중립 회랑 용병<br><span>얼굴도 본명도 아무도 모른다. 보수는 늘 현금으로만 받는다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>중립 회랑 해적왕 「붉은 갈고리」 암살</li><li>제타 하이브 내부 잠입 정찰 3회 성공</li></ul></div>
+    <blockquote>"…."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_samurai.jpg" alt="SM-08 무사" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">근접형 · 영웅</div><h4>SM-08 무사</h4>
+    <p class="spec">전고 18.3m · 중량 47t · 지구 네오 서울 장인 공방</p>
+    <p>언월도와 극. 한 번의 베기로 무리를 가른다. 지구의 옛 무예를 기체 동작으로 옮긴 유일한 기체.</p>
+    <p><b>주요 무장</b> 언월도, 극, 등 뒤 깃발 추진기</p>
+    <div class="pilot"><b>탑승 파일럿</b> 서무진 · 네오 서울 검술 도장 사범<br><span>군인이 아닌 무술가. 도장 제자들이 피난할 시간을 벌려고 기체에 올랐다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>2326 남산 방어: 아머 크롤러 무리 23기를 한 번에 베어 냄</li><li>네오 서울 피난 행렬 마지막까지 후위를 지킴</li></ul></div>
+    <blockquote>"베어야 할 것만 벤다."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/m_origin.jpg" alt="OR-A 오리진" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">알파 원형기 · 영웅</div><h4>OR-A 오리진</h4>
+    <p class="spec">전고 20.0m · 중량 측정 불가 · 고대 문명 알파</p>
+    <p>알파가 남긴 원형 기체. 순간적으로 공간을 건너뛰는 위상 이동과, 빛을 모아 터뜨리는 「알파 노바」를 쓴다. 인류 기동전사의 뿌리가 된 기체다.</p>
+    <p><b>주요 무장</b> 위상 검, 알파 노바, 위상 이동 장치</p>
+    <div class="pilot"><b>탑승 파일럿</b> 세라핀 · 알파 망명 함대 사령관<br><span>알파 망명자의 지도자. 필요할 때만 직접 출격한다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>알파 모성 「에덴」 탈출 때 망명 함대 후위 엄호</li><li>2326 네오 서울 상공에 처음 모습을 드러냄</li></ul></div>
+    <blockquote>"시험은 통과다."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/mech_leg.jpg" alt="세라핌 프라임" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">전설</div><h4>세라핌 프라임</h4>
+    <p class="spec">전고 22.0m · 빛의 날개 6장 · 고대 문명 알파 · 루멘 성역</p>
+    <p>빛의 날개를 펼친 수호 기체. 전설의 링크 아스트라와 공명할 때 진짜 힘을 낸다.</p>
+    <p><b>주요 무장</b> 빛의 창, 솔라 저지먼트, 수호 방벽</p>
+    <div class="pilot"><b>탑승 파일럿</b> 정해진 파일럿 없음 · 선택받은 자를 기다린다<br><span>루멘 사원에 잠들어 있다. 조건을 갖춘 파일럿만이 깨울 수 있다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>고대 기록 「빛의 날」: 거인 백 기를 홀로 막아 냈다고 전해진다</li></ul></div>
+    <blockquote>"너는 심판할 자인가, 지킬 자인가."</blockquote>
+   </div>
+  </article>
+  <article class="mcard">
+   <div class="mimg"><img src="/game/ascend/models/thumbs/god.jpg" alt="신기(神機) 엘 샤다이" loading="lazy" onerror="this.remove()"></div>
+   <div class="mbody">
+    <div class="role">신화 · 서버당 3대</div><h4>신기(神機) 엘 샤다이</h4>
+    <p class="spec">여섯 날개 · 황금, 진홍, 흑요 세 가지 빛깔 · 기록 봉인</p>
+    <p>여섯 날개의 신기. 한 서버에 황금, 진홍, 흑요 세 대뿐이다. 그 기원은 이야기의 마지막에 밝혀진다.</p>
+    <p><b>주요 무장</b> 기록 봉인</p>
+    <div class="pilot"><b>탑승 파일럿</b> 획득한 플레이어<br><span>모든 조건을 갖춘 파일럿에게 아주 드물게 부름이 들린다고 한다.</span></div>
+    <div class="rec"><b>주요 전적</b><ul><li>기록 봉인</li></ul></div>
+    <blockquote>"쓰지 않을 용기도 함께 가지세요."</blockquote>
+   </div>
+  </article>
  </div>
  <p class="note">적 기동전사: 은하 제국은 돌격, 중장, 저격, 포격 네 가지 기동전사를 붉은 도색으로 운용한다. 연합 이전에는 주인공의 적이었다.</p>
 </section>
