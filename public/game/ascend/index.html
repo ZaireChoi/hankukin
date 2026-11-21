@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.39 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.40 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6784,7 +6784,7 @@ const M3IC={m3:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentC
 // show the notice once per version to returning players (never on the very first visit)
 setTimeout(()=>{try{if(P.noticeSeen===ASC_VER)return;const veteran=(P.tut>=1)||(P.hist&&P.hist.length>0);if(!veteran){P.noticeSeen=ASC_VER;saveP();return;}if(G&&!G.over)return;if(document.querySelector('.m3ov,#custOv,#csIn'))return;noticeOpen();}catch(e){}},2500);
 
-Object.assign(STR.ko,{news:'v3.9 — 일일 임무 · 7일 출석 · 업적 · 기체별 기술 · 근접 무기 · 도색 뽑기 · 자동 전투(F)'});Object.assign(STR.en,{news:'v3.9 — daily missions · check-in · achievements · frame kits · melee styles · paints · AUTO (F)'});try{applyLang();}catch(e){}
+Object.assign(STR.ko,{news:'v3.40 — 분대 던전 전용 맵 3종 · 자동 전투 Lv 10 해금 · 반복·소탕 · 그랩·CC 기술 · 중복 각성 · 기체별 장비'});Object.assign(STR.en,{news:'v3.40 — 3 squad dungeon maps · squad auto at Lv 10 · repeat & sweep · grab/CC skills · awakening · gear per frame'});try{applyLang();}catch(e){}
 
 
 // ================= v3.9.3 : phone landscape — skill buttons in a thumb arc, no overlaps =================
@@ -7876,7 +7876,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
    else if(P0.a3==='ace'){const A=ACES[n%ACES.length];const u=spawnMech(A.m,ex,ey,n,'ace');if(u){u.named=1;u.slot.name=tx(A.n);u.fbd={sk:A.sk,col:'#ff5a5a'};u.fbdMul=.8;X.sqBoss=u;announce('★',tx(A.n),L('적 에이스 출현','Enemy ace'),true,'#ff6b6b');}}
    else{const u=spawnMech(MPM[n%MPM.length],ex,ey,n,'cmd');if(u){u.elite2='cmd';u.slot.name=L('★ 지휘관기','★ Commander');X.sqBoss=u;for(let i=0;i<(n<5?1:3);i++)spawnMech(MPM[(n+i+1)%MPM.length],ex+rnd(-160,160),ey+rnd(-200,200),n,'mp');announce('★',L('지휘관기 출현','Commander frame'),L('잡으면 남은 적이 흔들린다','Down it to break their line'),true,'#ffd166');}}}};
  const deploySquad=X=>{const me=G.local.unit;const a=arena();me.x=a.x-260;me.y=a.y;const F=rec().sqF;const list=[F.tank,...F.back].filter(Boolean);X.sqU=[];let row=0;
-  for(const k of list){const D=UN[k];for(let i=0;i<D.cnt;i++){let u=null;const x=me.x+(D.role==='tank'?120:-60-row*40)+rnd(-30,30),y=me.y+rnd(-160,160);try{if(D.m){const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};window.MONMDL['sqa_'+D.m]=[D.m,PI/2,H*.95,'h'];u=spawnMinion(me,'arkframe',x,y,1e9,me.z);u.mon='sqa_'+D.m;}else u=spawnMinion(me,D.cls,x,y,1e9,me.z);}catch(e){}if(u){u.sqTy=D.ty;u.sqU=k;u.mhp=Math.round(u.mhp*D.hp);u.hp=u.mhp;u.slot.name=tx(D.n);u.slot.leader=G.local;X.sqU.push(u);}}row++;}
+  for(const k of list){const D=UN[k];for(let i=0;i<D.cnt;i++){let u=null;const x=me.x+(D.role==='tank'?120:-60-row*40)+rnd(-30,30),y=me.y+rnd(-160,160);try{if(D.m){const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};window.MONMDL['sqa_'+D.m]=[D.m,PI/2,H*.95,'h'];u=spawnMinion(me,'arkframe',x,y,1e9,me.z);u.mon='sqa_'+D.m;}else u=spawnMinion(me,D.cls,x,y,1e9,me.z);}catch(e){}if(u){u.sqTy=D.ty;u.sqU=k;u.mhp=Math.round(u.mhp*D.hp);u.hp=u.mhp;try{window.__sqGear&&window.__sqGear(u,D);}catch(e){}u.slot.name=tx(D.n);u.slot.leader=G.local;X.sqU.push(u);}}row++;}
   const cnt={};list.forEach(k=>{cnt[UN[k].ty]=(cnt[UN[k].ty]||0)+1;});const same=Math.max(0,...Object.values(cnt))+1;const roles=new Set(list.map(k=>UN[k].role));X.sqSyn=1+((same>=5?18:same>=4?12:same>=3?6:0)+(roles.has('tank')&&roles.has('fire')&&roles.has('support')?8:0))/100;};
  // ---------- the fight ----------
  const _ss332=storyStep;storyStep=function(dt){const X=G&&G.rpg;if(!(X&&X.obj&&X.obj.k==='squad'))return _ss332(dt);if(G.over)return;try{const n=X.obj.stage;if(!X.sqInit){const me=G.local.unit;if(!me)return;X.sqInit=1;X.sqT=0;X.sqT0=G.t;X.sqAct=0;X.sqDead=0;deploySquad(X);act(X,1);X.sqAct=1;}
@@ -8077,6 +8077,30 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   document.body.appendChild(ov);ov.querySelector('#awX').onclick=()=>ov.remove();ov.querySelectorAll('[data-xk]').forEach(b=>b.onclick=()=>{const kk=b.dataset.xk,c=MECHS[kk];if((r.xpts||0)<XC[c.r])return;r.xpts-=XC[c.r];const log=[];_au(kk,false,log);saveP();toast(L('교환 완료 · ','Traded · ')+tx(c.n));window.awOpen();try{render();}catch(e){}});};
  setInterval(()=>{try{const a=document.getElementById('hgWing');if(a&&!document.getElementById('hgAw')){const b=document.createElement('button');b.id='hgAw';b.textContent=L('각성','Awaken');b.onclick=()=>window.awOpen();a.parentNode.insertBefore(b,a.nextSibling);}}catch(e){}},700);
 }catch(e){window.__c39Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.40 : GEAR PER FRAME — every frame keeps its own equipped gear; an item can be worn by one frame at a time; current gear stays on the current frame =================
+{try{
+ const others=r=>{const s=new Map();for(const [m,eq] of Object.entries(r.eqBy||{}))for(const id of Object.values(eq||{}))if(id!=null)s.set(id,m);return s;};
+ const _ae=autoEquip;autoEquip=function(r,onlyEmpty){try{if(r&&r.eqBy&&r.inv){const used=others(r);const px={inv:r.inv.filter(i=>!used.has(i.id)),eq:r.eq};return _ae(px,onlyEmpty);}}catch(e){}return _ae(r,onlyEmpty);};
+ const sync=()=>{let r;try{r=R();}catch(e){return;}if(!r||!r.mech)return;r.eqBy=r.eqBy||{};r.eq=r.eq||{};if(!r._eqM){r._eqM=r.mech;saveP();return;}
+  if(r._eqM!==r.mech){r.eqBy[r._eqM]=r.eq;r.eq=r.eqBy[r.mech]||{};delete r.eqBy[r.mech];const from=r._eqM;r._eqM=r.mech;const n0=Object.values(r.eq).filter(Boolean).length;const n=autoEquip(r,true);saveP();try{const C=MECHS[r.mech];toast(L('기체별 장비 · ','Gear per frame · ')+tx(C.n)+' '+L('장비 ','gear ')+(n0+n)+L('개',' items')+(n?L(' (빈 칸 자동 장착 ',' (auto-filled ')+n+')':''));}catch(e){}return;}
+  // an item worn here is taken off any other frame
+  const mine=new Set(Object.values(r.eq).filter(Boolean));let ch=0;for(const eq of Object.values(r.eqBy))for(const [sl,id] of Object.entries(eq||{}))if(mine.has(id)){delete eq[sl];ch++;}if(ch)saveP();};
+ window.__eqSync=sync;setInterval(()=>{try{sync();}catch(e){window.__eq40=String(e);}},400);
+ const _as40=arkStats;arkStats=function(){try{sync();}catch(e){}return _as40.apply(this,arguments);};
+ // squad dungeon: frames in the squad fight with that frame's own gear
+ const gearOf=(r,m)=>{const eq=m===r.mech?r.eq:(r.eqBy||{})[m];const s={hp:1,dmg:1,spd:1,cd:1,taken:1,crit:0,regen:0,msl:1,fly:1,drone:1};if(!eq)return null;let n=0;for(const id of Object.values(eq)){const it=r.inv.find(i=>i.id===id);if(!it)continue;n++;try{applySt(s,it.st,itemVal(it)*(SLOT_F[it.slot]!=null?SLOT_F[it.slot]:1));}catch(e){}}return n?s:null;};
+ window.__sqGear=(u,D)=>{const r=R();if(!D||!D.m)return;const s=gearOf(r,D.m);if(!s)return;u.mhp=Math.round(u.mhp*Math.min(2.5,s.hp));u.hp=u.mhp;u._gDmg=Math.min(2.5,s.dmg);u._gTaken=Math.max(.5,s.taken);};
+ const _hu340=hurt;hurt=function(e,dmg,src,a,dt){try{const su=src&&src.unit;if(su&&su._gDmg)dmg*=su._gDmg;if(e&&e._gTaken)dmg*=e._gTaken;}catch(er){}return _hu340(e,dmg,src,a,dt);};
+ // formation: long-press (or right-click) a frame slot to see that frame's gear
+ const showGear=(m)=>{const r=R();const C=MECHS[m];if(!C)return;const eq=m===r.mech?r.eq:(r.eqBy||{})[m]||{};const its=Object.values(eq).map(id=>r.inv.find(i=>i.id===id)).filter(Boolean);const s=gearOf(r,m);showDlg('sera','<b>'+tx(C.n)+L(' · 장비 ',' · gear ')+its.length+'</b><br><small>'+(its.length?its.slice(0,10).map(i=>'<span style="color:'+RAR[i.r].c+'">'+tx(i.n)+'</span>').join(', '):L('장착한 장비가 없습니다.','No gear yet.'))+'</small>'+(s?'<br><br>'+L('체력 ×','HP ×')+s.hp.toFixed(2)+' · '+L('피해 ×','DMG ×')+s.dmg.toFixed(2):'')+'<br><br><small style="opacity:.75">'+L('정비소에서 이 기체를 고르면 장비를 바꿀 수 있습니다.','Pick this frame in the hangar to change its gear.')+'</small>',[{l:L('정비소로','Hangar'),pri:1,f:()=>{try{document.getElementById('sqOv')&&document.getElementById('sqOv').remove();r.mech=m;saveP();hide('#menu');openRpg();}catch(e){}}},{l:'OK',f:()=>{}}]);};
+ window.__showGear=showGear;
+ new MutationObserver(()=>{try{const ov=document.getElementById('sqOv');if(!ov||ov.__lp)return;ov.__lp=1;const map={guardian:'m_guardian',artyframe:'m_artillery'};let tm=null;const hit=ev=>{const el=ev.target.closest('[data-slot],[data-u],[data-uk]');return el;};
+   ov.addEventListener('contextmenu',ev=>{const t=ev.target.closest('div');const txt=t&&t.textContent||'';const k=/가디언|Guardian/.test(txt)?'m_guardian':/포격|Artillery/.test(txt)?'m_artillery':/내 기체|My frame/.test(txt)?R().mech:null;if(k){ev.preventDefault();showGear(k);}});
+   ov.addEventListener('pointerdown',ev=>{clearTimeout(tm);const t=ev.target.closest('div');const txt=t&&t.textContent||'';const k=/가디언|Guardian/.test(txt)?'m_guardian':/포격|Artillery/.test(txt)?'m_artillery':/내 기체|My frame/.test(txt)?R().mech:null;if(k)tm=setTimeout(()=>{ov.__lpFired=Date.now();showGear(k);},600);});
+   ov.addEventListener('pointerup',()=>clearTimeout(tm));ov.addEventListener('pointerleave',()=>clearTimeout(tm));ov.addEventListener('click',ev=>{if(ov.__lpFired&&Date.now()-ov.__lpFired<400){ev.stopPropagation();ev.preventDefault();}},true);}catch(e){}}).observe(document.body,{childList:true});
+}catch(e){window.__c40Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
