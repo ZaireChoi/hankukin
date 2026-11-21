@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.30 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.31 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -4388,7 +4388,7 @@ const AFFX=[['dmg',.6,K('공격력','Damage')],['hp',.7,K('내구도','Armor')],
 const affTxt=a=>{const A=AFFX.find(x=>x[0]===a.st);const neg=a.st==='cd'||a.st==='taken';return (neg?'-':'+')+(a.st==='regen'?(a.v*100).toFixed(1):Math.round(a.v*100))+'% '+tx(A?A[2]:K(a.st,a.st));};
 {const _as2=arkStats;arkStats=function(){const s=_as2();const r=R();for(const g of SGROUP){if(g[0]==='style')continue;for(const sl of g[2]){const it=eqIt(r,sl);if(it&&it.aff)for(const a of it.aff)applySt(s,a.st,a.v);}}return s;};}
 // ---- floating damage numbers & hit-stop (RPG battles) ----
-{const _hu3=hurt;hurt=function(u,amt,src,ang,dt){const before=u&&!u.dead?u.hp:0;const crit0=window.__critFlag=false;const r=_hu3(u,amt,src,ang,dt);try{if(G&&G.rpg&&u&&G.local&&(src===G.local||(src&&src.ownerSlot===G.local))){const dealt=Math.max(0,before-(u.dead?0:u.hp));if(dealt>0){const crit=window.__critFlag;G.texts.push({h:unitH(u)+40,x:u.x+rnd(-14,14),y:u.y-u.r-6,txt:Math.round(dealt)+(crit?'!':''),c:crit?'#ffd166':'#ffffff',sz:crit?30:Math.min(24,15+Math.log10(dealt+1)*3),l:crit?1.1:.75,L:crit?1.1:.75});if(crit){G.hstop=Math.max(G.hstop||0,.07);cam.shake=Math.max(cam.shake||0,5);}}if(u.dead&&(u.elite||(u.mon&&MONS[u.mon]&&(MONS[u.mon].named||MONS[u.mon].boss)))){G.hstop=Math.max(G.hstop||0,.12);cam.shake=Math.max(cam.shake||0,9);}}}catch(e){}return r;};}
+{const _hu3=hurt;hurt=function(u,amt,src,ang,dt){const before=u&&!u.dead?u.hp:0;const crit0=window.__critFlag=false;const r=_hu3(u,amt,src,ang,dt);try{if(G&&G.rpg&&u&&G.local&&(src===G.local||(src&&src.ownerSlot===G.local))){const dealt=Math.max(0,before-(u.dead?0:u.hp));if(dealt>0){const crit=window.__critFlag;{const ex=!crit&&G.texts.find(t=>t._u===u&&!t._c&&t.l>.25);if(ex){ex._sum+=dealt;ex.txt=String(Math.round(ex._sum));ex.l=ex.L;ex.sz=Math.min(22,ex.sz+.4);ex.x=u.x+18;ex.y=u.y-u.r-6;}else G.texts.push({_u:u,_c:crit,_sum:dealt,h:unitH(u)+46,x:u.x+18,y:u.y-u.r-6,txt:Math.round(dealt)+(crit?'!':''),c:crit?'#ffd166':'#e9f0ff',sz:crit?22:Math.min(17,12+Math.log10(dealt+1)*2),l:crit?1:.7,L:crit?1:.7});}if(crit){G.hstop=Math.max(G.hstop||0,.07);cam.shake=Math.max(cam.shake||0,5);}}if(u.dead&&(u.elite||(u.mon&&MONS[u.mon]&&(MONS[u.mon].named||MONS[u.mon].boss)))){G.hstop=Math.max(G.hstop||0,.12);cam.shake=Math.max(cam.shake||0,9);}}}catch(e){}return r;};}
 setTimeout(()=>{const _stHS=step;step=function(dt){if(G&&G.hstop>0){G.hstop-=dt;dt*=.12;}_stHS(dt);};},0);
 // ---- ground loot with rarity beams ----
 const RCOL=[0xc9d2e3,0x7ee787,0x5ab4ff,0xc58cff,0xffd166,0xff6b6b];
@@ -7677,7 +7677,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // ---- 2) perfect dodge: dash out of a telegraphed hit in the last 0.45 s ----
  const inZone=(s,x,y)=>{if(s.k==='circle')return (x-s.x)**2+(y-s.y)**2<s.r*s.r;const dx=s.x2-s.x,dy=s.y2-s.y,L2=dx*dx+dy*dy||1;const t=clamp(((x-s.x)*dx+(y-s.y)*dy)/L2,0,1);return (x-(s.x+dx*t))**2+(y-(s.y+dy*t))**2<(s.w||50)**2;};
  const perfect=()=>{const u=me();if(!u||G.t-C2.pdT<.6)return;C2.pdT=G.t;C2.buff=G.t+2.5;if(u.en!=null)u.en=Math.min(u.enMax||100,u.en+(C2.pdEN||30));G.hstop=Math.max(G.hstop||0,.12);for(const e of G.units){if(e.dead||e.team===u.team||e.boss)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<900)e.stun=Math.max(e.stun||0,.7);}
-  fx(L('완벽 회피! · 다음 공격 2배','PERFECT DODGE! · next hit x2'),'#7dffd0',true);snd(660,1760,.18,.07,'sine');snd(990,1980,.22,.05,'triangle');for(let i=0;i<26;i++){const a=Math.random()*6.28;part(u.x,u.y,Math.cos(a)*380,Math.sin(a)*380,.35,i%2?'#7dffd0':'#ffffff',4,50);}G.rpg&&(G.rpg.pd=(G.rpg.pd||0)+1);G.pdN=(G.pdN||0)+1;};
+  fx(L('완벽 회피! · 다음 공격 2배','PERFECT DODGE! · next hit x2'),'#7dffd0',true);snd(660,1760,.18,.07,'sine');snd(990,1980,.22,.05,'triangle');for(let i=0;i<26;i++){const a=Math.random()*6.28;part(u.x,u.y,Math.cos(a)*380,Math.sin(a)*380,.35,i%2?'#7dffd0':'#ffffff',4,50);}G.rpg&&(G.rpg.pd=(G.rpg.pd||0)+1);G.pdN=(G.pdN||0)+1;try{window.__onPD&&window.__onPD();}catch(e){}};
  window.__perfectDodge=perfect;
  try{const _tt=teleTick;teleTick=function(dt){const u=me();const chk=[];try{if(u&&G.tele&&C2.dashPos&&G.t-C2.dashAt<(C2.pdWin||.45)){for(const s of G.tele){if(!s.done&&s.t>0&&s.t-dt<=0&&inZone(s,C2.dashPos.x,C2.dashPos.y))chk.push(s);}}}catch(e){}const r=_tt(dt);try{for(const s of chk){if(!inZone(s,u.x,u.y))perfect();}}catch(e){}return r;};}catch(e){window.__c2t=String(e);}
  // ---- 3) elite roles: commander (aura; kill = allied surge), sniper (lock-on), charger (telegraphed ram), shield (front blocks 80%) ----
@@ -7776,6 +7776,48 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  const _st330=step;step=function(dt){_st330(dt);try{const X=G&&G.rpg;if(X&&X._pro&&X.bossU&&!X._proB){X._proB=1;X.bossU.mhp=Math.round(X.bossU.mhp*.6);X.bossU.hp=Math.min(X.bossU.hp,X.bossU.mhp);}}catch(e){}};
  const _hu330=hurt;hurt=function(e,dmg,src,a,dt){try{if(G&&G.rpg&&G.rpg._pro&&e&&G.local&&e===G.local.unit)dmg/=1.67;}catch(er){}return _hu330(e,dmg,src,a,dt);};
 }catch(e){window.__c30Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.31 : IMPACT — hit-stop on every hit, hit flash + directional sparks, 3-layer sound, kill bursts, merged damage numbers, bullet-time on perfect dodge, LINK combo strike + cut-ins =================
+{try{
+ const me=()=>G&&G.local&&G.local.unit;const IM={hs:0,hitN:0,hitT:0,sndT:0,lk:0,slowCd:-99};window.__IM=IM;
+ const tone=(f,f2,d,v,ty)=>{try{SFX2.tone(f,d,ty||'sine',v,f2);}catch(e){}};const noise=(d,v,f0,f1,ty)=>{try{SFX2.noise(d,v,f0,f1,ty);}catch(e){}};
+ const hitStop=s=>{if(!G)return;const now=performance.now();if(s<.05&&now<IM.hs)return;IM.hs=now+(s<.05?110:0);G.hstop=Math.max(G.hstop||0,s);};
+ const slow=(t,k)=>{if(!G)return;G.slowT=Math.max(G.slowT||0,t);G.slowK=k;};
+ // bullet time: runs outside the hit-stop wrapper
+ setTimeout(()=>{const _stS=step;step=function(dt){if(G&&G.slowT>0){G.slowT-=dt;dt*=(G.slowK||.35);}return _stS(dt);};},120);
+ // ---- link cut-in (portrait slides in for 0.6 s) ----
+ const cut=(txt,col)=>{try{const pk=(P.linkM||'link2');let el=document.getElementById('ciBox');if(!el){el=document.createElement('div');el.id='ciBox';el.style.cssText='position:fixed;left:0;top:38%;z-index:70;pointer-events:none;display:flex;align-items:center;gap:10px;padding:6px 26px 6px 10px;background:linear-gradient(90deg,rgba(0,0,0,.75),rgba(0,0,0,0));transform:translateX(-110%);transition:transform .16s ease-out,opacity .3s;opacity:0';el.innerHTML='<img style="height:110px;width:110px;object-fit:cover;object-position:top;filter:drop-shadow(0 0 12px rgba(127,232,255,.6))"><b style="font:900 22px Noto Sans KR,sans-serif;text-shadow:0 2px 10px #000"></b>';document.body.appendChild(el);}el.querySelector('img').src='models/portraits/'+pk+'.png';const b=el.querySelector('b');b.textContent=txt;b.style.color=col||'#7fe8ff';el.style.opacity='1';el.style.transform='translateX(0)';clearTimeout(el._t);el._t=setTimeout(()=>{el.style.transform='translateX(-110%)';el.style.opacity='0';},650);}catch(e){}};window.__cutIn=cut;
+ // ---- LINK combo: after a BREAK or a PERFECT DODGE you have 2.5 s to press V (or tap) for a joint strike ----
+ let btn=null;const showBtn=on=>{try{if(!btn){btn=document.createElement('button');btn.id='lkCombo';btn.style.cssText='position:fixed;left:50%;bottom:22%;transform:translateX(-50%);z-index:71;padding:10px 22px;font:900 17px Noto Sans KR,sans-serif;color:#05121a;background:linear-gradient(90deg,#7fe8ff,#e6fbff);border:0;border-radius:24px;box-shadow:0 0 24px rgba(127,232,255,.8);display:none';btn.onclick=()=>strike();document.body.appendChild(btn);}btn.textContent=(touchMode?'':'[V] ')+L('링크 연계 일격','LINK combo strike');btn.style.display=on?'block':'none';}catch(e){}};
+ const openWin=why=>{IM.lk=G.t+2.5;cut(why==='brk'?L('지금입니다, 파일럿!','Now, pilot!'):L('빈틈 포착!','Opening!'));showBtn(true);};
+ const strike=()=>{try{const u=me();if(!u||u.dead||!(IM.lk>G.t))return;IM.lk=0;showBtn(false);let tg=null,bd=1e9;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);const w=(e.brk>G.t?.5:1)*(e.boss||e.elite2?.7:1)*d;if(d<900&&w<bd){bd=w;tg=e;}}
+   const x=tg?tg.x:u.x+Math.cos(u.aa||0)*300,y=tg?tg.y:u.y+Math.sin(u.aa||0)*300;cut(L('합동 일격!','Joint strike!'),'#ffd166');slow(.3,.25);hitStop(.12);G.shake=Math.max(G.shake||0,16);
+   const base=(140+plv()*12)*(typeof dmgMul==='function'?dmgMul(u):1);for(const e of G.units){if(e.dead||e.team===u.team)continue;const d=Math.hypot(e.x-x,e.y-y);if(d<260)hurt(e,base*(d<90?6:3)*(e===tg?1.5:1),G.local,Math.atan2(e.y-y,e.x-x),'x');}
+   for(let i=0;i<70;i++){const a=Math.random()*6.28,s=rnd(200,700);part(x,y,Math.cos(a)*s,Math.sin(a)*s,.5,i%3?'#7fe8ff':'#ffffff',i%4?6:10,rnd(10,80));}tone(160,40,.45,.12,'sawtooth');noise(.5,.12,2400,200,'lowpass');tone(880,1760,.2,.06,'triangle');}catch(e){window.__lkcErr=String(e).slice(0,120);}};window.__linkStrike=strike;
+ addEventListener('keydown',e=>{if(e.code==='KeyV'&&G&&IM.lk>G.t&&!e.repeat){e.stopImmediatePropagation();e.preventDefault();strike();}},true);
+ // perfect dodge → bullet time (12 s cooldown) + combo window ; break → combo window
+ window.__onPD=function(){if(G.t-IM.slowCd>12){IM.slowCd=G.t;slow(.5,.35);}openWin('pd');};
+ // ---- every hit I land: hit-stop, flash, directional sparks, low thump with rising pitch; small enemies get knocked back ----
+ const _hu331=hurt;hurt=function(e,dmg,src,a,dt){const u=me();const mine=u&&e&&e!==u&&(src===G.local||(src&&src.ownerSlot===G.local));const hp0=e?e.hp:0;const brk0=e&&e.brk;const r=_hu331(e,dmg,src,a,dt);try{if(mine&&e&&e.hp<hp0){const melee=Math.hypot(e.x-u.x,e.y-u.y)<(e.r||14)+230;const heavy=(hp0-e.hp)>=e.mhp*.22||dt==='x';let ang=(typeof a==='number'&&isFinite(a))?a:Math.atan2(e.y-u.y,e.x-u.x);if(!isFinite(ang))ang=0;
+    hitStop(e.dead?.12:heavy?.1:melee?.06:.03);
+    const h=(typeof unitH==='function'?unitH(e):0)+((e.r||14)*.9);part(e.x,e.y,0,0,.08,'#ffffff',(e.r||14)*1.3,h);const n=melee||heavy?16:8;for(let i=0;i<n;i++){const b=ang+rnd(-.7,.7),s=rnd(180,560);part(e.x,e.y,Math.cos(b)*s,Math.sin(b)*s,rnd(.25,.4),i%3?'#ffd28a':'#ffffff',melee?4:3,h+rnd(-10,10));}
+    if(!e.boss&&!e.dead&&(e.r||14)<20&&isFinite(e.vx||0)&&isFinite(e.vy||0)){const k=melee||heavy?420:120;e.vx=(e.vx||0)+Math.cos(ang)*k;e.vy=(e.vy||0)+Math.sin(ang)*k;}
+    if(melee||heavy)G.shake=Math.max(G.shake||0,heavy?8:4);
+    const now=performance.now();if(now-IM.hitT<500)IM.hitN=Math.min(14,IM.hitN+1);else IM.hitN=0;IM.hitT=now;if(now-IM.sndT>45){IM.sndT=now;tone(95*(1+IM.hitN*.04),55,melee||heavy?.12:.07,melee||heavy?.09:.045,'sine');if(melee||heavy)noise(.08,.05,1800,400,'bandpass');}
+    if(e.brk>G.t&&!(brk0>G.t))openWin('brk');}}catch(er){}return r;};
+ // ---- kills: mechanical burst (fire, debris, embers, smoke); 5+ chain = short slow-mo; crunchy kill sound ----
+ const _ku331=killUnit;killUnit=function(v,src){const was=v&&v.dead;const r=_ku331(v,src);try{const u=me();if(!was&&v&&v.dead&&u&&(src===G.local||(src&&src.ownerSlot===G.local))){const big=(v.r||14)>=20||v.elite2||v.boss;const h=(typeof unitH==='function'?unitH(v):0)+10;const n=big?42:16;for(let i=0;i<n;i++){const a=Math.random()*6.28,s=rnd(120,big?620:380);part(v.x,v.y,Math.cos(a)*s,Math.sin(a)*s,rnd(.3,.7),['#ffb347','#ff6a2a','#ffe2a0','#555a63','#2b2f36'][i%5],i%5>2?7:4,h+rnd(0,40));}
+   for(let i=0;i<(big?10:4);i++)part(v.x+rnd(-20,20),v.y+rnd(-20,20),rnd(-30,30),rnd(-30,30),rnd(.8,1.4),'rgba(70,70,78,.55)',big?22:12,h+30);
+   noise(big?.35:.16,big?.12:.06,big?900:1600,big?120:300,'lowpass');tone(big?70:120,35,big?.3:.14,big?.1:.05,'triangle');
+   const C2=window.__C2;if(C2&&C2.chain>=5&&C2.chain%5===0)slow(.15,.4);}}catch(e){}return r;};
+ // ---- ultimate: cut-in ----
+ {let prevU=0;setInterval(()=>{try{if(!G||G.over||!G.local)return;const v=G.local.ult||0;if(prevU>=100&&v<50)cut(L('궁극 출력, 전개!','Ultimate output, deploy!'),'#ffd166');prevU=v;}catch(e){}},100);}
+ // ---- safety: no NaN positions ever reach the renderer/audio ----
+ {const _stN=step;step=function(dt){_stN(dt);try{for(const u of G.units){if(!isFinite(u.x)||!isFinite(u.y)){u.x=u._gx!=null?u._gx:WW/2;u.y=u._gy!=null?u._gy:WH/2;u.vx=0;u.vy=0;}else{u._gx=u.x;u._gy=u.y;}if(!isFinite(u.vx))u.vx=0;if(!isFinite(u.vy))u.vy=0;}const m=G.local&&G.local.unit;if(typeof cam!=='undefined'&&cam&&(!isFinite(cam.x)||!isFinite(cam.y))&&m){cam.x=m.x;cam.y=m.y;}}catch(e){}};}
+ // ---- link combo button auto-hide ----
+ setInterval(()=>{try{if(!(IM.lk>((G&&G.t)||0)))showBtn(false);}catch(e){}},200);
+}catch(e){window.__c31Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
