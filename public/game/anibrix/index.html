@@ -8,9 +8,6 @@
 <meta name="theme-color" content="#ff6b9a">
 <meta name="author" content="Anibrix">
 <meta name="copyright" content="Anibrix. All rights reserved.">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Anibrix - Cute Animal Block Battle | 귀여운 동물 블록 대전">
@@ -20,7 +17,8 @@
 <link rel="canonical" href="https://www.hankuk-in.com/game/anibrix/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap" rel="stylesheet">
+<!-- v1.1: 폰트는 게임 시작을 막지 않게 뒤에서 불러옴 (폰트 서버가 느리거나 막혀도 바로 시작) -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Jua&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:linear-gradient(160deg,#ffe9e3,#e8f1ff);font-family:'Pretendard','Apple SD Gothic Neo','Malgun Gothic','Hiragino Sans','Yu Gothic','Microsoft YaHei','PingFang SC',system-ui,sans-serif;color:#4a3426;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
@@ -324,13 +322,46 @@ body.phone #touch button.item,body.phone #touch button.hold{width:52px;font-size
 .goal{margin:6px auto;max-width:340px;background:#fff3bf;border-radius:12px;padding:6px 10px;font-weight:800;color:#8a5a00;font-size:14px;line-height:1.5}
 /* =================== v1.0 손맛 업데이트 =================== */
 .score{font-variant-numeric:tabular-nums;background:rgba(50,20,60,.45);border-radius:999px;padding:2px 12px}
-.box,.namebar{backdrop-filter:blur(6px)}
+/* v1.1: 움직이는 배경 위의 blur는 저사양 기기에서 프레임을 크게 떨어뜨려서 뺌 (칸이 거의 불투명이라 겉보기 차이 없음) */
 #touch button:active{transform:translateY(2px);box-shadow:0 1px 0 #e0c9b8}
 .cta.solo{background:linear-gradient(180deg,#d0bfff,#7950f2);box-shadow:0 7px 0 #5f3dc4,0 14px 26px rgba(95,61,196,.3),inset 0 3px 0 rgba(255,255,255,.55)}
 .nrow{display:flex;align-items:center;gap:2px}
 .next2{opacity:.78;border-left:1.5px dashed rgba(170,130,100,.28);padding-left:2px;box-sizing:content-box}
 body.phone .nrow{flex-direction:column;gap:1px}
 body.phone .next2{border-left:0;padding-left:0;border-top:1.5px dashed rgba(170,130,100,.28);padding-top:1px}
+/* =================== v1.1 큰 판 레이아웃: 정보 칸을 판 옆으로 =================== */
+.side{flex-direction:row;align-items:flex-start;gap:10px}
+.side .col{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.side .panel{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:70px}
+#s0 .panel{order:-1}
+.side .panel .info{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:8px}
+.side .panel .box{padding:6px 8px;text-align:center}
+.side .panel .box canvas{display:block;margin:0 auto}
+.side .panel .lbl{font-size:13px}
+.nrow{flex-direction:column;gap:3px}
+.next2{border-left:0;padding-left:0;border-top:1.5px dashed rgba(170,130,100,.28);padding-top:3px}
+.namebar{max-width:100%;overflow:hidden}
+.nmwrap{min-width:0}
+.nm,.sub{overflow:hidden;text-overflow:ellipsis}
+#mid{padding-top:70px}
+body.phone .side{flex-direction:column;align-items:center;gap:5px}
+body.phone .side .col,body.phone .side .panel{display:contents}
+body.phone .side .panel .info{flex-direction:row;align-items:stretch}
+body.phone .side .panel .box{padding:3px 4px}
+@media (max-width:700px){#mid{padding-top:44px}.side{gap:5px}.side .panel{padding-top:56px}}
+/* 첫 판 길잡이 말풍선 · 키캡 */
+.coach{position:absolute;left:20px;right:8px;top:24%;background:rgba(255,255,255,.97);border-radius:16px;padding:9px 10px;font-family:'Jua','Fredoka',sans-serif;font-size:15px;line-height:1.6;text-align:center;color:#4a3426;box-shadow:0 8px 20px rgba(80,30,60,.28),0 0 0 3px #ffd43b;opacity:0;transform:translateY(-8px) scale(.95);transition:opacity .2s,transform .2s;pointer-events:none;z-index:6}
+.coach.on{opacity:1;transform:none}
+.coach b{display:block;color:#e64980;font-weight:400;font-size:18px}
+.kc{display:inline-block;min-width:26px;padding:0 7px;margin:0 2px;border-radius:7px;background:#fff;border:2px solid #d9c3b4;border-bottom-width:4px;font-family:'Fredoka',sans-serif;font-weight:700;font-size:13px;line-height:1.5;color:#6b4a35;vertical-align:middle}
+body.phone .coach{font-size:13px;left:14px}body.phone .coach b{font-size:15px}
+/* 간결한 로비: 넓은 화면에서는 옆 버튼만, 좁은 화면에서는 아래 탭만 보여 중복을 없앰 */
+@media (min-width:701px){.bnav{display:none}.lobby-wrap{padding-bottom:18px}}
+.lobby-wrap.first{padding-bottom:18px}
+.lobby-wrap.first .cta.play{min-width:340px;padding:16px 34px 16px 16px}
+.lobby-wrap.first .cta.play b{font-size:32px}
+.firsttag{margin-top:10px;font-family:'Jua',sans-serif;font-size:17px;color:#fff;background:rgba(50,20,60,.45);border-radius:999px;padding:6px 18px}
+.lside{min-width:78px}
 </style>
 </head>
 <body>
@@ -364,7 +395,8 @@ body.phone .next2{border-left:0;padding-left:0;border-top:1.5px dashed rgba(170,
    동물 블록 대전 퍼즐: AI 보스 챌린지 · 2인 대전 · 온라인 대전 · 4개 언어
    ===================================================== */
 const VER='0.2';
-const W=9,H=25,DANGER=H-7;
+// v1.1: 판 높이 25 -> 18. 한 칸이 약 2배로 커져서 동물이 또렷하게 보임 (위험선도 함께 조정)
+const W=9,H=18,DANGER=H-6;
 const $=s=>document.querySelector(s);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 let CELL=24;
@@ -884,7 +916,7 @@ function resolveBoard(p){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++){const v=p.grid[y][x];if(v){if(v._fy!==undefined&&v._fy!==y)R.moves.push([x,y,v._fy]);delete v._fy;}}
   return R;
 }
-const PQ_DELAY=2000,DANGER2=H-6,DEX1=['cat','dog','tiger','rabbit'];
+const PQ_DELAY=2000,DANGER2=H-5,DEX1=['cat','dog','tiger','rabbit'];
 function syncPQ(p){if(!p.pq)p.pq=[];let s=0;for(const e of p.pq)s+=e.n;const tot=Math.max(0,p.pending|0);if(tot>s)p.pq.push({n:tot-s,at:G.t+PQ_DELAY});else if(tot<s){let d=s-tot;while(d>0&&p.pq.length){const e=p.pq[0];if(e.n<=d){d-=e.n;p.pq.shift();}else{e.n-=d;d=0;}}}}
 function pqReady(p){let r=0;for(const e of p.pq||[])if(e.at<=G.t)r+=e.n;return r;}
 function dangerCheck(p,cleared){const h=p.maxH;if(h>=DANGER2){p.inDanger=true;return;}if(p.inDanger&&cleared&&h<=DANGER2-3){p.inDanger=false;p.score+=500;bigK(p,'clutch',null,'#f08c00');floatK(p,'f_clutch',null,'#f08c00');if(p.idx===0&&!p.isAI&&!p.remote&&G.mode!=='demo'){G.clutch=(G.clutch||0)+1;Snd.fever();}return;}if(h<=DANGER2-3)p.inDanger=false;}
@@ -961,7 +993,7 @@ function lock(p){
     syncPQ(p);const rdy=pqReady(p);if(rdy>0&&!fxOn(p,'immune')){const k=Math.min(rdy,4);p.pending-=k;syncPQ(p);addGarbage(p,k);floatK(p,'f_garb',{n:k},'#868e96');if(p.dead)return;}
   }
   if(p.ai&&p.ai.mistake&&Math.random()<0.35)sayK(p,'s_miss',null,1400);
-  checkMood(p);dangerCheck(p,n>0);updateUI(p);
+  checkMood(p);dangerCheck(p,n>0);updateUI(p);if(G.tut&&p.idx===0&&!p.isAI)tutLock(n);
   if(delay>0){p.waitUntil=G.t+delay;p.waitSpawn=true;}else spawn(p);
 }
 /* ---- 보스 체력 & 필살기 (챌린지) ---- */
@@ -1091,7 +1123,7 @@ function updatePlayer(p,dt){
 function checkEnd(){
   if(G.ended||G.contOffer)return;const dead=G.players.filter(p=>p.dead);if(!dead.length)return;
   if(G.mode==='ai'&&!G.contUsed){const me=G.players[0],b=G.players[1];if(me.dead&&!me.isAI&&!b.dead&&b.hpMax&&b.hp/b.hpMax<=0.6){offerContinue();return;}}
-  G.ended=true;G.running=false;const winner=G.players.find(p=>!p.dead)||null;G.lastWinner=winner;for(const p of G.players)p.held={};Music.stop();Music.fever=false;
+  G.ended=true;G.running=false;const winner=G.players.find(p=>!p.dead)||null;G.lastWinner=winner;cgPlay(false);coach(null);if(G.mode==='ai'&&G.tut){store.set('ftue',1);G.tut=null;}if(winner===G.players[0]&&G.mode!=='demo')cgHappy();for(const p of G.players)p.held={};Music.stop();Music.fever=false;
   if(G.mode==='ai'){
     const ai=G.players[1],lk='loss_'+G.level;
     if(winner===G.players[0]){store.set('maxst',Math.max(store.get('maxst',1),G.level+1));chapterClear(G.level);store.set(lk,0);G.lossesNow=0;const secs=G.t/1000;G.stars=secs<=90?3:secs<=150?2:1;store.set('star_'+G.level,Math.max(store.get('star_'+G.level,0),G.stars));say(ai,lineOf(ai.ai.cfg,'lose'),3000);Snd.win();}
@@ -1105,10 +1137,10 @@ function checkEnd(){
 }
 
 /* ---- 아깝게 졌을 때 한 번 이어하기 ---- */
-function offerContinue(){G.contOffer=true;G.running=false;Music.stop();for(const p of G.players)p.held={};const b=G.players[1],pct=Math.max(1,Math.round(b.hp/b.hpMax*100)),adOK=!!(ADS.on&&window.adBreak);
+function offerContinue(){G.contOffer=true;G.running=false;cgPlay(false);Music.stop();for(const p of G.players)p.held={};const b=G.players[1],pct=Math.max(1,Math.round(b.hp/b.hpMax*100)),adOK=adsReady();
   setTimeout(()=>{if(!G.contOffer)return;ov(`<div class="card"><div class="title">${tr('cont_t')}</div>${img(b.ai.cfg.por,72,false,'scared')}<div class="subt">${tr('cont_d',{n:pct})}</div><button class="btn" id="contBtn" onclick="doContinue(${adOK?1:0})">${adOK?tr('cont_ad'):tr('cont_free')}</button><button class="btn gray" id="contNo" onclick="declineContinue()">${tr('cont_no')}</button></div>`);},700);}
 function doContinue(ad){if(!G.contOffer)return;if(ad)showRewarded('continue',()=>applyContinue());else applyContinue();}
-function applyContinue(){if(!G.contOffer)return;G.contOffer=false;G.contUsed=true;const me=G.players[0];me.dead=false;me.grid.splice(0,12);while(me.grid.length<H)me.grid.unshift(Array(W).fill(null));me.pending=0;me.pq=[];me.inDanger=false;me.hp=Math.max(1,Math.ceil(me.hpMax*0.5));me.fx={};me.cur=null;me.waitSpawn=false;calcH(me);updateHP();hideOv();spawn(me);updateUI(me);G.running=true;G.countdown=2000;showCount(2);Music.start();bigK(me,'cont_go',null,'#2b8a3e');}
+function applyContinue(){if(!G.contOffer)return;G.contOffer=false;G.contUsed=true;const me=G.players[0];me.dead=false;me.grid.splice(0,12);while(me.grid.length<H)me.grid.unshift(Array(W).fill(null));me.pending=0;me.pq=[];me.inDanger=false;me.hp=Math.max(1,Math.ceil(me.hpMax*0.5));me.fx={};me.cur=null;me.waitSpawn=false;calcH(me);updateHP();hideOv();spawn(me);updateUI(me);G.running=true;cgPlay(true);G.countdown=2000;showCount(2);Music.start();bigK(me,'cont_go',null,'#2b8a3e');}
 function declineContinue(){if(!G.contOffer)return;G.contOffer=false;G.contUsed=true;hideOv();checkEnd();}
 function submitWeekly(){try{const A=window.HKAccount,b=myWeek();if(A&&A.user&&A.submitScore&&b>0)A.submitScore('anibrix-'+weekKey(),b,nick()).catch(()=>{});}catch(e){}}
 function streakBlock(){const r=G.streakRes;if(!r)return '';if(r.win&&r.s>=2)return `<div class="goal" style="background:#ffe8cc;color:#d9480f">${tr('streak_win',{n:r.s,m:r.mul})}</div>`;if(!r.win&&r.prev>=2)return `<div class="subt">${tr('streak_lost')}</div>`;return '';}
@@ -1188,13 +1220,14 @@ function computeCell(){
   const vw=innerWidth,vh=innerHeight,small=vw<700;
   const phone=vw<640&&vh>vw*1.15;document.body.classList.toggle('phone',phone);
   if(phone){const tb=(G.mode==='ai'||G.mode==='online'||G.mode==='solo')?64:0;CELL=Math.max(10,Math.min(28,Math.floor((vh-232-tb)/H),Math.floor((vw-50)/13.6)));return;}
+  // v1.1: 홀드/다음/아이템을 판 옆으로 옮겨서 화면 높이를 거의 전부 판에 씀
   const extra=(TOUCH&&(G.mode==='ai'||G.mode==='online'||G.mode==='solo'))?70:0;
-  const byH=Math.floor((vh-(small?236:252)-extra)/(H+(small?4.2:2.9)));
-  const midW=small?50:120,byW=Math.floor((vw-midW-60)/(2*W+1));
-  CELL=Math.max(11,Math.min(32,byH,byW));
+  const byH=Math.floor((vh-(small?150:170)-extra)/H);
+  const midW=small?50:120,panW=small?170:270,byW=Math.floor((vw-midW-70-panW)/(2*W));
+  CELL=Math.max(11,Math.min(40,byH,byW));
 }
 function sideInfo(p){
-  if(G.mode==='ai'){if(p.idx===0)return {por:heroId(),nm:tr('me'),sub:tr('ch_lv',{n:G.level}),key:TOUCH?'':'E'};const c=p.ai.cfg;return {por:c.por,nm:bossName(c)+' ('+bossTitle(c)+')',sub:G.mercy>0?tr('mercy'):tr('ai_boss'),key:''};}
+  if(G.mode==='ai'){if(p.idx===0)return {por:heroId(),nm:tr('me'),sub:tr('ch_lv',{n:G.level}),key:TOUCH?'':'E'};const c=p.ai.cfg;return {por:c.por,nm:bossName(c),sub:bossTitle(c)+(G.mercy>0?' · '+tr('mercy'):''),key:''};}
   if(G.mode==='solo')return {por:heroId(),nm:tr('me'),sub:tr('solo_title'),key:(p.idx===0&&!TOUCH)?'E':''};
   if(G.mode==='demo'){const c=p.ai.cfg;return {por:c.por,nm:bossName(c)+' ('+bossTitle(c)+')',sub:tr('ai'),key:''};}
   if(G.mode==='online')return p.idx===0?{por:heroId(),nm:tr('you'),sub:tr('on_title'),key:TOUCH?'':'E'}:{por:(NET.opp&&HERO_BY[NET.opp.hero])?NET.opp.hero:'dog',nm:NET.opp?String(NET.opp.name):tr('friend'),sub:NET.opp?tr('opp_info',{lv:NET.opp.lv|0,tr:NET.opp.tr|0}):tr('on_title'),key:''};
@@ -1203,7 +1236,7 @@ function sideInfo(p){
 function buildUI(){
   for(const p of G.players){
     const el=$('#s'+p.idx);
-    el.innerHTML=`<div class="namebar"><canvas class="por"></canvas><div><div class="nm"></div><div class="sub"></div></div></div><div class="hpbar ${(G.mode==='ai'&&p.idx===1)?'':'me'}"><div class="hpfill"></div><span class="hptxt"></span></div><div class="bwrap"><div class="pend"><div class="pfill"></div></div><canvas class="board"></canvas><div class="bubble"></div></div><div class="fbar"><div class="ffill"></div><span>FEVER</span></div><div class="info"><div class="box hbox"><div class="lbl">${tr('hold')}</div><canvas class="hold"></canvas></div><div class="box"><div class="lbl">${tr('next')}</div><div class="nrow"><canvas class="next"></canvas><canvas class="next2"></canvas></div></div><div class="box"><div class="lbl">${tr('items_lbl')} <b class="key"></b></div><div class="inv"></div></div>${(p.idx===0&&!p.isAI&&G.mode!=='demo')?'<button class="skbtn"><div class="skfill"></div><canvas class="skc"></canvas><span class="skn"></span></button>':''}</div><div class="score"></div>`;
+    el.innerHTML=`<div class="col"><div class="namebar"><canvas class="por"></canvas><div class="nmwrap"><div class="nm"></div><div class="sub"></div></div></div><div class="hpbar ${(G.mode==='ai'&&p.idx===1)?'':'me'}"><div class="hpfill"></div><span class="hptxt"></span></div><div class="bwrap"><div class="pend"><div class="pfill"></div></div><canvas class="board"></canvas><div class="bubble"></div><div class="coach"></div></div><div class="fbar"><div class="ffill"></div><span>FEVER</span></div></div><div class="panel"><div class="info"><div class="box hbox"><div class="lbl">${tr('hold')}</div><canvas class="hold"></canvas></div><div class="box"><div class="lbl">${tr('next')}</div><div class="nrow"><canvas class="next"></canvas><canvas class="next2"></canvas></div></div><div class="box"><div class="lbl">${tr('items_lbl')} <b class="key"></b></div><div class="inv"></div></div>${(p.idx===0&&!p.isAI&&G.mode!=='demo')?'<button class="skbtn"><div class="skfill"></div><canvas class="skc"></canvas><span class="skn"></span></button>':''}</div><div class="score"></div></div>`;
     const q=s=>el.querySelector(s),board=q('.board'),next=q('.next'),hold=q('.hold');
     p.ui={el,board,ctx:board.getContext('2d'),next,nctx:next.getContext('2d'),next2:q('.next2'),n2ctx:q('.next2').getContext('2d'),holdc:hold,hctx:hold.getContext('2d'),hbox:q('.hbox'),por:q('.por'),inv:q('.inv'),score:q('.score'),pfill:q('.pfill'),bubble:q('.bubble'),bubbleTimer:0,info:sideInfo(p),fbar:q('.fbar'),ffill:q('.ffill'),hpfill:q('.hpfill'),hptxt:q('.hptxt'),porState:'normal',skbtn:q('.skbtn'),skfill:q('.skfill'),skc:q('.skc'),skn:q('.skn')};
     if(p.ui.skbtn)p.ui.skbtn.onclick=e=>{e.currentTarget.blur();useSkill(p);};
@@ -1234,7 +1267,7 @@ function layout(){
     u.board.width=bw*DPR;u.board.height=bh*DPR;u.board.style.width=bw+'px';u.board.style.height=bh+'px';u.ctx.setTransform(DPR,0,0,DPR,0,0);
     const ns=Math.max(7,Math.round(CELL*0.55)),nw=ns*5;u.ns=ns;
     for(const [cv,cx] of [[u.next,u.nctx],[u.holdc,u.hctx]]){cv.width=nw*DPR;cv.height=nw*DPR;cv.style.width=cv.style.height=nw+'px';cx.setTransform(DPR,0,0,DPR,0,0);}
-    {const ms=Math.max(4,Math.floor(ns/2)),mw=ms*5;const hz=document.body.classList.contains('phone'),cw=hz?mw*2:mw,ch=hz?mw:mw*2;u.ms=ms;u.n2hz=hz;u.next2.width=cw*DPR;u.next2.height=ch*DPR;u.next2.style.width=cw+'px';u.next2.style.height=ch+'px';u.n2ctx.setTransform(DPR,0,0,DPR,0,0);}
+    {const ms=Math.max(4,Math.floor(ns/2)),mw=ms*5;const hz=true,cw=hz?mw*2:mw,ch=hz?mw:mw*2;u.ms=ms;u.n2hz=hz;u.next2.width=cw*DPR;u.next2.height=ch*DPR;u.next2.style.width=cw+'px';u.next2.style.height=ch+'px';u.n2ctx.setTransform(DPR,0,0,DPR,0,0);}
     const ps=34;u.por.width=u.por.height=ps*DPR;u.por.style.width=u.por.style.height=ps+'px';const pc=u.por.getContext('2d');pc.setTransform(DPR,0,0,DPR,0,0);pc.clearRect(0,0,ps,ps);drawAnimal(pc,u.info.por,ps,'normal',false);
     u.pfill.parentElement.style.height=bh+'px';
     if(u.skc){u.skc.width=u.skc.height=56*DPR;const sc=u.skc.getContext('2d');sc.setTransform(DPR,0,0,DPR,0,0);sc.clearRect(0,0,56,56);drawAnimal(sc,heroId(),56,'happy',false);u.skn.textContent='R';}u.bubble.style.maxWidth=(bw+40)+'px';
@@ -1277,6 +1310,7 @@ function startMatch(mode,level,seed){
   for(const p of G.players){p.hp=p.hpMax=100;}
   if(mode!=='demo'){const me=G.players[0],h=HERO_BY[heroId()];me.hero=h;me.hp=me.hpMax=h.hp+4*(heroLv(h.id)-1);me.revive=!!h.revive;}
   if(mode==='ai')G.players[1].isBoss=true;
+  G.tut=null;if(mode==='ai'&&G.level===1&&isNewbie())tutSetup(G.players[0]);
   G.bgTheme=mode==='ai'?(G.ch&&G.ch.c>=2?G.ch.theme:bossFor(G.level).por):mode==='online'?'online':'lobby';document.body.classList.remove('inlobby');
   G.clock=mode==='demo'?60000:mode==='ai'?(120000+Math.min(60000,G.level*3000)):mode==='solo'?0:120000;G.riseEvery=(mode==='ai'&&G.level<=3)?8000:5000;
   buildUI();if(mode==='solo'){G.players[1].ui=null;$('#s1').innerHTML='';G.events.push({at:15000,fn:soloWave});}setKeys();if(mode==='ai')bossSetup();updateHP();
@@ -1287,42 +1321,44 @@ function startMatch(mode,level,seed){
   G.running=true;modsStart();showCount(3);Snd.beep(false);Music.fever=false;Music.stop();Music.start();
   for(const p of G.players)if(p.ai)say(p,lineOf(p.ai.cfg,'start'),2600);
   if(mode==='online'){NET.started=true;NET.left=false;NET.lastSend=-1e9;netState();nsend({t:'prof',me:myEntry(),lb:lbTop().slice(0,60)});applyOpp();}
-  if(mode==='ai'&&G.level<=2)setTimeout(()=>{if(G.players&&G.mode==='ai')say(G.players[0],tr('tip1'),4500);},2800);
+  if(G.tut)tutStart();if(mode!=='demo')cgPlay(true);
+  if(mode==='ai'&&G.level<=2&&!G.tut)setTimeout(()=>{if(G.players&&G.mode==='ai')say(G.players[0],tr('tip1'),4500);},2800);
   if(mode==='solo')setTimeout(()=>{if(G.players&&G.mode==='solo'&&G.running)say(G.players[0],tr('solo_tip'),5200);},TOUCH&&store.get('swtip',0)<3?9000:3400);
-  if(TOUCH&&(mode==='ai'||mode==='online'||mode==='solo')&&store.get('swtip',0)<3){store.set('swtip',store.get('swtip',0)+1);setTimeout(()=>{if(G.players&&G.running&&!G.ended)say(G.players[0],tr('tip_swipe'),5200);},(mode==='ai'&&G.level<=2)?8200:3400);}
+  if(TOUCH&&!G.tut&&(mode==='ai'||mode==='online'||mode==='solo')&&store.get('swtip',0)<3){store.set('swtip',store.get('swtip',0)+1);setTimeout(()=>{if(G.players&&G.running&&!G.ended)say(G.players[0],tr('tip_swipe'),5200);},(mode==='ai'&&G.level<=2)?8200:3400);}
 }
 function showMenu(){
   leaveOnline();Music.stop();
   G.running=false;G.paused=false;G.players=null;G.mode=null;G.bgTheme='lobby';document.body.classList.add('inlobby');$('#s0').innerHTML='';$('#s1').innerHTML='';$('#touch').classList.remove('on');setKeys();
   document.querySelectorAll('.runner').forEach(e=>e.remove());
   const p=prof(),hid=heroId(),h=HERO_BY[hid],lg=h.tier==='legend',st=store.get('maxst',1),boss=bossFor(st),nx=HEROES.find(x=>!ownHero(x.id)&&x.lv>p.lv),own=HEROES.filter(x=>ownHero(x.id)),dd=dailyDot();
-  ov(`<div class="lobby-wrap">
+  // v1.1: 처음엔 '플레이' 하나만. 1스테이지를 깨면 무한·스테이지·영웅·도감, 2스테이지를 깨면 보상·랭킹(·온라인)이 차례로 열림
+  const u2=st>=2,u3=st>=3,ON=!noExt(),nb=isNewbie();cgPlay(false);
+  ov(`<div class="lobby-wrap ${u2?'':'first'}">
    <div class="ltop">
      <div class="pchip" onclick="showRank('me')"><div class="av">${img(hid,46,false,'happy')}</div><div><div class="pn">${esc(p.name)}</div><div class="lvrow"><span class="lvb">Lv.${p.lv}</span><div class="xpmini"><div style="width:${Math.round(p.xp/p.need*100)}%"></div></div></div></div></div>
-     <div class="res"><span class="rpill">\ud83c\udfc6 ${p.tr}</span><span class="rpill">\ud83e\ude99 ${getCoins().toLocaleString()}<b onclick="showHeroes()">+</b></span><span class="rpill">\ud83e\udde9 ${store.get('shards',0)}</span>${store.get('wstreak',0)>=1?`<span class="rpill streak">\ud83d\udd25 ${tr('streak_chip',{n:store.get('wstreak',0),m:streakMul(store.get('wstreak',0)+1)})}</span>`:''}</div>
+     <div class="res">${ON&&u3?`<span class="rpill">\ud83c\udfc6 ${p.tr}</span>`:''}${u2?`<span class="rpill">\ud83e\ude99 ${getCoins().toLocaleString()}<b onclick="showHeroes()">+</b></span><span class="rpill">\ud83e\udde9 ${store.get('shards',0)}</span>`:''}${store.get('wstreak',0)>=1?`<span class="rpill streak">\ud83d\udd25 ${tr('streak_chip',{n:store.get('wstreak',0),m:streakMul(store.get('wstreak',0)+1)})}</span>`:''}</div>
      <button class="icbtn" onclick="showSettings()">\u2699\ufe0f</button>
    </div>
    <div class="lmid">
-     <div class="lside"><button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button><button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button><button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button><button class="rbtn" onclick="showDex()">\ud83d\udcd6<span>${tr('dex')}</span></button></div>
+     <div class="lside">${u2?`<button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button><button class="rbtn" onclick="showDex()">\ud83d\udcd6<span>${tr('dex')}</span></button>`:''}${u3?`<button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button>`:''}${ON&&u3?`<button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}</div>
      <div class="showcase">
        <div class="logo">Anibrix</div><div class="logosub">${tr('subtitle')}</div><div class="copyr">\u00a9 ${new Date().getFullYear()} ${OWNER}. All rights reserved.</div>
        <div class="ped ${lg?'lg':''}">${own.length>1?`<button class="arr" onclick="cycleHero(-1)">\u2039</button>`:''}<div class="hbig">${img(hid,190,false,'happy')}</div>${own.length>1?`<button class="arr" onclick="cycleHero(1)">\u203a</button>`:''}</div>
        <div class="hplate">${lg?'<span class="ltag">\u2605 '+tr('legend')+'</span>':''}<b>${heroName(hid)}</b><span>\u2764 ${h.hp+4*(heroLv(hid)-1)}</span><span>${tr('up_lv',{n:heroLv(hid)})}</span></div>
-       <div class="hskill"><b>${tr('sk_'+hid+'_n')}</b> ${tr('sk_'+hid+'_d')}</div>
-       ${nx?`<div class="nexth">${tr('next_hero',{name:heroName(nx.id),lv:nx.lv})}</div>`:''}
+       ${u2?`<div class="hskill"><b>${tr('sk_'+hid+'_n')}</b> ${tr('sk_'+hid+'_d')}</div>`:`<div class="firsttag">${tr('first_tag')}</div>`}
+       ${nx&&u2?`<div class="nexth">${tr('next_hero',{name:heroName(nx.id),lv:nx.lv})}</div>`:''}
      </div>
-     <div class="lside"><button class="rbtn" onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button><button class="rbtn" onclick="showHelp()">\u2753<span>${tr('help_s')}</span></button><button class="rbtn" onclick="startMatch('demo')">\ud83d\udc40<span>${tr('m_demo')}</span></button></div>
+     <div class="lside">${u2?`<button class="rbtn" onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button>`:''}<button class="rbtn" onclick="showHelp()">\u2753<span>${tr('help_s')}</span></button>${u3?`<button class="rbtn" onclick="showRank()">\ud83c\udfc6<span>${tr('rank_title')}</span></button>`:''}</div>
    </div>
    <div class="ctas">
      <button class="cta play" onclick="startMatch('ai',${st})"><span class="ci">${img(boss.por,48,false,'normal')}</span><span><b>\u25b6 ${tr('play')}</b><small>${tr('stage',{n:st})} \u00b7 ${bossName(boss)}</small></span></button>
-     <button class="cta pvp" onclick="quickMatch()"><span class="ci big">\u2694\ufe0f</span><span><b>${tr('m_quick_s')}</b><small>\ud83c\udfc6 ${p.tr}</small></span></button>
-     <button class="cta solo" onclick="startMatch('solo')"><span class="ci big">♾️</span><span><b>${tr('solo_title')}</b><small>🏅 ${store.get('solo_best',0).toLocaleString()}</small></span></button>
-     <button class="cta fr" onclick="showOnline()"><span class="ci big">\ud83d\udc65</span><span><b>${tr('m_friend_s')}</b><small>${tr('room_code')}</small></span></button>
+     ${u2?`<button class="cta solo" onclick="startMatch('solo')"><span class="ci big">♾️</span><span><b>${tr('solo_title')}</b><small>🏅 ${store.get('solo_best',0).toLocaleString()}</small></span></button>`:''}
+     ${ON&&u3?`<button class="cta pvp" onclick="quickMatch()"><span class="ci big">\u2694\ufe0f</span><span><b>${tr('m_quick_s')}</b><small>\ud83c\udfc6 ${p.tr}</small></span></button><button class="cta fr" onclick="showOnline()"><span class="ci big">\ud83d\udc65</span><span><b>${tr('m_friend_s')}</b><small>${tr('room_code')}</small></span></button>`:''}
    </div>
-   <div class="bnav"><button class="on">\ud83c\udfe0<span>${tr('go_home')}</span></button><button onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button><button onclick="showDaily()">\ud83c\udf81<span>${tr('m_daily')}</span>${dd?'<i class="dot"></i>':''}</button><button onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button><button onclick="showRank()">\ud83c\udfc6<span>${tr('rank_title')}</span></button><button onclick="showSettings()">\u2699\ufe0f<span>${tr('settings')}</span></button></div>
+   ${u2?`<div class="bnav"><button class="on">\ud83c\udfe0<span>${tr('go_home')}</span></button><button onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button><button onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button>${u3?`<button onclick="showDaily()">\ud83c\udf81<span>${tr('m_daily')}</span>${dd?'<i class="dot"></i>':''}</button>`:''}${ON&&u3?`<button onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}${u3?`<button onclick="showRank()">\ud83c\udfc6<span>${tr('rank_title')}</span></button>`:''}</div>`:''}
   </div>`,'lobby');
-  if(!G._dailyShown&&dd){G._dailyShown=true;setTimeout(()=>{if(!G.players)showDaily();},600);}
-  socStart().then(ok=>{if(ok)socAutoSync();});
+  if(!G._dailyShown&&dd&&u3){G._dailyShown=true;setTimeout(()=>{if(!G.players&&$('#ov').classList.contains('lobby'))showDaily();},600);}
+  if(ON)socStart().then(ok=>{if(ok)socAutoSync();});
 }
 function cycleHero(d){const own=HEROES.filter(x=>ownHero(x.id));if(own.length<2)return;const i=own.findIndex(x=>x.id===heroId());const n=own[(i+d+own.length)%own.length];store.set('hero',n.id);Snd.pop();showMenu();}
 function showSettings(){const langs=Object.keys(I18N).map(l=>`<button class="lbtn ${l===LANG?'on':''}" onclick="setLang('${l}');showSettings()">${I18N[l]._name}</button>`).join('');ov(`<div class="card"><div class="title" style="font-size:30px">\u2699\ufe0f ${tr('settings')}</div><h3>${tr('sound')}</h3><div class="minirow"><button class="lbtn ${Snd.on?'on':''}" onclick="toggleMute();showSettings()">${Snd.on?tr('sfx_on'):tr('sfx_off')}</button><button class="lbtn ${Snd.bgm?'on':''}" onclick="toggleBgm();showSettings()">${Snd.bgm?tr('bgm_on'):tr('bgm_off')}</button></div><h3>${tr('language')}</h3><div class="minirow">${langs}</div><h3>${tr('nick')}</h3><div class="nickrow"><input id="nickIn" maxlength="12" value="${esc(nick())}"><button class="btn alt" onclick="saveNick2()">${tr('save')}</button></div><button class="btn gray" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`);}
@@ -1358,9 +1394,9 @@ function showResult(w){
     const c=b.ai.cfg;
     if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
     else h+=`${img(c.por,84,false,'happy')}<div class="ribbon lose">${tr('lose')}</div><div class="subt">${tr('lose_sub',{name:bossName(c)})} ${G.lossesNow>=1?tr('mercy_next'):''}</div>`;
-    h+=`${xpBlock()}${streakBlock()}${goalBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
+    {const early=store.get('maxst',1)<=3,opened=store.get('maxst',1)>=2;h+=xpBlock();
     if(w===a)h+=`<button class="btn" onclick="adGate(()=>startMatch('ai',${G.level+1}))">${tr('stage',{n:G.level+1})} ▶</button>`;
-    h+=`${heroPicker('result')}<button class="btn alt" onclick="adGate(()=>startMatch('ai',${G.level}))">${tr('retry')}</button><button class="btn green" onclick="quickMatch()">\u2694\ufe0f ${tr('go_quick')}</button><div class="minirow"><button class="lbtn" onclick="showSelect()">\ud83d\uddfa ${tr('sel_title2')}</button><button class="lbtn" onclick="showHeroes()">\ud83d\udc09 ${tr('change_hero')}</button><button class="lbtn" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;
+    h+=`${streakBlock()}${early?'':goalBlock()}${early?'':adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>${early?'':heroPicker('result')}<button class="btn ${w===a?'alt':''}" onclick="adGate(()=>startMatch('ai',${G.level}))">${tr('retry')}</button>${early?'':noExt()?'':`<button class="btn green" onclick="quickMatch()">\u2694\ufe0f ${tr('go_quick')}</button>`}<div class="minirow">${opened?`<button class="lbtn" onclick="showSelect()">\ud83d\uddfa ${tr('sel_title2')}</button><button class="lbtn" onclick="showHeroes()">\ud83d\udc09 ${tr('change_hero')}</button>`:''}<button class="lbtn" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;}
   } else if(G.mode==='online'){
     const meWin=w===a;
     h+=`${img(meWin?'cat':'dog',84,false,'happy')}<div class="ribbon ${meWin?'win':'lose'}">${meWin?tr('win'):tr('lose')}</div><div class="subt">${tr('playtime',{t:fmt(G.t)})}</div>${NET.left?`<div class="subt" style="color:#e03131;font-weight:800">${tr('on_left')}</div>`:''}${xpBlock()}${streakBlock()}${goalBlock()}${adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>`;
@@ -1376,7 +1412,7 @@ function showResult(w){
   h+='</div>';ov(h);
 }
 function togglePause(){
-  if(!G.players||G.ended||!G.running||isOnline())return;G.paused=!G.paused;if(G.paused)Music.stop();else Music.start();
+  if(!G.players||G.ended||!G.running||isOnline())return;G.paused=!G.paused;if(G.mode!=='demo')cgPlay(!G.paused);if(G.paused)Music.stop();else Music.start();
   if(G.paused)ov(`<div class="card"><div class="title" style="font-size:30px">${tr('paused')}</div><button class="btn" onclick="togglePause()">${tr('resume')}</button><button class="btn gray" onclick="showMenu()">${tr('menu')}</button></div>`);else hideOv();
 }
 function sndLabels(){$('#sfxBtn').textContent=Snd.on?tr('sfx_on'):tr('sfx_off');$('#bgmBtn').textContent=Snd.bgm?tr('bgm_on'):tr('bgm_off');}
@@ -1652,10 +1688,19 @@ const OWNER='Anibrix';
 // 게임이 실행될 수 있는 공식 주소. 비워 두면 어디서나 실행됨. 예: ['anibrix.com','www.anibrix.com','anibrix.netlify.app']
 // itch.io에 올릴 때는 'html-classic.itch.zone' 도 넣어야 합니다.
 const ALLOWED_HOSTS=['hankuk-in.com','hankukin.pages.dev'];
-const CG_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='crazygames'){try{sessionStorage.setItem('hk_src','crazygames');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='crazygames';}catch(e){return false;}})();
+// v1.1: 크레이지게임즈에 파일을 직접 올린 경우(게임이 crazygames 도메인에서 열림)도 CG 모드로 인식
+const CG_HOST=(()=>{try{return /(^|\.)crazygames\.[a-z.]+$|(^|\.)1001juegos\.com$/i.test(location.hostname);}catch(e){return false;}})();
+const CG_MODE=CG_HOST||(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='crazygames'){try{sessionStorage.setItem('hk_src','crazygames');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='crazygames';}catch(e){return false;}})();
 function noExt(){try{return CG_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE;}}
+function ownHost(){try{const h=location.hostname;return /^https?:/.test(location.protocol)&&ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return false;}}
 
-function hostOK(){try{const h=location.hostname;if(!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
+function hostOK(){try{const h=location.hostname;if(CG_HOST||!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
+/* ---- 크레이지게임즈 SDK v3: 플레이 시작/중단 알림, 승리 축하, 광고 요청. CG 모드에서만 불러옴 ---- */
+const CG={sdk:null,ok:false,playing:false};
+function cgInit(){if(!CG_MODE)return;loadScript('https://sdk.crazygames.com/crazygames-sdk-v3.js').then(async()=>{try{await window.CrazyGames.SDK.init();CG.sdk=window.CrazyGames.SDK;CG.ok=true;if(G.players&&G.running&&!G.paused&&G.mode!=='demo')cgPlay(true);}catch(e){}}).catch(()=>{});}
+function cgPlay(on){if(!CG.ok||CG.playing===on)return;CG.playing=on;try{if(on)CG.sdk.game.gameplayStart();else CG.sdk.game.gameplayStop();}catch(e){}}
+function cgHappy(){try{if(CG.ok)CG.sdk.game.happytime();}catch(e){}}
+function adsReady(){return CG.ok||!!(ADS.on&&window.adBreak);}
 function showCopyBlock(){document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:60px 20px;color:#4a3426"><h1 style="color:#ff5c8a">Anibrix</h1><p>'+tr('copy_block')+'</p>'+(GAME_URL?'<p><a style="font-size:20px;color:#ff5c8a" href="'+GAME_URL+'">'+GAME_URL+'</a></p>':'')+'<p style="opacity:.6">\u00a9 '+new Date().getFullYear()+' '+OWNER+'. All rights reserved.</p></div>';}
 // 광고: 승인 받은 뒤 on:true 와 client 값을 넣으세요. test:true 이면 구글 테스트 광고만 나옵니다.
 // provider: 'adsense' = 내 사이트/안드로이드 앱(AdMob 연동), 포털(Poki·CrazyGames)에 올릴 때는 그 회사 SDK로 교체
@@ -1665,12 +1710,16 @@ function adsInit(){if(!ADS.on||ADS.provider!=='adsense')return;window.adsbygoogl
   adConfig({preloadAdBreaks:'on',sound:'on'});}
 let _adVol=null;const adMute=()=>{try{if(Snd.master){_adVol=Snd.master.gain.value;Snd.master.gain.value=0;}}catch(e){}},adUnmute=()=>{try{if(Snd.master&&_adVol!==null)Snd.master.gain.value=_adVol;}catch(e){}};
 // 판과 판 사이 전면 광고 (ADS.every 판마다 1번, 그 외에는 바로 진행)
-function adGate(fn){ADS.n++;if(!ADS.on||!window.adBreak||ADS.n%ADS.every!==0||(prof().lv<3)){fn();return;}let done=false;const go=()=>{if(done)return;done=true;adUnmute();fn();};
+function adGate(fn){ADS.n++;
+  if(CG.ok){if(ADS.n%ADS.every!==0||prof().lv<3){fn();return;}let d=false,st=false;const go=()=>{if(d)return;d=true;adUnmute();fn();};try{CG.sdk.ad.requestAd('midgame',{adStarted:()=>{st=true;adMute();},adFinished:go,adError:go});setTimeout(()=>{if(!d&&!st)go();},4000);}catch(e){go();}return;}
+  if(!ADS.on||!window.adBreak||ADS.n%ADS.every!==0||(prof().lv<3)){fn();return;}let done=false;const go=()=>{if(done)return;done=true;adUnmute();fn();};
   try{adBreak({type:'next',name:'between_match',beforeAd:adMute,afterAd:adUnmute,adBreakDone:go});setTimeout(go,8000);}catch(e){go();}}
 // 보상형 광고 (보고 나면 보상)
-function showRewarded(name,onReward){if(!ADS.on||!window.adBreak){toast(tr('ad_none'));return;}if(ADS.busy)return;ADS.busy=true;let shown=false;
+function showRewarded(name,onReward){
+  if(CG.ok){if(ADS.busy)return;ADS.busy=true;try{CG.sdk.ad.requestAd('rewarded',{adStarted:adMute,adFinished:()=>{ADS.busy=false;adUnmute();onReward();},adError:()=>{ADS.busy=false;adUnmute();toast(tr('ad_none'));}});}catch(e){ADS.busy=false;toast(tr('ad_none'));}return;}
+  if(!ADS.on||!window.adBreak){toast(tr('ad_none'));return;}if(ADS.busy)return;ADS.busy=true;let shown=false;
   try{adBreak({type:'reward',name,beforeAd:adMute,afterAd:adUnmute,beforeReward:show=>{shown=true;show();},adViewed:()=>{onReward();},adDismissed:()=>toast(tr('ad_skip')),adBreakDone:()=>{ADS.busy=false;adUnmute();if(!shown)toast(tr('ad_none'));}});}catch(e){ADS.busy=false;toast(tr('ad_none'));}}
-function adX2Btn(){const c=G.xpRes&&G.xpRes.coins;if(!ADS.on||!c||G.xpRes.doubled)return '';return `<button class="btn" id="adx2" style="background:linear-gradient(180deg,#ffe066,#fab005);color:#5c3b00;box-shadow:0 5px 0 #e08e00" onclick="adDouble()">\ud83d\udcfa ${tr('ad_x2',{n:c})}</button>`;}
+function adX2Btn(){const c=G.xpRes&&G.xpRes.coins;if(!adsReady()||!c||G.xpRes.doubled)return '';return `<button class="btn" id="adx2" style="background:linear-gradient(180deg,#ffe066,#fab005);color:#5c3b00;box-shadow:0 5px 0 #e08e00" onclick="adDouble()">\ud83d\udcfa ${tr('ad_x2',{n:c})}</button>`;}
 function adDouble(){showRewarded('double_coins',()=>{if(G.xpRes.doubled)return;G.xpRes.doubled=true;addCoins(G.xpRes.coins);Snd.sparkle();toast(tr('ad_got',{n:G.xpRes.coins}));const b=$('#adx2');if(b)b.remove();});}
 // 출시 설정: 유료 결제를 붙이기 전(등급분류·결제 연동 전)에는 false로 둡니다.
 const PAID_ON=false;
@@ -2031,6 +2080,32 @@ I18N.ko.tip_swipe='보드를 밀어서 이동 · 톡 치면 회전 · 아래로 
 I18N.en.tip_swipe='Drag the board to move · tap to rotate · flick down to drop · flick up to hold!';
 if(I18N.ja)I18N.ja.tip_swipe='ボードをスワイプで移動 · タップで回転 · 下にフリックで落下 · 上にフリックでホールド！';
 if(I18N.zh)I18N.zh.tip_swipe='滑动棋盘移动 · 轻点旋转 · 向下轻扫直落 · 向上轻扫暂存！';
+/* =====================  v1.1: 첫 판 길잡이(튜토리얼) · 간결한 첫 화면  ===================== */
+const I18N_V11={
+ en:{subtitle:'Animal Block Battle',first_tag:'Clear rows to attack the boss!',tut_drop:'<b>Drop it into the gap!</b>Press <span class="kc">Space</span>',tut_drop_t:'<b>Drop it into the gap!</b>Flick down on the board',tut_row:'<b>Fill a whole row</b>to pop it and attack',tut_hit:'<b>Nice hit!</b>Every row you pop hurts the boss',tut_ctrl:'<span class="kc">←</span><span class="kc">→</span> Move · <span class="kc">↑</span> Rotate · <span class="kc">Space</span> Drop',tut_ctrl_t:'Drag to move · Tap to rotate · Flick down to drop',tut_goal:'<b>Empty the boss HP bar to win!</b>Pop 2+ rows at once for big attacks',keys_ai:'← → Move · ↑ Rotate · ↓ Down · Space Drop · C Hold · E Item · R Skill · Esc Pause'},
+ ko:{subtitle:'애니브릭스: 동물 블록 대소동',first_tag:'줄을 지워서 보스를 공격하세요!',tut_drop:'<b>빈칸에 떨어뜨려 보세요!</b><span class="kc">Space</span> 를 누르세요',tut_drop_t:'<b>빈칸에 떨어뜨려 보세요!</b>판을 아래로 튕기세요',tut_row:'<b>한 줄을 꽉 채우면</b>터지면서 공격해요',tut_hit:'<b>명중!</b>줄을 지울 때마다 보스가 아파해요',tut_ctrl:'<span class="kc">←</span><span class="kc">→</span> 이동 · <span class="kc">↑</span> 회전 · <span class="kc">Space</span> 떨구기',tut_ctrl_t:'끌어서 이동 · 톡 눌러 회전 · 아래로 튕겨 떨구기',tut_goal:'<b>보스 체력을 0으로 만들면 승리!</b>2줄 이상 한 번에 지우면 큰 공격',keys_ai:'← → 이동 · ↑ 회전 · ↓ 내리기 · Space 떨구기 · C 홀드 · E 아이템 · R 스킬 · Esc 일시정지'},
+ ja:{subtitle:'アニブリックス：どうぶつブロック大騒動',first_tag:'ラインを消してボスを攻撃！',tut_drop:'<b>すきまに落とそう！</b><span class="kc">Space</span> を押してね',tut_drop_t:'<b>すきまに落とそう！</b>ボードを下にフリック',tut_row:'<b>1列そろえると</b>消えて攻撃できるよ',tut_hit:'<b>ヒット！</b>列を消すたびにボスにダメージ',tut_ctrl:'<span class="kc">←</span><span class="kc">→</span> 移動 · <span class="kc">↑</span> 回転 · <span class="kc">Space</span> 落下',tut_ctrl_t:'スワイプで移動 · タップで回転 · 下フリックで落下',tut_goal:'<b>ボスのHPを0にすれば勝ち！</b>2列以上まとめて消すと大攻撃',keys_ai:'← → 移動 · ↑ 回転 · ↓ 下 · Space 落下 · C ホールド · E アイテム · R スキル · Esc ポーズ'},
+ zh:{subtitle:'动物方块大作战',first_tag:'消除整行来攻击首领！',tut_drop:'<b>把它放进空位！</b>按 <span class="kc">Space</span>',tut_drop_t:'<b>把它放进空位！</b>在棋盘上向下轻扫',tut_row:'<b>填满一整行</b>就能消除并攻击',tut_hit:'<b>命中！</b>每消一行都会伤害首领',tut_ctrl:'<span class="kc">←</span><span class="kc">→</span> 移动 · <span class="kc">↑</span> 旋转 · <span class="kc">Space</span> 直落',tut_ctrl_t:'滑动移动 · 轻点旋转 · 向下轻扫直落',tut_goal:'<b>把首领血量打到0就赢了！</b>一次消2行以上是大攻击',keys_ai:'← → 移动 · ↑ 旋转 · ↓ 下落 · Space 直落 · C 暂存 · E 道具 · R 技能 · Esc 暂停'}
+};
+for(const l in I18N_V11)if(I18N[l])Object.assign(I18N[l],I18N_V11[l]);
+// 처음 하는 사람의 1스테이지: 맨 아랫줄을 2칸만 비워 두고 첫 블록(토끼 2칸)을 바로 그 위에 줌 -> 떨구기 한 번으로 첫 줄 삭제 + 첫 공격
+function isNewbie(){return store.get('maxst',1)<=1&&!store.get('ftue',0);}
+function tutSetup(me){
+  const row=['cat','dog','cat',null,null,'dog','cat','dog','cat'];
+  me.grid[H-1]=row.map(a=>a?{a,item:null}:null);
+  me.next={a:'rabbit',cells:[[0,0],[1,0]],item:null,gold:false,x:0,y:0};
+  G.tut={step:0,clears:0};calcH(me);
+}
+function coach(html,dur){const me=G.players&&G.players[0],el=me&&me.ui&&me.ui.el.querySelector('.coach');if(!el)return;clearTimeout(el._h);if(!html){el.classList.remove('on');return;}el.innerHTML=html;el.classList.add('on');if(dur)el._h=setTimeout(()=>el.classList.remove('on'),dur);}
+function tutStart(){if(!G.tut)return;coach(tr(TOUCH?'tut_drop_t':'tut_drop'));}
+function tutLock(n){
+  const t=G.tut;if(!t)return;const live=()=>G.tut===t&&G.players&&!G.ended;
+  if(n>0)t.clears+=n;
+  if(t.step===0){
+    if(n>0){t.step=1;coach(tr('tut_hit'));G.events.push({at:G.t+2600,fn:()=>{if(!live())return;t.step=2;coach(tr(TOUCH?'tut_ctrl_t':'tut_ctrl')+'<br>'+tr('tut_row'));G.events.push({at:G.t+9000,fn:()=>{if(live()&&t.step===2)coach(null);}});}});}
+    else coach(tr('tut_row'));
+  } else if(t.step===2&&t.clears>=3){t.step=3;coach(tr('tut_goal'),6000);}
+}
 const lineOf=(c,k)=>{const a=(L.lines[c.por]&&L.lines[c.por][k])||(L.lines.gen&&L.lines.gen[k])||(I18N.en.lines.gen[k])||['...'];return pick(a);};
 
 /* =====================  입력  ===================== */
@@ -2083,9 +2158,13 @@ function loop(now){
   }catch(err){console.error(err);}
   requestAnimationFrame(loop);
 }
-if('serviceWorker' in navigator&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
-if(!hostOK())showCopyBlock();else{adsInit();socBoot();fxInit();bgInit();applyStatic();showMenu();requestAnimationFrame(loop);}
+// v1.1: 내 사이트에서만 PWA(매니페스트·서비스워커)와 계정 스크립트를 붙임. 포털/로컬에서는 불필요한 요청(404)을 만들지 않음
+if(ownHost()&&!CG_HOST){
+  for(const [rel,href] of [['manifest','manifest.webmanifest'],['icon','icons/icon-192.png'],['apple-touch-icon','icons/apple-touch-icon.png']]){const l=document.createElement('link');l.rel=rel;l.href=href;document.head.appendChild(l);}
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  const s=document.createElement('script');s.type='module';s.src='/game/account.js';s.dataset.game='anibrix';s.dataset.prefix='anibrix_';document.body.appendChild(s);
+}
+if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();showMenu();requestAnimationFrame(loop);}
 </script>
-<script type="module" src="/game/account.js" data-game="anibrix" data-prefix="anibrix_"></script>
 </body>
 </html>
