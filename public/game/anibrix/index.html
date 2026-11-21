@@ -362,6 +362,17 @@ body.phone .coach{font-size:13px;left:14px}body.phone .coach b{font-size:15px}
 .lobby-wrap.first .cta.play b{font-size:32px}
 .firsttag{margin-top:10px;font-family:'Jua',sans-serif;font-size:17px;color:#fff;background:rgba(50,20,60,.45);border-radius:999px;padding:6px 18px}
 .lside{min-width:78px}
+/* v1.2: 첫 1분 - 손가락/키 안내, 첫 판 동안 알림 숨김, 큰 다음 판 버튼 */
+.gest{position:absolute;left:50%;top:44%;width:70px;height:70px;margin:-35px 0 0 -35px;font-size:56px;line-height:70px;text-align:center;pointer-events:none;z-index:7;opacity:0;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35));transition:opacity .2s}
+.gest.on{opacity:1}.gest.move{animation:gmove 1.5s ease-in-out infinite}.gest.tap{animation:gtap .9s ease-in-out infinite}.gest.flick{animation:gflick 1.1s ease-in infinite}
+@keyframes gmove{0%,100%{transform:translateX(-60px)}50%{transform:translateX(60px)}}
+@keyframes gtap{0%,100%{transform:scale(1)}40%{transform:scale(.72)}}
+@keyframes gflick{0%{transform:translateY(-50px);opacity:1}75%{transform:translateY(80px);opacity:1}100%{transform:translateY(100px);opacity:0}}
+.coach .kc{animation:kblink .9s ease-in-out infinite}
+@keyframes kblink{0%,100%{background:#fff}50%{background:#ffe066;box-shadow:0 0 0 3px rgba(255,212,59,.65)}}
+body.ftue .hkacc-toast{display:none!important}
+.hkacc-toast{top:74px!important}
+.btn.nextbig{font-size:24px;padding:14px 18px;animation:pulse 1.6s ease-in-out infinite}
 /* v1.1b: 낮은 가로 화면(예: CrazyGames 16:9 틀 907x510)에서도 로비가 한 화면에 들어오도록 높이 기준 축소 */
 @media (max-height:740px){.ltop{padding:6px 12px}.logo{font-size:50px}.logosub{margin:4px 0 0;font-size:13px}.hbig{width:150px;height:150px}.hbig img{width:130px;height:130px}.ped{margin-top:0}.hskill{margin-top:4px;padding:4px 10px}.nexth{margin-top:3px}.firsttag{margin-top:6px;font-size:15px;padding:4px 14px}.ctas{margin:6px 0 4px}.cta{padding:8px 20px 8px 8px}.cta .ci{width:46px;height:46px}.cta b{font-size:22px}.lobby-wrap.first .cta.play{padding:10px 28px 10px 10px}.lobby-wrap.first .cta.play b{font-size:27px}.lside{gap:9px}}
 @media (max-height:600px){.logo{font-size:40px;margin-bottom:10px}.logosub{display:none}.copyr{display:none}.hbig{width:112px;height:112px}.hbig img{width:96px;height:96px}.hbig:before{left:24px;right:24px;height:18px}.hskill,.nexth{display:none}.cta b{font-size:19px}.cta small{font-size:11px}.cta .ci{width:38px;height:38px}.cta .ci.big{font-size:22px}.lobby-wrap.first .cta.play b{font-size:23px}.lobby-wrap.first .cta.play{min-width:280px}.cta.play{min-width:250px}.lside{gap:6px}.firsttag{font-size:13px;margin-top:4px}.lobby-wrap{padding-bottom:8px}}
@@ -1317,12 +1328,12 @@ function startMatch(mode,level,seed){
   G.tut=null;if(mode==='ai'&&G.level===1&&isNewbie())tutSetup(G.players[0]);
   G.bgTheme=mode==='ai'?(G.ch&&G.ch.c>=2?G.ch.theme:bossFor(G.level).por):mode==='online'?'online':'lobby';document.body.classList.remove('inlobby');
   G.clock=mode==='demo'?60000:mode==='ai'?(120000+Math.min(60000,G.level*3000)):mode==='solo'?0:120000;G.riseEvery=(mode==='ai'&&G.level<=3)?8000:5000;
-  buildUI();if(mode==='solo'){G.players[1].ui=null;$('#s1').innerHTML='';G.events.push({at:15000,fn:soloWave});}setKeys();if(mode==='ai')bossSetup();updateHP();
+  buildUI();if(mode==='solo'){G.players[1].ui=null;$('#s1').innerHTML='';G.events.push({at:15000,fn:soloWave});}setKeys();if(mode==='ai'){bossSetup();if(G.tut){const b=G.players[1],c=b.ai.cfg;b.hpMax=b.hp=16;b.skillNext=1e12;c.think*=1.8;c.act*=1.6;c.mistake=Math.max(c.mistake,0.6);c.garbBonus=0;}}updateHP();
   if(mode!=='demo'&&store.get('goldframe',0)&&G.players[0].ui)G.players[0].ui.board.classList.add('goldframe');
   {const me=G.players[0];if(me.hero&&me.hero.tier==='legend'){me.ui.el.querySelector('.namebar').classList.add('legend');setTimeout(()=>{if(G.players&&G.players[0]===me){bigK(me,'legend_in',{name:heroName(me.hero.id)},'#f08c00');flashGold();Snd.fever();}},600);}}
   $('#touch').classList.toggle('on',(TOUCH||document.body.classList.contains('phone'))&&(mode==='ai'||mode==='online'||mode==='solo'));
   for(const p of G.players){if(!p.remote)spawn(p);updateUI(p);}
-  G.running=true;modsStart();showCount(3);Snd.beep(false);Music.fever=false;Music.stop();Music.start();
+  G.running=true;modsStart();if(G.tut){G.countdown=0;showCount(tr('start'));}else showCount(3);Snd.beep(!!G.tut);Music.fever=false;Music.stop();Music.start();
   for(const p of G.players)if(p.ai)say(p,lineOf(p.ai.cfg,'start'),2600);
   if(mode==='online'){NET.started=true;NET.left=false;NET.lastSend=-1e9;netState();nsend({t:'prof',me:myEntry(),lb:lbTop().slice(0,60)});applyOpp();}
   if(G.tut)tutStart();if(mode!=='demo')cgPlay(true);
@@ -1393,13 +1404,13 @@ function showHelp(){
 }
 function showResult(w){
   if(!G.players)return;
-  try{if(G.mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('finish');}catch(e){}const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
+  try{if(G.mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('finish');}catch(e){}if(document.body.classList.contains('ftue'))flushFirst();const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
   if(G.mode==='ai'){
     const c=b.ai.cfg;
     if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
     else h+=`${img(c.por,84,false,'happy')}<div class="ribbon lose">${tr('lose')}</div><div class="subt">${tr('lose_sub',{name:bossName(c)})} ${G.lossesNow>=1?tr('mercy_next'):''}</div>`;
-    {const early=store.get('maxst',1)<=3,opened=store.get('maxst',1)>=2;h+=xpBlock();
-    if(w===a)h+=`<button class="btn" onclick="adGate(()=>startMatch('ai',${G.level+1}))">${tr('stage',{n:G.level+1})} ▶</button>`;
+    {const early=store.get('maxst',1)<=3,opened=store.get('maxst',1)>=2;
+    if(w===a)h+=`<button class="btn nextbig" onclick="adGate(()=>startMatch('ai',${G.level+1}))">${tr('next_big')} ▶ <small style="font-size:15px;opacity:.85">${tr('stage',{n:G.level+1})}</small></button>`;h+=xpBlock();
     h+=`${streakBlock()}${early?'':goalBlock()}${early?'':adX2Btn()}<div class="stats">${stat(a)}<br>${stat(b)}</div>${early?'':heroPicker('result')}<button class="btn ${w===a?'alt':''}" onclick="adGate(()=>startMatch('ai',${G.level}))">${tr('retry')}</button>${early?'':noExt()?'':`<button class="btn green" onclick="quickMatch()">\u2694\ufe0f ${tr('go_quick')}</button>`}<div class="minirow">${opened?`<button class="lbtn" onclick="showSelect()">\ud83d\uddfa ${tr('sel_title2')}</button><button class="lbtn" onclick="showHeroes()">\ud83d\udc09 ${tr('change_hero')}</button>`:''}<button class="lbtn" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`;}
   } else if(G.mode==='online'){
     const meWin=w===a;
@@ -1821,7 +1832,7 @@ function onSync(m){
   if(m.ref&&String(m.ref).toLowerCase()===uid()){const paid=store.get('refPaid',[])||[];if(!paid.includes(code)){paid.push(code);store.set('refPaid',paid);addCoins(1500);store.set('shards',store.get('shards',0)+5);setTimeout(()=>toast(tr('ref_reward',{name})),400);Snd.win();}}
   return code;
 }
-function socBoot(){try{const q=new URLSearchParams(location.search),r=(q.get('ref')||'').toLowerCase();if(r&&r!==uid()&&!store.get('refBy',null)&&/^[a-z0-9]{4,16}$/.test(r)){store.set('refBy',r);addFriend(r,{});addCoins(1000);store.set('shards',store.get('shards',0)+3);setTimeout(()=>toast(tr('welcome_ref')),1500);}}catch(e){}}
+function socBoot(){try{const q=new URLSearchParams(location.search),r=(q.get('ref')||'').toLowerCase();if(r&&r!==uid()&&!store.get('refBy',null)&&/^[a-z0-9]{4,16}$/.test(r)){store.set('refBy',r);addFriend(r,{});addCoins(1000);store.set('shards',store.get('shards',0)+3);afterFirst(()=>toast(tr('welcome_ref')));}}catch(e){}}
 function socStart(){
   if(SOC.peer&&!SOC.peer.destroyed)return Promise.resolve(true);if(SOC.starting)return SOC.starting;
   SOC.starting=(async()=>{try{await loadPeer();}catch(e){SOC.starting=null;return false;}
@@ -2092,6 +2103,19 @@ const I18N_V11={
  zh:{subtitle:'动物方块大作战',first_tag:'消除整行来攻击首领！',tut_drop:'<b>把它放进空位！</b>按 <span class="kc">Space</span>',tut_drop_t:'<b>把它放进空位！</b>在棋盘上向下轻扫',tut_row:'<b>填满一整行</b>就能消除并攻击',tut_hit:'<b>命中！</b>每消一行都会伤害首领',tut_ctrl:'<span class="kc">←</span><span class="kc">→</span> 移动 · <span class="kc">↑</span> 旋转 · <span class="kc">Space</span> 直落',tut_ctrl_t:'滑动移动 · 轻点旋转 · 向下轻扫直落',tut_goal:'<b>把首领血量打到0就赢了！</b>一次消2行以上是大攻击',keys_ai:'← → 移动 · ↑ 旋转 · ↓ 下落 · Space 直落 · C 暂存 · E 道具 · R 技能 · Esc 暂停'}
 };
 for(const l in I18N_V11)if(I18N[l])Object.assign(I18N[l],I18N_V11[l]);
+const I18N_V12={
+ en:{g_move:'<b>Move it</b>Press <span class="kc">←</span><span class="kc">→</span>',g_move_t:'<b>Move it</b>Slide your finger left or right on the board',g_rot:'<b>Rotate it</b>Press <span class="kc">↑</span>',g_rot_t:'<b>Rotate it</b>Tap the board',g_drop:'<b>Drop it!</b>Press <span class="kc">Space</span>',g_drop_t:'<b>Drop it!</b>Flick down on the board',g_done:'<b>Perfect!</b>Clear rows to knock out the boss',next_big:'Next stage'},
+ ko:{g_move:'<b>옮겨 보세요</b><span class="kc">←</span><span class="kc">→</span> 를 누르세요',g_move_t:'<b>옮겨 보세요</b>판 위에서 손가락을 좌우로 밀어요',g_rot:'<b>돌려 보세요</b><span class="kc">↑</span> 를 누르세요',g_rot_t:'<b>돌려 보세요</b>판을 톡 치세요',g_drop:'<b>떨궈 보세요!</b><span class="kc">Space</span> 를 누르세요',g_drop_t:'<b>떨궈 보세요!</b>판을 아래로 휙 튕기세요',g_done:'<b>완벽해요!</b>줄을 지워서 보스를 쓰러뜨리세요',next_big:'다음 판'},
+ ja:{g_move:'<b>動かそう</b><span class="kc">←</span><span class="kc">→</span> を押してね',g_move_t:'<b>動かそう</b>ボードの上で指を左右にスライド',g_rot:'<b>回そう</b><span class="kc">↑</span> を押してね',g_rot_t:'<b>回そう</b>ボードをタップ',g_drop:'<b>落とそう！</b><span class="kc">Space</span> を押してね',g_drop_t:'<b>落とそう！</b>ボードを下にフリック',g_done:'<b>完璧！</b>列を消してボスを倒そう',next_big:'次のステージ'},
+ zh:{g_move:'<b>移动方块</b>按 <span class="kc">←</span><span class="kc">→</span>',g_move_t:'<b>移动方块</b>在棋盘上左右滑动手指',g_rot:'<b>旋转方块</b>按 <span class="kc">↑</span>',g_rot_t:'<b>旋转方块</b>轻点棋盘',g_drop:'<b>放下！</b>按 <span class="kc">Space</span>',g_drop_t:'<b>放下！</b>在棋盘上向下轻扫',g_done:'<b>完美！</b>消除整行打倒首领',next_big:'下一关'}};
+for(const l in I18N_V12)if(I18N[l])Object.assign(I18N[l],I18N_V12[l]);
+/* v1.2 첫 1분: 미뤄 둔 알림, 손가락·키 안내 */
+const FTQ=[];function afterFirst(fn){if(isNewbie()||G.tut)FTQ.push(fn);else fn();}
+function flushFirst(){document.body.classList.remove('ftue');while(FTQ.length){const f=FTQ.shift();try{setTimeout(f,900);}catch(e){}}}
+function gest(kind){const me=G.players&&G.players[0],w=me&&me.ui&&me.ui.board&&me.ui.board.parentElement;if(!w)return;let g=w.querySelector('.gest');if(!g){g=document.createElement('div');g.className='gest';g.textContent='\u{1F446}';w.appendChild(g);}g.className='gest'+(kind&&TOUCH?' on '+kind:'');}
+const GUIDE=[{a:['L','R'],k:'g_move',g:'move'},{a:['CW','CCW'],k:'g_rot',g:'tap'},{a:['HD'],k:'g_drop',g:'flick'}];
+function guideShow(){const t=G.tut;if(!t)return;const s=GUIDE[t.gi];if(!s){gest(null);coach(tr('g_done'),4500);t.step=3;return;}coach(tr(TOUCH?s.k+'_t':s.k));gest(s.g);}
+function guideAct(a){const t=G.tut;if(!t||G.ended)return;if(t.step===0&&a==='HD'){gest(null);return;}if(t.step!==2)return;const s=GUIDE[t.gi];if(s&&s.a.includes(a)){t.gi++;guideShow();}}
 // 처음 하는 사람의 1스테이지: 맨 아랫줄을 2칸만 비워 두고 첫 블록(토끼 2칸)을 바로 그 위에 줌 -> 떨구기 한 번으로 첫 줄 삭제 + 첫 공격
 function isNewbie(){return store.get('maxst',1)<=1&&!store.get('ftue',0);}
 function tutSetup(me){
@@ -2101,21 +2125,21 @@ function tutSetup(me){
   G.tut={step:0,clears:0};calcH(me);
 }
 function coach(html,dur){const me=G.players&&G.players[0],el=me&&me.ui&&me.ui.el.querySelector('.coach');if(!el)return;clearTimeout(el._h);if(!html){el.classList.remove('on');return;}el.innerHTML=html;el.classList.add('on');if(dur)el._h=setTimeout(()=>el.classList.remove('on'),dur);}
-function tutStart(){if(!G.tut)return;coach(tr(TOUCH?'tut_drop_t':'tut_drop'));}
+function tutStart(){if(!G.tut)return;G.tut.gi=0;coach(tr(TOUCH?'tut_drop_t':'tut_drop'));gest('flick');}
 function tutLock(n){
   const t=G.tut;if(!t)return;const live=()=>G.tut===t&&G.players&&!G.ended;
   if(n>0)t.clears+=n;
   if(t.step===0){
-    if(n>0){t.step=1;coach(tr('tut_hit'));G.events.push({at:G.t+2600,fn:()=>{if(!live())return;t.step=2;coach(tr(TOUCH?'tut_ctrl_t':'tut_ctrl')+'<br>'+tr('tut_row'));G.events.push({at:G.t+9000,fn:()=>{if(live()&&t.step===2)coach(null);}});}});}
-    else coach(tr('tut_row'));
-  } else if(t.step===2&&t.clears>=3){t.step=3;coach(tr('tut_goal'),6000);}
+    if(n>0){t.step=1;coach(tr('tut_hit'));G.events.push({at:G.t+2600,fn:()=>{if(!live())return;t.step=2;t.gi=0;guideShow();}});}
+    else{t.step=2;t.gi=0;guideShow();}
+  } else if(t.step===3&&t.clears>=3&&!t.goal){t.goal=1;coach(tr('tut_goal'),5000);}
 }
 const lineOf=(c,k)=>{const a=(L.lines[c.por]&&L.lines[c.por][k])||(L.lines.gen&&L.lines.gen[k])||(I18N.en.lines.gen[k])||['...'];return pick(a);};
 
 /* =====================  입력  ===================== */
 const KEYMAP_1P={KeyR:'S',ArrowLeft:'L',KeyA:'L',ArrowRight:'R',KeyD:'R',ArrowUp:'CW',KeyW:'CW',KeyX:'CW',KeyZ:'CCW',KeyQ:'CCW',ArrowDown:'D',KeyS:'D',Space:'HD',KeyC:'H',ShiftLeft:'H',ShiftRight:'H',KeyE:'I'};
 function mapKey(code){const a=KEYMAP_1P[code];return a?[0,a]:null;}
-function doAction(p,a){if(a==='I'){useItem(p,0);return;}if(a==='S'){useSkill(p);return;}if(a==='H'){if(p.cur&&p.canHold)Snd.hold();holdPiece(p);return;}if(!p.cur||p.dead)return;switch(a){case'L':if(tryMove(p,-1))Snd.tick();break;case'R':if(tryMove(p,1))Snd.tick();break;case'CW':if(tryRotate(p,1))Snd.rot();break;case'CCW':if(tryRotate(p,-1))Snd.rot();break;case'D':softDrop(p);break;case'HD':Snd.drop();hardDrop(p);break;}}
+function doAction(p,a){if(G.tut&&p===(G.players&&G.players[0]))setTimeout(()=>guideAct(a),0);if(a==='I'){useItem(p,0);return;}if(a==='S'){useSkill(p);return;}if(a==='H'){if(p.cur&&p.canHold)Snd.hold();holdPiece(p);return;}if(!p.cur||p.dead)return;switch(a){case'L':if(tryMove(p,-1))Snd.tick();break;case'R':if(tryMove(p,1))Snd.tick();break;case'CW':if(tryRotate(p,1))Snd.rot();break;case'CCW':if(tryRotate(p,-1))Snd.rot();break;case'D':softDrop(p);break;case'HD':Snd.drop();hardDrop(p);break;}}
 document.addEventListener('keydown',e=>{
   if(e.target&&e.target.tagName==='INPUT')return;
   if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Space','Slash','Enter'].includes(e.code)&&G.players&&!$('#ov').classList.contains('show'))e.preventDefault();
@@ -2168,7 +2192,7 @@ if(ownHost()&&!CG_HOST){
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
   const s=document.createElement('script');s.type='module';s.src='/game/account.js';s.dataset.game='anibrix';s.dataset.prefix='anibrix_';document.body.appendChild(s);
 }
-if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();showMenu();requestAnimationFrame(loop);}
+if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();if(isNewbie()){document.body.classList.add('ftue');startMatch('ai',1);}else showMenu();requestAnimationFrame(loop);}
 </script>
 </body>
 </html>
