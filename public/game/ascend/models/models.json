@@ -857,7 +857,7 @@
   ]
  },
  "mech_leg": {
-  "bytes": 5875088,
+  "bytes": 4854152,
   "tris": 45847,
   "size": [
    17.11,
@@ -865,10 +865,11 @@
    7.43
   ],
   "anims": [
-   "idle",
+   "Armature|clip0|baselayer",
    "walk",
-   "shoot",
    "run",
+   "idle",
+   "shoot",
    "slash",
    "hover",
    "glide",
@@ -1004,7 +1005,7 @@
   ]
  },
  "god": {
-  "bytes": 7010768,
+  "bytes": 5409676,
   "tris": 51328,
   "size": [
    18.91,
@@ -1012,10 +1013,11 @@
    4.67
   ],
   "anims": [
-   "idle",
+   "Armature|clip0|baselayer",
    "walk",
-   "shoot",
    "run",
+   "idle",
+   "shoot",
    "slash",
    "hover",
    "glide",
@@ -1024,7 +1026,7 @@
   ]
  },
  "god_red": {
-  "bytes": 6679728,
+  "bytes": 5362308,
   "tris": 51328,
   "size": [
    18.84,
@@ -1032,10 +1034,11 @@
    6.25
   ],
   "anims": [
-   "idle",
+   "Armature|clip0|baselayer",
    "walk",
-   "shoot",
    "run",
+   "idle",
+   "shoot",
    "slash",
    "hover",
    "glide",
@@ -1044,7 +1047,7 @@
   ]
  },
  "god_black": {
-  "bytes": 6679580,
+  "bytes": 5114008,
   "tris": 51328,
   "size": [
    18.23,
@@ -1052,10 +1055,11 @@
    5.34
   ],
   "anims": [
-   "idle",
+   "Armature|clip0|baselayer",
    "walk",
-   "shoot",
    "run",
+   "idle",
+   "shoot",
    "slash",
    "hover",
    "glide",
@@ -1064,7 +1068,7 @@
   ]
  },
  "god_white": {
-  "bytes": 7032852,
+  "bytes": 5352784,
   "tris": 51328,
   "size": [
    18.45,
@@ -1072,10 +1076,11 @@
    4.88
   ],
   "anims": [
-   "idle",
+   "Armature|clip0|baselayer",
    "walk",
-   "shoot",
    "run",
+   "idle",
+   "shoot",
    "slash",
    "hover",
    "glide",
@@ -1458,20 +1463,43 @@
   "anims": []
  },
  "robo": {
-  "bytes": 964068,
-  "anims": []
+  "bytes": 1833984,
+  "anims": [
+   "Armature|clip0|baselayer",
+   "walk",
+   "run"
+  ]
  },
  "arkos": {
-  "bytes": 2344136,
-  "anims": []
+  "bytes": 4801112,
+  "anims": [
+   "Armature|clip0|baselayer",
+   "walk",
+   "run",
+   "idle",
+   "judgment",
+   "slam",
+   "spin",
+   "cast",
+   "roar"
+  ]
  },
  "fb_ruin": {
   "bytes": 1399848,
   "anims": []
  },
  "fb_wreck": {
-  "bytes": 1772576,
-  "anims": []
+  "bytes": 3956348,
+  "anims": [
+   "Armature|clip0|baselayer",
+   "walk",
+   "run",
+   "idle",
+   "slam",
+   "swing",
+   "roar",
+   "punch"
+  ]
  },
  "fb_magma": {
   "bytes": 1668364,
@@ -1482,12 +1510,30 @@
   "anims": []
  },
  "fb_fallen": {
-  "bytes": 1519444,
-  "anims": []
+  "bytes": 3390020,
+  "anims": [
+   "Armature|clip0|baselayer",
+   "walk",
+   "run",
+   "idle",
+   "judgment",
+   "spin",
+   "cast",
+   "slam"
+  ]
  },
  "fb_exec": {
-  "bytes": 1656444,
-  "anims": []
+  "bytes": 3605508,
+  "anims": [
+   "Armature|clip0|baselayer",
+   "walk",
+   "run",
+   "idle",
+   "charge",
+   "spin",
+   "upslash",
+   "slam"
+  ]
  },
  "fb_hound": {
   "bytes": 1363900,
