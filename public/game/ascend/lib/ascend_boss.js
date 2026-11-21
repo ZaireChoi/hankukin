@@ -27,7 +27,7 @@ var TIER=[
  {p:.25,g:'C',t:L('금화 400 · 크레딧 2,000','400 gold · 2,000 credits'),f:function(r){r.shards=(r.shards||0)+400;r.cred=(r.cred||0)+2000;}},
  {p:.50,g:'B',t:L('영웅 장비 1개','1 Epic gear'),f:function(r){try{r.inv.push(A().mkItem(3));}catch(e){}}},
  {p:.75,g:'A',t:L('금화 1,000 · 전설 장비 1개','1,000 gold · 1 Legendary gear'),f:function(r){r.shards=(r.shards||0)+1000;try{r.inv.push(A().mkItem(4));}catch(e){}}},
- {p:1.0,g:'S',t:L('전설 확정 소환권 1장','1 Legendary ticket'),f:function(r){r.legTicket=(r.legTicket||0)+1;}}];
+ {p:1.0,g:'S',t:L('소환권 10장 (기동전사·안드로이드 소환)','10 summon tickets (Mech / Android)'),f:function(r){r.sumTicket=(r.sumTicket||0)+10;}}];
 var gradeOf=function(p){var g='-';TIER.forEach(function(t){if(p>=t.p)g=t.g;});return g;};
 var CSS='position:fixed;inset:0;z-index:9320;display:flex;align-items:center;justify-content:center;background:rgba(3,5,10,.88);font-family:"Noto Sans KR",sans-serif;color:#e9eef6;padding:14px';
 var BOXC='width:min(460px,94vw);max-height:92vh;overflow:auto;padding:18px;border-radius:14px;background:linear-gradient(180deg,#121a2b,#070a12);border:1px solid rgba(207,224,242,.28)';
@@ -73,3 +73,12 @@ X.huntGate=function(go){guard('huntGate',function(){var f=fld(),old=document.get
 // chip on the home strip (lib/ascend_loop.js draws it)
 X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button id="lpBoss" style="all:unset;cursor:pointer;padding:6px 12px;border-radius:15px;font:700 12px \'Noto Sans KR\',sans-serif;border:1px solid '+(l?'#cfe0f2':'rgba(255,255,255,.14)')+';background:rgba(8,12,22,.6);color:'+(l?'#eaf3fc':'#8c96a8')+'">'+L('주간 보스 ','Weekly boss ')+l+' / '+TRIES+(s.best?' · '+gradeOf(s.best):'')+'</button>';};
 })();
+
+/* v3.48b: general summon tickets (weekly boss S reward). Usable on Mech / Android summon instead of gold; weekly pull caps still apply. */
+(function(){try{
+ var R0=function(){try{return R();}catch(e){return null;}};
+ var _rsT=renderSummon;renderSummon=function(B){_rsT(B);try{var r=R0();if(!r||!(r.sumTicket>0))return;var d=document.createElement('div');d.className='epi';d.style.cssText='margin:0 0 12px;border:1px solid rgba(185,214,230,.4);display:flex;gap:8px;align-items:center;flex-wrap:wrap';
+  d.innerHTML='<b style="flex:1;min-width:160px">'+L('소환권 ','Summon tickets ')+r.sumTicket+L('장','')+'</b>'+[['mech',L('기동전사','Mech')],['link',L('안드로이드','Android')]].map(function(x){return '<button class="pri" data-tk="'+x[0]+'" data-n="1">'+x[1]+' 1'+L('회','x')+'</button>'+(r.sumTicket>=10?'<button class="pri" data-tk="'+x[0]+'" data-n="10">'+x[1]+' 10'+L('회','x')+'</button>':'');}).join('');
+  B.insertBefore(d,B.firstChild);
+  d.querySelectorAll('[data-tk]').forEach(function(el){el.onclick=function(){var rr=R0();var b=el.dataset.tk,n=+el.dataset.n;if(!rr||(rr.sumTicket||0)<n)return;var cost=BANNERS[b].cost*(n===10?9:1);rr.shards=(rr.shards||0)+cost;var out=null;try{out=pull(b,n);}catch(e){}if(out){rr.sumTicket-=n;lastPull=out;}else{rr.shards-=cost;}try{saveP();}catch(e){}render();};});}catch(e){window.__tkErr=String(e);}};
+}catch(e){window.__tk0Err=String(e);}})();
