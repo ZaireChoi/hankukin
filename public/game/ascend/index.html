@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.41 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.42 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1846,7 +1846,7 @@ R.buildEnv=function(){const S=this.envG,th=this.th,SP=!!MAP.space,ZM=MAP.zmax||1
  for(let i=0;i<GUSTS.length;i++){const gp=new T.Group();S.add(gp);const parts=[];for(let j=0;j<3;j++){const m=new T.Mesh(new T.CylinderGeometry(GUST_R*(.55+j*.25),GUST_R*(.25+j*.2),GH,32,1,true),new T.MeshBasicMaterial({map:streak,transparent:true,opacity:.45,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide,color:gcol}));m.position.y=GH/2;gp.add(m);parts.push(m);}
   if(!SP){const base=new T.Mesh(new T.CircleGeometry(GUST_R+20,40),new T.MeshBasicMaterial({map:this.radTex([[0,'rgba(200,230,255,.5)'],[1,'rgba(150,200,255,0)']]),transparent:true,depthWrite:false}));base.rotation.x=-Math.PI/2;base.position.y=1.6;gp.add(base);}this.gust.push({gp,parts});}};
 R.buildPoints=function(){const S=this.envG||this.scene;this.pts=[];
- for(const p of POINTS){const gp=new T.Group();gp.position.set(p.x,MAP.space?(p.z||0):0,p.y);S.add(gp);
+ for(const p of POINTS){const gp=new T.Group();gp.position.set(p.x,MAP.space?(p.z||0):0,p.y);S.add(gp);if(String(MAP.id).startsWith('sq_'))gp.visible=false;
   const ringM=new T.MeshBasicMaterial({color:0xdcdcdc,transparent:true,opacity:.85,blending:T.AdditiveBlending,depthWrite:false,toneMapped:false});const ring=new T.Mesh(new T.RingGeometry(PR-7,PR,96),ringM);ring.rotation.x=-Math.PI/2;ring.position.y=1.5;gp.add(ring);
   const pad=new T.Mesh(new T.CylinderGeometry(PR*.42,PR*.48,6,6),new T.MeshStandardMaterial({color:0x2b2f38,metalness:.6,roughness:.4}));pad.position.y=3;pad.receiveShadow=true;gp.add(pad);
   const fillM=new T.MeshBasicMaterial({color:0xdcdcdc,transparent:true,opacity:.08,depthWrite:false});const fill=new T.Mesh(new T.CircleGeometry(PR,64),fillM);fill.rotation.x=-Math.PI/2;fill.position.y=1.2;gp.add(fill);
@@ -6583,7 +6583,7 @@ const SK={
  if(k.r&&inp.ul&&(G.local.ult||0)>=100){inp.ul=false;const c=SK[k.r[0]];if(c){u._kitR=G.t;G.local.ult=0;u._orbU=0;c(u);kName(k.r[2],'#ffd166',true);G.hstop=Math.max(G.hstop||0,.15);}}
  else if(k.r&&inp.ul)inp.ul=false;
  if(u.kDeploy){inp.mx=0;inp.my=0;}if(u.kch>0){inp.mx*=.2;inp.my*=.2;}}catch(e){}return inp;};}
-function kName(n,col,big){try{if(big)(window.arAnnounce||announce)('',tx(n),'',true,col);else pop(tx(n),col,false);}catch(e){}}
+function kName(n,col,big){try{if(window.__skTag){window.__skTag(tx(n),col,big);return;}if(big)(window.arAnnounce||announce)('',tx(n),'',true,col);else pop(tx(n),col,false);}catch(e){}}
 // ---------- passives / timers / damage modifiers ----------
 {const _stKp=step;step=function(dt){_stKp(dt);try{const u=G&&G.local&&G.local.unit;const k=kitOf(u);if(!k||u.dead)return;
  if(u._kitFor!==myMechKey()){u._kitFor=myMechKey();if(k.rng&&u.w){const b=u._w0||u.w;u.w=Object.assign({},u.w,{dmg:Math.round(b.dmg*(k.rng.dmg||1)),range:b.range*(k.rng.range||1),rate:b.rate*(k.rng.rate||1),splash:k.rng.splash||u.w.splash});u._wOwnRef=null;}if(myMechKey()==='m_artillery')u.st.spd*=.85;if(myMechKey()==='m_origin')u.st.cd=(u.st.cd||1)*.8;if(myMechKey()==='m_sky')u.st.spd*=1.1;
@@ -6609,7 +6609,7 @@ function kName(n,col,big){try{if(big)(window.arAnnounce||announce)('',tx(n),'',t
  if(myMechKey()==='mech_leg'&&k&&src===G.local)amt*=1.1;}catch(e){}return _huK(t,amt,src,ang,dt);};}
 // ---------- melee style: weapon look, stats, visible swings and slash waves ----------
 function slashFx(u,S,dir,fin){try{const T3=window.THREE;if(!R3||!R3.scene||!T3)return;const col=new T3.Color(S.col);const a=u.aa||0;const r=S.range*.85;const arc=S.thrust?.5:S.arc*1.6;
- const g=new T3.RingGeometry(r*.55,r,24,1,0,arc);const m=new T3.Mesh(g,new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.5,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.rotation.x=-Math.PI/2;m.rotation.z=-(a)-arc/2+(dir?0:0);m.position.set(u.x,(fin&&!S.heavy)?70:55,u.y);if(fin&&!S.heavy)m.rotation.y=(dir?-.5:.5);R3.scene.add(m);
+ const g=new T3.RingGeometry(r*.55,r,24,1,0,arc);const m=new T3.Mesh(g,new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.5,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.rotation.x=-Math.PI/2;m.rotation.z=-(a)-arc/2+(dir?0:0);m.position.set(u.x,40,u.y);m.material.opacity=.3;R3.scene.add(m);
  const core=new T3.Mesh(new T3.RingGeometry(r*.88,r,24,1,0,arc),new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));core.rotation.copy(m.rotation);core.position.copy(m.position);R3.scene.add(core);
  window.__fxA=(window.__fxA||0)+1;let t=0;const T=fin?.26:.18;const f=()=>{t+=1/60;const k=t/T;const om=Math.min(1,3/Math.max(1,window.__fxA));m.material.opacity=.5*om*(1-k);core.material.opacity=.45*om*(1-k);const s=1+k*.25;m.scale.set(s,s,s);core.scale.set(s,s,s);if(k<1)requestAnimationFrame(f);else{window.__fxA=Math.max(0,(window.__fxA||1)-1);for(const o of[m,core]){R3.scene.remove(o);o.geometry.dispose();o.material.dispose();}}};f();
  // slash wave: the finisher of blade styles flies forward and cuts everything in its path
@@ -8114,9 +8114,22 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v341';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v342';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.42 : LEAK CUT — scene groups nobody references any more (dead units' bodies, hidden soldier models, stray parts) are removed; skill names small above the skill bar =================
+{try{
+ const SKIP=o=>{const u=o.userData||{};return u.__bolt||u.keep||u.freed||u.__merged||u.inst||u.core||u.holder||u.dressed;};
+ const reach=()=>{const own=new Set();const seen=new Set();const walk=(v,d)=>{if(!v||d>3||typeof v!=='object'||seen.has(v))return;seen.add(v);if(v.isObject3D){own.add(v);return;}if(v instanceof Map){for(const x of v.values())walk(x,d+1);return;}if(Array.isArray(v)){for(const x of v)walk(x,d+1);return;}if(v.nodeType||v.isMaterial||v.isBufferGeometry||v.isTexture)return;for(const k in v){try{walk(v[k],d+1);}catch(e){}}};
+  for(const k in R3){if(k==='scene'||k==='r'||k==='cam')continue;try{walk(R3[k],1);}catch(e){}}if(G){for(const u of G.units||[])walk(u,1);walk(G.loot,1);walk(G.tele,1);walk(G.structs,1);walk(G.rpg,1);}return own;};
+ const age=new WeakMap();let base=null,baseKey=null;const ST={removed:0,objs:0};window.__leak=ST;
+ setInterval(()=>{try{if(!G||!R3||!R3.scene||G.over)return;const key=(R3.envG&&R3.envG.uuid)+':'+(MAP&&MAP.id);if(key!==baseKey){baseKey=key;base=null;setTimeout(()=>{try{base=new Set(R3.scene.children);}catch(e){}},3000);return;}if(!base)return;
+  const own=reach();for(const o of R3.scene.children.slice()){if(!o.isGroup||base.has(o)||o===R3.envG||own.has(o)||SKIP(o)){age.delete(o);continue;}const a=(age.get(o)||0)+1;age.set(o,a);if(a<3)continue;let n=0;o.traverse(()=>n++);R3.scene.remove(o);ST.removed++;ST.objs+=n;age.delete(o);}}catch(e){window.__lk42=String(e&&e.stack||e).slice(0,200);}},2000);
+ // skill names: small tag above the skill bar instead of big centre text
+ window.__skTag=(txt,col,big)=>{try{let h=document.getElementById('skTag');if(!h){h=document.createElement('div');h.id='skTag';h.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:8;pointer-events:none;display:flex;flex-direction:column-reverse;align-items:center;gap:2px';document.body.appendChild(h);}while(h.children.length>=2)h.lastChild.remove();const d=document.createElement('div');d.textContent=txt;d.style.cssText='font:800 '+(big?15:13)+'px Noto Sans KR,sans-serif;color:'+(col||'#fff')+';text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.6);opacity:.95;transition:opacity .4s';h.insertBefore(d,h.firstChild);setTimeout(()=>{d.style.opacity='0';},1100);setTimeout(()=>d.remove(),1500);}catch(e){}};
+}catch(e){window.__c42Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
