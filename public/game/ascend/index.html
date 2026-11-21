@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.40 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.41 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1727,12 +1727,12 @@ const THEMES={
  station:{sky:[[0,.005,.02],[.02,.05,.13],[.16,.38,.75]],fog:0x0a1428,fn:3600,ff:13000,hemi:[0xc8dcff,0x20242c,1.15],sun:[0xe8f0ff,2.6],rock:0x8a93a6,outer:0x1a1f28,edge:'90,200,255',mud:0x3a4656,high:0x4a5262,lava:['#18c8ff','rgba(230,255,255,.95)','rgba(0,40,110,.8)',0x40d0ff,'#3a404c'],fogC:[0x9fb4d8,0x6f8fc0],fogD:0x2a3a58,metal:1},
  space:{sky:[[0,0,.015],[.02,.015,.06],[.04,.025,.1]],fog:0x05040c,fn:7000,ff:24000,hemi:[0xc8d8ff,0x302848,1.25],sun:[0xfff0e0,2.9],rock:0x6a6058,outer:0,edge:'255,80,90',mud:0,high:0,lava:['#ff5a14','rgba(255,230,120,.9)','rgba(110,8,0,.85)',0xff6a2a,'#2b1a12'],fogC:[0x8a5ad0,0x4fb3c8],fogD:0x6a3fa8}};
 // ---------- NEO SEOUL 2326 ----------
-THEMES.seoul={sky:[[.01,.01,.05],[.12,.05,.22],[.62,.26,.62]],fog:0x1c1236,fn:3200,ff:12500,hemi:[0xb8c8ff,0x2a2040,1.05],sun:[0xd0dcff,2.1],rock:0x2a3040,outer:0x1a1e2a,edge:'120,220,255',mud:0x16507a,high:0x4a4f66,lava:['#18c8ff','rgba(230,255,255,.95)','rgba(0,40,110,.8)',0x40d0ff,'#3a404c'],fogC:[0x9a6ae0,0x4fd3e8],fogD:0x3a2a68,city:1};
+THEMES.seoul={sky:[[.01,.01,.05],[.12,.05,.22],[.62,.26,.62]],fog:0x1c1236,fn:3200,ff:12500,hemi:[0xb8c8ff,0x2a2040,1.05],sun:[0xd0dcff,2.1],rock:0x2a3040,outer:0x1a1e2a,edge:'120,220,255',mud:0x16507a,high:0x4a4f66,lava:['#18c8ff','rgba(230,255,255,.95)','rgba(0,40,110,.8)',0x40d0ff,'#3a404c'],fogC:[0x9a6ae0,0x4fd3e8],fogD:0x3a2a68,city:1};THEMES.ruin={sky:[[.02,.02,.03],[.1,.08,.08],[.36,.26,.2]],fog:0x2b2724,fn:1400,ff:7000,hemi:[0xa89c90,0x2a231e,.9],sun:[0xffd2a8,1.6],rock:0x3b3835,outer:0x1e1c1a,edge:'200,160,120',mud:0x3a3028,high:0x4a443e,lava:['#ff7a2a','rgba(255,220,180,.95)','rgba(90,30,0,.8)',0xff7a2a,'#3a3430'],fogC:[0x6a5a50,0x8a7a6a],fogD:0x2a2420,city:1};
 R.winTex=function(seed,warm){return this.tex(128,256,(g,w,h)=>{const Rn=mulberry(seed);g.fillStyle='#0b0f18';g.fillRect(0,0,w,h);for(let y=6;y<h-4;y+=10)for(let x=5;x<w-4;x+=9){const r=Rn();if(r<.42){g.fillStyle=r<.08?(warm?'#ffd28a':'#ff7ad9'):r<.25?'#7fe8ff':'#cfe0ff';g.globalAlpha=.35+Rn()*.6;g.fillRect(x,y,5,6);}}g.globalAlpha=1;for(let y=0;y<h;y+=64){g.fillStyle='rgba(120,220,255,.55)';g.fillRect(0,y,w,2);}});};
 R.signTex=function(txt,col){return this.tex(256,96,(g,w,h)=>{g.clearRect(0,0,w,h);g.fillStyle='rgba(10,6,24,.55)';g.fillRect(4,4,w-8,h-8);g.strokeStyle=col;g.lineWidth=4;g.strokeRect(6,6,w-12,h-12);g.font='bold 46px "Noto Sans KR",sans-serif';g.textAlign='center';g.textBaseline='middle';g.shadowColor=col;g.shadowBlur=16;g.fillStyle='#fff';g.fillText(txt,w/2,h/2+2);});};
 R.cityMats=function(){if(this._cm)return this._cm;const mk=(s,warm)=>{const tx=this.winTex(s,warm);return new T.MeshStandardMaterial({color:0x2a3346,roughness:.35,metalness:.65,map:tx,emissiveMap:tx,emissive:0xffffff,emissiveIntensity:.9});};
  this._cm={win:[mk(3,0),mk(7,1),mk(11,0),mk(19,1)],roof:this.std('#20263a',.5,.6),neon:[this.glow('#5ad1ff',2.4),this.glow('#ff4fd8',2.4),this.glow('#ffb84a',2.2),this.glow('#7dff9a',2)],red:this.glow('#ff3040',3)};return this._cm;};
-R.cityTower=function(k,S,i){const M=this.cityMats(),h=70+((k.x*7+k.y*13)%115),w=k.r*1.55;const m=new T.Mesh(this.box(w,h,w),M.win[i%4]);m.position.set(k.x,h/2,k.y);m.rotation.y=((i%4)*.0)+(i%3===0?.785:0)*.0;m.castShadow=m.receiveShadow=true;S.add(m);
+R.cityTower=function(k,S,i){if(MAP&&MAP.id==='sq_ruin'&&window.__ruinTower)return window.__ruinTower.call(this,k,S,i);const M=this.cityMats(),h=70+((k.x*7+k.y*13)%115),w=k.r*1.55;const m=new T.Mesh(this.box(w,h,w),M.win[i%4]);m.position.set(k.x,h/2,k.y);m.rotation.y=((i%4)*.0)+(i%3===0?.785:0)*.0;m.castShadow=m.receiveShadow=true;S.add(m);
  const nm=M.neon[i%4];this.mesh(this.box(w+4,4,w+4),nm,k.x,h+1,k.y,0,0,0,S);this.mesh(this.box(w*.7,10,w*.7),M.roof,k.x,h+7,k.y,0,0,0,S);
  if(i%3===0){this.mesh(this.cyl(1.5,1.5,40,6),M.roof,k.x,h+30,k.y,0,0,0,S);this.mesh(this.sph(3,8,6),M.red,k.x,h+51,k.y,0,0,0,S);}
  if(i%4===1){const sg=['네오서울','제타 경보','대피 구역','한강','2326','연합 전선','SEOUL'][i%7];const sp=new T.Sprite(new T.SpriteMaterial({map:this.signTex(sg,['#5ad1ff','#ff4fd8','#ffb84a','#7dff9a'][i%4]),transparent:true,depthWrite:false,toneMapped:false}));sp.scale.set(110,41,1);sp.position.set(k.x,h+48,k.y);S.add(sp);}};
@@ -2669,7 +2669,7 @@ function aiAssign(u,B){const st=G.ai&&G.ai[u.team];if(!st)return 1;const N=st.n+
  return best;}
 function aiGoal(u,B){const a=B.asg,E=1-u.team;
  if(a==='core'){const c=G.structs.find(s=>s.kind==='core'&&s.team===E);if(c&&!c.dead&&coreVuln(E)){const rg=u.arm==='inf'?Math.min(u.w.range*.7,330):u.w.range*.75,ang=Math.atan2(BASES[u.team].y-c.y,BASES[u.team].x-c.x)+B.slotA*.5;return{x:c.x+Math.cos(ang)*rg,y:c.y+Math.sin(ang)*rg,core:1};}B.asg=null;B.asgT=0;}
- const p=G.pts[typeof a==='number'?a:1];
+ const p=G.pts[typeof a==='number'?a:1]||G.pts[0]||{x:WW/2,y:WH/2,owner:-1};
  if(u.arm==='inf'&&!u.drone){const r=PR*(.2+.5*B.slotR);return{x:p.x+Math.cos(B.slotA)*r,y:p.y+Math.sin(B.slotA)*r,pt:p,def:p.owner===u.team};}
  const bb=BASES[u.team],bdx=bb.x-p.x,bdy=bb.y-p.y,bl=Math.hypot(bdx,bdy)||1,r=u.layer?260:190+60*B.slotR;return{x:clamp(p.x+bdx/bl*r*.7+Math.cos(B.slotA)*r*.5,40,WW-40),y:clamp(p.y+bdy/bl*r*.7+Math.sin(B.slotA)*r,40,WH-40),pt:p,def:p.owner===u.team,sup:1};}
 window.aiSpawnPt=function(own,team){const st=G.ai&&G.ai[team];if(!st||Math.random()<.25)return pick(own);let tx=WW/2,ty=WH/2;if(st.focus==='core'){tx=BASES[1-team].x;ty=BASES[1-team].y;}else if(st.focus>=0){tx=G.pts[st.focus].x;ty=G.pts[st.focus].y;}
@@ -4161,7 +4161,7 @@ function renderTerr(){let h='<h3>'+L('행성별 지형지물','Landmarks by worl
  for(const[k,arr]of Object.entries(TERR))h+=`<div class="epi" style="margin:6px 0"><b>${nm[k]}</b><br>${arr.map(f=>`<span style="color:${f.c}">■</span> <b>${tx(f.n)}</b> — <small>${tx(f.e)}</small>`).join('<br>')}</div>`;
  h+='<h3>'+L('공통 전장 지형','Common battlefield features')+'</h3><div class="epi">'+TERR_BASE.map(t2=>`<span style="color:${t2[2]}">■</span> <b>${tx(t2[0])}</b> — <small>${tx(t2[1])}</small>`).join('<br>')+'</div>';return h;}
 // terrain landmarks in RPG battles (visual + effect)
-window.__rpgDeco=function(R0){try{const X=(G&&G.rpg)||window.__rpgNext;if(!X)return;const A=AREA[X.epi];if(!A)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const list=TERR[A.terr]||[];X.terr=[];const R2=mulberry(77+(X.epi||'').length);
+window.__rpgDeco=function(R0){try{const X=(G&&G.rpg)||window.__rpgNext;if(!X)return;if(X.obj&&X.obj.k==='squad'){X.terr=[];return;}const A=AREA[X.epi];if(!A)return;const T3=window.THREE,S0=R0.envG;if(!S0)return;const list=TERR[A.terr]||[];X.terr=[];const R2=mulberry(77+(X.epi||'').length);
  const lbl=(txt,col,x,z,y)=>{const cv=document.createElement('canvas');cv.width=512;cv.height=96;const g=cv.getContext('2d');g.fillStyle='rgba(4,8,18,.62)';g.fillRect(0,14,512,68);g.fillStyle=col;g.fillRect(0,14,8,68);g.font='bold 40px "Noto Sans KR",sans-serif';g.fillStyle='#fff';g.textBaseline='middle';g.fillText(txt,22,50);const tx2=new T3.CanvasTexture(cv);tx2.colorSpace=T3.SRGBColorSpace;const sp=new T3.Sprite(new T3.SpriteMaterial({map:tx2,transparent:true,depthWrite:false,depthTest:false}));sp.scale.set(150,28,1);sp.position.set(x,y,z);sp.renderOrder=5;S0.add(sp);};
  const glowMat=(c,o)=>new T3.MeshStandardMaterial({color:c,emissive:c,emissiveIntensity:o||1.4,roughness:.4,metalness:.3});
  for(const f of list){const n=f.k==='well'||f.k==='reactor'||f.k==='rift'?2:f.k==='vent'?4:3;for(let i=0;i<n;i++){const x=WW*(.3+R2()*.4),y=WH*(.15+R2()*.7);const g=new T3.Group();const col=new T3.Color(f.c);
@@ -5844,7 +5844,7 @@ try{const _ep2=epiPanel;epiPanel=function(){_ep2();try{const E=EPIS.find(x=>x.id
 // ================= v3.3 : NATURAL ALIEN TERRAIN — irregular lava fields, soft hills, alien flora, magnetic cloud ceiling, steam vents =================
 const NAT={on:false,steam:[],aur:[],clouds:null,t:0,embers:[]};
 function natNoise(seed){const R=mulberry(seed|0);const a=[];for(let i=0;i<6;i++)a.push([R()*6.28,1+Math.floor(R()*5),R()*.18]);return t=>{let v=0;for(const[p,f,amp]of a)v+=Math.sin(t*f+p)*amp;return v;};}
-function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;const S=R.envG,th=MAP.theme;if(MAP.space||th==='station'||th==='seoul'||th==='city')return;
+function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;const S=R.envG,th=MAP.theme;if(MAP.space||th==='station'||th==='seoul'||th==='city'||th==='ruin')return;
  // 1) lava: drop the round dish & torus crust, lay an irregular cooled-basalt field with glowing veins
  const rm=[];S.children.forEach(o=>{if(!o.geometry)return;const g=o.geometry.type;for(const l of LAVA){if(Math.abs(o.position.x-l.x)<2&&Math.abs(o.position.z-l.y)<2&&(g==='TorusGeometry'||g==='CircleGeometry'))rm.push(o);}
   for(const h of HIGH){if(Math.abs(o.position.x-h.x)<2&&Math.abs(o.position.z-h.y)<2&&(g==='CylinderGeometry'||g==='TorusGeometry'))rm.push(o);}});rm.forEach(o=>S.remove(o));
@@ -8024,7 +8024,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
 // ================= v3.38 : SQUAD DUNGEON MAPS — three small dedicated maps (about 1/4 of a battlefield), 3 enemy gates, a map rule that ties into the counters, map order shuffled per stage =================
 {try{
  MAPS.sq_ruin={id:'sq_ruin',n:K('폐허 도시 교차로','Ruined Crossroads'),d:K('무너진 빌딩 사이 교차로. 엄폐물이 많아 지상 유닛이 받는 피해 -15%.','A crossroads among fallen towers. Lots of cover: ground units take 15% less damage.'),
-  theme:'seoul',W:2800,H:1700,sym:'x',base:{x:240,y:850},points:[{n:'B',x:1400,y:850}],coreNeed:1,river:{y:-900,h:120},bridges:[],fogs:[],bholes:[],wholes:[],lava:[],mud:[{x:1400,y:300,r:110}],high:[],gusts:[],
+  theme:'ruin',W:2800,H:1700,sym:'x',base:{x:240,y:850},points:[{n:'B',x:1400,y:850}],coreNeed:1,river:{y:-900,h:120},bridges:[],fogs:[],bholes:[],wholes:[],lava:[],mud:[{x:1400,y:300,r:110}],high:[],gusts:[],
   grid:{xs:[640,900,1160],ys:[330,560,1140,1370],r:52},rocks:10,rmin:26,rmax:46,rgap:70,seed:3801,minBase:300};
  MAPS.sq_deck={id:'sq_deck',n:K('궤도 정거장 갑판','Orbital Station Deck'),d:K('난간 없는 갑판. 가장자리 낙하 구역에서 지상 유닛은 피해를 입고, 비행 유닛의 피해 +12%.','A deck with no railings. Ground units take damage near the drop edge; air units deal +12%.'),
   theme:'station',W:2800,H:1800,sym:'x',base:{x:260,y:900},points:[{n:'B',x:1400,y:900}],coreNeed:1,fogs:[],bholes:[],wholes:[],lava:[],mud:[],high:[{x:1400,y:420,r:120}],gusts:[{cx:1400,cy:900,ax:900,ay:60,wx:.12,wy:.3}],gsym:'x',
@@ -8101,6 +8101,22 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
    ov.addEventListener('pointerdown',ev=>{clearTimeout(tm);const t=ev.target.closest('div');const txt=t&&t.textContent||'';const k=/가디언|Guardian/.test(txt)?'m_guardian':/포격|Artillery/.test(txt)?'m_artillery':/내 기체|My frame/.test(txt)?R().mech:null;if(k)tm=setTimeout(()=>{ov.__lpFired=Date.now();showGear(k);},600);});
    ov.addEventListener('pointerup',()=>clearTimeout(tm));ov.addEventListener('pointerleave',()=>clearTimeout(tm));ov.addEventListener('click',ev=>{if(ov.__lpFired&&Date.now()-ov.__lpFired<400){ev.stopPropagation();ev.preventDefault();}},true);}catch(e){}}).observe(document.body,{childList:true});
 }catch(e){window.__c40Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.41 : ruined-city theme for the dungeon (no neon), aiGoal guard, new-version notice =================
+{try{
+ const mkTheme=()=>{}; const RT=['#6a645c','#7a7268','#58534d','#837a6e'];
+ const wrap=()=>{};window.__ruinTower=function(k,S,i){const T3=window.THREE;const Rn=mulberry(Math.round(k.x*3+k.y*7)+11);const M1=new T3.MeshStandardMaterial({color:RT[i%4],roughness:.95,metalness:.04});const M2=new T3.MeshStandardMaterial({color:'#2e2a27',roughness:.98,metalness:.02});const w=k.r*1.6,h=46+Rn()*84;
+   const m=new T3.Mesh(this.box(w,h,w*(.8+Rn()*.3)),M1);m.position.set(k.x,h/2,k.y);m.rotation.set(0,Rn()*.5,(Rn()-.5)*.1);m.castShadow=m.receiveShadow=true;S.add(m);
+   for(let j=0;j<2;j++){const s=w*(.3+Rn()*.35),hh=12+Rn()*26;const b=new T3.Mesh(this.box(s,hh,s*(.6+Rn()*.5)),j?M2:M1);b.position.set(k.x+(Rn()-.5)*w*.5,h+hh*.3,k.y+(Rn()-.5)*w*.5);b.rotation.set((Rn()-.5)*.6,Rn()*3,(Rn()-.5)*.6);b.castShadow=true;S.add(b);}
+   for(let j=0;j<3;j++){const s=8+Rn()*18;const b=new T3.Mesh(this.box(s,s*.55,s*1.2),j%2?M2:M1);const a=Rn()*6.28,d=w*.65+Rn()*w*.45;b.position.set(k.x+Math.cos(a)*d,s*.25,k.y+Math.sin(a)*d);b.rotation.set(Rn()*.6,Rn()*3,Rn()*.6);S.add(b);}};
+ setInterval(()=>{try{mkTheme();wrap();}catch(e){}},300);
+ // smoke columns from the ruins
+ let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
+ // new version notice (deploys reach players at once)
+ const MYV='ascend-v341';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
+}catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
