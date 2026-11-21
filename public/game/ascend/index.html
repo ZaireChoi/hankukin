@@ -6392,7 +6392,7 @@ function scorchMark(x,y,a,len,hot){try{const T3=window.THREE;if(!R3||!R3.scene||
 
 // ================= v3.7c : performance — simplify heavy Meshy meshes at load (meshoptimizer), fewer props on phones; no getting stuck in terrain =================
 {const Q=[];let MS=null,busy=false;const phone=()=>!!window.__phone||((window.matchMedia&&matchMedia('(pointer:coarse)').matches));
- const capOf=(f,skinned,tris)=>{const ph=phone();const mech=/^(mech|m_|a_|god|omega|link|g\d_|c_boss|h_|o_knight)/.test(f);if(skinned)return mech?(ph?9000:20000):(ph?3500:8000);if(tris>30000)return ph?5000:9000;return ph?900:1600;};
+ const capOf=(f,skinned,tris)=>{const ph=phone();const mech=/^(mech|m_|a_|god|omega|link|g\d_|c_boss|h_|o_knight)/.test(f);if(skinned)return mech?(ph?7000:16000):(ph?1800:3500);if(tris>30000)return ph?2500:4500;return ph?700:1200;};
  async function run(){if(busy)return;busy=true;try{if(!MS){const mod=await import(new URL('lib/meshopt_simplifier.module.js',document.baseURI).href);MS=mod.MeshoptSimplifier;await MS.ready;}
   while(Q.length){const [f,scene]=Q.shift();let skinned=false;scene.traverse(o=>{if(o.isSkinnedMesh)skinned=true;});let total=0;const meshes=[];scene.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.index){meshes.push(o);total+=o.geometry.index.count/3;}});const cap=capOf(f,skinned,total);if(total<=cap*1.15)continue;const ratio=cap/total;
    for(const o of meshes){const g=o.geometry;if(g.userData.simp)continue;g.userData.simp=1;const pa=g.attributes.position;const n=pa.count;const pos=new Float32Array(n*3);for(let i=0;i<n;i++){pos[i*3]=pa.getX(i);pos[i*3+1]=pa.getY(i);pos[i*3+2]=pa.getZ(i);}
@@ -7473,7 +7473,9 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // 5) Arkos: the finale has its own boss — a violet-blade god-king with three attack patterns and a second phase
  CL.arkos=Object.assign({},CL.omegaw,{n:{ko:'오메가 군주 아르코스',en:'Omega Lord Arkos'},r:54,hp:9000,spd:110,xp:5000,d:{ko:'버려질 날을 알고 태어난 오메가의 왕',en:'The Omega king born knowing the day he would be discarded'}});
  try{STR.ko.arkos='오메가 군주 아르코스';STR.en.arkos='Omega Lord Arkos';}catch(e){}
- MDL.arkos=window.__ARKOS_GLB?['arkos',window.__ARKOS_YAW||0,170,'h']:['omega',PI/2,160,'h'];
+ MDL.arkos=['arkos',PI/2,170,'h'];
+ // v3.23: every mob has a real model now (no more placeholder bug shapes or grey boxes)
+ Object.assign(MDL,{zplasma:['zplasma',PI/2,58,'l'],zbane:['zbane',PI/2,26,'h'],zroach:['zroach',PI/2,46,'l'],zlurk:['zlurk',PI/2,48,'l'],robo:['robo',PI/2,40,'h'],sentry:['sentry',PI/2,46,'h']});
  const _la321=launch;launch=function(E,n){try{if(n&&n.boss==='omegaw'&&/아르코스|Arkos/.test(tx(n.x)||''))n=Object.assign({},n,{boss:'arkos'});}catch(e){}return _la321(E,n);};
  const AK={t:0,ph:1,sh:0};const _st321b=step;step=function(dt){_st321b(dt);try{const X=G&&G.rpg;const b=X&&X.bossU;if(!b||b.dead||X.boss!=='arkos'||G.over)return;const me=G.local.unit;if(!me||me.dead)return;b.isArkos=1;b.named=1;
    if(AK.ph===1&&b.hp<b.mhp*.5){AK.ph=2;announce('⚠',L('아르코스 · 각성','Arkos · Awakened'),L('「버려진 자의 분노를 보아라」','"Behold the wrath of the discarded"'),true,'#c58cff');for(let i=0;i<60;i++){const a=Math.random()*6.28;part(b.x,b.y,Math.cos(a)*380,Math.sin(a)*380,.8,i%2?'#c58cff':'#ffffff',6,80);}}
@@ -7493,6 +7495,43 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  const sweep=()=>{try{if(!R3||!R3.scene)return;const live=new Set();for(const e of R3.units.values()){if(e.eq&&e.eq.o)for(const o of Object.values(e.eq.o))if(o)live.add(o);if(e._thr)for(const o of e._thr){live.add(o);if(o.geometry)THG.add(o.geometry);}}
    const kill=[];for(const o of R3.scene.children){if(live.has(o))continue;const ud=o.userData||{};if(('holder'in ud&&'rot'in ud)||(o.isMesh&&THG.has(o.geometry)))kill.push(o);}for(const o of kill)R3.scene.remove(o);if(kill.length)window.__swept=(window.__swept||0)+kill.length;}catch(e){window.__sweepErr=String(e).slice(0,120);}};
  setInterval(sweep,500);}
+
+
+// ================= v3.23 : performance pass — batch static props, merge instanced props, share friend/foe materials, freeze static matrices, perf HUD + bench =================
+{const PF={key:null,t0:0,merged:0,batched:0,list:[],shared:0};window.__PF=PF;const CELL=1600;
+ const clearMine=()=>{for(const o of PF.list)if(o.parent)o.parent.remove(o);PF.list=[];PF.merged=0;PF.batched=0;};
+ // 1) identical top-level instanced props → one draw call each
+ const mergeInst=()=>{const T3=window.THREE;const groups=new Map();const v=new T3.Vector3(),m0=new T3.Matrix4();for(const o of R3.scene.children){if(!o.isInstancedMesh||o.userData.keep||o.userData.__merged||Array.isArray(o.material)||!o.visible||o.count<1||o.isSkinnedMesh)continue;o.updateMatrixWorld(true);o.getMatrixAt(0,m0);v.setFromMatrixPosition(m0).applyMatrix4(o.matrixWorld);const k=o.geometry.uuid+'|'+o.material.uuid+'|'+Math.floor(v.x/CELL)+','+Math.floor(v.z/CELL);let a=groups.get(k);if(!a)groups.set(k,a=[]);a.push(o);}
+  for(const a of groups.values()){if(a.length<2)continue;let n=0;a.forEach(o=>n+=o.count);const im=new T3.InstancedMesh(a[0].geometry,a[0].material,n);const m=new T3.Matrix4(),m2=new T3.Matrix4(),c=new T3.Color();const hasCol=a.some(o=>o.instanceColor);let i=0;
+   for(const o of a){o.updateMatrixWorld(true);for(let j=0;j<o.count;j++){o.getMatrixAt(j,m);m2.multiplyMatrices(o.matrixWorld,m);im.setMatrixAt(i,m2);if(hasCol){if(o.instanceColor)o.getColorAt(j,c);else c.set(0xffffff);im.setColorAt(i,c);}i++;}R3.scene.remove(o);const li=PF.list.indexOf(o);if(li>=0)PF.list.splice(li,1);}
+   im.instanceMatrix.needsUpdate=true;if(im.instanceColor)im.instanceColor.needsUpdate=true;im.castShadow=a[0].castShadow;im.receiveShadow=a[0].receiveShadow;try{im.computeBoundingSphere();}catch(e){}im.frustumCulled=true;im.matrixAutoUpdate=false;im.userData.__merged=1;R3.scene.add(im);PF.list.push(im);PF.merged+=a.length;}};
+ // 2) decorative props (env group): same mesh+material → instanced; originals stay (hidden) for collision
+ const batchEnv=()=>{const T3=window.THREE;const env=R3.envG;if(!env)return;env.updateMatrixWorld(true);const groups=new Map();const visUp=o=>{for(let p=o;p&&p!==env;p=p.parent)if(!p.visible)return false;return true;};
+  env.traverse(o=>{if(!o.isMesh||o.isSkinnedMesh||o.isInstancedMesh||o.userData.__bat||Array.isArray(o.material)||!o.geometry||o.userData.keep)return;if(!visUp(o))return;const k=o.geometry.uuid+'|'+o.material.uuid+'|'+Math.floor(o.matrixWorld.elements[12]/CELL)+','+Math.floor(o.matrixWorld.elements[14]/CELL);let a=groups.get(k);if(!a)groups.set(k,a=[]);a.push(o);});
+  for(const a of groups.values()){if(a.length<3)continue;const im=new T3.InstancedMesh(a[0].geometry,a[0].material,a.length);a.forEach((o,i)=>{im.setMatrixAt(i,o.matrixWorld);o.visible=false;o.userData.__bat=1;});im.instanceMatrix.needsUpdate=true;im.castShadow=a[0].castShadow;im.receiveShadow=a[0].receiveShadow;try{im.computeBoundingSphere();}catch(e){}im.matrixAutoUpdate=false;im.userData.__merged=1;R3.scene.add(im);PF.list.push(im);PF.batched+=a.length;}
+  env.matrixWorldAutoUpdate=false;};
+ const _st323=step;step=function(dt){_st323(dt);try{if(!R3||!R3.scene||!G)return;const key=(R3.envG?R3.envG.uuid:'-')+':'+(MAP&&MAP.id);if(key!==PF.key){clearMine();PF.key=key;PF.t0=G.t;PF.next=G.t+3;}
+   if(G.t>=PF.next&&G.t-PF.t0<45){PF.next=G.t+4;batchEnv();mergeInst();}
+   if(R3.envG&&R3.envG.matrixWorldAutoUpdate===false&&(PF.mw=(PF.mw||0)-dt)<0){PF.mw=2;R3.envG.updateMatrixWorld(true);}}catch(e){window.__pfErr=String(e&&e.stack||e).slice(0,200);}};
+ // 3) allies and ordinary foes share materials per (model material, side) instead of one clone per frame
+ const MSH=new Map();const _ip323=iffPaint;iffPaint=function(e,m,u){const k0=e._iff;_ip323(e,m,u);try{const k=iffOf(u);if(k==='me'||u.illu||(k0===k&&e._sh323===k))return;e._sh323=k;
+   const share=mt=>{const b=mt&&mt.userData&&mt.userData.iffBase;if(!b||mt.userData.grayFoe)return mt;const key=b.uuid+'|'+k;const s=MSH.get(key);if(!s){MSH.set(key,mt);return mt;}if(s!==mt)PF.shared++;return s;};
+   m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;o.material=Array.isArray(o.material)?o.material.map(share):share(o.material);});}catch(er){}};
+ // 4) perf HUD (?perf=1) and a 60-second bench (?perf=1&bench=60)
+ const Q=new URLSearchParams(location.search);const on=Q.get('perf')==='1';const S={fr:[],last:performance.now(),rnd:[],stp:[]};window.__PS=S;
+ {const raf=()=>{const n=performance.now();S.fr.push(n-S.last);S.last=n;if(S.fr.length>240)S.fr.shift();requestAnimationFrame(raf);};requestAnimationFrame(raf);}
+ const wrapR=()=>{if(!R3||!R3.r||R3.r.__pfw)return;const r=R3.r;const f=r.render.bind(r);r.render=function(s,c){const t=performance.now();f(s,c);S.rnd.push(performance.now()-t);if(S.rnd.length>120)S.rnd.shift();};r.__pfw=1;};
+ const _st323b=step;step=function(dt){const t=performance.now();_st323b(dt);S.stp.push(performance.now()-t);if(S.stp.length>240)S.stp.shift();};
+ const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+ window.__perfSnap=()=>{wrapR();let obj=0;const mats=new Set();try{R3.scene.traverse(o=>{obj++;if(o.material)(Array.isArray(o.material)?o.material:[o.material]).forEach(x=>mats.add(x));});}catch(e){}const fr=S.fr.slice(-120);return{fps:+(1000/Math.max(1,avg(fr))).toFixed(1),frameMax:+Math.max(0,...fr).toFixed(0),render:+avg(S.rnd.slice(-60)).toFixed(1),step:+avg(S.stp.slice(-120)).toFixed(2),obj,mats:mats.size,calls:R3&&R3.r?R3.r.info.render.calls:0,tris:R3&&R3.r?R3.r.info.render.triangles:0,mem:performance.memory?Math.round(performance.memory.usedJSHeapSize/1e6):null,units:G&&G.units?G.units.length:0,merged:PF.merged,batched:PF.batched,shared:PF.shared};};
+ if(on){const d=document.createElement('div');d.id='perfHud';d.style.cssText='position:fixed;left:6px;bottom:6px;z-index:99999;font:11px/1.35 monospace;color:#bff;background:rgba(0,0,0,.6);padding:5px 7px;border-radius:6px;pointer-events:none;white-space:pre';document.body.appendChild(d);
+  setInterval(()=>{try{wrapR();if(!G||!R3)return;const s=window.__perfSnap();d.textContent='FPS '+s.fps+'  max '+s.frameMax+'ms\nrender '+s.render+'ms  step '+s.step+'ms\nobj '+s.obj+'  mats '+s.mats+'  calls '+s.calls+'\ntris '+(s.tris/1000).toFixed(0)+'k  mem '+s.mem+'MB  units '+s.units;}catch(e){}},1000);
+  const bn=+Q.get('bench');if(bn){window.__bench=async(n,secs)=>{P.size=n;P.mode='solo';try{document.querySelectorAll('#csIn').forEach(x=>{let d=x;while(d&&d.parentElement!==document.body)d=d.parentElement;d&&d.remove();});}catch(e){}document.getElementById('mSolo').click();await new Promise(r=>setTimeout(r,8000));S.fr=[];const samples=[];for(let i=0;i<secs;i+=5){await new Promise(r=>setTimeout(r,5000));samples.push(window.__perfSnap());}const res={n,secs,fps:+avg(samples.map(s=>s.fps)).toFixed(1),frameMax:Math.max(...samples.map(s=>s.frameMax)),render:+avg(samples.map(s=>s.render)).toFixed(1),step:+avg(samples.map(s=>s.step)).toFixed(2),obj:samples[samples.length-1].obj,mats:samples[samples.length-1].mats,calls:samples[samples.length-1].calls,mem:samples[samples.length-1].mem};window.__benchRes=res;console.log('BENCH',JSON.stringify(res));const b=document.getElementById('perfHud');if(b)b.textContent+='\nBENCH '+JSON.stringify(res);return res;};setTimeout(()=>window.__bench(bn,60),4000);}}}
+
+
+// v3.23b: hidden subtrees skip matrix updates (they refresh the moment they are shown); far frames animate at a lower rate
+{try{const T3=window.THREE;const OP=T3&&T3.Object3D&&T3.Object3D.prototype;if(OP&&!OP.__hidSkip){OP.__hidSkip=1;OP.updateMatrixWorld=function(force){if(this.matrixAutoUpdate)this.updateMatrix();if(this.matrixWorldNeedsUpdate||force){if(this.parent===null)this.matrixWorld.copy(this.matrix);else this.matrixWorld.multiplyMatrices(this.parent.matrixWorld,this.matrix);this.matrixWorldNeedsUpdate=false;force=true;}const ch=this.children;for(let i=0,l=ch.length;i<l;i++){const c=ch[i];if(c.visible===false&&!c.isBone&&!c.isLight&&!c.isCamera){if(force)c.matrixWorldNeedsUpdate=true;continue;}if(c.matrixWorldAutoUpdate===true||force===true)c.updateMatrixWorld(force);}};}}catch(e){window.__hidErr=String(e);}
+ const _maL=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){try{const me=G&&G.local&&G.local.unit;if(u&&me&&u!==me&&!u.boss&&!u.named){const d=Math.abs(u.x-me.x)+Math.abs(u.y-me.y);const every=d>2200?4:d>1200?2:1;if(every>1){e._lodA=(e._lodA||0)+dt;e._lodN=((e._lodN||0)+1)%every;if(e._lodN!==0)return;dt=e._lodA;e._lodA=0;}}}catch(er){}return _maL(e,m,u,dt,now);};}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
@@ -7593,7 +7632,7 @@ if(typeof MDL!=='undefined'&&MDL.arkframe)syncArkModel();
  setInterval(()=>{try{const e=document.getElementById('cine');if(e&&e.classList.contains('on')&&window.__HL)window.__HL.until=Math.max(window.__HL.until,performance.now()/1000+.6);}catch(e){}},200);}
 // ================= v3.11d : no mid-fight hitches (model prefetch, paced spawning, shader prewarm) · swarm as real Zeta lings · XP shards =================
 // ---- at deploy: fetch the models this fight will need right away, instead of on first sight ----
-{const _nmP=newMatch;newMatch=function(size,mode){_nmP(size,mode);try{if(!mdlUse())return;const need=new Set(['zling','zling_sw','zspit','zwing','zbehemoth','w_laserrifle','w_plasmacannon','w_rocket','w_railsniper']);for(const fac of['fed','emp'])for(const k of['t','f','o'])need.add(INF_M[fac][k]);
+{const _nmP=newMatch;newMatch=function(size,mode){_nmP(size,mode);try{if(!mdlUse())return;const need=new Set(['zling','zling_sw','zspit','zwing','zbehemoth','zplasma','zbane','zroach','zlurk','robo','sentry','w_laserrifle','w_plasmacannon','w_rocket','w_railsniper']);for(const fac of['fed','emp'])for(const k of['t','f','o'])need.add(INF_M[fac][k]);
   for(const u of G.units){const m=MDL[u.cls];if(m)need.add(m[0]);}let i=0;for(const f of need)setTimeout(()=>{try{mdlGet(f);}catch(e){}},200+(i++)*120);}catch(e){}};}
 // ---- a wave of 10+ units no longer clones every model in one frame: at most two rigged models are built per frame ----
 {let n=0,fr=-1;const _mi=mdlInstance;mdlInstance=function(f,yaw,size,axis){try{const c=MC[f];if(c&&c.st==='ok'&&c.skinned&&G&&!G.over&&G.t>1.5&&R3&&R3.fno!=null){if(R3.fno!==fr){fr=R3.fno;n=0;}if(++n>2)return null;}}catch(e){}return _mi(f,yaw,size,axis);};}
