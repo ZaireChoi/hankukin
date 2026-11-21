@@ -1,5 +1,5 @@
 // ASCEND service worker: cache-first for heavy assets, network-first for pages
-const V='ascend-v337';const HEAVY=/\/game\/ascend\/(models|bg)\/|\.(glb|webp|jpg|png)$/;
+const V='ascend-v338';const HEAVY=/\/game\/ascend\/(models|bg)\/|\.(glb|webp|jpg|png)$/;
 self.addEventListener('install',e=>self.skipWaiting());
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET'||u.origin!==location.origin)return;

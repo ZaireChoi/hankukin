@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.37 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.38 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2580,7 +2580,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
    const ae=$('#tAuto');ae.style.background=autoOn()?'rgba(40,140,80,.7)':'';
    const eb=$('#tAb');if(info.abk&&ABS[info.abk]){eb.style.display='';const t2=info.ab>=100?ABS[info.abk].ic+'\n'+tx(ABS[info.abk].n):'T '+Math.floor(info.ab||0)+'%';if(eb.textContent!==t2)eb.textContent=t2;eb.style.opacity=info.ab>=100?1:.55;}else eb.style.display='none';
    $('#tUp').style.display=$('#tDn').style.display=MAP.space?'':'none';}}
- else if(!G.over){const rt=G.client?info.rt:G.local.respT;c.textAlign='center';if(G.killer){c.font=fnt(mob?40:58,900,1);c.fillStyle='rgba(0,0,0,.6)';c.fillText(t('kia'),cx+3,VH*.36+3);c.fillStyle='#ff5b64';c.fillText(t('kia'),cx,VH*.36);c.font=fnt(17);c.fillStyle='#fff';c.fillText(t('killedBy',rs(G.killer)),cx,VH*.36+34);}
+ else if(!G.over){const rt=G.client?info.rt:G.local.respT;c.textAlign='center';if(G.killer){{const s0=t('kia')+' · '+t('killedBy',rs(G.killer));c.font=fnt(mob?14:18,800,1);c.fillStyle='rgba(0,0,0,.55)';c.fillText(s0,cx+1,VH*.14+1);c.fillStyle='#ff8a8f';c.fillText(s0,cx,VH*.14);}}
   if(isHidden('#deploy')&&(G.local.want||NET.wantSent)){c.font=fnt(18,700,1);c.fillStyle='#ffc24a';c.fillText(t('waitDeploy',Math.max(0,rt).toFixed(1)),cx,VH*.36+66);}}
  // ---- hit / kill markers & crosshair ----
  const mx=touchMode?cx:mouse.x,my=touchMode?VH/2:mouse.y;
@@ -3186,7 +3186,7 @@ function invSetup(mode){invTeams(false);if(!G)return;G.inv=null;if(mode==='clien
  let n=0;for(const s of G.slots){if(s.team!==1)continue;s.name='ZETA-'+(101+n++);s.ch=bugCh();s.absK=null;s.ab=0;}
  if(G.story&&G.story.ms){const has=new Set(G.story.ms.map(m=>m.k));G.story.ms=G.story.ms.map(m=>m.k!=='obj'?m:(!has.has('kill')?{k:'kill',n:16,v:0,merit:190,done:false}:!has.has('dmg')?{k:'dmg',n:4000,v:0,merit:180,done:false}:{k:'assist',n:8,v:0,merit:160,done:false}));}
  setTimeout(()=>{if(G&&G.inv&&!G.rpg)announce(t('inv0'),t('inv0s'),tx(MAP.n),true,'#c58cff');},3800);storyEvent(t('inv0')+' · '+tx(MAP.n),'#c58cff');}
-{const _nm=newMatch;newMatch=function(size,mode){const keep=P.map;if(P.mode==='inv'&&mode!=='client')P.map='seoul';try{_nm(size,mode);}finally{P.map=keep;}invSetup(mode);};}
+{const _nm=newMatch;newMatch=function(size,mode){const keep=P.map;if(P.mode==='inv'&&mode!=='client'&&!String(P.map).startsWith('sq_'))P.map='seoul';try{_nm(size,mode);}finally{P.map=keep;}invSetup(mode);};}
 {const _pb=pickBotClass;pickBotClass=function(s){if(G&&G.inv&&s.team===1){const a=G.inv.act,r=Math.random();if(a>=2&&r<.07)return'ztank';if(a>=2&&r<.15)return'zplasma';if(r<.27)return'zhopper';if(r<.52)return'zspit';return'zling';}return _pb(s);};}
 function invSpawn(cls,x,y,ttl){const u=spawnMinion(invOwn(),cls,x,y,ttl||170,0);u.slot.name=t(cls);u.slot.ch=bugCh();u.bugM=1;return u;}
 function spawnWave(n){const I=G.inv,k=clamp(G.size/40,.6,2.2),cnt=Math.round(Math.min(5+n*2,20)*k),b=BASES[1];
@@ -7862,11 +7862,11 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
    ov.querySelector('#sqGo').onclick=()=>{saveP();ov.remove();start(stage);};};
   draw();};
  // ---------- launch ----------
- const start=n=>{const E=EPIS.find(e=>e.map==='dune')||EPIS[0];const r=rec();if(r.sqF.ace){r.wingPrev=r.wing;r.wing=r.sqF.ace;r.wingFree=r.sqF.ace;}SQ.pending=n;launch(E,{waves:0,boss:null,diff:Math.max(1,Math.round(n/5)),rw:{},quest:'squad',obj:{k:'squad',stage:n}});};
+ const start=n=>{const E=EPIS.find(e=>e.map==='dune')||EPIS[0];const r=rec();if(r.sqF.ace){r.wingPrev=r.wing;r.wing=r.sqF.ace;r.wingFree=r.sqF.ace;}SQ.pending=n;launch(Object.assign({},E,{map:window.__sqMapOf?window.__sqMapOf(n):E.map}),{waves:0,boss:null,diff:Math.max(1,Math.round(n/5)),rw:{},quest:'squad',obj:{k:'squad',stage:n}});};
  window.squadStart=start;window.__sqFinish=(X,w)=>finish(X,w);
  const hpMul=n=>1+.08*(n-1);
- const spawnE=(k,x,y,n,o)=>{o=o||{};let u=null;try{u=invSpawn(k,x,y,9999);}catch(e){}if(!u)return null;u.sqStage=n;u.mhp=Math.round(u.mhp*hpMul(n)*(o.hp||1));u.hp=u.mhp;u.sqE=1;if(o.name&&u.slot)u.slot.name=o.name;return u;};
- const spawnMech=(model,x,y,n,tier)=>{const key='sqm_'+model+'_'+tier;const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};const sc={mp:.9,imp:1,cmd:1.1,ace:1.15}[tier];window.MONMDL[key]=[model,PI/2,H*sc,'h'];let u=null;try{u=invSpawn('arkframe',x,y,9999);}catch(e){}if(!u)return null;u.mon=key;u.sqE=1;u.sqStage=n;const early=n<=5;const m=(early?{mp:.42,imp:.6,cmd:.85,ace:1.5}:{mp:.55,imp:.8,cmd:1.4,ace:2.6})[tier];u.mhp=Math.round(u.mhp*m*hpMul(n));u.hp=u.mhp;
+ const spawnE=(k,x,y,n,o)=>{o=o||{};let u=null;try{if(window.__sqGate){const g=window.__sqGate();x=g[0];y=g[1];}u=invSpawn(k,x,y,9999);}catch(e){}if(!u)return null;u.sqStage=n;u.mhp=Math.round(u.mhp*hpMul(n)*(o.hp||1));u.hp=u.mhp;u.sqE=1;if(o.name&&u.slot)u.slot.name=o.name;return u;};
+ const spawnMech=(model,x,y,n,tier)=>{const key='sqm_'+model+'_'+tier;const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};const sc={mp:.9,imp:1,cmd:1.1,ace:1.15}[tier];window.MONMDL[key]=[model,PI/2,H*sc,'h'];let u=null;try{if(window.__sqGate){const g=window.__sqGate();x=g[0];y=g[1];}u=invSpawn('arkframe',x,y,9999);}catch(e){}if(!u)return null;u.mon=key;u.sqE=1;u.sqStage=n;const early=n<=5;const m=(early?{mp:.42,imp:.6,cmd:.85,ace:1.5}:{mp:.55,imp:.8,cmd:1.4,ace:2.6})[tier];u.mhp=Math.round(u.mhp*m*hpMul(n));u.hp=u.mhp;
   if(tier==='imp'){u.fbd={sk:['charge'],col:'#ff9b40'};u.fbdMul=.5;u.slot.name=L('개량형','Improved');}else if(tier==='mp'){u.slot.name=L('양산형','Mass-production');}return u;};
  const arena=()=>({x:WW*.5,y:WH*.5});
  const act=(X,k)=>{const n=X.obj.stage;const P0=plan(n);const a=arena();const me=G.local.unit;const ex=a.x+420,ey=a.y;
@@ -7880,7 +7880,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   const cnt={};list.forEach(k=>{cnt[UN[k].ty]=(cnt[UN[k].ty]||0)+1;});const same=Math.max(0,...Object.values(cnt))+1;const roles=new Set(list.map(k=>UN[k].role));X.sqSyn=1+((same>=5?18:same>=4?12:same>=3?6:0)+(roles.has('tank')&&roles.has('fire')&&roles.has('support')?8:0))/100;};
  // ---------- the fight ----------
  const _ss332=storyStep;storyStep=function(dt){const X=G&&G.rpg;if(!(X&&X.obj&&X.obj.k==='squad'))return _ss332(dt);if(G.over)return;try{const n=X.obj.stage;if(!X.sqInit){const me=G.local.unit;if(!me)return;X.sqInit=1;X.sqT=0;X.sqT0=G.t;X.sqAct=0;X.sqDead=0;deploySquad(X);act(X,1);X.sqAct=1;}
-   X.sqT=Math.max(X.sqT+dt,G.t-(X.sqT0!=null?X.sqT0:G.t));const live=G.units.filter(u=>!u.dead&&u.sqE);{const A0=arena();for(const e of live){const d=Math.hypot(e.x-A0.x,e.y-A0.y);if(d>1100){e.x=A0.x+(e.x-A0.x)/d*900;e.y=A0.y+(e.y-A0.y)/d*900;e.vx=0;e.vy=0;}}}if(X.sqAct===1&&live.length<=Math.max(2,Math.floor(plan(n).a1.n*.15))){act(X,2);X.sqAct=2;}else if(X.sqAct===2&&live.length<=1){act(X,3);X.sqAct=3;}else if(X.sqAct===3&&(live.length===0||(X.sqBoss&&X.sqBoss.dead&&live.every(u=>u.hp<=0||u===X.sqBoss)))){X.won=1;finish(X,true);return;}
+   X.sqT=Math.max(X.sqT+dt,G.t-(X.sqT0!=null?X.sqT0:G.t));const live=G.units.filter(u=>!u.dead&&u.sqE);{const A0=arena();for(const e of live){const d=Math.hypot(e.x-A0.x,e.y-A0.y);const LR=window.__sqLeash?window.__sqLeash():1100;if(d>LR){e.x=A0.x+(e.x-A0.x)/d*LR*.82;e.y=A0.y+(e.y-A0.y)/d*LR*.82;e.vx=0;e.vy=0;}}}if(X.sqAct===1&&live.length<=Math.max(2,Math.floor(plan(n).a1.n*.15))){act(X,2);X.sqAct=2;}else if(X.sqAct===2&&live.length<=1){act(X,3);X.sqAct=3;}else if(X.sqAct===3&&(live.length===0||(X.sqBoss&&X.sqBoss.dead&&live.every(u=>u.hp<=0||u===X.sqBoss)))){X.won=1;finish(X,true);return;}
    const me=G.local.unit;if(me&&me.dead&&!X._dd){X._dd=1;X.sqDead++;}if(me&&!me.dead)X._dd=0;if(X.sqT>=120){finish(X,false);}}catch(e){window.__sqErr=String(e&&e.stack||e).slice(0,200);}};
  // counters + synergy + stage scaling of enemy damage
  const _hu332=hurt;hurt=function(e,dmg,src,a,dt){try{const X=G&&G.rpg;if(X&&X.obj&&X.obj.k==='squad'&&e){const su=src&&src.unit;if(su){const ta=typeOf(su),td=typeOf(e);if(BEAT[ta]===td)dmg*=1.25;if(BEAT[td]===ta)dmg*=.8;if(su.team===G.local.team&&X.sqSyn)dmg*=X.sqSyn;if(su.sqE)dmg*=hpMul(X.obj.stage);}}}catch(er){}return _hu332(e,dmg,src,a,dt);};
@@ -8019,6 +8019,36 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
    const R0=Math.max(64,Math.min(110,Math.min(w,h)*.12));
    for(const [dd,e] of pick){const p=pr(e.x,e.y,hh(e)+20);const a=Math.atan2(p[1]-P0[1],p[0]-P0[0]);const sd=Math.hypot(p[0]-P0[0],p[1]-P0[1]);if(sd<R0+12)continue;const big=e.boss||e.named||e.elite2==='cmd';const s=big?16:11;const al=Math.max(.35,Math.min(.95,1.15-dd/1600));
     const cx=P0[0]+Math.cos(a)*R0,cy=P0[1]+Math.sin(a)*R0;c.save();c.translate(cx,cy);c.rotate(a);c.globalAlpha=al;c.beginPath();c.moveTo(s*1.3,0);c.lineTo(-s*.8,-s*.85);c.lineTo(-s*.35,0);c.lineTo(-s*.8,s*.85);c.closePath();c.fillStyle=big?'#ffcf5a':'#ff4b4b';c.shadowColor=big?'#ffcf5a':'#ff2a2a';c.shadowBlur=8;c.fill();c.lineWidth=1;c.strokeStyle='rgba(0,0,0,.6)';c.shadowBlur=0;c.stroke();c.restore();}}catch(e){window.__arrErr=String(e).slice(0,150);}};requestAnimationFrame(loop);}catch(e){window.__c37b=String(e);}}
+
+
+// ================= v3.38 : SQUAD DUNGEON MAPS — three small dedicated maps (about 1/4 of a battlefield), 3 enemy gates, a map rule that ties into the counters, map order shuffled per stage =================
+{try{
+ MAPS.sq_ruin={id:'sq_ruin',n:K('폐허 도시 교차로','Ruined Crossroads'),d:K('무너진 빌딩 사이 교차로. 엄폐물이 많아 지상 유닛이 받는 피해 -15%.','A crossroads among fallen towers. Lots of cover: ground units take 15% less damage.'),
+  theme:'seoul',W:2800,H:1700,sym:'x',base:{x:240,y:850},points:[{n:'B',x:1400,y:850}],coreNeed:1,river:{y:-900,h:120},bridges:[],fogs:[],bholes:[],wholes:[],lava:[],mud:[{x:1400,y:300,r:110}],high:[],gusts:[],
+  grid:{xs:[640,900,1160],ys:[330,560,1140,1370],r:52},rocks:10,rmin:26,rmax:46,rgap:70,seed:3801,minBase:300};
+ MAPS.sq_deck={id:'sq_deck',n:K('궤도 정거장 갑판','Orbital Station Deck'),d:K('난간 없는 갑판. 가장자리 낙하 구역에서 지상 유닛은 피해를 입고, 비행 유닛의 피해 +12%.','A deck with no railings. Ground units take damage near the drop edge; air units deal +12%.'),
+  theme:'station',W:2800,H:1800,sym:'x',base:{x:260,y:900},points:[{n:'B',x:1400,y:900}],coreNeed:1,fogs:[],bholes:[],wholes:[],lava:[],mud:[],high:[{x:1400,y:420,r:120}],gusts:[{cx:1400,cy:900,ax:900,ay:60,wx:.12,wy:.3}],gsym:'x',
+  grid:{xs:[760,1060],ys:[520,1280],r:44},rocks:8,rmin:30,rmax:50,rgap:110,seed:3802,minBase:300};
+ MAPS.sq_arena={id:'sq_arena',n:K('보스 원형 투기장','Boss Arena'),d:K('10·20·30단계 전용. 용암이 주기적으로 분출한다(바닥 예고). 움직이며 싸워라.','Stages 10/20/30. Lava erupts on a timer (ground warning). Keep moving.'),
+  theme:'volcano',W:2600,H:2600,sym:'x',base:{x:300,y:1300},points:[{n:'B',x:1300,y:1300}],coreNeed:1,fogs:[],bholes:[],wholes:[],lava:[{x:520,y:520,r:120},{x:520,y:2080,r:120}],mud:[],high:[],gusts:[],rocks:12,rmin:40,rmax:80,rgap:160,seed:3803,minBase:300};
+ const SQM={sq_ruin:{rule:'cover'},sq_deck:{rule:'edge'},sq_arena:{rule:'lava'}};
+ const hash=n=>{let h=(n*2654435761)>>>0;h^=h>>>13;return h;};
+ window.__sqMapOf=n=>n%10===0?'sq_arena':['sq_ruin','sq_deck'][hash(n)%2];
+ const isSq=()=>!!(G&&G.rpg&&G.rpg.obj&&G.rpg.obj.k==='squad'&&MAP&&SQM[MAP.id]);
+ window.__sqGate=()=>{if(!isSq())return null;const gs=[[WW*.86,WH*.5],[WW*.72,WH*.16],[WW*.72,WH*.84]];const g=gs[Math.floor(Math.random()*3)];return [g[0]+rnd(-110,110),g[1]+rnd(-110,110)];};
+ window.__sqLeash=()=>isSq()?Math.min(WW,WH)*.5:1100;
+ const air=u=>u&&(u.sqTy==='air'||u.cls==='zhopper'||!!(CL[u.cls]&&CL[u.cls].air));
+ const _hu338=hurt;hurt=function(e,dmg,src,a,dt){try{if(isSq()&&e){const r=SQM[MAP.id].rule;const su=src&&src.unit;if(r==='cover'&&!air(e))dmg*=.85;if(r==='edge'&&su&&air(su))dmg*=1.12;}}catch(er){}return _hu338(e,dmg,src,a,dt);};
+ let tE=0,tL=0;
+ const _st338=step;step=function(dt){_st338(dt);try{if(!isSq()||G.over)return;const r=SQM[MAP.id].rule;
+  if(r==='edge'){tE+=dt;const M0=150;if(tE>=.5){tE=0;for(const u of G.units){if(u.dead||air(u)||u.boss)continue;const d=Math.min(u.x,u.y,WW-u.x,WH-u.y);if(d<M0){u.hp-=u.mhp*.025;part(u.x,u.y,0,0,.4,'#ff5a3a',6,8);if(u.hp<=0){try{hurt(u,1,null,0,'x');}catch(e){}}}}
+    for(let i=0;i<6;i++){const s=Math.floor(Math.random()*4),k=Math.random();const x=s<2?k*WW:(s===2?40:WW-40),y=s<2?(s===0?40:WH-40):k*WH;part(x,y,0,0,.6,'#ff6b3a',5,4);}}}
+  if(r==='lava'){tL+=dt;if(tL>=6){tL=0;const tg=G.units.filter(u=>!u.dead&&u.team===G.local.team).sort(()=>Math.random()-.5).slice(0,3);for(const u of tg){const x=u.x+rnd(-90,90),y=u.y+rnd(-90,90),R0=140;G.tele=G.tele||[];G.tele.push({k:'circle',x,y,r:R0,dmg:0,src:null,t:1.1});setTimeout(()=>{try{if(!G||G.over)return;for(let i=0;i<34;i++){const b=Math.random()*6.28,s=rnd(80,420);part(x,y,Math.cos(b)*s,Math.sin(b)*s,.7,i%3?'#ff6a2a':'#ffd166',8,rnd(10,140));}for(const v of G.units){if(v.dead||v.boss)continue;if(Math.hypot(v.x-x,v.y-y)<R0+(v.r||10)){try{hurt(v,v.mhp*.12,null,0,'x');}catch(e){}}}G.shake=Math.max(G.shake||0,6);}catch(e){}},1100);}}}
+ }catch(e){window.__c38Err=String(e&&e.stack||e).slice(0,200);}};
+ // map name + rule on the formation screen and at the start
+ new MutationObserver(()=>{try{const ov=document.getElementById('sqOv');if(!ov)return;const m=ov.innerHTML.match(/(?:단계|Stage) (\d+)<\/b>/);if(!m)return;const n=+m[1];const id=window.__sqMapOf(n);let b=ov.querySelector('#sqMapRow');if(b&&b.dataset.id===id)return;if(!b){b=document.createElement('div');b.id='sqMapRow';b.style.cssText='margin:4px 0 10px;padding:8px 12px;border-radius:10px;background:rgba(125,216,255,.07);border-left:3px solid #7fd8ff';const host=ov.querySelector('#sqPrev');if(!host)return;host.parentElement.insertAdjacentElement('afterend',b);}b.dataset.id=id;const M=MAPS[id];b.innerHTML='<b style="color:#9fe8ff">🗺 '+tx(M.n)+'</b> <small style="opacity:.85">· '+tx(M.d)+'</small>';}catch(e){}}).observe(document.body,{childList:true,subtree:true});
+ let annT=null;setInterval(()=>{try{if(isSq()&&G.rpg.sqInit&&annT!==G){annT=G;announce('🗺',tx(MAP.n),tx(MAP.d),false,'#9fe8ff');}}catch(e){}},700);
+}catch(e){window.__c38Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
@@ -8235,7 +8265,7 @@ MAPS.seoul={id:'seoul',n:{ko:'네오 서울 2326',en:'Neo Seoul 2326'},d:{ko:'30
  grid:{xs:[1060,1340,1620,1900,2180,2460],ys:[400,660,980,1240,1480,1880,2480,2760,3020],r:56},rocks:18,rmin:28,rmax:60,rgap:70,seed:2326,minBase:760};
 STR.ko.modeInvD='무대는 300년 후의 서울(네오 서울 2326). '+STR.ko.modeInvD;STR.en.modeInvD='Set in Seoul, 300 years from now (Neo Seoul 2326). '+STR.en.modeInvD;
 {const _sm=syncModeUI;syncModeUI=function(){_sm();const s=$('#mMap');if(s){s.disabled=P.mode==='inv';if(P.mode==='inv'){s.value='seoul';const d=$('#mMapD');if(d)d.textContent=tx(MAPS.seoul.d);}}};}
-{const _st=step;step=function(dt){_st(dt);try{if(R3&&R3.ready&&R3.hiveDeco&&!!(G&&G.inv)!==!!R3._hiveG&&R3.scene)R3.hiveDeco(!!(G&&G.inv));}catch(e){}};}
+{const _st=step;step=function(dt){_st(dt);try{{const want=!!(G&&G.inv)&&!String(MAP&&MAP.id).startsWith('sq_');if(R3&&R3.ready&&R3.hiveDeco&&want!==!!R3._hiveG&&R3.scene)R3.hiveDeco(want);}}catch(e){}};}
 {const _lm2=leaveMatch;leaveMatch=function(...a){try{if(R3&&R3.hiveDeco)R3.hiveDeco(false);}catch(e){}return _lm2.apply(this,a);};}
 STR.ko.tutPC=(STR.ko.tutPC||'')+' · '+STR.ko.camTip;STR.en.tutPC=(STR.en.tutPC||'')+' · '+STR.en.camTip;
 // ================= v0.9.2 : MOBILE FIT (touch button scaling · rotate hint · fullscreen landscape) =================
