@@ -2876,10 +2876,10 @@ function scrPt(x,y,h){if(use3D())return R3.proj(x,h||0,y);return{x:(x-cam.x)*cam
 function drawAimGuide(info,now){const u=info.u;if(!u||G.over)return;const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const chase=use3D()&&P.view==='chase';const lt=G.local.team;
  const cl=CL[u.cls]||{};const w=u.w||W[info.wk]||null;
  if(w&&!chase){const air=u.layer===1&&!cl.hover&&!cl.aimT;const a=air?u.a:u.aa;const rg=w.range*(u.high?1.2:1);const h=unitH(u)+(u.layer===0?16:0);
-  c.save();c.setLineDash([9,6]);c.lineWidth=2.4;c.strokeStyle='rgba(255,255,255,.62)';c.shadowColor='rgba(0,0,0,.6)';c.shadowBlur=3;c.beginPath();let st=false;
+  c.save();c.setLineDash([9,6]);c.lineWidth=2.4;c.strokeStyle='rgba(255,255,255,0)';c.shadowColor='rgba(0,0,0,.6)';c.shadowBlur=3;c.beginPath();let st=false;
   for(let i=1;i<=16;i++){const k=i/16;const p=scrPt(u.x+Math.cos(a)*rg*k,u.y+Math.sin(a)*rg*k,h);if(!p)continue;if(!st){c.moveTo(p.x,p.y);st=true;}else c.lineTo(p.x,p.y);}c.stroke();c.setLineDash([]);
   const e=scrPt(u.x+Math.cos(a)*rg,u.y+Math.sin(a)*rg,h);if(e){c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=1.6;c.beginPath();c.arc(e.x,e.y,8,0,6.28);c.moveTo(e.x-13,e.y);c.lineTo(e.x-5,e.y);c.moveTo(e.x+5,e.y);c.lineTo(e.x+13,e.y);c.stroke();}
-  if(G.autoT&&!G.autoT.dead){const tp=scrPt(G.autoT.x,G.autoT.y,(G.autoT.layer!=null?unitH(G.autoT):0)+16),mp=scrPt(u.x,u.y,h);if(tp&&mp){c.strokeStyle='rgba(255,91,100,.55)';c.lineWidth=1.5;c.beginPath();c.moveTo(mp.x,mp.y);c.lineTo(tp.x,tp.y);c.stroke();}}
+  if(G.autoT&&!G.autoT.dead){const tp=scrPt(G.autoT.x,G.autoT.y,(G.autoT.layer!=null?unitH(G.autoT):0)+16),mp=scrPt(u.x,u.y,h);if(tp&&mp){c.strokeStyle='rgba(255,91,100,0)';c.lineWidth=1.5;c.beginPath();c.moveTo(mp.x,mp.y);c.lineTo(tp.x,tp.y);c.stroke();}}
   c.restore();}
  const list=[];for(const e of G.units){if(e.dead||e.team===lt||!visibleTo(e,lt))continue;const dd=Math.hypot(e.x-u.x,e.y-u.y);if(dd<1400)list.push([dd,e]);}
  list.sort((p,q)=>p[0]-q[0]);let shown=0;const m=touchMode?40:30,cx=VW/2,cy=VH/2;
@@ -3718,7 +3718,7 @@ function renderShop(B){const r=R();const owned=!!r.starter;const show=!owned&&pl
  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap"><b style="font-size:26px;color:#ffd166">₩${STARTER.price.toLocaleString()}</b>${owned?`<span style="color:#7dffb0">✔ ${L('구매 완료','Purchased')}</span>`:show?`<button class="pri" id="buyStarter">${L('구매하기','Buy now')}</button>`:`<span>${L('Lv 30 이하 신규 파일럿만 구매할 수 있습니다.','Available to new pilots up to Lv 30.')}</span>`}</div>
  <small style="opacity:.7;display:block;margin-top:8px">${L('구성품은 고정이며 확률형 아이템이 없습니다. 구매 후 7일 이내, 사용하지 않은 경우 청약철회가 가능합니다.','Fixed contents, no random items. Refundable within 7 days if unused.')}</small></div></div>`;
  h+=`</div><div><h3>${L('상점 안내','About the shop')}</h3><div class="epi small" style="line-height:1.7">${L('외형(도색·궤적·오라·엠블럼)은 사냥과 퀘스트에서도 드랍됩니다. 능력치에는 영향이 없습니다.','Cosmetics (paint, trails, auras, emblems) also drop from hunts and quests. They do not affect stats.')}<br>${L('소환은 확률이 공개되어 있으며 100회 천장이 있습니다.','Summons show their odds and have a 100-pull pity.')}</div></div></div>`;B.innerHTML=h;
- const b=$('#buyStarter');if(b)b.onclick=()=>{const A=window.HKAccount;const admin=A&&A.user&&A.user.email==='suyol1974@gmail.com';if(window.ASCEND_PAY&&typeof window.ASCEND_PAY.buy==='function'){window.ASCEND_PAY.buy('starter',STARTER.price).then(ok=>{if(ok&&starterGrant()){render();showDlg('igni',L('세트가 지급됐어! 같이 날아오르자!','Your pack is here! Let\'s fly!'),[{l:'OK',pri:1,f:()=>{}}]);}});return;}
+ const b=$('#buyStarter');if(b)b.onclick=()=>{const A=window.HKAccount;const admin=A&&A.user&&window.__adm(A.user);if(window.ASCEND_PAY&&typeof window.ASCEND_PAY.buy==='function'){window.ASCEND_PAY.buy('starter',STARTER.price).then(ok=>{if(ok&&starterGrant()){render();showDlg('igni',L('세트가 지급됐어! 같이 날아오르자!','Your pack is here! Let\'s fly!'),[{l:'OK',pri:1,f:()=>{}}]);}});return;}
   if(admin){starterGrant();render();showDlg('igni',L('(관리자 시험 지급) 세트가 지급됐어!','(Admin test grant) Pack delivered!'),[{l:'OK',pri:1,f:()=>{}}]);return;}
   showDlg('sera',L('결제 시스템을 연결하는 중입니다. 곧 구매할 수 있어요.','Payments are being connected. You can buy this soon.'),[{l:'OK',pri:1,f:()=>{}}]);};}
 // battle effects of equipment: crit, buff/nerf rifles, vulnerability, regen
@@ -3770,7 +3770,7 @@ CL.omegaw={npc:1,bug:0,n:{ko:'오메가 거인 전사',en:'Omega Giant Warrior'}
 if(typeof MDL!=='undefined'){MDL.omegaw=['omega',PI/2,130,'h'];}
 // ---------- episodes ----------
 const K=(ko,en)=>({ko,en});
-const PORT={sera:'link2',luna:'link3',astra:'link_leg',reinhard:'emp_officer',yang:'fed_officer',arkos:'omega',hq:'emp_female',seraphine:'seraphine',hayun:'hayun',minjae:'minjae',me:null,igni:'a_fire',zeta:'zbehemoth'};
+const PORT={sera:'link2',luna:'link3',astra:'link_leg',reinhard:'emp_officer',yang:'fed_officer',arkos:'omega',hq:'fed_female',seraphine:'seraphine',hayun:'hayun',minjae:'minjae',me:null,igni:'a_fire',zeta:'zbehemoth'};
 const WHO={sera:K('세라','Sera'),luna:K('루나','Luna'),astra:K('아스트라','Astra'),reinhard:K('아델하르트 폰 크로이츠','Adelhard von Kreuz'),yang:K('에이든 서','Aiden Seo'),arkos:K('오메가 군주 아르코스','Omega Lord Arkos'),hq:K('연합 사령부','United HQ'),seraphine:K('알파 사령관 세라핀','Alpha Commander Seraphine'),hayun:K('하윤','Hayun'),minjae:K('민재','Minjae'),me:K('{name}','{name}'),igni:K('이그니','Igni'),zeta:K('???','???'),nar:K('','')};
 const BG={seoul:'radial-gradient(ellipse at 50% 120%,rgba(255,80,200,.35),transparent 60%),linear-gradient(180deg,#0a0820 0%,#2a1040 55%,#ff5aa0 140%)',hangar:'linear-gradient(180deg,#0b1018,#1b2433 60%,#0a0e14)',fire:'radial-gradient(ellipse at 50% 110%,rgba(255,110,30,.6),transparent 60%),linear-gradient(180deg,#140604,#3a0f06)',ice:'radial-gradient(ellipse at 50% 0%,rgba(160,220,255,.4),transparent 60%),linear-gradient(180deg,#081a2c,#0d2f4a)',space:'radial-gradient(ellipse at 30% 40%,rgba(120,80,220,.35),transparent 55%),radial-gradient(#0a0f22,#020308)',temple:'radial-gradient(ellipse at 50% 30%,rgba(255,220,140,.45),transparent 60%),linear-gradient(180deg,#120e04,#2a2008)',gate:'radial-gradient(ellipse at 50% 50%,rgba(197,140,255,.35),transparent 60%),linear-gradient(180deg,#07040e,#1a0a2a)',memorial:'linear-gradient(180deg,#0a1224,#1d2c48 60%,#3a4d70)'};
 const S=(w,ko,en,o)=>Object.assign({t:'say',w,x:K(ko,en)},o||{});
@@ -3826,6 +3826,7 @@ const EPIS=[
   {t:'battle',x:K('이그니스의 시즈 타이탄을 쓰러뜨려라.','Bring down the Siege Titan of Ignis.'),waves:4,boss:'ztitan',diff:3,rw:{shards:400,item:3}},
   S('sera','타이탄의 신경에서 외부 명령 신호를 포착했습니다. 발신지는… 은하 바깥.','An external command signal in the titan\'s nervous system. Point of origin… outside the galaxy.'),
   S('seraphine','…그 기록은 지워졌어야 했다.','…That record should have been erased.'),
+  S('sera','그리고 파일럿, 구하지 못한 함대의 구조 신호가 아직 살아 있습니다. 부가 의뢰 「남겨진 함대」입니다. 두 함대를 모두 지켜야 볼 수 있는 결말이 있다고 저는 판단합니다.','And pilot, the beacon of the fleet we could not save is still alive. Side mission "The Fleet Left Behind". I believe there is an ending we can only reach if both fleets survive.'),
   {t:'reward',x:K('기억 조각 3: 알파는 생명을 만들었고, 실패하자 버렸다.','Memory fragment 3: Alpha created life—and when it failed, Alpha threw it away.'),rw:{mem:1}}]},
  {id:'e3',planet:K('빙하 위성 니브','Glacial Moon Niv'),t:K('4장 · 얼음 아래의 진실','Ch.4 · Truth Beneath the Ice'),x:58,y:28,col:'#bfe9ff',map:'frost',req:'e1',nodes:[
   SC('ice','니브 · 빙하 아래 알파 연구소','Niv — an Alpha laboratory beneath the glacier'),
@@ -3894,7 +3895,7 @@ function giveRw(rw,log){const r=R();if(!rw)return;if(rw.shards){r.shards+=rw.sha
 function addUnit(k,isLink,log){const r=R();const arr=isLink?r.links:r.mechs;const C=isLink?LINKS[k]:MECHS[k];if(!C)return;if(arr.includes(k)){r.aw[k]=Math.min(5,(r.aw[k]||0)+1);log&&log.push(tx(C.n)+' · '+tx(K('각성','Awaken'))+' '+r.aw[k]);}else{arr.push(k);log&&log.push('<b style="color:'+RAR[C.r].c+'">NEW '+tx(C.n)+'</b>');}}
 // divine frames: reward for clearing the Trial of the Divine (no server-wide cap)
 const GODS=['god','god_red','god_black'];
-function godAfter(){const r=R();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!(r.mechs||[]).includes('god_white'))addUnit('god_white');}catch(e){}
+function godAfter(){const r=R();try{const A=window.HKAccount;if(A&&A.user&&window.__adm(A.user)&&!(r.mechs||[]).includes('god_white'))addUnit('god_white');}catch(e){}
  if(r.mythic){saveP();return;}
  const pickG=c=>{r.mythic=c;addUnit(c);saveP();render();showDlg('astra','<b style="color:#ffd166">'+tx(MECHS[c].n)+'</b><br><br>'+L('이 신기는 이제 당신의 것입니다. 그 힘을 지키는 데 쓰세요.','This divine frame is yours now. Use its power to protect.'),[{l:'OK',pri:1,f:()=>{}}]);};
  showDlg('astra',L('시련을 이겨낸 자여. 당신의 빛을 고르십시오. 한 번 고른 빛은 바뀌지 않습니다.','You who passed the trial—choose your light. Once chosen, it cannot be changed.'),GODS.map(c=>({l:tx(MECHS[c].n),pri:c==='god',f:()=>pickG(c)})));}
@@ -4078,8 +4079,8 @@ const TERR={
 const TERR_BASE=[[K('용암','Lava'),K('밟으면 큰 피해','Heavy damage on contact'),'#ff6a2a'],[K('진흙','Mud'),K('이동 속도 감소','Slows movement'),'#6fbf6a'],[K('고지대','High ground'),K('사거리·명중 보너스','Range and accuracy bonus'),'#ffd166'],[K('안개','Fog'),K('시야 감소, 매복에 유리','Reduced vision, good for ambush'),'#a8b8d8'],[K('블랙홀','Black hole'),K('주변 유닛을 끌어당김','Pulls nearby units'),'#c58cff'],[K('웜홀','Wormhole'),K('연결된 곳으로 순간 이동','Teleports to its pair'),'#7df9ff'],[K('이온 폭풍','Ion storm'),K('비행체를 밀어냄','Pushes aircraft'),'#9fe0ff']];
 const SUBQ=[
  {id:'q_tags',area:'e_p',req:'e_p',giver:'hq',t:K('남겨진 인식표','The Dog Tags Left Behind'),obj:{k:'kill',mon:['zling','zspit'],n:25},diff:1,rw:{shards:250,item:2,trust:{sera:1}},
-  intro:[S('hq','서울 외곽 폐허에서 실종 분대의 인식표 신호가 잡혔다. 제타가 아직 그 구역을 점거하고 있다.','We\'ve picked up dog-tag beacons from the missing squad in the Seoul ruins. The Zeta still hold that sector.'),S('sera','회수해 오죠. …당신에게 필요한 일 같으니까요.','We\'ll recover them. …I think you need this.')],
-  outro:[S('sera','하윤, 민재. 두 개 다 찾았어요. 녹슬었지만 이름은 또렷해요.','Hayun. Minjae. Both found. Rusted, but the names are still clear.'),S('hayun','(인식표 뒷면에 적힌 글씨) 「한강 야시장, 네가 쏘는 거야」','(Scratched on the back of the tag) "Han River night market. You\'re buying."')]},
+  intro:[S('hq','서울 외곽 폐허에서 실종 분대의 인식표 신호가 잡혔다. 제타가 아직 그 구역을 점거하고 있다.','We\'ve picked up dog-tag beacons from the missing squad in the Seoul ruins. The Zeta still hold that sector.'),S('sera','회수해 오겠습니다. …당신에게 필요한 일이라고 판단합니다.','We\'ll recover them. …I think you need this.')],
+  outro:[S('sera','하윤, 민재. 두 개 모두 찾았습니다. 녹슬었지만 이름은 또렷합니다.','Hayun. Minjae. Both found. Rusted, but the names are still clear.'),S('hayun','(인식표 뒷면에 적힌 글씨) 「한강 야시장, 네가 쏘는 거야」','(Scratched on the back of the tag) "Han River night market. You\'re buying."')]},
  {id:'q_evac',area:'e0',req:'e0',giver:'hq',t:K('네오 서울 피난 행렬','The Neo Seoul Evacuation'),obj:{k:'survive',t:90},diff:2,rw:{shards:300,cred:300,item:2},
   intro:[S('hq','마지막 피난 행렬이 한강 다리를 건너는 중이다. 90초만 버텨 줘.','The last evacuation convoy is crossing the Han River bridge. Hold for ninety seconds.')],
   outro:[S('hq','행렬 전원 통과 확인. 시민 4,120명. …고맙다, 파일럿.','Entire convoy across. 4,120 civilians. …Thank you, pilot.')]},
@@ -4099,8 +4100,8 @@ const SUBQ=[
   intro:[S('seraphine','동결 연구소에 내 동족의 연구 일지가 남아 있어. 서리 스피터가 길을 막고 있다.','My people\'s research journal is still in the frozen lab. Frost Spitters block the way.')],
   outro:[S('seraphine','…「실험체 Z는 실패작. 폐기한다.」 우리가 이렇게 썼구나.','…"Specimen Z: failure. Dispose." So this is what we wrote.')]},
  {id:'q_frost',area:'e3',req:'e3',giver:'sera',t:K('프로스트의 부탁','Frost\'s Request'),obj:{k:'hunt',target:'icetitan',mon:['frostspit','ztank']},diff:4,rw:{shards:500,link:'a_ice',trust:{sera:1}},
-  intro:[S('sera','연구소 깊은 곳에 같은 얼음형 안드로이드가 봉인돼 있어요. 깨우려면 저 거대충부터 치워야 해요.','There\'s an ice-type android sealed deep in the lab. To wake her, we have to clear that colossus first.')],
-  outro:[S('sera','프로스트, 일어나요. 이제 혼자가 아니에요.','Frost, wake up. You\'re not alone anymore.')]},
+  intro:[S('sera','연구소 깊은 곳에 같은 얼음형 안드로이드가 봉인되어 있습니다. 깨우려면 저 거대충부터 치워야 합니다.','There\'s an ice-type android sealed deep in the lab. To wake her, we have to clear that colossus first.')],
+  outro:[S('sera','프로스트, 일어나십시오. 이제 혼자가 아닙니다.','Frost, wake up. You\'re not alone anymore.')]},
  {id:'q_trial',area:'e4',req:'e4',giver:'astra',t:K('수호상의 시험','Trial of the Guardians'),obj:{k:'kill',mon:['lumen'],n:12},diff:4,rw:{shards:550,item:4},
   intro:[S('astra','사원의 수호상들은 자격을 시험합니다. 열둘을 쓰러뜨리면 인정받을 겁니다.','The temple guardians test the worthy. Fell twelve and you will be acknowledged.')],
   outro:[S('astra','수호상들이 고개를 숙였습니다. 당신은 자격이 있습니다.','The guardians bow their heads. You are worthy.')]},
@@ -4497,7 +4498,7 @@ function renderHangar2(B){const r=R();droneInit(r);const a=arkStats(),m=MECHS[r.
 // drone supply crate (shop) — under 1,000 won, fixed price, random drones disclosed
 const DRONE_PACK={price:990,count:3};
 {const _rs=renderShop;renderShop=function(B){_rs(B);const col=B.querySelector('.hg>div:last-child');if(!col)return;const d=document.createElement('div');d.className='epi';d.style.cssText='margin-top:12px;border:1px solid #7df9ff';d.innerHTML=`<b style="color:#7df9ff">${L('드론 보급 상자','Drone supply crate')}</b> · ₩${DRONE_PACK.price}<br><small>${L('무작위 드론 3기 (Lv.1~2). 종류별 확률 동일(각 16.7%), Lv.2 확률 25%.','3 random drones (Lv.1–2). Each type 16.7%, Lv.2 chance 25%.')}</small><div style="margin-top:8px"><button class="pri" id="buyDrone">${L('구매하기','Buy')}</button></div>`;col.appendChild(d);
-  $('#buyDrone').onclick=()=>{const A=window.HKAccount;const admin=A&&A.user&&A.user.email==='suyol1974@gmail.com';const grant=()=>{const r=R();const got=[];for(let i=0;i<DRONE_PACK.count;i++){const x=mkDrone(null,Math.random()<.25?2:1);r.inv.push(x);got.push(tx(x.n));}saveP();render();showDlg('sera',L('드론 3기가 도착했습니다: ','Three drones arrived: ')+got.join(', '),[{l:'OK',pri:1,f:()=>{}}]);};
+  $('#buyDrone').onclick=()=>{const A=window.HKAccount;const admin=A&&A.user&&window.__adm(A.user);const grant=()=>{const r=R();const got=[];for(let i=0;i<DRONE_PACK.count;i++){const x=mkDrone(null,Math.random()<.25?2:1);r.inv.push(x);got.push(tx(x.n));}saveP();render();showDlg('sera',L('드론 3기가 도착했습니다: ','Three drones arrived: ')+got.join(', '),[{l:'OK',pri:1,f:()=>{}}]);};
    if(window.ASCEND_PAY&&typeof window.ASCEND_PAY.buy==='function'){window.ASCEND_PAY.buy('drone',DRONE_PACK.price).then(ok=>{if(ok)grant();});return;}if(admin){grant();return;}showDlg('sera',L('결제 시스템을 연결하는 중입니다. 곧 구매할 수 있어요.','Payments are being connected. You can buy this soon.'),[{l:'OK',pri:1,f:()=>{}}]);};};}
 // ---------- skill bar (hotkeys 1–6) for ARK frames in RPG battles ----------
 const SKB=[['Digit1','KeyQ',K('손바닥 레이저','Palm Laser'),'#9ff6ff','1'],['Digit2','KeyE',K('빔 세이버','Beam Saber'),'#ff7ae0','2'],['Digit3','KeyR',K('군집 미사일','Missiles'),'#ffd166','3'],['Digit4','KeyX',K('비행','Flight'),'#7df9ff','4'],['Digit5',null,K('드론 일제사격','Drone Volley'),'#7dffb0','5'],['Digit6',null,K('수리 키트','Repair Kit'),'#ff6b7a','6']];
@@ -4810,9 +4811,9 @@ for(const E of EPIS){if(EPIS_NODES2[E.id])E.nodes=EPIS_NODES2[E.id];}
  const OS="()=>fl('mercy')()&&fl('trustLuna')()&&tr('sera',3)()",OC="()=>fl('mercy')()&&!(fl('trustLuna')()&&tr('sera',3)())";let ns=0,nc=0;for(const E of EPIS)for(const n of E.nodes){if(!n||typeof n.if!=='function')continue;const s=n.if.toString().replace(/\s/g,'');if(s===OS.replace(/\s/g,'')){n.if=stars;ns++;}else if(s===OC.replace(/\s/g,'')){n.if=()=>fl('mercy')()&&!stars();nc++;}}window.__endFix=[ns,nc];
  window.__starsCond=stars;}
 // side quest: rescue the fleet you could not save (unlocks the hidden-ending path)
-SUBQ.push({id:'q_both',area:'e2',req:'e2',giver:'sera',t:K('남겨진 함대','The Fleet Left Behind'),obj:{k:'kill',mon:['zling','ztank','zspit'],n:30},diff:3,rw:{shards:500,item:3,trust:{sera:1}},
- intro:[S('sera','{name}, 그때 구하지 못한 함대의 구조 신호가 아직 살아 있어요.','{name}, the distress beacon of the fleet we could not save is still alive.'),S('sera','두 함대가 모두 있어야 볼 수 있는 미래가 있다고… 저는 믿어요.','I believe there is a future we can only reach with both fleets.')],
- outro:[S('sera','구조 완료. 이제 제국과 연맹, 두 함대 모두 당신에게 빚을 졌어요.','Rescue complete. Now both the Empire and the Federation owe you.')]});
+SUBQ.push({id:'q_both',area:'e2',req:'e2',giver:'sera',t:K('남겨진 함대 · ★진엔딩 열쇠','The Fleet Left Behind · ★True-ending key'),obj:{k:'kill',mon:['zling','ztank','zspit'],n:30},diff:3,rw:{shards:500,item:3,trust:{sera:1}},
+ intro:[S('sera','{name}, 그때 구하지 못한 함대의 구조 신호가 아직 살아 있습니다.','{name}, the distress beacon of the fleet we could not save is still alive.'),S('sera','두 함대가 모두 있어야 볼 수 있는 미래가 있다고… 저는 믿습니다.','I believe there is a future we can only reach with both fleets.')],
+ outro:[S('sera','구조 완료. 이제 제국과 연맹, 두 함대 모두 당신에게 빚을 졌습니다.','Rescue complete. Now both the Empire and the Federation owe you.')]});
 {const _qr2=qResult;qResult=function(res){try{if(res&&res.win&&res.X&&res.X.quest==='q_both'){const r=R();r.flags=r.flags||{};r.flags.reinhard=1;r.flags.yang=1;saveP();}}catch(e){}return _qr2(res);};}
 // 4) callsign follows into battle
 {const _ac=askCallsign;askCallsign=function(done){_ac(()=>{try{const i=document.getElementById('mName');if(i&&P.name)i.value=P.name;}catch(e){}done&&done();});};}
@@ -5727,7 +5728,7 @@ function arenaLobby(){const ov=document.createElement('div');ov.id='arLobby';ov.
   <h3 style="margin:14px 0 6px">4. ${L('기동전사 스킨','Mech skin')} <small style="opacity:.6;font-weight:400">${L('대전·사냥·스토리 모두 적용','Worn in every mode')}</small></h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px">${skins.map(k=>{const own=skinOwned(k);const q=SKIN_QUEST[k],pd=SKIN_PAID[k];const sel=(P.skin||'mech3')===k;return `<div data-sk="${k}" style="cursor:pointer;position:relative;border-radius:10px;overflow:hidden;border:1px solid ${sel?'#eef6fb':'rgba(255,255,255,.12)'};opacity:${own?1:.6}"><img src="${TH+k}.jpg" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"><div style="padding:4px 6px;font-size:11px;background:rgba(0,0,0,.6)"><b>${tx(MECHS[k].n)}</b><br><small style="opacity:.75">${own?(sel?L('착용 중','Equipped'):L('보유','Owned')):q?'🔒 '+tx(q[1]):pd?'₩'+pd:L('소환으로 획득','From summons')}</small></div></div>`;}).join('')}</div>
   <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="pri" id="arGo" style="font-size:18px;padding:13px 40px">${L('AI 5대5 시작 ▶','Start AI 5v5 ▶')}</button></div></div>`;
   ov.querySelector('#arX').onclick=()=>ov.remove();ov.querySelectorAll('[data-ln]').forEach(b=>b.onclick=()=>{A.lane=b.dataset.ln;A.role=LANES[A.lane].rec[0];A.pre=0;saveP();draw();});ov.querySelectorAll('[data-rl]').forEach(b=>b.onclick=()=>{A.role=b.dataset.rl;A.pre=0;saveP();draw();});ov.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{A.pre=+b.dataset.pr;saveP();draw();});
-  ov.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const k=b.dataset.sk;if(skinOwned(k)){P.skin=k;saveP();draw();return;}const pd=SKIN_PAID[k];if(pd){const Ac=window.HKAccount;const admin=Ac&&Ac.user&&Ac.user.email==='suyol1974@gmail.com';const grant=()=>{P.skins=P.skins||[];P.skins.push(k);P.skin=k;saveP();draw();toast(L('스킨 획득: ','Skin unlocked: ')+tx(MECHS[k].n));};if(window.ASCEND_PAY&&typeof window.ASCEND_PAY.buy==='function'){window.ASCEND_PAY.buy('skin_'+k,pd).then(ok=>{if(ok)grant();});}else if(admin)grant();else toast(L('결제 시스템 연결 중입니다. 곧 구매할 수 있어요 (₩','Payments coming soon (₩')+pd+')');}else toast(SKIN_QUEST[k]?tx(SKIN_QUEST[k][1])+L(' 하면 열립니다',' to unlock'):L('소환에서 얻을 수 있어요','Available from summons'));});
+  ov.querySelectorAll('[data-sk]').forEach(b=>b.onclick=()=>{const k=b.dataset.sk;if(skinOwned(k)){P.skin=k;saveP();draw();return;}const pd=SKIN_PAID[k];if(pd){const Ac=window.HKAccount;const admin=Ac&&Ac.user&&window.__adm(Ac.user);const grant=()=>{P.skins=P.skins||[];P.skins.push(k);P.skin=k;saveP();draw();toast(L('스킨 획득: ','Skin unlocked: ')+tx(MECHS[k].n));};if(window.ASCEND_PAY&&typeof window.ASCEND_PAY.buy==='function'){window.ASCEND_PAY.buy('skin_'+k,pd).then(ok=>{if(ok)grant();});}else if(admin)grant();else toast(L('결제 시스템 연결 중입니다. 곧 구매할 수 있어요 (₩','Payments coming soon (₩')+pd+')');}else toast(SKIN_QUEST[k]?tx(SKIN_QUEST[k][1])+L(' 하면 열립니다',' to unlock'):L('소환에서 얻을 수 있어요','Available from summons'));});
   ov.querySelector('#arGo').onclick=()=>{ov.remove();arenaStart();};};
  draw();document.body.appendChild(ov);}
 window.arenaLobby=arenaLobby;
@@ -6014,10 +6015,10 @@ function spawnStrike(x,y,lvl,withMech){const own=eOwner();if(!own)return;for(let
  if(withMech)spawnEMech(pick(Object.keys(EM_KIND)),x,y,1+lvl*.08);for(let i=0;i<30;i++)part(x+rnd(-80,80),y+rnd(-80,80),0,-120,.8,'#ff9b9b',6,rnd(20,200));}
 // telegraphed attacks
 function tele(k,o){G.tele=G.tele||[];G.tele.push(Object.assign({k,t:1.1},o));}
-function teleTick(dt){if(!G.tele||!G.tele.length)return;for(const s of G.tele){s.t-=dt;if(s.t>0){if(s.k==='circle'){for(let i=0;i<3;i++){const a=Math.random()*6.28;part(s.x+Math.cos(a)*s.r,s.y+Math.sin(a)*s.r,0,0,.15,'#ff3b47',5,5);}}else if(s.k==='line'){for(let i=0;i<4;i++){const t=Math.random();part(s.x+(s.x2-s.x)*t,s.y+(s.y2-s.y)*t,0,0,.12,'#ff3b47',5,8);}}continue;}
+function teleTick(dt){if(!G.tele||!G.tele.length)return;for(const s of G.tele){s.t-=dt;if(s.t>0){if(s.k==='circle'){for(let i=0;i<3;i++){const a=Math.random()*6.28;part(s.x+Math.cos(a)*s.r,s.y+Math.sin(a)*s.r,0,0,.15,'#ff3b47',5,5);}}else if(s.k==='line'){for(let i=0;i<2;i++){const t=Math.random()*.15;part(s.x+(s.x2-s.x)*t,s.y+(s.y2-s.y)*t,0,0,.12,'#ff3b47',5,8);}}continue;}
   if(s.done)continue;s.done=1;const hit=u=>{if(s.k==='circle')return d2(u.x,u.y,s.x,s.y)<s.r*s.r;const dx=s.x2-s.x,dy=s.y2-s.y,L2=dx*dx+dy*dy;const t=clamp(((u.x-s.x)*dx+(u.y-s.y)*dy)/L2,0,1);return d2(u.x,u.y,s.x+dx*t,s.y+dy*t)<(s.w||50)**2;};
   for(const u of G.units){if(u.dead||u.team!==0)continue;if(hit(u))hurt(u,s.dmg,s.src,0,'x');}
-  if(s.k==='circle'){for(let i=0;i<34;i++){const a=Math.random()*6.28;part(s.x,s.y,Math.cos(a)*rnd(150,420),Math.sin(a)*rnd(150,420),.5,i%2?'#ff6a2a':'#ffd166',8,rnd(5,50));}fx(1,s.x,s.y,0);}else{for(let i=0;i<40;i++){const t=Math.random();part(s.x+(s.x2-s.x)*t,s.y+(s.y2-s.y)*t,rnd(-50,50),rnd(-50,50),.35,'#ff3b47',8,30);}}}
+  if(s.k==='circle'){for(let i=0;i<34;i++){const a=Math.random()*6.28;part(s.x,s.y,Math.cos(a)*rnd(150,420),Math.sin(a)*rnd(150,420),.5,i%2?'#ff6a2a':'#ffd166',8,rnd(5,50));}fx(1,s.x,s.y,0);}else{{const la=Math.atan2(s.y2-s.y,s.x2-s.x),ll=Math.hypot(s.x2-s.x,s.y2-s.y);for(let i=0;i<3;i++)setTimeout(()=>{try{window.__vbolt(s.x,s.y,la+(i?rnd(-.03,.03):0),ll,0xff4a4a,50,{vis:70,r:6});}catch(e){}},i*55);}}}
  G.tele=G.tele.filter(s=>!s.done||s.t>-.5);}
 function mechAI(u){const inp={mx:0,my:0,mz:0,aim:u.aa,fire:false,a1:false,a2:false,ul:false,ab:false,steer:null,thr:1,tx:u.x,ty:u.y};const me=G.local&&G.local.unit;let tg=me&&!me.dead&&d2(me.x,me.y,u.x,u.y)<2200*2200?me:null;if(!tg){let bd=1e12;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=d2(e.x,e.y,u.x,u.y);if(d<bd){bd=d;tg=e;}}}if(!tg)return inp;
  const d=Math.hypot(tg.x-u.x,tg.y-u.y),a=Math.atan2(tg.y-u.y,tg.x-u.x);inp.aim=a;inp.tx=tg.x;inp.ty=tg.y;const want=u.eMech==='phantom'?620:u.eMech==='artillery'?560:u.eMech==='knight'?320:220;
@@ -7437,6 +7438,62 @@ addEventListener('keydown',e=>{if(e.code==='KeyG'&&!e.repeat&&G&&G.local&&!G.ove
  const _maG2=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_maG2(e,m,u,dt,now);try{if(!u||!m||!m.obj||!G||!G.local)return;if(u===G.local.unit||u.team===G.local.team||special(u))return;const c=CL[u.cls]||{};if(!(u.cls==='arkframe'||u.eMech||c.arm==='heavy'&&c.layer===0))return;
   if(m._ws&&!m._wsG){m._wsG=1;for(const S of[m._ws.L,m._ws.R])if(S&&S.mesh)S.mesh.material=grayMat(S.mesh.material);}if(e._grayK===e._iff&&e._grayD)return;e._grayD=1;e._grayK=e._iff;m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;if(Array.isArray(o.material))o.material=o.material.map(grayMat);else if(!o.material.userData.grayFoe)o.material=grayMat(o.material);});if(e.mfx&&e.mfx.saber)e.mfx.saber.traverse&&e.mfx.saber.traverse(o=>{if(o.material&&o.material.color)o.material.color.set('#e8eef6');});}catch(er){}};}
 
+// ================= v3.20 : true frame colours · no line lasers anywhere =================
+// 1) colours: the factory paint IS the model's own texture (no tint, no glow wash). Other paints recolour by luminance, so a blue frame can be repainted cleanly.
+{const FAC=(typeof FACTORY!=='undefined')?FACTORY:{};
+ const _cg320=custGet;custGet=function(){const c=_cg320();try{const mk=myMechKey();if(mk!=='mech3'&&(!c.paint||c.paint===FAC[mk])){c.body=null;c.tint=0;c.mix=0;c.emis='#000000';c.finish='orig';c.orig=1;}}catch(e){}return c;};
+ const _cm320=custMat;custMat=function(base,c,T3){if(c&&c.orig){const m=base.clone();m.userData.iffBase=base;if(m.emissive&&!m.emissiveMap){m.emissive.setRGB(0,0,0);m.emissiveIntensity=0;}m.needsUpdate=true;return m;}
+  const m=_cm320(base,c,T3);try{if(m.emissive&&!m.emissiveMap&&!(c&&c.emis)){m.emissive.setRGB(0,0,0);m.emissiveIntensity=0;}if('metalness'in m&&m.metalness>.6){m.metalness=.6;m.roughness=Math.max(m.roughness||0,.32);}
+   if(c&&c.body&&!c.mix&&myMechKey()!=='mech3'&&m.color){const pc=new T3.Color(c.body);m.color.setRGB(1,1,1);m.onBeforeCompile=sh=>{sh.uniforms.uPaint={value:pc};sh.fragmentShader='uniform vec3 uPaint;\n'+sh.fragmentShader.replace('#include <map_fragment>','#include <map_fragment>\n{float l=dot(diffuseColor.rgb,vec3(.299,.587,.114));float hi=smoothstep(.82,.95,l);diffuseColor.rgb=mix(uPaint*(.25+1.45*l),diffuseColor.rgb,hi);}');};m.customProgramCacheKey=()=>'paint'+c.body;m.needsUpdate=true;}}catch(e){window.__colErr=String(e).slice(0,120);}return m;};
+ // allies keep their own colours (only a faint cyan rim); named enemy aces keep their signature colours
+ const _ip320=iffPaint;iffPaint=function(e,m,u){const k0=e._iff;_ip320(e,m,u);try{const k=iffOf(u);if(k==='me'||k0===k&&e._c320)return;e._c320=1;m.obj.traverse(o=>{if(!o.isMesh||o.userData.keep)return;const mats=Array.isArray(o.material)?o.material:[o.material];for(const mt of mats){const b=mt.userData.iffBase;if(!b||mt.userData.grayFoe)continue;if(k==='foe'&&mt.color&&b.color)mt.color.copy(b.color).lerp(new window.THREE.Color(0xc23a3a),.12);if(mt.emissive&&!mt.emissiveMap){mt.emissiveIntensity=k==='foe'?.18:.12;}}});}catch(er){}};}
+// 2) lasers: every straight-line attack is drawn as a few short bolts that fly, never as a long line
+{const VB=[];window.__VB=VB;
+ window.__vbolt=function(x,y,a,len,col,h,o){o=o||{};const T3=window.THREE;if(!R3||!R3.scene||!T3)return;const L=o.vis||64,r=o.r||5;const g=new T3.Group();const core=new T3.Mesh(new T3.CylinderGeometry(r*.5,r*.5,L,8),new T3.MeshBasicMaterial({color:0xffffff}));const glow=new T3.Mesh(new T3.CylinderGeometry(r*1.5,r*.6,L*1.25,10,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.55,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));core.rotation.z=glow.rotation.z=Math.PI/2;g.add(core);g.add(glow);g.rotation.y=-a;g.position.set(x,h,y);g.traverse(q=>{q.userData.keep=1;q.frustumCulled=false;});R3.scene.add(g);VB.push({x,y,a,sp:o.sp||3000,left:len,g,h,col});};
+ const _st320=step;step=function(dt){_st320(dt);try{for(const b of VB){if(b.dead)continue;const d=Math.min(b.left,b.sp*dt);b.x+=Math.cos(b.a)*d;b.y+=Math.sin(b.a)*d;b.left-=d;b.g.position.set(b.x,b.h,b.y);if(b.left<=0||solidAt(b.x,b.y,4)){b.dead=1;R3.scene.remove(b.g);b.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});part(b.x,b.y,0,0,.15,'#ffffff',6,b.h);}}for(let i=VB.length-1;i>=0;i--)if(VB[i].dead)VB.splice(i,1);}catch(e){}};
+ const _kl320=kLine;kLine=function(u,x,y,a,len,w,dmg,col,kb){const keep=G.parts.length;const n=_kl320(u,x,y,a,len,w,dmg,col,kb);try{G.parts.length=Math.min(G.parts.length,keep);}catch(e){}
+  try{const T3=window.THREE;const c=new T3.Color(col||'#9ff6ff').getHex();const h=(u?unitH(u):0)+44;const nb=w>=90?3:2;for(let i=0;i<nb;i++)setTimeout(()=>{try{window.__vbolt(x,y,a+(i?rnd(-.025,.025):0),len,c,h,{vis:58+Math.min(40,w*.25),r:Math.min(9,4+w*.04)});}catch(e){}},i*50);}catch(e){}return n;};}
+
+
+// ================= v3.21 : story battles have stakes · Arkos final boss · leaner rewards =================
+window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(const ch of String(u.email).toLowerCase()){h^=ch.codePointAt(0);h=Math.imul(h,0x01000193)>>>0;}return h.toString(36)==='19m9xh3';}catch(e){return false;}};
+{const story=()=>!!(G&&G.rpg&&!(G.rpg.obj&&G.rpg.obj.k==='field'));window.__storyB=story;
+ // 1) story battles start in manual control (auto battle stays one key away: F)
+ const _nm321=newMatch;newMatch=function(size,mode){_nm321(size,mode);try{if(story()){G._autoPrev=!!P.autoHunt;P.autoHunt=false;G._deaths=0;G._drops=0;setTimeout(()=>{try{window.rcToast&&window.rcToast(L('이야기 전투는 직접 조종으로 시작합니다 · F: 자동 전투','Story battles start in manual control · F: auto battle'));}catch(e){}},2600);}}catch(e){}};
+ const back=()=>{try{if(G&&G._autoPrev!=null){if(!P.autoHunt)P.autoHunt=G._autoPrev;G._autoPrev=null;saveP();}}catch(e){}};
+ const _em321=endMatch;endMatch=function(w){back();return _em321(w);};const _lm321=leaveMatch;leaveMatch=function(...a){back();return _lm321(...a);};
+ // 2) danger: enemies hit harder in story battles (more with auto battle on, more when under-levelled)
+ const recLv=d=>[1,1,8,15,22,30,38,48][Math.min(7,d|0)]||1;
+ const _hu321=hurt;hurt=function(e,dmg,src,a,dt){try{if(story()&&e&&G.local&&e===G.local.unit&&dmg>0){const X=G.rpg,d=X.diff||1;let k=1.45+d*.22;if(P.autoHunt)k*=1.2;const gap=recLv(d)-plv();if(gap>0)k*=1+Math.min(.8,gap*.06);if(X.bossU&&!X.bossU.dead)k*=1.15;dmg*=k;}}catch(er){}return _hu321(e,dmg,src,a,dt);};
+ // 3) failure: lose the frame three times and the operation fails
+ const _st321=step;step=function(dt){_st321(dt);try{if(!story()||G.over)return;const u=G.local.unit;if(u&&u.dead&&!G._dd){G._dd=1;G._deaths=(G._deaths||0)+1;const left=3-G._deaths;if(left<=0){announce('✖',L('작전 실패','Operation failed'),L('기체가 세 번 대파되었습니다','Your frame was destroyed three times'),true,'#ff6b6b');setTimeout(()=>{try{if(G&&!G.over)endMatch(1);}catch(e){}},1800);}else{announce('⚠',L('기체 대파','Frame destroyed'),L('남은 재출격 ','Relaunches left ')+left,true,'#ff9b5a');}}if(u&&!u.dead)G._dd=0;}catch(e){}};
+ // 4) leaner rewards: story rewards are a third, equipment drops in a story battle are capped
+ const _gr321=giveRw;giveRw=function(rw,log){try{if(rw&&!rw._lean){rw=Object.assign({},rw,{_lean:1});if(rw.shards)rw.shards=Math.max(30,Math.round(rw.shards*.35/10)*10);if(rw.cred)rw.cred=Math.round(rw.cred*.45);if(rw.item&&rw.item>=3&&Math.random()<.5)rw.item-=1;}}catch(e){}return _gr321(rw,log);};
+ const _ld321=lootDrop;lootDrop=function(it,x,y){try{if(story()){G._drops=(G._drops||0)+1;const boss=G.rpg.bossU&&G.rpg.bossU.dead;if(G._drops>2&&!boss){const r=R();r.cred+=20;return;}}}catch(e){}return _ld321(it,x,y);};
+ // 5) Arkos: the finale has its own boss — a violet-blade god-king with three attack patterns and a second phase
+ CL.arkos=Object.assign({},CL.omegaw,{n:{ko:'오메가 군주 아르코스',en:'Omega Lord Arkos'},r:54,hp:9000,spd:110,xp:5000,d:{ko:'버려질 날을 알고 태어난 오메가의 왕',en:'The Omega king born knowing the day he would be discarded'}});
+ try{STR.ko.arkos='오메가 군주 아르코스';STR.en.arkos='Omega Lord Arkos';}catch(e){}
+ MDL.arkos=window.__ARKOS_GLB?['arkos',window.__ARKOS_YAW||0,170,'h']:['omega',PI/2,160,'h'];
+ const _la321=launch;launch=function(E,n){try{if(n&&n.boss==='omegaw'&&/아르코스|Arkos/.test(tx(n.x)||''))n=Object.assign({},n,{boss:'arkos'});}catch(e){}return _la321(E,n);};
+ const AK={t:0,ph:1,sh:0};const _st321b=step;step=function(dt){_st321b(dt);try{const X=G&&G.rpg;const b=X&&X.bossU;if(!b||b.dead||X.boss!=='arkos'||G.over)return;const me=G.local.unit;if(!me||me.dead)return;b.isArkos=1;b.named=1;
+   if(AK.ph===1&&b.hp<b.mhp*.5){AK.ph=2;announce('⚠',L('아르코스 · 각성','Arkos · Awakened'),L('「버려진 자의 분노를 보아라」','"Behold the wrath of the discarded"'),true,'#c58cff');for(let i=0;i<60;i++){const a=Math.random()*6.28;part(b.x,b.y,Math.cos(a)*380,Math.sin(a)*380,.8,i%2?'#c58cff':'#ffffff',6,80);}}
+   if(AK.sh<2&&b.hp<b.mhp*(AK.sh?.3:.7)){AK.sh++;for(let i=0;i<2;i++){const s=invSpawn('omegaw',b.x+rnd(-260,260),b.y+rnd(-260,260),9999);s.slot.name=L('군주의 그림자','Shadow of the Lord');s.mhp*=.5;s.hp=s.mhp;}pop(L('아르코스가 그림자를 불러냅니다','Arkos calls his shadows'),'#c58cff',true);}
+   AK.t-=dt;if(AK.t>0)return;AK.t=AK.ph===2?3.6:5.2;const a=Math.atan2(me.y-b.y,me.x-b.x);const pat=Math.floor(Math.random()*3);const dm=(320+90*(X.diff||6));
+   if(pat===0){tele('circle',{x:b.x,y:b.y,r:AK.ph===2?420:340,dmg:dm*1.2,src:b.slot,t:1.2});pop(L('⚠ 보랏빛 대참격 · 거리를 벌려라','⚠ Violet cleave · get away'),'#c58cff',false);}
+   else if(pat===1){const n=AK.ph===2?13:9;for(let i=0;i<n;i++){const aa=a+(i-(n-1)/2)*.11;setTimeout(()=>{try{if(!b.dead)window.boltAt(b.x+Math.cos(aa)*60,b.y+Math.sin(aa)*60,aa,{team:b.team,dmg:dm*.35,len:900,spd:1500,src:b.slot,col:0xc58cff,vis:90,r:7});}catch(e){}},i*40);}}
+   else{const tx2=me.x+(me.vx||0)*.6,ty2=me.y+(me.vy||0)*.6;for(let i=0;i<(AK.ph===2?3:2);i++){const ox=tx2+rnd(-140,140),oy=ty2+rnd(-140,140);tele('circle',{x:ox,y:oy,r:150,dmg:dm*.9,src:b.slot,t:1.3});}pop(L('⚠ 낙하하는 빛의 창','⚠ Falling spears of light'),'#c58cff',false);}}catch(e){window.__akErr=String(e).slice(0,160);}};
+ const _nm321b=newMatch;newMatch=function(s,m){AK.t=4;AK.ph=1;AK.sh=0;return _nm321b(s,m);};
+ // 6) true-ending hint lives in the story itself
+ try{if(typeof PORT!=='undefined')PORT.hq='fed_female';}catch(e){}}
+
+
+// ================= v3.22 : no orphaned weapons / thruster cones left at the spawn point =================
+// equipment and sole-thruster meshes live in the scene (not under the frame); when a frame's view is rebuilt the old ones stayed behind.
+{const THG=new Set();
+ const sweep=()=>{try{if(!R3||!R3.scene)return;const live=new Set();for(const e of R3.units.values()){if(e.eq&&e.eq.o)for(const o of Object.values(e.eq.o))if(o)live.add(o);if(e._thr)for(const o of e._thr){live.add(o);if(o.geometry)THG.add(o.geometry);}}
+   const kill=[];for(const o of R3.scene.children){if(live.has(o))continue;const ud=o.userData||{};if(('holder'in ud&&'rot'in ud)||(o.isMesh&&THG.has(o.geometry)))kill.push(o);}for(const o of kill)R3.scene.remove(o);if(kill.length)window.__swept=(window.__swept||0)+kill.length;}catch(e){window.__sweepErr=String(e).slice(0,120);}};
+ setInterval(sweep,500);}
+
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
 
@@ -7486,7 +7543,7 @@ function wingSplit(e,m,u){if(m._ws!==undefined)return m._ws;m._ws=null;try{const
 
 
 {const _sl=setLang;setLang=function(l){_sl(l);try{if(!isHidden('#rpg'))render();}catch(e){}};}
-function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&A.user.email==='suyol1974@gmail.com'&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
+function openRpg(){if((!P.name||/^Pilot-\d+$/.test(P.name))&&!openRpg.asked){openRpg.asked=1;askCallsign(()=>openRpg());return;}R();show('#rpg');render();try{const A=window.HKAccount;if(A&&A.user&&window.__adm(A.user)&&!own('god_white'))addUnit('god_white');}catch(e){}}window.openRpg=openRpg;
 $('#rpgBack').onclick=()=>{hide('#rpg');show('#menu');refreshMenu();};
 // lobby button
 {const pri=$('#mSolo');if(pri){const b=document.createElement('button');b.className='nav pri';b.id='mRpg';b.style.cssText='background:linear-gradient(90deg,#b8860b,#7a4a14 70%,rgba(122,74,20,.55));border-color:#ffd166;border-left-color:#fff';b.innerHTML='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg><span class="tx"><span id="mRpgT"></span><small id="mRpgS"></small></span>';pri.parentNode.insertBefore(b,pri.nextSibling);b.onclick=()=>{ensureName();hide('#menu');openRpg();};}}
@@ -7712,6 +7769,6 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
-<script src="lib/transform.js?v=3191"></script>
+<script src="lib/transform.js?v=321"></script>
 </body>
 </html>
