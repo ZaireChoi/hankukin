@@ -1,0 +1,482 @@
+{
+  "collectedAt": "2026-11-21T00:59:54.291Z",
+  "charts": {
+    "korea": [
+      {
+        "week": "2026-11-15",
+        "rank": 1,
+        "title": "The Devil's Plan",
+        "season": "The Devil's Plan: Season 3",
+        "weeksInTop10": 1
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 2,
+        "title": "Doctor X: Mafia in White",
+        "season": "Doctor X: Mafia in White: Limited Series",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 3,
+        "title": "Dead-End Job",
+        "season": "Dead-End Job: Limited Series",
+        "weeksInTop10": 3
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 4,
+        "title": "100 Days of Deception",
+        "season": "100 Days of Deception: Limited Series",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 5,
+        "title": "I am Solo",
+        "season": "I am Solo: Part 34",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 6,
+        "title": "Romance School : First & Again",
+        "season": "Romance School : First & Again: Season 2",
+        "weeksInTop10": 2
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 7,
+        "title": "Sword & Silence",
+        "season": "Sword & Silence: Season 1",
+        "weeksInTop10": 1
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 8,
+        "title": "The Wonder Coach",
+        "season": "The Wonder Coach: Season 2",
+        "weeksInTop10": 5
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 9,
+        "title": "The Ballad of Us",
+        "season": "The Ballad of Us: Season 2",
+        "weeksInTop10": 6
+      },
+      {
+        "week": "2026-11-15",
+        "rank": 10,
+        "title": "What a Boss Wants",
+        "season": "What a Boss Wants: Season 1",
+        "weeksInTop10": 1
+      }
+    ],
+    "global": [
+      {
+        "rank": 1,
+        "title": "7F,U+0181,U+0186,U+0189-018A,U+018E-0192,U+0194,U+0196-0199,U+019D-01A3,U+01AF-01B9,U+01C0-01C3,U+01CD-01DD,U+01E4-01EB,U+01EE-01F0,U+01F4-01F5,U+01F8-01FF,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 2,
+        "title": "18-021B,U+021E-0220,U+0226-0227,U+022E-022F,U+0232-0233,U+0237,U+0241-0242,U+0244,U+0248-0249,U+024C-024D,U+0250-0251,U+0253-0254,U+0256-0259,U+025B,U+025F,U+0261,U+0263,U+0268-026A,U+0272,U+0275,U+027D,U+0283,U+0289-028B,U+0292,U+0294,U+02B7,U+02B9,U+02BB-02BC,U+02BE-02BF,U+02C6-02CB,U+02D8-02DD,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 3,
+        "title": "00-",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 4,
+        "title": ",U+0306-030D,U+0312,U+0315,U+031B,U+0323,U+0326-0329,U+032D-032E,U+0331,U+0338,U+0344,U+0358,U+0374-0375,U+037E,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03CE,U+0400-045F,U+0490-0493,U+0496-0497,U+049A-049B,U+04A2-04A3,U+04AE-04B3,U+04B6-04B7,U+04BA-04BB,U+04C0,U+04CF,U+04D4-04D5,U+04D8-04D9,U+04E2-04E3,U+04E8-04E9,U+04EE-04EF,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 5,
+        "title": "8F,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 6,
+        "title": "0B,U+0E3F,U+1DC6-1DC7,U+1E04-1E",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 7,
+        "title": ",U+1E0C-1E13,U+1E18-1E19,U+1E20-1E25,U+1E28-1E2B,U+1E32-1E37,U+1E3A-1E3F,U+1E42-1E4B,U+1E5A-1E5B,U+1E5E-1E5F,U+1E62-1E63,U+1E6C-1E71,U+1E76-1E77,U+1E7C-1E85,U+1E88-1E89,U+1E92-1E96,U+1E9E,U+1EA0-1EF9,U+2000-200B,U+2010-2027,U+2030-203E,U+2044,U+2070,U+2074-",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 8,
+        "title": "E,U+20A1-20A4,U+20A6-20AF,U+20B1-20B2,U+20B4-20B5,U+20B8-20BA,U+20BC-20BF,U+2103,U+2105,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 9,
+        "title": ",U+2113,U+2116-2117,U+2120-2122,U+2126,U+212E,U+2153-215E,U+2190-2199,U+21A8,U+21B8-21B9,U+21D2,U+21D4,U+21E7,U+2202,U+2206,U+220F,U+2211-2212,U+2215,U+2219-221A,U+221E-2220,U+2229,U+222B,U+2248,U+2260-2261,U+2264-2265,U+2302,U+",
+        "weeksInTop10": null
+      },
+      {
+        "rank": 10,
+        "title": ",U+2320-2321,U+2500,U+2502,U+250C,U+2510,U+2514,U+2518,U+251C,U+2524,U+252C,U+2534,U+253C,U+2550-256C,U+2580,U+2584,U+",
+        "weeksInTop10": null
+      }
+    ]
+  },
+  "candidates": [
+    {
+      "title": "Dead-End Job",
+      "season": "Dead-End Job: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 3,
+      "weeksInTop10": 3,
+      "novelty": "holding",
+      "noveltyScore": 0.32,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.455,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Dead-End Job",
+        "videos": 10,
+        "relevant": 3,
+        "rejected": 7,
+        "topViews": 2140902,
+        "samples": [
+          {
+            "title": "Dead-End Job.This boss, who’s used to yelling at his staff, has finally met his match#movie #shorts",
+            "channel": "Firepower Film",
+            "publishedAt": "2026-11-10T16:30:36Z",
+            "views": 2140902
+          },
+          {
+            "title": "This film is called Dead-End Job(2026)#movie  #film  #horro #horror #shorts",
+            "channel": "Nanyu Movie",
+            "publishedAt": "2026-11-07T15:44:31Z",
+            "views": 1940592
+          },
+          {
+            "title": "Joker requests for eat something 😋 | dead-end job | montagem royal | #weakheroclass1 #edit",
+            "channel": "PixelWizEditz",
+            "publishedAt": "2026-11-09T14:30:36Z",
+            "views": 1935297
+          }
+        ],
+        "strength": 0.427
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Sword & Silence",
+      "season": "Sword & Silence: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 7,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.16,
+      "locationPotential": 1,
+      "locationNote": "사극·궁궐 — 고궁/한옥 촬영지, 문화·역사 축과 중첩",
+      "score": 0.43,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Sword & Silence",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Devil's Plan",
+      "season": "The Devil's Plan: Season 3",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 1,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.4,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.41,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Devil's Plan",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "Doctor X: Mafia in White",
+      "season": "Doctor X: Mafia in White: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 2,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.225,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.409,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Doctor X: Mafia in White",
+        "videos": 10,
+        "relevant": 4,
+        "rejected": 6,
+        "topViews": 2168349,
+        "samples": [
+          {
+            "title": "A Devil In Angel's Guise ✨ Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-13T18:05:28Z",
+            "views": 2168349
+          },
+          {
+            "title": "She Has A Heart Of Gold ✨ Doctor X Mafia In White 🥼 #Kdrama #KimJiWon #KimWooSeok #DoctorX",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-06T17:20:23Z",
+            "views": 1691112
+          },
+          {
+            "title": "Dancing Kim Ji-won # Doctor X : Mafia in white....",
+            "channel": "Me Jaanakee",
+            "publishedAt": "2026-11-03T17:22:12Z",
+            "views": 1346011
+          }
+        ],
+        "strength": 0.43
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "100 Days of Deception",
+      "season": "100 Days of Deception: Limited Series",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 4,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.175,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.371,
+      "youtube": {
+        "matched": true,
+        "reason": "search_buzz",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "100 Days of Deception",
+        "videos": 10,
+        "relevant": 2,
+        "rejected": 8,
+        "topViews": 1661277,
+        "samples": [
+          {
+            "title": "He Knows Her Name 💗 100 Days of Deception ✨ #Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-14T17:32:10Z",
+            "views": 1661277
+          },
+          {
+            "title": "She Salvaged The Plan 🔥 100 Days of Deception ✨#Kdrama #KimYooJung #ParkJinYoung #100DaysOfDeception",
+            "channel": "ThrillVille",
+            "publishedAt": "2026-11-07T17:08:29Z",
+            "views": 806949
+          }
+        ],
+        "strength": 0.372
+      },
+      "independentSources": 2
+    },
+    {
+      "title": "Romance School : First & Again",
+      "season": "Romance School : First & Again: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 6,
+      "weeksInTop10": 2,
+      "novelty": "holding",
+      "noveltyScore": 0.2,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.31,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "Romance School : First & Again",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Wonder Coach",
+      "season": "The Wonder Coach: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 8,
+      "weeksInTop10": 5,
+      "novelty": "holding",
+      "noveltyScore": 0.12,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.27,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Wonder Coach",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "The Ballad of Us",
+      "season": "The Ballad of Us: Season 2",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 9,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.05,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.235,
+      "youtube": {
+        "matched": false,
+        "reason": "below_buzz_threshold",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0,
+        "method": "search",
+        "query": "The Ballad of Us",
+        "videos": 10,
+        "relevant": 0,
+        "rejected": 10,
+        "topViews": 0,
+        "samples": [],
+        "strength": null
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "What a Boss Wants",
+      "season": "What a Boss Wants: Season 1",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 10,
+      "weeksInTop10": 1,
+      "novelty": "holding",
+      "noveltyScore": 0.04,
+      "locationPotential": 0.6,
+      "locationNote": "일반 드라마 — 촬영지 확인 필요",
+      "score": 0.23,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    },
+    {
+      "title": "I am Solo",
+      "season": "I am Solo: Part 34",
+      "charts": [
+        "korea"
+      ],
+      "alsoGlobal": false,
+      "rank": 5,
+      "weeksInTop10": 6,
+      "novelty": "saturated",
+      "noveltyScore": 0.15,
+      "locationPotential": 0.2,
+      "locationNote": "스튜디오 중심 — 방문 가능한 촬영지가 적을 가능성",
+      "score": 0.145,
+      "youtube": {
+        "matched": false,
+        "reason": "no_match",
+        "hits": [],
+        "via": null,
+        "triedAliases": 0
+      },
+      "independentSources": 1
+    }
+  ],
+  "errors": [],
+  "sourceMode": "tsv",
+  "youtubeVideosScanned": 130,
+  "aliasesUsed": 1,
+  "aliasesUnverified": 3,
+  "youtubeQuotaUnits": 811
+}
