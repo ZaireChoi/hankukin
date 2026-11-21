@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.44 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.45 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -8114,7 +8114,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v344';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v345';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8128,7 +8128,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  setInterval(()=>{try{if(!G||!R3||!R3.scene||G.over)return;const key=(R3.envG&&R3.envG.uuid)+':'+(MAP&&MAP.id);if(key!==baseKey){baseKey=key;base=null;setTimeout(()=>{try{base=new Set(R3.scene.children);}catch(e){}},3000);return;}if(!base)return;
   const own=reach();for(const o of R3.scene.children.slice()){if(!o.isGroup||base.has(o)||o===R3.envG||own.has(o)||SKIP(o)){age.delete(o);continue;}const a=(age.get(o)||0)+1;age.set(o,a);if(a<3)continue;let n=0;o.traverse(()=>n++);R3.scene.remove(o);ST.removed++;ST.objs+=n;age.delete(o);}}catch(e){window.__lk42=String(e&&e.stack||e).slice(0,200);}},2000);
  // skill names: small tag above the skill bar instead of big centre text
- window.__skTag=(txt,col,big)=>{try{let h=document.getElementById('skTag');if(!h){h=document.createElement('div');h.id='skTag';h.style.cssText='position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:8;pointer-events:none;display:flex;flex-direction:column-reverse;align-items:center;gap:2px';document.body.appendChild(h);}while(h.children.length>=2)h.lastChild.remove();const d=document.createElement('div');d.textContent=txt;d.style.cssText='font:800 '+(big?15:13)+'px Noto Sans KR,sans-serif;color:'+(col||'#fff')+';text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.6);opacity:.95;transition:opacity .4s';h.insertBefore(d,h.firstChild);setTimeout(()=>{d.style.opacity='0';},1100);setTimeout(()=>d.remove(),1500);}catch(e){}};
+ window.__skTag=(txt,col,big)=>{try{let h=document.getElementById('skTag');if(!h){h=document.createElement('div');h.id='skTag';h.style.cssText='position:fixed;left:calc(50% - 500px);bottom:98px;z-index:8;pointer-events:none;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:2px';document.body.appendChild(h);}while(h.children.length>=2)h.lastChild.remove();const d=document.createElement('div');d.textContent=txt;d.style.cssText='font:800 '+(big?15:13)+'px Noto Sans KR,sans-serif;color:'+(col||'#fff')+';text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.6);opacity:.95;transition:opacity .4s';h.insertBefore(d,h.firstChild);setTimeout(()=>{d.style.opacity='0';},1100);setTimeout(()=>d.remove(),1500);}catch(e){}};
 }catch(e){window.__c42Err=String(e&&e.stack||e).slice(0,200);}}
 
 
@@ -8189,6 +8189,22 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   for(const g of seenG){if(curG.has(g))continue;seenG.delete(g);try{g.dispose();ST.geoFreed++;}catch(e){}}
   for(const t of seenT){if(curT.has(t)||t===bg||t===env)continue;seenT.delete(t);try{t.dispose();ST.texFreed++;}catch(e){}}}catch(e){window.__gc44=String(e&&e.stack||e).slice(0,200);}},4000);
 }catch(e){window.__c44Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.45 : ONE HANGAR — the same frame picker before every sortie (hunting, squad dungeon, duel, story), last pick remembered =================
+{try{
+ const MODE=n=>{const k=n&&n.obj&&n.obj.k;return k==='field'?L('사냥터','Hunting'):k==='squad'?L('분대 던전','Squad dungeon'):k==='duel'?L('결투장','Duel'):L('작전','Operation');};
+ const _ln=launch;launch=function(E,n){try{const r=R();if(!(n&&n.__picked)&&r.mechs&&r.mechs.length>=2&&!(n&&n.patrol)&&!window.__noPick){pick(E,n);return;}}catch(e){}return _ln.apply(this,arguments);};
+ const pick=(E,n)=>{const r=R();let ov=document.getElementById('pkOv');if(ov)ov.remove();ov=document.createElement('div');ov.id='pkOv';ov.style.cssText='position:fixed;inset:0;z-index:9500;background:radial-gradient(ellipse at 50% 20%,#101a30ee,#03050bf5 75%);color:#e9eef6;font-family:Noto Sans KR,sans-serif;overflow:auto;padding:18px';
+  let sel=r.mech;const gearN=k=>{const eq=k===r.mech?r.eq:(r.eqBy||{})[k];return eq?Object.values(eq).filter(Boolean).length:0;};
+  const draw=()=>{const list=r.mechs.filter(k=>MECHS[k]).sort((a,b)=>(MECHS[b].r-MECHS[a].r));ov.innerHTML='<div style="max-width:980px;margin:0 auto"><div style="display:flex;align-items:center;gap:10px"><div><div style="font:700 12px Rajdhani,sans-serif;letter-spacing:.35em;color:#c9a46a">SORTIE · '+MODE(n)+'</div><b style="font-size:22px">'+L('출격 기체 선택','Choose your frame')+'</b></div><span style="flex:1"></span><button id="pkX">✕</button></div><small style="opacity:.75">'+L('뽑은 기체의 장비·각성·기술은 모든 모드에 똑같이 적용됩니다. 마지막 선택을 기억합니다.','Gear, awakening and skills apply the same in every mode. Your last pick is remembered.')+'</small>'+
+   '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:14px 0">'+list.map(k=>{const C=MECHS[k];const a=(r.aw||{})[k]||0;const on=k===sel;return '<div data-pk="'+k+'" style="cursor:pointer;padding:8px;border-radius:12px;background:'+(on?'rgba(255,209,102,.12)':'#101727')+';border:1px solid '+(on?'#ffd166':'#26314a')+'"><img src="'+TH+k+'.jpg" style="width:100%;height:120px;object-fit:cover;object-position:top;border-radius:8px;background:#0b1020"><b style="display:block;font-size:13px;margin-top:6px;color:'+RAR[C.r].c+'">'+tx(C.n)+'</b><small style="opacity:.8">'+rn(C.r)+(a?' · ★'+a:'')+' · '+L('장비 ','gear ')+gearN(k)+'</small></div>';}).join('')+'</div>'+
+   '<div style="display:flex;justify-content:flex-end"><button id="pkGo" style="padding:14px 30px;font-size:17px;font-weight:900;background:linear-gradient(90deg,#8a6a3a,#e6c27a);color:#1a1208;border:0;border-radius:10px">'+L('이 기체로 출격','Deploy with this frame')+'</button></div></div>';
+   ov.querySelector('#pkX').onclick=()=>{ov.remove();try{if(isHidden('#rpg'))show('#menu');}catch(e){}};ov.querySelectorAll('[data-pk]').forEach(el=>el.onclick=()=>{sel=el.dataset.pk;draw();});
+   ov.querySelector('#pkGo').onclick=()=>{ov.remove();if(sel!==r.mech){r.mech=sel;saveP();try{window.__eqSync&&window.__eqSync();}catch(e){}}const n2=Object.assign({},n,{__picked:1});_ln(E,n2);};};
+  draw();document.body.appendChild(ov);};
+ window.__pickFrame=pick;
+}catch(e){window.__c45Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
