@@ -1436,5 +1436,33 @@
  "mech_leg_jet": {
   "bytes": 1476552,
   "anims": []
+ },
+ "zplasma": {
+  "bytes": 1003440,
+  "anims": []
+ },
+ "zbane": {
+  "bytes": 704024,
+  "anims": []
+ },
+ "zroach": {
+  "bytes": 1000036,
+  "anims": []
+ },
+ "zlurk": {
+  "bytes": 896948,
+  "anims": []
+ },
+ "sentry": {
+  "bytes": 1000520,
+  "anims": []
+ },
+ "robo": {
+  "bytes": 964068,
+  "anims": []
+ },
+ "arkos": {
+  "bytes": 2344136,
+  "anims": []
  }
 }
