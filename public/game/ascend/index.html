@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.35 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.37 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -7863,7 +7863,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   draw();};
  // ---------- launch ----------
  const start=n=>{const E=EPIS.find(e=>e.map==='dune')||EPIS[0];const r=rec();if(r.sqF.ace){r.wingPrev=r.wing;r.wing=r.sqF.ace;r.wingFree=r.sqF.ace;}SQ.pending=n;launch(E,{waves:0,boss:null,diff:Math.max(1,Math.round(n/5)),rw:{},quest:'squad',obj:{k:'squad',stage:n}});};
- window.squadStart=start;
+ window.squadStart=start;window.__sqFinish=(X,w)=>finish(X,w);
  const hpMul=n=>1+.08*(n-1);
  const spawnE=(k,x,y,n,o)=>{o=o||{};let u=null;try{u=invSpawn(k,x,y,9999);}catch(e){}if(!u)return null;u.sqStage=n;u.mhp=Math.round(u.mhp*hpMul(n)*(o.hp||1));u.hp=u.mhp;u.sqE=1;if(o.name&&u.slot)u.slot.name=o.name;return u;};
  const spawnMech=(model,x,y,n,tier)=>{const key='sqm_'+model+'_'+tier;const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};const sc={mp:.9,imp:1,cmd:1.1,ace:1.15}[tier];window.MONMDL[key]=[model,PI/2,H*sc,'h'];let u=null;try{u=invSpawn('arkframe',x,y,9999);}catch(e){}if(!u)return null;u.mon=key;u.sqE=1;u.sqStage=n;const early=n<=5;const m=(early?{mp:.42,imp:.6,cmd:.85,ace:1.5}:{mp:.55,imp:.8,cmd:1.4,ace:2.6})[tier];u.mhp=Math.round(u.mhp*m*hpMul(n));u.hp=u.mhp;
@@ -7879,8 +7879,8 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   for(const k of list){const D=UN[k];for(let i=0;i<D.cnt;i++){let u=null;const x=me.x+(D.role==='tank'?120:-60-row*40)+rnd(-30,30),y=me.y+rnd(-160,160);try{if(D.m){const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL=window.MONMDL||{};window.MONMDL['sqa_'+D.m]=[D.m,PI/2,H*.95,'h'];u=spawnMinion(me,'arkframe',x,y,1e9,me.z);u.mon='sqa_'+D.m;}else u=spawnMinion(me,D.cls,x,y,1e9,me.z);}catch(e){}if(u){u.sqTy=D.ty;u.sqU=k;u.mhp=Math.round(u.mhp*D.hp);u.hp=u.mhp;u.slot.name=tx(D.n);u.slot.leader=G.local;X.sqU.push(u);}}row++;}
   const cnt={};list.forEach(k=>{cnt[UN[k].ty]=(cnt[UN[k].ty]||0)+1;});const same=Math.max(0,...Object.values(cnt))+1;const roles=new Set(list.map(k=>UN[k].role));X.sqSyn=1+((same>=5?18:same>=4?12:same>=3?6:0)+(roles.has('tank')&&roles.has('fire')&&roles.has('support')?8:0))/100;};
  // ---------- the fight ----------
- const _ss332=storyStep;storyStep=function(dt){const X=G&&G.rpg;if(!(X&&X.obj&&X.obj.k==='squad'))return _ss332(dt);if(G.over)return;try{const n=X.obj.stage;if(!X.sqInit){const me=G.local.unit;if(!me)return;X.sqInit=1;X.sqT=0;X.sqAct=0;X.sqDead=0;deploySquad(X);act(X,1);X.sqAct=1;}
-   X.sqT+=dt;const live=G.units.filter(u=>!u.dead&&u.sqE);{const A0=arena();for(const e of live){const d=Math.hypot(e.x-A0.x,e.y-A0.y);if(d>1100){e.x=A0.x+(e.x-A0.x)/d*900;e.y=A0.y+(e.y-A0.y)/d*900;e.vx=0;e.vy=0;}}}if(X.sqAct===1&&live.length<=Math.max(2,Math.floor(plan(n).a1.n*.15))){act(X,2);X.sqAct=2;}else if(X.sqAct===2&&live.length<=1){act(X,3);X.sqAct=3;}else if(X.sqAct===3&&live.length===0){X.won=1;finish(X,true);return;}
+ const _ss332=storyStep;storyStep=function(dt){const X=G&&G.rpg;if(!(X&&X.obj&&X.obj.k==='squad'))return _ss332(dt);if(G.over)return;try{const n=X.obj.stage;if(!X.sqInit){const me=G.local.unit;if(!me)return;X.sqInit=1;X.sqT=0;X.sqT0=G.t;X.sqAct=0;X.sqDead=0;deploySquad(X);act(X,1);X.sqAct=1;}
+   X.sqT=Math.max(X.sqT+dt,G.t-(X.sqT0!=null?X.sqT0:G.t));const live=G.units.filter(u=>!u.dead&&u.sqE);{const A0=arena();for(const e of live){const d=Math.hypot(e.x-A0.x,e.y-A0.y);if(d>1100){e.x=A0.x+(e.x-A0.x)/d*900;e.y=A0.y+(e.y-A0.y)/d*900;e.vx=0;e.vy=0;}}}if(X.sqAct===1&&live.length<=Math.max(2,Math.floor(plan(n).a1.n*.15))){act(X,2);X.sqAct=2;}else if(X.sqAct===2&&live.length<=1){act(X,3);X.sqAct=3;}else if(X.sqAct===3&&(live.length===0||(X.sqBoss&&X.sqBoss.dead&&live.every(u=>u.hp<=0||u===X.sqBoss)))){X.won=1;finish(X,true);return;}
    const me=G.local.unit;if(me&&me.dead&&!X._dd){X._dd=1;X.sqDead++;}if(me&&!me.dead)X._dd=0;if(X.sqT>=120){finish(X,false);}}catch(e){window.__sqErr=String(e&&e.stack||e).slice(0,200);}};
  // counters + synergy + stage scaling of enemy damage
  const _hu332=hurt;hurt=function(e,dmg,src,a,dt){try{const X=G&&G.rpg;if(X&&X.obj&&X.obj.k==='squad'&&e){const su=src&&src.unit;if(su){const ta=typeOf(su),td=typeOf(e);if(BEAT[ta]===td)dmg*=1.25;if(BEAT[td]===ta)dmg*=.8;if(su.team===G.local.team&&X.sqSyn)dmg*=X.sqSyn;if(su.sqE)dmg*=hpMul(X.obj.stage);}}}catch(er){}return _hu332(e,dmg,src,a,dt);};
@@ -8001,6 +8001,24 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  setInterval(()=>{try{if(isSq()&&!G.over){const r=sqRec();if(lvl()<LV()&&P.autoHunt)P.autoHunt=false;else if(r.sq.auto&&lvl()>=LV()&&!G.__sqA){G.__sqA=1;P.autoHunt=true;}}
   const res=document.getElementById('sqRes');if(res&&!res.__rep){res.__rep=1;const r=sqRec();const won=!/(실패|Failed)/.test(res.querySelector('div div:nth-child(3)')?res.querySelector('div div:nth-child(3)').textContent:'');if(r.sq.repLeft>0&&won){const b=document.createElement('div');b.style.cssText='margin-top:10px;color:#7dffd0';let s=3;b.textContent=L('반복 도전 · 남은 ','Repeat · left ')+r.sq.repLeft+L('판 · ','· ')+s;res.firstElementChild.appendChild(b);const iv=setInterval(()=>{s--;b.textContent=L('반복 도전 · 남은 ','Repeat · left ')+r.sq.repLeft+L('판 · ','· ')+s;if(!document.body.contains(res)){clearInterval(iv);r.sq.repLeft=0;saveP();return;}if(s<=0){clearInterval(iv);r.sq.repLeft--;saveP();const a=res.querySelector('#sqAgain');a&&a.click();}},1000);}else if(r.sq.repLeft>0){r.sq.repLeft=0;saveP();}}}catch(e){window.__sqaErr=String(e);}},500);
 }catch(e){window.__c35Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.36 : squad dungeon always ends on its own result screen (ticket/score ends, boss-stage ends and the 120 s limit) =================
+{try{const _em336=endMatch;endMatch=function(w){try{const X=G&&G.rpg;if(X&&X.obj&&X.obj.k==='squad'&&!X.sqDone&&window.__sqFinish){const live=G.units.filter(u=>!u.dead&&u.sqE).length;const won=X.sqAct===3&&live===0&&(X.sqT||0)<120;window.__sqFinish(X,won);return;}}catch(e){window.__sq36=String(e);}return _em336.apply(this,arguments);};}catch(e){window.__c36Err=String(e);}}
+
+
+// ================= v3.37 : squad dungeon — own result only (no expedition result on top) + triangle arrows around my frame pointing at the nearest foes =================
+{try{const _sr337=showResult;showResult=function(w,rows,mySid,myTeam){try{const res=window.__rpgRes;if(res&&res.X&&res.X.obj&&res.X.obj.k==='squad'){window.__rpgRes=null;hide('#deploy');hide('#pause');G.showSB=false;return;}}catch(e){}return _sr337.apply(this,arguments);};}catch(e){window.__c37a=String(e);}
+ try{const cv=document.createElement('canvas');cv.id='sqArr';cv.style.cssText='position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:6';let on=false,last=0;
+  const loop=t=>{requestAnimationFrame(loop);try{const X=G&&G.rpg;const sq=X&&X.obj&&X.obj.k==='squad'&&!G.over;if(!sq){if(on){cv.remove();on=false;}return;}if(t-last<33)return;last=t;if(!on){document.body.appendChild(cv);on=true;}
+   const d=Math.min(2,devicePixelRatio||1),w=innerWidth,h=innerHeight;if(cv.width!==Math.round(w*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);}const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,w,h);
+   const me=G.local.unit;if(!me||me.dead||!R3||!R3.cam)return;const V3=R3.cam.position.constructor;const pr=(x,y,z)=>{const v=new V3(x,z,y).project(R3.cam);return [(v.x+1)/2*w,(1-v.y)/2*h];};
+   const hh=(u)=>{try{return (typeof unitH==='function'?unitH(u):0)||0;}catch(e){return 0;}};const P0=pr(me.x,me.y,hh(me)+30);
+   const foes=[];for(const e of G.units){if(e.dead||e.team===me.team||e.team===2)continue;const dd=Math.hypot(e.x-me.x,e.y-me.y);foes.push([dd,e]);}foes.sort((a,b)=>a[0]-b[0]);
+   const pick=foes.slice(0,6);for(const f of foes)if((f[1].boss||f[1].named||f[1].elite2==='cmd')&&!pick.includes(f))pick.push(f);
+   const R0=Math.max(64,Math.min(110,Math.min(w,h)*.12));
+   for(const [dd,e] of pick){const p=pr(e.x,e.y,hh(e)+20);const a=Math.atan2(p[1]-P0[1],p[0]-P0[0]);const sd=Math.hypot(p[0]-P0[0],p[1]-P0[1]);if(sd<R0+12)continue;const big=e.boss||e.named||e.elite2==='cmd';const s=big?16:11;const al=Math.max(.35,Math.min(.95,1.15-dd/1600));
+    const cx=P0[0]+Math.cos(a)*R0,cy=P0[1]+Math.sin(a)*R0;c.save();c.translate(cx,cy);c.rotate(a);c.globalAlpha=al;c.beginPath();c.moveTo(s*1.3,0);c.lineTo(-s*.8,-s*.85);c.lineTo(-s*.35,0);c.lineTo(-s*.8,s*.85);c.closePath();c.fillStyle=big?'#ffcf5a':'#ff4b4b';c.shadowColor=big?'#ffcf5a':'#ff2a2a';c.shadowBlur=8;c.fill();c.lineWidth=1;c.strokeStyle='rgba(0,0,0,.6)';c.shadowBlur=0;c.stroke();c.restore();}}catch(e){window.__arrErr=String(e).slice(0,150);}};requestAnimationFrame(loop);}catch(e){window.__c37b=String(e);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
