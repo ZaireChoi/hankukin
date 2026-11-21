@@ -12,7 +12,13 @@ var PROF={
  mech4:{nose:'twin',noseLen:.26,fin:.3,flame:0x7fd4ff,alt:50,speed:5.6,twinTail:true},  // Knight: twin-boom fast striker
  m_sky:{nose:'needle',noseLen:.42,fin:.4,flame:0x9ff6ff,alt:70,speed:6,span:1.4},        // Sky: long-wing high flyer
  m_striker:{nose:'blade',noseLen:.3,fin:.18,flame:0xff4a4a,alt:45,speed:5.8},            // Crimson Striker: blade-nose dart, low and fast
- m_titan:{nose:'heavy',noseLen:.22,fin:.36,flame:0xffb070,alt:40,speed:4,bulk:1.5}        // Titan: heavy gunship
+ m_titan:{nose:'heavy',noseLen:.22,fin:.36,flame:0xffb070,alt:40,speed:4,bulk:1.5},       // Titan: heavy gunship
+ m_ranger:{nose:'needle',noseLen:.36,fin:.3,flame:0x7df9ff,alt:62,speed:5.4},           // Ranger: long-barrel recon interceptor
+ m_artillery:{nose:'heavy',noseLen:.22,fin:.34,flame:0xffa040,alt:44,speed:4.4,bulk:1.4}, // Artillery: gun-pod bomber
+ m_wizard:{nose:'needle',noseLen:.3,fin:.32,flame:0x7dffe0,alt:66,speed:5.2},           // Wizard: delta with drone pods
+ m_phantom:{nose:'blade',noseLen:.28,fin:.2,flame:0xb48cff,alt:52,speed:6.2},           // Phantom: stealth flying wing
+ m_samurai:{nose:'blade',noseLen:.32,fin:.22,flame:0xffd166,alt:50,speed:5.8},          // Samurai: katana dart
+ m_origin:{nose:'needle',noseLen:.34,fin:.3,flame:0xffe9a0,alt:60,speed:5.6}            // Origin: ancient prototype
 };
 function prof(k){var p={};for(var a in BASE)p[a]=BASE[a];var q=PROF[k]||{};for(var b in q)p[b]=q[b];return p;}
 function seg(k,a,b){var x=Math.max(0,Math.min(1,(k-a)/(b-a)));return x*x*(3-2*x);}
@@ -84,7 +90,7 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf)return;var w=functi
  }catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
 
 // ================= v2: "shell" transform — a Meshy jet model split into armour pieces; each piece launches from the robot part it comes from and locks into the jet =================
-var JETM={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet'};
+var JETM={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet',m_ranger:'m_ranger_jet',m_artillery:'m_artillery_jet',m_wizard:'m_wizard_jet',m_phantom:'m_phantom_jet',m_samurai:'m_samurai_jet',m_origin:'m_origin_jet'};
 function jetKey(){var k=AX().myMechKey?AX().myMechKey():'';return JETM[k]||null;}
 var JC={};// split cache per jet model
 function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);if(!c||c.st!=='ok'||!c.g)return null;var src=c.g.scene;src.updateMatrixWorld(true);var tris=[];var mat=null;var box=new T.Box3();
@@ -92,7 +98,7 @@ function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);
  var sz=box.getSize(new T.Vector3()),ctr=box.getCenter(new T.Vector3());
  // length axis = longest horizontal; the nose end is the narrower end
  // length axis: the fuselage holds most vertices, so its spread is wider than the thin wings' spread
- var vx=0,vz=0,nv=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var dx=t.p[i]-ctr.x,dz=t.p[i+2]-ctr.z;vx+=dx*dx;vz+=dz*dz;nv++;}});var LX=vx>=vz;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
+ var vx=0,vz=0,nv=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var dx=t.p[i]-ctr.x,dz=t.p[i+2]-ctr.z;vx+=dx*dx;vz+=dz*dz;nv++;}});var JAX={m_phantom_jet:'x'};var LX=JAX[f]?JAX[f]==='x':vx>=vz;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
  var wA=0,wB=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var a=ax(t.p,i)/len,s=Math.abs(sd(t.p,i))/wid;if(a>.35)wA=Math.max(wA,s);if(a<-.35)wB=Math.max(wB,s);}});var noseSign=wA<wB?1:-1;
  var groups={nose:[],body:[],wingL:[],wingR:[],tailL:[],tailR:[]};
  tris.forEach(function(t){var a=0,s=0;for(var i=0;i<9;i+=3){a+=ax(t.p,i);s+=sd(t.p,i);}a=a/3/len*noseSign;s=s/3/wid;var key;if(a>.22)key='nose';else if(Math.abs(s)>.2&&a>-.3)key=s>0?'wingL':'wingR';else if(a<-.18)key=s>=0?'tailL':'tailR';else key='body';groups[key].push(t);});
@@ -135,7 +141,7 @@ setInterval(boot,600);
 window.__TF={toggle:toggle,prof:prof,PROF:PROF,set:function(k){var u=me();if(!u)return;u.tf={mode:'hold',k:k,mark:-1};}};
 })();
 
-;(function(){var IMG={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet'};
+;(function(){var IMG={mech3:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet',m_ranger:'m_ranger_jet',m_artillery:'m_artillery_jet',m_wizard:'m_wizard_jet',m_phantom:'m_phantom_jet',m_samurai:'m_samurai_jet',m_origin:'m_origin_jet'};
  window.__onFlyTo=function(h){var r;try{var k=(window.__AX&&window.__AX.myMechKey&&window.__AX.myMechKey())||'mech3';var jk=IMG[k]||'saberjet';var im=document.createElement('img');im.src='bg/jetrear_'+jk+'.png';im.id='tfJetFly';im.style.cssText='position:fixed;left:50%;bottom:9%;width:min(34vw,420px);transform:translateX(-50%) scale(.2);opacity:0;z-index:61;pointer-events:none;transition:transform .9s cubic-bezier(.2,1.4,.4,1),opacity .4s;filter:drop-shadow(0 0 18px rgba(255,140,90,.55))';document.body.appendChild(im);
   var fl=document.createElement('div');fl.style.cssText='position:fixed;left:50%;bottom:7%;width:min(16vw,200px);height:min(9vw,110px);transform:translateX(-50%);z-index:60;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,rgba(255,200,140,.9),rgba(255,110,60,.35) 45%,transparent 70%);filter:blur(4px);opacity:0;transition:opacity .6s';document.body.appendChild(fl);
   try{window.__AX&&window.__AX.SFX2&&window.__AX.SFX2.hatch();}catch(e){}setTimeout(function(){im.style.opacity='1';im.style.transform='translateX(-50%) scale(1)';try{window.__AX.SFX2.clang();}catch(e){}},60);setTimeout(function(){fl.style.opacity='1';try{window.__AX.SFX2.launch();}catch(e){}},900);
