@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.34 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.35 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -7975,6 +7975,32 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  const TIER={mp:['slowshot','shock'],imp:['slowshot','shock','root'],cmd:['taunt','shield','orbital'],ace:['grab','lift','orbital']};
  setInterval(()=>{try{if(!G||!G.units)return;for(const u of G.units){if(u.dead||u.sk2)continue;let list=null;if(u.sqU&&SQSK[u.sqU])list=SQSK[u.sqU];else if(u.sqE&&u.cls==='arkframe'){const tier=u.named?'ace':u.elite2==='cmd'?'cmd':u.fbd?'imp':'mp';list=TIER[tier];}if(list)u.sk2=list.map(id=>({id,next:now()+1+Math.random()*3}));}}catch(e){}},500);
 }catch(e){window.__c33Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.35 : SQUAD AUTO — auto battle unlocks at pilot Lv 10 (one constant), full auto uses skills/ultimate, repeat runs, 3 daily sweeps =================
+{try{
+ window.__SQ_AUTO_LV=10;const LV=()=>window.__SQ_AUTO_LV;
+ const isSq=()=>!!(G&&G.rpg&&G.rpg.obj&&G.rpg.obj.k==='squad');const lvl=()=>{try{return plv();}catch(e){return 1;}};
+ const day=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();};
+ {const _ta=toggleAuto;toggleAuto=function(){if(isSq()&&lvl()<LV()){P.autoHunt=false;toast(L('분대 던전 자동 전투는 파일럿 Lv ','Squad auto battle unlocks at pilot Lv ')+LV()+L('에 해금',''));return;}return _ta.apply(this,arguments);};}
+ {const _ah=autoHuntInput;autoHuntInput=function(u){if(isSq()&&lvl()<LV())return null;const inp=_ah(u);try{if(inp&&isSq()){if(window.__C2)window.__C2.autoOn=null;let fd=1e9,boss=0;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<fd)fd=d;if((e.boss||e.named||e.elite2)&&d<700)boss=1;}let near=0;for(const e of G.units){if(!e.dead&&e.team!==u.team&&e.team!==2&&Math.hypot(e.x-u.x,e.y-u.y)<480)near++;}
+   inp.a1=fd<620;inp.a2=fd<360;inp.ul=(G.local.ult||0)>=100&&(near>=3||boss);inp.ab=false;}}catch(e){}return inp;};}
+ // formation screen: auto switch (locked below Lv), repeat count, daily sweep
+ const sqRec=()=>{const r=R();r.sq=r.sq||{best:0,stars:{},t:{}};return r;};
+ const decor=()=>{const ov=document.getElementById('sqOv');if(!ov||ov.querySelector('#sqAutoRow'))return;const go=ov.querySelector('#sqGo');if(!go)return;const r=sqRec();const st=+(String((ov.innerHTML.match(/(?:단계|Stage) (\d+)<\/b>/)||[])[1]||1));const ok=lvl()>=LV();const cleared=st<=(r.sq.best||0);r.sq.sw=r.sq.sw&&r.sq.sw.d===day()?r.sq.sw:{d:day(),n:0};
+  const row=document.createElement('div');row.id='sqAutoRow';row.style.cssText='display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-right:6px';
+  row.innerHTML=(ok?'<label style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="sqAuto" '+(r.sq.auto?'checked':'')+'> <b>'+L('자동 전투','Auto battle')+'</b></label>':'<span style="opacity:.6">🔒 '+L('자동 전투 · Lv ','Auto battle · Lv ')+LV()+L('에 해금',' unlock')+' ('+L('현재 ','now ')+lvl()+')</span>')+
+   (ok&&cleared?'<select id="sqRep" style="background:#0b1020;color:#e9eef6;border:1px solid #3a4560;border-radius:6px;padding:6px">'+[1,3,5,10].map(k=>'<option value="'+k+'"'+((r.sq.repN||1)==k?' selected':'')+'>'+(k===1?L('1판','1 run'):L('반복 ','Repeat ')+k+L('판',''))+'</option>').join('')+'</select>':'')+
+   (cleared?'<button id="sqSweep" style="padding:8px 12px;border-radius:8px;border:1px solid #3a4560;background:#162036;color:#e9eef6"'+(r.sq.sw.n>=3?' disabled':'')+'>'+L('소탕 ','Sweep ')+(3-r.sq.sw.n)+'/3</button>':'');
+  go.parentElement.insertBefore(row,go);
+  const ab=row.querySelector('#sqAuto');if(ab)ab.onchange=()=>{r.sq.auto=ab.checked;saveP();};const rp=row.querySelector('#sqRep');if(rp)rp.onchange=()=>{r.sq.repN=+rp.value;saveP();};
+  const sw=row.querySelector('#sqSweep');if(sw)sw.onclick=()=>{if(r.sq.sw.n>=3)return;r.sq.sw.n++;const log=[];try{giveRw({cred:30+st*5,shards:6+Math.floor(st/3)},log);}catch(e){}saveP();toast(L('소탕 완료 · 단계 ','Swept stage ')+st+' · '+log.join(' · '));sw.textContent=L('소탕 ','Sweep ')+(3-r.sq.sw.n)+'/3';if(r.sq.sw.n>=3)sw.disabled=true;};
+  go.addEventListener('click',()=>{try{const rr=sqRec();rr.sq.repLeft=(ok&&rr.sq.auto&&cleared)?Math.max(0,(rr.sq.repN||1)-1):0;if(ok&&rr.sq.auto){P.autoHunt=true;}saveP();}catch(e){}},true);};
+ new MutationObserver(()=>{try{decor();}catch(e){window.__sqaErr=String(e);}}).observe(document.body,{childList:true});
+ // a fresh squad run: auto on if chosen, off (manual) otherwise below Lv
+ setInterval(()=>{try{if(isSq()&&!G.over){const r=sqRec();if(lvl()<LV()&&P.autoHunt)P.autoHunt=false;else if(r.sq.auto&&lvl()>=LV()&&!G.__sqA){G.__sqA=1;P.autoHunt=true;}}
+  const res=document.getElementById('sqRes');if(res&&!res.__rep){res.__rep=1;const r=sqRec();const won=!/(실패|Failed)/.test(res.querySelector('div div:nth-child(3)')?res.querySelector('div div:nth-child(3)').textContent:'');if(r.sq.repLeft>0&&won){const b=document.createElement('div');b.style.cssText='margin-top:10px;color:#7dffd0';let s=3;b.textContent=L('반복 도전 · 남은 ','Repeat · left ')+r.sq.repLeft+L('판 · ','· ')+s;res.firstElementChild.appendChild(b);const iv=setInterval(()=>{s--;b.textContent=L('반복 도전 · 남은 ','Repeat · left ')+r.sq.repLeft+L('판 · ','· ')+s;if(!document.body.contains(res)){clearInterval(iv);r.sq.repLeft=0;saveP();return;}if(s<=0){clearInterval(iv);r.sq.repLeft--;saveP();const a=res.querySelector('#sqAgain');a&&a.click();}},1000);}else if(r.sq.repLeft>0){r.sq.repLeft=0;saveP();}}}catch(e){window.__sqaErr=String(e);}},500);
+}catch(e){window.__c35Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
