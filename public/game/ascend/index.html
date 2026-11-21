@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.45 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.46 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6784,7 +6784,7 @@ const M3IC={m3:'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentC
 // show the notice once per version to returning players (never on the very first visit)
 setTimeout(()=>{try{if(P.noticeSeen===ASC_VER)return;const veteran=(P.tut>=1)||(P.hist&&P.hist.length>0);if(!veteran){P.noticeSeen=ASC_VER;saveP();return;}if(G&&!G.over)return;if(document.querySelector('.m3ov,#custOv,#csIn'))return;noticeOpen();}catch(e){}},2500);
 
-Object.assign(STR.ko,{news:'v3.40 — 분대 던전 전용 맵 3종 · 자동 전투 Lv 10 해금 · 반복·소탕 · 그랩·CC 기술 · 중복 각성 · 기체별 장비'});Object.assign(STR.en,{news:'v3.40 — 3 squad dungeon maps · squad auto at Lv 10 · repeat & sweep · grab/CC skills · awakening · gear per frame'});try{applyLang();}catch(e){}
+Object.assign(STR.ko,{news:'v3.46 — 결투장(1대1) · 출격 기체 선택 · 기체별 장비 · 중복 각성 · 분대 던전 전용 맵 · 메모리 안정화'});Object.assign(STR.en,{news:'v3.46 — Duel Arena (1v1) · sortie frame picker · gear per frame · awakening · squad dungeon maps · memory fixes'});try{applyLang();}catch(e){}
 
 
 // ================= v3.9.3 : phone landscape — skill buttons in a thumb arc, no overlaps =================
@@ -8114,7 +8114,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v345';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v346';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #c9a46a;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#e6c27a;color:#1a1208;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8126,7 +8126,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   for(const k in R3){if(k==='scene'||k==='r'||k==='cam')continue;try{walk(R3[k],1);}catch(e){}}if(G){for(const u of G.units||[])walk(u,1);walk(G.loot,1);walk(G.tele,1);walk(G.structs,1);walk(G.rpg,1);}return own;};
  const age=new WeakMap();let base=null,baseKey=null;const ST={removed:0,objs:0};window.__leak=ST;
  setInterval(()=>{try{if(!G||!R3||!R3.scene||G.over)return;const key=(R3.envG&&R3.envG.uuid)+':'+(MAP&&MAP.id);if(key!==baseKey){baseKey=key;base=null;setTimeout(()=>{try{base=new Set(R3.scene.children);}catch(e){}},3000);return;}if(!base)return;
-  const own=reach();for(const o of R3.scene.children.slice()){if(!o.isGroup||base.has(o)||o===R3.envG||own.has(o)||SKIP(o)){age.delete(o);continue;}const a=(age.get(o)||0)+1;age.set(o,a);if(a<3)continue;let n=0;o.traverse(()=>n++);R3.scene.remove(o);ST.removed++;ST.objs+=n;age.delete(o);}}catch(e){window.__lk42=String(e&&e.stack||e).slice(0,200);}},2000);
+  const own=reach();const usedB=new Set();R3.scene.traverse(x=>{if(x.isSkinnedMesh&&x.skeleton)for(const b of x.skeleton.bones)usedB.add(b);});const hasUsedBone=o=>{let f=false;o.traverse(x=>{if(!f&&x.isBone&&usedB.has(x))f=true;});return f;};for(const o of R3.scene.children.slice()){if(!o.isGroup||base.has(o)||o===R3.envG||own.has(o)||SKIP(o)||hasUsedBone(o)){age.delete(o);continue;}const a=(age.get(o)||0)+1;age.set(o,a);if(a<3)continue;let n=0;o.traverse(()=>n++);R3.scene.remove(o);ST.removed++;ST.objs+=n;age.delete(o);}}catch(e){window.__lk42=String(e&&e.stack||e).slice(0,200);}},2000);
  // skill names: small tag above the skill bar instead of big centre text
  window.__skTag=(txt,col,big)=>{try{let h=document.getElementById('skTag');if(!h){h=document.createElement('div');h.id='skTag';h.style.cssText='position:fixed;left:calc(50% - 500px);bottom:98px;z-index:8;pointer-events:none;display:flex;flex-direction:column-reverse;align-items:flex-start;gap:2px';document.body.appendChild(h);}while(h.children.length>=2)h.lastChild.remove();const d=document.createElement('div');d.textContent=txt;d.style.cssText='font:800 '+(big?15:13)+'px Noto Sans KR,sans-serif;color:'+(col||'#fff')+';text-shadow:0 1px 3px #000,0 0 8px rgba(0,0,0,.6);opacity:.95;transition:opacity .4s';h.insertBefore(d,h.firstChild);setTimeout(()=>{d.style.opacity='0';},1100);setTimeout(()=>d.remove(),1500);}catch(e){}};
 }catch(e){window.__c42Err=String(e&&e.stack||e).slice(0,200);}}
@@ -8205,6 +8205,15 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
   draw();document.body.appendChild(ov);};
  window.__pickFrame=pick;
 }catch(e){window.__c45Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.46 : TEXTURES — identical small square canvas textures (glows, icons) share one texture, duplicates are released; one auto reload when a new service worker takes over =================
+{try{
+ const HM=new WeakMap();const canon=new Map();const ST=window.__leak=window.__leak||{};ST.texShared=0;
+ const hash=t=>{const c=t.image;try{const g=c.getContext('2d');const d=g.getImageData(0,0,c.width,c.height).data;let h=2166136261;for(let i=0;i<d.length;i+=13){h^=d[i];h=Math.imul(h,16777619);}return c.width+'x'+c.height+':'+(h>>>0);}catch(e){return null;}};
+ setInterval(()=>{try{if(!G||G.over||!R3||!R3.scene)return;R3.scene.traverse(o=>{const ms=o.material?(Array.isArray(o.material)?o.material:[o.material]):[];for(const m of ms){const t=m&&m.map;if(!t||!t.image||t.image.tagName!=='CANVAS')continue;const w=t.image.width,h=t.image.height;if(w!==h||w>128)continue;if(t.version>1)continue;let k=HM.get(t);if(k===undefined){k=hash(t);HM.set(t,k);}if(!k)continue;const c=canon.get(k);if(!c){canon.set(k,t);continue;}if(c!==t&&c.version<=1){m.map=c;ST.texShared++;}}});}catch(e){window.__tx46=String(e).slice(0,160);}},3000);
+ try{if(navigator.serviceWorker){navigator.serviceWorker.addEventListener('controllerchange',()=>{try{if(sessionStorage.getItem('__swr'))return;sessionStorage.setItem('__swr','1');if(!G||G.over)location.reload();}catch(e){}});}}catch(e){}
+}catch(e){window.__c46Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
