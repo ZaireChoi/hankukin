@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.19 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.28 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -358,7 +358,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
 const $=s=>document.querySelector(s);
 const cv=$('#cv'),ctx=cv.getContext('2d');
 let VW=0,VH=0,DPR=1;
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);cv.style.width=VW+'px';cv.style.height=VH+'px';if(typeof R3!=='undefined'&&R3.ready)R3.resize();}
+function resize(){DPR=Math.min(1,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);cv.style.width=VW+'px';cv.style.height=VH+'px';if(typeof R3!=='undefined'&&R3.ready)R3.resize();}
 var R3={ready:false,failed:false};
 function gfxMode(){return P.gfx||(isTouch()?'low':'high');}
 function use3D(){return R3.ready&&gfxMode()!=='2d';}
@@ -6394,7 +6394,7 @@ function scorchMark(x,y,a,len,hot){try{const T3=window.THREE;if(!R3||!R3.scene||
 {const Q=[];let MS=null,busy=false;const phone=()=>!!window.__phone||((window.matchMedia&&matchMedia('(pointer:coarse)').matches));
  const capOf=(f,skinned,tris)=>{const ph=phone();const mech=/^(mech|m_|a_|god|omega|link|g\d_|c_boss|h_|o_knight)/.test(f);if(skinned)return mech?(ph?7000:16000):(ph?1800:3500);if(tris>30000)return ph?2500:4500;return ph?700:1200;};
  async function run(){if(busy)return;busy=true;try{if(!MS){const mod=await import(new URL('lib/meshopt_simplifier.module.js',document.baseURI).href);MS=mod.MeshoptSimplifier;await MS.ready;}
-  while(Q.length){const [f,scene]=Q.shift();let skinned=false;scene.traverse(o=>{if(o.isSkinnedMesh)skinned=true;});let total=0;const meshes=[];scene.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.index){meshes.push(o);total+=o.geometry.index.count/3;}});const cap=capOf(f,skinned,total);if(total<=cap*1.15)continue;const ratio=cap/total;
+  while(Q.length){await new Promise(r=>setTimeout(r,24));const [f,scene]=Q.shift();let skinned=false;scene.traverse(o=>{if(o.isSkinnedMesh)skinned=true;});let total=0;const meshes=[];scene.traverse(o=>{if(o.isMesh&&o.geometry&&o.geometry.index){meshes.push(o);total+=o.geometry.index.count/3;}});const cap=capOf(f,skinned,total);if(total<=cap*1.15)continue;const ratio=cap/total;
    for(const o of meshes){const g=o.geometry;if(g.userData.simp)continue;g.userData.simp=1;const pa=g.attributes.position;const n=pa.count;const pos=new Float32Array(n*3);for(let i=0;i<n;i++){pos[i*3]=pa.getX(i);pos[i*3+1]=pa.getY(i);pos[i*3+2]=pa.getZ(i);}
     const idx=new Uint32Array(g.index.array);const target=Math.max(36,Math.floor(idx.length*ratio/3)*3);try{const r=MS.simplify(idx,pos,3,target,.06,['LockBorder']);const ni=r[0]||r;if(ni&&ni.length>=36&&ni.length<idx.length)g.setIndex(new window.THREE.BufferAttribute(ni,1));}catch(e){}}
    window.__simpN=(window.__simpN||0)+1;await new Promise(r=>setTimeout(r,0));}}catch(e){window.__simpErr=String(e).slice(0,200);}busy=false;}
@@ -7394,7 +7394,7 @@ try{const _agR=drawAimGuide;drawAimGuide=function(info,now){if(window.__RC&&wind
 // ================= v3.16 : "many troops, little information" — the battlefield stays, the clutter goes =================
 window.__MMTOP=true;
 try{document.body.classList.add('bclean');}catch(e){}
-const BIGOK=/거점|점령|보스|BOSS|Boss|승리|패배|VICTORY|DEFEAT|captured|Captured|CAPTURED/;
+const BIGOK=/거점|점령|보스|BOSS|Boss|승리|패배|VICTORY|DEFEAT|captured|Captured|CAPTURED|완벽 회피|PERFECT|처형|EXECUTION|브레이크|BREAK|지휘관 격파|Commander down|연쇄 [0-9]|Chain [0-9]|작전 실패|Operation failed/;
 // ---- 5) notices: centre text only for capture / boss / win-lose, one at a time, ~1 s; the rest is a quiet side line ----
 {const _popB=pop;pop=function(txt,c,big){try{if(G&&!G.over&&!(window.__RC&&window.__RC())){const s=String(txt||'');if(big&&BIGOK.test(s)){G.pops.length=0;_popB(txt,c,true);const p=G.pops[G.pops.length-1];if(p){p.l=1.1;}return;}if(big){rcToast(s,c);return;}return;}}catch(e){}return _popB(txt,c,big);};}
 {const _anB=announce;announce=function(c1,c2,c3,big,col){try{if(G&&G.t>4&&!G.over&&!(window.__RC&&window.__RC())){const s=[c1,c2].filter(Boolean).join(' · ');if(!BIGOK.test(s)){rcToast(s,col);return;}}}catch(e){}return _anB.apply(this,arguments);};}
@@ -7478,12 +7478,12 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  Object.assign(MDL,{zplasma:['zplasma',PI/2,58,'l'],zbane:['zbane',PI/2,26,'h'],zroach:['zroach',PI/2,46,'l'],zlurk:['zlurk',PI/2,48,'l'],robo:['robo',PI/2,40,'h'],sentry:['sentry',PI/2,46,'h']});
  const _la321=launch;launch=function(E,n){try{if(n&&n.boss==='omegaw'&&/아르코스|Arkos/.test(tx(n.x)||''))n=Object.assign({},n,{boss:'arkos'});}catch(e){}return _la321(E,n);};
  const AK={t:0,ph:1,sh:0};const _st321b=step;step=function(dt){_st321b(dt);try{const X=G&&G.rpg;const b=X&&X.bossU;if(!b||b.dead||X.boss!=='arkos'||G.over)return;const me=G.local.unit;if(!me||me.dead)return;b.isArkos=1;b.named=1;
-   if(AK.ph===1&&b.hp<b.mhp*.5){AK.ph=2;announce('⚠',L('아르코스 · 각성','Arkos · Awakened'),L('「버려진 자의 분노를 보아라」','"Behold the wrath of the discarded"'),true,'#c58cff');for(let i=0;i<60;i++){const a=Math.random()*6.28;part(b.x,b.y,Math.cos(a)*380,Math.sin(a)*380,.8,i%2?'#c58cff':'#ffffff',6,80);}}
+   if(AK.ph===1&&b.hp<b.mhp*.5){AK.ph=2;b._akA='ak3';announce('⚠',L('아르코스 · 각성','Arkos · Awakened'),L('「버려진 자의 분노를 보아라」','"Behold the wrath of the discarded"'),true,'#c58cff');for(let i=0;i<60;i++){const a=Math.random()*6.28;part(b.x,b.y,Math.cos(a)*380,Math.sin(a)*380,.8,i%2?'#c58cff':'#ffffff',6,80);}}
    if(AK.sh<2&&b.hp<b.mhp*(AK.sh?.3:.7)){AK.sh++;for(let i=0;i<2;i++){const s=invSpawn('omegaw',b.x+rnd(-260,260),b.y+rnd(-260,260),9999);s.slot.name=L('군주의 그림자','Shadow of the Lord');s.mhp*=.5;s.hp=s.mhp;}pop(L('아르코스가 그림자를 불러냅니다','Arkos calls his shadows'),'#c58cff',true);}
    AK.t-=dt;if(AK.t>0)return;AK.t=AK.ph===2?3.6:5.2;const a=Math.atan2(me.y-b.y,me.x-b.x);const pat=Math.floor(Math.random()*3);const dm=(320+90*(X.diff||6));
-   if(pat===0){tele('circle',{x:b.x,y:b.y,r:AK.ph===2?420:340,dmg:dm*1.2,src:b.slot,t:1.2});pop(L('⚠ 보랏빛 대참격 · 거리를 벌려라','⚠ Violet cleave · get away'),'#c58cff',false);}
-   else if(pat===1){const n=AK.ph===2?13:9;for(let i=0;i<n;i++){const aa=a+(i-(n-1)/2)*.11;setTimeout(()=>{try{if(!b.dead)window.boltAt(b.x+Math.cos(aa)*60,b.y+Math.sin(aa)*60,aa,{team:b.team,dmg:dm*.35,len:900,spd:1500,src:b.slot,col:0xc58cff,vis:90,r:7});}catch(e){}},i*40);}}
-   else{const tx2=me.x+(me.vx||0)*.6,ty2=me.y+(me.vy||0)*.6;for(let i=0;i<(AK.ph===2?3:2);i++){const ox=tx2+rnd(-140,140),oy=ty2+rnd(-140,140);tele('circle',{x:ox,y:oy,r:150,dmg:dm*.9,src:b.slot,t:1.3});}pop(L('⚠ 낙하하는 빛의 창','⚠ Falling spears of light'),'#c58cff',false);}}catch(e){window.__akErr=String(e).slice(0,160);}};
+   if(pat===0){b._akA='ak0';tele('circle',{x:b.x,y:b.y,r:AK.ph===2?420:340,dmg:dm*1.2,src:b.slot,t:1.2});pop(L('⚠ 보랏빛 대참격 · 거리를 벌려라','⚠ Violet cleave · get away'),'#c58cff',false);}
+   else if(pat===1){b._akA='ak1';const n=AK.ph===2?13:9;for(let i=0;i<n;i++){const aa=a+(i-(n-1)/2)*.11;setTimeout(()=>{try{if(!b.dead)window.boltAt(b.x+Math.cos(aa)*60,b.y+Math.sin(aa)*60,aa,{team:b.team,dmg:dm*.35,len:900,spd:1500,src:b.slot,col:0xc58cff,vis:90,r:7});}catch(e){}},i*40);}}
+   else{b._akA='ak2';const tx2=me.x+(me.vx||0)*.6,ty2=me.y+(me.vy||0)*.6;for(let i=0;i<(AK.ph===2?3:2);i++){const ox=tx2+rnd(-140,140),oy=ty2+rnd(-140,140);tele('circle',{x:ox,y:oy,r:150,dmg:dm*.9,src:b.slot,t:1.3});}pop(L('⚠ 낙하하는 빛의 창','⚠ Falling spears of light'),'#c58cff',false);}}catch(e){window.__akErr=String(e).slice(0,160);}};
  const _nm321b=newMatch;newMatch=function(s,m){AK.t=4;AK.ph=1;AK.sh=0;return _nm321b(s,m);};
  // 6) true-ending hint lives in the story itself
  try{if(typeof PORT!=='undefined')PORT.hq='fed_female';}catch(e){}}
@@ -7498,7 +7498,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
 
 
 // ================= v3.23 : performance pass — batch static props, merge instanced props, share friend/foe materials, freeze static matrices, perf HUD + bench =================
-{const PF={key:null,t0:0,merged:0,batched:0,list:[],shared:0};window.__PF=PF;const CELL=1600;
+{const PF={key:null,t0:0,merged:0,batched:0,list:[],shared:0};window.__PF=PF;const CELL=900;
  const clearMine=()=>{for(const o of PF.list)if(o.parent)o.parent.remove(o);PF.list=[];PF.merged=0;PF.batched=0;};
  // 1) identical top-level instanced props → one draw call each
  const mergeInst=()=>{const T3=window.THREE;const groups=new Map();const v=new T3.Vector3(),m0=new T3.Matrix4();for(const o of R3.scene.children){if(!o.isInstancedMesh||o.userData.keep||o.userData.__merged||Array.isArray(o.material)||!o.visible||o.count<1||o.isSkinnedMesh)continue;o.updateMatrixWorld(true);o.getMatrixAt(0,m0);v.setFromMatrixPosition(m0).applyMatrix4(o.matrixWorld);const k=o.geometry.uuid+'|'+o.material.uuid+'|'+Math.floor(v.x/CELL)+','+Math.floor(v.z/CELL);let a=groups.get(k);if(!a)groups.set(k,a=[]);a.push(o);}
@@ -7595,8 +7595,119 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
     else if(S.cur==='fan'||S.cur==='meteor'||S.cur==='starfall'){pitch=t<w?-.28*ease(p):-.28*(1-q);lift=H*.08*(t<w?ease(p):1-q);}
     else if(S.cur==='burrow'){if(t<w)lift=-H*1.1*ease(p);else if(!S.moved)lift=-H*1.1;else{const r=Math.min(1,(t-w-.9)/.35);lift=-H*1.1+H*1.4*ease(r)-H*.3*Math.max(0,r-.8)*5;}}
     else if(S.cur==='nova'){sc=1+.18*ease(p)-(t>w?.18*q:0);lift=H*.15*ease(p)*(t>w?1-q:1);}}
-   o.position.y=b.y+lift;o.rotation.x=b.rx+pitch;o.rotation.y=b.ry+spin;o.scale.setScalar(b.s*sc);}catch(er){}};
+   const clip=!!(u._clipSkill&&m.mx&&m.mx.acts&&m.mx.acts.skill);o.position.y=b.y+lift;o.rotation.x=b.rx+(clip?0:pitch);o.rotation.y=b.ry+(clip&&S.cur!=='spin'?0:spin);o.scale.setScalar(b.s*sc);}catch(er){}};
 }catch(e){window.__fb0Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.25 : perf round 2 — fewer DOM writes, fewer draw calls, less memory, no entry freeze =================
+{try{
+ // 1) HUD: writing the same text / style again no longer touches the DOM
+ const dedupe=(proto,prop)=>{const d=Object.getOwnPropertyDescriptor(proto,prop);if(!d||!d.set||d.set.__dd)return;const set=function(v){if(d.get.call(this)===String(v))return;d.set.call(this,v);};set.__dd=1;Object.defineProperty(proto,prop,{get:d.get,set,configurable:true,enumerable:d.enumerable});};
+ dedupe(Node.prototype,'textContent');
+ const SP=CSSStyleDeclaration.prototype;for(const k of['width','height','left','top','right','bottom','transform','opacity','display','background','color','borderColor','boxShadow','filter','visibility','fontSize'])dedupe(SP,k);
+ // 2) memory: drop each loaded GLB's raw buffer (scenes, textures and clips are already built)
+ setInterval(()=>{try{if(typeof MC==='undefined')return;for(const f in MC){const c=MC[f];if(c&&c.st==='ok'&&c.g&&c.g.parser){c.g.parser=null;}}}catch(e){}},3000);
+ // 3) draw calls: foot rings only for me, my squad, frames and bosses ("many troops, little information"); hidden lights leave the scene
+ {const keepRing=u=>{try{const me=G.local.unit;if(u===me)return true;if(u.boss||u.named||u.eMech||u.cls==='arkframe')return true;if(u.slot&&u.slot.leader===G.local)return true;}catch(e){}return false;};
+  const fix=()=>{try{if(!R3||!R3.units||!G||!G.units)return;const byId=new Map();for(const u of G.units)byId.set(u.id,u);for(const [id,e] of R3.units){if(!e.ring)continue;const u=byId.get(id);if(u&&!keepRing(u))e.ring.visible=false;}}catch(e){}};
+  const hook=()=>{if(!R3||!R3.syncUnits||R3.syncUnits.__rk)return;const f=R3.syncUnits;R3.syncUnits=function(...a){const r=f.apply(this,a);fix();return r;};R3.syncUnits.__rk=1;};
+  setInterval(()=>{try{hook();if(R3&&R3.scene){for(const o of R3.scene.children.slice())if(o.isPointLight&&!o.visible&&o.intensity===0)R3.scene.remove(o);}}catch(e){}},1000);}
+}catch(e){window.__p325Err=String(e).slice(0,160);}}
+
+
+// v3.25b: joint-gear FX (≈100 tiny meshes per frame) only on my own frame; other frames keep the clean Meshy body
+{const _ma325=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){_ma325(e,m,u,dt,now);try{const fx=e.mfx;if(!fx||e._gearOpt===true||!G||!G.local)return;const me=G.local.unit;if(!me)return;e._gearOpt=true;if(u===me)return;for(const g of fx.gears||[]){g.visible=false;if(g.parent)g.parent.remove(g);}for(const l of fx.lights||[]){l.visible=false;if(l.parent)l.parent.remove(l);}fx.gears=[];fx.lights=[];}catch(er){}};}
+
+
+// v3.25c: fully transparent leftovers (faded trails/arcs) are skipped at draw time; other units' drones keep only their core light
+{const hook=()=>{if(!R3||!R3.r||R3.r.__z0)return;const r=R3.r;const f=r.render.bind(r);const off=[];r.render=function(s,c){off.length=0;try{if(s===R3.scene){for(const o of s.children){if(o.visible&&o.isMesh&&o.material&&o.material.transparent&&!Array.isArray(o.material)&&o.material.opacity<.01){o.visible=false;off.push(o);}}}}catch(e){}f(s,c);for(const o of off)o.visible=true;};r.__z0=1;};
+ setInterval(()=>{try{hook();if(!R3||!R3.units||!G||!G.local)return;const me=G.local.unit;for(const [id,e] of R3.units){const fx=e.mfx;if(!fx||!fx.drones||e._drOpt)continue;const u=G.units.find(x=>x.id===id);if(!u||u===me)continue;e._drOpt=1;for(const d of fx.drones){const U=d.userData||{};if(U.halo)U.halo.visible=false;for(const t of U.trail||[])t.visible=false;}}}catch(e){}},700);}
+
+
+// ================= v3.26 : named pilots — 10 aces you can take into battle as your wingman (their own frames, portraits, voice lines, a small bonus) =================
+{try{
+ const PL=[
+  {k:'p_hanseojin',f:'mech4',req:'e0',n:K('한서진 소령','Maj. Han Seo-jin'),r:K('연맹 제7기동대 「블루 랜서」 대장','Captain of Federation 7th "Blue Lancers"'),b:{spd:1.08},bt:K('이동 속도 +8%','Move speed +8%'),q:K('따라올 수 있으면 따라와 봐.','Keep up if you can.'),d:K('속도라면 누구에게도 지지 않는 쾌활한 에이스. 대원들의 생일을 하나도 빼먹지 않는다.','A cheerful ace no one outruns. She never misses a squadmate\'s birthday.')},
+  {k:'p_mira',f:'m_ranger',req:'e1',n:K('미라 오스틴 중위','Lt. Mira Austin'),r:K('연맹 정찰대 저격수','Federation recon sniper'),b:{dmg:1.06},bt:K('피해 +6%','Damage +6%'),q:K('한 발이면 충분해.','One shot is enough.'),d:K('말수가 적고 기다림에 익숙하다. 한 발을 쏘기 위해 열 시간을 엎드려 있던 적도 있다.','Quiet and patient; she once lay still for ten hours to take one shot.')},
+  {k:'p_parkcheolho',f:'m_artillery',req:'e0',n:K('박철호 원사','MSgt. Park Cheol-ho'),r:K('지구 방위군 포병대','Earth Defense artillery'),b:{dmg:1.05,hp:1.04},bt:K('피해 +5% · 체력 +4%','Damage +5% · HP +4%'),q:K('좌표만 불러. 나머지는 내가 한다.','Just call the coordinates. I\'ll do the rest.'),d:K('은퇴를 석 달 앞두고 제타 침공을 맞은 노장 포병. 젊은 파일럿들에게 "아저씨"로 불린다.','A veteran gunner three months from retirement when the Zeta came; the young pilots call him "uncle".')},
+  {k:'p_ohserin',f:'m_guardian',req:'e0',n:K('오세린 대위','Capt. Oh Se-rin'),r:K('지구 방위군 방호대 · 방패의 성녀','Earth Defense guard corps · Saint of Shields'),b:{hp:1.12},bt:K('체력 +12%','HP +12%'),q:K('내 뒤에 있으면 안전해요.','You\'re safe behind me.'),d:K('구하지 못한 사람의 이름을 수첩에 적어 둔다.','She writes down the names of everyone she could not save.')},
+  {k:'p_bruno',f:'m_titan',req:'e2',n:K('브루노 카르사','Bruno Karsa'),r:K('연맹 의용 기갑대 · 이그니스 광부 출신','Federation volunteer armour · ex-Ignis miner'),b:{hp:1.15},bt:K('체력 +15%','HP +15%'),q:K('내 동네는 내가 지킨다.','I guard my own town.'),d:K('군인이 아니라서 경례를 자주 틀린다. 스웜링 600마리를 한 번에 쓸어낸 거구.','Not a soldier—he still gets the salute wrong. Swept away 600 swarmlings in one fight.')},
+  {k:'p_airamoon',f:'m_sky',req:'e1',n:K('아이라 문 대위','Capt. Aira Moon'),r:K('연맹 항공대','Federation air wing'),b:{spd:1.12},bt:K('이동 속도 +12%','Move speed +12%'),q:K('하늘은 내 구역이야.','The sky is my turf.'),d:K('원래 화물선 조종사. 하늘에 있을 때만 말이 많아진다.','A former cargo pilot who only gets talkative in the sky.')},
+  {k:'p_cassian',f:'m_striker',req:'e3',n:K('카시안 드라크','Cassian Drake'),r:K('은하 제국 진홍 기사단장','Knight Commander of the Imperial Crimson Order'),b:{dmg:1.1},bt:K('피해 +10%','Damage +10%'),q:K('진홍은 물러서지 않는다.','Crimson does not retreat.'),d:K('아델하르트 제독의 오른팔. 처음으로 연맹 파일럿에게 등을 맡긴다.','Admiral Adelhard\'s right hand, trusting a Federation pilot with his back for the first time.')},
+  {k:'p_noahlin',f:'m_wizard',req:'e2',n:K('노아 린','Noah Lin'),r:K('연맹 기술자 협회 시험 파일럿','Federation engineers\' test pilot'),b:{cd:.92},bt:K('기술 재사용 -8%','Skill cooldown -8%'),q:K('계산은 끝났어. 이제 쏘기만 하면 돼.','The math is done. Now we just fire.'),d:K('열아홉 살의 천재 설계자. 자기가 만든 기체를 자기가 시험한다.','A nineteen-year-old genius who test-flies what he designs.')},
+  {k:'p_shade',f:'m_phantom',req:'e4',n:K('셰이드','Shade'),r:K('중립 회랑 용병','Neutral-corridor mercenary'),b:{dmg:1.08,spd:1.04},bt:K('피해 +8% · 이동 +4%','Damage +8% · Move +4%'),q:K('…','…'),d:K('얼굴도 본명도 아무도 모른다. 보수는 늘 현금으로만 받는다.','No one knows the face or the name. Paid in cash, always.')},
+  {k:'p_seomujin',f:'m_samurai',req:'e1',n:K('서무진','Seo Mu-jin'),r:K('네오 서울 검술 도장 사범','Neo Seoul sword master'),b:{dmg:1.06,hp:1.05},bt:K('피해 +6% · 체력 +5%','Damage +6% · HP +5%'),q:K('베어야 할 것만 벤다.','I cut only what must be cut.'),d:K('군인이 아닌 무술가. 제자들이 피난할 시간을 벌려고 기체에 올랐다.','A martial artist, not a soldier, who boarded a frame to buy his students time to flee.')}];
+ window.__PILOTS=PL;
+ for(const p of PL){PORT[p.k]=p.k;WHO[p.k]=p.n;}
+ try{for(const p of PL)if(!CAST.some(c=>c.k===p.k))CAST.push({k:p.k,img:p.k,n:p.n,role:p.r,d:K(tx(p.d)+' · '+L('기체 ','Frame ')+tx(MECHS[p.f].n)+' · 「'+tx(p.q)+'」',tx(p.d))});}catch(e){}
+ const open=k=>{const r=R();return !!(r.epi&&r.epi[k]&&r.epi[k].done)||k==='e0'&&!!(r.epi&&r.epi.e_p&&r.epi.e_p.done);};
+ const cur=()=>{const r=R();const p=PL.find(x=>x.k===r.wing);return p&&open(p.req)?p:null;};
+ {const _asW=arkStats;arkStats=function(){const s=_asW();try{const p=cur();if(p){for(const [k,v] of Object.entries(p.b))if(k in s)s[k]*=v;}}catch(e){}return s;};}
+ // picker
+ window.wingOpen=function(){let ov=document.getElementById('wingOv');if(ov)ov.remove();ov=document.createElement('div');ov.id='wingOv';ov.style.cssText='position:fixed;inset:0;z-index:9100;background:rgba(3,6,14,.86);display:flex;align-items:center;justify-content:center;padding:12px';const r=R();
+  const card=p=>{const op=open(p.req);const on=r.wing===p.k;return '<div data-wk="'+p.k+'" style="cursor:'+(op?'pointer':'default')+';display:flex;gap:10px;align-items:center;padding:8px;border-radius:12px;margin:5px 0;border:1px solid '+(on?'#7dffd0':'rgba(150,180,220,.25)')+';background:'+(on?'rgba(20,70,60,.55)':'rgba(10,16,30,.7)')+';'+(op?'':'opacity:.45')+'"><img src="models/portraits/'+p.k+'.png" style="width:64px;height:64px;object-fit:cover;object-position:top;border-radius:10px;background:#0b1020"><div style="flex:1;min-width:0"><b style="color:#ffd166">'+tx(p.n)+'</b> <small style="opacity:.75">'+tx(p.r)+'</small><br><small>'+L('기체 ','Frame ')+tx(MECHS[p.f].n)+' · <span style="color:#7dffd0">'+tx(p.bt)+'</span></small><br><small style="opacity:.8">「'+tx(p.q)+'」</small>'+(op?'':'<br><small>🔒 '+tx(EPIS.find(e=>e.id===p.req).t)+L(' 클리어',' cleared')+'</small>')+'</div>'+(on?'<b style="color:#7dffd0">'+L('출격 중','Assigned')+'</b>':'')+'</div>';};
+  ov.innerHTML='<div style="width:min(620px,96vw);max-height:90vh;overflow:auto;padding:16px;border-radius:16px;border:1px solid rgba(150,200,255,.3);background:linear-gradient(180deg,rgba(14,22,40,.97),rgba(6,10,20,.98))"><div style="display:flex;align-items:center;gap:8px"><b style="font-size:18px">'+L('출격 동료 · 에이스 파일럿','Wingman · Ace pilots')+'</b><span style="flex:1"></span><button id="wingNone">'+L('동료 없이','No wingman')+'</button><button id="wingX">✕</button></div><small style="opacity:.75">'+L('고른 파일럿이 자기 전용 기체를 타고 AI 에이스로 함께 싸웁니다. 파일럿마다 작은 보너스가 있습니다.','The chosen pilot flies their own frame as an AI ace beside you, with a small bonus.')+'</small>'+PL.map(card).join('')+'</div>';
+  document.body.appendChild(ov);ov.querySelector('#wingX').onclick=()=>ov.remove();ov.querySelector('#wingNone').onclick=()=>{r.wing=null;saveP();ov.remove();};
+  ov.querySelectorAll('[data-wk]').forEach(el=>el.onclick=()=>{const p=PL.find(x=>x.k===el.dataset.wk);if(!p||!open(p.req))return;r.wing=p.k;saveP();try{window.linkCorner&&window.linkCorner(p.k,tx(p.n),tx(p.q));}catch(e){}window.wingOpen();});};
+ setInterval(()=>{try{const a=document.getElementById('hgAuto');if(a&&!document.getElementById('hgWing')){const b=document.createElement('button');b.id='hgWing';b.textContent=L('출격 동료','Wingman');b.onclick=()=>window.wingOpen();a.parentNode.insertBefore(b,a.nextSibling);}
+   const m=document.getElementById('menu');if(m&&!document.getElementById('mWing')){const hb=[...m.querySelectorAll('button')].find(x=>/^\s*(정비소|Hangar)\s*$/.test(x.textContent));if(hb){const b=document.createElement('button');b.id='mWing';b.className=hb.className;b.textContent=L('출격 동료','Wingman');b.onclick=()=>window.wingOpen();hb.parentNode.insertBefore(b,hb.nextSibling);}}}catch(e){}},1000);
+ // battle: the wingman flies in with you, and returns 25 s after being shot down
+ window.MONMDL=window.MONMDL||{};const _st326=step;step=function(dt){_st326(dt);try{if(!G||G.over||G.client||!G.local)return;const me=G.local.unit;if(!me||me.dead||me.cls!=='arkframe')return;const p=cur();if(!p)return;if(G._wingT==null)G._wingT=G.t+2.5;
+   const w=G._wingU;if(w&&!w.dead)return;if(w&&w.dead&&!G._wingDown){G._wingDown=1;G._wingT=G.t+25;try{window.linkCorner&&window.linkCorner(p.k,tx(p.n),L('기체 손상… 잠시 후 복귀한다.','Frame damaged… I\'ll be back shortly.'));}catch(e){}}
+   if(G.t<G._wingT)return;const H=(MDL.arkframe&&MDL.arkframe[2])||80;window.MONMDL['pw_'+p.k]=[p.f,PI/2,H,'h'];const u=spawnMinion(me,'arkframe',me.x-110,me.y+90,1e9,me.z);u.mon='pw_'+p.k;u.wing=1;u.slot.name=tx(p.n);u.slot.leader=G.local;u.mhp=Math.round(u.mhp*.85);u.hp=u.mhp;G._wingU=u;G._wingDown=0;
+   try{window.linkCorner&&window.linkCorner(p.k,tx(p.n),tx(p.q));}catch(e){}}catch(e){window.__wingErr=String(e&&e.stack||e).slice(0,200);}};
+}catch(e){window.__w0Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.27 : rigged bosses play their own attack motions (slam, spin, judgment, cast, roar, charge) during skills =================
+{const CLIP={slam:['slam','judgment','swing'],charge:['charge','punch','judgment'],spin:['spin','swing'],roar:['roar','cast'],fan:['cast','judgment','swing'],meteor:['cast','judgment'],nova:['cast','roar'],starfall:['cast'],burrow:[],ak0:['judgment','slam'],ak1:['cast','spin'],ak2:['cast','roar'],ak3:['roar']};
+ const find=(A,names)=>{for(const n of names){if(A[n])return A[n];const k=Object.keys(A).find(x=>x.toLowerCase().includes(n));if(k)return A[k];}return null;};
+ const _ma327=mdlAnimate;mdlAnimate=function(e,m,u,dt,now){try{if(u&&m&&m.mx&&m.mx.acts){const A=m.mx.acts;let sk=null,dur=1.4;if(u.fbs&&u.fbs.cur&&!u.fbs.anim){sk=u.fbs.cur;u.fbs.anim=1;}else if(u.fbs&&!u.fbs.cur)u.fbs.anim=0;if(u._akA){sk=u._akA;u._akA=null;dur=1.6;}
+   if(sk){const act=find(A,CLIP[sk]||[]);if(act){A.skill=act;u.skillT=dur;u._clipSkill=1;}}
+   if(u._clipSkill&&!(u.skillT>0)){u._clipSkill=0;}}}catch(er){}return _ma327(e,m,u,dt,now);};}
+
+
+// ================= v3.28 : COMBAT 2.0 — read, react, reward (telegraph + perfect dodge, auto battle demoted to co-pilot, elite roles, guard break, execution, chain kills, hit-stop) =================
+{try{
+ const me=()=>G&&G.local&&G.local.unit;const fx=(t,c,big)=>{try{pop(t,c||'#ffd166',!!big);}catch(e){}};const snd=(f,f2,d,v,ty)=>{try{SFX2.tone(f,d||.12,ty||'square',v||.05,f2);}catch(e){}};
+ const C2={pdT:0,buff:0,chain:0,chainT:0,lastKill:null,execCd:0,dirT:8,dashAt:-9,dashPos:null,prevDash:0};window.__C2=C2;
+ // ---- 1) auto battle = co-pilot: moves and fires only; skills, ultimate, dodges, executions are yours ----
+ try{const _ahi=autoHuntInput;autoHuntInput=function(u){const inp=_ahi(u);if(inp){inp.a1=false;inp.a2=false;inp.ul=false;inp.ab=false;C2.autoOn=G?G.t:0;}return inp;};}catch(e){window.__c2a=String(e);}
+ const autoNow=()=>G&&C2.autoOn!=null&&G.t-C2.autoOn<.2;
+ // ---- 2) perfect dodge: dash out of a telegraphed hit in the last 0.45 s ----
+ const inZone=(s,x,y)=>{if(s.k==='circle')return (x-s.x)**2+(y-s.y)**2<s.r*s.r;const dx=s.x2-s.x,dy=s.y2-s.y,L2=dx*dx+dy*dy||1;const t=clamp(((x-s.x)*dx+(y-s.y)*dy)/L2,0,1);return (x-(s.x+dx*t))**2+(y-(s.y+dy*t))**2<(s.w||50)**2;};
+ const perfect=()=>{const u=me();if(!u||G.t-C2.pdT<.6)return;C2.pdT=G.t;C2.buff=G.t+2.5;if(u.en!=null)u.en=Math.min(u.enMax||100,u.en+30);G.hstop=Math.max(G.hstop||0,.12);for(const e of G.units){if(e.dead||e.team===u.team||e.boss)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<900)e.stun=Math.max(e.stun||0,.7);}
+  fx(L('완벽 회피! · 다음 공격 2배','PERFECT DODGE! · next hit x2'),'#7dffd0',true);snd(660,1760,.18,.07,'sine');snd(990,1980,.22,.05,'triangle');for(let i=0;i<26;i++){const a=Math.random()*6.28;part(u.x,u.y,Math.cos(a)*380,Math.sin(a)*380,.35,i%2?'#7dffd0':'#ffffff',4,50);}G.rpg&&(G.rpg.pd=(G.rpg.pd||0)+1);G.pdN=(G.pdN||0)+1;};
+ window.__perfectDodge=perfect;
+ try{const _tt=teleTick;teleTick=function(dt){const u=me();const chk=[];try{if(u&&G.tele&&C2.dashPos&&G.t-C2.dashAt<.45){for(const s of G.tele){if(!s.done&&s.t>0&&s.t-dt<=0&&inZone(s,C2.dashPos.x,C2.dashPos.y))chk.push(s);}}}catch(e){}const r=_tt(dt);try{for(const s of chk){if(!inZone(s,u.x,u.y))perfect();}}catch(e){}return r;};}catch(e){window.__c2t=String(e);}
+ // ---- 3) elite roles: commander (aura; kill = allied surge), sniper (lock-on), charger (telegraphed ram), shield (front blocks 80%) ----
+ const ROLE={cmd:{n:K('지휘관','Commander'),c:'#ffd166',hp:3.2},snp:{n:K('저격수','Marksman'),c:'#ff5a5a',hp:2.2},chg:{n:K('돌격대장','Charger'),c:'#ff9b40',hp:2.6},shd:{n:K('방패병','Shieldbearer'),c:'#7fb8ff',hp:3}};
+ const ring=(u,col)=>{try{const e=R3.units.get(u.id);if(!e||!window.THREE)return;const T3=window.THREE;const m=new T3.Mesh(new T3.RingGeometry(1,1.12,36),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.85,depthWrite:false,side:T3.DoubleSide}));m.rotation.x=-Math.PI/2;m.position.y=2;const s=(u.r||14)+22;m.scale.setScalar(s);m.userData.keep=1;e.root.add(m);u._eRing=m;}catch(e){}};
+ const promote=(u,role)=>{const R0=ROLE[role];u.elite2=role;u.mhp=Math.round(u.mhp*R0.hp);u.hp=u.mhp;u.gd=0;u.e2t=2+Math.random()*3;try{u.slot.name='★ '+tx(R0.n)+' · '+(u.slot.name||'');}catch(e){}setTimeout(()=>ring(u,new window.THREE.Color(R0.c).getHex()),200);};
+ const director=dt=>{C2.dirT-=dt;if(C2.dirT>0)return;C2.dirT=11+Math.random()*5;const u=me();if(!u)return;const els=G.units.filter(e=>!e.dead&&e.elite2);if(els.length>=2)return;const cand=G.units.filter(e=>!e.dead&&e.team!==u.team&&e.team!==2&&!e.boss&&!e.elite2&&!e.drone&&e.layer===0&&Math.hypot(e.x-u.x,e.y-u.y)<1400&&Math.hypot(e.x-u.x,e.y-u.y)>350);if(!cand.length)return;const e=cand[(Math.random()*cand.length)|0];const pool=['cmd','snp','chg','shd'].filter(r=>!els.some(x=>x.elite2===r));const role=pool[(Math.random()*pool.length)|0];promote(e,role);
+  fx('⚠ '+tx(ROLE[role].n)+L(' 출현',' appears')+' — '+({cmd:L('처치하면 아군 돌격','kill it to rally your troops'),snp:L('조준 원에서 벗어나라','leave the lock-on ring'),chg:L('돌진 선 밖으로','step off the charge line'),shd:L('정면은 막힌다 · 측면/근접','front is blocked · flank or melee')}[role]),ROLE[role].c,false);};
+ const roleTick=(e,dt)=>{const u=me();if(!u||u.dead)return;const d=Math.hypot(u.x-e.x,u.y-e.y);e.e2t-=dt;
+  if(e.elite2==='snp'){if(!e.lk&&e.e2t<=0&&d<1500){e.lk={t:0};snd(520,520,.06,.04,'square');}if(e.lk){const L0=e.lk;L0.t+=dt;if(L0.t<1.2){L0.x=u.x;L0.y=u.y;if(Math.random()<.6)for(let i=0;i<3;i++){const a=Math.random()*6.28;part(L0.x+Math.cos(a)*90,L0.y+Math.sin(a)*90,0,0,.12,'#ff3b47',4,8);}if(Math.random()<dt*6)snd(700+L0.t*400,0,.04,.03,'square');}else if(L0.t<1.6){for(let i=0;i<4;i++){const a=Math.random()*6.28;part(L0.x+Math.cos(a)*80,L0.y+Math.sin(a)*80,0,0,.1,'#ffffff',5,8);}}else{const a=Math.atan2(L0.y-e.y,L0.x-e.x);try{window.__vbolt(e.x,e.y,a,Math.hypot(L0.x-e.x,L0.y-e.y),0xff4a4a,50,{vis:110,r:7,sp:5200});}catch(er){}if(Math.hypot(u.x-L0.x,u.y-L0.y)<95){hurt(u,u.mhp*.26,e.slot,a,'b');}else if(G.t-C2.dashAt<.6)perfect();e.lk=null;e.e2t=8+Math.random()*3;}}}
+  else if(e.elite2==='chg'){if(!e.cg&&e.e2t<=0&&d<900&&d>150){const a=Math.atan2(u.y-e.y,u.x-e.x);e.cg={t:0,a};tele('line',{x:e.x,y:e.y,x2:e.x+Math.cos(a)*720,y2:e.y+Math.sin(a)*720,w:(e.r||14)+40,dmg:u.mhp*.16,src:e.slot,t:.7});}if(e.cg){const C=e.cg;C.t+=dt;if(C.t>.7&&C.t<1.05){const sp=2100*dt;e.x=clamp(e.x+Math.cos(C.a)*sp,30,WW-30);e.y=clamp(e.y+Math.sin(C.a)*sp,30,WH-30);e.vx=0;e.vy=0;if(typeof solidAt==='function'&&solidAt(e.x,e.y,e.r||14)){e.stun=Math.max(e.stun||0,2.2);fx(L('벽에 충돌! 기절','Slammed into cover! Stunned'),'#ff9b40');C.t=9;}}else if(C.t<.7){e.vx=0;e.vy=0;}if(C.t>=1.05){e.cg=null;e.e2t=6+Math.random()*2;}}}};
+ // ---- 4) damage rules: commander aura, shield front, guard break, execution, perfect-dodge buff, auto penalty ----
+ const _hu328=hurt;hurt=function(e,dmg,src,a,dt){try{const u=me();const su=src&&src.unit;
+   if(su&&e&&su.team!==e.team){for(const c of G.units){if(c.elite2==='cmd'&&!c.dead&&c.team===su.team&&c!==su&&Math.hypot(c.x-su.x,c.y-su.y)<450){dmg*=1.3;break;}}
+    if(G._surge>G.t&&u&&su.team===u.team&&su!==u)dmg*=1.4;}
+   if(e&&e.elite2==='shd'&&su&&a!=null){const face=Math.atan2(su.y-e.y,su.x-e.x);const fwd=e.aa!=null?e.aa:(e.a||0);if(Math.abs(angDiff(face,fwd))<1.05&&Math.hypot(su.x-e.x,su.y-e.y)>200){dmg*=.2;if(Math.random()<.3)part(e.x+Math.cos(face)*30,e.y+Math.sin(face)*30,0,0,.15,'#7fb8ff',6,40);}}
+   const mine=u&&(src===G.local||(src&&src.ownerSlot===G.local));
+   if(mine&&e&&e!==u){if(C2.buff>G.t){dmg*=2;C2.buff=0;fx(L('반격!','COUNTER!'),'#7dffd0');}if(autoNow())dmg*=.75;if(e.brk>G.t)dmg*=1.6;
+    if((e.elite2||e.boss)&&!e.dead){e.gd=(e.gd||0)+dmg;if(!(e.brk>G.t)&&e.gd>=e.mhp*(e.boss?.12:.22)){e.gd=0;e.brk=G.t+3.5;e.stun=Math.max(e.stun||0,e.boss?1.6:3.5);G.hstop=Math.max(G.hstop||0,.12);fx(L('브레이크! 3초간 피해 증가','BREAK! extra damage for 3s'),'#ffd166',true);snd(220,90,.3,.08,'sawtooth');for(let i=0;i<30;i++){const b=Math.random()*6.28;part(e.x,e.y,Math.cos(b)*300,Math.sin(b)*300,.4,i%2?'#ffd166':'#ffffff',5,40);}}}
+    if((e.elite2||(e.boss&&!e.isArkos))&&C2.execCd<=0&&u&&Math.hypot(e.x-u.x,e.y-u.y)<240&&e.hp-dmg<e.mhp*.15&&e.hp>0){C2.execCd=3;if(e.elite2){dmg=e.hp+1;}else{dmg=Math.max(dmg,e.mhp*.08);e.stun=Math.max(e.stun||0,1);}u.hp=Math.min(u.mhp,u.hp+u.mhp*.2);if(u.en!=null)u.en=Math.min(u.enMax||100,u.en+25);G.hstop=Math.max(G.hstop||0,.14);fx(L('처형! 체력 회복','EXECUTION! HP restored'),'#ff6b6b',true);snd(140,60,.35,.09,'sawtooth');}}}catch(er){}return _hu328(e,dmg,src,a,dt);};
+ // ---- 5) kills: elite hit-stop, commander surge, chain kills with escalating pitch and chain blasts ----
+ const _ku328=killUnit;killUnit=function(u,src){const was=u&&u.dead;const r=_ku328(u,src);try{if(!was&&u&&u.dead){const p=me();if(u.elite2){G.hstop=Math.max(G.hstop||0,.07);try{if(u._eRing&&u._eRing.parent)u._eRing.parent.remove(u._eRing);}catch(e){}
+     if(u.elite2==='cmd'&&p){G._surge=G.t+8;for(const a of G.units){if(a.dead)continue;if(a.team===p.team&&Math.hypot(a.x-u.x,a.y-u.y)<800)a.haste=Math.max(a.haste||0,8);else if(a.team!==p.team&&Math.hypot(a.x-u.x,a.y-u.y)<550)a.stun=Math.max(a.stun||0,3);}fx(L('지휘관 격파! 아군 돌격 — 8초간 아군 화력 +40%','Commander down! Troops surge — allied firepower +40% for 8s'),'#ffd166',true);try{COMMS.say('hq',t('hq'),L('지휘 신호 소멸! 전 부대 돌격!','Enemy command is down! All units, charge!'),{pri:3});}catch(e){}}}
+    const mine=src===G.local||(src&&src.ownerSlot===G.local);if(mine&&p){if(G.t-C2.chainT<3)C2.chain++;else C2.chain=1;C2.chainT=G.t;snd(260+Math.min(40,C2.chain)*22,0,.05,.035,'triangle');
+     if(C2.chain%10===0){fx(L('연쇄 ','Chain ')+C2.chain+'!','#9ff6ff',C2.chain>=30);const base=90+plv()*7;for(const e of G.units){if(e.dead||e.team===p.team)continue;if(Math.hypot(e.x-u.x,e.y-u.y)<170)_hu328(e,base,G.local,Math.atan2(e.y-u.y,e.x-u.x),'x');}for(let i=0;i<34;i++){const b=Math.random()*6.28;part(u.x,u.y,Math.cos(b)*340,Math.sin(b)*340,.35,i%3?'#9ff6ff':'#ffffff',5,20);}
+      if(C2.chain===30&&p.en!=null)p.en=p.enMax||100;}}}}catch(e){}return r;};
+ // ---- 6) tick: dash tracking, director, roles ----
+ const _st328=step;step=function(dt){_st328(dt);try{if(!G||G.over||!G.local)return;const u=me();if(!u)return;if((u.dashT||0)>0&&!(C2.prevDash>0)){C2.dashAt=G.t;C2.dashPos={x:u.x,y:u.y};}C2.prevDash=u.dashT||0;if(C2.execCd>0)C2.execCd-=dt;
+   if(!G.client&&!u.dead&&!(G.rpg&&G.rpg.obj&&G.rpg.obj.k==='field'&&false))director(dt);for(const e of G.units){if(!e.dead&&e.elite2)roleTick(e,dt);}}catch(e){window.__c2Err=String(e&&e.stack||e).slice(0,200);}};
+}catch(e){window.__c20Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
@@ -7697,12 +7808,12 @@ if(typeof MDL!=='undefined'&&MDL.arkframe)syncArkModel();
  setInterval(()=>{try{const e=document.getElementById('cine');if(e&&e.classList.contains('on')&&window.__HL)window.__HL.until=Math.max(window.__HL.until,performance.now()/1000+.6);}catch(e){}},200);}
 // ================= v3.11d : no mid-fight hitches (model prefetch, paced spawning, shader prewarm) · swarm as real Zeta lings · XP shards =================
 // ---- at deploy: fetch the models this fight will need right away, instead of on first sight ----
-{const _nmP=newMatch;newMatch=function(size,mode){_nmP(size,mode);try{if(!mdlUse())return;const need=new Set(['zling','zling_sw','zspit','zwing','zbehemoth','zplasma','zbane','zroach','zlurk','robo','sentry','w_laserrifle','w_plasmacannon','w_rocket','w_railsniper']);for(const fac of['fed','emp'])for(const k of['t','f','o'])need.add(INF_M[fac][k]);
+{const _nmP=newMatch;newMatch=function(size,mode){_nmP(size,mode);try{if(!mdlUse())return;const zeta=P.mode==='inv'||!!(G&&(G.rpg||G.inv));const need=new Set(zeta?['zling','zling_sw','zspit','zwing','zbehemoth','zplasma','zbane','zroach','zlurk','robo','sentry','w_laserrifle','w_plasmacannon','w_rocket','w_railsniper']:['zling_sw','w_laserrifle','w_plasmacannon','w_rocket','w_railsniper']);for(const fac of['fed','emp'])for(const k of['t','f','o'])need.add(INF_M[fac][k]);
   for(const u of G.units){const m=MDL[u.cls];if(m)need.add(m[0]);}let i=0;for(const f of need)setTimeout(()=>{try{mdlGet(f);}catch(e){}},200+(i++)*120);}catch(e){}};}
 // ---- a wave of 10+ units no longer clones every model in one frame: at most two rigged models are built per frame ----
 {let n=0,fr=-1;const _mi=mdlInstance;mdlInstance=function(f,yaw,size,axis){try{const c=MC[f];if(c&&c.st==='ok'&&c.skinned&&G&&!G.over&&G.t>1.5&&R3&&R3.fno!=null){if(R3.fno!==fr){fr=R3.fno;n=0;}if(++n>2)return null;}}catch(e){}return _mi(f,yaw,size,axis);};}
 // ---- compile shaders while the deploy overlay is still up, and again whenever a new model arrives (outside the fight's hot moments) ----
-{let done=null,ver=-1,t=0;const _stC=step;step=function(dt){_stC(dt);try{if(!G||G.over||!R3||!R3.r||!R3.cam||!use3D())return;t-=dt;if(t>0)return;t=.5;if(done!==G&&G.t>.4){done=G;ver=mVer;R3.r.compile(R3.scene,R3.cam);}else if(ver!==mVer){ver=mVer;const p=R3.r.compileAsync?R3.r.compileAsync(R3.scene,R3.cam):R3.r.compile(R3.scene,R3.cam);if(p&&p.catch)p.catch(()=>{});}}catch(e){}};}
+{let done=null,ver=-1,t=0;const _stC=step;step=function(dt){_stC(dt);try{if(!G||G.over||!R3||!R3.r||!R3.cam||!use3D())return;t-=dt;if(t>0)return;t=.5;if(done!==G&&G.t>.4){done=G;ver=mVer;const p0=R3.r.compileAsync?R3.r.compileAsync(R3.scene,R3.cam):R3.r.compile(R3.scene,R3.cam);if(p0&&p0.catch)p0.catch(()=>{});}else if(ver!==mVer){ver=mVer;const p=R3.r.compileAsync?R3.r.compileAsync(R3.scene,R3.cam):R3.r.compile(R3.scene,R3.cam);if(p&&p.catch)p.catch(()=>{});}}catch(e){}};}
 // ---- swarm body: a low-poly Zeta ling (one draw call for the whole horde) instead of a purple cone ----
 {const _sm=swMesh;swMesh=function(){const M=_sm();try{if(!SW.real&&M&&mdlGet('zling_sw')){const T3=window.THREE;const c=MC['zling_sw'];let src=null;c.g.scene.updateMatrixWorld(true);c.g.scene.traverse(o=>{if(o.isMesh&&!src)src=o;});
    if(src){const g=src.geometry.clone();g.applyMatrix4(src.matrixWorld);for(const k of Object.keys(g.attributes))if(k!=='position'&&k!=='normal'&&k!=='uv')g.deleteAttribute(k);g.rotateY(-Math.PI/2);g.computeBoundingBox();const b=g.boundingBox;const len=Math.max(b.max.x-b.min.x,b.max.z-b.min.z)||1,k=36/len;g.translate(-(b.min.x+b.max.x)/2,-b.min.y,-(b.min.z+b.max.z)/2);g.scale(k,k,k);g.computeVertexNormals();
