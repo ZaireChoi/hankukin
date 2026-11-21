@@ -1464,5 +1464,49 @@
  "arkos": {
   "bytes": 2344136,
   "anims": []
+ },
+ "fb_ruin": {
+  "bytes": 1399848,
+  "anims": []
+ },
+ "fb_wreck": {
+  "bytes": 1772576,
+  "anims": []
+ },
+ "fb_magma": {
+  "bytes": 1668364,
+  "anims": []
+ },
+ "fb_frost": {
+  "bytes": 1523200,
+  "anims": []
+ },
+ "fb_fallen": {
+  "bytes": 1519444,
+  "anims": []
+ },
+ "fb_exec": {
+  "bytes": 1656444,
+  "anims": []
+ },
+ "fb_hound": {
+  "bytes": 1363900,
+  "anims": []
+ },
+ "fb_scorp": {
+  "bytes": 1385796,
+  "anims": []
+ },
+ "fb_spore": {
+  "bytes": 1308600,
+  "anims": []
+ },
+ "cos_whale": {
+  "bytes": 968380,
+  "anims": []
+ },
+ "cos_mother": {
+  "bytes": 1460384,
+  "anims": []
  }
 }
