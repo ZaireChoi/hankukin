@@ -647,7 +647,7 @@
   "anims": []
  },
  "link_leg": {
-  "bytes": 4459232,
+  "bytes": 3840684,
   "tris": 40840,
   "size": [
    0.55,
@@ -656,10 +656,11 @@
   ],
   "anims": [
    "idle",
-   "walk",
-   "bow",
    "talk",
-   "talk3"
+   "talk3",
+   "wave",
+   "bow",
+   "shrug"
   ]
  },
  "m_striker": {
@@ -892,7 +893,7 @@
   ]
  },
  "a_ice": {
-  "bytes": 4146624,
+  "bytes": 3017460,
   "tris": 41352,
   "size": [
    0.25,
@@ -901,14 +902,14 @@
   ],
   "anims": [
    "idle",
-   "talk",
-   "bow",
-   "talk2",
-   "shrug"
+   "walk",
+   "wave",
+   "shrug",
+   "cheer"
   ]
  },
  "a_thunder": {
-  "bytes": 3707108,
+  "bytes": 3075136,
   "tris": 41232,
   "size": [
    0.43,
@@ -917,8 +918,9 @@
   ],
   "anims": [
    "idle",
-   "sway",
-   "talk3",
+   "walk",
+   "wave",
+   "shrug",
    "cheer"
   ]
  },
@@ -936,7 +938,7 @@
   ]
  },
  "a_dark": {
-  "bytes": 3824568,
+  "bytes": 2809708,
   "tris": 40516,
   "size": [
    0.63,
@@ -945,13 +947,15 @@
   ],
   "anims": [
    "idle",
-   "talk2",
    "talk",
+   "talk3",
+   "wave",
+   "bow",
    "shrug"
   ]
  },
  "a_time": {
-  "bytes": 3748412,
+  "bytes": 2691944,
   "tris": 41468,
   "size": [
    0.3,
@@ -960,13 +964,15 @@
   ],
   "anims": [
    "idle",
-   "bow",
    "talk",
-   "sway"
+   "talk3",
+   "wave",
+   "bow",
+   "shrug"
   ]
  },
  "a_void": {
-  "bytes": 3550976,
+  "bytes": 2880552,
   "tris": 41099,
   "size": [
    0.24,
@@ -975,8 +981,10 @@
   ],
   "anims": [
    "idle",
-   "talk2",
    "talk",
+   "talk3",
+   "wave",
+   "bow",
    "shrug"
   ]
  },
@@ -1076,7 +1084,7 @@
   ]
  },
  "a_wind2": {
-  "bytes": 3960884,
+  "bytes": 3133804,
   "tris": 41277,
   "size": [
    0.53,
@@ -1084,8 +1092,11 @@
    0.38
   ],
   "anims": [
+   "idle",
    "walk",
-   "run"
+   "wave",
+   "shrug",
+   "cheer"
   ]
  },
  "hayun": {
@@ -1217,5 +1228,213 @@
    "wave",
    "talk3"
   ]
+ },
+ "d_laser": {
+  "bytes": 1323176,
+  "anims": []
+ },
+ "d_missile": {
+  "bytes": 1253712,
+  "anims": []
+ },
+ "d_shield": {
+  "bytes": 1330620,
+  "anims": []
+ },
+ "d_repair": {
+  "bytes": 1011576,
+  "anims": []
+ },
+ "d_emp": {
+  "bytes": 990908,
+  "anims": []
+ },
+ "d_blade": {
+  "bytes": 1231344,
+  "anims": []
+ },
+ "g1_firefly": {
+  "bytes": 1413652,
+  "anims": []
+ },
+ "g2_swallow": {
+  "bytes": 1580136,
+  "anims": []
+ },
+ "g3_turtle": {
+  "bytes": 1669760,
+  "anims": []
+ },
+ "g4_hawk": {
+  "bytes": 2017404,
+  "anims": []
+ },
+ "g5_wyvern": {
+  "bytes": 1804680,
+  "anims": []
+ },
+ "g6_phoenix": {
+  "bytes": 1713504,
+  "anims": []
+ },
+ "a_unit01": {
+  "bytes": 3298240,
+  "anims": [
+   "idle",
+   "walk",
+   "wave",
+   "shrug",
+   "cheer"
+  ]
+ },
+ "a_unit02": {
+  "bytes": 3676516,
+  "anims": [
+   "idle",
+   "walk",
+   "wave",
+   "shrug",
+   "cheer"
+  ]
+ },
+ "p_rock3": {
+  "bytes": 559836,
+  "anims": []
+ },
+ "p_mesa": {
+  "bytes": 657468,
+  "anims": []
+ },
+ "p_boulders": {
+  "bytes": 547548,
+  "anims": []
+ },
+ "p_crystal": {
+  "bytes": 726312,
+  "anims": []
+ },
+ "p_atree": {
+  "bytes": 891848,
+  "anims": []
+ },
+ "p_atree2": {
+  "bytes": 840864,
+  "anims": []
+ },
+ "p_cliff": {
+  "bytes": 548704,
+  "anims": []
+ },
+ "p_ruin": {
+  "bytes": 662732,
+  "anims": []
+ },
+ "p_bush": {
+  "bytes": 960840,
+  "anims": []
+ },
+ "b_core_f": {
+  "bytes": 1121944,
+  "anims": []
+ },
+ "b_core_e": {
+  "bytes": 1088596,
+  "anims": []
+ },
+ "b_turret": {
+  "bytes": 824336,
+  "anims": []
+ },
+ "b_pylon": {
+  "bytes": 856080,
+  "anims": []
+ },
+ "b_hangar": {
+  "bytes": 969400,
+  "anims": []
+ },
+ "b_pad": {
+  "bytes": 1011456,
+  "anims": []
+ },
+ "wm_katana": {
+  "bytes": 637304,
+  "anims": []
+ },
+ "wm_great": {
+  "bytes": 713720,
+  "anims": []
+ },
+ "wm_hammer": {
+  "bytes": 948272,
+  "anims": []
+ },
+ "wm_mace": {
+  "bytes": 902352,
+  "anims": []
+ },
+ "wm_lance": {
+  "bytes": 966300,
+  "anims": []
+ },
+ "wm_staff": {
+  "bytes": 944024,
+  "anims": []
+ },
+ "wm_glaive": {
+  "bytes": 859912,
+  "anims": []
+ },
+ "wm_pistol": {
+  "bytes": 792344,
+  "anims": []
+ },
+ "wm_gatling": {
+  "bytes": 980684,
+  "anims": []
+ },
+ "wm_howitzer": {
+  "bytes": 841512,
+  "anims": []
+ },
+ "wm_tshield": {
+  "bytes": 765708,
+  "anims": []
+ },
+ "wm_mpod": {
+  "bytes": 1019776,
+  "anims": []
+ },
+ "m_ranger_jet": {
+  "bytes": 1234360,
+  "anims": []
+ },
+ "m_artillery_jet": {
+  "bytes": 1446372,
+  "anims": []
+ },
+ "m_guardian_jet": {
+  "bytes": 1744832,
+  "anims": []
+ },
+ "m_wizard_jet": {
+  "bytes": 1573376,
+  "anims": []
+ },
+ "m_phantom_jet": {
+  "bytes": 1096308,
+  "anims": []
+ },
+ "m_samurai_jet": {
+  "bytes": 1192680,
+  "anims": []
+ },
+ "m_origin_jet": {
+  "bytes": 1295868,
+  "anims": []
+ },
+ "mech_leg_jet": {
+  "bytes": 1476552,
+  "anims": []
  }
 }
