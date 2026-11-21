@@ -216,7 +216,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.32 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.33 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -6542,6 +6542,7 @@ function aimPt(u,maxd){let x=u._ax,y=u._ay;const a=u.aa||0;if(!(x>0&&y>0)||Math.
 function kLunge(u,a,dist,T,dmg){u.lunge={a,t:0,T,sx:u.x,sy:u.y,hit:new Set(),dmg,dist};u.spawnProt=Math.max(u.spawnProt||0,T+.15);}
 // ---------- skills ----------
 const SK={
+ grab(u){window.__SK2&&window.__SK2.grab(u,u.aa);},dashcut(u){window.__SK2&&window.__SK2.dashcut(u,u.aa);},execute2(u){window.__SK2&&window.__SK2.execute(u,u.aa);},shock(u){window.__SK2&&window.__SK2.shock(u,u.aa);},orbital(u){window.__SK2&&window.__SK2.orbital(u,u.aa);},slowshot(u){window.__SK2&&window.__SK2.slowshot(u,u.aa);},root(u){window.__SK2&&window.__SK2.root(u,u.aa);},taunt(u){window.__SK2&&window.__SK2.taunt(u,u.aa);},lift(u){window.__SK2&&window.__SK2.lift(u,u.aa);},flame(u){window.__SK2&&window.__SK2.flame(u,u.aa);},push(u){window.__SK2&&window.__SK2.push(u,u.aa);},ambush(u){window.__SK2&&window.__SK2.ambush(u,u.aa);},
  flash(u){const a=u.aa;kLunge(u,a,560,.2,kbase(u)*3.2);cam.shake=5;},
  fivecut(u){const a=u.aa;for(let i=0;i<5;i++)kLater(i*.09,()=>{u.slashT=.2;u.melSw={t:0,T:.12,i:i%2,fin:i===4};kHitUnits(e=>{const d=Math.hypot(e.x-u.x,e.y-u.y);return d<260&&Math.abs(ANGD(u.aa,Math.atan2(e.y-u.y,e.x-u.x)))<1.1;},kbase(u)*(i===4?3.4:1.6),u.aa,i===4?380:80);slashFx(u,styleOf(u),i%2,i===4);});},
  bladefall(u){const a=u.aa;for(let i=0;i<12;i++){const t=120+i*70;const x=u.x+Math.cos(a)*t+rnd(-60,60),y=u.y+Math.sin(a)*t+rnd(-60,60);kLater(.15+i*.07,()=>{kSky(x,y,'#9ff6ff');kCircle(x,y,130,kbase(u)*4,'#9ff6ff',.3);},x,y,130);}},
@@ -6576,7 +6577,7 @@ const SK={
  sanctum(u){u.hp=Math.min(u.mhp,u.hp+u.mhp*.25);u.spawnProt=Math.max(u.spawnProt||0,3);pop(L('성광 방벽 · 무적 3초','Sanctum · 3s invulnerable'),'#fff3b0',false);},
  descent(u){const ts=foesNear(u,1000,7);const pts=ts.length?ts:[aimPt(u)];pts.forEach((e,i)=>kLater(.2+i*.15,()=>{kSky(e.x,e.y,'#fff3b0');kCircle(e.x,e.y,200,kbase(u)*6,'#fff3b0',.4,200);},e.x,e.y,200));}};
 // ---------- input: Q / E / R go to the frame's own kit ----------
-{const _liK=localInput;localInput=function(u){const inp=_liK(u);try{const k=kitOf(u);if(!k||u.dead)return inp;const cdm=k.cd||1;
+{const _liK=localInput;localInput=function(u){const inp=_liK(u);try{let k=kitOf(u);try{const mk=(typeof myMechKey==='function'?myMechKey():null);const o=window.__SK2KIT&&window.__SK2KIT[mk];if(o){const T2=window.__SK2T;const mkS=(id,cd)=>[id==='execute'?'execute2':id,cd,T2[id].n];k=Object.assign({},k||{},{q:o.q?mkS(o.q,T2[o.q].cd):(k&&k.q),e:o.e?mkS(o.e,T2[o.e].cd):(k&&k.e),r:o.r?mkS(o.r,0):(k&&k.r)});}}catch(e){}if(!k||u.dead)return inp;const cdm=k.cd||1;
  if(k.q&&inp.a1){inp.a1=false;u.qch=0;u.qfire=false;if(!(u.cd1>0)&&!(u.kch>0)){const c=SK[k.q[0]];if(c){const r=c(u);if(r!==true)setCd(u,1,k.q[1]*cdm);u.en=Math.max(0,(u.en||0)-14);kName(k.q[2],'#9ff6ff');}}}
  if(k.e&&inp.a2){inp.a2=false;if(!(u.cd2>0)){const c=SK[k.e[0]];if(c){u._spin=(u.cd2||0)+99;const r=c(u);if(r!==true)setCd(u,2,k.e[1]*cdm);u._spin=u.cd2;kName(k.e[2],'#ff9be8');}}}
  if(k.r&&inp.ul&&(G.local.ult||0)>=100){inp.ul=false;const c=SK[k.r[0]];if(c){u._kitR=G.t;G.local.ult=0;u._orbU=0;c(u);kName(k.r[2],'#ffd166',true);G.hstop=Math.max(G.hstop||0,.15);}}
@@ -7903,6 +7904,77 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  setInterval(()=>{try{const B=document.getElementById('rpgBody');if(B&&!document.getElementById('sqCard')){const rift=[...B.querySelectorAll('div')].find(d=>/균열 던전|Rift/.test(d.textContent||'')&&d.children.length<12&&d.querySelector('button'));if(rift){const c=document.createElement('div');c.id='sqCard';c.className=rift.className;c.style.cssText=rift.getAttribute('style')||'';c.style.borderColor='#c9a46a';const r=rec();c.innerHTML='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b style="color:#ffd166;font-size:17px">⚔ '+L('분대 던전','Squad Dungeon')+'</b><br><small>'+L('내 기체 + 분대 4 + 에이스로 60초 안에 섬멸. 상성 편성, 단계 1~30, 10단계마다 보스.','Your frame + 4 units + an ace. Clear within 60 s. Counters, stages 1-30, boss every 10.')+'</small><br><small style="opacity:.75">'+L('최고 단계 ','Best stage ')+(r.sq.best||0)+'</small></div><button class="pri" id="sqOpenB">'+L('편성 ▶','Squad ▶')+'</button></div>';rift.parentNode.insertBefore(c,rift);c.querySelector('#sqOpenB').onclick=()=>window.squadOpen();}}
    const m=document.getElementById('menu');if(m&&!document.getElementById('mSq')){const hb=document.getElementById('mWing');if(hb){const b=document.createElement('button');b.id='mSq';b.className=hb.className;b.textContent=L('분대 던전','Squad Dungeon');b.onclick=()=>{try{hide('#menu');}catch(e){}window.squadOpen();};hb.parentNode.insertBefore(b,hb);}}}catch(e){}},1000);
 }catch(e){window.__c32Err=String(e&&e.stack||e).slice(0,200);}}
+
+
+// ================= v3.33 : SKILLS 2.0 — grab, crowd control and special area skills (LoL-style structure, our own names/effects) for frames, squad units and enemy frames =================
+{try{
+ const me=()=>G&&G.local&&G.local.unit;const now=()=>G?G.t:0;
+ const T={ // id: name, type, shape, range, cast, cd, cc, coef, tele
+  grab:{n:K('앵커 그랩','Anchor Grab'),ty:'grab',shape:'line',rng:650,cast:.25,cd:13,cc:['stun',.75],coef:1.6,tele:.7},
+  shock:{n:K('충격파','Shockwave'),ty:'cc',shape:'circle',rng:260,cast:.2,cd:9,cc:['stun',1],coef:1.4,tele:.7},
+  lift:{n:K('지면 강타','Ground Breaker'),ty:'cc',shape:'circle',rng:230,cast:.3,cd:10,cc:['knockup',.9],coef:1.8,tele:.8},
+  root:{n:K('구속 그물','Binding Net'),ty:'cc',shape:'cone',rng:520,cast:.2,cd:11,cc:['root',1.2],coef:1,tele:.7},
+  slowshot:{n:K('둔화탄','Frost Round'),ty:'cc',shape:'line',rng:900,cast:.1,cd:6,cc:['slow',2],coef:1.3,tele:.6},
+  taunt:{n:K('도발 함성','Challenge'),ty:'cc',shape:'circle',rng:340,cast:.2,cd:14,cc:['taunt',1.3],coef:0,tele:.6,shield:.25},
+  silence:{n:K('전파 교란','Jammer'),ty:'cc',shape:'circle',rng:300,cast:.2,cd:12,cc:['silence',1.5],coef:.8,tele:.6},
+  push:{n:K('밀쳐내기 포탄','Concussion Shell'),ty:'cc',shape:'circle',rng:180,cast:.2,cd:8,cc:['push',0],coef:1.5,tele:.6,at:620},
+  gravity:{n:K('중력장','Gravity Well'),ty:'aoe',shape:'circle',rng:380,cast:.3,cd:16,cc:['root',.6],coef:2.6,tele:.8,at:520},
+  flame:{n:K('화염 장판','Napalm Field'),ty:'aoe',shape:'circle',rng:210,cast:.2,cd:12,cc:null,coef:.7,tele:.6,at:560,dur:3},
+  orbital:{n:K('궤도 포격','Orbital Strike'),ty:'aoe',shape:'circle',rng:260,cast:.1,cd:20,cc:['stun',.5],coef:5,tele:.8,at:700},
+  shield:{n:K('보호막 전개','Barrier'),ty:'guard',shape:'self',rng:320,cast:.1,cd:15,cc:null,coef:0,tele:0,shield:.3},
+  dashcut:{n:K('돌진 베기','Lunge Slash'),ty:'engage',shape:'line',rng:520,cast:.12,cd:6,cc:['knockup',.6],coef:2.6,tele:.6},
+  execute:{n:K('처형 일섬','Execution Strike'),ty:'finish',shape:'line',rng:420,cast:.1,cd:10,cc:null,coef:3,tele:.6,exec:.25},
+  ambush:{n:K('그림자 기습','Shadow Ambush'),ty:'engage',shape:'line',rng:560,cast:.1,cd:12,cc:['stun',1],coef:3.2,tele:.6}};
+ window.__SK2T=T;
+ // ---- crowd control core ----
+ const CCcol={stun:'#ffd166',root:'#7dffb0',knockup:'#ffffff',slow:'#7fd8ff',taunt:'#ff6b6b',silence:'#c58cff'};
+ const cc=(e,type,dur,src)=>{if(!e||e.dead||!dur&&type!=='push')return;if(e.boss&&!(e.brk>now())){if(type==='slow'){e.slowT=Math.max(e.slowT||0,dur);e.slowK=.7;}return;}e._cc=e._cc||{};if(e._cc[type]&&now()-e._cc[type]<1.5)dur*=.5;e._cc[type]=now()+dur;
+  if(type==='stun')e.stun=Math.max(e.stun||0,dur);else if(type==='root')e.rootT=Math.max(e.rootT||0,dur);else if(type==='knockup'){e.stun=Math.max(e.stun||0,dur);e.kupT=dur;e.kupD=dur;}else if(type==='slow'){e.slowT=Math.max(e.slowT||0,dur);e.slowK=.55;}else if(type==='taunt'){e.tauntT=dur;e.tauntBy=src;}else if(type==='silence')e.silT=dur;
+  const c=CCcol[type]||'#fff';for(let i=0;i<10;i++){const a=i/10*6.28;part(e.x+Math.cos(a)*(e.r||14)*1.4,e.y+Math.sin(a)*(e.r||14)*1.4,0,0,.35,c,5,(typeof unitH==='function'?unitH(e):0)+30);}};
+ window.__cc=cc;
+ const crowded=e=>e.stun>0||e.rootT>0||e.kupT>0;
+ const _hu333=hurt;hurt=function(e,dmg,src,a,dt){try{if(e&&crowded(e)&&src&&src.unit&&src.unit.team!==e.team)dmg*=1.2;if(e&&e.shieldT>0)dmg*=.6;}catch(er){}return _hu333(e,dmg,src,a,dt);};
+ // step: root / slow / knock-up timers, taunt & silence via AI input
+ const _st333=step;step=function(dt){const keep=[];try{if(G&&G.units)for(const u of G.units){if(!u.dead&&(u.rootT>0||u.slowT>0))keep.push([u,u.x,u.y]);}}catch(e){}_st333(dt);try{for(const [u,x,y] of keep){if(u.rootT>0){u.x=x;u.y=y;u.vx=0;u.vy=0;}else if(u.slowT>0){u.x=x+(u.x-x)*(u.slowK||.55);u.y=y+(u.y-y)*(u.slowK||.55);}}if(G&&G.units)for(const u of G.units){for(const k of['rootT','slowT','kupT','tauntT','silT','shieldT'])if(u[k]>0)u[k]-=dt;}tickAI(dt);}catch(e){window.__sk2Err=String(e&&e.stack||e).slice(0,200);}};
+ try{const _bi=botInput;botInput=function(s,u,dt){const inp=_bi(s,u,dt);try{if(u.tauntT>0&&u.tauntBy&&!u.tauntBy.dead){const t=u.tauntBy;const a=Math.atan2(t.y-u.y,t.x-u.x);inp.aim=a;inp.tx=t.x;inp.ty=t.y;inp.fire=true;inp.mx=Math.cos(a);inp.my=Math.sin(a);}if(u.silT>0||u.kupT>0){inp.a1=false;inp.a2=false;inp.ul=false;}}catch(e){}return inp;};}catch(e){window.__sk2bi=String(e);}
+ // knock-up: lift the model
+ const _ma333=mdlAnimate;mdlAnimate=function(e,m,u,dt,nw){_ma333(e,m,u,dt,nw);try{if(u&&u.kupD&&m&&m.wrap){const k=Math.max(0,u.kupT||0)/u.kupD;m.wrap.position.y=(k>0?Math.sin(Math.PI*(1-k))*((u.r||14)*3):0);if(k<=0)u.kupD=0;}}catch(er){}};
+ // ---- skill casting ----
+ const base=u=>{let b=90;try{b=(typeof kbase==='function')?kbase(u):(60+plv()*6)*(typeof dmgMul==='function'?dmgMul(u):1);}catch(e){}if(u&&u.sqE&&G.rpg&&G.rpg.obj)b*=(1+.08*((G.rpg.obj.stage||1)-1));return b;};
+ const foes=(u,x,y,r)=>G.units.filter(e=>!e.dead&&e.team!==u.team&&e.team!==2&&Math.hypot(e.x-x,e.y-y)<r+(e.r||10));
+ const allies=(u,x,y,r)=>G.units.filter(e=>!e.dead&&e.team===u.team&&Math.hypot(e.x-x,e.y-y)<r);
+ const ring=(x,y,r,col,h)=>{for(let i=0;i<28;i++){const a=i/28*6.28;part(x+Math.cos(a)*r,y+Math.sin(a)*r,Math.cos(a)*60,Math.sin(a)*60,.35,col,6,h||12);}};
+ const hookFly=(u,a,cb)=>{const T3=window.THREE;const sp=2400,R0=T.grab.rng;let x=u.x,y=u.y,t=0;let g=null;try{g=new T3.Group();const head=new T3.Mesh(new T3.OctahedronGeometry(9,0),new T3.MeshStandardMaterial({color:0x9aa3b0,metalness:.9,roughness:.3,emissive:0x5ad1ff,emissiveIntensity:.6}));head.scale.set(1.6,.7,.7);g.add(head);g.userData.__bolt=1;g.position.set(x,(unitH(u)||0)+44,y);g.rotation.y=-a;R3.scene.add(g);}catch(e){}
+  const tick=()=>{if(!G||G.over){if(g)R3.scene.remove(g);return;}const d=sp/60;t+=d;x+=Math.cos(a)*d;y+=Math.sin(a)*d;if(g)g.position.set(x,(unitH(u)||0)+44,y);if(Math.random()<.6)part(x,y,0,0,.15,'#9fe8ff',3,44);const hit=foes(u,x,y,40)[0];if(hit||t>=R0){if(g)R3.scene.remove(g);cb(hit);return;}requestAnimationFrame(tick);};requestAnimationFrame(tick);};
+ const pull=(u,e,dur)=>{const x0=e.x,y0=e.y,a=Math.atan2(e.y-u.y,e.x-u.x);const tx=u.x+Math.cos(a)*((u.r||14)+(e.r||14)+60),ty=u.y+Math.sin(a)*((u.r||14)+(e.r||14)+60);let k=0;const f=()=>{k+=1/(60*dur);const kk=Math.min(1,k);e.x=x0+(tx-x0)*kk;e.y=y0+(ty-y0)*kk;e.vx=0;e.vy=0;if(kk<1)requestAnimationFrame(f);};f();};
+ const SK2={
+  grab(u,a){hookFly(u,a,e=>{if(!e)return;hurt(e,base(u)*T.grab.coef,u.slot,a,'b');if(!e.boss||e.brk>now())pull(u,e,.25);cc(e,'stun',T.grab.cc[1],u);try{SFX2.tone(180,60,.18,.08,'sawtooth');}catch(er){}});},
+  shock(u){ring(u.x,u.y,T.shock.rng,'#ffd166');for(const e of foes(u,u.x,u.y,T.shock.rng)){hurt(e,base(u)*T.shock.coef,u.slot,Math.atan2(e.y-u.y,e.x-u.x),'x');cc(e,'stun',1,u);}G.shake=Math.max(G.shake||0,6);},
+  lift(u,a){const x=u.x+Math.cos(a)*120,y=u.y+Math.sin(a)*120;ring(x,y,T.lift.rng,'#ffffff');for(const e of foes(u,x,y,T.lift.rng)){hurt(e,base(u)*T.lift.coef,u.slot,a,'x');cc(e,'knockup',.9,u);}G.shake=Math.max(G.shake||0,8);},
+  root(u,a){for(const e of foes(u,u.x,u.y,T.root.rng)){const da=Math.abs(angDiff(Math.atan2(e.y-u.y,e.x-u.x),a));if(da<.6){hurt(e,base(u)*T.root.coef,u.slot,a,'b');cc(e,'root',1.2,u);part(e.x,e.y,0,0,.6,'#7dffb0',16,10);}}for(let i=0;i<20;i++){const b=a+rnd(-.6,.6),s=rnd(200,500);part(u.x,u.y,Math.cos(b)*s,Math.sin(b)*s,.4,'#7dffb0',4,40);}},
+  slowshot(u,a){try{window.__vbolt(u.x,u.y,a,T.slowshot.rng,0x7fd8ff,(unitH(u)||0)+44,{vis:40,r:6,sp:3200});}catch(e){}const hit=G.units.filter(e=>!e.dead&&e.team!==u.team&&e.team!==2).filter(e=>{const dx=e.x-u.x,dy=e.y-u.y,t=dx*Math.cos(a)+dy*Math.sin(a);return t>0&&t<T.slowshot.rng&&Math.abs(dx*Math.sin(a)-dy*Math.cos(a))<40+(e.r||10);});for(const e of hit.slice(0,3)){hurt(e,base(u)*T.slowshot.coef,u.slot,a,'b');cc(e,'slow',2,u);}},
+  taunt(u){ring(u.x,u.y,T.taunt.rng,'#ff6b6b');for(const e of foes(u,u.x,u.y,T.taunt.rng))cc(e,'taunt',1.3,u);u.shieldT=3;u.hp=Math.min(u.mhp,u.hp+u.mhp*.08);},
+  silence(u,a){const x=u.x+Math.cos(a)*200,y=u.y+Math.sin(a)*200;ring(x,y,T.silence.rng,'#c58cff');for(const e of foes(u,x,y,T.silence.rng)){hurt(e,base(u)*T.silence.coef,u.slot,a,'x');cc(e,'silence',1.5,u);}},
+  push(u,a,tx,ty){const x=tx!=null?tx:u.x+Math.cos(a)*400,y=ty!=null?ty:u.y+Math.sin(a)*400;ring(x,y,T.push.rng,'#ffb36b');for(const e of foes(u,x,y,T.push.rng)){const b=Math.atan2(e.y-y,e.x-x);hurt(e,base(u)*T.push.coef,u.slot,b,'x');if(!e.boss){e.vx=(e.vx||0)+Math.cos(b)*700;e.vy=(e.vy||0)+Math.sin(b)*700;}}},
+  gravity(u,a,tx,ty){const x=tx!=null?tx:u.x+Math.cos(a)*380,y=ty!=null?ty:u.y+Math.sin(a)*380;let k=0;const f=()=>{if(!G||G.over)return;k++;for(const e of foes(u,x,y,T.gravity.rng)){if(e.boss&&!(e.brk>now()))continue;const d=Math.hypot(e.x-x,e.y-y)||1;e.x-= (e.x-x)/d*Math.min(d,9);e.y-=(e.y-y)/d*Math.min(d,9);}for(let i=0;i<4;i++){const b=Math.random()*6.28;part(x+Math.cos(b)*T.gravity.rng,y+Math.sin(b)*T.gravity.rng,-Math.cos(b)*400,-Math.sin(b)*400,.4,'#c58cff',4,20);}if(k<70)requestAnimationFrame(f);else{for(const e of foes(u,x,y,T.gravity.rng)){hurt(e,base(u)*T.gravity.coef,u.slot,0,'x');cc(e,'root',.6,u);}ring(x,y,T.gravity.rng*.6,'#ffffff');G.shake=Math.max(G.shake||0,10);}};f();},
+  flame(u,a,tx,ty){const x=tx!=null?tx:u.x+Math.cos(a)*360,y=ty!=null?ty:u.y+Math.sin(a)*360;let t=0;const id=setInterval(()=>{try{if(!G||G.over){clearInterval(id);return;}t+=.25;for(let i=0;i<10;i++){const b=Math.random()*6.28,r=Math.random()*T.flame.rng;part(x+Math.cos(b)*r,y+Math.sin(b)*r,0,0,.5,i%2?'#ff6a2a':'#ffb347',7,rnd(4,40));}for(const e of foes(u,x,y,T.flame.rng)){hurt(e,base(u)*T.flame.coef*.25,u.slot,0,'x');}if(t>=3)clearInterval(id);}catch(e){clearInterval(id);}},250);},
+  orbital(u,a,tx,ty){const x=tx!=null?tx:u.x+Math.cos(a)*450,y=ty!=null?ty:u.y+Math.sin(a)*450;ring(x,y,T.orbital.rng,'#ff9b40');setTimeout(()=>{try{if(!G||G.over)return;for(let i=0;i<50;i++){const b=Math.random()*6.28,s=rnd(200,700);part(x,y,Math.cos(b)*s,Math.sin(b)*s,.6,i%3?'#ffb347':'#ffffff',8,rnd(10,120));}for(const e of foes(u,x,y,T.orbital.rng)){hurt(e,base(u)*T.orbital.coef,u.slot,0,'x');cc(e,'stun',.5,u);}G.shake=Math.max(G.shake||0,14);G.hstop=Math.max(G.hstop||0,.1);}catch(e){}},800);},
+  shield(u){ring(u.x,u.y,T.shield.rng,'#7fe8ff');for(const a of allies(u,u.x,u.y,T.shield.rng)){a.shieldT=3;}},
+  dashcut(u,a){const tg=foes(u,u.x+Math.cos(a)*260,u.y+Math.sin(a)*260,300)[0];const d=tg?Math.max(0,Math.hypot(tg.x-u.x,tg.y-u.y)-(tg.r||14)-30):T.dashcut.rng*.8;const aa=tg?Math.atan2(tg.y-u.y,tg.x-u.x):a;let k=0;const x0=u.x,y0=u.y;const f=()=>{k+=1/9;const kk=Math.min(1,k);u.x=x0+Math.cos(aa)*d*kk;u.y=y0+Math.sin(aa)*d*kk;part(u.x,u.y,0,0,.2,'#ffffff',8,40);if(kk<1)requestAnimationFrame(f);else{u.slashT=.25;for(const e of foes(u,u.x+Math.cos(aa)*90,u.y+Math.sin(aa)*90,170)){hurt(e,base(u)*T.dashcut.coef,u.slot,aa,'m');cc(e,'knockup',.6,u);}}};f();},
+  execute(u,a){const tg=foes(u,u.x,u.y,T.execute.rng).sort((p,q)=>p.hp/p.mhp-q.hp/q.mhp)[0];if(!tg)return;const aa=Math.atan2(tg.y-u.y,tg.x-u.x);u.x=tg.x-Math.cos(aa)*((tg.r||14)+40);u.y=tg.y-Math.sin(aa)*((tg.r||14)+40);u.slashT=.3;const low=tg.hp<tg.mhp*T.execute.exec&&!(tg.boss&&!(tg.brk>now()));hurt(tg,low?tg.hp+1:base(u)*T.execute.coef,u.slot,aa,'m');if(low){try{window.__cutIn&&u===me()&&window.__cutIn(L('처형!','Execute!'),'#ff6b6b');}catch(e){}}},
+  ambush(u,a){u.cloakT=1;const tg=foes(u,u.x,u.y,T.ambush.rng)[0];if(!tg)return;setTimeout(()=>{try{const aa=Math.atan2(tg.y-u.y,tg.x-u.x);u.x=tg.x-Math.cos(aa)*60;u.y=tg.y-Math.sin(aa)*60;hurt(tg,base(u)*T.ambush.coef,u.slot,aa,'m');cc(tg,'stun',1,u);}catch(e){}},350);}};
+ window.__SK2=SK2;
+ // ---- AI casting with telegraphs (enemies: 0.7 s ground warning; allies cast at once) ----
+ const tele0=(u,id,a,tx,ty)=>{const S=T[id];if(!S||!S.tele)return;const near=S.shape==='circle'&&!S.at?{x:u.x,y:u.y,r:S.rng}:S.at?{x:tx,y:ty,r:S.rng}:null;if(near){G.tele=G.tele||[];G.tele.push({k:'circle',x:near.x,y:near.y,r:near.r,dmg:0,src:u.slot,t:S.tele});}else{for(let i=0;i<5;i++){const d=40+i*26;part(u.x+Math.cos(a)*d,u.y+Math.sin(a)*d,0,0,S.tele,'#ff3b47',7,6);}}};
+ const tickAI=dt=>{if(!G||G.over||!G.units)return;const t=now();for(const u of G.units){if(u.dead||!u.sk2||u===me())continue;if(u.stun>0||u.silT>0||u.kupT>0)continue;if(u._sk2p&&t>=u._sk2p.at){const p=u._sk2p;u._sk2p=null;try{SK2[p.id](u,p.a,p.x,p.y);}catch(e){}continue;}if(u._sk2p)continue;
+   for(const s of u.sk2){if(t<(s.next||0))continue;const S=T[s.id];let tg=null,bd=1e9;for(const e of G.units){if(e.dead||e.team===u.team||e.team===2)continue;const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<bd){bd=d;tg=e;}}if(!tg)break;const need=S.ty==='guard'?(u.hp<u.mhp*.75||bd<400):(S.at?bd<S.at:bd<S.rng*(S.shape==='circle'?1:1));if(!need)continue;s.next=t+S.cd*(1+Math.random()*.3);const a=Math.atan2(tg.y-u.y,tg.x-u.x);const enemy=me()&&u.team!==me().team;const tx=tg.x,ty=tg.y;if(enemy&&S.tele){tele0(u,s.id,a,tx,ty);u._sk2p={id:s.id,a,x:tx,y:ty,at:t+S.tele};u.vx=0;u.vy=0;}else{try{SK2[s.id](u,a,tx,ty);}catch(e){}}break;}}};
+ // ---- kits: the six starting classes get skills from the new set ----
+ window.__SK2KIT={mech3:{q:'grab',e:'dashcut',r:'execute'},mech4:{q:'dashcut',e:'shock',r:'orbital'},m_ranger:{q:'slowshot',e:'root'},m_guardian:{q:'grab',e:'taunt',r:'lift'},m_artillery:{q:'flame',e:'push',r:'orbital'},m_samurai:{q:'ambush',e:'execute',r:'shock'}};
+ // ---- squad units and enemy frames ----
+ const SQSK={guardian:['grab','taunt','shield'],walker:['shock','push'],artyframe:['flame','orbital'],sentry:['slowshot','root'],heli:['silence','push'],rocket:['push'],fighter:['slowshot']};
+ const TIER={mp:['slowshot','shock'],imp:['slowshot','shock','root'],cmd:['taunt','shield','orbital'],ace:['grab','lift','orbital']};
+ setInterval(()=>{try{if(!G||!G.units)return;for(const u of G.units){if(u.dead||u.sk2)continue;let list=null;if(u.sqU&&SQSK[u.sqU])list=SQSK[u.sqU];else if(u.sqE&&u.cls==='arkframe'){const tier=u.named?'ace':u.elite2==='cmd'?'cmd':u.fbd?'imp':'mp';list=TIER[tier];}if(list)u.sk2=list.map(id=>({id,next:now()+1+Math.random()*3}));}}catch(e){}},500);
+}catch(e){window.__c33Err=String(e&&e.stack||e).slice(0,200);}}
 
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
