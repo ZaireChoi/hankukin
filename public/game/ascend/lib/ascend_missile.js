@@ -18,7 +18,7 @@
   var phone = function () { return !!window.__phone; };
   // ------------------------------------------------------------------ kinds (sizes in world units)
   var KIND = {
-    micro: { len: 13, flame: 9, fw: 3, ex: 55, puff: 5, puffL: .35, puffDt: .03, ring: 0 },   // small: 20 of them fit the two shoulder pods
+    micro: { len: 17, flame: 10, fw: 4.2, ex: 60, puff: 7, puffL: .5, puffDt: .022, ring: 0 },   // small: 20 of them fit the two shoulder pods
     heavy: { len: 46, flame: 30, fw: 10, ex: 150, puff: 16, puffL: .7, puffDt: .03, ring: 1 },
     rocket: { len: 34, flame: 22, fw: 7, ex: 100, puff: 11, puffL: .5, puffDt: .03, ring: 1 }
   };
@@ -30,7 +30,8 @@
     he: { k: 'he', col: [1, .42, .16], fl: [1, .7, .45], dm: 1, r: 0, cut: true },
     emp: { k: 'emp', col: [.86, .92, 1], fl: [.8, .9, 1], dm: .4, r: 95, cut: true },
     acid: { k: 'acid', col: [.62, 1, .18], fl: [.7, 1, .4], dm: .5, r: 105, cut: false },
-    flash: { k: 'flash', col: [1, .93, .35], fl: [1, .95, .6], dm: .2, r: 170, cut: false }
+    flash: { k: 'flash', col: [1, .93, .35], fl: [1, .95, .6], dm: .2, r: 170, cut: false },
+    poison: { k: 'poison', col: [.62, .3, 1], fl: [.75, .5, 1], dm: .45, r: 120, cut: false }   // violet toxin: long burn (6 s), stops healing, no slow
   };
   var PROF = {
     vertical: { climb: .42, v0: 110, vClimb: 360, vmax: 1100, vEnd: 1380, endR: 460, acc: 1700, turn: 3.0, turnUp: 9, wob: .5, wf: 6.5, life: 4.5 },
@@ -40,7 +41,7 @@
     bomb: { v0r: .3, accT: .3, rings: 0 },
     intercept: { v0r: .45, accT: .2, rings: 0 }
   };
-  var MAXM = 96, LIVE = [], fr = 0;
+  var MAXM = 160, LIVE = [], fr = 0;
   // ------------------------------------------------------------------ shared math scratch
   var V, Q, M4, SC, ZA, UP;
   // ------------------------------------------------------------------ textures
@@ -186,7 +187,10 @@
   };
   // ------------------------------------------------------------------ spawning
   var spawn = function (o) {
-    if (!attach()) return null; if (LIVE.length >= MAXM) return null;
+    if (!attach()) return null;
+    if (LIVE.length >= MAXM) { LIVE = LIVE.filter(function (q) { return !q.dead; }); }
+    if (LIVE.length >= MAXM) { // full: my own missiles always fly — drop the oldest bullet-borne visual to make room
+      var mine = o.src && G.local && o.src === G.local; if (!mine) return null; for (var di = 0; di < LIVE.length; di++) if (LIVE[di].b) { LIVE[di].b._eng = null; LIVE[di].dead = 1; LIVE.splice(di, 1); break; } if (LIVE.length >= MAXM) return null; }
     var m = { prof: o.profile || 'vertical', K: KIND[o.kind || 'micro'] || KIND.micro, P: PROF[o.profile || 'vertical'], x: o.x, h: o.h, y: o.y, t: 0, delay: o.delay || 0,
       tg: o.target || null, tx: o.tx, th: o.th, ty: o.ty, dmg: o.dmg || 0, src: o.src || null, dt: o.dt || 'x', splash: o.splash || 0, sw: o.sw || 0, team: o.team,
       wh: WH[o.wh] || WH.he, tm: o.tm || null, seed: Math.random() * 6.28, puffA: 0, ringA: 0, b: o.bullet || null, roll: Math.random() * 6.28, spd: 0 };
@@ -201,7 +205,7 @@
     var out = null;
     try {
       var e = R.units && R.units.get(u.id), B = e && e.mdl && window.__AX && window.__AX.motBones(e.mdl);
-      if (B) { var l = B.LeftShoulder || B.LeftArm, r = B.RightShoulder || B.RightArm; if (l && r) { var a = new T.Vector3(), b = new T.Vector3(); l.getWorldPosition(a); r.getWorldPosition(b); var H = (e.wg && e.wg.H) || 90; out = [[a.x, a.y + H * .1, a.z], [b.x, b.y + H * .1, b.z]]; } }
+      if (B) { var l = B.LeftShoulder || B.LeftArm, r = B.RightShoulder || B.RightArm; if (l && r) { var a = new T.Vector3(), b = new T.Vector3(); l.getWorldPosition(a); r.getWorldPosition(b); var H = (e.wg && e.wg.H) || 90, sx = a.x - b.x, sz = a.z - b.z, sl = Math.hypot(sx, sz) || 1; sx /= sl; sz /= sl; out = [[a.x + sx * H * .13, a.y + H * .14, a.z + sz * H * .13], [b.x - sx * H * .13, b.y + H * .14, b.z - sz * H * .13]]; } }
     } catch (er) {}
     if (!out) { var f = u.aa != null ? u.aa : (u.a || 0), sx = Math.cos(f + Math.PI / 2), sy = Math.sin(f + Math.PI / 2), hh = uh(u) + 78, w = (u.r || 24) * .9;
       out = [[u.x + sx * w, hh, u.y + sy * w], [u.x - sx * w, hh, u.y - sy * w]]; }
@@ -272,9 +276,10 @@
   };
   // ------------------------------------------------------------------ per-frame update
   var trailPuff = function (m, K, n) {
+    var lu = G.local && G.local.unit; if (lu && m.b && Math.abs(m.x - lu.x) + Math.abs(m.y - lu.y) > 2200) return;   // far rockets: no smoke (cost)
     var ph = phone(), crowd = Math.max(1, n / (ph ? 10 : 18)), dtp = K.puffDt * crowd;
     m.puffA += m._dt; while (m.puffA >= dtp) { m.puffA -= dtp; var bx = m.x - m.dx * K.len * .55, bh = m.h - m.dh * K.len * .55, by = m.y - m.dy * K.len * .55;
-      SMOKE.add(bx, bh, by, (Math.random() - .5) * 14, 6 + Math.random() * 10, (Math.random() - .5) * 14, K.puff * .6, K.puff * 2.1, K.puffL, .62, .66, .72, .42, 2); }
+      SMOKE.add(bx, bh, by, (Math.random() - .5) * 18, 8 + Math.random() * 14, (Math.random() - .5) * 18, K.puff * .7, K.puff * 2.6, K.puffL, .7, .72, .78, .5, 2); }
   };
   var pressureRing = function (m, K) {
     var L = RING.userData.list; if (L.length >= 120) L.shift();
@@ -299,6 +304,7 @@
     if (m.wh === WH.acid) { for (var j = 0; j < (ph ? 3 : 5); j++) { var b = Math.random() * 6.28; GLOW.add(x, h, y, Math.cos(b) * 120, 60, Math.sin(b) * 120, 6, 3, .45, .55, 1, .2, .9, 1); }
       for (var k = 0; k < 2; k++) SMOKE.add(x, h, y, (Math.random() - .5) * 30, 30, (Math.random() - .5) * 30, ex * .5, ex * 1.2, 1, .45, .62, .2, .5, 1); }
     if (m.wh === WH.flash) { try { G.parts.push({ x: x, y: y, vx: 0, vy: 0, l: .25, ml: .25, c: 'ring', s: m.wh.r * 2 }); } catch (e) {} }
+    if (m.wh === WH.poison) { for (var p2 = 0; p2 < (ph ? 2 : 4); p2++) SMOKE.add(x + (Math.random() - .5) * ex * .6, h, y + (Math.random() - .5) * ex * .6, (Math.random() - .5) * 30, 18, (Math.random() - .5) * 30, ex * .5, ex * 1.5, 1.6, .42, .2, .55, .55, .6); }
     var t = G.t || 0; if (t - sndT > .07) { sndT = t; try { if (m.wh === WH.emp) SFX.tone(160, .25, 'square', .04, 60); else if (m.wh === WH.flash) SFX.noise(.08, .18, 4000); else SFX.noise(.2, .08, 500); } catch (e) {} }
   };
   var blindMe = function (k) { try { if (!flashEl) { flashEl = document.createElement('div'); flashEl.style.cssText = 'position:fixed;inset:0;background:#fffbe6;pointer-events:none;z-index:40;opacity:0;transition:opacity 1.4s ease-out'; document.body.appendChild(flashEl); }
@@ -311,6 +317,7 @@
       if (W === WH.emp) { var st = isMechU(u) || u.arm === 'heavy' ? 1.8 : .5; u.stun = Math.max(u.stun || 0, st); u.jam = Math.max(u.jam || 0, st); }
       else if (W === WH.acid) { var bio = isBio(u) ? 1.6 : 1; DOT.push({ u: u, dps: m.dmg * .2 * bio, until: (G.t || 0) + 4, acc: 0, src: m.src }); u.slow = Math.max(u.slow || 0, .35); }
       else if (W === WH.flash) { u.conf = Math.max(u.conf || 0, 1.5); if (u === me) blindMe(1 - Math.min(1, d / (r * 1.4))); }
+      else if (W === WH.poison) { var bio2 = isBio(u) ? 1.5 : 1; DOT.push({ u: u, dps: m.dmg * .16 * bio2, until: (G.t || 0) + 6, acc: 0, src: m.src, pz: 1 }); u.noHeal = Math.max(u.noHeal || 0, 6); }
     }
     if (W === WH.acid) PUD.push({ x: x, y: y, r: 80, until: (G.t || 0) + 3, team: m.team, dps: m.dmg * .15, src: m.src, acc: 0 });
   };
@@ -388,16 +395,16 @@
         V.set(m.dx, m.dh, m.dy); Q.setFromUnitVectors(ZA, V); m.roll += dt * 9;
         SC.setScalar(K.len); V.set(m.x, m.h, m.y); M4.compose(V, Q, SC); BODY.setMatrixAt(nb++, M4);
         var fl = (.8 + Math.random() * .4) * thrust; V.set(m.x - m.dx * K.len * .45, m.h - m.dh * K.len * .45, m.y - m.dy * K.len * .45);
-        SC.set(K.fw * (.8 + .3 * thrust), K.fw * (.8 + .3 * thrust), K.flame * fl); M4.compose(V, Q, SC); FLAME.setMatrixAt(nf, M4);
+        SC.set(K.fw * (1 + .35 * thrust), K.fw * (1 + .35 * thrust), K.flame * fl * (.55 + .3 * thrust)); M4.compose(V, Q, SC); FLAME.setMatrixAt(nf, M4);
         var wf = m.wh.fl; FLAME.instanceColor.setXYZ(nf, wf[0] * (.6 + .4 * thrust), wf[1] * (.75 + .25 * thrust), wf[2]); nf++;
         if (m.wh !== WH.he) { var wc = m.wh.col; GLOW.now(m.x + m.dx * K.len * .5, m.h + m.dh * K.len * .5, m.y + m.dy * K.len * .5, K.fw * 1.7, wc[0], wc[1], wc[2], .9); }
-        GLOW.now(V.x, V.y, V.z, K.fw * (2.6 + thrust * 1.4), .5, .78, 1, .75);
+        GLOW.now(V.x, V.y, V.z, K.fw * (2.2 + thrust * 1.2), .55, .8, 1, .85); GLOW.now(V.x - m.dx * K.flame * .35, V.y - m.dh * K.flame * .35, V.z - m.dy * K.flame * .35, K.fw * (3.2 + thrust * 1.6), 1, .55, .25, .35); GLOW.now(V.x, V.y, V.z, K.fw * 1.1, 1, 1, 1, .95);
         trailPuff(m, K, LIVE.length);
       }
     }
     // acid burns and puddles
     var tn2 = G.t || 0;
-    for (var di = DOT.length - 1; di >= 0; di--) { var D = DOT[di]; if (D.u.dead || tn2 > D.until) { DOT.splice(di, 1); continue; } D.acc += dt; if (D.acc >= .5) { D.acc -= .5; try { hurt(D.u, D.dps * .5, D.src, 0, 'x'); } catch (e) {} if (Math.random() < .6) GLOW.add(D.u.x, aimH(D.u) * .7, D.u.y, 0, 40, 0, 8, 16, .4, .55, 1, .2, .7); } }
+    for (var di = DOT.length - 1; di >= 0; di--) { var D = DOT[di]; if (D.u.dead || tn2 > D.until) { DOT.splice(di, 1); continue; } D.acc += dt; if (D.acc >= .5) { D.acc -= .5; try { hurt(D.u, D.dps * .5, D.src, 0, 'x'); } catch (e) {} if (Math.random() < .6) GLOW.add(D.u.x, aimH(D.u) * .7, D.u.y, 0, 40, 0, 8, 16, .4, D.pz ? .62 : .55, D.pz ? .3 : 1, D.pz ? 1 : .2, .7); } }
     for (var pi = PUD.length - 1; pi >= 0; pi--) { var Pd = PUD[pi]; if (tn2 > Pd.until) { PUD.splice(pi, 1); continue; } GLOW.now(Pd.x, 3, Pd.y, Pd.r * 2, .3, .7, .1, .35 * Math.min(1, Pd.until - tn2)); Pd.acc += dt; if (Pd.acc >= .5) { Pd.acc -= .5; for (var ui = 0; ui < G.units.length; ui++) { var uu = G.units[ui]; if (uu.dead || uu.team === Pd.team || uu.team === 2 || uu.layer > 0) continue; if (Math.hypot(uu.x - Pd.x, uu.y - Pd.y) < Pd.r + (uu.r || 20)) { try { hurt(uu, Pd.dps * .5, Pd.src, 0, 'x'); } catch (e) {} uu.slow = Math.max(uu.slow || 0, .3); } } } }
     // pressure rings
     var RL = RING.userData.list, nr = 0;
@@ -421,7 +428,7 @@
   };
   // ------------------------------------------------------------------ hooking into the game
   var MISK = { 6: 1, 8: 1, 13: 1 };
-  var followCap = function () { return phone() ? 24 : 48; };
+  var followCap = function () { return phone() ? 20 : 56; };
   var hookShoot = function () {
     if (typeof shoot !== 'function' || window.__msleShoot) return; window.__msleShoot = 1; var _s = shoot;   // once only: later wrappers keep calling this one
     var w = function (u, a, o) {
@@ -432,11 +439,11 @@
             var t = G.t || 0; if (u._swT !== t) { u._swT = t; u._swN = 0; }
             var idx = u._swN++, extra = (idx % 4 === 3) ? 1 : 0, per = (o.dmg || 0) * (idx < 16 ? .8 : 1);
             for (var e = 0; e <= extra; e++) { var k = idx + Math.floor(idx / 4) + e, sh = shoulders(u)[k % 2], f = u.aa != null ? u.aa : u.a, side = k % 2 ? -1 : 1;
-              if (idx === 0) u._swWH = u.mslWH || (G.local && u === G.local.unit ? 'he' : ['he', 'he', 'he', 'emp', 'acid', 'flash'][Math.floor(Math.random() * 6)]);
-              spawn({ wh: u._swWH, profile: 'vertical', kind: 'micro', x: sh[0], h: sh[1], y: sh[2], dir: [-Math.sin(f) * side * .22 - Math.cos(f) * .12, 1, Math.cos(f) * side * .22 - Math.sin(f) * .12],
+              if (idx === 0) u._swWH = u.mslWH || (window.__mslPick ? window.__mslPick(u) : null) || (G.local && u === G.local.unit ? 'he' : ['he', 'he', 'he', 'emp', 'acid', 'poison', 'flash'][Math.floor(Math.random() * 7)]);
+              spawn({ wh: u._swWH, profile: 'vertical', kind: 'micro', x: sh[0], h: sh[1], y: sh[2], dir: [-Math.sin(f) * side * .38 - Math.cos(f) * .14 + (Math.random() - .5) * .12, 1, Math.cos(f) * side * .38 - Math.sin(f) * .14 + (Math.random() - .5) * .12],
                 target: o.home || null, tx: o.home ? null : u.x + Math.cos(a) * Math.min(900, o.range || 900), ty: o.home ? null : u.y + Math.sin(a) * Math.min(900, o.range || 900), th: o.home ? null : 8,
                 dmg: per, src: u.slot, dt: o.dt || 'at', splash: o.splash || 0, team: u.team, delay: (k >> 1) * .055 + Math.random() * .02 }); }
-            if (idx === 0) { try { var s2 = shoulders(u); for (var q = 0; q < 2; q++) SMOKE.add(s2[q][0], s2[q][1], s2[q][2], 0, 40, 0, 14, 40, .5, .7, .72, .76, .45, 1); SFX.noise(.5, .22, 2400); } catch (er) {} }
+            try { var s2 = shoulders(u), q2 = idx % 2; GLOW.add(s2[q2][0], s2[q2][1], s2[q2][2], 0, 30, 0, 10, 34, .12, 1, .85, .6, .9); SMOKE.add(s2[q2][0], s2[q2][1], s2[q2][2], (Math.random() - .5) * 40, 50, (Math.random() - .5) * 40, 10, 34, .45, .72, .74, .78, .45, 1); if (idx === 0) SFX.noise(.5, .22, 2400); } catch (er) {}
             return;
           }
         }
@@ -470,7 +477,7 @@
     if (!G || !G.hm || !G.hm.length || !attach()) return; var u = G.local && G.local.unit; if (!u || u.dead) { G.hm.length = 0; return; }
     var list = G.hm.splice(0, G.hm.length), sh = shoulders(u), f = u.aa != null ? u.aa : (u.a || 0), fx = Math.cos(f), fy = Math.sin(f);
     for (var i = 0; i < list.length; i++) { var h = list[i], s = sh[i % 2], side = i % 2 ? -1 : 1;
-      spawn({ wh: u.mslWH || 'he', profile: 'vertical', kind: 'micro', x: s[0], h: s[1], y: s[2], dir: [-fy * side * .22 - fx * .12 + (Math.random() - .5) * .1, 1, fx * side * .22 - fy * .12 + (Math.random() - .5) * .1],
+      spawn({ wh: u.mslWH || (window.__mslPick ? window.__mslPick(u) : null) || 'he', profile: 'vertical', kind: 'micro', x: s[0], h: s[1], y: s[2], dir: [-fy * side * .22 - fx * .12 + (Math.random() - .5) * .1, 1, fx * side * .22 - fy * .12 + (Math.random() - .5) * .1],
         target: h.tg || null, dmg: h.dmg, src: G.local, dt: 'x', sw: 1, team: u.team, delay: (h.delay || 0) + (i >> 1) * .01 }); }
     try { for (var q = 0; q < 2; q++) SMOKE.add(sh[q][0], sh[q][1], sh[q][2], 0, 40, 0, 14, 40, .5, .7, .72, .76, .45, 1); } catch (e) {}
   };
