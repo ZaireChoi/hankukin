@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.50 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.51 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2049,7 +2049,7 @@ R.syncUnits=function(dt,now){const lt=G.local.team;const chase=P.view==='chase';
   e.seen=fr;const far=d2(u.x,u.y,cx,cz)>cull;if(far){if(e.root.parent)this.scene.remove(e.root);continue;}else if(!e.root.parent)this.scene.add(e.root);const hid=u.team!==lt&&!visibleTo(u,lt);const near=chase&&rel!==0&&d2(u.x,u.y,this.cam.position.x,this.cam.position.z)<75*75&&u.layer===0;e.root.visible=!hid&&!near&&!(u.spawnProt>0&&Math.floor(now*10)%2);if(hid)continue;
   const ghost=((u.cloak>0||u.illu)&&u.team===lt)||u.phase>0;if(ghost!==!!e.ghost){e.ghost=ghost;this.setGhost(e,ghost);}
   e.root.position.set(u.x,unitH(u),u.y);this.animate(e,u,dt,now);}
- for(const[id,e]of this.units)if(e.seen!==fr){this.scene.remove(e.root);if(typeof mechFXCleanup==='function')mechFXCleanup(e);unitDispose(e);this.units.delete(id);}try{unitDisposeRun(dt);}catch(er){}};
+ for(const[id,e]of this.units)if(e.seen!==fr){this.scene.remove(e.root);if(typeof mechFXCleanup==='function')mechFXCleanup(e);unitDispose(e);this.units.delete(id);}try{unitDisposeRun(dt);}catch(er){}try{unitLod(dt);}catch(er){}};
 R.recoil=function(u){const e=this.units.get(u.id);if(e)e.rec=1;};
 R.status=function(e,u,now){const hh=headH(u);
  if(e.jet)e.jet.scale.setScalar(12+Math.random()*6+Math.abs(u.vz||0)*.04);
@@ -3567,6 +3567,10 @@ let arkMsgT=0;{const _st=step;step=function(dt){_st(dt);if(!G)return;if(G.arkCd>
 var G_DEBRIS=[];
 // v3.49 (4): what a removed unit owned (name tags, rings, cloned materials, procedural geometry) is freed in a batch every 2 s;
 // anything still in the scene or held by a loaded model file is kept
+// v3.50b (5): far LOD - rigged units away from the camera show only their body (hand-weapon parts, thruster cones and glows are hidden)
+let lodT=0;function unitLod(dt){if(!R3||!R3.units||!R3.camT||!G||!G.local)return;lodT-=dt;const rb=lodT<=0;if(rb)lodT=1;const me=G.local.unit;const cx=R3.camT.x,cz=R3.camT.z;const F2=(window.__phone?380:470)**2;
+ for(const [id,e] of R3.units){if(!e.root||!e.root.parent||(me&&id===me.id))continue;if(rb||!e._lodL){const L=[];let sk=false;e.root.traverse(o=>{if(o.isSkinnedMesh){sk=true;return;}if(!(o.isMesh||o.isSprite)||o===e.ring||o===e.blob||o===e.meArr||(o.renderOrder||0)>=5)return;const gt=o.geometry&&o.geometry.type;if(gt==='CircleGeometry'||gt==='RingGeometry')return;L.push(o);});e._lodL=sk?L:[];}
+  if(!e._lodL.length)continue;const p=e.root.position;if((p.x-cx)*(p.x-cx)+(p.z-cz)*(p.z-cz)>F2){for(const o of e._lodL)if(o.visible){o.visible=false;o.userData._lodH=1;}e._lodF=1;}else if(e._lodF){e._lodF=0;for(const o of e._lodL)if(o.userData._lodH){o.visible=true;o.userData._lodH=0;}}}window.__lodN=(window.__lodN||0)+1;}
 const UDQ=[];let udT=0,udProt=null,udMC=-1;function unitDispose(e){if(e&&e.root)UDQ.push(e.root);}
 function unitDisposeRun(dt){udT+=dt;if(udT<2||!UDQ.length||!R3||!R3.scene)return;udT=0;try{const mcN=Object.keys(MC).length;if(!udProt||mcN!==udMC){udMC=mcN;udProt=new Set();for(const k in MC){const c=MC[k];if(c&&c.g&&c.g.scene)c.g.scene.traverse(o=>{if(o.geometry)udProt.add(o.geometry);if(o.skeleton)udProt.add(o.skeleton);const m=o.material;if(m)(Array.isArray(m)?m:[m]).forEach(x=>{udProt.add(x);for(const t of['map','normalMap','emissiveMap','roughnessMap','metalnessMap','aoMap','alphaMap'])if(x[t])udProt.add(x[t]);});});}}
  const live=new Set(Object.values(GEARC));R3.scene.traverse(o=>{if(o.geometry)live.add(o.geometry);if(o.skeleton)live.add(o.skeleton);const m=o.material;if(m)(Array.isArray(m)?m:[m]).forEach(x=>{live.add(x);if(x.map)live.add(x.map);});});for(const e of R3.units.values())if(e.root&&!e.root.parent)e.root.traverse(o=>{if(o.geometry)live.add(o.geometry);const m=o.material;if(m)(Array.isArray(m)?m:[m]).forEach(x=>{live.add(x);if(x.map)live.add(x.map);});});
@@ -4324,7 +4328,7 @@ const BGRIM={seoul:0xff6ad5,hangar:0xffc27a,fire:0xff7a2a,ice:0x9fe0ff,space:0x8
 #vnNext{position:absolute;right:max(6vw,22px);bottom:22px;color:#9ff6ff;font-size:18px;animation:vnBlink 1s infinite;display:none}@keyframes vnBlink{50%{opacity:.2;transform:translateY(3px)}}
 #rpgDlg .opts{align-items:center}#rpgDlg .opts button{min-width:min(520px,86vw);background:linear-gradient(90deg,rgba(20,40,80,.85),rgba(10,20,44,.9));border:1px solid #4a7ad0;border-radius:8px;padding:11px 18px;font-size:16px}
 #rpgDlg .opts button.pri{background:linear-gradient(90deg,#1f6fd0,#123a7a)}
-#vnCtl{position:absolute;top:14px;right:16px;z-index:4;display:flex;gap:8px}#vnCtl button{background:rgba(6,12,26,.6);border:1px solid rgba(160,200,255,.35);color:#cfe0ff;border-radius:6px;padding:6px 12px;font-size:12.5px;font-weight:800;letter-spacing:.06em}#vnCtl button.on{background:rgba(31,111,208,.75);color:#fff;border-color:#9ff6ff}
+#vnCtl{position:absolute;top:14px;right:96px;z-index:4;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 112px)} /* v3.50b: clear of the back/home control (top-right, 78px) */#vnCtl button{background:rgba(6,12,26,.6);border:1px solid rgba(160,200,255,.35);color:#cfe0ff;border-radius:6px;padding:6px 12px;font-size:12.5px;font-weight:800;letter-spacing:.06em}#vnCtl button.on{background:rgba(31,111,208,.75);color:#fff;border-color:#9ff6ff}
 #vnLog{position:absolute;inset:8vh 10vw;z-index:5;background:rgba(4,8,18,.94);border:1px solid #3a5a96;border-radius:12px;padding:18px 22px;overflow:auto;display:none;line-height:1.7}
 #vnTitle{z-index:3;text-shadow:0 0 30px rgba(0,0,0,.9),0 0 24px rgba(90,209,255,.6)!important}
 @media(max-width:700px){#rpgDlg .box{padding:34px 16px 22px!important}#vnCtl button{padding:5px 8px;font-size:11px}}`;document.head.appendChild(css);}
@@ -7862,7 +7866,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
    const disc=new T.Mesh(new T.CircleGeometry(140,64),new T.MeshStandardMaterial({color:0x14161c,metalness:.7,roughness:.35}));disc.rotation.x=-Math.PI/2;scn.add(disc);const ring=new T.Mesh(new T.RingGeometry(118,121,96),new T.MeshBasicMaterial({color:0xc9a46a,transparent:true,opacity:.55}));ring.rotation.x=-Math.PI/2;ring.position.y=.3;scn.add(ring);cam=new T.PerspectiveCamera(30,1,1,4000);}catch(e){}
   const show3d=()=>{want='mech3';if(inst&&scn){scn.remove(inst.wrap);inst=null;}try{mdlGet(want);}catch(e){}};
   const loop=()=>{if(stop)return;requestAnimationFrame(loop);if(!rend)return;const w=cv.clientWidth,h=cv.clientHeight;if(cv.width!==Math.round(w*rend.getPixelRatio())){rend.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();}const now=performance.now(),dt=Math.min(.05,(now-last)/1000);last=now;
-   if(want&&!inst){try{if(mdlGet(want)){inst=mdlInstance(want,0,170,'h');if(inst){try{window.__charcoal&&window.__charcoal(inst.obj);}catch(e){}scn.add(inst.wrap);inst.wrap.rotation.y=.6;}}}catch(e){}}
+   if(want&&!inst){try{if(mdlGet(want)){inst=mdlInstance(want,0,170,'h');if(inst){try{window.__charcoal&&window.__charcoal(inst.obj);}catch(e){}scn.add(inst.wrap);inst.wrap.rotation.y=.6;/* v3.50b: play the idle clip (it stood in the raw bind pose and looked crumpled) */try{const c0=MC[want];const an=c0&&c0.g&&c0.g.animations||[];const cl=an.find(a=>/^idle$/i.test(a.name))||an[0];if(cl&&!inst.mx){const mixer=new T.AnimationMixer(inst.obj);mixer.clipAction(cl).play();inst.mx={mixer};}}catch(e){}}}}catch(e){}}
    if(inst){inst.wrap.rotation.y+=dt*.35;try{inst.mx&&inst.mx.mixer.update(dt);}catch(e){}}const t=now/1000;cam.position.set(Math.sin(t*.12)*40,120,560);cam.lookAt(0,80,0);rend.render(scn,cam);};
   const close=()=>{stop=true;try{rend&&rend.dispose();rend&&rend.forceContextLoss&&rend.forceContextLoss();}catch(e){}ov.remove();};
   if(!first)ov.querySelector('#clsX').onclick=close;drawList();drawR();show3d();loop();};
@@ -8242,7 +8246,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v350';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v351';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8641,7 +8645,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_clean.js?v=348"></script>
 <script src="lib/explosionfx.js?v=348"></script>
 <script src="lib/ascend_boom.js?v=349"></script>
-<script src="lib/ascend_lobby.js?v=348"></script>
+<script src="lib/ascend_lobby.js?v=350"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
 </body>
 </html>
