@@ -387,8 +387,8 @@ whenR3(function(){var r=R3.r;
    //  2.2 s      it lands: dust ring, debris, camera jolt, thump
    //  1.6-3.2 s  the squad comes down one after another around it, each with its own landing burst
    if(me&&u.team===me.team&&MAP&&!MAP.space&&G._intDone!==1&&!G.client&&((G.rpg&&/^sq_/.test(MAP.id||''))||u===me)){ /* v3.64: every battlefield opens with this entrance (squad dungeons also bring the squad in) */var nowR=performance.now()/1000;
-    if(G._int0==null){if(G.t>.25&&e.mdl&&u===me){G._int0=nowR;G._intN=0;}else{e.root.position.y+=900;}}
-    if(G._int0!=null){var p=nowR-G._int0;G.hstop=Math.max(G.hstop||0,.25);if(G.rpg){G.rpg.sqT=0;G.rpg.sqT0=G.t;}
+    if(G._int0==null){if(G.t>.25&&u===me&&(e.mdl||G.t>1.2)){G._int0=nowR;G._intN=0;}else if(G.t<4){e.root.position.y+=900;}else{G._intDone=1;}} /* v3.66b: frames whose model path has no e.mdl were parked 900 up for good (invisible) - start anyway, never hold past 4 s */
+    if(G._int0!=null){var p=nowR-G._int0;if(p>6){G._intDone=1;G.hstop=0;}G.hstop=Math.max(G.hstop||0,.25);if(G.rpg){G.rpg.sqT=0;G.rpg.sqT0=G.t;}
      var ez=function(x){x=Math.max(0,Math.min(1,x));return x*x*(3-2*x);};
      if(u===me){var a0=(u.aa!=null?u.aa:(u.a||0)),fl=1-ez(p/2.2),hgt=fl*fl*420+(p<2.2?Math.sin(Math.min(1,p/2.2)*Math.PI)*60:0);
       e.root.position.x-=Math.cos(a0)*fl*620;e.root.position.z-=Math.sin(a0)*fl*620;e.root.position.y+=hgt;

@@ -23,7 +23,7 @@
       if (S.done) return;
       var u = G.local && G.local.unit; if (!u) { if (performance.now() - S.t0 > 10000) finish(); return; }
       var R = window.R3, e = R && R.units && R.units.get(u.id);
-      var ready = !!(e && e.mdl && e.mdl.obj && e.root && e.root.parent);
+      var el0 = (performance.now() - S.t0) / 1000; var ready = !!(e && e.root && e.root.parent && ((e.mdl && e.mdl.obj) || (e.root.children.length > 0 && el0 > 1.5)));   // frames drawn without e.mdl count as ready once built
       if (!S.held && !ready) { S.held = true; G.paused = true; }
       var el = (performance.now() - S.t0) / 1000;
       if (ready && !S.warm) { S.warm = true; if (S.held) show(L('셰이더 준비 중…', 'Preparing shaders…'), .85); try { R.r.compile(R.scene, R.cam); } catch (er) {} return; }
