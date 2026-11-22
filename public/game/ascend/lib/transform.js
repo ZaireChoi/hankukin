@@ -135,7 +135,7 @@ function addCell(){var bar=document.getElementById('skb2');if(!bar||document.get
  d.style.cssText='position:relative;width:52px;height:52px;border-radius:8px;border:1px solid rgba(255,140,110,.6);background:linear-gradient(160deg,#2a0d10,#120609);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto';
  d.innerHTML='<span style="position:absolute;left:4px;top:2px;font:800 10px sans-serif;color:#ffd2c8">Y</span><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#ff8a70" stroke-width="1.6"><path d="M12 3v7M5 13l7-3 7 3M8 21l4-3 4 3M12 10v8"/></svg><em id="skTFs" style="position:absolute;bottom:2px;right:4px;font:700 9px sans-serif;color:#ffb0a0;font-style:normal">변신</em>';
  d.addEventListener('pointerdown',function(e){e.stopPropagation();e.preventDefault();toggle();});row.appendChild(d);}
-function syncCell(){var s=document.getElementById('skTFs');var u=me();if(!s)return;var j=isJet(u);var t=j?(u.tf.mode==='jet'?'비행':'…'):'변신';if(s.textContent!==t)s.textContent=t;var d=document.getElementById('skTF');if(d)d.style.boxShadow=j?'0 0 10px rgba(255,120,90,.7)':'none';}
+function syncCell(){var s=document.getElementById('skTFs');var u=me();if(!s)return;var j=isJet(u);var t=j?(u.tf.mode==='jet'?'로봇 복귀':'…'):'변신';if(s.textContent!==t)s.textContent=t;var d=document.getElementById('skTF');if(d)d.style.boxShadow=j?'0 0 10px rgba(255,120,90,.7)':'none';}
 function boot(){hookInput();hookStep();hookPose();addCell();syncCell();}
 setInterval(boot,600);
 window.__TF={toggle:toggle,prof:prof,PROF:PROF,set:function(k){var u=me();if(!u)return;u.tf={mode:'hold',k:k,mark:-1};}};
