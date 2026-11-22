@@ -27,7 +27,8 @@ var boxTick=function(){var r=R(),f=fw();if(!r||!f)return;var w=wins();if(f.seen<
  save();if(out.length)banner('<small style="color:#9fb6cf;letter-spacing:.2em">'+L('승리 상자 ','VICTORY BOX ')+f.n+' / 3</small><br>'+out.join(' · '));};
 X.boxRates=function(){return BOX.map(function(b){return b[1]+' '+b[0]+'%';}).join(' · ');};
 // ---- one-time repair: a named glaive that an earlier test build had turned into a whip ----
-var repair=function(){var r=R();if(!r||r._fixMoon)return;r._fixMoon=1;(r.inv||[]).forEach(function(it){if(it&&it.slot==='mel'&&it.sub==='whip'&&it.n&&/언월도/.test(it.n.ko||''))it.sub='glaive';});save();};
+// v3.60: runs on EVERY load (the old one-time flag let a later broken copy slip through) - every named item gets its own weapon type back
+var repair=function(){var r=R();if(!r)return;var ch=0;(r.inv||[]).forEach(function(it){try{if(window.uqFix&&window.uqFix(it))ch++;else if(it&&it.slot==='mel'&&it.sub!=='glaive'&&it.n&&/언월도/.test(it.n.ko||'')){it.sub='glaive';ch++;}}catch(e){}});if(ch){save();try{var u=G&&G.local&&G.local.unit;if(u&&window.arkLook)u.melSub=arkLook().melSub;}catch(e){}}};
 // ---- home strip ----
 var strip=function(){var menu=document.getElementById('menu'),left=menu&&menu.querySelector('.lb-left');if(!left||!R())return;var s=document.getElementById('lbyLoop');if(!s){s=document.createElement('div');s.id='lbyLoop';s.style.cssText='display:flex;gap:6px;flex-wrap:wrap;margin-top:10px';left.appendChild(s);}
  var i=idle(),f=fw(),can=i&&i.h>=MINH;

@@ -41,7 +41,7 @@
 
   // input: no melee while flying
   var hookInput = function () {
-    var li = window.localInput; if (!li || li.__fl) return;
+    var li = window.localInput; if (!li || li.__fl || window.__hkFl) return; window.__hkFl = 1;   // v3.61: wrap once (re-wrapping on top of other wrappers stacked endlessly)
     var w = function (u) { var inp = li(u); try { if (flying(u)) { inp.a2 = false; inp.ab = false; if (inp.melee) inp.melee = false; } } catch (e) {} return inp; };
     w.__fl = 1; window.localInput = w;
   };

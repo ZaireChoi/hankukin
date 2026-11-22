@@ -31,7 +31,7 @@
     SK.forEach(function (d) { var v = u[d.cd] || 0, p = lastCd[d.id] || 0; if (v > p + .05 && learned(s, d.id)) { var r = s.aSk[d.id]; u[d.cd] = v * (1 - .1 * (r - 1)); } lastCd[d.id] = u[d.cd] || 0; });
     // the auto pilot only uses what has been learned
   };
-  var hookInput = function () { var li = window.localInput; if (!li || li.__wr) return; var w = function (u) { var inp = li(u); try { if (on() && u === G.local.unit) { var s = me(); if (!learned(s, 'q')) inp.a1 = false; if ((s.alv || 1) < ULT_LV) inp.ul = false; if (!learned(s, 't')) inp.ab = false; if (window.__wrFire) inp.fire = true; } } catch (e) {} return inp; }; w.__wr = 1; window.localInput = w; };
+  var hookInput = function () { var li = window.localInput; if (!li || li.__wr || window.__hkWr) return; window.__hkWr = 1; var w = function (u) { var inp = li(u); try { if (on() && u === G.local.unit) { var s = me(); if (!learned(s, 'q')) inp.a1 = false; if ((s.alv || 1) < ULT_LV) inp.ul = false; if (!learned(s, 't')) inp.ab = false; if (window.__wrFire) inp.fire = true; } } catch (e) {} return inp; }; w.__wr = 1; window.localInput = w; };
 
   // ---------------------------------------------------------------- minimap to the top-left in this mode
   var hookMini = function () {

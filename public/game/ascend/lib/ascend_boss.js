@@ -20,7 +20,7 @@ var wk=function(){return Math.floor((Date.now()+9*3600e3-4*86400e3)/(7*86400e3))
 var left=function(){var ms=(wk()+1)*7*86400e3+4*86400e3-9*3600e3-Date.now(),d=Math.floor(ms/86400e3),h=Math.floor(ms%86400e3/3600e3);return d?d+L('일 ','d ')+h+L('시간','h'):h+L('시간','h');};
 var st=function(){var r=R();if(!r)return null;var w=wk();if(!r.wb||r.wb.wk!==w)r.wb={wk:w,n:0,best:0,got:[]};return r.wb;};
 // health also follows combat power: a pilot far above the recommended power of the stage (heavy gear) met a boss that died in 21 s
-var cfg=function(){var r=R(),w=wk(),b=(r&&r.sq&&r.sq.best)||0,s=Math.max(5,Math.min(200,Math.max(b,(r&&r.lv)||1))),k=1;try{k=Math.sqrt(Math.max(1,X.cp()/X.recCP(s)));   /* full ratio was too hard: 8% removed in 41 s */}catch(e){}return {boss:BOSS[w%BOSS.length],ty:TY[w%3],stage:s,hp:(window.__wbM||HPM)*k};};
+var cfg=function(){var r=R(),w=wk(),b=(r&&r.sq&&r.sq.best)||0,s=Math.max(5,Math.min(200,Math.max(b,(r&&r.lv)||1))),k=1;try{k=Math.sqrt(Math.max(1,X.cp()/X.recCP(s)));   /* full ratio was too hard: 8% removed in 41 s */}catch(e){}return {boss:BOSS[w%BOSS.length],ty:TY[w%3],stage:s,hp:(window.__wbM||HPM)*k*.5};   /* v3.60 (5): half the health - a Lv 16 pilot should reach grade D (10%) on a first try */};
 var bossName=function(k){try{return tx(MONS[k].n);}catch(e){}try{return tx(CL[k].n);}catch(e){}return L('주간 보스','Weekly boss');};
 var TIER=[
  {p:.10,g:'D',t:L('금화 200','200 gold'),f:function(r){r.shards=(r.shards||0)+200;}},
@@ -28,7 +28,7 @@ var TIER=[
  {p:.50,g:'B',t:L('영웅 장비 1개','1 Epic gear'),f:function(r){try{r.inv.push(A().mkItem(3));}catch(e){}}},
  {p:.75,g:'A',t:L('금화 1,000 · 전설 장비 1개','1,000 gold · 1 Legendary gear'),f:function(r){r.shards=(r.shards||0)+1000;try{r.inv.push(A().mkItem(4));}catch(e){}}},
  {p:1.0,g:'S',t:L('소환권 10장 (기동전사·안드로이드 소환)','10 summon tickets (Mech / Android)'),f:function(r){r.sumTicket=(r.sumTicket||0)+10;}}];
-var gradeOf=function(p){var g='-';TIER.forEach(function(t){if(p>=t.p)g=t.g;});return g;};
+var gradeOf=function(p){var g=L('등급 없음','No grade');TIER.forEach(function(t){if(p>=t.p)g=t.g;});return g;};
 var CSS='position:fixed;inset:0;z-index:9320;display:flex;align-items:center;justify-content:center;background:rgba(3,5,10,.88);font-family:"Noto Sans KR",sans-serif;color:#e9eef6;padding:14px';
 var BOXC='width:min(460px,94vw);max-height:92vh;overflow:auto;padding:18px;border-radius:14px;background:linear-gradient(180deg,#121a2b,#070a12);border:1px solid rgba(207,224,242,.28)';
 var BTN='all:unset;cursor:pointer;padding:10px 18px;border-radius:8px;font-weight:800;font-size:14px;text-align:center;';
