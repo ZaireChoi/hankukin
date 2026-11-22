@@ -417,8 +417,8 @@
     // shield bubbles
     var ns = 0; if (SHL.length) { if (!SHM) mkShield(); if (SHM.parent !== R.scene) R.scene.add(SHM);
       for (var si = SHL.length - 1; si >= 0; si--) { var S = SHL[si], u2 = S.u, tn = G.t || 0; if (!u2 || u2.dead || tn > S.until || ns >= 16) { SHL.splice(si, 1); continue; }
-        var rr2 = (u2.r || 20) + 62, k0 = Math.min(1, (tn - S.t0) / .12), k1 = Math.min(1, (S.until - tn) / .2), fl2 = S.hit && tn - S.hit < .12 ? 1.8 : 1;
-        V.set(u2.x, aimH(u2) * .55, u2.y); Q.identity(); SC.setScalar(rr2 * (.6 + .4 * k0)); M4.compose(V, Q, SC); SHM.setMatrixAt(ns, M4); var cc2 = .55 * Math.min(k0, k1) * fl2; SHM.instanceColor.setXYZ(ns, cc2 * .5, cc2 * .85, cc2); ns++; } }
+        var rr2 = (u2.r || 20) * 1.5 + 26, k0 = Math.min(1, (tn - S.t0) / .12), k1 = Math.min(1, (S.until - tn) / .2), fl2 = S.hit && tn - S.hit < .12 ? 1.6 : 1;
+        V.set(u2.x, aimH(u2) * .55, u2.y); Q.identity(); SC.setScalar(rr2 * (.6 + .4 * k0)); M4.compose(V, Q, SC); SHM.setMatrixAt(ns, M4); var cc2 = .32 * Math.min(k0, k1) * fl2; SHM.instanceColor.setXYZ(ns, cc2 * .45, cc2 * .8, cc2); ns++; } }
     if (SHM) { SHM.count = ns; SHM.instanceMatrix.needsUpdate = true; SHM.instanceColor.needsUpdate = true; SHM.visible = ns > 0; }
     BODY.count = nb; FLAME.count = nf; RING.count = nr;
     BODY.instanceMatrix.needsUpdate = true; FLAME.instanceMatrix.needsUpdate = true; FLAME.instanceColor.needsUpdate = true; RING.instanceMatrix.needsUpdate = true; RING.instanceColor.needsUpdate = true;

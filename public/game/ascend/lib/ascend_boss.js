@@ -20,7 +20,7 @@ var wk=function(){return Math.floor((Date.now()+9*3600e3-4*86400e3)/(7*86400e3))
 var left=function(){var ms=(wk()+1)*7*86400e3+4*86400e3-9*3600e3-Date.now(),d=Math.floor(ms/86400e3),h=Math.floor(ms%86400e3/3600e3);return d?d+L('일 ','d ')+h+L('시간','h'):h+L('시간','h');};
 var st=function(){var r=R();if(!r)return null;var w=wk();if(!r.wb||r.wb.wk!==w)r.wb={wk:w,n:0,best:0,got:[]};return r.wb;};
 // health also follows combat power: a pilot far above the recommended power of the stage (heavy gear) met a boss that died in 21 s
-var cfg=function(){var r=R(),w=wk(),b=(r&&r.sq&&r.sq.best)||0,s=Math.max(5,Math.min(200,Math.max(b,(r&&r.lv)||1))),k=1;try{k=Math.sqrt(Math.max(1,X.cp()/X.recCP(s)));   /* full ratio was too hard: 8% removed in 41 s */}catch(e){}return {boss:BOSS[w%BOSS.length],ty:TY[w%3],stage:s,hp:(window.__wbM||HPM)*k*.5};   /* v3.60 (5): half the health - a Lv 16 pilot should reach grade D (10%) on a first try */};
+var cfg=function(){var r=R(),w=wk(),b=(r&&r.sq&&r.sq.best)||0,s=Math.max(5,Math.min(200,Math.max(b,(r&&r.lv)||1))),k=1;try{k=Math.sqrt(Math.max(1,X.cp()/X.recCP(s)));   /* full ratio was too hard: 8% removed in 41 s */}catch(e){}return {boss:BOSS[w%BOSS.length],ty:TY[w%3],stage:s,hp:(window.__wbM||HPM)*k*.22};   /* v3.66 (19-2): manager v3.65 - 5 % in 98 s on a first try; x0.44 more so grade D (10 %) is reachable */   /* v3.60 (5): half the health - a Lv 16 pilot should reach grade D (10%) on a first try */};
 var bossName=function(k){try{return tx(MONS[k].n);}catch(e){}try{return tx(CL[k].n);}catch(e){}return L('주간 보스','Weekly boss');};
 var TIER=[
  {p:.10,g:'D',t:L('금화 200','200 gold'),f:function(r){r.shards=(r.shards||0)+200;}},
@@ -42,7 +42,7 @@ var open=X.wbOpen=function(){guard('wbOpen',function(){var s=st();if(!s)return;v
  ov.querySelector('#wbSq').onclick=function(){ov.remove();try{hide('#menu');}catch(e){}try{window.squadOpen();}catch(e){}};
  ov.querySelector('#wbGo').onclick=function(){if(!can||!window.__wbStart)return;s.n++;save();ov.remove();try{hide('#menu');}catch(e){}try{window.__wbStart(c);}catch(e){s.n--;save();(X.err=X.err||[]).push('wbStart: '+String(e).slice(0,160));}};});};
 window.__wbHud=function(G0){try{var b=G0.sqBoss,p=b?Math.max(0,b.hp)/b.mhp:1,t=Math.max(0,SEC-Math.floor(G0.sqT||0));return L('주간 보스 ','Weekly boss ')+'<span style="color:#ff9b9b">'+Math.ceil(p*100)+'%</span> · <span style="color:'+(t<=15?'#ffb36b':'#cfe0f2')+'">'+t+L('초','s')+'</span> · '+gradeOf(1-p);}catch(e){return '';}};
-window.__wbFinish=function(pct,sec){guard('wbFinish',function(){var r=R(),s=st();if(!r||!s)return;var log=[];
+window.__wbFinish=function(pct,sec){try{var gl='-';TIER.forEach(function(t){if(pct>=t.p)gl=t.g;});var nx=TIER.filter(function(t){return pct<t.p;})[0];window.__wbLast={g:gl,at:Date.now(),msg:nx?L(nx.g+'('+Math.round(nx.p*100)+'%)까지 '+Math.max(1,Math.ceil((nx.p-pct)*100))+'%',Math.max(1,Math.ceil((nx.p-pct)*100))+'% to '+nx.g):L('최고 등급!','Top grade!')};}catch(e){}guard('wbFinish',function(){var r=R(),s=st();if(!r||!s)return;var log=[];
  if(pct<0){s.n=Math.max(0,s.n-1);pct=0;log.push(L('보스를 불러오지 못해 도전 횟수를 돌려드렸습니다.','The boss failed to load; the attempt was returned.'));}
  s.best=Math.max(s.best,pct);TIER.forEach(function(t,i){if(pct>=t.p&&s.got.indexOf(i)<0){s.got.push(i);t.f(r);log.push(t.g+' · '+t.t);}});
  var part=300+cfg().stage*20;r.cred=(r.cred||0)+part;save();

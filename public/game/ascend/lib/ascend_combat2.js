@@ -99,6 +99,7 @@
     var ang = a ? Math.atan2(u.y - a.y, u.x - a.x) : Math.random() * 6.28, heavy = frac >= .12 || fin || (dt === 'x' && frac >= .08);
     if (!heavy && frac < .04) return;
     var kb = (mech ? 6 : 14) * (heavy ? 2.2 : 1); u._kbv = { vx: Math.cos(ang) * kb / .14, vy: Math.sin(ang) * kb / .14, t: .14 }; if (REACT.indexOf(u) < 0) REACT.push(u);
+    if (window.__autoSoftCC && window.__autoSoftCC(a)) return;
     if (heavy && !mech && u.arm !== 'heavy') { if (!(u._kd > 0)) { u._kd = 1.05; u._kdA = ang; u.stun = Math.max(u.stun || 0, .95); } }
     else if (heavy && mech) { u._stg = .38; u._kdA = ang; u.stun = Math.max(u.stun || 0, .18); }
     if (fin && Math.random() < .25) { u.stun = Math.max(u.stun || 0, 1.1); u._stars = 1.1; }

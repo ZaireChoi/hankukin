@@ -79,6 +79,7 @@ guard('result',function(){var card=null,doneFor=null;
    miss=grade==='S'?L('완벽한 전투!','Flawless!'):grade==='A'?(!win?L('승리했다면 S에 도전할 수 있었다','A win would have put S in reach'):d>1?L('대파 '+(d-1)+'회만 줄이면 S','Lose '+(d-1)+' fewer frames for S'):L('S까지 격추 '+Math.max(1,28-pts)+'기','S is '+Math.max(1,28-pts)+' kills away')):L('A까지 격추 '+Math.max(1,14-pts)+'기','A is '+Math.max(1,14-pts)+' kills away');}
   else if(mode==='squad'){grade=win?(t<=60?'S':t<=90?'A':'B'):'B';miss=!win?L('클리어하면 등급이 오른다','Clear the stage to rank up'):grade==='S'?L('60초 안에 돌파!','Cleared inside 60 s!'):L((grade==='A'?'S':'A')+'까지 '+(t-(grade==='A'?60:90))+'초','Only '+(t-(grade==='A'?60:90))+' s from '+(grade==='A'?'S':'A'));}
   else{grade=win?(d===0?'S':'A'):'B';miss=grade==='S'?L('무사망 클리어!','No frame lost!'):grade==='A'?L('무사망까지 대파 '+d+'회','No-loss clear was '+d+' frame'+(d>1?'s':'')+' away'):L('승리하면 A, 무사망이면 S','Win for A, lose no frame for S');}
+  try{var wl=window.__wbLast;if(wl&&Date.now()-wl.at<20000){grade=wl.g==='-'?'—':wl.g;miss=wl.msg;}}catch(e){} /* v3.66: weekly boss - the card shows the boss grade, same as the centre screen */
   var R0=rec(),m=R0[mode]||{best:0,n:0,g:'B'},newRec=k>m.best,rank={S:3,A:2,B:1};
   var lines=[];
   try{var r=window.__A&&window.__A.R&&window.__A.R();if(r&&r.lv){var need=r.lv<30?Math.floor(40+r.lv*r.lv*3):0;lines.push(need?L('파일럿 Lv '+(r.lv+1)+'까지 경험치 '+Math.max(1,need-(r.exp||0)),'Pilot Lv '+(r.lv+1)+' in '+Math.max(1,need-(r.exp||0))+' XP'):L('파일럿 Lv '+r.lv+' · 다음 레벨 진행 중','Pilot Lv '+r.lv+' · levelling'));}}catch(e){}
