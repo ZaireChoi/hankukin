@@ -2207,7 +2207,7 @@ window.addEventListener('beforeunload',()=>{try{if(NET.conn&&NET.conn.open)NET.c
 /* =====================  메인 루프  ===================== */
 let last=performance.now();
 function loop(now){
-  const dt=Math.min(50,now-last);last=now;
+  const dt=Math.max(0,Math.min(50,now-last));last=Math.max(last,now);
   try{
     if(G.players&&G.running&&!G.paused){
       if(G.countdown>0){const before=Math.ceil(G.countdown/1000);G.countdown-=dt;const after=Math.ceil(G.countdown/1000);if(after!==before){showCount(after>0?after:tr('start'));Snd.beep(after<=0);}}
