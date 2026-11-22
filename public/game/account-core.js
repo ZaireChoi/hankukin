@@ -31,7 +31,7 @@ const PREFIXES = ((SCRIPT && SCRIPT.dataset.prefix) || (GAME ? GAME + '_' : ''))
 const PORTAL = '/game/';
 const GAME_NAMES = { anibrix: 'Anibrix', ascend: 'ASCEND' };
 // 다른 게임 사이트(CrazyGames 등)에 올린 판에서는 우리 이메일 로그인을 보이지 않는다 (그 사이트 규칙: 외부 로그인 금지)
-const EMBED_NOLOGIN = (() => { const hit = /[?&]src=crazygames\b/i.test(location.search); try { if (hit) sessionStorage.setItem('hk_nologin', '1'); return sessionStorage.getItem('hk_nologin') === '1'; } catch (e) { return hit; } })();
+const EMBED_NOLOGIN = (() => { const hit = /[?&]src=(crazygames|onestore)\b/i.test(location.search); try { if (hit) sessionStorage.setItem('hk_nologin', '1'); return sessionStorage.getItem('hk_nologin') === '1'; } catch (e) { return hit; } })();
 
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
@@ -40,7 +40,7 @@ const db = getFirestore(app);
 // ── 이용 기록: 하루 단위 익명 집계 (stats/{한국날짜}) ──
 // 개인을 알아볼 수 있는 값은 저장하지 않는다. 숫자만 더한다.
 // 우리 쪽 시험 방문은 빼기: 주소에 ?internal=1 로 한 번 열면 그 브라우저는 계속 제외 (?internal=0 으로 해제)
-const STAT_SRCS = ['direct', 'dc', 'dc_dev', 'ruliweb', 'reddit', 'youtube', 'itch', 'crazygames', 'kakao', 'facebook', 'x', 'threads', 'search', 'other', 'app'];
+const STAT_SRCS = ['direct', 'dc', 'dc_dev', 'ruliweb', 'reddit', 'youtube', 'itch', 'crazygames', 'kakao', 'facebook', 'x', 'threads', 'search', 'other', 'app', 'onestore'];
 function kstDay() { return new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10); }
 const INTERNAL = (() => { try { const q = new URLSearchParams(location.search); if (q.get('internal') === '1') localStorage.setItem('hk_internal', '1'); if (q.get('internal') === '0') localStorage.removeItem('hk_internal'); const s = (q.get('src') || '').toLowerCase(); return localStorage.getItem('hk_internal') === '1' || ['video', 'shot', 'test', 'qa'].includes(s); } catch (e) { return false; } })();
 function trafficSrc() {
@@ -53,6 +53,7 @@ function trafficSrc() {
       if (!h || /hankuk-in\.com$/.test(h)) s = 'direct';
       else if (/itch\.(io|zone)$/.test(h)) s = 'itch';
       else if (/crazygames/.test(h)) s = 'crazygames';
+      else if (/onestore\.(co\.kr|net)$/.test(h)) s = 'onestore';
       else if (/dcinside/.test(h)) s = 'dc';
       else if (/ruliweb/.test(h)) s = 'ruliweb';
       else if (/reddit/.test(h)) s = 'reddit';
