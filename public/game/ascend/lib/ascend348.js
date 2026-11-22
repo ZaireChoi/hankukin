@@ -103,7 +103,7 @@ guard('mydeath',function(){var _st=step,was=false,lx=0,ly=0;
 // The models every sortie needs (my frame, the infantry, their rifle, the swarm) are fetched while the menu is up,
 // so my frame is on screen from the first frame instead of popping in 2-3 s later.
 (function(){var iv=setInterval(function(){try{if(!window.THREE||!window.__TX||!window.__TX.GLTFLoader||typeof mdlGet!=='function')return;clearInterval(iv);
-  var list=[];try{var k=window.__AX&&window.__AX.myMechKey&&window.__AX.myMechKey();if(k)list.push(k);}catch(e){}list=list.concat(['fed_trooper','emp_trooper','fed_female','emp_female','fed_officer','emp_officer','w_laserrifle','zling_sw','w_plasmacannon','w_rocket','w_railsniper']);
+  var list=[];try{var k=window.__AX&&window.__AX.myMechKey&&window.__AX.myMechKey();if(k)list.push(k);}catch(e){}/* v3.49: only my own frame is fetched in the menu; infantry, weapons and the swarm are fetched at deploy (newMatch prefetch) */
   list.forEach(function(f,i){setTimeout(function(){try{mdlGet(f);}catch(e){}},600+i*350);});}catch(e){}},300);})();
 
 // Balance: the ordinary (white/grey) enemy frame is a standard unit, not an ace. It hits human players for 55% of what it did

@@ -21,7 +21,7 @@ function init(){var T3=window.THREE,phone=!!window.__phone,XFX=window.createExpl
  var S={kills:0,skipped:0,ms:0,max:0,n:0,off:0},recent=[],scene=R3.scene;
  var facOf=function(u){try{var c=CL[u.cls]||{};if(c.bug||/^z/.test(u.cls))return'zeta';var D=window.__FBD&&u.mon&&window.__FBD[u.mon];var f=(D&&D.f)||(u.fbd&&u.fbd.f);if(f)return{empire:'emp',omega:'omg',alpha:'alp',fed:'fed',zeta:'zeta'}[f]||'emp';var me=G.local&&G.local.unit;return me&&u.team===me.team?'fed':'emp';}catch(e){return'emp';}};
  var sizeOf=function(u){try{var m=u.mon&&window.MONMDL&&window.MONMDL[u.mon];if(m&&m[2])return m[2];var d=MDL[u.cls];if(d&&d[3]==='h')return d[2];if(d)return Math.max(30,d[2]*.6);}catch(e){}return Math.max(36,(u.r||14)*3);};
- var boom=function(u){if(!u||typeof G==='undefined'||!G||S.off>0)return;var c=CL[u.cls]||{};if(c.arm==='inf'&&!u.boss&&!u.mon)return;if((u.r||0)<16&&!u.boss&&u.cls!=='arkframe')return;
+ var boom=function(u){if(!u||typeof G==='undefined'||!G||S.off>0)return;var c=CL[u.cls]||{};if(c.arm==='inf'&&!u.boss&&!u.mon)return;/* v3.49: every non-infantry kill uses the engine (grey box shards were removed) */
   var now=performance.now();recent=recent.filter(function(t){return now-t<1000;});if(recent.length>=(phone?4:8)){S.skipped++;return;}recent.push(now);
   if(scene!==R3.scene||meshes[0].parent!==R3.scene){scene=R3.scene;meshes.forEach(function(m){R3.scene.add(m);});fx.scene=R3.scene;}
   var e=R3.units.get(u.id),p=e&&e.root?e.root.position:{x:u.x,y:0,z:u.y};var tier=u.boss?'boss':(u.named||u.elite2||u.fbd)?'elite':'grunt';hsOK=tier!=='grunt';
