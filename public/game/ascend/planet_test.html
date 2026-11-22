@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ASCEND · 행성 점령전 지형 시험</title>
+<style>html,body{margin:0;height:100%;background:#0b0a12;overflow:hidden;font-family:'Noto Sans KR',sans-serif}#gl{width:100%;height:100%;display:block}
+#hud{position:fixed;left:10px;top:10px;color:#eaf3fc;font:12px/1.5 monospace;background:rgba(8,10,18,.55);padding:6px 10px;border-radius:8px;pointer-events:none}
+#bar{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+#bar button{background:rgba(8,12,22,.7);color:#eaf3fc;border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:6px 12px;font:600 12px 'Noto Sans KR',sans-serif;cursor:pointer}</style>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head><body><canvas id="gl"></canvas><div id="hud">불러오는 중…</div><div id="bar"></div>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+window.THREE = THREE; window.__TX = { GLTFLoader };
+await new Promise(r => { const s = document.createElement('script'); s.src = 'lib/ascend_planet.js?v=3'; s.onload = r; document.head.appendChild(s); });
+const P = window.PLANET, canvas = document.getElementById('gl'), hud = document.getElementById('hud');
+const r = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); r.setPixelRatio(Math.min(2, devicePixelRatio)); r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
+r.shadowMap.enabled = !/Android|iPhone/i.test(navigator.userAgent); r.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x2a2236); scene.fog = new THREE.Fog(0x6e5560, 3500, 15000);
+const cam = new THREE.PerspectiveCamera(42, 1, 10, 40000);
+const sun = new THREE.DirectionalLight(0xffe2c4, 2.6); sun.position.set(-4000, 6000, -2500); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -2500, right: 2500, top: 2500, bottom: -2500, near: 100, far: 16000 }); scene.add(sun, sun.target);
+scene.add(new THREE.HemisphereLight(0xb9a6d8, 0x5a3a2a, .9));
+// sky: gas giant with rings and a small moon
+{ const c = document.createElement('canvas'); c.width = 512; c.height = 256; const g = c.getContext('2d'); for (let y = 0; y < 256; y++) { const t = y / 256; g.fillStyle = `hsl(${30 + 12 * Math.sin(y * .11)},${35 + 15 * Math.sin(y * .05)}%,${45 + 14 * Math.sin(y * .23 + 1)}%)`; g.fillRect(0, y, 512, 1); }
+  const pl = new THREE.Mesh(new THREE.SphereGeometry(2600, 48, 32), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(c), fog: false })); pl.position.set(9000, 7000, -16000); scene.add(pl);
+  const rg = new THREE.Mesh(new THREE.RingGeometry(3300, 5200, 96), new THREE.MeshBasicMaterial({ color: 0xe8d0b0, transparent: true, opacity: .35, side: THREE.DoubleSide, fog: false })); rg.position.copy(pl.position); rg.rotation.x = -1.25; rg.rotation.y = .3; scene.add(rg);
+  const mn = new THREE.Mesh(new THREE.SphereGeometry(420, 32, 16), new THREE.MeshBasicMaterial({ color: 0xcfd6e6, fog: false })); mn.position.set(-9000, 9500, -14000); scene.add(mn); }
+const ctl = new OrbitControls(cam, canvas); ctl.enableDamping = true; ctl.maxPolarAngle = 1.45;
+const q = new URLSearchParams(location.search), id = q.get('map') || 'argen';
+await P.load('planet/' + id + '/'); scene.add(P.group);
+const L = P.layout; const marks = (L.landmarks || []);
+P.placeLandmarks('models/', marks).then(n => { hud.dataset.lm = n; });
+// unit-scale reference: a mech-sized pillar at each objective (90 units tall)
+const ref = new THREE.Mesh(new THREE.CylinderGeometry(14, 14, 90, 8), new THREE.MeshStandardMaterial({ color: 0xffc24a, emissive: 0x332200 }));
+for (const p of [...L.bases, ...L.points]) { const m = ref.clone(); m.position.set(p.x + 260, P.heightAt(p.x + 260, p.y) + 45, p.y); scene.add(m); }
+const views = { '연맹 본진': [1150, 8450, 1300, -0.8], '궤도포': [4800, 4800, 1400, -0.7], '전방 기지 A': [3050, 5650, 1100, -0.7], '통신탑': [7700, 7700, 1200, -2.4], '전장 시점': [3000, 6000, 820, -0.8, 1], '전체': [4800, 4800, 9500, -0.8] };
+const go = (k) => { const v = views[k]; const h = P.heightAt(v[0], v[1]); ctl.target.set(v[0], h, v[1]); const d = v[2], a = v[3], el = v[4] ? .9 : .75; cam.position.set(v[0] - Math.cos(a) * d * Math.cos(el), h + d * Math.sin(el), v[1] - Math.sin(a) * d * Math.cos(el)); };
+const bar = document.getElementById('bar'); for (const k of Object.keys(views)) { const b = document.createElement('button'); b.textContent = k; b.onclick = () => go(k); bar.appendChild(b); }
+go(q.get('v') || '전장 시점');
+const fit = () => { r.setSize(innerWidth, innerHeight, false); cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); }; addEventListener('resize', fit); fit();
+let fr = 0, t0 = performance.now(), fps = 0;
+r.setAnimationLoop(() => { ctl.update(); P.update(ctl.target.x, ctl.target.z); sun.position.set(ctl.target.x - 4000, 6000, ctl.target.z - 2500); sun.target.position.copy(ctl.target);
+  r.render(scene, cam); fr++; const t = performance.now(); if (t - t0 > 1000) { fps = fr * 1000 / (t - t0); fr = 0; t0 = t; const i = r.info.render; hud.textContent = `행성 ${id} · ${L.world}×${L.world} · 초당 ${fps.toFixed(0)}장 · 그리기 ${i.calls}회 · 삼각형 ${(i.triangles / 1000).toFixed(0)}k · 지형물 ${hud.dataset.lm || 0}`; window.__stat = { fps, calls: i.calls, tris: i.triangles }; } });
+window.__go = go;
+</script></body></html>
