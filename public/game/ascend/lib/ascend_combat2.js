@@ -36,7 +36,14 @@
       var go = function (e) { e.preventDefault(); e.stopPropagation(); try { var u = meU(); if (window.__TF && u) window.__TF.toggle ? window.__TF.toggle(u) : null; } catch (er) {} };
       b.addEventListener('touchstart', go, { passive: false }); b.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'touch') go(e); }); host.appendChild(b); }
     var cs = getComputedStyle(fly), r = fly.getBoundingClientRect(); b.style.display = cs.display === 'none' ? 'none' : '';
-    if (r.width) { b.style.position = 'fixed'; b.style.left = Math.max(4, r.left - r.width - 10) + 'px'; b.style.top = r.top + 'px'; b.style.right = 'auto'; b.style.bottom = 'auto'; b.style.width = r.width + 'px'; b.style.height = r.height + 'px'; b.style.borderColor = '#ff8a70'; b.style.color = '#ffd2c8'; b.style.fontSize = '11px'; }
+    if (r.width && !b._placed) {
+      // find a free spot next to FLY: above, left, below, right — whichever does not touch another visible button
+      var others = [].slice.call(document.querySelectorAll('#touchUI .tb, #touchUI button, #wrSk .b')).filter(function (x) { return x !== b && x.offsetParent !== null; }).map(function (x) { return x.getBoundingClientRect(); });
+      var w = r.width, h = r.height, gap = 10, cand = [[r.left, r.top - h - gap], [r.left - w - gap, r.top], [r.left, r.bottom + gap], [r.right + gap, r.top], [r.left - w - gap, r.top - h - gap]];
+      var hit = function (x, y) { if (x < 4 || y < 4 || x + w > innerWidth - 4 || y + h > innerHeight - 4) return true; for (var i = 0; i < others.length; i++) { var o = others[i]; if (!(x + w + 4 < o.left || x > o.right + 4 || y + h + 4 < o.top || y > o.bottom + 4)) return true; } return false; };
+      var pos = cand.filter(function (c) { return !hit(c[0], c[1]); })[0] || cand[0];
+      b.style.position = 'fixed'; b.style.left = pos[0] + 'px'; b.style.top = pos[1] + 'px'; b.style.right = 'auto'; b.style.bottom = 'auto'; b.style.width = w + 'px'; b.style.height = h + 'px'; b.style.borderColor = '#ff8a70'; b.style.color = '#ffd2c8'; b.style.fontSize = '11px'; b._placed = 1;
+      addEventListener('resize', function () { b._placed = 0; }, { once: true }); }
     try { var u = meU(), j = u && u.tf && u.tf.mode === 'jet'; var want = j ? L2('로봇', 'ROBOT') : L2('변신', 'MORPH'); if (b.textContent !== want) b.textContent = want; } catch (e) {}
     if (!fly.dataset.o2) { fly.dataset.o2 = 1; } try { var u2 = meU(); if (u2 && !u2.fly && fly.textContent !== L2('날기', 'FLY') && !/로봇|ROBOT/.test(fly.textContent)) fly.textContent = L2('날기', 'FLY'); } catch (e) {}
   };
