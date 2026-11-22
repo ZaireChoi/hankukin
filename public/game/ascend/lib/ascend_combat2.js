@@ -126,6 +126,14 @@
     if (ang <= .001) { e.root.quaternion.copy(BQ); e._tilted = 0; return; }
     TA.set(Math.sin(u._kdA || 0), 0, -Math.cos(u._kdA || 0)).normalize(); TQ.setFromAxisAngle(TA, ang); e.root.quaternion.copy(BQ).premultiply(TQ); e._tilted = 1;
   };
+  var FXL = [];
+  var fxAdd = function (x, h, y, s0, s1, col, life, vx, vh, vy) { if (FXL.length > 260) FXL.shift(); var c = typeof col === 'string' ? col3(col) : col; FXL.push({ x: x, h: h, y: y, s0: s0, s1: s1, c: c, l: life, ml: life, vx: vx || 0, vh: vh || 0, vy: vy || 0 }); };
+  var fxDraw = function (dt) { for (var i = FXL.length - 1; i >= 0; i--) { var f = FXL[i]; f.l -= dt; if (f.l <= 0) { FXL.splice(i, 1); continue; } f.x += f.vx * dt; f.h += f.vh * dt; f.y += f.vy * dt; var k = 1 - f.l / f.ml; put(f.x, f.h, f.y, f.s0 + (f.s1 - f.s0) * k, f.c[0], f.c[1], f.c[2], 1 - k); } };
+  // absolute tech (T) hits: nano particles swarm onto the target, it lights up from inside, then breaks into motes
+  var nanoHit = function (u) { var h = (function () { try { return unitH(u); } catch (e) { return 0; } })() + (u.r || 20) * 1.2, r = (u.r || 20) * 2.2, ph = window.__phone;
+    for (var i = 0; i < (ph ? 6 : 12); i++) { var a = Math.random() * 6.283, d = r * (1.6 + Math.random()); fxAdd(u.x + Math.cos(a) * d, h + (Math.random() - .5) * r, u.y + Math.sin(a) * d, 7, 3, '#7df9ff', .28, -Math.cos(a) * d / .28, 0, -Math.sin(a) * d / .28); }
+    fxAdd(u.x, h, u.y, r * .6, r * 2.2, '#bff8ff', .32); fxAdd(u.x, h, u.y, r * .4, r * 1.2, '#ffffff', .16);
+    for (var j = 0; j < (ph ? 4 : 8); j++) { var b = Math.random() * 6.283, s = 80 + Math.random() * 160; fxAdd(u.x, h, u.y, 5, 1, '#7df9ff', .5, Math.cos(b) * s, 40 + Math.random() * 80, Math.sin(b) * s); } };
   var starsDraw = function () {
     var t = performance.now() / 1000;
     for (var i = 0; i < REACT.length; i++) { var u = REACT[i]; if (!(u._stars > 0) && !(u._kd > .3)) continue; var hh = (function () { try { return unitH(u); } catch (e) { return 0; } })() + (u.r || 20) * 2.6 + 30;
@@ -136,7 +144,7 @@
   var gate = function (u, inp) {
     if (!inp || !G || !G.local || u !== G.local.unit) return inp; var t = G.t || 0;
     if (inp.ul) { if (t < nxt.r) inp.ul = false; else { var gauge = Math.max(G.local.ult || 0, (u.slot && u.slot.ult) || 0); if (gauge >= 100 || u.cls !== 'arkframe') nxt.r = t + CDR; } }
-    if (inp.ab) { if (t < nxt.t) inp.ab = false; else nxt.t = t + CDT; }
+    if (inp.ab) { if (t < nxt.t) inp.ab = false; else { nxt.t = t + CDT; u._absAt = t; } }
     return inp;
   };
   var barCd = function () {
@@ -148,18 +156,18 @@
   var lastG = null;
   var hook = function () {
     if (!window.__c2Hurt && typeof hurt === 'function') { window.__c2Hurt = 1; var hu = hurt;
-      hurt = function (u, amt, src, ang, dt) { var hp0 = u && u.hp; var r = hu(u, amt, src, ang, dt); try { if (u && !u.dead && u.hp < hp0) react(u, src && src.unit, hp0 - u.hp, dt); } catch (e) {} return r; }; }
+      hurt = function (u, amt, src, ang, dt) { var hp0 = u && u.hp; var r = hu(u, amt, src, ang, dt); try { if (u && u.hp < hp0) { if (!u.dead) react(u, src && src.unit, hp0 - u.hp, dt); var a0 = src && src.unit; if (a0 && a0._absAt != null && (G.t || 0) - a0._absAt < 5 && bb) { u._nanoT = u._nanoT || 0; if ((G.t || 0) - u._nanoT > .25) { u._nanoT = G.t || 0; nanoHit(u); } } } } catch (e) {} return r; }; }
     if (!window.__c2Step && typeof step === 'function') { window.__c2Step = 1; var st = step;
       step = function (dt) { st(dt); try { if (!G || G.over) return; if (G !== lastG) { lastG = G; nxt.r = 0; nxt.t = 0; RL.length = 0; REACT.length = 0; } if (!bbInit()) return; ringInit(); dashTick(dt); reactTick(dt); } catch (e) { window.__c2Err = String(e).slice(0, 160); } }; }
     if (!window.__c2In && window.localInput) { window.__c2In = 1; var li = window.localInput; window.localInput = function (u) { return gate(u, li(u)); }; }
     if (!window.__c2Anim && window.R3 && typeof R3.animate === 'function') { window.__c2Anim = 1; var an = R3.animate; R3.animate = function (e, u, dt, now) { var r = an.call(this, e, u, dt, now); try { if (u && (u._kd > 0 || u._stg > 0 || e._tilted)) pose(e, u); } catch (er) {} return r; }; }
     if (!window.__c2Frame && window.R3 && typeof R3.syncParts === 'function') { window.__c2Frame = 1; var sp = R3.syncParts; R3.syncParts = function () { var r = sp.apply(this, arguments);
-        try { if (bb && G && !G.over) { if (bb.parent !== R3.scene) R3.scene.add(bb); bbW = 0; drawBolts(); ringsDraw(1 / 60); starsDraw(); bb.geometry.instanceCount = bbW; bbA.needsUpdate = true; bbC.needsUpdate = true; bb.visible = bbW > 0; } else if (bb) bb.visible = false; } catch (e) { window.__c2Err = String(e).slice(0, 160); }
+        try { if (bb && G && !G.over) { if (bb.parent !== R3.scene) R3.scene.add(bb); bbW = 0; drawBolts(); ringsDraw(1 / 60); starsDraw(); fxDraw(1 / 60); bb.geometry.instanceCount = bbW; bbA.needsUpdate = true; bbC.needsUpdate = true; bb.visible = bbW > 0; } else if (bb) bb.visible = false; } catch (e) { window.__c2Err = String(e).slice(0, 160); }
         return r; }; }
     hookBolts();
   };
   // ---------------------------------------------------------------- (7) phone menus answer at once
   var css = document.createElement('style'); css.textContent = 'html,body,button,select,.tb,.sk2,[onclick]{touch-action:manipulation}button:active,.tb:active{filter:brightness(1.35);transform:scale(.97)}#tTF2{display:flex;align-items:center;justify-content:center}'; document.head.appendChild(css);
   setInterval(function () { try { hook(); settingsRow(); if (window.__phone || (window.matchMedia && matchMedia('(pointer:coarse)').matches)) phoneTF(); barCd(); } catch (e) { window.__c2Err = String(e).slice(0, 160); } }, 250);
-  window.__c2 = { nxt: nxt, frameWH: frameWH, cd: { r: CDR, t: CDT } };
+  window.__c2 = { nxt: nxt, frameWH: frameWH, cd: { r: CDR, t: CDT }, fx: function () { if (bbInit()) fxAdd.apply(null, arguments); } };
 })();

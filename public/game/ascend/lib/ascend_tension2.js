@@ -39,6 +39,8 @@
   };
   // 19-5: on auto battle the level-up card picks itself (first choice) after 1.2 s instead of covering the screen
   setInterval(function () { try { if (typeof P === 'undefined' || !P.autoHunt) return; var box = document.getElementById('perkPick'); if (!box || box.offsetParent === null || getComputedStyle(box).display === 'none') { box && (box._t0 = 0); return; } if (!box._t0) { box._t0 = performance.now(); return; } if (performance.now() - box._t0 > 1200) { var b = box.querySelector('button[data-k]'); box._t0 = 0; if (b) b.click(); } } catch (e) {} }, 300);
+  // 19-5: the 5v5 top bar (#arHud) stayed on the main menu and the weekly boss after leaving 5v5 - shown only inside 5v5 now
+  setInterval(function () { try { var el = document.getElementById('arHud'); if (!el) return; var inA = typeof G !== 'undefined' && G && G.arena && !G.over; var want = inA ? 'flex' : 'none'; if (el.style.display !== want) el.style.display = want; } catch (e) {} }, 300);
   window.__autoSoftCC = function (a) { try { return on() && a && a === me(); } catch (e) { return false; } };   // read by combat2: no knock-down / stun from my blows on auto
   setInterval(function () { try { hook(); } catch (e) {} }, 500);
 })();
