@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.54 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.56 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3310,7 +3310,11 @@ function mkGear(r,col){const T3=window.THREE;const g=new T3.Group();const rk=Mat
   /* v3.49 (5): body + 10 teeth baked into one geometry (was 11 draw calls per gear, 8 gears on my frame) */
   const body=new T3.Mesh(gearC('bt'+rk,()=>{const parts=[];const c=new T3.CylinderGeometry(r,r,r*.35,14).toNonIndexed();c.rotateX(Math.PI/2);parts.push(c);for(let i=0;i<10;i++){const a=i/10*Math.PI*2;const b=new T3.BoxGeometry(r*.28,r*.3,r*.3).toNonIndexed();b.rotateZ(a);b.translate(Math.cos(a)*r,Math.sin(a)*r,0);parts.push(b);}let n=0;for(const p of parts)n+=p.attributes.position.count;const P=new Float32Array(n*3),N=new Float32Array(n*3);let o=0;for(const p of parts){P.set(p.attributes.position.array,o*3);N.set(p.attributes.normal.array,o*3);o+=p.attributes.position.count;p.dispose();}const m=new T3.BufferGeometry();m.setAttribute('position',new T3.BufferAttribute(P,3));m.setAttribute('normal',new T3.BufferAttribute(N,3));m.computeBoundingSphere();return m;}),met);g.add(body);
  const ring=new T3.Mesh(gearC('r'+rk,()=>new T3.TorusGeometry(r*.55,r*.09,6,20)),gearC('rm'+col,()=>new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.95,blending:T3.AdditiveBlending})));ring.position.z=r*.2;g.add(ring);g.userData.ring=ring;g.traverse(o=>o.userData.keep=1);return g;}
-function mkFlame(len,rad,col){const T3=window.THREE;const g=new T3.Group();const m1=new T3.Mesh(new T3.ConeGeometry(rad,len,10,1,true),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.75,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m1.rotation.x=Math.PI;m1.position.y=-len/2;g.add(m1);const m2=new T3.Mesh(new T3.ConeGeometry(rad*.5,len*.6,8,1,true),new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,blending:T3.AdditiveBlending,depthWrite:false}));m2.rotation.x=Math.PI;m2.position.y=-len*.3;g.add(m2);g.add(glowSpr(col,rad*4));g.traverse(o=>o.userData.keep=1);return g;}
+/* v3.55b: thruster flames are two crossed soft streak planes (bright at the nozzle, feathered, fading out) instead of hard cones */
+function flameTex(){if(flameTex.t)return flameTex.t;const T3=window.THREE;const fc=document.createElement('canvas');fc.width=64;fc.height=256;const fg=fc.getContext('2d');const img=fg.createImageData(64,256);for(let y=0;y<256;y++)for(let x=0;x<64;x++){const t=y/255,sx=Math.abs(x-31.5)/31.5;const w=.95-.65*t;const side=Math.max(0,1-Math.pow(sx/w,2.2));const a=Math.pow(1-t,1.6)*side;const o=(y*64+x)*4;img.data[o]=img.data[o+1]=img.data[o+2]=255;img.data[o+3]=Math.round(255*Math.min(1,a));}fg.putImageData(img,0,0);flameTex.t=new T3.CanvasTexture(fc);return flameTex.t;}
+
+function flameGeo(T3,r,l){/* two crossed planes the size of the old open cone: wide bright end at -l/2, fading to +l/2 */const w=r*2.6;const g=new T3.BufferGeometry();const P=[],U=[],I=[];for(let k=0;k<2;k++){const b=P.length/3;const ax=k?[0,0,1]:[1,0,0];for(const[sx,sy,u,v]of[[-1,-1,0,1],[1,-1,1,1],[1,1,1,0],[-1,1,0,0]]){P.push(ax[0]*sx*w/2,sy*l/2,ax[2]*sx*w/2);U.push(u,v);}I.push(b,b+1,b+2,b,b+2,b+3);}g.setAttribute('position',new T3.Float32BufferAttribute(P,3));g.setAttribute('uv',new T3.Float32BufferAttribute(U,2));g.setIndex(I);g.computeBoundingSphere();return g;}
+function mkFlame(len,rad,col){const T3=window.THREE;const g=new T3.Group();const tex=flameTex();const pg=flameTex.g||(flameTex.g=(()=>{const p=new T3.PlaneGeometry(1,1);p.translate(0,-.5,0);return p;})());const mk=(c,op,w,l)=>{const m=new T3.MeshBasicMaterial({map:tex,color:c,transparent:true,opacity:op,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide});for(const ry of[0,Math.PI/2]){const q=new T3.Mesh(pg,m);q.scale.set(w,l,1);q.rotation.y=ry;g.add(q);}};mk(col,.8,rad*2.6,len);mk(0xffffff,.6,rad*1.1,len*.55);g.add(glowSpr(col,rad*3.2));g.traverse(o=>o.userData.keep=1);return g;}
 function mkWing(col,side){const T3=window.THREE;const sh=new T3.Shape();sh.moveTo(0,0);sh.lineTo(side*36,22);sh.lineTo(side*58,10);sh.lineTo(side*40,-2);sh.lineTo(side*50,-16);sh.lineTo(side*20,-8);sh.lineTo(0,-4);const m=new T3.Mesh(new T3.ShapeGeometry(sh),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.0,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;return m;}
 function boneFind(obj,re,not){let b=null;obj.traverse(o=>{if(!b&&o.isBone&&re.test(o.name)&&!(not&&not.test(o.name)))b=o;});return b;}
 function mechInit(e,m,u){const T3=window.THREE;try{if(e.mfx)mechFXCleanup(e);}catch(er){}const fx={gears:[],lights:[],flames:[],wings:[],ghosts:[],gT:0};e.mfx=fx;const obj=m.obj;
@@ -6431,7 +6435,7 @@ try{const phone=(window.matchMedia&&matchMedia('(pointer:coarse)').matches)||/An
 
 
 // ================= v3.7b : vectored thrusters (feet + wings), energy beam saber with swing trail, scorch marks and terrain strikes =================
-function jetMesh(T3,len,rad,col){const g=new T3.Group();const mk=(r,l,c,o)=>{const geo=new T3.ConeGeometry(r,l,12,1,true);geo.translate(0,-l/2,0);geo.rotateX(Math.PI);/* tip along +Y */const m=new T3.Mesh(geo,new T3.MeshBasicMaterial({color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;m.frustumCulled=false;return m;};
+function jetMesh(T3,len,rad,col){const g=new T3.Group();const mk=(r,l,c,o)=>{const geo=flameGeo(T3,r,l);geo.translate(0,-l/2,0);geo.rotateX(Math.PI);/* tip along +Y */const m=new T3.Mesh(geo,new T3.MeshBasicMaterial({map:flameTex(),color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;m.frustumCulled=false;return m;};
  g.add(mk(rad,len,col,.3));g.add(mk(rad*.45,len*.55,0xffffff,.42));/* v3.48: exhaust is gas - translucent, not a solid cone */const fl=new T3.Mesh(new T3.SphereGeometry(rad*.8,10,8),new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.4,blending:T3.AdditiveBlending,depthWrite:false}));fl.userData.keep=1;g.add(fl);g.visible=false;return g;}
 const _Y=()=>new window.THREE.Vector3(0,1,0);
 function jetSet(j,pos,dir,k){if(k<.04){j.visible=false;return;}j.visible=true;j.position.copy(pos);j.quaternion.setFromUnitVectors(_Y(),dir);const f=.75+Math.random()*.35;j.scale.set(.7+k*.5,k*f,.7+k*.5);}
@@ -7378,7 +7382,7 @@ window.loadoutOf2=loadoutOf2;
 // ================= v3.13g : Meshy jet wings — folded on the back, unfold and fire their thrusters to fly =================
 function wing2Build(T3,H,col){const W={g:new T3.Group(),sides:[],H,col};for(const s of[-1,1]){const hinge=new T3.Group();hinge.position.set(-H*.07,H*.04,s*H*.07);W.g.add(hinge);const mdl=eqModel('wm_wing',H*.36,'x');if(!mdl)return null;mdl.rotation.y=Math.PI;mdl.position.x=H*.18;if(s<0)mdl.scale.z*=-1;hinge.add(mdl);
   // thruster flames at the wing root, pointing backward-down
-  const fl=new T3.Group();fl.position.set(H*.04,-H*.01,0);hinge.add(fl);const mk=(r,l,c,o)=>{const g=new T3.ConeGeometry(r,l,14,1,true);g.translate(0,-l/2,0);const m=new T3.Mesh(g,new T3.MeshBasicMaterial({color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;m.frustumCulled=false;fl.add(m);return m;};
+  const fl=new T3.Group();fl.position.set(H*.04,-H*.01,0);hinge.add(fl);const mk=(r,l,c,o)=>{const g=flameGeo(T3,r,l);g.translate(0,-l/2,0);const m=new T3.Mesh(g,new T3.MeshBasicMaterial({map:flameTex(),color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));m.userData.keep=1;m.frustumCulled=false;fl.add(m);return m;};
   const outer=mk(H*.05,H*.5,col,.55),core=mk(H*.024,H*.34,0xffffff,.9);const ring=new T3.Mesh(new T3.TorusGeometry(H*.045,H*.008,6,18),new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.9,blending:T3.AdditiveBlending,depthWrite:false}));ring.rotation.x=Math.PI/2;ring.userData.keep=1;fl.add(ring);
   W.sides.push({s,hinge,mdl,fl,outer,core,ring});}
  W.g.traverse(o=>{if(o.isMesh){o.userData.keep=1;o.castShadow=false;}});return W;}
@@ -8275,7 +8279,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v354';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v356';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8406,7 +8410,7 @@ function wingSplit(e,m,u){if(m._ws!==undefined)return m._ws;m._ws=null;try{const
   // axes in bone space: back (-z mesh) and down (-y mesh)
   const back=new T3.Vector3(0,0,-1).applyMatrix3(nrm).normalize();const down=new T3.Vector3(0,-1,0).applyMatrix3(nrm).normalize();const side3=new T3.Vector3(side,0,0).applyMatrix3(nrm).normalize();
   // thruster: two flame cones along the inner edge, pointing down/back
-  const HB=H*toL.getMaxScaleOnAxis();const fl=new T3.Group();bone.add(fl);const mkF=(r,l,c,o)=>{const cg=new T3.ConeGeometry(r,l,12,1,true);cg.translate(0,-l/2,0);const cm=new T3.Mesh(cg,new T3.MeshBasicMaterial({color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));cm.userData.keep=1;cm.frustumCulled=false;fl.add(cm);return cm;};
+  const HB=H*toL.getMaxScaleOnAxis();const fl=new T3.Group();bone.add(fl);const mkF=(r,l,c,o)=>{const cg=flameGeo(T3,r,l);cg.translate(0,-l/2,0);const cm=new T3.Mesh(cg,new T3.MeshBasicMaterial({map:flameTex(),color:c,transparent:true,opacity:o,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));cm.userData.keep=1;cm.frustumCulled=false;fl.add(cm);return cm;};
   const fo=mkF(HB*.03,HB*.3,0xffb070,.26),fc=mkF(HB*.014,HB*.2,0xffffff,.4);fl.position.copy(hinge).add(side3.clone().multiplyScalar(HB*.05)).add(back.clone().multiplyScalar(HB*.02)).add(down.clone().multiplyScalar(HB*.05));fl.quaternion.setFromUnitVectors(new T3.Vector3(0,-1,0),back.clone().add(down.clone().multiplyScalar(.7)).normalize());fl.visible=false;
   return{piv,mesh,back,down,side3,side,fl,fo,fc,H};};
  m._ws={L:build(tri.L,1),R:build(tri.R,-1),cfg};return m._ws;}catch(er){window.__wsErr=String(er&&er.stack||er).slice(0,300);return null;}}
@@ -8542,19 +8546,21 @@ function loadoutVis(e,m,u){const fx=e.mfx;if(!fx||!fx.hand||u.illu||!window.THRE
 {const TH={};const groundY=u=>{try{return unitH(u)-(u.flyH||0);}catch(e){return 0;}};
  const _mcl=mechFXCleanup;mechFXCleanup=function(e){try{for(const o of e._thr||[])if(o.parent)o.parent.remove(o);e._thr=null;}catch(er){}return _mcl(e);};
  window.__thrustFx=function(e,m,u,dt){const T3=window.THREE;const fx=e.mfx;if(!fx||!T3||u.illu||!e.root.parent)return;const sc=e.root.parent;
-  if(!e._thr){e._thrB=[boneFind(m.obj,/left.?foot/i),boneFind(m.obj,/right.?foot/i)].filter(Boolean);e._thr=[];if(!TH.tex){const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');const gr=g.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.55)');gr.addColorStop(.6,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);TH.tex=new T3.CanvasTexture(cv);TH.disc=new T3.CircleGeometry(1,24);TH.cone=new T3.ConeGeometry(1,1,10,1,true);TH.cone.translate(0,-.5,0);}
+  if(!e._thr){e._thrB=[boneFind(m.obj,/left.?foot/i),boneFind(m.obj,/right.?foot/i)].filter(Boolean);e._thr=[];if(!TH.tex){const cv=document.createElement('canvas');cv.width=cv.height=128;const g=cv.getContext('2d');const gr=g.createRadialGradient(64,64,4,64,64,64);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(.25,'rgba(255,255,255,.55)');gr.addColorStop(.6,'rgba(255,255,255,.12)');gr.addColorStop(1,'rgba(255,255,255,0)');g.fillStyle=gr;g.fillRect(0,0,128,128);TH.tex=new T3.CanvasTexture(cv);TH.disc=new T3.CircleGeometry(1,24);
+    /* v3.55b: the jet is a soft camera-facing streak (bright at the nozzle, feathered sides, fading to nothing) instead of a hard cone */
+    const fc=document.createElement('canvas');fc.width=64;fc.height=256;const fg=fc.getContext('2d');const img=fg.createImageData(64,256);for(let y=0;y<256;y++)for(let x=0;x<64;x++){const t=y/255,sx=Math.abs(x-31.5)/31.5;const w=.95-.65*t;const side=Math.max(0,1-Math.pow(sx/w,2.2));const a=Math.pow(1-t,1.6)*side;const o=(y*64+x)*4;img.data[o]=img.data[o+1]=img.data[o+2]=255;img.data[o+3]=Math.round(255*Math.min(1,a));}fg.putImageData(img,0,0);TH.flame=new T3.CanvasTexture(fc);}
    const foe=typeof iffOf==='function'&&iffOf(u)==='foe';const col=foe?0xff6a4a:(u===(G.local&&G.local.unit)?new T3.Color(custGet().jet).getHex():0x8ad8ff);
    for(const b of e._thrB){const d=new T3.Mesh(TH.disc,new T3.MeshBasicMaterial({map:TH.tex,color:col,transparent:true,opacity:.5,blending:T3.AdditiveBlending,depthWrite:false}));d.rotation.x=-Math.PI/2;d.userData.keep=1;sc.add(d);
-    const c=new T3.Mesh(TH.cone,new T3.MeshBasicMaterial({color:col,transparent:true,opacity:.55,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));c.userData.keep=1;sc.add(c);
-    const c2=new T3.Mesh(TH.cone,new T3.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.8,blending:T3.AdditiveBlending,depthWrite:false,side:T3.DoubleSide}));c2.userData.keep=1;sc.add(c2);e._thr.push(d,c,c2);}
+    const c=new T3.Sprite(new T3.SpriteMaterial({map:TH.flame,color:col,transparent:true,opacity:.55,blending:T3.AdditiveBlending,depthWrite:false}));c.center.set(.5,1);c.userData.keep=1;sc.add(c);
+    const c2=new T3.Sprite(new T3.SpriteMaterial({map:TH.flame,color:0xffffff,transparent:true,opacity:.5,blending:T3.AdditiveBlending,depthWrite:false}));c2.center.set(.5,1);c2.userData.keep=1;sc.add(c2);e._thr.push(d,c,c2);}
    e._thrT=0;}
   const sp=Math.hypot(u.vx||0,u.vy||0);const boost=(u.dashT>0||u.boost>0||u.lunge)?1:0;const pw=clamp(.55+sp/420+boost*.7+(u.fly?.5:0),.5,2);const gy=groundY(u);
   /* v3.54: the foot jets belong to the walking frame - hidden whenever that body is hidden (jet form, cloak, boarding) and when flying high, so no white cones are left standing on the ground */
   let bodyVis=e.root.visible;{let p=m.obj;while(p&&p!==e.root){if(!p.visible){bodyVis=false;break;}p=p.parent;}}if(u.flyH>70||(u.tf&&(u.tf.mode!=='robot'||(u.tf.k||0)>.05)))bodyVis=false;const v=new T3.Vector3();const tt=performance.now()/1000;e._thrT-=dt;const puff=e._thrT<=0;if(puff)e._thrT=.07;
   e._thrB.forEach((b,i)=>{b.getWorldPosition(v);const d=e._thr[i*3],c=e._thr[i*3+1],c2=e._thr[i*3+2];const hgt=Math.max(1.5,v.y-gy);const fl=.85+.3*Math.sin(tt*38+i*2)+Math.random()*.12;
    d.position.set(v.x,gy+.7+i*.05,v.z);const r=(13+pw*9)*clamp(1.4-hgt/60,.35,1.2);d.scale.set(r*fl,r*fl,1);d.material.opacity=clamp(.8*pw*clamp(1.2-hgt/70,0,1),0,.95);d.visible=bodyVis;
-   const len=Math.min(hgt+2,10+pw*14)*fl;c.position.set(v.x,v.y-1,v.z);c.scale.set(2.6+pw*1.4,len,2.6+pw*1.4);c.material.opacity=.5*Math.min(1.3,pw);c.visible=bodyVis&&hgt<60;
-   c2.position.copy(c.position);c2.scale.set(.9+pw*.4,len*.45,.9+pw*.4);c2.material.opacity=.45;c2.visible=bodyVis&&hgt<60;
+   const len=Math.min(hgt+4,14+pw*16)*fl;c.position.set(v.x,v.y+1,v.z);c.scale.set(9+pw*4,len,1);c.material.opacity=.42*Math.min(1.3,pw);c.visible=bodyVis&&hgt<60;
+   c2.position.copy(c.position);c2.scale.set(3.6+pw*1.6,len*.5,1);c2.material.opacity=.5;c2.visible=bodyVis&&hgt<60;
    if(puff&&bodyVis&&hgt<40&&G&&G.parts.length<500&&(u===(G.local&&G.local.unit)||sp>60)){const a=Math.random()*6.283,vv=50+pw*70;part(v.x+Math.cos(a)*6,v.z+Math.sin(a)*6,Math.cos(a)*vv,Math.sin(a)*vv,.38,'rgba(255,225,190,.45)',3+pw*2,gy+2);}});};
  const _stkT=saberTick;saberTick=function(e,m,u,dt){const r=_stkT(e,m,u,dt);try{window.__thrustFx(e,m,u,dt||.016);}catch(er){if(!window.__thrErr)window.__thrErr=String(er&&er.stack||er).slice(0,300);}return r;};}
 // ================= v3.11e : closer fights — shorter weapon range for everyone, longer duels with elites / bosses / rival frames, softer enemy gunfire =================
@@ -8658,7 +8664,7 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
-<script src="lib/transform.js?v=321"></script>
+<script src="lib/transform.js?v=356"></script>
 <script src="lib/terrainfx.js?v=348"></script>
 <script src="lib/ascend348.js?v=349"></script>
 <script src="lib/ascend_rank.js?v=348"></script>
@@ -8679,5 +8685,6 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_lobby.js?v=350"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
 <script src="lib/ascend_arena2.js?v=354"></script>
+<script src="lib/ascend_flight.js?v=355"></script>
 </body>
 </html>
