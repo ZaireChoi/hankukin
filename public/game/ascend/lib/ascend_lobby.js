@@ -181,7 +181,7 @@ var SKIN=[
 '#rpgDlg .opts button.pri{background:linear-gradient(90deg,#f4f8fc,#9eb0c5)!important;color:#0a1322!important;border:0!important;font-weight:800!important}',
 '#rpgDlg #vnNext{right:22px!important;bottom:12px!important;color:#cfe0f2!important}',
 '#rpgDlg.serLine .box{border-top-color:rgba(255,120,120,.5)!important}',
-'#vnCtl{top:14px!important;right:16px!important;gap:6px!important;display:flex}',
+'#vnCtl{top:12px!important;right:100px!important;gap:6px!important;display:flex;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 116px)}',
 '#vnCtl button{height:30px;padding:0 12px!important;border-radius:15px!important;border:1px solid rgba(255,255,255,.14)!important;background:rgba(8,12,22,.6)!important;color:#cfd8e6!important;font:700 11px Rajdhani,"Noto Sans KR",sans-serif!important;letter-spacing:.08em;backdrop-filter:blur(6px)}',
 '#vnCtl button.on{border-color:#cfe0f2!important;color:#eaf3fc!important;background:rgba(190,214,240,.14)!important}',
 // squad formation: the deploy bar stays in reach at the bottom of the screen
