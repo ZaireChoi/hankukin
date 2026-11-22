@@ -61,7 +61,7 @@
       mat.onBeforeCompile = function (sh) {
         sh.uniforms.detMap = { value: det };
         sh.vertexShader = 'varying vec3 vWp;\n' + sh.vertexShader.replace('#include <worldpos_vertex>', '#include <worldpos_vertex>\n vWp = (modelMatrix * vec4(transformed, 1.0)).xyz;');
-        sh.fragmentShader = 'uniform sampler2D detMap;varying vec3 vWp;\n' + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n float dd = clamp(1.0 - length(vWp - cameraPosition) / 2600.0, 0.0, 1.0);\n float dt = texture2D(detMap, vWp.xz / 90.0).r * .6 + texture2D(detMap, vWp.xz / 23.0).r * .4;\n diffuseColor.rgb *= mix(1.0, .55 + dt * .9, dd);');
+        sh.fragmentShader = 'uniform sampler2D detMap;varying vec3 vWp;\n' + sh.fragmentShader.replace('#include <map_fragment>', '#include <map_fragment>\n float dd = clamp(1.4 - length(vWp - cameraPosition) / 3200.0, 0.0, 1.0);\n float dt = texture2D(detMap, vWp.xz / 90.0).r * .6 + texture2D(detMap, vWp.xz / 23.0).r * .4;\n diffuseColor.rgb *= 1.0 + (dt - .55) * .45 * dd; /* neutral on average: no lighter or darker patch around the camera */');
       };
       P.mat = mat; var grp = new T.Group(); grp.name = 'planet'; grp.userData.keep = 1;
       for (var cj = 0; cj < CH; cj++) for (var ci = 0; ci < CH; ci++) {
