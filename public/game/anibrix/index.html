@@ -126,6 +126,7 @@ table.rank tr.me td{background:#fff0f6;font-weight:900}
 .spl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.spc{position:relative;width:150px;background:#fff7f0;border-radius:18px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:3px}.spc b{font-family:'Jua',sans-serif;font-weight:400;font-size:17px}.spc span:last-child{font-size:12px;line-height:1.35;opacity:.85}.spc .newtag{position:absolute;top:6px;left:6px}
 .bossrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}.bossrow div{display:flex;flex-direction:column;align-items:center;font-size:13px;font-weight:700}.bossrow i{font-style:normal;font-size:11px;color:#d6336c}
 .copyr{font-size:10px;opacity:.55;color:#6b4a35;margin-top:2px;letter-spacing:.3px}
+.rbxlink{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:4px 12px;border-radius:999px;background:#fff;color:#393b3d;font-size:12px;font-weight:800;text-decoration:none;box-shadow:0 2px 6px rgba(120,80,40,.15);border:2px solid #e2231a}.rbxlink:active{transform:scale(.96)}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #mid{display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:70px;min-width:70px}
 .vs{font-size:28px;font-weight:900;color:#ff6b9a;text-shadow:2px 2px 0 #fff}
@@ -1396,7 +1397,7 @@ function showMenu(){
    <div class="lmid">
      <div class="lside">${u2?`<button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button><button class="rbtn" onclick="showDex()">\ud83d\udcd6<span>${tr('dex')}</span></button>`:''}${u3?`<button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button>`:''}${ON&&u3?`<button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}</div>
      <div class="showcase">
-       <div class="logo">Anibrix</div><div class="logosub">${tr('subtitle')}</div><div class="copyr">\u00a9 ${new Date().getFullYear()} ${OWNER}. All rights reserved.</div>
+       <div class="logo">Anibrix</div><div class="logosub">${tr('subtitle')}</div><div class="copyr">\u00a9 ${new Date().getFullYear()} ${OWNER}. All rights reserved.</div>${u2&&robloxOK()?`<a class="rbxlink" href="${ROBLOX_URL}" target="_blank" rel="noopener">🎮 Play on Roblox</a>`:''}
        <div class="ped ${lg?'lg':''}">${own.length>1?`<button class="arr" onclick="cycleHero(-1)">\u2039</button>`:''}<div class="hbig">${img(hid,190,false,'happy')}</div>${own.length>1?`<button class="arr" onclick="cycleHero(1)">\u203a</button>`:''}</div>
        <div class="hplate">${lg?'<span class="ltag">\u2605 '+tr('legend')+'</span>':''}<b>${heroName(hid)}</b><span>\u2764 ${h.hp+4*(heroLv(hid)-1)}</span><span>${tr('up_lv',{n:heroLv(hid)})}</span></div>
        ${u2?`<div class="hskill"><b>${tr('sk_'+hid+'_n')}</b> ${tr('sk_'+hid+'_d')}</div>`:`<div class="firsttag">${tr('first_tag')}</div>`}
@@ -1748,6 +1749,10 @@ const CG_MODE=CG_HOST||(()=>{try{const q=new URLSearchParams(location.search);if
 // v1.4: 원스토어 웹게임(Web 상품) - 실행 주소 ?src=onestore 또는 원스토어 페이지 안에서 열릴 때만
 const OS_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='onestore'){try{sessionStorage.setItem('hk_os','1');}catch(e){}return true;}try{if(sessionStorage.getItem('hk_os')==='1')return true;}catch(e){}return !!document.referrer&&/(^|\.)onestore\.(co\.kr|net)$/i.test(new URL(document.referrer).hostname);}catch(e){return false;}})();
 function noExt(){try{return CG_MODE||OS_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE||OS_MODE;}}
+// v1.5: 로블록스판 안내 버튼 - 사이트판에서만 (크레이지게임즈·원스토어·앱(src=app)·설치형 실행에서는 숨김)
+const ROBLOX_URL='https://www.roblox.com/games/131171001545708';
+const APP_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='app'){try{sessionStorage.setItem('hk_app','1');}catch(e){}return true;}try{if(sessionStorage.getItem('hk_app')==='1')return true;}catch(e){}if(/^android-app:/i.test(document.referrer||''))return true;return !!(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);}catch(e){return false;}})();
+function robloxOK(){try{return !noExt()&&!APP_MODE&&ownHost();}catch(e){return false;}}
 function ownHost(){try{const h=location.hostname;return /^https?:/.test(location.protocol)&&ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return false;}}
 
 function hostOK(){try{const h=location.hostname;if(CG_HOST||!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
