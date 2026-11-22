@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.59 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.61 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1823,7 +1823,7 @@ R.buildEnv=function(){const S=this.envG,th=this.th,SP=!!MAP.space,ZM=MAP.zmax||1
    if(th2==='dune'){const n=Math.max(3,Math.round((c.len+20)/20));for(let row=0;row<3;row++)for(let i=0;i<n-(row%2);i++){const m=new T.Mesh(this.box(19,11,20),cvM);m.position.set((i-(n-1-(row%2))/2)*20,6+row*11,0);m.rotation.y=(i*7%5-2)*.04;m.castShadow=m.receiveShadow=true;g.add(m);}}
    else{const m=new T.Mesh(this.box(c.len+22,H,20),cvM);m.position.y=SPc?0:H/2;m.castShadow=m.receiveShadow=true;g.add(m);const cap=new T.Mesh(this.box(c.len+24,3,22),cvM);cap.position.y=(SPc?0:H/2)+H/2+1;g.add(cap);
     const strip=new T.Mesh(this.box(c.len+16,1.6,20.6),cvG);strip.position.y=(SPc?0:H/2)+H*.18;g.add(strip);}}}
- const mudM=new T.MeshStandardMaterial({color:th.mud,roughness:.15,metalness:.3,transparent:true,opacity:.92});
+ const mudM=new T.MeshStandardMaterial({color:new T.Color(th.mud).lerp(new T.Color(0x4a3426),.65),roughness:.8,metalness:.05,transparent:true,opacity:.55,depthWrite:false});/* v3.60: wet-earth tone blended into the ground, matte (was a glossy flat green disc on the desert) */
  for(const m of MUD){const o=new T.Mesh(new T.CircleGeometry(m.r,40),mudM);o.rotation.x=-Math.PI/2;o.position.set(m.x,.8,m.y);o.receiveShadow=true;S.add(o);}
  const hiM=new T.MeshStandardMaterial({color:th.high,roughness:th.metal?.4:.88,metalness:th.metal?.6:.05,flatShading:true});
  for(const h of HIGH){const o=new T.Mesh(new T.CylinderGeometry(h.r,h.r+28,30,th.metal?8:26,1),hiM);o.position.set(h.x,15,h.y);o.castShadow=o.receiveShadow=true;S.add(o);const rim=new T.Mesh(new T.TorusGeometry(h.r-2,1.2,6,48),this.addm(th.metal?'#5ad1ff':'#ffd9a0',.3));rim.rotation.x=Math.PI/2;rim.position.set(h.x,30.5,h.y);S.add(rim);}
@@ -4476,7 +4476,7 @@ const AFFX=[['dmg',.6,K('공격력','Damage')],['hp',.7,K('내구도','Armor')],
 const affTxt=a=>{const A=AFFX.find(x=>x[0]===a.st);const neg=a.st==='cd'||a.st==='taken';return (neg?'-':'+')+(a.st==='regen'?(a.v*100).toFixed(1):Math.round(a.v*100))+'% '+tx(A?A[2]:K(a.st,a.st));};
 {const _as2=arkStats;arkStats=function(){const s=_as2();const r=R();for(const g of SGROUP){if(g[0]==='style')continue;for(const sl of g[2]){const it=eqIt(r,sl);if(it&&it.aff)for(const a of it.aff)applySt(s,a.st,a.v);}}return s;};}
 // ---- floating damage numbers & hit-stop (RPG battles) ----
-{const _hu3=hurt;hurt=function(u,amt,src,ang,dt){const before=u&&!u.dead?u.hp:0;const crit0=window.__critFlag=false;const r=_hu3(u,amt,src,ang,dt);try{if(G&&G.rpg&&u&&G.local&&(src===G.local||(src&&src.ownerSlot===G.local))){const dealt=Math.max(0,before-(u.dead?0:u.hp));if(dealt>0){const crit=window.__critFlag;{const ex=!crit&&G.texts.find(t=>t._u===u&&!t._c&&t.l>.25);if(ex){ex._sum+=dealt;ex.txt=String(Math.round(ex._sum));ex.l=ex.L;ex.sz=Math.min(16,ex.sz+.3);ex.x=u.x+18;ex.y=u.y-u.r-6;}else G.texts.push({_u:u,_c:crit,_sum:dealt,h:unitH(u)+46,x:u.x+18,y:u.y-u.r-6,txt:Math.round(dealt)+(crit?'!':''),c:crit?'#ffd166':'#e9f0ff',sz:crit?16:Math.min(14,11+Math.log10(dealt+1)*1.5),l:crit?.8:.6,L:crit?.8:.6});}if(crit){G.hstop=Math.max(G.hstop||0,.07);cam.shake=Math.max(cam.shake||0,5);}}if(u.dead&&(u.elite||(u.mon&&MONS[u.mon]&&(MONS[u.mon].named||MONS[u.mon].boss)))){G.hstop=Math.max(G.hstop||0,.12);cam.shake=Math.max(cam.shake||0,9);}}}catch(e){}return r;};}
+{const _hu3=hurt;hurt=function(u,amt,src,ang,dt){const before=u&&!u.dead?u.hp:0;const crit0=window.__critFlag=false;const r=_hu3(u,amt,src,ang,dt);try{if(G&&G.rpg&&u&&G.local&&(src===G.local||(src&&src.ownerSlot===G.local))){const dealt=Math.max(0,before-(u.dead?0:u.hp));if(dealt>0){const crit=window.__critFlag;{const ex=!crit&&G.texts.find(t=>t._u===u&&!t._c&&t.l>.25);if(ex){ex._sum+=dealt;ex.txt=String(Math.round(ex._sum));ex.l=ex.L;ex.sz=Math.min(11,ex.sz+.2);ex.x=u.x+18;ex.y=u.y-u.r-6;}else G.texts.push({_u:u,_c:crit,_sum:dealt,h:unitH(u)+46,x:u.x+18,y:u.y-u.r-6,txt:Math.round(dealt)+(crit?'!':''),c:crit?'#ffd166':'#e9f0ff',sz:crit?11:Math.min(9.5,7+Math.log10(dealt+1)),l:crit?.8:.6,L:crit?.8:.6});}if(crit){G.hstop=Math.max(G.hstop||0,.07);cam.shake=Math.max(cam.shake||0,5);}}if(u.dead&&(u.elite||(u.mon&&MONS[u.mon]&&(MONS[u.mon].named||MONS[u.mon].boss)))){G.hstop=Math.max(G.hstop||0,.12);cam.shake=Math.max(cam.shake||0,9);}}}catch(e){}return r;};}
 setTimeout(()=>{const _stHS=step;step=function(dt){if(G&&G.hstop>0){G.hstop-=dt;dt*=.12;}_stHS(dt);};},0);
 // ---- ground loot with rarity beams ----
 const RCOL=[0xc9d2e3,0x7ee787,0x5ab4ff,0xc58cff,0xffd166,0xff6b6b];
@@ -5116,7 +5116,9 @@ const UQ_CH=[0,0,0,.5,1,1];
 function uqPick(r,slot){let c=UQ.filter(q=>q.r===r&&q.slot===slot);if(!c.length&&r>=4&&Math.random()<.7)c=UQ.filter(q=>q.r===r);if(!c.length&&r>=5)c=UQ.filter(q=>q.r===4);return c.length?pick(c):null;}
 function uqApply(it,q){it.u=q.id;it.n={ko:q.n.ko,en:q.n.en};it.r=Math.max(it.r,q.r);it.v=+(it.v*1.15).toFixed(3);return it;}
 {const _mk2=mkItem;mkItem=function(r,slot,sub){let it=_mk2(r,slot,sub);if(it.st==='none'||r<3||Math.random()>UQ_CH[r])return it;const q=uqPick(r,it.slot);if(!q)return it;if(q.slot!==it.slot||q.sub!==it.sub)it=_mk2(r,q.slot,q.sub);return uqApply(it,q);};}
-window.mkNamed=(id)=>{const q=UQM[id];if(!q)return null;return uqApply(mkItem(Math.min(4,q.r),q.slot,q.sub),q);};
+/* v3.60: the random 'unique roll' inside mkItem could swap the base item (a glaive came out as a whip/twin blades) - named gear now always keeps its own weapon type */
+window.uqFix=(it)=>{const q=it&&it.u&&UQM[it.u];if(!q||it.sub===q.sub)return false;it.slot=q.slot;it.sub=q.sub;const sb=(SUBS[it.slot]||[]).find(x=>x[0]===q.sub);if(sb)it.st=sb[2];it.n={ko:q.n.ko,en:q.n.en};return true;};
+window.mkNamed=(id)=>{const q=UQM[id];if(!q)return null;const it=uqApply(mkItem(Math.min(4,q.r),q.slot,q.sub),q);window.uqFix(it);return it;};
 // migrate existing epic+ gear
 function uqMigrate(r){if(r.uqv)return;r.uqv=1;for(const it of r.inv||[]){if(it.u||it.st==='none'||it.slot==='drone'||it.r<3)continue;if(Math.random()<.6){const c=UQ.filter(q=>q.slot===it.slot&&q.r<=Math.max(3,it.r));if(c.length){const q=pick(c);it.sub=q.sub;const sb=SUBS[it.slot].find(x=>x[0]===q.sub);if(sb)it.st=sb[2];uqApply(it,q);}}}saveP();}
 // equipped named effects
@@ -5971,6 +5973,8 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
  k=0;shrooms.forEach(s=>{for(let j=0;j<4;j++){D.position.set(s[0]+(Rn()-.5)*40,0,s[1]+(Rn()-.5)*40);D.rotation.set(0,Rn()*6,0);D.scale.setScalar(s[2]*(.5+Rn()*.8));D.updateMatrix();mSt.setMatrixAt(k,D.matrix);mSh.setMatrixAt(k,D.matrix);k++;}});
  }else{try{window.__placeFlora(S,spots,th);}catch(e){console.warn(e);}}
  // pebbles & moss decals
+ /* v3.60: mk lived only inside the flora branch; defined here too so the pebbles no longer throw "mk is not defined" */
+ const mk=(geo,mat,n)=>{const m=new T3.InstancedMesh(geo,mat,Math.max(1,n));m.castShadow=gfxMode()==='high';m.receiveShadow=false;S.add(m);return m;};
  const peb=mk(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:th==='frost'?0x8ea2b6:0x3a3228,roughness:1,flatShading:true}),420);peb.castShadow=false;for(let i=0;i<420;i++){const x=Rn()*WW,y=Rn()*WH;const s=2+Rn()*6;D.position.set(x,s*.2,y);D.scale.set(s*(1+Rn()),s*.5,s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();peb.setMatrixAt(i,D.matrix);}
  if(th!=='frost'&&th!=='volcano'){const mossT=R.radTex([[0,'rgba(80,220,170,.35)'],[.6,'rgba(40,140,110,.12)'],[1,'rgba(0,0,0,0)']]);for(let i=0;i<40;i++){const x=Rn()*WW,y=Rn()*WH;if(avoid(x,y))continue;const d=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:mossT,transparent:true,depthWrite:false}));const s=120+Rn()*220;d.scale.set(s,s*(.6+Rn()*.6),1);d.rotation.x=-Math.PI/2;d.rotation.z=Rn()*6;d.position.set(x,.3,y);S.add(d);}}
  // 4) magnetic cloud ceiling with descending field lines (aurora curtains)
@@ -7519,7 +7523,7 @@ try{const _agR=drawAimGuide;drawAimGuide=function(info,now){if(window.__RC&&wind
 // ================= v3.16 : "many troops, little information" — the battlefield stays, the clutter goes =================
 window.__MMTOP=true;
 try{document.body.classList.add('bclean');}catch(e){}
-const BIGOK=/거점|점령|보스|BOSS|Boss|승리|패배|VICTORY|DEFEAT|captured|Captured|CAPTURED|완벽 회피|PERFECT|브레이크|BREAK|지휘관 격파|Commander down|작전 실패|Operation failed/;
+const BIGOK=/거점|점령|보스|BOSS|Boss|승리|패배|VICTORY|DEFEAT|captured|Captured|CAPTURED|완벽 회피|PERFECT|브레이크|BREAK|작전 실패|Operation failed/;
 // ---- 5) notices: centre text only for capture / boss / win-lose, one at a time, ~1 s; the rest is a quiet side line ----
 {const _popB=pop;pop=function(txt,c,big){try{if(G&&!G.over&&!(window.__RC&&window.__RC())){const s=String(txt||'');if(big&&BIGOK.test(s)){G.pops.length=0;_popB(txt,c,true);const p=G.pops[G.pops.length-1];if(p){p.l=1.1;}return;}if(big){rcToast(s,c);return;}return;}}catch(e){}return _popB(txt,c,big);};}
 {const _anB=announce;announce=function(c1,c2,c3,big,col){try{if(G&&G.t>4&&!G.over&&!(window.__RC&&window.__RC())){const s=[c1,c2].filter(Boolean).join(' · ');if(!BIGOK.test(s)){rcToast(s,col);return;}}}catch(e){}return _anB.apply(this,arguments);};}
@@ -8279,7 +8283,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v359';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v361';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8664,15 +8668,15 @@ import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,SkeletonUtils,RoomEnvironment};window.THREE=THREE;
 </script>
 <script type="module" src="/game/account.js" data-game="ascend" data-prefix="ascend_"></script>
-<script src="lib/transform.js?v=356"></script>
+<script src="lib/transform.js?v=361"></script>
 <script src="lib/terrainfx.js?v=348"></script>
 <script src="lib/ascend348.js?v=349"></script>
 <script src="lib/ascend_rank.js?v=348"></script>
 <script src="lib/ascend_event.js?v=348"></script>
 <script src="lib/ascend_grow.js?v=348"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
-<script src="lib/ascend_loop.js?v=348"></script>
-<script src="lib/ascend_boss.js?v=348b"></script>
+<script src="lib/ascend_loop.js?v=361"></script>
+<script src="lib/ascend_boss.js?v=361"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
@@ -8685,8 +8689,12 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_lobby.js?v=350"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
 <script src="lib/ascend_arena2.js?v=354"></script>
-<script src="lib/ascend_flight.js?v=355"></script>
+<script src="lib/ascend_flight.js?v=361"></script>
 <script src="lib/ascend_bgm.js?v=357"></script>
-<script src="lib/ascend_wr.js?v=358"></script>
+<script src="lib/ascend_wr.js?v=361"></script>
+<script src="lib/ascend_mem.js?v=360"></script>
+<script src="lib/ascend_tension.js?v=360"></script>
+<script src="lib/ascend_palm.js?v=360"></script>
+<script src="lib/ascend_missile.js?v=361"></script>
 </body>
 </html>
