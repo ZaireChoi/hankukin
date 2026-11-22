@@ -379,6 +379,8 @@ body.os{padding-top:var(--sat,0px);padding-bottom:var(--sab,0px)}body.os .lobby-
 @media (max-height:740px){.ltop{padding:6px 12px}.logo{font-size:50px}.logosub{margin:4px 0 0;font-size:13px}.hbig{width:150px;height:150px}.hbig img{width:130px;height:130px}.ped{margin-top:0}.hskill{margin-top:4px;padding:4px 10px}.nexth{margin-top:3px}.firsttag{margin-top:6px;font-size:15px;padding:4px 14px}.ctas{margin:6px 0 4px}.cta{padding:8px 20px 8px 8px}.cta .ci{width:46px;height:46px}.cta b{font-size:22px}.lobby-wrap.first .cta.play{padding:10px 28px 10px 10px}.lobby-wrap.first .cta.play b{font-size:27px}.lside{gap:9px}}
 @media (max-height:600px){.logo{font-size:40px;margin-bottom:10px}.logosub{display:none}.copyr{display:none}.hbig{width:112px;height:112px}.hbig img{width:96px;height:96px}.hbig:before{left:24px;right:24px;height:18px}.hskill,.nexth{display:none}.cta b{font-size:19px}.cta small{font-size:11px}.cta .ci{width:38px;height:38px}.cta .ci.big{font-size:22px}.lobby-wrap.first .cta.play b{font-size:23px}.lobby-wrap.first .cta.play{min-width:280px}.cta.play{min-width:250px}.lside{gap:6px}.firsttag{font-size:13px;margin-top:4px}.lobby-wrap{padding-bottom:8px}}
 
+/* v1.5.1: 위쪽 보상 버튼 */
+.icbtn.gift{position:relative;margin-right:6px}.icbtn.gift .dot{position:absolute;top:-5px;right:-5px;width:14px;height:14px;border-radius:50%;background:#ff4757;border:2px solid #fff}.icbtn.gift.on{animation:giftw 1.4s ease-in-out infinite}@keyframes giftw{0%,100%{transform:rotate(0)}10%{transform:rotate(-12deg)}20%{transform:rotate(10deg)}30%{transform:rotate(0)}}
 </style>
 </head>
 <body>
@@ -1392,7 +1394,7 @@ function showMenu(){
    <div class="ltop">
      <div class="pchip" onclick="showRank('me')"><div class="av">${img(hid,46,false,'happy')}</div><div><div class="pn">${esc(p.name)}</div><div class="lvrow"><span class="lvb">Lv.${p.lv}</span><div class="xpmini"><div style="width:${Math.round(p.xp/p.need*100)}%"></div></div></div></div></div>
      <div class="res">${ON&&u3?`<span class="rpill">\ud83c\udfc6 ${p.tr}</span>`:''}${u2?`<span class="rpill">\ud83e\ude99 ${getCoins().toLocaleString()}<b onclick="showHeroes()">+</b></span><span class="rpill">\ud83e\udde9 ${store.get('shards',0)}</span>`:''}${store.get('wstreak',0)>=1?`<span class="rpill streak">\ud83d\udd25 ${tr('streak_chip',{n:store.get('wstreak',0),m:streakMul(store.get('wstreak',0)+1)})}</span>`:''}</div>
-     <button class="icbtn" onclick="showSettings()">\u2699\ufe0f</button>
+     ${u3?`<button class="icbtn gift${dd?' on':''}" onclick="showDaily()" title="${tr('m_daily')}">\ud83c\udf81${dd?'<i class="dot"></i>':''}</button>`:''}<button class="icbtn" onclick="showSettings()">\u2699\ufe0f</button>
    </div>
    <div class="lmid">
      <div class="lside">${u2?`<button class="rbtn" onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button><button class="rbtn" onclick="showDex()">\ud83d\udcd6<span>${tr('dex')}</span></button>`:''}${u3?`<button class="rbtn" onclick="showDaily()">\ud83c\udf81${dd?'<i class="dot"></i>':''}<span>${tr('m_daily')}</span></button>`:''}${ON&&u3?`<button class="rbtn" onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}</div>
@@ -1412,7 +1414,7 @@ function showMenu(){
    </div>
    ${u2?`<div class="bnav"><button class="on">\ud83c\udfe0<span>${tr('go_home')}</span></button><button onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button><button onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button>${u3?`<button onclick="showDaily()">\ud83c\udf81<span>${tr('m_daily')}</span>${dd?'<i class="dot"></i>':''}</button>`:''}${ON&&u3?`<button onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}${u3?`<button onclick="showRank()">\ud83c\udfc6<span>${tr('rank_title')}</span></button>`:''}</div>`:''}
   </div>`,'lobby');
-  if(!G._dailyShown&&dd&&u3){G._dailyShown=true;setTimeout(()=>{if(!G.players&&$('#ov').classList.contains('lobby'))showDaily();},600);}
+  // v1.5.1: 보상 창은 자동으로 띄우지 않음. 메인 화면 위쪽 🎁 버튼(빨간 점)으로 연다
   if(ON)socStart().then(ok=>{if(ok)socAutoSync();});
 }
 function cycleHero(d){const own=HEROES.filter(x=>ownHero(x.id));if(own.length<2)return;const i=own.findIndex(x=>x.id===heroId());const n=own[(i+d+own.length)%own.length];store.set('hero',n.id);Snd.pop();showMenu();}
