@@ -372,6 +372,7 @@ body.phone .coach{font-size:13px;left:14px}body.phone .coach b{font-size:15px}
 @keyframes kblink{0%,100%{background:#fff}50%{background:#ffe066;box-shadow:0 0 0 3px rgba(255,212,59,.65)}}
 body.ftue .hkacc-toast{display:none!important}
 .hkacc-toast{top:74px!important}
+body.os{padding-top:var(--sat,0px);padding-bottom:var(--sab,0px)}body.os .lobby-wrap{min-height:calc(100vh - var(--sat,0px) - var(--sab,0px))}body.os .bnav{bottom:calc(10px + var(--sab,0px))}
 .btn.nextbig{font-size:24px;padding:14px 18px;animation:pulse 1.6s ease-in-out infinite}
 /* v1.1b: 낮은 가로 화면(예: CrazyGames 16:9 틀 907x510)에서도 로비가 한 화면에 들어오도록 높이 기준 축소 */
 @media (max-height:740px){.ltop{padding:6px 12px}.logo{font-size:50px}.logosub{margin:4px 0 0;font-size:13px}.hbig{width:150px;height:150px}.hbig img{width:130px;height:130px}.ped{margin-top:0}.hskill{margin-top:4px;padding:4px 10px}.nexth{margin-top:3px}.firsttag{margin-top:6px;font-size:15px;padding:4px 14px}.ctas{margin:6px 0 4px}.cta{padding:8px 20px 8px 8px}.cta .ci{width:46px;height:46px}.cta b{font-size:22px}.lobby-wrap.first .cta.play{padding:10px 28px 10px 10px}.lobby-wrap.first .cta.play b{font-size:27px}.lside{gap:9px}}
@@ -1270,7 +1271,7 @@ function updateMid(){const t=$('#timer');if(G.clock){const left=G.clock-G.t;t.te
 
 /* =====================  화면 구성  ===================== */
 function computeCell(){
-  const vw=innerWidth,vh=innerHeight,small=vw<700;
+  const _sa=window.__osSA||{top:0,bottom:0},vw=innerWidth,vh=innerHeight-_sa.top-_sa.bottom,small=vw<700;
   const phone=vw<640&&vh>vw*1.15;document.body.classList.toggle('phone',phone);
   if(phone){const tb=(G.mode==='ai'||G.mode==='online'||G.mode==='solo')?64:0;CELL=Math.max(10,Math.min(28,Math.floor((vh-232-tb)/H),Math.floor((vw-50)/13.6)));return;}
   // v1.1: 홀드/다음/아이템을 판 옆으로 옮겨서 화면 높이를 거의 전부 판에 씀
@@ -1744,13 +1745,34 @@ const ALLOWED_HOSTS=['hankuk-in.com','hankukin.pages.dev'];
 // v1.1: 크레이지게임즈에 파일을 직접 올린 경우(게임이 crazygames 도메인에서 열림)도 CG 모드로 인식
 const CG_HOST=(()=>{try{return /(^|\.)crazygames\.[a-z.]+$|(^|\.)1001juegos\.com$/i.test(location.hostname);}catch(e){return false;}})();
 const CG_MODE=CG_HOST||(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='crazygames'){try{sessionStorage.setItem('hk_src','crazygames');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='crazygames';}catch(e){return false;}})();
-function noExt(){try{return CG_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE;}}
+// v1.4: 원스토어 웹게임(Web 상품) - 실행 주소 ?src=onestore 또는 원스토어 페이지 안에서 열릴 때만
+const OS_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='onestore'){try{sessionStorage.setItem('hk_os','1');}catch(e){}return true;}try{if(sessionStorage.getItem('hk_os')==='1')return true;}catch(e){}return !!document.referrer&&/(^|\.)onestore\.(co\.kr|net)$/i.test(new URL(document.referrer).hostname);}catch(e){return false;}})();
+function noExt(){try{return CG_MODE||OS_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE||OS_MODE;}}
 function ownHost(){try{const h=location.hostname;return /^https?:/.test(location.protocol)&&ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return false;}}
 
 function hostOK(){try{const h=location.hostname;if(CG_HOST||!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
 /* ---- 크레이지게임즈 SDK v3: 플레이 시작/중단 알림, 승리 축하, 광고 요청. CG 모드에서만 불러옴 ---- */
 const CG={sdk:null,ok:false,playing:false};
 function cgInit(){if(!CG_MODE)return;loadScript('https://sdk.crazygames.com/crazygames-sdk-v3.js').then(async()=>{try{await window.CrazyGames.SDK.init();CG.sdk=window.CrazyGames.SDK;CG.ok=true;if(G.players&&G.running&&!G.paused&&G.mode!=='demo')cgPlay(true);}catch(e){}}).catch(()=>{});}
+/* ---- 원스토어 H5 Game SDK v1.2.0: 초기화 → 로딩 100 → startGameAsync, pause/resume/exit, 백키, 무음 모드, 안전 영역 ---- */
+const OS={sdk:null,ok:false};
+function osSilent(s){try{if(s){Snd.on=false;Snd.bgm=false;Music.stop();}else{Snd.on=store.get('sfx3',true);Snd.bgm=store.get('bgm3',true);}if(typeof sndLabels==='function')sndLabels();}catch(e){}}
+function osBack(){try{const o=$('#ov');
+  if(G.players&&G.running&&!G.ended&&!G.paused&&!isOnline()){togglePause();return true;}
+  if(G.players&&G.paused&&!G.ended){togglePause();return true;}
+  if(o.classList.contains('show')&&!o.classList.contains('lobby')){showMenu();return true;}
+  if(G.players&&!G.running){showMenu();return true;}
+  return false;}catch(e){return false;}}
+function osInit(){return new Promise(res=>{let done=false;const fin=()=>{if(!done){done=true;res();}};setTimeout(fin,5000);
+  import('https://h5sdk.onestore.net/lib/v1.2.0/onestore-h5-sdk.min.js').then(m=>{const sdk=m.createSDK();OS.sdk=sdk;
+    sdk.on('pause',()=>{try{if(G.players&&G.running&&!G.paused&&!G.ended&&!isOnline())togglePause();Music.stop();if(Snd.ctx&&Snd.ctx.suspend)Snd.ctx.suspend();}catch(e){}});
+    sdk.on('resume',ev=>{try{if(ev&&typeof ev.ringerSilent==='boolean')osSilent(ev.ringerSilent);if(Snd.ctx&&Snd.ctx.resume)Snd.ctx.resume();}catch(e){}});
+    sdk.on('exit',()=>{try{store.set('os_exit',Date.now());}catch(e){}});
+    try{sdk.onBackPressed(osBack);}catch(e){}
+    return sdk.initializeAsync().then(info=>{if(!info||info.err)return;OS.ok=true;const sa=info.safeArea||{};window.__osSA={top:+sa.top||0,bottom:+sa.bottom||0};
+      document.documentElement.style.setProperty('--sat',window.__osSA.top+'px');document.documentElement.style.setProperty('--sab',window.__osSA.bottom+'px');document.body.classList.add('os');
+      osSilent(!!info.ringerSilent);sdk.setLoadingProgress(100);return sdk.startGameAsync();});
+  }).then(fin,fin);});}
 function cgPlay(on){if(!CG.ok||CG.playing===on)return;CG.playing=on;try{if(on)CG.sdk.game.gameplayStart();else CG.sdk.game.gameplayStop();}catch(e){}}
 function cgHappy(){try{if(CG.ok)CG.sdk.game.happytime();}catch(e){}}
 function adsReady(){return CG.ok||!!(ADS.on&&window.adBreak);}
@@ -2232,7 +2254,7 @@ if(ownHost()&&!CG_HOST){
   const s=document.createElement('script');s.type='module';s.src='/game/account.js';s.dataset.game='anibrix';s.dataset.prefix='anibrix_';document.body.appendChild(s);
 }
 document.addEventListener('pointerdown',e=>{const b=e.target&&e.target.closest&&e.target.closest('button,.btn,.cta,.rbtn,.lbtn,.icbtn,.sbtn,.arr');if(!b||b.closest('#touch'))return;Snd.init();Snd.click();},true);
-if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();if(isNewbie()){document.body.classList.add('ftue');startMatch('ai',1);}else showMenu();requestAnimationFrame(loop);}
+if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();const boot=()=>{if(isNewbie()){document.body.classList.add('ftue');startMatch('ai',1);}else showMenu();};if(OS_MODE)osInit().then(boot);else boot();requestAnimationFrame(loop);}
 </script>
 </body>
 </html>
