@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.57 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.58 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -5783,7 +5783,7 @@ function heroInput(u){const s=u.slot;const inp=arInp(u);const base=BASES[u.team]
 // ---------- waves, camps, fortresses, levels, fountain, sudden death ----------
 const AR_NEED=l=>90+l*45;
 function arXp(s,n){if(!s||!s.aRole||s.alv>=15)return;s.axp=(s.axp||0)+n;while(s.alv<15&&s.axp>=AR_NEED(s.alv)){s.axp-=AR_NEED(s.alv);s.alv++;const u=s.unit;if(u&&!u.dead){const Rl=ROLES[s.aRole];const nm=Math.round(2200*Rl.hp*(1+.09*(s.alv-1)));u.hp+=nm-u.mhp;u.mhp=nm;for(let i=0;i<24;i++)part(u.x+rnd(-30,30),u.y+rnd(-30,30),0,-50,.8,'#cfefff',6,40+Math.random()*120);}
- if(s===G.local){pop(L('레벨 ','LEVEL ')+s.alv+(s.alv===6?L(' · 궁극기 해금!',' · ULT unlocked!'):''),'#cfefff',true);}}}
+ if(s===G.local){pop(L('레벨 ','LEVEL ')+s.alv+(s.alv===5?L(' · 궁극기 해금!',' · ULT unlocked!'):'')+L(' · 스킬 포인트 +1',' · skill point +1'),'#cfefff',true);}}}
 {const _stA2=step;step=function(dt){_stA2(dt);if(!arOn()||G.over)return;try{const A=G.arena;A.t0+=dt;
  // minion waves every 30 s (3 lanes × 4 per team)
  A.waveT-=dt;if(A.waveT<=0){A.wave++;A.waveT=30;const sd=G.t>900;for(let t=0;t<2;t++)for(const ln of Object.keys(AR_LANES)){const pth=AR_LANES[ln].map(p=>mirX(p,t));const p0=pth[0];
@@ -5793,7 +5793,7 @@ function arXp(s,n){if(!s||!s.aRole||s.alv>=15)return;s.axp=(s.axp||0)+n;while(s.
  for(const c of A.camps){const alive=c.units.filter(m=>!m.dead);if(!alive.length){c.respT-=dt;if(c.respT<=0){if(!BASES[2])BASES[2]=Object.assign({},BASES[0],{x:WW/2,y:WH/2,fx:0,fy:1});window.MONMDL=window.MONMDL||{};if(!window.MONMDL.arkc)window.MONMDL.arkc=['fb_emp_knightcommander',PI/2,74,'h'];if(!window.MONMDL.hpriest2)window.MONMDL.hpriest2=['h_priest',PI/2,27];
   c.units=c.m.map((k,i)=>{const hk=/^H:/.test(k)?k.slice(2):null;const m=spawnMinion(A.neutral,hk?'arkframe':(CL[k]?k:'zling'),c.x+rnd(-60,60),c.y+rnd(-60,60),99999,0);m.aCamp=c;if(hk){m.mon=hk;m.mhp=c.epic?9000:(c.m.length>1?1100:1700);try{const NM={halpha:L('알파 전사','Alpha Warrior'),hpriest:L('균열 사제','Rift Priest'),hpriest2:L('균열 사제','Rift Priest'),oknight:L('흑철 기사','Black Iron Knight'),pboss:L('약탈자 두목','Raider Chief'),pgunner:L('약탈자 사수','Raider Gunner'),arkc:L('★ 제국 기사단장','★ Imperial Knight Commander')};if(m.slot)m.slot.name=NM[hk]||hk;}catch(e){}}else m.mhp=Math.round(m.mhp*(c.epic?14:3));m.hp=m.mhp;if(c.epic){m.boss=1;}return m;});c.respT=c.epic?240:75;if(c.epic&&A.t0>30)(window.arAnnounce||announce)('',L('궤도 수호자 출현','ORBITAL GUARDIAN SPAWNED'),'',false,'#ffd166');}}}
  // fountain heal, ult lock before Lv6, level share
- for(const s of G.slots){if(!s.aRole)continue;if((s.alv||1)<6)s.ult=Math.min(s.ult||0,0);if(s===G.local&&(s.alv||1)<6)G.local.ult=0;const u=s.unit;if(u&&!u.dead&&Math.hypot(u.x-BASES[u.team].x,u.y-BASES[u.team].y)<420)u.hp=Math.min(u.mhp,u.hp+u.mhp*.06*dt*10);
+ for(const s of G.slots){if(!s.aRole)continue;if((s.alv||1)<5)s.ult=Math.min(s.ult||0,0);if(s===G.local&&(s.alv||1)<5)G.local.ult=0;const u=s.unit;if(u&&!u.dead&&Math.hypot(u.x-BASES[u.team].x,u.y-BASES[u.team].y)<420)u.hp=Math.min(u.mhp,u.hp+u.mhp*.06*dt*10);
   if(!u&&s.respT>0&&!s.aResp){s.aResp=1;s.respT=5+(s.alv||1)*1.6;}if(u)s.aResp=0;}
  arHud();}catch(e){window.__lastErr='arena '+(e&&e.stack||e);}};}
 // xp & rewards on kills (units) and fortresses
@@ -8279,7 +8279,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v357';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v358';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8687,5 +8687,6 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_arena2.js?v=354"></script>
 <script src="lib/ascend_flight.js?v=355"></script>
 <script src="lib/ascend_bgm.js?v=357"></script>
+<script src="lib/ascend_wr.js?v=358"></script>
 </body>
 </html>
