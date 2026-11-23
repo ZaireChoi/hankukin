@@ -1,4 +1,6 @@
-/* ASCEND v3.75 — ghost blades: the sword leaves copies of itself along its swing, the way the frame leaves afterimages
+/* ASCEND v3.81: the ghost copies of the weapon looked cluttered (user) - they are off (window.__bgCopies = true turns them back on).
+   This module still marks swings that hit (u._bgHit), which the single soft swing trail in index.html uses (shown on hits, ~0.1 s).
+   ASCEND v3.75 — ghost blades: the sword leaves copies of itself along its swing, the way the frame leaves afterimages
    when it dashes. Every 40 ms of a swing a see-through copy of the blade is left exactly where the blade was (its real
    position and angle), glowing in the blade colour and held until the swing finishes and then fading out together over a quarter second — so the whole swing, from where it
    started to where it finished, stays readable for a moment.
@@ -32,7 +34,7 @@
       if (on && (!P.on || sk !== P.sk || st > (P.st || 0) + .02)) { P.sw0 = performance.now(); P.shown = false; P.arr.forEach(function (g) { g.userData.pend = false; }); } P.on = on; P.sk = sk; P.st = st;
       var hit = (u._bgHit || 0) >= (P.sw0 || 0) && on;
       if (hit && !P.shown) { P.shown = true; /* reveal the copies already taken in this swing: the path from the start of the swing to the hit */ P.arr.forEach(function (g) { if (g.userData.pend && g.userData.born >= P.sw0 && performance.now() - g.userData.born < 350) { g.userData.pend = false; g.visible = true; g.userData.l = g.userData.ml = LIFE; } }); }
-      if (on) { P.acc += dt; if (P.acc >= .03) { P.acc = 0; snap(P, e.root.parent, hit); } } else { P.acc = .03; P.arr.forEach(function (g) { g.userData.pend = false; }); } });
+      if (on && window.__bgCopies) { P.acc += dt; if (P.acc >= .03) { P.acc = 0; snap(P, e.root.parent, hit); } } else { P.acc = .03; P.arr.forEach(function (g) { g.userData.pend = false; }); } });
     POOLS.forEach(function (P, e) { for (var j = 0; j < P.arr.length; j++) { var g = P.arr[j]; if (!g.visible) continue; g.userData.l -= dt; var k = g.userData.l / g.userData.ml; if (k <= 0) { g.visible = false; continue; } for (var c = 0; c < g.children.length; c++) { var m = g.children[c].material; m.opacity = (g.children[c].userData.o === P.S.userData.core ? .75 : .45) * k * k; } }
       if (!e.root.parent) { P.arr.forEach(function (g) { if (g.parent) g.parent.remove(g); }); POOLS.delete(e); } });
   };
