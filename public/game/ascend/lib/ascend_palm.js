@@ -41,12 +41,15 @@
     var w = function (e, m, u, dt) {
       gt(e, m, u, dt);
       try {
-        var on = palmOn(u); var B = motBones(m); if (!B) return; var hand = B.LeftHand, fore = B.LeftForeArm, arm = B.LeftArm;   // the empty left hand (the right one keeps the sword)
+        var on = palmOn(u); var B = motBones(m); if (!B) return; var hand = B.LeftHand, fore = B.LeftForeArm, arm = B.LeftArm;
+        /* v3.91 (user: the arm moved strangely) - the arm used to snap to the target and back every 3 s; it now eases in and out (about 0.15 s) */
+        e._palmW = (e._palmW || 0) + ((on ? 1 : 0) - (e._palmW || 0)) * Math.min(1, (dt || 1 / 60) * (on ? 9 : 6)); var W = e._palmW;   // the empty left hand (the right one keeps the sword)
         var g = glow(e); var sc = e.root && e.root.parent;
-        if (!on || !hand || !fore || !arm) { if (e.grip && e.grip.wrapL && e._palmHid) { e.grip.wrapL.visible = true; e._palmHid = 0; } g.visible = false; return; }
+        if (!hand || !fore || !arm || (!on && W < .03)) { if (e.grip && e.grip.wrapL && e._palmHid) { e.grip.wrapL.visible = true; e._palmHid = 0; } g.visible = false; return; }
+        if (!on) { var dirO = aimDir(u); pointBone(arm, fore, dirO, .95 * W); pointBone(fore, hand, dirO, .95 * W); g.visible = false; return; }
         var H = (e.wg && e.wg.H) || 90, dir = aimDir(u);
         // the arm reaches straight at the target (upper arm, then forearm in line)
-        pointBone(arm, fore, dir, .95); pointBone(fore, hand, dir, .95);
+        pointBone(arm, fore, dir, .95 * W); pointBone(fore, hand, dir, .95 * W);
         // the open left hand (no fist over it); a carried gun steps aside
         hand.scale.setScalar(1); hand.updateMatrixWorld(true);
         if (e.grip && e.grip.wrapL) { e.grip.wrapL.visible = false; e._palmHid = 1; }
@@ -57,7 +60,7 @@
         var t = now(); var k = u._lzCh > 0 ? Math.max(0, Math.min(1, 1 - (u._lzFire - t) / CH)) : Math.max(0, 1 - (t - u._lzShot) / HOLD);
         g.position.copy(p); var fl = .85 + Math.random() * .3; g.scale.setScalar(H * (.12 + .5 * k) * fl); g.material.opacity = .35 + .65 * k; g.visible = true;
         e.palmPos = p.clone(); e.muzzle = p.clone();
-        if (u._lzCh > 0 && Math.random() < .7 && typeof part === 'function') { var b = Math.random() * 6.28, r = H * .35; part(p.x + Math.cos(b) * r, p.z + Math.sin(b) * r, -Math.cos(b) * r * 4, -Math.sin(b) * r * 4, .22, '#bff8ff', 2.2, p.y + (Math.random() - .5) * r); }
+        if (u._lzCh > 0 && Math.random() < .7 && typeof part === 'function') { var b = Math.random() * 6.28, r = H * (.12 + Math.random() * .3); part(p.x + Math.cos(b) * r, p.z + Math.sin(b) * r, -Math.cos(b) * r * 4, -Math.sin(b) * r * 4, .22, '#bff8ff', 2.2, p.y + (Math.random() - .5) * r); }
       } catch (er) { window.__palmErr = String(er && er.stack || er).slice(0, 200); }
     };
     w.__palm = 1; try { gripTick = w; } catch (e) {}
