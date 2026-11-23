@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.77 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.78 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1827,7 +1827,7 @@ R.buildEnv=function(){const S=this.envG,th=this.th,SP=!!MAP.space,ZM=MAP.zmax||1
  for(const m of MUD){const o=new T.Mesh(new T.CircleGeometry(m.r,40),mudM);o.rotation.x=-Math.PI/2;o.position.set(m.x,.8,m.y);o.receiveShadow=true;S.add(o);}
  const hiM=new T.MeshStandardMaterial({color:th.high,roughness:th.metal?.4:.88,metalness:th.metal?.6:.05,flatShading:true});
  for(const h of HIGH){const o=new T.Mesh(new T.CylinderGeometry(h.r,h.r+28,30,th.metal?8:26,1),hiM);o.position.set(h.x,15,h.y);o.castShadow=o.receiveShadow=true;S.add(o);const rim=new T.Mesh(new T.TorusGeometry(h.r-2,1.2,6,48),this.addm(th.metal?'#5ad1ff':'#ffd9a0',.3));rim.rotation.x=Math.PI/2;rim.position.set(h.x,30.5,h.y);S.add(rim);}
- const LC=th.lava;this.lavaTex=this.tex(256,256,(g,w)=>{g.fillStyle=LC[0];g.fillRect(0,0,w,w);for(let i=0;i<140;i++){const x=Math.random()*w,y=Math.random()*w,r=4+Math.random()*30;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,Math.random()<.5?LC[1]:LC[2]);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,r*2,r*2);}});this.lavaTex.wrapS=this.lavaTex.wrapT=T.RepeatWrapping;
+ const LC=th.lava;this.lavaTex=this.tex(256,256,(g,w)=>{g.fillStyle=LC[0];g.fillRect(0,0,w,w);for(let i=0;i<140;i++){const x=Math.random()*w,y=Math.random()*w,r=4+Math.random()*30;const c0=Math.random()<.5?LC[1]:LC[2];/* v3.77: every blob is also drawn wrapped around the edges so the flowing (scrolling) lava picture has no seams */for(const dx of[-w,0,w])for(const dy of[-w,0,w]){const X=x+dx,Y=y+dy;if(X+r<0||X-r>w||Y+r<0||Y-r>w)continue;const gr=g.createRadialGradient(X,Y,0,X,Y,r);gr.addColorStop(0,c0);gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(X-r,Y-r,r*2,r*2);}}});this.lavaTex.wrapS=this.lavaTex.wrapT=T.RepeatWrapping;
  this.lavaLights=[];
  for(const l of LAVA){const o=new T.Mesh(new T.CircleGeometry(l.r+12,48),new T.MeshStandardMaterial({color:0x200400,emissive:0xffffff,emissiveMap:this.lavaTex,emissiveIntensity:1.9,roughness:.6}));o.rotation.x=-Math.PI/2;o.position.set(l.x,.9,l.y);S.add(o);
   const crust=new T.Mesh(new T.TorusGeometry(l.r+14,7,8,40),this.std(LC[4],.1,.95));crust.rotation.x=Math.PI/2;crust.position.set(l.x,2,l.y);S.add(crust);
@@ -2588,7 +2588,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
    const ae=$('#tAuto');ae.style.background=autoOn()?'rgba(40,140,80,.7)':'';
    const eb=$('#tAb');if(info.abk&&ABS[info.abk]){eb.style.display='';const t2=info.ab>=100?ABS[info.abk].ic+'\n'+tx(ABS[info.abk].n):'T '+Math.floor(info.ab||0)+'%';if(eb.textContent!==t2)eb.textContent=t2;eb.style.opacity=info.ab>=100?1:.55;}else eb.style.display='none';
    $('#tUp').style.display=$('#tDn').style.display=MAP.space?'':'none';}}
- else if(!G.over){const rt=G.client?info.rt:G.local.respT;c.textAlign='center';if(G.killer){{const s0=t('kia')+' · '+t('killedBy',rs(G.killer));c.font=fnt(mob?14:18,800,1);c.fillStyle='rgba(0,0,0,.55)';c.fillText(s0,cx+1,VH*.14+1);c.fillStyle='#ff8a8f';c.fillText(s0,cx,VH*.14);}}
+ else if(!G.over){const rt=G.client?info.rt:G.local.respT;c.textAlign='center';/* v3.77 (21 가): the 'killed by' line shows for 4 s, not the whole wait */if(G.killer&&G._kk!==G.killer){G._kk=G.killer;G._kAt=G.t;}if(G.killer&&G.t-(G._kAt||0)<4){{const s0=t('kia')+' · '+t('killedBy',rs(G.killer));c.font=fnt(mob?14:18,800,1);c.fillStyle='rgba(0,0,0,.55)';c.fillText(s0,cx+1,VH*.14+1);c.fillStyle='#ff8a8f';c.fillText(s0,cx,VH*.14);}}
   if(isHidden('#deploy')&&(G.local.want||NET.wantSent)){c.font=fnt(18,700,1);c.fillStyle='#ffc24a';c.fillText(t('waitDeploy',Math.max(0,rt).toFixed(1)),cx,VH*.36+66);}}
  // ---- hit / kill markers & crosshair ----
  const mx=touchMode?cx:mouse.x,my=touchMode?VH/2:mouse.y;
@@ -5944,7 +5944,7 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
  const rm=[];S.children.forEach(o=>{if(!o.geometry)return;const g=o.geometry.type;for(const l of LAVA){if(Math.abs(o.position.x-l.x)<2&&Math.abs(o.position.z-l.y)<2&&(g==='TorusGeometry'||g==='CircleGeometry'))rm.push(o);}
   for(const h of HIGH){if(Math.abs(o.position.x-h.x)<2&&Math.abs(o.position.z-h.y)<2&&(g==='CylinderGeometry'||g==='TorusGeometry'))rm.push(o);}});rm.forEach(o=>S.remove(o));
  for(const l of LAVA){const nz=natNoise(l.x*7+l.y);const sh=new T3.Shape();const N=56;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*(1+.12*Math.sin(a*3+l.x));const x=Math.cos(a)*r,y=Math.sin(a)*r;i?sh.lineTo(x,y):sh.moveTo(x,y);}
-  const lava=new T3.Mesh(new T3.ShapeGeometry(sh,2),new T3.MeshStandardMaterial({color:0x200400,emissive:0xffffff,emissiveMap:R.lavaTex,emissiveIntensity:1.8,roughness:.6}));lava.rotation.x=-Math.PI/2;lava.position.set(l.x,.6,l.y);S.add(lava);
+  /* v3.77 (21 마): ShapeGeometry UVs are raw shape units - the lava picture was clamped to one flat colour with a hard straight edge; map them to 0..1 */const lava=new T3.Mesh(((g)=>{g.computeBoundingBox();const b=g.boundingBox,uv=g.attributes.uv,p=g.attributes.position,w=Math.max(1,b.max.x-b.min.x),h=Math.max(1,b.max.y-b.min.y);for(let i=0;i<uv.count;i++)uv.setXY(i,(p.getX(i)-b.min.x)/w,(p.getY(i)-b.min.y)/h);uv.needsUpdate=true;return g;})(new T3.ShapeGeometry(sh,2)),new T3.MeshStandardMaterial({color:0x200400,emissive:0xffffff,emissiveMap:R.lavaTex,emissiveIntensity:1.8,roughness:.6}));lava.rotation.x=-Math.PI/2;lava.position.set(l.x,.6,l.y);S.add(lava);
   // basalt crust: irregular dark slab ring + scattered cooled rocks, no torus
   const crustSh=new T3.Shape();for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*1.38+18*Math.sin(a*5+l.y);i?crustSh.lineTo(Math.cos(a)*r,Math.sin(a)*r):crustSh.moveTo(Math.cos(a)*r,Math.sin(a)*r);}const hole=new T3.Path();for(let i=0;i<=N;i++){const a=-i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*(1+.12*Math.sin(a*3+l.x))*.98;i?hole.lineTo(Math.cos(a)*r,Math.sin(a)*r):hole.moveTo(Math.cos(a)*r,Math.sin(a)*r);}crustSh.holes.push(hole);
   const crust=new T3.Mesh(new T3.ShapeGeometry(crustSh,2),new T3.MeshStandardMaterial({color:0x1a1210,roughness:1,emissive:0x3a0c02,emissiveIntensity:.35}));crust.rotation.x=-Math.PI/2;crust.position.set(l.x,.4,l.y);crust.receiveShadow=true;S.add(crust);
@@ -5954,7 +5954,7 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
  const irr=(o,x,y,r,seed)=>{const nz=natNoise(seed);const sh=new T3.Shape();const N=48;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const rr=r*(1+nz(a)*1.3)*(1+.1*Math.sin(a*4+seed));i?sh.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):sh.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}const m=new T3.Mesh(new T3.ShapeGeometry(sh,2),o.material);m.rotation.copy(o.rotation);m.position.copy(o.position);m.renderOrder=o.renderOrder;S.add(m);S.remove(o);};
  const disc=[];S.children.forEach(o=>{if(!o.geometry||o.geometry.type!=='CircleGeometry')return;for(const md of MUD)if(Math.abs(o.position.x-md.x)<2&&Math.abs(o.position.z-md.y)<2)disc.push([o,md]);for(const f of FOGS)if(Math.abs(o.position.x-f.x)<2&&Math.abs(o.position.z-f.y)<2)disc.push([o,f]);});disc.forEach(([o,c])=>irr(o,c.x,c.y,c.r,c.x*3+c.y));
  // 2) hills: soft noisy mounds instead of flat-topped cylinders
- const hillM=new T3.MeshStandardMaterial({color:th==='frost'?0xc9d6e2:th==='volcano'?0x2e2622:0x6a5a44,roughness:1,flatShading:false});
+ const hillM=new T3.MeshStandardMaterial({color:th==='frost'?0xc9d6e2:th==='volcano'?0x2e2622:th==='dune'?0xc98a56:0x6a5a44,/* v3.77 (21-1): dune hills in sand colour instead of grey-brown lumps */roughness:1,flatShading:false});
  for(const h of HIGH){const g=new T3.SphereGeometry(h.r+46,40,14,0,Math.PI*2,0,Math.PI/2);const p=g.attributes.position;const nz=natNoise(h.x+h.y*5);for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const a=Math.atan2(z,x);const k=1+nz(a)*.6;p.setXYZ(i,x*k,y*(34/(h.r+46))*(1+nz(a*2)*.5),z*k);}g.computeVertexNormals();const m=new T3.Mesh(g,hillM);m.position.set(h.x,0,h.y);m.receiveShadow=true;m.castShadow=true;S.add(m);}
  // 3) alien flora (instanced): trees, crystal spires, glowing fungus — kept off lanes, bases and capture points
  const avoid=(x,y)=>{for(const b of BASES)if(Math.hypot(x-b.x,y-b.y)<520)return true;for(const p of POINTS)if(Math.hypot(x-p.x,y-p.y)<300)return true;for(const l of LAVA)if(Math.hypot(x-l.x,y-l.y)<l.r+70)return true;for(const h of HIGH)if(Math.hypot(x-h.x,y-h.y)<h.r+60)return true;if(Math.abs(y-WH/2)<160&&MAP.id!=='seoul')return true;return false;};
@@ -8287,7 +8287,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v377';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v378';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8680,7 +8680,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_grow.js?v=348"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
-<script src="lib/ascend_boss.js?v=366"></script>
+<script src="lib/ascend_boss.js?v=378"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
