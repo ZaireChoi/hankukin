@@ -40,15 +40,15 @@
       var col = '#ff9be8', a = u.aa || 0;
       u.slashT = Math.max(u.slashT || 0, .3); gather(u, col, window.__phone ? 8 : 16); try { SFX2.charge(.3); } catch (e) {}
       kLater(.3, function () { if (u.dead) return; u.melSw2 = { t: 0, T: .3, i: 0, fin: true, kind: 'twirl', dir: 1 };
-        try { slashFx(u, styleOf(u), 0, true); } catch (e) {} crescent(u.x, uh(u) + 50, u.y, u.aa, 90, 360, col, .42, 1);
+        try { slashFx(u, styleOf(u), 0, true); } catch (e) {} crescent(u.x, uh(u) + 50, u.y, u.aa, 80, 300, col, .38, .42);
         var n = hitArc(u, 340, 1.75, base * 6.5, 260); if (n) { G.hstop = Math.max(G.hstop || 0, .09); try { cam.shake = Math.max(cam.shake || 0, 9); } catch (e) {} }
         try { swArea(u.x + Math.cos(u.aa) * 150, u.y + Math.sin(u.aa) * 150, 220, base * 3, G.local); SFX2.swing(true); } catch (e) {} });
-      kLater(.52, function () { if (u.dead) return; crescent(u.x, uh(u) + 46, u.y, (u.aa || a) + Math.PI, 70, 280, '#ffd0f0', .36, .6); hitArc(u, 260, 3.2, base * 3.3, 140); try { SFX2.swing(false); } catch (e) {} });
+      kLater(.52, function () { if (u.dead) return; crescent(u.x, uh(u) + 46, u.y, (u.aa || a) + Math.PI, 60, 230, '#ffd0f0', .32, .28); hitArc(u, 260, 3.2, base * 3.3, 140); try { SFX2.swing(false); } catch (e) {} });
     },
     staff: function (u, base) {    // 선풍: wind-up, three wide sweeping turns (each one readable), a closing gust
       var col = '#b48cff'; u.slashT = Math.max(u.slashT || 0, .3); gather(u, col, window.__phone ? 6 : 12); try { SFX2.charge(.25); } catch (e) {}
       for (var i = 0; i < 3; i++) (function (i) { kLater(.28 + i * .2, function () { if (u.dead) return; u.melSw2 = { t: 0, T: .18, i: i, fin: i === 2, kind: 'twirl', dir: 1 }; try { slashFx(u, styleOf(u), i % 2, i === 2); } catch (e) {}
-        crescent(u.x, uh(u) + 50, u.y, (u.aa || 0) + i * 2.09, 80, 250 + i * 30, col, .3, .85); hitArc(u, 260 + i * 20, 3.2, base * (i === 2 ? 3.6 : 2.4), i === 2 ? 220 : 90); if (i === 2) { G.hstop = Math.max(G.hstop || 0, .07); try { cam.shake = Math.max(cam.shake || 0, 7); } catch (e) {} } }); })(i);
+        crescent(u.x, uh(u) + 50, u.y, (u.aa || 0) + i * 2.09, 70, 210 + i * 25, col, .28, .38); hitArc(u, 260 + i * 20, 3.2, base * (i === 2 ? 3.6 : 2.4), i === 2 ? 220 : 90); if (i === 2) { G.hstop = Math.max(G.hstop || 0, .07); try { cam.shake = Math.max(cam.shake || 0, 7); } catch (e) {} } }); })(i);
     }
   };
   // called first thing by the game's weaponArt (inside its own code block); true = handled here
