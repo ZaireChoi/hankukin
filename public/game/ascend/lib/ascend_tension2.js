@@ -69,3 +69,10 @@
   window.__autoSoftCC = function (a) { try { return on() && a && a === me(); } catch (e) { return false; } };   // read by combat2: no knock-down / stun from my blows on auto
   setInterval(function () { try { hook(); } catch (e) {} }, 500);
 })();
+
+/* v3.83 (manager 22-5): battle length. A faction battle was won in 79 s (inside the enemy base at 46 s). The enemy HQ can be
+   damaged only while we hold 2+ points (engine rule), and now it also cannot fall below 15 % of its health before 2:00 of
+   battle time - its last shield holds, the defenders keep coming. 5v5 lanes, story and boss modes are not affected. */
+(function(){var told=0;var hook=function(){if(window.__hkCoreMin||typeof hurtStruct!=='function')return;window.__hkCoreMin=1;var hs=hurtStruct;
+ hurtStruct=function(s,amt,src){try{if(s&&s.kind==='core'&&!s.dead&&window.G&&G.local&&s.team!==G.local.team&&!(typeof arOn==='function'&&arOn())&&!(G.rpg&&G.rpg.obj&&/squad|kill|survive|hunt|field|rift/.test(G.rpg.obj.k||''))&&G.t<120){var mh=s.mhp||s.maxHp||s.hp0||0;if(!mh){s.hp0=s.hp0||s.hp;mh=s.hp0;}var floor=mh*.15;if(s.hp-amt<floor){amt=Math.max(0,s.hp-floor);if(G.t-told>8){told=G.t;try{announce('⛨',L2('적 사령부 최후 방어막','Enemy HQ last shield'),L2('2분 전에는 함락되지 않는다 · 거점을 지켜라','It will not fall before 2:00 · hold the points'),true,'#ff9b5a');}catch(e){}}}}}catch(e){}return hs(s,amt,src);};};
+ var L2=function(k,e){try{return (typeof LANG!=='undefined'&&LANG==='en')?e:k;}catch(er){return k;}};setInterval(function(){try{hook();}catch(e){}},500);})();

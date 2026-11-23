@@ -94,3 +94,6 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
 (function(){var rate=function(){try{var r=window.__A&&window.__A.R&&window.__A.R();var n=(r&&r.wb&&r.wb.n)||1;return n<=1?.0045:n===2?.007:.012;}catch(e){return .0045;}};
  var hook=function(){if(window.__hkWbCap||typeof hurt!=='function')return;window.__hkWbCap=1;var hu=hurt;hurt=function(u,amt,src,ang,dt){try{if(u&&u.boss&&u.sqTy!=null&&amt>0&&!u.dead&&window.G){if(u._wbT0==null){u._wbT0=G.t;u._wbD=0;}var mh=u.mhp||u.hp||1,allow=mh*rate()*(G.t-u._wbT0+2)-u._wbD;if(amt>allow)amt=Math.max(0,allow);var hp0=u.hp;var r=hu(u,amt,src,ang,dt);u._wbD+=Math.max(0,hp0-u.hp);return r;}}catch(e){}return hu(u,amt,src,ang,dt);};};
  setInterval(function(){try{hook();}catch(e){}},500);})();
+
+/* v3.83 (manager 22-8): when any battle starts, the weekly boss window / result card are closed (they stayed on top of the 5v5) */
+(function(){var lastG=null;setInterval(function(){try{var g=window.G||null;if(g&&g!==lastG&&g.local){lastG=g;var isWb=false;try{isWb=!!(g.rpg&&g.rpg.obj&&g.rpg.obj.wb);}catch(e){}['wb348','wbRes'].forEach(function(id){var el=document.getElementById(id);if(el&&!(isWb&&id==='wb348'&&false))el.remove();});}if(!g)lastG=null;}catch(e){}},400);})();
