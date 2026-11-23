@@ -88,5 +88,6 @@
   }catch(e){}return inp;};
  /* v3.85: the auto battle (F) on my frame runs through autoHuntInput, not botInput - both are steered */
  var hook=function(){if(!window.__hkAutoObj&&typeof window.botInput==='function'){window.__hkAutoObj=1;var bi=window.botInput;window.botInput=function(s,u,dt){return steerObj(u,bi(s,u,dt));};}
-  if(!window.__hkAutoObj2&&typeof window.autoHuntInput==='function'){window.__hkAutoObj2=1;var ah=window.autoHuntInput;window.autoHuntInput=function(u){var r=ah(u);return r?steerObj(u,r):r;};}};
+  /* autoHuntInput lives inside a code block (not global), so the auto battle is steered at localInput, the outermost input */
+  if(!window.__hkAutoObj2&&typeof window.localInput==='function'){window.__hkAutoObj2=1;var li=window.localInput;window.localInput=function(u){var r=li(u);try{if(r&&typeof P!=='undefined'&&P.autoHunt&&typeof G!=='undefined'&&G&&G.local&&u===G.local.unit)r=steerObj(u,r);}catch(e){}return r;};}};
  setInterval(function(){try{hook();}catch(e){}},500);})();
