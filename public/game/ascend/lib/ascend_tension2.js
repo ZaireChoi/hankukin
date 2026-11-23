@@ -80,11 +80,13 @@
 /* v3.84 (manager 23-5): the auto pilot played alone - at the enemy base by 44 s, 426 kills vs 11 for the next ally, 0 captures.
    Now in faction battles the auto pilot (my frame only) first takes the nearest point we do not hold, fights near it, and
    pulls back from the enemy base while we hold fewer than 2 points or before 2:00. Manual play is unchanged. */
-(function(){var hook=function(){if(window.__hkAutoObj||typeof window.botInput!=='function')return;window.__hkAutoObj=1;var bi=window.botInput;
- window.botInput=function(s,u,dt){var inp=bi(s,u,dt);try{var g=(typeof G!=='undefined'?G:undefined);if(!g||!g.local||u!==g.local.unit||g.over||u.dead)return inp;if(typeof arOn==='function'&&arOn())return inp;if(g.rpg&&g.rpg.obj&&/squad|kill|survive|hunt|field|rift/.test(g.rpg.obj.k||''))return inp;if(!g.pts||!g.pts.length||typeof BASES==='undefined')return inp;
+(function(){var steerObj=function(u,inp){try{var g=(typeof G!=='undefined'?G:undefined);if(!g||!g.local||u!==g.local.unit||g.over||u.dead)return inp;if(typeof arOn==='function'&&arOn())return inp;if(g.rpg&&g.rpg.obj&&/squad|kill|survive|hunt|field|rift/.test(g.rpg.obj.k||''))return inp;if(!g.pts||!g.pts.length||typeof BASES==='undefined')return inp;
    var T=u.team,EB=BASES[1-T],held=0,best=null,bd=1e12;for(var i=0;i<g.pts.length;i++){var p=g.pts[i];if(p.owner===T){held++;continue;}var d=(p.x-u.x)*(p.x-u.x)+(p.y-u.y)*(p.y-u.y);if(d<bd){bd=d;best=p;}}
    var dEB=Math.hypot(EB.x-u.x,EB.y-u.y),near=0;for(var j=0;j<g.units.length;j++){var e=g.units[j];if(e.dead||e.team===T||e.team===2)continue;if((e.x-u.x)*(e.x-u.x)+(e.y-u.y)*(e.y-u.y)<520*520){near++;if(near>2)break;}}
    var goal=null;if(dEB<1500&&(held<2||g.t<120))goal=best||BASES[T];else if(best&&near<2&&Math.sqrt(bd)>(typeof PR!=='undefined'?PR*.6:90))goal=best;
    if(goal&&u.layer===0){var dx=goal.x-u.x,dy=goal.y-u.y,L=Math.hypot(dx,dy)||1;inp.mx=dx/L;inp.my=dy/L;if(inp.steer!=null)inp.steer=Math.atan2(dy,dx);if(u.fly&&typeof arkFly==='function'&&L<600)arkFly(u,false);}
-  }catch(e){}return inp;};};
+  }catch(e){}return inp;};
+ /* v3.85: the auto battle (F) on my frame runs through autoHuntInput, not botInput - both are steered */
+ var hook=function(){if(!window.__hkAutoObj&&typeof window.botInput==='function'){window.__hkAutoObj=1;var bi=window.botInput;window.botInput=function(s,u,dt){return steerObj(u,bi(s,u,dt));};}
+  if(!window.__hkAutoObj2&&typeof window.autoHuntInput==='function'){window.__hkAutoObj2=1;var ah=window.autoHuntInput;window.autoHuntInput=function(u){var r=ah(u);return r?steerObj(u,r):r;};}};
  setInterval(function(){try{hook();}catch(e){}},500);})();
