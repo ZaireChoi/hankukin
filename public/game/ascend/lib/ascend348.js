@@ -297,7 +297,7 @@ whenR3(function(){var r=R3.r;
  var terrKey=X.terrKey=function(){if(!G||!MAP||MAP.space)return null;var id=MAP.id;if(id==='sq_ruin'||id==='sq_arena'||id==='sq_ice')return id;var q=G.rpg;
   if(q){var o=q.obj;if(o&&(o.k==='squad'||o.k==='duel'))return null;if(o&&o.k==='field')return FIELD[o.zone]||null;return EPI[q.epi]||null;}return id==='dune'?'s07':null;};
  var TC={},MCACHE={};
- var tload=function(f,srgb){if(TC[f])return TC[f];var t=new T.TextureLoader().load('bg/terrain/'+f+'.jpg');if(srgb)t.colorSpace=T.SRGBColorSpace;try{t.anisotropy=R3.r.capabilities.getMaxAnisotropy();}catch(e){}TC[f]=t;return t;};
+ var tload=function(f,srgb){if(TC[f])return TC[f];var t=new T.TextureLoader().load('bg/terrain/'+f+'.jpg?v=371');if(srgb)t.colorSpace=T.SRGBColorSpace;try{t.anisotropy=R3.r.capabilities.getMaxAnisotropy();}catch(e){}TC[f]=t;return t;};
  var terrApply=function(){var key=terrKey();if(!key||!R3.envG)return;var ground=null,ch=R3.envG.children;
   for(var i=0;i<ch.length;i++){var o=ch[i],g=o.geometry;if(o.isMesh&&g&&g.type==='PlaneGeometry'&&Math.abs(g.parameters.width-WW)<1&&Math.abs(g.parameters.height-WH)<1){ground=o;break;}}
   if(!ground)return;
@@ -348,7 +348,7 @@ whenR3(function(){var r=R3.r;
     if(key==='sq_ruin'){for(var q=0;q<sm.data.length;q++)if(sm.data[q]===S.GRASS)sm.data[q]=S.SAND;} // the ruined city is recoloured to dust in the game: its "grass" is dusty ground
     // WATER: the generator's colour map paints lake and river beds as sand, not blue. On the big maps the low half of a
     // sand basin (by the height map) is therefore water; the higher half stays a sandy shore. Dungeons stay dry.
-    if(!dungeon&&hi){var cv=document.createElement('canvas');cv.width=cv.height=256;var c2=cv.getContext('2d',{willReadFrequently:true});c2.drawImage(hi,0,0,256,256);var hd=c2.getImageData(0,0,256,256).data,n=0,sum=0,all=[];
+    if(!dungeon&&hi&&MAP.id!=='dune'){var cv=document.createElement('canvas');cv.width=cv.height=256;var c2=cv.getContext('2d',{willReadFrequently:true});c2.drawImage(hi,0,0,256,256);var hd=c2.getImageData(0,0,256,256).data,n=0,sum=0,all=[];
      for(var k=0;k<65536;k++){all.push(hd[k*4]);if(sm.data[k]===S.SAND){n++;sum+=hd[k*4];}}
      var frac=n/65536;all.sort(function(a,b){return a-b;});var med=all[32768],mean=n?sum/n:255;
      if(frac>.02&&frac<.6&&mean<med-4){for(var k2=0;k2<65536;k2++)if(sm.data[k2]===S.SAND&&hd[k2*4]<mean)sm.data[k2]=S.WATER_SHALLOW;
