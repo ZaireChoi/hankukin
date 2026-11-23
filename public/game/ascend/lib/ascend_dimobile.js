@@ -25,6 +25,7 @@
     '#dimSk .b{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#eaf3fc;font-weight:800;text-align:center;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;background:radial-gradient(circle at 40% 35%,rgba(40,60,96,.78),rgba(6,10,20,.78));border:2px solid rgba(207,224,242,.35);box-shadow:0 0 12px rgba(0,0,0,.5);overflow:hidden}' +
     '#dimSk .b small{font-size:10px;font-weight:700;opacity:.9;line-height:1.1}#dimSk .b span{font-size:15px;line-height:1}#dimSk .b i{position:absolute;inset:0;background:conic-gradient(rgba(0,0,0,.66) var(--p,0%),transparent 0);pointer-events:none}' +
     '#dimSk .b em{position:absolute;font-style:normal;font-size:15px;font-weight:900;color:#ffd166;text-shadow:0 0 4px #000}#dimSk .b.on{filter:brightness(1.5);transform:scale(.94)}' +
+    '#dimSk .b.hasIc>span,#dimSk .b.hasIc>small,#wrSk .b.hasIc>span,#wrSk .b.hasIc>small{display:none}#dimSk .b i,#wrSk .b i{z-index:1}#dimSk .b em{z-index:2}' +
     '#dimSk .atk{background:radial-gradient(circle at 40% 35%,rgba(120,40,60,.85),rgba(30,6,12,.85));border-color:rgba(255,154,170,.6)}' +
     'body.dim #touchUI #tA1,body.dim #touchUI #tA2,body.dim #touchUI #tUl,body.dim #touchUI #tAb,body.dim #touchUI #tMsl,body.dim #touchUI #tDash{display:none!important}' +
     'body.dim #skb2>div:nth-child(2)>*:nth-child(-n+5){display:none!important}body.dim #skb2{left:14px!important;transform:scale(var(--dimBar,.78))!important;transform-origin:0 100%!important}' + /* the desktop bar keeps items 1-6 and the orbs, moved to the left; attack/Q/E/R/T live in the thumb cluster */
@@ -54,6 +55,15 @@
       b.addEventListener('pointerdown', down, { passive: false }); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('pointerleave', up);
       b.addEventListener('touchstart', function (ev) { ev.preventDefault(); }, { passive: false });
     });
+  };
+  // skill pictures: the same pictures as the PC skill bar (#skb2 cells hold them as img.ski), so each frame's own skills show
+  var ICMAP = { atk: 'lmb', q: 'Q', e: 'E', r: 'R', t: 'T', c: 'C', dash: '-' };
+  var ICFB = { c: 'models/thumbs/u_starswarm.jpg', dash: 'models/thumbs/dr_evader_1.jpg' };   // pictures for the two buttons the bar has no cell for
+  var setIcons = function (host) {
+    if (!host) return; var bs = host.querySelectorAll('.b[data-k]');
+    for (var i = 0; i < bs.length; i++) { var b = bs[i], k = ICMAP[b.dataset.k]; if (!k) continue; var src = document.querySelector('#skb2 .sk2[data-k="' + k + '"] img.ski'); if ((!src || !src.src) && ICFB[b.dataset.k]) src = { src: new URL(ICFB[b.dataset.k], document.baseURI).href }; if (!src || !src.src) continue;
+      var im = b.querySelector('img.dimIc'); if (!im) { im = document.createElement('img'); im.className = 'dimIc'; im.alt = ''; im.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;opacity:.95;pointer-events:none;z-index:0'; b.insertBefore(im, b.firstChild); }
+      if (im.src !== src.src) im.src = src.src; b.classList.add('hasIc'); }
   };
   var setCd = function (k, left, total) { var b = root && root.querySelector('[data-k="' + k + '"]'); if (!b) return; var f = left > .05 ? Math.min(1, left / (total || 10)) : 0; b.style.setProperty('--p', Math.round(f * 100) + '%'); var em = b.querySelector('em'), tx = left > .05 ? String(Math.ceil(left)) : ''; if (em.textContent !== tx) em.textContent = tx; };
   // ---------------------------------------------------------------- left joystick (anywhere on the left side)
@@ -101,8 +111,9 @@
     try { hook(); var on = active(); build(); var wrOn = document.body.classList.contains('wr');
       document.body.classList.toggle('dim', on && !wrOn); root.style.display = (on && !wrOn) ? 'block' : 'none'; hint.style.display = (on && J.id === null) ? 'block' : 'none'; if (!on && joy) joy.style.display = 'none';
       if (on) { var tu = document.getElementById('touchUI'); if (tu && tu.classList.contains('hidden')) tu.classList.remove('hidden'); } /* FLY, MORPH, AUTO, menu buttons live there - it used to appear only after the first touch on the 3D view */
+      if (on && wrOn) setIcons(document.getElementById('wrSk')); /* 5v5 thumb cluster gets the pictures too */
       if (!on || wrOn) return; var s = Math.max(.6, Math.min(1, innerHeight / 560)); root.style.transform = 'scale(' + s + ')'; document.body.style.setProperty('--dimTop', Math.round(280 * s + 16) + 'px'); try { var bb = document.getElementById('skb2'); if (bb) { var bw = bb.scrollWidth || 640, room = innerWidth - 280 * s - 30; document.body.style.setProperty('--dimBar', String(Math.max(.5, Math.min(.85, room / Math.max(1, bw))))); } } catch (e) {} /* the item bar shrinks so it always ends before the thumb cluster */
-      var u = meU(); if (!u) return; setCd('q', u.cd1 || 0, 6); setCd('e', u.cd2 || 0, 4);
+      var u = meU(); if (!u) return; setCd('q', u.cd1 || 0, 6); setCd('e', u.cd2 || 0, 4); setIcons(root);
     } catch (e) { window.__dimErr = String(e).slice(0, 160); }
   };
   setInterval(tick, 250);
