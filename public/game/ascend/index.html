@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.69 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.70 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2327,7 +2327,7 @@ function showResult(w,rows,mySid,myTeam){if(!G)return;hide('#deploy');hide('#pau
  $('#rsBody').innerHTML=`<div class="rs-title ${win?'win':'lose'}">${win?t('win'):t('lose')}</div><div class="sub" style="letter-spacing:2px;margin-top:6px">${t('teamWin',tx(TEAMS[w].n),rank,all.length)}</div>
  <div class="tiles">${tile(me[3],'kills','',0)}${tile(me[4],'deaths','',1)}${tile(me[5],'assists','',2)}${tile(me[12]||0,'revives','',3)}${tile(me[9],'captures','',4)}${tile(me[6],'score','gold',5)}</div>
  <p>${t('reward',rw.merit,rw.base,rw.win?t('rewardWin')+' '+rw.bonus:t('rewardPlay')+' '+rw.bonus,rw.cb)}</p>${promo}
- <div class="xp"><i style="width:${clamp(P.merit/need*100,0,100).toFixed(1)}%"></i></div><p class="small"><span class="gold">${rankName(P.rank)}</span> · ${t('nextRank',rankName(Math.min(MAXRANK,P.rank+1)),need-P.merit)}</p>
+ <div class="xp"><i style="width:${clamp(P.merit/need*100,0,100).toFixed(1)}%"></i></div><p class="small"><span class="gold">${rankName(P.rank)}</span> · ${t('nextRank',rankName(Math.min(MAXRANK,P.rank+1)),Math.max(0,need-P.merit))}</p>
  <h3 style="margin-top:14px">${t('top10')}</h3><table><tr><th>#</th><th>${t('thName')}</th><th>${t('thTeam')}</th><th>${t('thRank')}</th><th>${t('thKDA')}</th><th>${t('thScore')}</th></tr>${all.slice(0,10).map((r,i)=>`<tr class="${r[0]===mySid?'me':''}"><td>${i+1}</td><td>${r[1]}${r[8]?' <span class="tag">'+t('playerTag')+'</span>':''}</td><td style="color:${r[2]===myTeam?ALLY:ENEMY}">${tx(TEAMS[r[2]].n)}</td><td>${rankName(r[7])}</td><td>${r[3]}/${r[4]}/${r[5]}</td><td>${r[6]}</td></tr>`).join('')}</table>`;
  $('#rsAgain').style.display=G.client?'none':'';show('#result');};
 
@@ -2555,7 +2555,7 @@ function drawHUD(info,now){const c=ctx;c.setTransform(DPR,0,0,DPR,0,0);const lt=
  let ly=py0+ph+16;c.font=fnt(12,600);if(sqn){c.fillStyle=SQUAD;c.fillText('◆ '+t('squadTag')+' '+sqn+' · '+(G.local.sqMode==='follow'?t('sqFollow'):t('sqFree'))+(touchMode?'':' [G]'),14,ly);ly+=17;}
  if(NET.mode==='host'){c.fillStyle='#a8d4ff';c.fillText(t('roomCode',NET.code,NET.conns.size),14,ly);ly+=17;}if(G.client){c.fillStyle='#a8d4ff';c.fillText(t('onlineIn',NET.code),14,ly);ly+=17;}
  // ---- radio log ----
- {const log=P.commsHide?[]:(G.comms||[]).filter(m=>G.t-m.t<8).slice(mob?-1:-3);if(log.length){ly+=(mob&&touchMode?44:8);const mw=mob?VW*.62:Math.min(400,VW*.34);c.font=fnt(10.5,700,1);c.fillStyle='rgba(140,170,220,.75)';c.fillText('◢ '+t('comms'),14,ly);ly+=6;
+ {const log=P.commsHide?[]:(G.comms||[]).filter(m=>G.t-m.t<8).slice(mob?-1:-3);if(log.length){ly+=(mob&&touchMode?44:8);const mw=mob?VW*.62:Math.min(400,VW*.34);c.font=fnt(10.5,700,1);window.__commsY=ly;ly+=14;/* v3.70: the radio title is the #rdTog button itself, placed exactly here (they overlapped) */
    for(const m of log){const a=clamp((10-(G.t-m.t))/1.5,0,1)*clamp((G.t-m.t)/.2,.3,1);c.globalAlpha=a;const col=CHC[m.ch]||'#fff';c.font=fnt(12.5,700);const who=m.who+' ';const ww=c.measureText(who).width;c.font=fnt(12.5,m.ch==='hq'?700:500);const body=fitText(c,m.txt,mw-ww-14);const tw2=c.measureText(body).width;
     const g=c.createLinearGradient(10,0,10+mw,0);g.addColorStop(0,m.ch==='hq'?'rgba(70,48,6,.8)':'rgba(6,11,22,.72)');g.addColorStop(1,'rgba(6,11,22,0)');c.fillStyle=g;c.fillRect(10,ly+3,Math.min(mw,ww+tw2+26),18);c.fillStyle=col;c.fillRect(10,ly+3,2,18);
     c.font=fnt(12.5,700);c.fillText(who,17,ly+16.5);c.font=fnt(12.5,m.ch==='hq'?700:500);c.fillStyle=m.ch==='hq'?'#fff':'#dbe6fa';c.fillText(body,17+ww,ly+16.5);ly+=20;}c.globalAlpha=1;}}
@@ -5838,7 +5838,7 @@ Object.assign(STR.ko,{sub:'기체에 오르는 순간, 전장은 당신의 것. 
 try{applyLang();}catch(e){}
 setTimeout(()=>{try{const t=document.getElementById('mTree');if(t){t.style.display='none';}const ch=document.getElementById('mChar');if(ch&&!document.getElementById('mHangar')){const b=ch.cloneNode(true);b.id='mHangar';b.removeAttribute('data-t');const lab=b.querySelector('span:not(.ic)')||b;b.innerHTML=b.innerHTML.replace(/내 캐릭터|My Character|My character/,L('정비소','Hangar'));b.onclick=()=>{ensureName();hide('#menu');openRpg();setTimeout(()=>{try{window.__A.tab='hangar';window.__A.render();}catch(e){}},300);};ch.after(b);}}catch(e){}},1600);
 // ---- pilot level is the only progression; rank becomes a title derived from it ----
-window.__pilotTitle=r=>{try{const lv=plv();if(r===P.rank)return L('파일럿 Lv ','Pilot Lv ')+lv;}catch(e){}return L('파일럿 Lv ','Pilot Lv ')+Math.max(1,r*3+1);};
+window.__pilotTitle=r=>{const R0=RANKS[LANG]||RANKS.ko;return R0[clamp(r,0,MAXRANK)]||RANKS.ko[clamp(r,0,MAXRANK)];};/* v3.70 (20-7): ranks are shown by their own names again - mixing them with pilot levels gave 'Lv 16 -> Lv 28' */
 {const _stR=step;let t=0;step=function(dt){_stR(dt);try{t-=dt;if(t>0)return;t=3;const lv=plv();const rk=clamp(Math.floor(lv/3),0,MAXRANK);if(P.rank!==rk){P.rank=rk;saveP();}}catch(e){}};}
 try{const lv=plv();P.rank=clamp(Math.floor(lv/3),0,MAXRANK);}catch(e){}
 // ---- quick battle: you always deploy in your ARK frame (gear, drones and skin apply) ----
@@ -6940,7 +6940,7 @@ html body #perkPick.ph button{width:96px!important;font-size:10.5px!important}`;
 window.__noHQBand=true;
 {const st=document.createElement('style');st.textContent='body #cine::before,body #cine::after{display:none!important}body #cine .c1,body #cine .c2{font-size:clamp(16px,2.2vw,26px)!important;letter-spacing:.1em!important;opacity:.85}body #cine .c3{font-size:11px!important;opacity:.7}body #cine{top:12%!important;gap:4px!important}#rdTog{position:fixed;z-index:31;left:8px;padding:2px 8px;border-radius:6px;border:1px solid rgba(140,170,220,.35);background:rgba(6,11,22,.45);color:#9fb4d8;font:700 10.5px var(--fd,sans-serif);cursor:pointer}';document.head.appendChild(st);}
 try{STR.ko.battleStart='전투 개시! 기체로 거점을 점령하세요';STR.en.battleStart='Battle start! Take the points with your frame';}catch(e){}
-{let b=null;setInterval(()=>{try{const on=!!(G&&G.local&&!G.over);if(!b){b=document.createElement('button');b.id='rdTog';b.onclick=()=>{P.commsHide=!P.commsHide;saveP();};document.body.appendChild(b);}b.style.display=on?'':'none';if(!on)return;const mob=(VW<700||VH<520);b.style.top=(mob?92:56)+'px';const t=(P.commsHide?L('무전 ▸','Radio ▸'):L('무전 ▾','Radio ▾'));if(b.textContent!==t)b.textContent=t;}catch(e){}},400);}
+{let b=null;setInterval(()=>{try{const on=!!(G&&G.local&&!G.over);if(!b){b=document.createElement('button');b.id='rdTog';b.onclick=()=>{P.commsHide=!P.commsHide;saveP();};document.body.appendChild(b);}b.style.display=on?'':'none';if(!on)return;const mob=(VW<700||VH<520);b.style.top=(window.__commsY?Math.max(40,window.__commsY-11):(mob?92:56))+'px';const t=(P.commsHide?L('무전 ▸','Radio ▸'):L('무전 ▾','Radio ▾'));if(b.textContent!==t)b.textContent=t;}catch(e){}},400);}
 
 
 // ================= v3.10 : every frame's main weapon handles differently; Origin gets its own kit =================
@@ -8287,7 +8287,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v369';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v370';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8696,7 +8696,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_flight.js?v=361"></script>
 <script src="lib/ascend_bgm.js?v=357"></script>
 <script src="lib/ascend_wr.js?v=361"></script>
-<script src="lib/ascend_mem.js?v=360"></script>
+<script src="lib/ascend_mem.js?v=370"></script>
 <script src="lib/ascend_tension.js?v=360"></script>
 <script src="lib/ascend_palm.js?v=360"></script>
 <script src="lib/ascend_missile.js?v=366"></script>
@@ -8709,8 +8709,9 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_ready.js?v=367"></script>
 <script src="lib/ascend_auto.js?v=364"></script>
 <script src="lib/ascend_combat2.js?v=369"></script>
-<script src="lib/ascend_tension2.js?v=369"></script>
+<script src="lib/ascend_tension2.js?v=370"></script>
 <script src="lib/ascend_arts.js?v=369"></script>
-<script src="lib/ascend_floor2.js?v=366"></script>
+<script src="lib/ascend_lean.js?v=370"></script>
+<script src="lib/ascend_floor2.js?v=370"></script>
 </body>
 </html>
