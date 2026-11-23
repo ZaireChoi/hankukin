@@ -756,18 +756,54 @@ const Snd={ctx:null,master:null,fx:null,rv:null,nbuf:null,on:store.get('sfx3',tr
 };
 const NOTE={C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2};
 function nf(n){const m=n.match(/^([A-G])(#?)(\d)$/);return 440*Math.pow(2,(NOTE[m[1]]+(m[2]?1:0)+(+m[3]-4)*12)/12);}
+const SONG={bpm:148,
+ // 8분음표 단위, 한 마디 8칸. A(8마디) B(8마디) A'(8마디) = 24마디
+ MEL:[
+  'G4','E4','G4','C5',null,'E5','D5','C5',  'A4',null,'C5','A4','G4',null,'E4',null,
+  'F4','A4','C5','F5',null,'E5','D5','C5',  'D5',null,'B4','G4',null,null,'G4','A4',
+  'G4','E4','G4','C5',null,'E5','D5','C5',  'A4',null,'C5','E5','D5',null,'C5',null,
+  'F5',null,'E5','D5','D5',null,'C5','B4',  'C5',null,'G4',null,'C5',null,null,null,
+  'A5',null,'A5','G5','F5',null,'C5',null,  'B5',null,'B5','A5','G5',null,'D5',null,
+  'G5','E5','G5','E5','B4',null,'E5',null,  'C6',null,'B5','A5','E5',null,null,null,
+  'A5','G5','F5','E5','F5',null,'A5',null,  'B5','A5','G5','F5','G5',null,'D5',null,
+  'G#5',null,'B5',null,'E5',null,'G#5',null,'G5',null,'F5',null,'D5',null,'B4',null,
+  'G4','E4','G4','C5',null,'E5','D5','C5',  'A4',null,'C5','A4','G4',null,'E4',null,
+  'F4','A4','C5','F5',null,'E5','D5','C5',  'D5',null,'B4','G4',null,null,'G4','A4',
+  'G4','E4','G4','C5',null,'E5','D5','C5',  'A4',null,'C5','E5','D5',null,'C5',null,
+  'F5',null,'E5','D5','D5',null,'C5','B4',  'C5','E5','G5','C6',null,null,null,null],
+ // 마디별 화음(반마디 단위 2개)
+ CH:[['C','C'],['Am','Am'],['F','F'],['G','G'],['C','C'],['Am','Am'],['F','G'],['C','C'],
+     ['F','F'],['G','G'],['Em','Em'],['Am','Am'],['F','F'],['G','G'],['E','E'],['G','G'],
+     ['C','C'],['Am','Am'],['F','F'],['G','G'],['C','C'],['Am','Am'],['F','G'],['C','C']],
+ CHD:{C:['C','E','G'],Am:['A','C','E'],F:['F','A','C'],G:['G','B','D'],Em:['E','G','B'],E:['E','G#','B']}
+};
+function songStep(c,out,nb,i,t,dur,fever){
+ const N={C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2};
+ const fq=n=>{const m=n.match(/^([A-G])(#?)(\d)$/);return 440*Math.pow(2,(N[m[1]]+(m[2]?1:0)+(+m[3]-4)*12)/12);};
+ const env=(g,v,a,len)=>{g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+len);};
+ const osc=(type,f,v,len,dst,a)=>{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);env(g,v,a||0.005,len);o.connect(g);g.connect(dst||out);o.start(t);o.stop(t+len+0.05);return o;};
+ const bar=Math.floor(i/8)%24,s=i%8,ch=SONG.CHD[SONG.CH[bar][s<4?0:1]];
+ const m=SONG.MEL[i%SONG.MEL.length];
+ // 실로폰 같은 멜로디: 기본음 + 4배음(맑은 울림)
+ if(m){const f=fq(m)*(fever?2:1);osc('sine',f,0.16,0.42);osc('sine',f*4,0.035,0.09);osc('triangle',f*2,0.03,0.18);
+   if(fever)osc('square',f/2,0.018,dur*0.8);}
+ // 통통 튀는 베이스: 뿌리음 - 옥타브 - 5도 - 옥타브
+ const root=ch[0],r3=fq(root+'3')/(['A','B','G#'].includes(root)?2:1);
+ const bl=[r3,null,r3*2,null,r3*1.5,null,r3*2,null][s];
+ if(bl){const o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;o.type='triangle';o.frequency.setValueAtTime(bl,t);env(g,0.22,0.004,0.26);o.connect(lp);lp.connect(g);g.connect(out);o.start(t);o.stop(t+0.3);}
+ // 뒷박 화음 콕콕
+ if(s===2||s===6){for(const n of ch)osc('sine',fq(n+'5'),0.03,0.14);}
+ // 북: 쿵(1,3박) 짝(2,4박) 치치(매 칸)
+ if(s===0||s===4){const o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(48,t+0.12);env(g,0.5,0.002,0.16);o.connect(g);g.connect(out);o.start(t);o.stop(t+0.2);}
+ if(nb){
+  if(s===2||s===6){const b=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();b.buffer=nb;f.type='bandpass';f.frequency.value=1700;f.Q.value=0.8;env(g,0.22,0.002,0.11);b.connect(f);f.connect(g);g.connect(out);b.start(t,0.1);b.stop(t+0.14);}
+  {const b=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();b.buffer=nb;f.type='highpass';f.frequency.value=7500;env(g,s%2?0.035:0.06,0.001,0.04);b.connect(f);f.connect(g);g.connect(out);b.start(t,0.3);b.stop(t+0.06);}
+ }
+}
 const Music={timer:null,step:0,next:0,fever:false,gain:null,
-  MEL:['C5','E5','G5','E5','F5','A5','G5',null,'E5','G5','C6','G5','A5','G5','E5',null,'D5','F5','A5','F5','G5','B4','D5',null,'C5','E5','D5','B4','C5',null,'G4',null],
-  BAS:['C3',null,'G3',null,'C3',null,'G3',null,'A2',null,'E3',null,'A2',null,'E3',null,'G2',null,'D3',null,'G2',null,'D3',null,'C3',null,'G3',null,'C3',null,'G2',null],
-  start(){if(!Snd.ctx||!Snd.bgm||this.timer)return;if(!this.gain){this.gain=Snd.ctx.createGain();this.gain.gain.value=0.5;this.gain.connect(Snd.master);}this.step=0;this.next=Snd.ctx.currentTime+0.08;this.timer=setInterval(()=>this.sched(),25);},
+  start(){if(!Snd.ctx||!Snd.bgm||this.timer)return;if(!this.gain){this.gain=Snd.ctx.createGain();this.gain.gain.value=0.42;this.gain.connect(Snd.master);}this.step=0;this.next=Snd.ctx.currentTime+0.08;this.timer=setInterval(()=>this.sched(),25);},
   stop(){clearInterval(this.timer);this.timer=null;},
-  sched(){const c=Snd.ctx;if(!c||!Snd.bgm){this.stop();return;}const dur=60/(this.fever?168:126)/2;if(this.next<c.currentTime-0.2)this.next=c.currentTime+0.05;while(this.next<c.currentTime+0.12){this.play(this.step,this.next,dur);this.next+=dur;this.step=(this.step+1)%32;}},
-  play(i,t,dur){const c=Snd.ctx,m=this.MEL[i],b=this.BAS[i];
-    const note=(type,f,len,vol)=>{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+len);o.connect(g);g.connect(this.gain);o.start(t);o.stop(t+len+0.03);};
-    if(m)note('square',nf(m)*(this.fever?2:1),dur*0.85,0.05);
-    if(b)note('triangle',nf(b),dur*1.8,0.11);
-    if(i%2===0&&Snd.nbuf){const s=c.createBufferSource();s.buffer=Snd.nbuf;const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=c.createGain();g.gain.setValueAtTime(i%8===0?0.05:0.025,t);g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);s.connect(f);f.connect(g);g.connect(this.gain);s.start(t,Math.random()*0.5);s.stop(t+0.06);}
-  },
+  sched(){const c=Snd.ctx;if(!c||!Snd.bgm){this.stop();return;}const dur=60/(this.fever?170:SONG.bpm)/2;if(this.next<c.currentTime-0.2)this.next=c.currentTime+0.05;while(this.next<c.currentTime+0.12){try{songStep(c,this.gain,Snd.nbuf,this.step,this.next,dur,this.fever);}catch(e){}this.next+=dur;this.step=(this.step+1)%SONG.MEL.length;}},
 };
 /* =====================  그리기  ===================== */
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
