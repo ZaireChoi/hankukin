@@ -1,4 +1,6 @@
-/* ASCEND v3.80 — no circles on the ground, no swirl emblems (user, repeated: "바닥에 동그라미와 뜬금없는 태극 문장들은 같이 없애줘")
+/* ASCEND v3.84: also big dark round ground stains (contact shadows under units stay), rings raised up to 150 (warp holes at 110),
+   and big camera-facing ring pictures near the ground (the warp holes' black-hole sprites).
+   ASCEND v3.80 — no circles on the ground, no swirl emblems (user, repeated: "바닥에 동그라미와 뜬금없는 태극 문장들은 같이 없애줘")
    Every flat ring / disc / torus and every flat round-glow plate that some code tries to put on the ground is refused at the
    moment it is added to the 3D world (THREE.Object3D.add), from any module — explosion and hit rings, shock rings, stacked
    yellow rings, white swirl rings, capture-point / base / spawn / under-frame circles, heal (green) and EMP (cyan) rings,
@@ -10,7 +12,7 @@
   'use strict';
   var T = null, N = { refused: 0, swept: 0, kinds: {} };
   var ROUND = /^(Ring|Circle|Torus)Geometry$/;
-  var lumCache = new WeakMap();
+  var lumCache = new WeakMap(), ringCache = new WeakMap();
   var texLum = function (tex) {      // how bright a picture is (0..1); dark soft blobs are contact shadows and stay
     if (!tex || !tex.image) return 1; var v = lumCache.get(tex); if (v != null) return v; v = 1;
     try { var im = tex.image, c = document.createElement('canvas'); c.width = c.height = 16; var g = c.getContext('2d'); g.drawImage(im, 0, 0, 16, 16); var d = g.getImageData(0, 0, 16, 16).data, mx = 0;
@@ -26,6 +28,12 @@
       k = cn < .06 && ctr > .12; } catch (e) { k = false; }
     lumCache.set(tex.image, k); return k;
   };
+  var ringPic = function (tex) {    // dark middle, bright ring around it (warp holes drawn as camera-facing pictures)
+    if (!tex || !tex.image) return false; var key = 'r' + (tex.image.width || 0); var c0 = ringCache.get(tex); if (c0 != null) return c0; var k = false;
+    try { var im = tex.image, c = document.createElement('canvas'); c.width = c.height = 16; var g = c.getContext('2d'); g.drawImage(im, 0, 0, 16, 16); var d = g.getImageData(0, 0, 16, 16).data;
+      var L = function (x, y) { var i = (y * 16 + x) * 4; return d[i + 3] / 255 * (d[i] + d[i + 1] + d[i + 2]) / 765; }; var mid = L(8, 8), ring = Math.max(L(8, 3), L(3, 8), L(13, 8), L(8, 13)); k = mid < .12 && ring > .3; } catch (e) { k = false; }
+    ringCache.set(tex, k); return k;
+  };
   var isRed = function (m) { var c = m && m.color; if (!c) return false; return c.r > .75 && c.g < .45 && c.b < .45; };
   var flatLocal = function (o) {     // lies flat: its plane faces up (rotation.x = ±90°, or the geometry was rotated flat)
     var rx = Math.abs(o.rotation.x); if (Math.abs(rx - Math.PI / 2) < .35 && Math.abs(o.rotation.z) < 7 && Math.abs(Math.abs(o.rotation.y) % Math.PI) < .35) return true;
@@ -38,15 +46,16 @@
     var n = new T.Vector3(0, 0, 1).applyQuaternion(q); var g = o.geometry, flatGeo = false;
     if (g && g.boundingBox == null) try { g.computeBoundingBox(); } catch (e) {}
     var b = g && g.boundingBox; if (b && (b.max.y - b.min.y) < Math.max(b.max.x - b.min.x, b.max.z - b.min.z) * .08) { n.set(0, 1, 0).applyQuaternion(q); flatGeo = true; }
-    return Math.abs(n.y) > .8 && p.y < 90;
+    return Math.abs(n.y) > .8 && p.y < 150;
   };
   var banned = function (o, world) {
+    if (o && o.isSprite && !o.userData.groundOK) { var sm = o.material; var sc = Math.max(o.scale.x, o.scale.y); if (sm && sm.map && sc > 300 && o.position.y < 220 && ringPic(sm.map)) return 'Sprite-ring #' + (sm.color ? sm.color.getHexString() : ''); return null; }
     if (!o || !o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || o.userData.groundOK) return null;
     var g = o.geometry, gt = g && g.type, m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m) return null;
     var round = ROUND.test(gt || ''), plate = !round && gt === 'PlaneGeometry' && m.map && roundPic(m.map);
     if (!round && !plate) return null;
     if (isRed(m)) return null;                                   // attack warnings stay
-    if (plate && texLum(m.map) * Math.max(m.color.r, m.color.g, m.color.b) < .22 && m.blending !== 2) return null;   // contact shadow
+    if (plate && texLum(m.map) * Math.max(m.color.r, m.color.g, m.color.b) < .22 && m.blending !== 2) { var pw = (g.parameters && Math.max(g.parameters.width || 0, g.parameters.height || 0) || 1) * Math.max(Math.abs(o.scale.x), Math.abs(o.scale.y), Math.abs(o.scale.z)); if (pw < 95) return null; }   // small dark blob = contact shadow under a unit; big ones are ground stains (v3.84)
     if (gt === 'RingGeometry' || gt === 'CircleGeometry') { var pr = g.parameters || {}; if ((pr.outerRadius || pr.radius || 0) > 4000) return null; } // sky / horizon pieces
     if (!(world ? flatWorld(o) : flatLocal(o))) return null;
     return (gt || 'plate') + (m.map ? '+pic' : '') + ' #' + (m.color ? m.color.getHexString() : '');
@@ -72,6 +81,9 @@
     R3.scene.traverse(function (o) { var k = banned(o, true); if (k) { rm.push(o); note(k); } });
     for (var i = 0; i < rm.length; i++) { if (rm[i].parent) rm[i].parent.remove(rm[i]); N.swept++; }
   };
+  // sparks that fly out at one fixed speed form a perfect expanding ring of dots; every spark now gets its own speed (scatter)
+  var partHook = function () { if (window.__hkNgPart || typeof part !== 'function') return; window.__hkNgPart = 1; var p0 = part; part = function (x, y, vx, vy) { if (vx || vy) { var k = .42 + Math.random() * .66; arguments[2] = vx * k; arguments[3] = vy * k; } return p0.apply(this, arguments); }; };
+  setInterval(function () { try { partHook(); } catch (e) {} }, 500);
   var iv = setInterval(function () { try { install(); } catch (e) {} }, 50);
   setInterval(function () { try { if (install()) { clearInterval(iv); sweep(); } } catch (e) { N.err = String(e).slice(0, 160); } }, 500);
   window.__noGround = { stat: function () { return { refused: N.refused, swept: N.swept, kinds: N.kinds, err: N.err || null }; }, sweep: sweep };

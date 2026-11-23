@@ -42,7 +42,7 @@ var open=X.wbOpen=function(){guard('wbOpen',function(){var s=st();if(!s)return;v
  ov.querySelector('#wbSq').onclick=function(){ov.remove();try{hide('#menu');}catch(e){}try{window.squadOpen();}catch(e){}};
  ov.querySelector('#wbGo').onclick=function(){if(!can||!window.__wbStart)return;s.n++;save();ov.remove();try{hide('#menu');}catch(e){}try{window.__wbStart(c);}catch(e){s.n--;save();(X.err=X.err||[]).push('wbStart: '+String(e).slice(0,160));}};});};
 window.__wbHud=function(G0){try{var b=G0.sqBoss,p=b?Math.max(0,b.hp)/b.mhp:1,t=Math.max(0,SEC-Math.floor(G0.sqT||0));return L('주간 보스 ','Weekly boss ')+'<span style="color:#ff9b9b">'+Math.ceil(p*100)+'%</span> · <span style="color:'+(t<=15?'#ffb36b':'#cfe0f2')+'">'+t+L('초','s')+'</span> · '+gradeOf(1-p);}catch(e){return '';}};
-window.__wbFinish=function(pct,sec){try{var gl='-';TIER.forEach(function(t){if(pct>=t.p)gl=t.g;});var nx=TIER.filter(function(t){return pct<t.p;})[0];window.__wbLast={g:gl,at:Date.now(),msg:nx?L(nx.g+'('+Math.round(nx.p*100)+'%)까지 '+Math.max(1,Math.round((nx.p-pct)*100))+'%',Math.max(1,Math.round((nx.p-pct)*100))+'% to '+nx.g):L('최고 등급!','Top grade!')};}catch(e){}guard('wbFinish',function(){var r=R(),s=st();if(!r||!s)return;var log=[];
+window.__wbFinish=function(pct,sec){try{if(window.G&&G.t)sec=Math.round(G.t);/* v3.84 (23-6): the same battle clock as the result card */}catch(e){}try{var gl='-';TIER.forEach(function(t){if(pct>=t.p)gl=t.g;});var nx=TIER.filter(function(t){return pct<t.p;})[0];window.__wbLast={g:gl,at:Date.now(),msg:nx?L(nx.g+'('+Math.round(nx.p*100)+'%)까지 '+Math.max(1,Math.round((nx.p-pct)*100))+'%',Math.max(1,Math.round((nx.p-pct)*100))+'% to '+nx.g):L('최고 등급!','Top grade!')};}catch(e){}guard('wbFinish',function(){var r=R(),s=st();if(!r||!s)return;var log=[];
  if(pct<0){s.n=Math.max(0,s.n-1);pct=0;log.push(L('보스를 불러오지 못해 도전 횟수를 돌려드렸습니다.','The boss failed to load; the attempt was returned.'));}
  s.best=Math.max(s.best,pct);TIER.forEach(function(t,i){if(pct>=t.p&&s.got.indexOf(i)<0){s.got.push(i);t.f(r);log.push(t.g+' · '+t.t);}});
  var part=300+cfg().stage*20;r.cred=(r.cred||0)+part;save();
@@ -97,3 +97,12 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
 
 /* v3.83 (manager 22-8): when any battle starts, the weekly boss window / result card are closed (they stayed on top of the 5v5) */
 (function(){var lastG=null;setInterval(function(){try{var g=window.G||null;if(g&&g!==lastG&&g.local){lastG=g;var isWb=false;try{isWb=!!(g.rpg&&g.rpg.obj&&g.rpg.obj.wb);}catch(e){}['wb348','wbRes'].forEach(function(id){var el=document.getElementById(id);if(el&&!(isWb&&id==='wb348'&&false))el.remove();});}if(!g)lastG=null;}catch(e){}},400);})();
+
+/* v3.84 (23-6): the damage pace above was bypassed (a first try still reached 100 % in 31 s): some damage paths change the
+   boss's health directly. Now the weekly boss's health itself cannot drop faster than the pace, whatever lowers it. */
+(function(){var rate=function(){try{var r=window.__A&&window.__A.R&&window.__A.R();var n=(r&&r.wb&&r.wb.n)||1;return n<=1?.0045:n===2?.007:.012;}catch(e){return .0045;}};
+ setInterval(function(){try{var g=window.G;if(!g||g.over||!g.rpg||!g.rpg.obj||!g.rpg.obj.wb)return;for(var i=0;i<g.units.length;i++){var b=g.units[i];if(!b.boss||b._wbPace||b.dead)continue;b._wbPace=1;var hp=b.hp,mh=b.mhp||b.hp,t0=g.t;
+   Object.defineProperty(b,'hp',{configurable:true,enumerable:true,get:function(){return hp;},set:function(v){try{var floor=mh*(1-Math.min(1,rate()*(window.G.t-t0+2)));if(v<floor)v=floor;}catch(e){}hp=v;}});}}catch(e){}},300);})();
+
+/* v3.84 (23-8): any battle that is not the weekly boss (5v5 included, whatever path it was opened from) closes the weekly boss window */
+(function(){setInterval(function(){try{var g=window.G;if(!g||g.over||!g.local||!g.local.unit)return;var wb=!!(g.rpg&&g.rpg.obj&&g.rpg.obj.wb);if(wb)return;['wb348','wbRes'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});}catch(e){}},400);})();
