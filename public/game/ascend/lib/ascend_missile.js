@@ -19,8 +19,8 @@
   // ------------------------------------------------------------------ kinds (sizes in world units)
   var KIND = {
     micro: { len: 17, flame: 10, fw: 4.2, ex: 60, puff: 7, puffL: .5, puffDt: .022, ring: 0 },   // small: 20 of them fit the two shoulder pods
-    heavy: { len: 46, flame: 30, fw: 10, ex: 150, puff: 16, puffL: .7, puffDt: .03, ring: 1 },
-    rocket: { len: 34, flame: 22, fw: 7, ex: 100, puff: 11, puffL: .5, puffDt: .03, ring: 1 }
+    heavy: { len: 46, flame: 30, fw: 10, ex: 150, puff: 16, puffL: .7, puffDt: .03, ring: 0 },
+    rocket: { len: 34, flame: 22, fw: 7, ex: 100, puff: 11, puffL: .5, puffDt: .03, ring: 0 }
   };
   // ------------------------------------------------------------------ WARHEADS (the body stays black/grey/blue; the warhead shows in the nose light, the flame and the blast)
   //   he    red-orange : full damage, fire blast                       emp   silver : stuns machines 1.8 s (organics 0.5 s), 40 % damage
@@ -35,9 +35,9 @@
   };
   var PROF = {
     vertical: { climb: .42, v0: 110, vClimb: 360, vmax: 1100, vEnd: 1380, endR: 460, acc: 1700, turn: 3.0, turnUp: 9, wob: .5, wf: 6.5, life: 4.5 },
-    direct: { v0r: .28, accT: .5, vmax: 900, life: 4, rings: 1 },
-    rocket: { v0r: .3, accT: .45, rings: 1 },
-    aa: { v0r: .35, accT: .35, rings: 1 },
+    direct: { v0r: .28, accT: .5, vmax: 900, life: 4, rings: 0 },   /* v3.92: seen from above the launch pressure rings read as small white circles on the ground - off */
+    rocket: { v0r: .3, accT: .45, rings: 0 },
+    aa: { v0r: .35, accT: .35, rings: 0 },
     bomb: { v0r: .3, accT: .3, rings: 0 },
     intercept: { v0r: .45, accT: .2, rings: 0 }
   };
@@ -235,7 +235,7 @@
   var mkShield = function () {
     var mat = new T.ShaderMaterial({ transparent: true, depthWrite: false, blending: T.AdditiveBlending, side: T.FrontSide,
       vertexShader: 'varying vec3 vN;varying vec3 vV;varying vec3 vC;void main(){mat4 im=instanceMatrix;vec4 mv=modelViewMatrix*im*vec4(position,1.0);vN=normalize(normalMatrix*mat3(im)*normal);vV=normalize(-mv.xyz);vC=instanceColor;gl_Position=projectionMatrix*mv;}',
-      fragmentShader: 'varying vec3 vN;varying vec3 vV;varying vec3 vC;void main(){float f=pow(1.0-abs(dot(normalize(vN),vV)),2.2);gl_FragColor=vec4(vC*(f*1.6+.08),1.0);}' });
+      fragmentShader: 'varying vec3 vN;varying vec3 vV;varying vec3 vC;void main(){float f=pow(1.0-abs(dot(normalize(vN),vV)),2.2);gl_FragColor=vec4(vC*(f*1.2),1.0);}' });
     SHM = new T.InstancedMesh(new T.IcosahedronGeometry(1, 3), mat, 16); SHM.instanceColor = new T.InstancedBufferAttribute(new Float32Array(48), 3); SHM.count = 0; SHM.frustumCulled = false; SHM.userData.keep = 1; SHM.userData.core = 1;
   };
   var dSkill = function (u) {
@@ -417,8 +417,8 @@
     // shield bubbles
     var ns = 0; if (SHL.length) { if (!SHM) mkShield(); if (SHM.parent !== R.scene) R.scene.add(SHM);
       for (var si = SHL.length - 1; si >= 0; si--) { var S = SHL[si], u2 = S.u, tn = G.t || 0; if (!u2 || u2.dead || tn > S.until || ns >= 16) { SHL.splice(si, 1); continue; }
-        var rr2 = (u2.r || 20) * 1.5 + 26, k0 = Math.min(1, (tn - S.t0) / .12), k1 = Math.min(1, (S.until - tn) / .2), fl2 = S.hit && tn - S.hit < .12 ? 1.6 : 1;
-        V.set(u2.x, aimH(u2) * .55, u2.y); Q.identity(); SC.setScalar(rr2 * (.6 + .4 * k0)); M4.compose(V, Q, SC); SHM.setMatrixAt(ns, M4); var cc2 = .32 * Math.min(k0, k1) * fl2; SHM.instanceColor.setXYZ(ns, cc2 * .45, cc2 * .8, cc2); ns++; } }
+        var rr2 = (u2.r || 20) * 1.15 + 14, /* v3.92: smaller, fainter - from above it read as a big white circle */ k0 = Math.min(1, (tn - S.t0) / .12), k1 = Math.min(1, (S.until - tn) / .2), fl2 = S.hit && tn - S.hit < .12 ? 1.6 : 1;
+        V.set(u2.x, aimH(u2) * .55, u2.y); Q.identity(); SC.setScalar(rr2 * (.6 + .4 * k0)); M4.compose(V, Q, SC); SHM.setMatrixAt(ns, M4); var cc2 = .16 * Math.min(k0, k1) * fl2; SHM.instanceColor.setXYZ(ns, cc2 * .45, cc2 * .8, cc2); ns++; } }
     if (SHM) { SHM.count = ns; SHM.instanceMatrix.needsUpdate = true; SHM.instanceColor.needsUpdate = true; SHM.visible = ns > 0; }
     BODY.count = nb; FLAME.count = nf; RING.count = nr;
     BODY.instanceMatrix.needsUpdate = true; FLAME.instanceMatrix.needsUpdate = true; FLAME.instanceColor.needsUpdate = true; RING.instanceMatrix.needsUpdate = true; RING.instanceColor.needsUpdate = true;

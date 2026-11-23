@@ -112,3 +112,6 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
 
 /* v3.88 (25-6): in the weekly boss my frame never fell below 90 % - the boss and its adds now hit my frame 1.9x harder there */
 (function(){var hook=function(){if(window.__hkWbHurtMe||typeof hurt!=='function')return;window.__hkWbHurtMe=1;var hu=hurt;hurt=function(u,amt,src,ang,dt){try{var g=(typeof G!=='undefined'?G:null);if(g&&g.local&&u===g.local.unit&&amt>0&&g.rpg&&g.rpg.obj&&g.rpg.obj.wb)amt*=1.9;}catch(e){}return hu(u,amt,src,ang,dt);};};setInterval(function(){try{hook();}catch(e){}},500);})();
+
+/* v3.92 (26): leaving a battle midway left the "auto battle ON" badge on the main menu */
+(function(){setInterval(function(){try{var g=(typeof G!=='undefined'?G:null);var inb=!!(g&&g.local&&!g.over);if(inb)return;var b=document.getElementById('ahBadge');if(b&&b.style.display!=='none')b.style.display='none';}catch(e){}},500);})();
