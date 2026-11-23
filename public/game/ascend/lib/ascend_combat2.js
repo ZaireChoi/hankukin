@@ -90,12 +90,12 @@
     if (!(u.dashT > 0)) { dashSt.was = 0; return; }
     if (g < 3) return; var d = Math.hypot(u.x - dashSt.lx, u.y - dashSt.ly); dashSt.acc += d; dashSt.lx = u.x; dashSt.ly = u.y;
     var gap = g >= 5 ? 55 : g >= 4 ? 65 : 80; while (dashSt.acc >= gap) { dashSt.acc -= gap; var a = u.dashA != null ? u.dashA : u.aa; var hh = (function () { try { return unitH(u); } catch (e) { return 0; } })() + 60;
-      if (RL.length >= 46) RL.shift(); RL.push({ x: u.x + Math.cos(a) * 40, h: hh, y: u.y + Math.sin(a) * 40, dx: Math.cos(a), dy: Math.sin(a), s: 26 + g * 4, l: .26, ml: .26 });
+      if (RL.length >= 46) RL.shift(); RL.push({ x: u.x + Math.cos(a) * 40, h: hh, y: u.y + Math.sin(a) * 40, dx: Math.cos(a), dy: Math.sin(a), s: 14 + g * 2.5, l: .22, ml: .22 });
       try { if (Math.random() < .5) SFX.noise(.05, .06, 1900); } catch (e) {} }
   };
   var ringsDraw = function (dt) {
     if (!RINGS) return; if (RINGS.parent !== R3.scene) R3.scene.add(RINGS); var n = 0;
-    for (var i = RL.length - 1; i >= 0; i--) { var r = RL[i]; r.l -= dt; if (r.l <= 0) { RL.splice(i, 1); continue; } var k = 1 - r.l / r.ml; V.set(r.dx, 0, r.dy); Q.setFromUnitVectors(ZA, V); SC.setScalar(r.s * (1 + k * 2.2)); V.set(r.x, r.h, r.y); M4.compose(V, Q, SC); RINGS.setMatrixAt(n, M4); var c = (1 - k) * .85; RINGS.instanceColor.setXYZ(n, c * .85, c * .93, c); n++;
+    for (var i = RL.length - 1; i >= 0; i--) { var r = RL[i]; r.l -= dt; if (r.l <= 0) { RL.splice(i, 1); continue; } var k = 1 - r.l / r.ml; V.set(r.dx, 0, r.dy); Q.setFromUnitVectors(ZA, V); SC.setScalar(r.s * (1 + k * 1.3)); V.set(r.x, r.h, r.y); M4.compose(V, Q, SC); RINGS.setMatrixAt(n, M4); var c = (1 - k) * .85; RINGS.instanceColor.setXYZ(n, c * .85, c * .93, c); n++;
       if (k < .25) put(r.x, r.h, r.y, r.s * 1.2, .9, .95, 1, .5 * (1 - k * 4)); }
     RINGS.count = n; RINGS.instanceMatrix.needsUpdate = true; RINGS.instanceColor.needsUpdate = true;
   };
