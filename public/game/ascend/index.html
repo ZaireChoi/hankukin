@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.87 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.88 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -396,7 +396,7 @@ ko:{
  ally:'(아군)',roomCode:'방 코드 {0} · 접속 {1}명',onlineIn:'온라인 · 방 {0}',killedBy:'격추당함: {0}',waitDeploy:'출격 대기 {0}초',reviveWait:'의무병이 오면 소생할 수 있습니다',
  tail:'꼬리 잡힘! 급선회 / 감속 / 회피(E)',jam:'EMP 교란: 스킬 사용 불가',stun:'기절! 이동 불가',fog:'우주안개 속: 적에게 보이지 않음',hidden:'은신 중',autoOn:'자동조준 켬',autoOff:'자동조준 끔',
  sbTitle:'전장 순위 (점수순)',score:'점수',battleStart:'전투 개시! 보병으로 중앙 거점을 점령하세요',tutPC:'WASD 이동 · 마우스 조준/사격 · Q/E 스킬 · R 궁극기 · F 자동조준',tutMob:'왼쪽 드래그 이동 · 오른쪽 드래그 조준·사격 · AUTO 자동조준',
- rearHit:'후방 피격! 뒤를 잡혔습니다',rear:'후방!',capOk:'거점 {0} 확보!',capLost:'거점 {0} 상실',neutral:'거점 {0} 중립화됨',shieldDownE:'적 사령부 방어막 붕괴! 사령부를 공격하라',shieldDownO:'경고: 아군 사령부 방어막 붕괴',
+ rearHit:'후방 피격! 뒤를 잡혔습니다',rear:'후방!',capOk:'거점 {0} 확보!',capLost:'거점 {0} 상실',neutral:'거점 {0} 중립화됨',shieldDownE:'적 사령부 외곽 방어막 해제 · 2분까지는 최후 방어막이 버틴다',shieldDownO:'경고: 아군 사령부 방어막 붕괴',
  kill:'격추: {0}',assist:'어시스트',cap:'거점 {0} 점령',turretKill:'포탑 파괴',coreKill:'적 사령부 파괴!',reviveXp:'소생: {0}',revived:'의무병이 당신을 소생시켰습니다!',
  frigateLimit:'편성이 가득 찼습니다. 보병으로 출격',joinedTeam:'{0} 님이 {1}에 합류',leftGame:'{0} 님이 나갔습니다',youJoined:'{0} 소속으로 참전!',
  gust:'이온 돌풍! 에너지 -10%',bh:'블랙홀에 빨려 들어갔다!',wh:'웜홀 이동!',nukeWarn:'핵 경보! 반물질 탄두 낙하 중',tacNuke:'전술 핵 설치! 대피하라',wmdCd:'전략 무기 재정비 중 ({0}초)',ultReady:'궁극기 준비 완료 (R)',
@@ -2144,7 +2144,7 @@ R.buildField=function(f){const g=new T.Group(),col=this.fcol(f.k),o={g,k:f.k,mat
  const ring=(r,w,op,y=2)=>{const m=new T.Mesh(new T.RingGeometry(r-w,r,96),am(op));m.rotation.x=-Math.PI/2;m.position.y=y;g.add(m);return m;};
  const R0=f.r;
  switch(f.k){
- case'force':{const s=new T.Mesh(new T.IcosahedronGeometry(R0,3),am(.28));s.material.wireframe=true;g.add(s);o.spin=s;const s2=new T.Mesh(new T.SphereGeometry(R0*.99,40,24),am(.07));g.add(s2);ring(R0,10,.7);if(!MAP.space){s.scale.y=.6;s2.scale.y=.6;}break;}
+ case'force':{const s=new T.Mesh(new T.IcosahedronGeometry(R0,3),am(.1));/* v3.88: no wire mesh */g.add(s);o.spin=s;const s2=new T.Mesh(new T.SphereGeometry(R0*.99,40,24),am(.07));g.add(s2);ring(R0,10,.7);if(!MAP.space){s.scale.y=.6;s2.scale.y=.6;}break;}
  case'bagua':{/* v3.83 (user): the 8-trigram array with its yin-yang disc (태극 문장), eight yellow light pillars and stacked yellow rings is gone - the field still works (confusion, slow, lightning, +30 %) and its lightning strikes show it */break;}
  case'nano':{const n=520,pos=new Float32Array(n*3);for(let i=0;i<n;i++){const a=Math.random()*6.283,b=Math.acos(Math.random()*2-1),r=Math.cbrt(Math.random())*R0;pos[i*3]=Math.cos(a)*Math.sin(b)*r;pos[i*3+1]=Math.abs(Math.cos(b))*r*.7+10;pos[i*3+2]=Math.sin(a)*Math.sin(b)*r;}
   const gg=new T.BufferGeometry();gg.setAttribute('position',new T.BufferAttribute(pos,3));const pm=new T.PointsMaterial({color:col,size:5,transparent:true,opacity:.85,blending:T.AdditiveBlending,depthWrite:false});pm.userData.op=.85;o.mats.push(pm);const P3=new T.Points(gg,pm);g.add(P3);o.spin=P3;
@@ -2402,7 +2402,7 @@ const LINES={ko:{
  start:['전 부대, 여기는 중앙지휘실. 작전을 개시한다. 중앙 거점을 확보하라.','중앙지휘실에서 전 병력에게. 전투 개시. 제군들의 건투를 빈다.'],
  oAtk:['전 병력, {0} 거점으로 진격하라. 반복한다, {0} 거점이다.','지휘실이다. 주공은 {0} 거점. 화력을 집중하라.'],
  oDef:['{0} 거점이 위협받고 있다. 방어선을 유지하라.','적이 {0} 거점으로 몰려온다. 사수하라.'],
- oSiege:['적 사령부 방어막이 붕괴됐다. 전 화력을 적 사령부에 집중하라!','지금이다. 전 부대, 적 사령부로 돌격하라!'],
+ oSiege:['적 사령부 외곽 방어막이 꺼졌다. 거점을 지키면서 사령부를 압박하라!','최후 방어막이 꺼지면 그때 전 부대 돌격이다!'],
  oRecover:['아군 사령부가 노출됐다! 즉시 {0} 거점을 탈환하라!','방어막이 꺼졌다. {0} 거점을 되찾아라, 지금 당장!'],
  ack:['수신. 이동한다.','알겠다, 지휘실. 진입한다.','확인. 분대 전진!','수신 양호. 바로 간다.'],
  capOk:['{0} 거점 확보. 훌륭하다.','{0} 거점은 우리 것이다. 계속 밀어라.'],capLost:['{0} 거점을 빼앗겼다. 탈환하라.','{0} 거점 상실. 재정비 후 반격하라.'],
@@ -5950,7 +5950,7 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
  const disc=[];S.children.forEach(o=>{if(!o.geometry||o.geometry.type!=='CircleGeometry')return;for(const md of MUD)if(Math.abs(o.position.x-md.x)<2&&Math.abs(o.position.z-md.y)<2)disc.push([o,md]);for(const f of FOGS)if(Math.abs(o.position.x-f.x)<2&&Math.abs(o.position.z-f.y)<2)disc.push([o,f]);});disc.forEach(([o,c])=>irr(o,c.x,c.y,c.r,c.x*3+c.y));
  // 2) hills: soft noisy mounds instead of flat-topped cylinders
  const hillM=new T3.MeshStandardMaterial({color:th==='frost'?0xc9d6e2:th==='volcano'?0x2e2622:th==='dune'?0xb07448:0x6a5a44,/* v3.77 (21-1): dune hills in sand colour instead of grey-brown lumps */roughness:1,flatShading:false});
- for(const h of HIGH){const g=new T3.SphereGeometry(h.r+46,40,14,0,Math.PI*2,0,Math.PI/2);const p=g.attributes.position;const nz=natNoise(h.x+h.y*5);for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const a=Math.atan2(z,x);const k=1+nz(a)*.6;p.setXYZ(i,x*k,y*(34/(h.r+46))*(1+nz(a*2)*.5),z*k);}g.computeVertexNormals();const m=new T3.Mesh(g,hillM);m.position.set(h.x,0,h.y);m.receiveShadow=true;m.castShadow=true;S.add(m);}
+ for(const h of HIGH){const g=new T3.SphereGeometry(h.r+46,40,14,0,Math.PI*2,0,Math.PI/2);const p=g.attributes.position;const nz=natNoise(h.x+h.y*5);for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i);const a=Math.atan2(z,x);const k=1+nz(a)*.6;const rr=Math.min(1,Math.hypot(x,z)/(h.r+46));/* v3.88 (25-1): the bumps fade toward the top - the pole vertices all got different heights and pinched into a bright point */p.setXYZ(i,x*(1+(k-1)*rr),y*(34/(h.r+46))*(1+nz(a*2)*.5*rr),z*(1+(k-1)*rr));}g.computeVertexNormals();const m=new T3.Mesh(g,hillM);m.position.set(h.x,0,h.y);m.receiveShadow=true;m.castShadow=true;S.add(m);}
  // 3) alien flora (instanced): trees, crystal spires, glowing fungus — kept off lanes, bases and capture points
  const avoid=(x,y)=>{for(const b of BASES)if(Math.hypot(x-b.x,y-b.y)<520)return true;for(const p of POINTS)if(Math.hypot(x-p.x,y-p.y)<300)return true;for(const l of LAVA)if(Math.hypot(x-l.x,y-l.y)<l.r+70)return true;for(const h of HIGH)if(Math.hypot(x-h.x,y-h.y)<h.r+60)return true;if(Math.abs(y-WH/2)<160&&MAP.id!=='seoul')return true;return false;};
  const Rn=mulberry(4242+(MAP.id||'').length*31);const spots=[];for(let i=0;i<900&&spots.length<170;i++){const x=60+Rn()*(WW-120),y=60+Rn()*(WH-120);if(avoid(x,y))continue;
@@ -7209,7 +7209,7 @@ const defReady=(u,k)=>linkTier()>=DEF[k].t&&!((u.defCd&&u.defCd[k])>G.t);
  if(!proj&&front&&defReady(me,'parry')&&Math.random()<DEF.parry.ch){defCall(me,'parry');if(hasClip(me,'parry'))clipPlay(me,'parry',.5);try{SFX2.clang();}catch(er){}if(su&&!su.boss){su.stun=Math.max(su.stun||0,.6);su.vx=Math.cos(fromA)*300;su.vy=Math.sin(fromA)*300;}const p=new window.THREE.Vector3(me.x+Math.cos(fromA)*50,(unitH(me)||0)+50,me.y+Math.sin(fromA)*50);fxFlash(p,'#ffe28a',44,.12);for(let i=0;i<16;i++)part(p.x,p.z,rnd(-240,240),rnd(-240,240),.3,'#ffe9b0',4,p.y);return;}
  if(amt>me.mhp*.08&&defReady(me,'flip')&&Math.random()<DEF.flip.ch){defCall(me,'flip');if(hasClip(me,'backflip'))clipPlay(me,'backflip',.6);const a=fromA!=null?fromA+Math.PI:(me.aa||0)+Math.PI;kLunge(me,a,260,.3,0);me.spawnProt=Math.max(me.spawnProt||0,.5);return;}
  if(defReady(me,'dodge')&&Math.random()<DEF.dodge.ch){defCall(me,'dodge');if(hasClip(me,'dodge'))clipPlay(me,'dodge',.4);const a=(fromA!=null?fromA:(me.aa||0))+(Math.random()<.5?1.57:-1.57);kLunge(me,a,170,.18,0);me.spawnProt=Math.max(me.spawnProt||0,.3);return;}
- if(me.hp<me.mhp*.5&&defReady(me,'barrier')){defCall(me,'barrier');me.kArmor=Math.max(me.kArmor||0,3);const T3=window.THREE;try{const s=new T3.Mesh(new T3.IcosahedronGeometry(70,1),new T3.MeshBasicMaterial({color:0x7fe8ff,wireframe:true,transparent:true,opacity:.6,blending:T3.AdditiveBlending,depthWrite:false}));R3.scene.add(s);let tt=0;const f=()=>{tt+=(window.__fdt?window.__fdt():1/60);s.position.set(me.x,(unitH(me)||0)+45,me.y);s.rotation.y+=.03;s.material.opacity=.6*(tt<2.6?1:(3-tt)/.4);if(tt<3)requestAnimationFrame(f);else{R3.scene.remove(s);s.geometry.dispose();s.material.dispose();}};f();}catch(er){}}}}catch(er){}return _huD(t,amt,src,ang,dt);};}
+ if(me.hp<me.mhp*.5&&defReady(me,'barrier')){defCall(me,'barrier');me.kArmor=Math.max(me.kArmor||0,3);const T3=window.THREE;try{/* v3.88 (25-2): a faint smooth bubble instead of the white wire dome */const s=new T3.Mesh(new T3.SphereGeometry(62,24,16),new T3.MeshBasicMaterial({color:0x7fe8ff,transparent:true,opacity:.12,blending:T3.AdditiveBlending,depthWrite:false}));R3.scene.add(s);let tt=0;const f=()=>{tt+=(window.__fdt?window.__fdt():1/60);s.position.set(me.x,(unitH(me)||0)+45,me.y);s.rotation.y+=.03;s.material.opacity=.12*(tt<2.6?1:(3-tt)/.4);if(tt<3)requestAnimationFrame(f);else{R3.scene.remove(s);s.geometry.dispose();s.material.dispose();}};f();}catch(er){}}}}catch(er){}return _huD(t,amt,src,ang,dt);};}
 // ---- weapon arts (Z / touch ART): every weapon has its own signature move ----
 const ART={saber:{n:K('난도','Flurry'),cd:8,clip:'combo'},katana:{n:K('연속 발도','Triple Draw'),cd:8,clip:'thrust'},twin:{n:K('쌍인 난무','Twin Tempest'),cd:8,clip:'combo'},axe:{n:K('회전 분쇄','Whirl Breaker'),cd:9,clip:'slam'},hammer:{n:K('지진 강타','Quake Hammer'),cd:9,clip:'slam'},mace:{n:K('지진 강타','Quake Hammer'),cd:9,clip:'slam'},lance:{n:K('돌격 관통','Lance Charge'),cd:8,clip:'thrust'},dagger:{n:K('그림자 연격','Shadow Chain'),cd:8,clip:'combo'},staff:{n:K('선풍','Cyclone Staff'),cd:9,clip:'staff'},great:{n:K('천붕참','Sky Splitter'),cd:10,clip:'slam'},whip:{n:K('휘감기','Coil Lash'),cd:8,clip:'whip'},glaive:{n:K('반월참','Half-moon Reap'),cd:8,clip:'staff'}};
 window.__ART=ART;
@@ -8282,7 +8282,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v387';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v388';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8675,7 +8675,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_grow.js?v=348"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
-<script src="lib/ascend_boss.js?v=385"></script>
+<script src="lib/ascend_boss.js?v=388"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
@@ -8704,8 +8704,8 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_ready.js?v=367"></script>
 <script src="lib/ascend_auto.js?v=364"></script>
 <script src="lib/ascend_combat2.js?v=372"></script>
-<script src="lib/ascend_tension2.js?v=387"></script>
-<script src="lib/ascend_arts.js?v=377"></script>
+<script src="lib/ascend_tension2.js?v=388"></script>
+<script src="lib/ascend_arts.js?v=388"></script>
 <script src="lib/ascend_lean.js?v=370"></script>
 <script src="lib/ascend_moves.js?v=373"></script>
 <script src="lib/ascend_hitfx.js?v=374"></script>
