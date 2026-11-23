@@ -8,7 +8,7 @@
 (function () {
   'use strict';
   var REG = { g: new Map(), t: new Map() }, ST = { freedG: 0, freedT: 0, sweeps: 0, rings: 0 };
-  var inMatch = function () { try { return typeof G !== 'undefined' && G && G.local; } catch (e) { return false; } };
+  var inMatch = function () { try { return typeof G !== 'undefined' && G && G.local && !G.over; } catch (e) { return false; } };   // v3.70 (20-6): a finished match counts as left, so its leftovers are freed before the next one
   var hook = function () {
     var T = window.THREE; if (!T || T.BufferGeometry.prototype.__memHook) return !!T;
     var BG = T.BufferGeometry.prototype; BG.__memHook = 1;
@@ -49,6 +49,6 @@
       if (!big) { e._ringOff = 1; if (e.ring.parent) e.ring.parent.remove(e.ring); ST.rings++; } });
   };
   var wasIn = false, t5 = 0;
-  setInterval(function () { try { hook(); memoRad(); var now = inMatch(); if (wasIn && !now) { setTimeout(function () { sweep(true); }, 1200); } wasIn = !!now; if (now) { ringTick(); t5 += .5; if (t5 >= 5) { t5 = 0; sweep(false); } } } catch (e) { (window.__memErr = window.__memErr || []).push(String(e).slice(0, 120)); } }, 500);
+  var lastG = null; setInterval(function () { try { hook(); memoRad(); var now = inMatch(); var gNow = (typeof G !== 'undefined') ? G : null; if ((wasIn && !now) || (now && lastG && gNow !== lastG)) { setTimeout(function () { sweep(true); }, 1200); } lastG = gNow; wasIn = !!now; if (now) { ringTick(); t5 += .5; if (t5 >= 5) { t5 = 0; sweep(false); } } } catch (e) { (window.__memErr = window.__memErr || []).push(String(e).slice(0, 120)); } }, 500);
   window.__mem = { stat: function () { return { regG: REG.g.size, regT: REG.t.size, freedG: ST.freedG, freedT: ST.freedT, sweeps: ST.sweeps, ringsOff: ST.rings }; }, sweep: sweep };
 })();

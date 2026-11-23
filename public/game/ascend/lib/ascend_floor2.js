@@ -21,9 +21,9 @@
   var near = function (o, arr) { for (var i = 0; i < arr.length; i++) if (Math.abs(o.position.x - arr[i].x) < 3 && Math.abs(o.position.z - arr[i].y) < 3) return true; return false; };
   var tidy = function () {
     try { var S = R3.envG; if (!S) return;
-      S.traverse(function (o) { if (!o.isMesh || !o.geometry || o.geometry.type !== 'CircleGeometry' || o.position.y > 3) return;
-        if (typeof FOGS !== 'undefined' && near(o, FOGS)) { o.visible = false; return; }
-        if (typeof MUD !== 'undefined' && near(o, MUD) && !o.userData.mud2) { o.userData.mud2 = 1; var m = o.material.clone(); m.alphaMap = mudA; m.opacity = .7; m.color = new T.Color(0x3b2a20); m.roughness = .55; m.transparent = true; m.depthWrite = false; m.needsUpdate = true; o.material = m; } });
+      // v3.70 (20-3): the fog and mud plates are reshaped into ragged blobs at build time (no longer CircleGeometry) - match by place, flat and low, and remove both
+      S.traverse(function (o) { if (!o.isMesh || !o.geometry || o.position.y > 3 || o.geometry.type === 'PlaneGeometry' && o.geometry.parameters && o.geometry.parameters.width > 2000) return;
+        if ((typeof FOGS !== 'undefined' && near(o, FOGS)) || (typeof MUD !== 'undefined' && near(o, MUD))) { o.visible = false; o.userData.floorOff = 1; } });
     } catch (e) {}
   };
   var warm = function (col) { try { var c = new T.Color(col), h = {}; c.getHSL(h); return h.h < .17 || h.h > .93 || h.s < .25; } catch (e) { return false; } };
