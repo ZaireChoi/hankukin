@@ -143,8 +143,8 @@
   var CDR = 20, CDT = 30, nxt = { r: 0, t: 0 };
   var gate = function (u, inp) {
     if (!inp || !G || !G.local || u !== G.local.unit) return inp; var t = G.t || 0;
-    if (inp.ul) { if (t < nxt.r) inp.ul = false; else { var gauge = Math.max(G.local.ult || 0, (u.slot && u.slot.ult) || 0); if (gauge >= 100 || u.cls !== 'arkframe') nxt.r = t + CDR; } }
-    if (inp.ab) { if (t < nxt.t) inp.ab = false; else { nxt.t = t + CDT; u._absAt = t; } }
+    if (inp.ul) { if (t < nxt.r) inp.ul = false; else { var gauge = Math.max(G.local.ult || 0, (u.slot && u.slot.ult) || 0); if (gauge >= 100 || u.cls !== 'arkframe') nxt.r = t + CDR * (window.__mtCd || 1); } }
+    if (inp.ab) { if (t < nxt.t) inp.ab = false; else { nxt.t = t + CDT * (window.__mtCd || 1); u._absAt = t; } }
     return inp;
   };
   var barCd = function () {
