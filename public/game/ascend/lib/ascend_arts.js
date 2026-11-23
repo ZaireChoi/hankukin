@@ -1,4 +1,5 @@
-/* ASCEND v3.69 — weapon arts redesigned for readable motion (first: 반월참 Half-moon Reap, 선풍 Cyclone Staff)
+/* ASCEND v3.77: 난도(saber), 쌍인 난무(twin), 그림자 연격(dagger), 회전 분쇄(axe) also follow the three beats with the same damage totals
+   ASCEND v3.69 — weapon arts redesigned for readable motion (first: 반월참 Half-moon Reap, 선풍 Cyclone Staff)
    Before: 14 quick twirls every 0.06 s with a damage circle each — it read as frantic flailing.
    Now every art follows the same three beats:
      1. wind-up (0.3 s): the frame sinks, the blade is drawn back, light gathers along it (sparks converge), a low hum
@@ -36,6 +37,45 @@
   var hitArc = function (u, R, arc, dmg, kb) { try { return kHitUnits(function (e) { var d = Math.hypot(e.x - u.x, e.y - u.y); return d < R + (e.r || 0) && (arc >= 3.1 || Math.abs(ANGD(u.aa, Math.atan2(e.y - u.y, e.x - u.x))) < arc); }, dmg, u.aa, kb); } catch (e) { return 0; } };
   // ---------------------------------------------------------------- the arts
   var ARTS = {
+
+    saber: function (u, base) {    // 난도 (was 8 rapid cuts): draw back → two big crossing cuts → a finishing X-cut that leaves its mark
+      var col = '#ff7ae0'; u.slashT = Math.max(u.slashT || 0, .3); gather(u, col, window.__phone ? 6 : 12); try { SFX2.charge(.25); } catch (e) {}
+      [[.26, 2.6, -1], [.46, 2.6, 1], [.72, 5.7, 0]].forEach(function (s, i) { kLater(s[0], function () { if (u.dead) return; var fin = i === 2; u.melSw2 = { t: 0, T: fin ? .2 : .16, i: i, fin: fin, kind: 'slash', dir: s[2] || 1 };
+        try { slashFx(u, styleOf(u), i % 2, fin); } catch (e) {}
+        crescent(u.x, uh(u) + 50, u.y, (u.aa || 0) + s[2] * .5, 60, fin ? 260 : 190, fin ? '#ffffff' : col, fin ? .3 : .22, fin ? .4 : .3);
+        var n = hitArc(u, fin ? 300 : 250, fin ? 1.4 : 1.1, base * s[1], fin ? 380 : 90);
+        if (n) { G.hstop = Math.max(G.hstop || 0, fin ? .1 : .05); try { cam.shake = Math.max(cam.shake || 0, fin ? 9 : 4); } catch (e) {} }
+        try { SFX2.swing(fin); } catch (e) {}
+        if (fin) kLater(.08, function () { var a = u.aa || 0; for (var d = -1; d <= 1; d += 2) try { K().slashMark(u.x + Math.cos(a) * 120, u.y + Math.sin(a) * 120, 60, a + d * .8, 0xff5ad8); } catch (e) {} }); }); });
+    },
+    twin: function (u, base) {     // 쌍인 난무 (was 12 tiny cuts): cross the blades → three wide X-cuts, the last one twice as big
+      var col = '#7fe8ff'; u.slashT = Math.max(u.slashT || 0, .3); gather(u, col, window.__phone ? 6 : 12); try { SFX2.charge(.22); } catch (e) {}
+      for (var i = 0; i < 3; i++) (function (i) { kLater(.24 + i * .18, function () { if (u.dead) return; var fin = i === 2; u.melSw2 = { t: 0, T: .14, i: i, fin: fin, kind: 'cross', dir: 1 };
+        try { slashFx(u, styleOf(u), i % 2, fin); } catch (e) {}
+        crescent(u.x, uh(u) + 50, u.y, (u.aa || 0) + .45, 50, fin ? 230 : 170, col, .2, .3); crescent(u.x, uh(u) + 52, u.y, (u.aa || 0) - .45, 50, fin ? 230 : 170, '#ffffff', .2, .22);
+        var n = hitArc(u, fin ? 260 : 220, 1.3, base * (fin ? 4.2 : 2.4), fin ? 300 : 60); if (n && fin) { G.hstop = Math.max(G.hstop || 0, .08); try { cam.shake = Math.max(cam.shake || 0, 7); } catch (e) {} }
+        try { SFX2.swing(fin); } catch (e) {} }); })(i);
+    },
+    dagger: function (u, base) {   // 그림자 연격 (was 12 hits with 3 blinks): vanish → reappear behind two targets with one deep cut each → a final cut
+      var col = '#c9a0ff'; u.slashT = Math.max(u.slashT || 0, .25); gather(u, col, window.__phone ? 5 : 10);
+      var ts = []; try { ts = K().foesNear(u, 600, 3) || []; } catch (e) {}
+      for (var i = 0; i < 3; i++) (function (i) { kLater(.2 + i * .24, function () { if (u.dead) return; var t = ts[i % Math.max(1, ts.length)], fin = i === 2;
+        if (t && !t.dead && i < 2) { var a = Math.atan2(t.y - u.y, t.x - u.x); for (var q = 0; q < 6; q++) try { part(u.x, u.y, (Math.random() - .5) * 200, (Math.random() - .5) * 200, .3, col, 6, uh(u) + 40); } catch (e) {} u.x = t.x - Math.cos(a) * 70; u.y = t.y - Math.sin(a) * 70; u.aa = a; }
+        u.melSw2 = { t: 0, T: .14, i: i, fin: fin, kind: 'cross', dir: 1 }; try { slashFx(u, styleOf(u), i % 2, fin); } catch (e) {}
+        crescent(u.x, uh(u) + 50, u.y, u.aa || 0, 40, fin ? 220 : 150, col, .2, .32);
+        var n = hitArc(u, fin ? 250 : 200, fin ? 3.2 : 1.2, base * (fin ? 4.2 : 3.6), fin ? 260 : 80); if (n) G.hstop = Math.max(G.hstop || 0, fin ? .08 : .05); try { SFX2.swing(fin); } catch (e) {} }); })(i);
+    },
+    axe: function (u, base) {      // 회전 분쇄 (was 10 quick spins): heave the axe up → two heavy full turns → slam into the ground
+      var col = '#ffa040'; u.slashT = Math.max(u.slashT || 0, .35); gather(u, col, window.__phone ? 6 : 14); try { SFX2.charge(.35); } catch (e) {}
+      [[.34, 3.5], [.6, 3.5]].forEach(function (s, i) { kLater(s[0], function () { if (u.dead) return; u.melSw2 = { t: 0, T: .24, i: i, fin: false, kind: 'twirl', dir: 1 };
+        try { slashFx(u, styleOf(u), i % 2, false); } catch (e) {}
+        crescent(u.x, uh(u) + 46, u.y, (u.aa || 0) + i * Math.PI, 70, 270, col, .26, .3); crescent(u.x, uh(u) + 46, u.y, (u.aa || 0) + i * Math.PI + Math.PI, 70, 270, col, .26, .3);
+        hitArc(u, 280, 3.2, base * s[1], 150); try { SFX2.swing(true); } catch (e) {} }); });
+      kLater(.9, function () { if (u.dead) return; u.melSw2 = { t: 0, T: .2, i: 2, fin: true, kind: 'slam', dir: 1 };
+        var n = hitArc(u, 360, 3.2, base * 4, 420); G.hstop = Math.max(G.hstop || 0, .14); try { cam.shake = Math.max(cam.shake || 0, 14); SFX2.thump(); } catch (e) {}
+        try { K().shockRing(u.x, u.y, 0xffa040); } catch (e) {} for (var q = 0; q < 4; q++) try { K().scorchMark(u.x, u.y, q * .8, 300, true); } catch (e) {}
+        for (var j = 0; j < (window.__phone ? 12 : 26); j++) { var b = Math.random() * 6.28; try { part(u.x, u.y, Math.cos(b) * (150 + Math.random() * 250), Math.sin(b) * (150 + Math.random() * 250), .7, j % 2 ? '#b9a78c' : '#ffb36b', 8, 20); } catch (e) {} } });
+    },
     glaive: function (u, base) {   // 반월참: wind-up, one great crescent, echo crescent behind
       var col = '#ff9be8', a = u.aa || 0;
       u.slashT = Math.max(u.slashT || 0, .3); gather(u, col, window.__phone ? 8 : 16); try { SFX2.charge(.3); } catch (e) {}
