@@ -87,3 +87,10 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
 /* v3.77 (21-8): auto battle never waits on the deploy screen - after a frame is destroyed the relaunch is pressed for you
    3 s after it becomes possible (any mode: weekly boss, field, battlefield). Manual play is unchanged. */
 (function(){var since=0;setInterval(function(){try{if(!window.P||!P.autoHunt||!window.G||G.over){since=0;return;}var d=document.getElementById('deploy'),b=document.getElementById('dpGo');if(!d||!b||d.classList.contains('hidden')||b.disabled||(G.local&&G.local.respT>0)){since=0;return;}if(!since){since=performance.now();return;}if(performance.now()-since>3000){since=0;b.click();}}catch(e){}},500);})();
+
+/* v3.80 (22-6): weekly boss pace. A first attempt went from 6-16 % to 100 % in 34 s, so the boss now takes damage no faster
+   than a set pace that grows with each attempt this week: 1st try about 0.45 % of its health a second (~40 % in 90 s, grade C~B),
+   2nd 0.7 %/s, 3rd and later 1.2 %/s (S becomes possible). A weaker squad that deals less is not affected. */
+(function(){var rate=function(){try{var r=window.__A&&window.__A.R&&window.__A.R();var n=(r&&r.wb&&r.wb.n)||1;return n<=1?.0045:n===2?.007:.012;}catch(e){return .0045;}};
+ var hook=function(){if(window.__hkWbCap||typeof hurt!=='function')return;window.__hkWbCap=1;var hu=hurt;hurt=function(u,amt,src,ang,dt){try{if(u&&u.boss&&u.sqTy!=null&&amt>0&&!u.dead&&window.G){if(u._wbT0==null){u._wbT0=G.t;u._wbD=0;}var mh=u.mhp||u.hp||1,allow=mh*rate()*(G.t-u._wbT0+2)-u._wbD;if(amt>allow)amt=Math.max(0,allow);var hp0=u.hp;var r=hu(u,amt,src,ang,dt);u._wbD+=Math.max(0,hp0-u.hp);return r;}}catch(e){}return hu(u,amt,src,ang,dt);};};
+ setInterval(function(){try{hook();}catch(e){}},500);})();
