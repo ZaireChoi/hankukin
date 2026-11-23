@@ -246,8 +246,8 @@
           this.b.spark.spawn({ pos: c, life: .35 + Math.random() * .35, vel: dir.multiplyScalar((1.9 + Math.random() * 1.9) * S), g: -3.9 * S, drag: 1.2, s0: .06 * S, s1: .017 * S, c0: F.spark[0], c1: F.spark[1] });
         }
         // 3) 작은 진영색 파편 8~12개, 1초 안에 사라짐
-        for (let i = 0, N = n(big ? 12 : 8); i < N; i++) {
-          const sz = size * (.08 + Math.random() * .07);
+        for (let i = 0, N = n(big ? 4 : 2); i < N; i++) { /* v3.94 (27-2): fewer, smaller fragments - many white cubes read as a snowstorm over the screen */
+          const sz = size * (.05 + Math.random() * .04);
           this.debris.spawn({ pos: c, life: .9 + Math.random() * .3, ground: groundY, g: 5 * S,
             vel: new THREE.Vector3(Math.random() - .5, Math.random() * .8 + .6, Math.random() - .5).normalize().multiplyScalar((1.4 + Math.random() * 1.4) * S),
             spin: new THREE.Vector3(Math.random() * 12, Math.random() * 12, Math.random() * 12), scl: new THREE.Vector3(sz, sz * (.5 + Math.random() * .6), sz * (.4 + Math.random() * .6)),

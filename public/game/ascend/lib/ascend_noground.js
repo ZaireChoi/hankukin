@@ -78,6 +78,8 @@
   };
   var sweep = function () {
     if (!window.R3 || !R3.scene) return; var rm = [];
+    /* v3.94 (27-1): the coloured ring under every unit (red under enemies) is not an attack warning - taken off too */
+    try { R3.units.forEach(function (e) { if (e && e.ring && e.ring.parent) { e.ring.parent.remove(e.ring); N.swept++; note('unit ring'); } }); } catch (e) {}
     R3.scene.traverse(function (o) { var k = banned(o, true); if (k) { rm.push(o); note(k); } });
     for (var i = 0; i < rm.length; i++) { if (rm[i].parent) rm[i].parent.remove(rm[i]); N.swept++; }
   };

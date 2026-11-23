@@ -33,7 +33,7 @@
   var tx2 = function (a) { return L2(a[0], a[1]); };
   var T = function () { try { if (!P.mtree) P.mtree = {}; return P.mtree; } catch (e) { return {}; } };
   var rk = function (id) { return T()[id] || 0; };
-  var lv = function () { try { return typeof plv === 'function' ? plv() : 1; } catch (e) { return 1; } };
+  var lv = function () { /* v3.94: plv() lives inside a code block in the game, so the pilot level is read from the save record (it showed 1 / 1 at Lv 22) */ try { var r = window.__A && window.__A.R && window.__A.R(); if (r && r.lv) return r.lv; } catch (e) {} try { if (typeof plv === 'function') return plv(); } catch (e) {} try { return Math.max(1, (P.rank || 0) * 3); } catch (e) { return 1; } };
   var spent = function () { var s = 0, t = T(); for (var k in t) s += t[k]; return s; };
   var inBranch = function (b) { var s = 0; N.forEach(function (n) { if (n.br === b && !n.core) s += rk(n.id); }); return s; };
   var free = function () { return Math.max(0, lv() - spent()); };

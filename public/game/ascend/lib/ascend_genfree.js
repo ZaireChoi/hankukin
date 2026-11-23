@@ -39,12 +39,15 @@
     runs.push(rec); if (runs.length > 12) runs.shift(); return rec;
   };
   // battle transitions: the battle object changes (new battle) or goes away (menu)
-  var lastG = null, pend = 0, pendWhy = '';
+  var lastG = null, pend = 0, pendWhy = '', lastMenu = false;
   setInterval(function () {
     try {
       if (!hook()) return; var g = (typeof G !== 'undefined') ? G : null; var t = now();
       if (g !== lastG) { if (lastG) { pend = t + (g ? 6000 : 3500); pendWhy = g ? 'new battle' : 'menu'; } lastG = g; }
-      if (pend && t > pend) { pend = 0; sweep(g ? 5000 : 3000, pendWhy); }
+      /* v3.94 (27-7): also when the main menu comes up while a battle object is still around (leaving midway, story/RPG exits) */
+      var mv = false; try { var mn = document.getElementById('menu'); mv = !!(mn && !mn.classList.contains('hidden') && mn.offsetParent !== null); } catch (e) {}
+      if (mv && !lastMenu && !pend) { pend = t + 3500; pendWhy = 'menu shown'; } lastMenu = mv;
+      if (pend && t > pend) { pend = 0; sweep(g && !mv ? 5000 : 3000, pendWhy); }
     } catch (e) { window.__genErr = String(e).slice(0, 160); }
   }, 500);
   window.__genfree = {
