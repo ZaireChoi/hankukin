@@ -26,6 +26,7 @@
     '#dimSk .b small{font-size:10px;font-weight:700;opacity:.9;line-height:1.1}#dimSk .b span{font-size:15px;line-height:1}#dimSk .b i{position:absolute;inset:0;background:conic-gradient(rgba(0,0,0,.66) var(--p,0%),transparent 0);pointer-events:none}' +
     '#dimSk .b em{position:absolute;font-style:normal;font-size:15px;font-weight:900;color:#ffd166;text-shadow:0 0 4px #000}#dimSk .b.on{filter:brightness(1.5);transform:scale(.94)}' +
     '#dimSk .b.hasIc>span,#dimSk .b.hasIc>small,#wrSk .b.hasIc>span,#wrSk .b.hasIc>small{display:none}#dimSk .b i,#wrSk .b i{z-index:1}#dimSk .b em{z-index:2}' +
+    'body.wr:not(.touchdev) #wrSk .b{display:none!important}body.wr:not(.touchdev) #skb2{display:flex!important}' + /* v3.90 (user): in 5v5 a PC uses the skill bar and keys; the round buttons are for touch screens only (the + learn buttons stay) */
     '#dimSk .atk{background:radial-gradient(circle at 40% 35%,rgba(120,40,60,.85),rgba(30,6,12,.85));border-color:rgba(255,154,170,.6)}' +
     'body.dim #touchUI #tA1,body.dim #touchUI #tA2,body.dim #touchUI #tUl,body.dim #touchUI #tAb,body.dim #touchUI #tMsl,body.dim #touchUI #tDash{display:none!important}' +
     'body.dim #skb2>div:nth-child(2)>*:nth-child(-n+5){display:none!important}body.dim #skb2{left:14px!important;transform:scale(var(--dimBar,.78))!important;transform-origin:0 100%!important}' + /* the desktop bar keeps items 1-6 and the orbs, moved to the left; attack/Q/E/R/T live in the thumb cluster */
@@ -108,7 +109,7 @@
   // ---------------------------------------------------------------- show / layout
   var active = function () { return phone() && inBattle(); };
   var tick = function () {
-    try { hook(); var on = active(); build(); var wrOn = document.body.classList.contains('wr');
+    try { hook(); var touch = false; try { touch = !!window.__phone || matchMedia('(pointer:coarse)').matches || (navigator.maxTouchPoints > 0 && !matchMedia('(pointer:fine)').matches); } catch (e) {} document.body.classList.toggle('touchdev', touch); var on = active(); build(); var wrOn = document.body.classList.contains('wr');
       document.body.classList.toggle('dim', on && !wrOn); root.style.display = (on && !wrOn) ? 'block' : 'none'; hint.style.display = (on && J.id === null) ? 'block' : 'none'; if (!on && joy) joy.style.display = 'none';
       if (on) { var tu = document.getElementById('touchUI'); if (tu && tu.classList.contains('hidden')) tu.classList.remove('hidden'); } /* FLY, MORPH, AUTO, menu buttons live there - it used to appear only after the first touch on the 3D view */
       if (on && wrOn) setIcons(document.getElementById('wrSk')); /* 5v5 thumb cluster gets the pictures too */
