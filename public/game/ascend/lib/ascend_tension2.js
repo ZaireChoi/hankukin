@@ -91,3 +91,10 @@
   /* autoHuntInput lives inside a code block (not global), so the auto battle is steered at localInput, the outermost input */
   if(!window.__hkAutoObj2&&typeof window.localInput==='function'){window.__hkAutoObj2=1;var li=window.localInput;window.localInput=function(u){var r=li(u);try{if(r&&typeof P!=='undefined'&&P.autoHunt&&typeof G!=='undefined'&&G&&G.local&&u===G.local.unit)r=steerObj(u,r);}catch(e){}return r;};}};
  setInterval(function(){try{hook();}catch(e){}},500);})();
+
+/* v3.88 (manager 25-5): on auto battle in faction battles my frame still took 500+ kills (next ally ~10) and dropped to 2-11 %
+   health. On auto only: my frame deals 55 % damage to ordinary enemies (allies get their share of the fight) and takes 75 %
+   of the extra auto damage, so the lowest health sits around 30-60 %. Manual play, bosses, 5v5 and missions are unchanged. */
+(function(){var on=function(){try{if(typeof P==='undefined'||!P.autoHunt||typeof G==='undefined'||!G||!G.local||G.over)return false;if(typeof arOn==='function'&&arOn())return false;if(G.rpg&&G.rpg.obj&&/squad|kill|survive|hunt|field|rift/.test(G.rpg.obj.k||''))return false;return true;}catch(e){return false;}};
+ var hook=function(){if(window.__hkAutoBal||typeof hurt!=='function')return;window.__hkAutoBal=1;var hu=hurt;hurt=function(u,amt,src,ang,dt){try{if(on()&&u&&amt>0){var me=G.local.unit;var su=src&&(src.unit||src);if(me&&u!==me&&!u.boss&&!u.elite2&&(src===G.local||su===me))amt*=.55;else if(me&&u===me)amt*=.75;}}catch(e){}return hu(u,amt,src,ang,dt);};};
+ setInterval(function(){try{hook();}catch(e){}},500);})();

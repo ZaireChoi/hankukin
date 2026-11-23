@@ -53,7 +53,7 @@ window.__wbFinish=function(pct,sec){try{if((typeof G!=='undefined'?G:undefined)&
  document.body.appendChild(ov);var out=function(again){ov.remove();try{leaveMatch();}catch(e){}setTimeout(function(){guard('wbOut',function(){if(again){s.n++;save();window.__wbStart(cfg());}else{try{show('#menu');}catch(e){}open();}});},600);};
  ov.querySelector('#wbOut').onclick=function(){if(ov._t)clearInterval(ov._t);out(false);};ov.querySelector('#wbAgain').onclick=function(){if(ov._t)clearInterval(ov._t);if(s.n<TRIES)out(true);};
  /* v3.77 (21-8): with auto battle on and attempts left, the next attempt starts by itself after a short countdown (Exit cancels) */
- try{if(P.autoHunt&&s.n<TRIES&&pct<1){var left=6,bt=ov.querySelector('#wbAgain'),lab=bt.textContent;ov._t=setInterval(function(){left--;if(!document.body.contains(ov)){clearInterval(ov._t);return;}bt.textContent=lab+' · '+L('자동 ','auto ')+left;if(left<=0){clearInterval(ov._t);out(true);}},1000);}}catch(e){}});};
+ try{if(P.wbAutoRetry&&s.n<TRIES&&pct<1){/* v3.88 (25-7): off unless the player turns it on - it used up the week's attempts */var left=6,bt=ov.querySelector('#wbAgain'),lab=bt.textContent;ov._t=setInterval(function(){left--;if(!document.body.contains(ov)){clearInterval(ov._t);return;}bt.textContent=lab+' · '+L('자동 ','auto ')+left;if(left<=0){clearInterval(ov._t);out(true);}},1000);}}catch(e){}});};
 // ---------- field hunting: engagement settings, asked every time the hunting grounds are opened ----------
 // PVP is off until the pilot turns it on. With PVP on, one of four rules decides when my frame fights other pilots.
 var STN=[['counter',L('반격','Counterattack'),L('공격받으면 반격하고, 그 상대를 끝까지 공격합니다.','Fight back when attacked and keep attacking that pilot.')],
@@ -106,3 +106,9 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
 
 /* v3.84 (23-8): any battle that is not the weekly boss (5v5 included, whatever path it was opened from) closes the weekly boss window */
 (function(){setInterval(function(){try{var g=(typeof G!=='undefined'?G:undefined);if(!g||g.over||!g.local||!g.local.unit)return;var wb=!!(g.rpg&&g.rpg.obj&&g.rpg.obj.wb);if(wb)return;['wb348','wbRes'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});}catch(e){}},400);})();
+
+/* v3.88 (25-3): the flagship health bar (#arcBoss) is hidden when its battle is over or in any other battle */
+(function(){setInterval(function(){try{var el=document.getElementById('arcBoss');if(!el||el.style.display==='none')return;var g=(typeof G!=='undefined'?G:null);if(!g||g.over||!g.arc||!g.arc.boss||g.arc.won)el.style.display='none';}catch(e){}},400);})();
+
+/* v3.88 (25-6): in the weekly boss my frame never fell below 90 % - the boss and its adds now hit my frame 1.9x harder there */
+(function(){var hook=function(){if(window.__hkWbHurtMe||typeof hurt!=='function')return;window.__hkWbHurtMe=1;var hu=hurt;hurt=function(u,amt,src,ang,dt){try{var g=(typeof G!=='undefined'?G:null);if(g&&g.local&&u===g.local.unit&&amt>0&&g.rpg&&g.rpg.obj&&g.rpg.obj.wb)amt*=1.9;}catch(e){}return hu(u,amt,src,ang,dt);};};setInterval(function(){try{hook();}catch(e){}},500);})();

@@ -33,7 +33,7 @@
   };
   var tick = function (dt) { for (var i = live.length - 1; i >= 0; i--) { var m = live[i]; m.userData.l -= dt; var k = 1 - m.userData.l / m.userData.ml; if (m.userData.l <= 0) { m.visible = false; live.splice(i, 1); continue; } var e = 1 - Math.pow(1 - k, 3); m.scale.setScalar(m.userData.r0 + (m.userData.r1 - m.userData.r0) * e); m.material.opacity = m.userData.op * (1 - k * k); } };
   var uh = function (u) { try { return unitH(u); } catch (e) { return 0; } };
-  var gather = function (u, col, n) { var h = uh(u) + 55; for (var i = 0; i < n; i++) { var a = Math.random() * 6.283, d = 120 + Math.random() * 90; try { part(u.x + Math.cos(a) * d, u.y + Math.sin(a) * d, -Math.cos(a) * d * 3, -Math.sin(a) * d * 3, .3, i % 2 ? '#ffffff' : col, 3, h); } catch (e) {} } };
+  var gather = function (u, col, n) { var h = uh(u) + 55; for (var i = 0; i < n; i++) { var a = Math.random() * 6.283, d = 40 + Math.random() * 230; /* v3.88: spread, not a ring of dots closing in */ try { part(u.x + Math.cos(a) * d, u.y + Math.sin(a) * d, -Math.cos(a) * d * (2 + Math.random() * 2), -Math.sin(a) * d * (2 + Math.random() * 2), .3, i % 2 ? '#ffffff' : col, 3, h + (Math.random() - .5) * 60); } catch (e) {} } };
   var hitArc = function (u, R, arc, dmg, kb) { try { return kHitUnits(function (e) { var d = Math.hypot(e.x - u.x, e.y - u.y); return d < R + (e.r || 0) && (arc >= 3.1 || Math.abs(ANGD(u.aa, Math.atan2(e.y - u.y, e.x - u.x))) < arc); }, dmg, u.aa, kb); } catch (e) { return 0; } };
   // ---------------------------------------------------------------- the arts
   var ARTS = {
