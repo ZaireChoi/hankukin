@@ -935,7 +935,9 @@ function hardDrop(p){const c=p.cur;if(!c||p.dead)return;let d=0;const y0=c.y;whi
   lock(p);}
 // v1.0 무한 모드: 혼자서 끝까지. 10줄마다 레벨 업(속도 증가), 주기적으로 돌 줄 예고가 쌓이고 공격으로 상쇄. 남는 공격은 점수.
 function soloWave(){if(G.mode!=='solo'||G.ended||!G.players)return;const p=G.players[0];if(p.dead)return;const lv=G.soloLv||1;p.pending+=Math.min(4,1+Math.floor(lv/4));addFloat(p,tr('solo_wave'),'#868e96');Snd.hit();updateUI(p);G.events.push({at:G.t+Math.max(8000,18000-lv*700),fn:soloWave});}
-function vib(v){try{if(TOUCH&&navigator.vibrate)navigator.vibrate(v);}catch(e){}}
+function vib(v){try{if(TOUCH&&navigator.vibrate&&store.get('vib',1))navigator.vibrate(v);}catch(e){}}
+// v1.6: 3줄 이상 큰 공격을 맞으면 판이 크게 흔들리고 휴대폰 진동 (설정에서 끌 수 있음)
+function bigHit(p,k){if(!p||p.isAI||p.remote)return;p.shakeUntil=G.t+(k>=5?480:380);vib(k>=5?[90,50,90]:[70]);}
 function confetti(){if(!FX.ctx)return;for(let i=0;i<110;i++)FX.sparks.push({cf:true,x:Math.random()*innerWidth,y:-20-Math.random()*260,vx:(Math.random()-0.5)*0.16,vy:0.12+Math.random()*0.22,life:2800,max:2800,col:pick(['#FFD43B','#FF8FAB','#74C0FC','#69DB7C','#B197FC','#FFFFFF'])});}
 function die(p){if(p.dead)return;p.dead=true;p.cur=null;Snd.bad();if(mirror(p))nsend({t:'dead'});}
 function addFloat(p,text,color){p.floats.push({text,color,life:1500});if(p.floats.length>3)p.floats.shift();}
@@ -1041,7 +1043,7 @@ function lock(p){
     if(G.mode==='solo'&&atk>0){p.score+=atk*60;addFloat(p,'+'+(atk*60),'#1c7ed6');}
     {const o=opp(p),k=atk,toBoss=G.mode==='ai'&&p.idx===0;
       if(k>0||toBoss){const tt=launchShots(p,o,n,chains,Math.max(k,toBoss?Math.ceil(dmgBoss/2):0),G.t<p.feverUntil);
-        G.events.push({at:G.t+tt,fn:()=>{if(toBoss)bossDamage(dmgBoss);if(k>0&&!o.remote&&!o.dead){o.pending+=k;updateUI(o);if(!o.isAI)Snd.hit();}}});
+        G.events.push({at:G.t+tt,fn:()=>{if(toBoss)bossDamage(dmgBoss);if(k>0&&!o.remote&&!o.dead){o.pending+=k;updateUI(o);if(!o.isAI){Snd.hit();if(k>=3)bigHit(o,k);}}}});
         if(k>0&&o.remote)nsend({t:'garb',n:k,cl:n,ch:chains,fv:G.t<p.feverUntil?1:0});}}
     if(G.mode==='solo'){const lv=1+Math.floor(p.lines/10);if(lv>G.soloLv){G.soloLv=lv;G.speed=1+0.07*(lv-1);bigK(p,'solo_lvup',{n:lv},'#1c7ed6');Snd.fever();heal(p,5);}}
     delay=160+chains*130;
@@ -1418,7 +1420,7 @@ function showMenu(){
   if(ON)socStart().then(ok=>{if(ok)socAutoSync();});
 }
 function cycleHero(d){const own=HEROES.filter(x=>ownHero(x.id));if(own.length<2)return;const i=own.findIndex(x=>x.id===heroId());const n=own[(i+d+own.length)%own.length];store.set('hero',n.id);Snd.pop();showMenu();}
-function showSettings(){const langs=Object.keys(I18N).map(l=>`<button class="lbtn ${l===LANG?'on':''}" onclick="setLang('${l}');showSettings()">${I18N[l]._name}</button>`).join('');ov(`<div class="card"><div class="title" style="font-size:30px">\u2699\ufe0f ${tr('settings')}</div><h3>${tr('sound')}</h3><div class="minirow"><button class="lbtn ${Snd.on?'on':''}" onclick="toggleMute();showSettings()">${Snd.on?tr('sfx_on'):tr('sfx_off')}</button><button class="lbtn ${Snd.bgm?'on':''}" onclick="toggleBgm();showSettings()">${Snd.bgm?tr('bgm_on'):tr('bgm_off')}</button></div><h3>${tr('language')}</h3><div class="minirow">${langs}</div><h3>${tr('nick')}</h3><div class="nickrow"><input id="nickIn" maxlength="12" value="${esc(nick())}"><button class="btn alt" onclick="saveNick2()">${tr('save')}</button></div><button class="btn gray" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`);}
+function showSettings(){const langs=Object.keys(I18N).map(l=>`<button class="lbtn ${l===LANG?'on':''}" onclick="setLang('${l}');showSettings()">${I18N[l]._name}</button>`).join('');ov(`<div class="card"><div class="title" style="font-size:30px">\u2699\ufe0f ${tr('settings')}</div><h3>${tr('sound')}</h3><div class="minirow"><button class="lbtn ${Snd.on?'on':''}" onclick="toggleMute();showSettings()">${Snd.on?tr('sfx_on'):tr('sfx_off')}</button><button class="lbtn ${Snd.bgm?'on':''}" onclick="toggleBgm();showSettings()">${Snd.bgm?tr('bgm_on'):tr('bgm_off')}</button><button class="lbtn ${store.get('vib',1)?'on':''}" onclick="store.set('vib',store.get('vib',1)?0:1);vib(60);showSettings()">${store.get('vib',1)?'\ud83d\udcf3 ON':'\ud83d\udcf4 OFF'}</button></div><h3>${tr('language')}</h3><div class="minirow">${langs}</div><h3>${tr('nick')}</h3><div class="nickrow"><input id="nickIn" maxlength="12" value="${esc(nick())}"><button class="btn alt" onclick="saveNick2()">${tr('save')}</button></div><button class="btn gray" onclick="showMenu()">\ud83c\udfe0 ${tr('go_home')}</button></div>`);}
 function saveNick2(){const v=(($('#nickIn')&&$('#nickIn').value)||'').trim().slice(0,12);if(v){store.set('nick',v);toast('\u2713 '+v);}}
 
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -1532,7 +1534,7 @@ function onNet(m){
     case 'hello':if(NET.host)hostStart();break;
     case 'start':NET.re=false;NET.peerRe=false;clearTimeout(NET.joinTimer);startMatch('online',1,m.seed);break;
     case 'st':if(live)applyState(m);break;
-    case 'garb':if(live&&!G.ended){const n=m.n|0;const tt=launchShots(rm,me,(m.cl|0)||2,(m.ch|0)||1,n,!!m.fv);G.events.push({at:G.t+tt,fn:()=>{if(!me.dead){me.pending+=n;updateUI(me);Snd.hit();}}});}break;
+    case 'garb':if(live&&!G.ended){const n=m.n|0;const tt=launchShots(rm,me,(m.cl|0)||2,(m.ch|0)||1,n,!!m.fv);G.events.push({at:G.t+tt,fn:()=>{if(!me.dead){me.pending+=n;updateUI(me);Snd.hit();if(n>=3)bigHit(me,n);}}});}break;
     case 'item':if(live&&!G.ended&&ITEMS[m.k]){sendRunner(rm,me,ITEMS[m.k].runner,itemLabel(m.k)+'!',()=>applyItem(me,m.k));}break;
     case 'say':if(live)sayK(rm,m.k,m.v,m.d,m.i===null?undefined:m.i);break;
     case 'fl':if(live)floatK(rm,m.k,m.v,m.c);break;
@@ -1676,7 +1678,7 @@ function topOut(p){
   else{floatK(p,'f_topout',{n:30},'#e03131');hurt(p,30);}
   calcH(p);updateUI(p);
 }
-function sendGarb(p,o,k){const tt=launchShots(p,o,k,1,k,false);G.events.push({at:G.t+tt,fn:()=>{if(!o.remote&&!o.dead){o.pending+=k;updateUI(o);}}});if(o.remote)nsend({t:'garb',n:k,cl:k,ch:1});}
+function sendGarb(p,o,k){const tt=launchShots(p,o,k,1,k,false);G.events.push({at:G.t+tt,fn:()=>{if(!o.remote&&!o.dead){o.pending+=k;updateUI(o);bigHit(o,k);}}});if(o.remote)nsend({t:'garb',n:k,cl:k,ch:1});}
 function useSkill(p){
   if(!p||!p.hero||p.dead||p.remote||!G.running||G.countdown>0||p.sk<p.hero.charge)return;
   p.sk=0;const h=p.hero,o=opp(p),boss=G.mode==='ai';
