@@ -281,6 +281,7 @@ h3{font-family:'Jua',sans-serif;font-weight:400}
 .skbtn span{position:absolute;right:-3px;bottom:-3px;background:#7048e8;color:#fff;border-radius:8px;padding:1px 7px;font-size:12px;font-family:'Fredoka',sans-serif}
 .skbtn.ready{box-shadow:0 0 0 3px #fff,0 0 20px 6px rgba(255,212,59,.95)}
 #count{font-family:'Fredoka',sans-serif;font-weight:700;color:#fff;font-size:124px;text-shadow:4px 4px 0 #ff5c8a,-4px -4px 0 #ff5c8a,4px -4px 0 #ff5c8a,-4px 4px 0 #ff5c8a,0 10px 0 #d6336c,0 0 40px rgba(255,107,154,.8)}
+.ribbon+.subt,.ribbon+.stars{margin-top:14px}
 .ribbon{position:relative;z-index:1;display:inline-block;margin:8px auto 6px;padding:10px 48px;font-family:'Jua',sans-serif;font-size:40px;color:#fff;border-radius:12px;text-shadow:0 3px 0 rgba(0,0,0,.2)}
 .ribbon.win{background:linear-gradient(180deg,#ffd43b,#f59f00);box-shadow:0 6px 0 #d9480f,0 12px 26px rgba(245,159,0,.4)}
 .ribbon.lose{background:linear-gradient(180deg,#a5d8ff,#5c7cfa);box-shadow:0 6px 0 #3b5bdb,0 12px 26px rgba(59,91,219,.35)}
@@ -984,7 +985,7 @@ function riseRow(p){if(!p||p.dead||p.remote)return;if(p.isBoss&&G.level<=3)retur
 function climaxTick(dt){if(!G.clock||G.ended)return;const left=G.clock-G.t;
   if(!G.climax&&left<=30000){G.climax=true;G.riseT=0;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'climax',null,'#e03131');Snd.siren();}
   if(G.climax&&!G.sudden&&left<=0){G.sudden=true;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'sudden',null,'#c92a2a');Snd.siren();}
-  if(G.climax){G.riseT+=dt;const ev=G.sudden?Math.max(2500,G.riseEvery*0.6):G.riseEvery;if(G.riseT>=ev){G.riseT=0;for(const p of G.players)riseRow(p);}}}
+  if(G.climax){G.riseT+=dt;const ev=G.sudden?Math.max(2500,G.riseEvery*0.6):G.riseEvery;if(G.riseT>=ev){G.riseT=0;for(const p of G.players)riseRow(p);if(G.tut&&G.sudden&&G.mode==='ai')bossDamage(2);}}}
 const streakMul=s=>s>=5?2:s>=3?1.5:s>=2?1.2:1;
 function dexGet(){const d=store.get('dex',{});return (d&&typeof d==='object')?d:{};}
 function anName(a){if(DEX1.includes(a))return String(tr('a_'+a)).replace(/\s*[\(（].*$/,'');return tr('an_'+a);}
@@ -1355,7 +1356,7 @@ function setLang(l){if(!I18N[l])return;LANG=l;L=I18N[l];store.set('lang',l);appl
 
 function startMatch(mode,level,seed){
   if(mode==='ai'&&chapterGate(level||1))return;
-  try{if(mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('start');}catch(e){}
+  try{if(mode!=='demo')hkT('start');}catch(e){}
   Snd.init();hideOv();
   if(mode!=='online')leaveOnline();
   if(seed===undefined||seed===null)seed=(Math.random()*2147483647)|0;
@@ -1448,7 +1449,7 @@ function showHelp(){
 }
 function showResult(w){
   if(!G.players)return;if(G.mode==='ai'&&w===G.players[0])for(let i=0;i<(G.stars||1);i++)setTimeout(()=>Snd.star(i),420+i*250);
-  try{if(G.mode!=='demo'&&window.HKAccount&&window.HKAccount.track)window.HKAccount.track('finish');}catch(e){}if(document.body.classList.contains('ftue'))flushFirst();const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
+  try{if(G.mode!=='demo')hkT('finish');}catch(e){}if(document.body.classList.contains('ftue'))flushFirst();const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
   if(G.mode==='ai'){
     const c=b.ai.cfg;
     if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
@@ -1664,6 +1665,7 @@ function addCoins(n){store.set('coins',Math.max(0,getCoins()+n));if(n>0)setTimeo
 function toast(msg){const t=$('#toast');if(!t)return;t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),1900);}
 function hurt(p,d){
   if(!p||p.dead||p.remote||p.isBoss||d<=0||!p.hpMax)return;
+  if(G.tut&&!p.isAI){d=Math.min(d,Math.max(0,p.hp-25));if(d<=0)return;}
   if(fxOn(p,'immune')){floatK(p,'f_immune',null,'#2b8a3e');return;}
   p.hp=Math.max(0,p.hp-d);addFloat(p,'-'+d+' HP','#e03131');updateHP();
   if(p.hp<=0){if(p.revive){p.revive=false;p.hp=Math.ceil(p.hpMax*0.6);bigK(p,'revive',null,'#f08c00');Snd.fever();updateHP();return;}die(p);}
@@ -1675,7 +1677,7 @@ function topOut(p){
   p.grid.splice(0,10);while(p.grid.length<H)p.grid.unshift(Array(W).fill(null));
   p.pending=0;p.pq=[];p.inDanger=false;p.shakeUntil=G.t+400;Snd.boom();
   if(p.isBoss){bossDamage(Math.ceil(p.hpMax*0.3));}
-  else{floatK(p,'f_topout',{n:30},'#e03131');hurt(p,30);}
+  else{const td=G.tut?10:30;floatK(p,'f_topout',{n:td},'#e03131');hurt(p,td);if(G.tut&&p.idx===0)coach(tr('tut_row'),4000);}
   calcH(p);updateUI(p);
 }
 function sendGarb(p,o,k){const tt=launchShots(p,o,k,1,k,false);G.events.push({at:G.t+tt,fn:()=>{if(!o.remote&&!o.dead){o.pending+=k;updateUI(o);bigHit(o,k);}}});if(o.remote)nsend({t:'garb',n:k,cl:k,ch:1});}
@@ -2180,6 +2182,7 @@ const I18N_V12={
 for(const l in I18N_V12)if(I18N[l])Object.assign(I18N[l],I18N_V12[l]);
 Object.assign(I18N.ko,{legend_hdr2:'전설 영웅 (영웅 조각 30개로 획득)'});Object.assign(I18N.en,{legend_hdr2:'Legendary Heroes (get with 30 hero shards)'});if(I18N.ja)Object.assign(I18N.ja,{legend_hdr2:'伝説ヒーロー（かけら30個で獲得）'});if(I18N.zh)Object.assign(I18N.zh,{legend_hdr2:'传说英雄（30个碎片获得）'});
 /* v1.2 첫 1분: 미뤄 둔 알림, 손가락·키 안내 */
+function hkT(t){try{if(window.HKAccount&&window.HKAccount.track){window.HKAccount.track(t);return;}const q=window.__hkq=window.__hkq||[];q.push(t);if(!window.__hkqT){let n=0;window.__hkqT=setInterval(()=>{n++;if(window.HKAccount&&window.HKAccount.track){clearInterval(window.__hkqT);window.__hkqT=0;while(q.length){try{window.HKAccount.track(q.shift());}catch(e){}}}else if(n>120){clearInterval(window.__hkqT);window.__hkqT=0;}},500);}}catch(e){}}
 const FTQ=[];function afterFirst(fn){if(isNewbie()||G.tut)FTQ.push(fn);else fn();}
 function flushFirst(){document.body.classList.remove('ftue');while(FTQ.length){const f=FTQ.shift();try{setTimeout(f,900);}catch(e){}}}
 function gest(kind){const me=G.players&&G.players[0],w=me&&me.ui&&me.ui.board&&me.ui.board.parentElement;if(!w)return;let g=w.querySelector('.gest');if(!g){g=document.createElement('div');g.className='gest';g.textContent='\u{1F446}';w.appendChild(g);}g.className='gest'+(kind&&TOUCH?' on '+kind:'');}
