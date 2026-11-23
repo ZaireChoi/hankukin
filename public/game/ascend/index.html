@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.93 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.94 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -5942,8 +5942,8 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
   /* v3.77 (21 마): ShapeGeometry UVs are raw shape units - the lava picture was clamped to one flat colour with a hard straight edge; map them to 0..1 */const lava=new T3.Mesh(((g)=>{g.computeBoundingBox();const b=g.boundingBox,uv=g.attributes.uv,p=g.attributes.position,w=Math.max(1,b.max.x-b.min.x),h=Math.max(1,b.max.y-b.min.y);for(let i=0;i<uv.count;i++)uv.setXY(i,(p.getX(i)-b.min.x)/w,(p.getY(i)-b.min.y)/h);uv.needsUpdate=true;return g;})(new T3.ShapeGeometry(sh,2)),new T3.MeshStandardMaterial({color:0x200400,emissive:0xffffff,emissiveMap:R.lavaTex,emissiveIntensity:1.8,roughness:.6}));lava.rotation.x=-Math.PI/2;lava.position.set(l.x,2.4,l.y);/* v3.83: lifted off the ground plane and drawn with a depth offset - at 0.6 the far depth precision let the sand win over half the pool along a straight line */lava.material.polygonOffset=true;lava.material.polygonOffsetFactor=-4;lava.material.polygonOffsetUnits=-4;lava.renderOrder=1;S.add(lava);
   // basalt crust: irregular dark slab ring + scattered cooled rocks, no torus
   const crustSh=new T3.Shape();for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*1.38+18*Math.sin(a*5+l.y);i?crustSh.lineTo(Math.cos(a)*r,Math.sin(a)*r):crustSh.moveTo(Math.cos(a)*r,Math.sin(a)*r);}const hole=new T3.Path();for(let i=0;i<=N;i++){const a=-i/N*Math.PI*2;const r=(l.r+10)*(1+nz(a))*(1+.12*Math.sin(a*3+l.x))*.98;i?hole.lineTo(Math.cos(a)*r,Math.sin(a)*r):hole.moveTo(Math.cos(a)*r,Math.sin(a)*r);}crustSh.holes.push(hole);
-  const crust=new T3.Mesh(new T3.ShapeGeometry(crustSh,2),new T3.MeshStandardMaterial({color:0x1a1210,roughness:1,emissive:0x3a0c02,emissiveIntensity:.35}));crust.rotation.x=-Math.PI/2;crust.position.set(l.x,1.8,l.y);crust.material.polygonOffset=true;crust.material.polygonOffsetFactor=-2;crust.material.polygonOffsetUnits=-2;crust.receiveShadow=true;S.add(crust);
-  const rk=new T3.InstancedMesh(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:0x221815,roughness:1,flatShading:true}),18);const D=new T3.Object3D();const Rn=mulberry(l.x+l.y*3);for(let i=0;i<18;i++){const a=Rn()*6.28,r=(l.r+10)*(1.05+Rn()*.45);const s=6+Rn()*16;D.position.set(l.x+Math.cos(a)*r,s*.25,l.y+Math.sin(a)*r);D.scale.set(s*(1+Rn()*.6),s*(.35+Rn()*.4),s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();rk.setMatrixAt(i,D.matrix);}rk.castShadow=true;S.add(rk);
+  const crust=new T3.Mesh(new T3.ShapeGeometry(crustSh,2),new T3.MeshStandardMaterial({color:0x1a1210,roughness:1,emissive:0x3a0c02,emissiveIntensity:.35}));crust.rotation.x=-Math.PI/2;crust.position.set(l.x,1.8,l.y);crust.material.polygonOffset=true;crust.material.polygonOffsetFactor=-2;crust.material.polygonOffsetUnits=-2;crust.receiveShadow=true;/* v3.94 (27-1): the dark ring around each lava pool read as a black circle - not added; the rocks around the pool stay */
+  const rk=new T3.InstancedMesh(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:MAP&&MAP.theme==='dune'?0x6a4630:0x3a2a22,roughness:1,flatShading:true}),18)/* v3.94 (27-3): baked-clay rocks instead of black chunks */;const D=new T3.Object3D();const Rn=mulberry(l.x+l.y*3);for(let i=0;i<18;i++){const a=Rn()*6.28,r=(l.r+10)*(1.05+Rn()*.45);const s=6+Rn()*16;D.position.set(l.x+Math.cos(a)*r,s*.25,l.y+Math.sin(a)*r);D.scale.set(s*(1+Rn()*.6),s*(.35+Rn()*.4),s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();rk.setMatrixAt(i,D.matrix);}rk.castShadow=true;S.add(rk);
   for(let i=0;i<5;i++)NAT.steam.push({x:l.x+(Math.random()-.5)*l.r,y:l.y+(Math.random()-.5)*l.r,hot:1});}
  // 1b) swamps / fog pools: same irregular outline instead of perfect discs
  const irr=(o,x,y,r,seed)=>{const nz=natNoise(seed);const sh=new T3.Shape();const N=48;for(let i=0;i<=N;i++){const a=i/N*Math.PI*2;const rr=r*(1+nz(a)*1.3)*(1+.1*Math.sin(a*4+seed));i?sh.lineTo(Math.cos(a)*rr,Math.sin(a)*rr):sh.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);}const m=new T3.Mesh(new T3.ShapeGeometry(sh,2),o.material);m.rotation.copy(o.rotation);m.position.copy(o.position);m.renderOrder=o.renderOrder;S.add(m);S.remove(o);};
@@ -5971,7 +5971,7 @@ function naturalize(){try{const R=R3,T3=window.THREE;if(!R||!R.envG||!T3)return;
  // pebbles & moss decals
  /* v3.60: mk lived only inside the flora branch; defined here too so the pebbles no longer throw "mk is not defined" */
  const mk=(geo,mat,n)=>{const m=new T3.InstancedMesh(geo,mat,Math.max(1,n));m.castShadow=gfxMode()==='high';m.receiveShadow=false;S.add(m);return m;};
- const peb=mk(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:th==='frost'?0x8ea2b6:0x3a3228,roughness:1,flatShading:true}),420);peb.castShadow=false;/* v3.77: D was only declared in other branches - "naturalize ReferenceError: D is not defined" */const D=new T3.Object3D();for(let i=0;i<420;i++){const x=Rn()*WW,y=Rn()*WH;const s=2+Rn()*6;D.position.set(x,s*.2,y);D.scale.set(s*(1+Rn()),s*.5,s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();peb.setMatrixAt(i,D.matrix);}
+ const peb=mk(new T3.DodecahedronGeometry(1,0),new T3.MeshStandardMaterial({color:th==='frost'?0x8ea2b6:th==='dune'?0x7a5a40:0x3a3228,roughness:1,flatShading:true}),420);peb.castShadow=false;/* v3.77: D was only declared in other branches - "naturalize ReferenceError: D is not defined" */const D=new T3.Object3D();for(let i=0;i<420;i++){const x=Rn()*WW,y=Rn()*WH;const s=2+Rn()*6;D.position.set(x,s*.2,y);D.scale.set(s*(1+Rn()),s*.5,s);D.rotation.set(Rn(),Rn()*6,Rn());D.updateMatrix();peb.setMatrixAt(i,D.matrix);}
  /* v3.77: the moss decals, cloud ceiling, tall aurora curtains and steam below never ran (they sat behind the D error); they add tall stripes and overdraw, so they stay off */ NAT.on=true;return;
  if(th!=='frost'&&th!=='volcano'){const mossT=R.radTex([[0,'rgba(80,220,170,.35)'],[.6,'rgba(40,140,110,.12)'],[1,'rgba(0,0,0,0)']]);for(let i=0;i<40;i++){const x=Rn()*WW,y=Rn()*WH;if(avoid(x,y))continue;const d=new T3.Mesh(new T3.PlaneGeometry(1,1),new T3.MeshBasicMaterial({map:mossT,transparent:true,depthWrite:false}));const s=120+Rn()*220;d.scale.set(s,s*(.6+Rn()*.6),1);d.rotation.x=-Math.PI/2;d.rotation.z=Rn()*6;d.position.set(x,.3,y);S.add(d);}}
  // 4) magnetic cloud ceiling with descending field lines (aurora curtains)
@@ -8282,7 +8282,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v393';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v394';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8683,7 +8683,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_nan.js?v=348"></script>
 <script src="lib/ascend_music.js?v=357"></script>
 <script src="lib/ascend_clean.js?v=348"></script>
-<script src="lib/explosionfx.js?v=348"></script>
+<script src="lib/explosionfx.js?v=394"></script>
 <script src="lib/ascend_boom.js?v=349"></script>
 <script src="lib/ascend_lobby.js?v=350"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
@@ -8704,16 +8704,16 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_ready.js?v=367"></script>
 <script src="lib/ascend_auto.js?v=364"></script>
 <script src="lib/ascend_combat2.js?v=393"></script>
-<script src="lib/ascend_tension2.js?v=388"></script>
+<script src="lib/ascend_tension2.js?v=394"></script>
 <script src="lib/ascend_arts.js?v=388"></script>
 <script src="lib/ascend_lean.js?v=370"></script>
 <script src="lib/ascend_moves.js?v=373"></script>
 <script src="lib/ascend_hitfx.js?v=374"></script>
 <script src="lib/ascend_bladeghost.js?v=381"></script>
 <script src="lib/ascend_dimobile.js?v=390"></script>
-<script src="lib/ascend_noground.js?v=384"></script>
-<script src="lib/ascend_genfree.js?v=390"></script>
-<script src="lib/ascend_mtree.js?v=393"></script>
+<script src="lib/ascend_noground.js?v=394"></script>
+<script src="lib/ascend_genfree.js?v=394"></script>
+<script src="lib/ascend_mtree.js?v=394"></script>
 <script src="lib/ascend_floor2.js?v=370"></script>
 </body>
 </html>
