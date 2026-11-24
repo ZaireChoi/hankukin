@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.96 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.97 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1262,7 +1262,7 @@ function fxLocal0(type,x,y,s){
  else if(type===7){G.parts.push({x,y,vx:0,vy:0,l:.5,ml:.5,c:'tele',s:60});}
  else if(type===8){const h0=G._h!=null?G._h:0;let px=x,py=y;for(let i=16;i>=0;i--){px=x+rnd(-14,14);py=y+rnd(-14,14);part(px,py,0,0,.28,i%3?'#fff6b0':'#ffffff',i%4?5:8,h0+i*22);}G.parts.push({x,y,vx:0,vy:0,l:.3,ml:.3,c:'tele',s:40});if(Math.hypot(x-cam.x,y-cam.y)<900)SFX.boom(.6);}}
 function fx(type,x,y,s,h){if(MAP.space&&h==null&&G)h=nearZ(x,y);fxLocal(type,x,y,s,h);if(NET.mode==='host')NET.fxq.push([type,x|0,y|0,s|0,h|0]);}
-function updateFx(dt){for(const p of G.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.92;p.vy*=.92;p.l-=dt;if(p.vh){p.h+=p.vh*dt;p.vh-=110*dt;if(p.h<0){p.h=0;p.vh=0;}}}G.parts=G.parts.filter(p=>p.l>0);
+function updateFx(dt){for(const p of G.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.92;p.vy*=.92;p.l-=dt;if(p.vh){p.h+=p.vh*dt;p.vh-=110*dt;if(p.h<0){p.h=0;p.vh=0;}}}G.parts=G.parts.filter(p=>p.l>0&&p.c!=='ring');/* v3.97 (28-1): expanding ground circles (drawn as dotted circles in 3D) dropped - user asked for no ground circles */
  for(const tt of G.texts){tt.y-=30*dt;tt.l-=dt;}G.texts=G.texts.filter(tt=>tt.l>0);for(const p of G.pops)p.l-=dt;G.pops=G.pops.filter(p=>p.l>0);
  G.hitm=Math.max(0,G.hitm-dt);G.hurtFlash=Math.max(0,G.hurtFlash-dt);G.flash=Math.max(0,G.flash-dt*.8);cam.shake=Math.max(0,cam.shake-dt*20);
  if(G.deathT>0){G.deathT-=dt;if(G.deathT<=0&&!G.over&&!window.__auto)openDeploy();}}
@@ -8282,7 +8282,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v396';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v397';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8675,7 +8675,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_grow.js?v=348"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
-<script src="lib/ascend_boss.js?v=392"></script>
+<script src="lib/ascend_boss.js?v=397"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
@@ -8687,7 +8687,7 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_boom.js?v=349"></script>
 <script src="lib/ascend_lobby.js?v=350"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
-<script src="lib/ascend_arena2.js?v=354"></script>
+<script src="lib/ascend_arena2.js?v=397"></script>
 <script src="lib/ascend_flight.js?v=361"></script>
 <script src="lib/ascend_bgm.js?v=357"></script>
 <script src="lib/ascend_wr.js?v=361"></script>
@@ -8711,10 +8711,11 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script src="lib/ascend_hitfx.js?v=374"></script>
 <script src="lib/ascend_bladeghost.js?v=381"></script>
 <script src="lib/ascend_dimobile.js?v=390"></script>
-<script src="lib/ascend_noground.js?v=394"></script>
+<script src="lib/ascend_noground.js?v=397"></script>
 <script src="lib/ascend_genfree.js?v=394"></script>
 <script src="lib/ascend_mtree.js?v=394"></script>
-<script src="lib/ascend_posture.js?v=396"></script>
+<script src="lib/ascend_posture.js?v=397"></script>
+<script src="lib/ascend_feel.js?v=397"></script>
 <script src="lib/ascend_floor2.js?v=370"></script>
 </body>
 </html>
