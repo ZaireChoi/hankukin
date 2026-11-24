@@ -83,7 +83,9 @@ function trackVisit() {
     bumpStats(keys);
   } catch (e) {}
 }
+const EXTRA_EV = ['quit', 'quit_t30', 'quit_t90', 'quit_tlong', 'quit_s1', 'quit_s4', 'quit_other', 'win', 'lose', 'end_t90', 'end_t150', 'end_tlong'];
 function trackEvent(type) {
+  if (EXTRA_EV.includes(type) && STAT_GAME === 'anibrix') { bumpStats([STAT_GAME + '_' + type]); return; }
   if (!['start', 'finish'].includes(type)) return;
   const g = STAT_GAME, keys = [g + '_' + type];
   if (type === 'start' && onceToday(g + '_play')) keys.push(g + '_players');
