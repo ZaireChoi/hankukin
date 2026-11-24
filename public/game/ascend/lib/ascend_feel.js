@@ -35,7 +35,7 @@
     document.body.appendChild(el); CB.el = el; return el;
   };
   var comboHit = function () {
-    var now = performance.now(); if (now - CB.t > 1600) CB.n = 0; CB.n++; CB.t = now;
+    var now = performance.now(); if (now - CB.t > 1600 || now - (CB.t0 || 0) > 8000) { CB.n = 0; CB.t0 = now; } CB.n++; CB.t = now;   /* v4.00 (29-5): a chain also ends after 8 s, auto battle never stops hitting */
     if (CB.n < 3) return; var el = comboEl(), n = CB.n;
     el.innerHTML = n + '<span style="font-size:.5em;margin-left:4px">HIT</span>';
     el.style.color = n >= 50 ? '#ffb070' : n >= 10 ? '#ffd166' : '#ffffff';

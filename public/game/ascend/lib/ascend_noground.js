@@ -85,7 +85,22 @@
   };
   // sparks that fly out at one fixed speed form a perfect expanding ring of dots; every spark now gets its own speed (scatter)
   var partHook = function () { if (window.__hkNgPart || typeof part !== 'function') return; window.__hkNgPart = 1; var p0 = part; part = function (x, y, vx, vy) { if (vx || vy) { var k = .42 + Math.random() * .66; arguments[2] = vx * k; arguments[3] = vy * k; } return p0.apply(this, arguments); }; };
-  setInterval(function () { try { partHook(); } catch (e) {} }, 500);
+  setInterval(function () { try { partHook(); fxHook(); } catch (e) {} }, 500);
+/* v4.00 (29-1): dotted circles on the ground - effects spawn 8-60 sparks at the same distance around a point. Each frame the newly spawned
+   sparks of one colour are checked; if they sit on a circle (spread of distances < 22 % of the radius) they are pulled in to random
+   depths, so the same burst reads as a filled cloud, not a ring. */
+var ringBreak = function () {
+  var g = (typeof G !== 'undefined' ? G : null); if (!g || !g.parts) return; var a = g.parts, fresh = [];
+  for (var i = a.length - 1; i >= 0 && fresh.length < 500; i--) { var p = a[i]; if (p._rb) break; p._rb = 1; fresh.push(p); }
+  if (fresh.length < 6) return; var by = {};
+  for (var j = 0; j < fresh.length; j++) { var q = fresh[j], k = String(q.c); (by[k] = by[k] || []).push(q); }
+  for (var c in by) { var L = by[c]; if (L.length < 6) continue; var cx = 0, cy = 0; L.forEach(function (p) { cx += p.x; cy += p.y; }); cx /= L.length; cy /= L.length;
+    var ds = L.map(function (p) { return Math.hypot(p.x - cx, p.y - cy); }), m = ds.reduce(function (s, d) { return s + d; }, 0) / ds.length; if (m < 25) continue;
+    var v = Math.sqrt(ds.reduce(function (s, d) { return s + (d - m) * (d - m); }, 0) / ds.length); if (v / m > .22) continue;
+    L.forEach(function (p) { var kk = .15 + Math.random() * .85; p.x = cx + (p.x - cx) * kk; p.y = cy + (p.y - cy) * kk; p.h = (p.h || 4) + Math.random() * 30; });
+    window.__ringBroke = (window.__ringBroke || 0) + 1; }
+};
+var fxHook = function () { if (window.__hkRingBreak || typeof updateFx !== 'function') return; window.__hkRingBreak = 1; var u0 = updateFx; updateFx = function () { try { ringBreak(); } catch (e) {} return u0.apply(this, arguments); }; };
   var iv = setInterval(function () { try { install(); } catch (e) {} }, 50);
   setInterval(function () { try { if (install()) { clearInterval(iv); sweep(); } } catch (e) { N.err = String(e).slice(0, 160); } }, 500);
   window.__noGround = { stat: function () { return { refused: N.refused, swept: N.swept, kinds: N.kinds, err: N.err || null }; }, sweep: sweep };
