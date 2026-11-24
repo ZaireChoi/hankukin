@@ -74,7 +74,7 @@
   // ------------------------------------------------------------------ blueprint income + launch-event counter
   var hookEnd = function () {
     if (window.__hkFrames || typeof endMatch !== 'function') return; window.__hkFrames = 1; var em = endMatch;
-    endMatch = function (w) { var G0 = typeof G !== 'undefined' ? G : null, was = G0 && G0.over; var res = em.apply(this, arguments); try { if (G0 && !was) { var r = R(); if (r) { var win = G0.local && w === G0.local.team, g2 = (G0.rpg && win && !G0.rpg.quest) ? 6 : win ? 3 : 1; r.bp = (r.bp || 0) + g2; r.phx = Math.min(99, (r.phx || 0) + 1); A().saveP(); setTimeout(function () { try { toast(L2('설계도 조각 +' + g2, 'Blueprints +' + g2), 2200); } catch (e) {} }, 2600); } } } catch (e) {} return res; };
+    endMatch = function (w) { var G0 = typeof G !== 'undefined' ? G : null, was = G0 && G0.over; var res = em.apply(this, arguments); try { if (G0 && !was) { var r = R(); if (r) { var win = G0.local && w === G0.local.team, g2 = (G0.rpg && win && !G0.rpg.quest) ? 6 : win ? 3 : 1; r.bp = (r.bp || 0) + g2; r.phx = Math.min(99, (r.phx || 0) + 1); r.fsort = r.fsort || {}; var fk = r.mech || 'saber0'; r.fsort[fk] = (r.fsort[fk] || 0) + 1; A().saveP(); setTimeout(function () { try { toast(L2('설계도 조각 +' + g2, 'Blueprints +' + g2), 2200); } catch (e) {} }, 2600); } } } catch (e) {} return res; };
   };
   // ------------------------------------------------------------------ emblem plate at my frame's shoulder
   var plate = null, plateFor = null;
