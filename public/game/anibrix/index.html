@@ -326,6 +326,7 @@ body.phone #touch button.item,body.phone #touch button.hold{width:52px;font-size
 .score{font-variant-numeric:tabular-nums;background:rgba(50,20,60,.45);border-radius:999px;padding:2px 12px}
 /* v1.1: 움직이는 배경 위의 blur는 저사양 기기에서 프레임을 크게 떨어뜨려서 뺌 (칸이 거의 불투명이라 겉보기 차이 없음) */
 #touch button:active{transform:translateY(2px);box-shadow:0 1px 0 #e0c9b8}
+.cta.daily{background:linear-gradient(180deg,#ffe066,#fab005);box-shadow:0 7px 0 #e67700,0 14px 26px rgba(230,119,0,.3),inset 0 3px 0 rgba(255,255,255,.55)}.cta.daily b,.cta.daily small{color:#5c3b00;text-shadow:none}
 .cta.solo{background:linear-gradient(180deg,#d0bfff,#7950f2);box-shadow:0 7px 0 #5f3dc4,0 14px 26px rgba(95,61,196,.3),inset 0 3px 0 rgba(255,255,255,.55)}
 .nrow{display:flex;align-items:center;gap:2px}
 .next2{opacity:.78;border-left:1.5px dashed rgba(170,130,100,.28);padding-left:2px;box-sizing:content-box}
@@ -1018,7 +1019,7 @@ function pqReady(p){let r=0;for(const e of p.pq||[])if(e.at<=G.t)r+=e.n;return r
 function dangerCheck(p,cleared){const h=p.maxH;if(h>=DANGER2){p.inDanger=true;return;}if(p.inDanger&&cleared&&h<=DANGER2-3){p.inDanger=false;p.score+=500;bigK(p,'clutch',null,'#f08c00');floatK(p,'f_clutch',null,'#f08c00');if(p.idx===0&&!p.isAI&&!p.remote&&G.mode!=='demo'){G.clutch=(G.clutch||0)+1;Snd.fever();}return;}if(h<=DANGER2-3)p.inDanger=false;}
 function dangerTick(dt){for(const p of G.players){if(!p.ui||!p.ui.board)continue;const d=!p.dead&&p.maxH>=DANGER2;p.ui.board.classList.toggle('danger',d);if(d&&p.idx===0&&!p.isAI&&!p.remote){p.hbT-=dt;if(p.hbT<=0){Snd.heart();p.hbT=p.maxH>=H-3?430:720;}}else p.hbT=0;}}
 function riseRow(p){if(!p||p.dead||p.remote)return;if(p.isBoss&&G.level<=3)return;const top=p.grid.shift(),hole=Math.floor(Math.random()*W);p.grid.push(Array.from({length:W},(_,x)=>x===hole?null:{a:'stone',item:null}));p.shakeUntil=G.t+150;if(p.cur&&collide(p.grid,p.cur.cells,p.cur.x,p.cur.y))p.cur.y--;if(top.some(v=>v))topOut(p);calcH(p);if(p.idx===0&&!p.isAI)Snd.thud();}
-function climaxTick(dt){if(!G.clock||G.ended)return;const left=G.clock-G.t;
+function climaxTick(dt){if(G.daily){if(!G.ended&&G.clock&&G.t>=G.clock){for(const p of G.players)p.dead=true;checkEnd();}return;}if(!G.clock||G.ended)return;const left=G.clock-G.t;
   if(!G.climax&&left<=30000){G.climax=true;G.riseT=0;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'climax',null,'#e03131');Snd.siren();}
   if(G.climax&&!G.sudden&&left<=0){G.sudden=true;for(const p of G.players)if(!p.dead&&!p.remote)bigK(p,'sudden',null,'#c92a2a');Snd.siren();}
   if(G.climax){G.riseT+=dt;const ev=G.sudden?Math.max(2500,G.riseEvery*0.6):G.riseEvery;if(G.riseT>=ev){G.riseT=0;for(const p of G.players)riseRow(p);if(G.tut&&G.sudden&&G.mode==='ai')bossDamage(2);}}}
@@ -1225,6 +1226,7 @@ function checkEnd(){
     if(winner===G.players[0]){store.set('maxst',Math.max(store.get('maxst',1),G.level+1));chapterClear(G.level);store.set(lk,0);G.lossesNow=0;const secs=G.t/1000;G.stars=secs<=90?3:secs<=150?2:1;store.set('star_'+G.level,Math.max(store.get('star_'+G.level,0),G.stars));say(ai,lineOf(ai.ai.cfg,'lose'),3000);Snd.win();}
     else{G.lossesNow=store.get(lk,0)+1;store.set(lk,G.lossesNow);say(ai,lineOf(ai.ai.cfg,'win'),3000);Snd.lose();}
   } else if(G.mode==='online'){if(winner===G.players[0])Snd.win();else Snd.lose();if(G.players[0].dead===false&&!NET.left)nsend({t:'st',...stateMsg()});}
+  else if(G.mode==='solo'&&G.daily){const s=G.players[0].score,dk='daily_best_'+kday(),b=store.get(dk,0);G.soloNew=s>b;if(G.soloNew)store.set(dk,s);G.dailyReward=0;if(!store.get('daily_rw_'+kday(),0)){store.set('daily_rw_'+kday(),1);G.dailyReward=100;addCoins(100);}Snd.win();}
   else if(G.mode==='solo'){const s=G.players[0].score,b=store.get('solo_best',0);G.soloNew=s>b;if(G.soloNew)store.set('solo_best',s);if(G.soloNew)Snd.win();else Snd.lose();}
   else Snd.win();
   awardEnd(winner);
@@ -1396,7 +1398,7 @@ function startMatch(mode,level,seed){
   Snd.init();hideOv();
   if(mode!=='online')leaveOnline();
   if(seed===undefined||seed===null)seed=(Math.random()*2147483647)|0;
-  G.mode=mode;G.level=level||1;G.sp=mode==='ai'?stageSpecials(G.level):[];G.ch=mode==='ai'?chInfo(chOf(G.level)):null;G.mods=new Set(G.ch?G.ch.mods:[]);G.itemRate=G.mods.has('starRain')?0.26:0.13;G.bonusCoins=0;{const pl=PL();G.feat=mode==='ai'?{items:pl>=2,tiger:pl>=3,skills:pl>=4}:{items:true,tiger:true,skills:true};}G.maxCombo=0;G.maxChain=0;G.xpRes=null;G.t=0;G.hitstop=0;G.soloLv=1;G.soloNew=false;$('.vs').textContent=mode==='solo'?'∞':'VS';G.events=[];G.paused=false;G.ended=false;G.countdown=3000;G.mercy=0;G.lastWinner=null;G.clutch=0;G.dexNew=0;G.contUsed=false;G.contOffer=false;G.climax=false;G.sudden=false;G.riseT=0;G.streakRes=null;G.goldRate=0.045;
+  G.mode=mode;G.level=level||1;G.sp=mode==='ai'?stageSpecials(G.level):[];G.ch=mode==='ai'?chInfo(chOf(G.level)):null;G.mods=new Set(G.ch?G.ch.mods:[]);G.itemRate=G.mods.has('starRain')?0.26:0.13;G.bonusCoins=0;{const pl=PL();G.feat=mode==='ai'?{items:pl>=2,tiger:pl>=3,skills:pl>=4}:{items:true,tiger:true,skills:true};}G.maxCombo=0;G.maxChain=0;G.xpRes=null;G.t=0;G.hitstop=0;G.soloLv=1;G.soloNew=false;G.daily=false;G.dailyReward=0;$('.vs').textContent=mode==='solo'?'∞':'VS';G.events=[];G.paused=false;G.ended=false;G.countdown=3000;G.mercy=0;G.lastWinner=null;G.clutch=0;G.dexNew=0;G.contUsed=false;G.contOffer=false;G.climax=false;G.sudden=false;G.riseT=0;G.streakRes=null;G.goldRate=0.045;
   document.querySelectorAll('.runner').forEach(e=>e.remove());
   const kinds=mode==='ai'?['human','ai']:mode==='demo'?['ai','ai']:(mode==='online'||mode==='solo')?['human','remote']:['human','human'];
   G.players=[makePlayer(0,kinds[0],seed),makePlayer(1,kinds[1],seed)];
@@ -1448,7 +1450,7 @@ function showMenu(){if(G.players&&!G.ended&&G.mode&&G.mode!=='demo')liveQuitNow(
    </div>
    <div class="ctas">
      <button class="cta play" onclick="startMatch('ai',${st})"><span class="ci">${img(boss.por,48,false,'normal')}</span><span><b>\u25b6 ${tr('play')}</b><small>${tr('stage',{n:st})} \u00b7 ${bossName(boss)}</small></span></button>
-     ${u2?`<button class="cta solo" onclick="startMatch('solo')"><span class="ci big">♾️</span><span><b>${tr('solo_title')}</b><small>🏅 ${store.get('solo_best',0).toLocaleString()}</small></span></button>`:''}
+     ${u2?`<button class="cta daily" onclick="startDaily()"><span class="ci big">📅</span><span><b>${tr('daily_title')}</b><small>${store.get('daily_rw_'+kday(),0)?tr('daily_best',{s:store.get('daily_best_'+kday(),0).toLocaleString()}):tr('daily_sub')}</small></span></button>`:''} ${u2?`<button class="cta solo" onclick="startMatch('solo')"><span class="ci big">♾️</span><span><b>${tr('solo_title')}</b><small>🏅 ${store.get('solo_best',0).toLocaleString()}</small></span></button>`:''}
      ${ON&&u3?`<button class="cta pvp" onclick="quickMatch()"><span class="ci big">\u2694\ufe0f</span><span><b>${tr('m_quick_s')}</b><small>\ud83c\udfc6 ${p.tr}</small></span></button><button class="cta fr" onclick="showOnline()"><span class="ci big">\ud83d\udc65</span><span><b>${tr('m_friend_s')}</b><small>${tr('room_code')}</small></span></button>`:''}
    </div>
    ${u2?`<div class="bnav"><button class="on">\ud83c\udfe0<span>${tr('go_home')}</span></button><button onclick="showHeroes()">\ud83d\udc09<span>${tr('m_hero')}</span></button><button onclick="showSelect()">\ud83d\uddfa<span>${tr('sel_title2')}</span></button>${u3?`<button onclick="showDaily()">\ud83c\udf81<span>${tr('m_daily')}</span>${dd?'<i class="dot"></i>':''}</button>`:''}${ON&&u3?`<button onclick="showFriends()">\ud83d\udc65<span>${tr('friends')}</span></button>`:''}${u3?`<button onclick="showRank()">\ud83c\udfc6<span>${tr('rank_title')}</span></button>`:''}</div>`:''}
@@ -1488,7 +1490,7 @@ function showResult(w){
   try{if(G.mode!=='demo'&&!G.resSent){G.resSent=true;liveEnd();hkT('finish');const _sec=(G.t||0)/1000;hkT(_sec<=90?'end_t90':_sec<=150?'end_t150':'end_tlong');if(G.mode==='ai')hkT(w===G.players[0]?'win':'lose');}}catch(e){}if(document.body.classList.contains('ftue'))flushFirst();const [a,b]=G.players;const stat=p=>`${p.ui.info.nm}: ${p.score} · ${p.lines}`;let h='<div class="card">';
   if(G.mode==='ai'){
     const c=b.ai.cfg;
-    if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>`;
+    if(w===a)h+=`${img(c.por,84,false,'scared')}<div class="ribbon win">${tr('win')}</div><div class="stars">${[0,1,2].map(i=>`<span class="${i<(G.stars||1)?'on':''}" style="animation-delay:${0.3+i*0.25}s">\u2605</span>`).join('')}</div><div class="subt">${b.koByHP?tr('win_boss',{name:bossName(c),t:fmt(G.t)}):tr('win_sub',{name:bossName(c),title:bossTitle(c),t:fmt(G.t)})}</div>${noExt()?'':`<button class="lbtn" style="margin:2px auto 6px" onclick="shareDare('stage',${G.level},${G.stars||1})">📨 ${tr('dare_btn')}</button>`}`;
     else h+=`${img(c.por,84,false,'happy')}<div class="ribbon lose">${tr('lose')}</div><div class="subt">${tr('lose_sub',{name:bossName(c)})} ${G.lossesNow>=1?tr('mercy_next'):''}</div>`;
     {const early=store.get('maxst',1)<=3,opened=store.get('maxst',1)>=2;
     if(w===a)h+=`<button class="btn nextbig" onclick="adGate(()=>startMatch('ai',${G.level+1}))">${tr('next_big')} ▶ <small style="font-size:15px;opacity:.85">${tr('stage',{n:G.level+1})}</small></button>`;h+=xpBlock();
@@ -1500,6 +1502,8 @@ function showResult(w){
     if(!NET.left&&NET.conn)h+=`<div id="renote" class="subt" style="color:#d6336c;font-weight:800">${NET.peerRe?tr('on_peer_re'):''}</div><button class="btn" id="rebtn" onclick="requestRematch()">${tr('rematch')}</button>`;
     if(NET.quick)h+=`<button class="btn green" onclick="quickMatch()">${tr('q_again')}</button>`;
     h+=`<button class="btn gray" onclick="showMenu()">${tr('menu')}</button>`;
+  } else if(G.mode==='solo'&&G.daily){
+    h+=`${img(heroId(),84,false,'happy')}<div class="ribbon win">${tr('daily_done')}</div><div class="stats"><b style="font-size:30px;font-family:'Fredoka',sans-serif;color:#f08c00">${a.score.toLocaleString()}</b><br>${G.soloNew?'🎉 '+tr('daily_newbest')+'<br>':''}📅 ${tr('daily_best',{s:store.get('daily_best_'+kday(),0).toLocaleString()})}${G.dailyReward?'<br>🎁 '+tr('daily_reward',{n:G.dailyReward}):''}</div>${xpBlock()}${noExt()?'':`<button class="btn" style="background:linear-gradient(180deg,#ffe066,#fab005);color:#5c3b00;box-shadow:0 5px 0 #e67700" onclick="shareDare('daily',${a.score})">📨 ${tr('dare_btn')}</button>`}<button class="btn alt" onclick="startDaily()">${tr('daily_again')}</button><button class="btn gray" onclick="showMenu()">${tr('menu')}</button>`;
   } else if(G.mode==='solo'){
     h+=`${img(heroId(),84,false,G.soloNew?'happy':'normal')}<div class="ribbon ${G.soloNew?'win':'lose'}">${G.soloNew?tr('solo_new'):tr('solo_over')}</div><div class="stats"><b style="font-size:28px;font-family:'Fredoka',sans-serif;color:#ff5c8a">${a.score.toLocaleString()}</b><br>${tr('solo_stat',{l:a.lines,lv:G.soloLv,t:fmt(G.t)})}<br>🏅 ${tr('solo_best',{s:store.get('solo_best',0).toLocaleString()})}</div>${xpBlock()}${adX2Btn()}${heroPicker('result')}<button class="btn" onclick="adGate(()=>startMatch('solo'))">${tr('retry')}</button><button class="btn gray" onclick="showMenu()">${tr('menu')}</button>`;
   } else {
@@ -2230,6 +2234,15 @@ function liveEnd(){try{localStorage.removeItem(LIVEK);}catch(e){}}
 setInterval(()=>{try{liveTick();}catch(e){}},4000);
 try{const _lo=JSON.parse(localStorage.getItem(LIVEK)||'null');if(_lo){localStorage.removeItem(LIVEK);liveSendQuit(_lo);}}catch(e){}
 function hkT(t){try{if(window.HKAccount&&window.HKAccount.track){window.HKAccount.track(t);return;}const q=window.__hkq=window.__hkq||[];q.push(t);if(!window.__hkqT){let n=0;window.__hkqT=setInterval(()=>{n++;if(window.HKAccount&&window.HKAccount.track){clearInterval(window.__hkqT);window.__hkqT=0;while(q.length){try{window.HKAccount.track(q.shift());}catch(e){}}}else if(n>120){clearInterval(window.__hkqT);window.__hkqT=0;}},500);}}catch(e){}}
+/* v1.6 오늘의 도전: 하루 한 번 모두 같은 블록 순서로 60초 점수 대결. 첫 완료 때 코인 100 */
+function kday(){return new Date(Date.now()+9*3600e3).toISOString().slice(0,10);}
+function dailySeed(){let h=2166136261;const s='anibrix-'+kday();for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return (h>>>0)&0x7fffffff;}
+function startDaily(){try{const td=kday();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&/^anibrix_daily_(best|rw)_/.test(k)&&!k.endsWith(td))localStorage.removeItem(k);}}catch(e){}startMatch('solo',1,dailySeed());G.daily=true;G.clock=60000;$('.vs').textContent='📅';setTimeout(()=>{if(G.players&&G.daily)say(G.players[0],tr('daily_tip'),3800);},3200);}
+function shareDare(kind,a,b){const t=kind==='daily'?tr('dare_daily',{s:Number(a).toLocaleString()}):tr('dare_stage',{n:a,st:'★'.repeat(b||1)});try{shareMessenger(t);}catch(e){shareText(t,'share');}}
+Object.assign(I18N.ko,{daily_title:'오늘의 도전',daily_sub:'60초 점수 대결 · 🪙100',daily_best:'오늘 최고 {s}점',daily_done:'오늘의 도전 완료!',daily_newbest:'오늘 최고 기록!',daily_reward:'오늘의 보상 🪙{n}',daily_again:'다시 도전',daily_tip:'60초 동안 최고 점수! 오늘은 모두 같은 블록이에요',dare_btn:'도전장 보내기',dare_daily:'📅 애니브릭스 오늘의 도전 {s}점! 오늘은 모두 같은 블록이야. 나를 이겨봐!',dare_stage:'🐯 애니브릭스 {n}단계 보스를 {st}로 깼어! 너도 깰 수 있어?'});
+Object.assign(I18N.en,{daily_title:'Daily Challenge',daily_sub:'60s score attack · 🪙100',daily_best:"Today's best {s}",daily_done:'Daily Challenge done!',daily_newbest:'New best today!',daily_reward:'Daily reward 🪙{n}',daily_again:'Try again',daily_tip:'Best score in 60s! Everyone gets the same blocks today',dare_btn:'Send a challenge',dare_daily:"📅 I scored {s} in today's Anibrix Daily Challenge! Same blocks for everyone today. Can you beat me?",dare_stage:'🐯 I beat Anibrix stage {n} boss with {st}! Can you?'});
+Object.assign(I18N.ja,{daily_title:'今日のチャレンジ',daily_sub:'60秒スコア勝負 · 🪙100',daily_best:'今日のベスト {s}点',daily_done:'今日のチャレンジ完了！',daily_newbest:'今日のベスト更新！',daily_reward:'今日の報酬 🪙{n}',daily_again:'もう一度',daily_tip:'60秒でハイスコア！今日はみんな同じブロック',dare_btn:'挑戦状を送る',dare_daily:'📅 アニブリックス今日のチャレンジで{s}点！今日はみんな同じブロック。勝てるかな？',dare_stage:'🐯 アニブリックス ステージ{n}のボスを{st}でクリア！君もできる？'});
+Object.assign(I18N.zh,{daily_title:'今日挑战',daily_sub:'60秒得分赛 · 🪙100',daily_best:'今日最佳 {s}分',daily_done:'今日挑战完成！',daily_newbest:'今日新纪录！',daily_reward:'今日奖励 🪙{n}',daily_again:'再挑战',daily_tip:'60秒内拿最高分！今天大家的方块都一样',dare_btn:'发送挑战',dare_daily:'📅 我在Anibrix今日挑战拿了{s}分！今天大家方块都一样，来超过我吧！',dare_stage:'🐯 我用{st}打败了Anibrix第{n}关的Boss！你也行吗？'});
 const FTQ=[];function afterFirst(fn){if(isNewbie()||G.tut)FTQ.push(fn);else fn();}
 function flushFirst(){document.body.classList.remove('ftue');while(FTQ.length){const f=FTQ.shift();try{setTimeout(f,900);}catch(e){}}}
 function gest(kind){const me=G.players&&G.players[0],w=me&&me.ui&&me.ui.board&&me.ui.board.parentElement;if(!w)return;let g=w.querySelector('.gest');if(!g){g=document.createElement('div');g.className='gest';g.textContent='\u{1F446}';w.appendChild(g);}g.className='gest'+(kind&&TOUCH?' on '+kind:'');}
