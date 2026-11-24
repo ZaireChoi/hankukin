@@ -58,6 +58,9 @@ a.thumb{display:block}
 .ani h2{color:#ff5c8a}
 .rbx .play{background:linear-gradient(90deg,#00a2ff,#335fff)}
 .rbx h2{color:#5cc8ff}
+.kz .play{background:linear-gradient(90deg,#e0482f,#f2a33a)}
+.kz h2{color:#ffb35c}
+.kz .thumb{background-position:center 22%!important}
 .rbx h2 small{font-size:15px;font-weight:700;color:var(--sub)}
 .how{margin-top:42px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
 .how div{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(14,20,40,.6)}
@@ -86,6 +89,12 @@ footer a{color:#a9bbe6}
     <div class="tags"><span data-t="aniT1">퍼즐 대전</span><span data-t="aniT2">친구 초대</span><span data-t="aniT3">보스 스테이지</span><span data-t="aniT4">4개 언어</span></div>
     <span class="play" data-t="playBtn">지금 플레이 ▶</span></div>
   </a>
+  <a class="game kz" href="/game/kzombi/">
+   <div class="thumb" style="background-image:url(/game/kzombi/img/ui/title.jpg)"><span class="badge" data-t="kzBadge">NEW · 시험판</span></div>
+   <div class="body"><h2 data-t="kzName">처용, 조선좀비</h2><p data-t="kzDesc">조선 땅에 좀비가 쏟아진다! 낮에는 망루·병영·성벽을 세우고, 밤에는 처용과 이순신·을지문덕 같은 영웅, 깨어난 사방신과 함께 사당을 지켜요.</p>
+    <div class="tags"><span data-t="kzT1">디펜스 서바이벌</span><span data-t="kzT2">영웅 수집</span><span data-t="kzT3">건설·병사</span><span data-t="kzT4">휴대폰 OK</span></div>
+    <span class="play" data-t="kzPlay">지금 지키러 가기 ▶</span></div>
+  </a>
   <a class="game rbx" href="https://www.roblox.com/games/131171001545708/Anibrix-Animal-Block-Battle" target="_blank" rel="noopener">
    <div class="thumb" style="background-image:url(/game/anibrix/og-image.png)"><span class="badge" data-t="rbxBadge">NEW · Roblox</span></div>
    <div class="body"><h2>Anibrix <small>on Roblox</small></h2><p data-t="rbxDesc">로블록스에서도 Anibrix! 보스전과 같은 서버 플레이어와 1대1 대전을 즐겨 보세요.</p>
@@ -108,22 +117,22 @@ footer a{color:#a9bbe6}
 </div>
 <script>
 const S={
- ko:{rbxBadge:'NEW · 로블록스',rbxDesc:'로블록스에서도 Anibrix! 보스전과 같은 서버 플레이어와 1대1 대전을 즐겨 보세요.',rbxT1:'로블록스',rbxT2:'1대1 대전',rbxT3:'보스전',rbxT4:'현재 16세 이상',rbxPlay:'로블록스에서 플레이 ▶',ascWorld:'세계관 · 기동전사 도감 📖',h1:'설치 없이 <span>바로 플레이</span>',lead:'브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.',p1:'무료',p2:'설치 없음',p3:'PC · 모바일',p4:'한국어 · English',
+ ko:{kzBadge:'NEW · 시험판',kzName:'처용, 조선좀비',kzDesc:'조선 땅에 좀비가 쏟아진다! 낮에는 망루·병영·성벽을 세우고, 밤에는 처용과 이순신·을지문덕 같은 영웅, 깨어난 사방신과 함께 사당을 지켜요.',kzT1:'디펜스 서바이벌',kzT2:'영웅 수집',kzT3:'건설·병사',kzT4:'휴대폰 OK',kzPlay:'지금 지키러 가기 ▶',rbxBadge:'NEW · 로블록스',rbxDesc:'로블록스에서도 Anibrix! 보스전과 같은 서버 플레이어와 1대1 대전을 즐겨 보세요.',rbxT1:'로블록스',rbxT2:'1대1 대전',rbxT3:'보스전',rbxT4:'현재 16세 이상',rbxPlay:'로블록스에서 플레이 ▶',ascWorld:'세계관 · 기동전사 도감 📖',h1:'설치 없이 <span>바로 플레이</span>',lead:'브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.',p1:'무료',p2:'설치 없음',p3:'PC · 모바일',p4:'한국어 · English',
   newBadge:'NEW v2.5 · 은하 원정 RPG',hotBadge:'추천 · 휴대폰 OK',playBtn:'지금 플레이 ▶',ascPlay:'지금 출격 ▶',
   ascDesc:'기동전사를 타고 은하를 누비는 3D 핵앤슬래시 RPG. 이야기 8장과 엔딩 3종, 사냥터 7곳, 이름과 사연이 있는 고유 장비, 6등급으로 커지는 드론 6기, 기동전사 합체까지. 100명 AI 전장과 친구 방 대전도 그대로 즐길 수 있어요.',ascT1:'이야기 RPG',ascT2:'핵앤슬래시 사냥',ascT3:'고유 장비·드론',ascT4:'100명 전장',
   aniDesc:'귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.',aniT1:'퍼즐 대전',aniT2:'친구 초대',aniT3:'보스 스테이지',aniT4:'4개 언어',
   w1t:'1. 게임 고르기',w1d:'카드를 누르면 바로 시작돼요. 회원가입 없이 닉네임만 정하면 됩니다.',w2t:'2. 친구와 함께',w2d:'방을 만들고 6자리 코드를 보내면 친구가 같은 전장에 들어옵니다.',w3t:'3. 성장 기록',w3d:'이메일로 가입하면 경험치, 게임머니, 기술, 계급이 계정에 저장돼서 다른 기기에서도 이어서 할 수 있어요.',rights:'모든 권리 보유',guide:'한국 여행 가이드 보기 →'},
- en:{rbxBadge:'NEW · Roblox',rbxDesc:'Anibrix is on Roblox too! Beat the bosses or battle other players 1v1 on the same server.',rbxT1:'Roblox',rbxT2:'1v1 battles',rbxT3:'Boss battles',rbxT4:'16+ for now',rbxPlay:'Play on Roblox ▶',ascWorld:'Story world · Mech guide 📖',h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
+ en:{kzBadge:'NEW · Beta',kzName:'K Zombi',kzDesc:'Zombies flood Joseon-era Korea! Build towers, barracks and walls by day, then defend the shrine at night with Cheoyong, legendary heroes and the four guardian spirits. (Korean text)',kzT1:'Defense survival',kzT2:'Hero collection',kzT3:'Build & soldiers',kzT4:'Mobile OK',kzPlay:'Defend now ▶',rbxBadge:'NEW · Roblox',rbxDesc:'Anibrix is on Roblox too! Beat the bosses or battle other players 1v1 on the same server.',rbxT1:'Roblox',rbxT2:'1v1 battles',rbxT3:'Boss battles',rbxT4:'16+ for now',rbxPlay:'Play on Roblox ▶',ascWorld:'Story world · Mech guide 📖',h1:'No install. <span>Just play.</span>',lead:'Free games that run right in your browser. Send one link and your friends can join.',p1:'Free',p2:'No install',p3:'PC · Mobile',p4:'English · 한국어',
   newBadge:'NEW v2.5 · Galaxy RPG',hotBadge:'Top pick · Mobile OK',playBtn:'Play now ▶',ascPlay:'Launch now ▶',
   ascDesc:'A 3D hack-and-slash mech RPG across the galaxy. Eight story chapters with three endings, seven hunting zones, named gear with its own lore, six drones that grow through six grades, and mech fusion. The 100-player AI battlefield and room-code battles are still here.',ascT1:'Story RPG',ascT2:'Hack & slash',ascT3:'Named gear · drones',ascT4:'100-player battles',
   aniDesc:'Cute animal block battle. Clear lines, attack friends, and meet new animals and bosses every 12 stages.',aniT1:'Puzzle battle',aniT2:'Invite friends',aniT3:'Boss stages',aniT4:'4 languages',
   w1t:'1. Pick a game',w1d:'Tap a card and you are in. No sign-up, just choose a nickname.',w2t:'2. Play with friends',w2d:'Create a room and share the 6-digit code to bring friends into the same battle.',w3t:'3. Keep progress',w3d:'Sign up with email and your XP, coins, skills and rank are saved to your account, on any device.',rights:'All rights reserved',guide:'Korea travel guide →'},
- ja:{rbxBadge:'NEW · Roblox',rbxDesc:'AnibrixがRobloxにも登場！ボス戦や同じサーバーのプレイヤーと1対1対戦。',rbxT1:'Roblox',rbxT2:'1対1対戦',rbxT3:'ボス戦',rbxT4:'現在16歳以上',rbxPlay:'Robloxでプレイ ▶',ascWorld:'世界観・機動戦士図鑑 📖',h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
+ ja:{kzBadge:'NEW · ベータ',kzName:'K Zombi（処容、朝鮮ゾンビ）',kzDesc:'朝鮮の地にゾンビが押し寄せる！昼は櫓・兵営・城壁を建て、夜は処容と英雄たち、目覚めた四神と共に祠を守ろう。（韓国語）',kzT1:'ディフェンス',kzT2:'英雄収集',kzT3:'建設・兵士',kzT4:'スマホOK',kzPlay:'今すぐ守る ▶',rbxBadge:'NEW · Roblox',rbxDesc:'AnibrixがRobloxにも登場！ボス戦や同じサーバーのプレイヤーと1対1対戦。',rbxT1:'Roblox',rbxT2:'1対1対戦',rbxT3:'ボス戦',rbxT4:'現在16歳以上',rbxPlay:'Robloxでプレイ ▶',ascWorld:'世界観・機動戦士図鑑 📖',h1:'インストール不要。<span>すぐ遊べる。</span>',lead:'ブラウザですぐ遊べる無料ゲーム。リンクを送れば友だちと一緒に遊べます。',p1:'無料',p2:'インストール不要',p3:'PC・スマホ',p4:'日本語対応(Anibrix)',
   newBadge:'NEW v2.5 · 銀河RPG',hotBadge:'おすすめ・スマホOK',playBtn:'今すぐプレイ ▶',ascPlay:'今すぐ出撃 ▶',
   ascDesc:'機動戦士で銀河を駆ける3DハクスラRPG。全8章のストーリーと3つのエンディング、狩場7か所、名前と物語を持つ固有装備、6段階で大きくなるドローン。100人AI戦場もそのまま遊べます。(英語・韓国語)',ascT1:'大規模戦闘',ascT2:'昇進・分隊',ascT3:'見下ろし / TPS',ascT4:'ルームコード対戦',
   aniDesc:'かわいい動物ブロックを消して友だちと対戦！12ステージごとに新しい動物とボスが登場。',aniT1:'パズル対戦',aniT2:'友だち招待',aniT3:'ボス戦',aniT4:'4言語',
   w1t:'1. ゲームを選ぶ',w1d:'カードをタップするだけ。登録不要、ニックネームを決めるだけ。',w2t:'2. 友だちと遊ぶ',w2d:'ルームを作って6桁のコードを送れば同じ戦場に参加できます。',w3t:'3. 記録を残す',w3d:'メールで登録すると、経験値・コイン・スキル・階級がアカウントに保存されます。',rights:'All rights reserved',guide:'韓国旅行ガイド →'},
- zh:{rbxBadge:'NEW · Roblox',rbxDesc:'Anibrix 登陆 Roblox！挑战Boss，或与同服玩家1对1对战。',rbxT1:'Roblox',rbxT2:'1对1对战',rbxT3:'Boss战',rbxT4:'目前16岁以上',rbxPlay:'在Roblox上玩 ▶',ascWorld:'世界观 · 机动战士图鉴 📖',h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
+ zh:{kzBadge:'NEW · 测试版',kzName:'K Zombi（处容·朝鲜僵尸）',kzDesc:'僵尸涌入朝鲜！白天建造箭楼、兵营和城墙，夜晚与处容、英雄们和苏醒的四神一起守护祠堂。（韩语）',kzT1:'塔防生存',kzT2:'英雄收集',kzT3:'建造·士兵',kzT4:'手机可玩',kzPlay:'立即守护 ▶',rbxBadge:'NEW · Roblox',rbxDesc:'Anibrix 登陆 Roblox！挑战Boss，或与同服玩家1对1对战。',rbxT1:'Roblox',rbxT2:'1对1对战',rbxT3:'Boss战',rbxT4:'目前16岁以上',rbxPlay:'在Roblox上玩 ▶',ascWorld:'世界观 · 机动战士图鉴 📖',h1:'无需安装，<span>即刻开玩</span>',lead:'在浏览器里直接玩的免费游戏。发一个链接，朋友就能一起玩。',p1:'免费',p2:'无需安装',p3:'电脑 · 手机',p4:'中文支持(Anibrix)',
   newBadge:'NEW v2.5 · 银河RPG',hotBadge:'推荐 · 手机可玩',playBtn:'立即开玩 ▶',ascPlay:'立即出击 ▶',
   ascDesc:'驾驶机动战士纵横银河的3D砍杀RPG。8章剧情与3种结局、7个狩猎场、拥有名字与故事的专属装备、6阶成长的无人机。100人AI战场依然可玩。（英文·韩文）',ascT1:'大规模战斗',ascT2:'晋升·小队',ascT3:'俯视 / 第三人称',ascT4:'房间码对战',
   aniDesc:'消除可爱的动物方块与好友对战！每12关出现新的动物和Boss。',aniT1:'益智对战',aniT2:'邀请好友',aniT3:'Boss关卡',aniT4:'4种语言',
