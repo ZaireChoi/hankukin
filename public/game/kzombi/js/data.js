@@ -75,14 +75,14 @@ D.layoutOf = function (ch) {
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
 D.nightsOf = function (ch) {
-  const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.55 * (ch - 1);
+  const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.34 * (ch - 1) + 0.004 * (ch - 1) * (ch - 1); /* 시뮬 조정(11-25): 장별 체력 증가를 완만하게 */
   for (let i = 0; i < C.nights; i++) {
     const last = i === C.nights - 1, k = i / Math.max(1, C.nights - 1);
     const mix = {};
     C.pool.forEach((t, j) => { if (j === 0) return; if (j <= 1 + i) mix[t] = 0.07 + 0.04 * Math.min(i, 3); });
     out.push({
       name: (i + 1) + '번째 밤', dur: 50 + i * 8 + (last ? 10 : 0),
-      rate: [1.6 + k * 1.4 + ch * 0.12, 3.2 + k * 2.6 + ch * 0.2], hp: hp0 * (1 + 0.28 * i), mix, base: C.pool[0],
+      rate: [1.5 + k * 1.6 + ch * 0.07, 3.0 + k * 3.0 + ch * 0.12], hp: hp0 * (0.7 + 0.3 * k) * (1 + 0.22 * i) * (last && ch <= 3 ? 0.8 : 1), mix, base: C.pool[0], /* 시뮬 조정: 첫 밤은 약하게, 밤마다 가파르게 */
       kind: last ? 'boss' : (i % 2 === 1 ? 'elite' : 'normal'),
       elites: last ? [0.4] : (i % 2 === 1 ? [0.5] : []), eliteType: C.elite, boss: last ? C.boss : null
     });
