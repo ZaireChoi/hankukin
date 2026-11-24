@@ -22,6 +22,7 @@
   // ------------------------------------------------------------------ which mission
   var pick = function (X) {
     if (!X || X.obj || X.quest || X.patrol) return null;
+    if (X.choice && X.epi === 'e2') return { k: 'nests', n: 3 };   /* v4.19: the rescue side-battle in ch.3 is a different job (break the hive nests) - it used to replay the titan barrage */
     switch (X.epi) {
       case 'e0': return flag('saveCivil') ? { k: 'protect', name: L2('민간인 수송대', 'Civilian convoy'), hp: 2400, t: 90, at: .22 } : { k: 'nests', n: 3 };
       case 'e1': return { k: 'air', n: 30 };
