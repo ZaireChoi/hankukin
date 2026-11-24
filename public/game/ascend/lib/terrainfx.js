@@ -243,18 +243,20 @@
       }`;
     const DEC_FS = `
       varying vec2 vUv; varying vec4 vCol; varying float vK; varying float vShape;
+      float aSeed(){ return fract(vCol.r * 13.1 + vCol.g * 7.3) * 6.28; }
       void main(){
         vec2 q = (vUv - 0.5) * 2.0; float r = length(q); float a = 0.0;
-        if (vShape < 0.5) {                       // ripple ring (thins as it grows)
-          float w = mix(0.22, 0.06, vK); a = smoothstep(w, 0.0, abs(r - 0.8)) ;
+        float ang = atan(q.y, q.x); float wob = 1.0 + 0.32 * sin(ang * 3.0 + aSeed()) + 0.18 * sin(ang * 7.0 + 1.7);   /* v4.13: no round shapes on the ground - every splat is a ragged, uneven blotch */
+        if (vShape < 0.5) {                       // (was a ripple ring) -> a few ragged spatter specks, no ring
+          float sp = smoothstep(0.35, 0.0, abs(r * wob - 0.75)) * step(0.55, fract(sin(floor(ang * 2.6) * 91.7) * 437.5)); a = sp * (1.0 - vK);
         } else if (vShape < 1.5) {                // mech footprint: pad + 3 toes
           float pad = smoothstep(0.62, 0.5, length(q * vec2(1.0, 0.75) + vec2(0.0, 0.15)));
           float t1 = smoothstep(0.2, 0.12, length(q - vec2(-0.38, -0.62)));
           float t2 = smoothstep(0.2, 0.12, length(q - vec2(0.0, -0.75)));
           float t3 = smoothstep(0.2, 0.12, length(q - vec2(0.38, -0.62)));
           a = max(pad, max(t1, max(t2, t3)));
-        } else if (vShape < 2.5) {                // soft round print / splat
-          a = smoothstep(1.0, 0.35, r);
+        } else if (vShape < 2.5) {                // (was a soft round splat) -> ragged blotch
+          a = smoothstep(1.0, 0.25, r * wob) * (0.75 + 0.25 * sin(q.x * 9.0) * sin(q.y * 7.0));
         } else {                                  // drag streak (stretched by aspect)
           a = smoothstep(1.0, 0.2, r) * 0.8;
         }

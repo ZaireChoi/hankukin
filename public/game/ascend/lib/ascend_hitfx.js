@@ -11,7 +11,7 @@
   var init = function () {
     if (SH) return true; T = window.THREE; if (!T || !window.R3 || !R3.scene) return false;
     V = new T.Vector3(); Q = new T.Quaternion(); M4 = new T.Matrix4(); SC = new T.Vector3(); E3 = new T.Euler();
-    var g = new T.BoxGeometry(1, .35, .7); SH = new T.InstancedMesh(g, new T.MeshStandardMaterial({ color: 0x3a3e46, metalness: .8, roughness: .35, emissive: 0xff7a30, emissiveIntensity: .0 }), 64);
+    var g = new T.BoxGeometry(1, .35, .7); SH = new T.InstancedMesh(g, new T.MeshStandardMaterial({ color: 0xc9b896, metalness: .35, roughness: .6, emissive: 0xff7a30, emissiveIntensity: .0 })   /* v4.13: shards are sand / steel coloured, never black */, 64);
     SH.instanceColor = new T.InstancedBufferAttribute(new Float32Array(64 * 3), 3); SH.count = 0; SH.frustumCulled = false; SH.userData.keep = 1;
     var c = document.createElement('canvas'); c.width = 128; c.height = 16; var x = c.getContext('2d'), gr = x.createLinearGradient(0, 0, 128, 0);
     gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(.2, 'rgba(255,255,255,.9)'); gr.addColorStop(.5, 'rgba(255,255,255,1)'); gr.addColorStop(.8, 'rgba(255,255,255,.9)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = gr; x.fillRect(0, 5, 128, 6);
@@ -47,7 +47,7 @@
   var tick = function (dt) {
     var n = 0;
     for (var i = SL.length - 1; i >= 0; i--) { var p = SL[i]; p.l -= dt; if (p.l <= 0) { SL.splice(i, 1); continue; } p.vh -= 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.h += p.vh * dt; if (p.h < 2) { p.h = 2; p.vh *= -.3; p.vx *= .6; p.vy *= .6; } p.rx += p.wx * dt; p.ry += p.wy * dt;
-      E3.set(p.rx, p.ry, 0); Q.setFromEuler(E3); var k = p.l / p.ml; SC.setScalar(p.s * (.4 + .6 * k)); V.set(p.x, p.h, p.y); M4.compose(V, Q, SC); SH.setMatrixAt(n, M4); var hot = Math.max(0, (k - .6) / .4); SH.instanceColor.setXYZ(n, .5 + hot * 1.6, .5 + hot * .7, .55); n++; }
+      E3.set(p.rx, p.ry, 0); Q.setFromEuler(E3); var k = p.l / p.ml; SC.setScalar(p.s * (.4 + .6 * k)); V.set(p.x, p.h, p.y); M4.compose(V, Q, SC); SH.setMatrixAt(n, M4); var hot = Math.max(0, (k - .6) / .4); SH.instanceColor.setXYZ(n, 1 + hot * 1.2, .95 + hot * .5, .9); n++; }
     if (SH) { if (SH.parent !== R3.scene && n) R3.scene.add(SH); SH.count = n; SH.instanceMatrix.needsUpdate = true; SH.instanceColor.needsUpdate = true; }
     for (var j = 0; j < GASH.length; j++) { var s = GASH[j]; if (!s.visible) continue; s.userData.l -= dt; var u = s.userData.u, k2 = s.userData.l / s.userData.ml; if (k2 <= 0 || !u || u.dead) { s.visible = false; continue; }
       s.position.set(u.x, uh(u) + s.userData.dh, u.y); s.material.opacity = k2; if (k2 < .75) s.material.color.set(s.userData.col); }

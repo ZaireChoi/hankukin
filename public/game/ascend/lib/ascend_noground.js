@@ -115,3 +115,46 @@ var fxHook = function () { if (window.__hkRingBreak || typeof updateFx !== 'func
   window.__noGround = { stat: function () { return { refused: N.refused, swept: N.swept, kinds: N.kinds, err: N.err || null }; }, sweep: sweep };
 
 })();
+
+/* v4.13 ground-circle guard + audit (evaluation: "no round shapes on the ground, check before every deploy")
+   - 'ring' particles (landing / blast shock rings drawn as circles on the ground) are dropped
+   - every second: flat, round, see-through meshes lying on the ground (radial-gradient discs, Circle/Ring geometry) are hidden,
+     except red attack warnings and small dark contact shadows under units
+   - window.__groundAudit() lists what is still on the ground (used before deploying; 0 = pass) */
+(function () {
+  'use strict';
+  var T = function () { return window.THREE; };
+  var GA = { hidden: 0, rings: 0 };
+  var allowed = function (o, m, w) {
+    if (!m) return true; if (o.userData && (o.userData.tele || o.userData.keepGround)) return true;
+    var c = m.color || { r: 1, g: 1, b: 1 }; var op = m.opacity == null ? 1 : m.opacity;
+    if (c.r > .55 && c.g < .4 && c.b < .4) return true;                                 // red attack warning
+    if (m.map && m.map.image && m.map.image.__red) return true;
+    if (c.r + c.g + c.b < .45 && w < 220 && m.blending !== 2) return true;               // dark contact shadow under a unit
+    return false;
+  };
+  var B = null, S = null;
+  var scan = function (hide) {
+    var t = T(); if (!t || !window.R3 || !R3.scene) return [];
+    B = B || new t.Box3(); S = S || new t.Vector3(); var out = [];
+    R3.scene.traverse(function (o) {
+      if (!o.isMesh || !o.visible || !o.geometry) return; var p = o.parent; while (p) { if (!p.visible) return; p = p.parent; }
+      var g = o.geometry, gt = g.type || '', m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m) return;
+      var circ = /Circle|Ring/.test(gt) && !(g.parameters && g.parameters.segments != null && g.parameters.segments <= 8 && /Circle/.test(gt));
+      var plane = /Plane/.test(gt);
+      if (!circ && !(plane && m.transparent && m.map)) return;
+      try { B.setFromObject(o); } catch (e) { return; } if (B.isEmpty()) return; B.getSize(S);
+      var w = Math.max(S.x, S.z), d = Math.min(S.x, S.z); if (w < 16 || w > 3000) return;
+      if (S.y > Math.max(4, w * .1)) return; if (d / w < .55) return; if (B.min.y > 40) return;
+      if (allowed(o, m, w)) return;
+      var info = { g: gt, w: Math.round(w), x: Math.round((B.min.x + B.max.x) / 2), z: Math.round((B.min.z + B.max.z) / 2), col: m.color ? m.color.getHexString() : '', op: +(m.opacity == null ? 1 : m.opacity).toFixed(2), add: m.blending === 2 };
+      out.push(info); if (hide) { o.visible = false; o.userData.gaHidden = 1; GA.hidden++; }
+    });
+    return out;
+  };
+  var dropRings = function () { try { if (typeof G === 'undefined' || !G || !G.parts) return; for (var i = G.parts.length - 1; i >= 0; i--) { var q = G.parts[i]; if (q && q.c === 'ring') { G.parts.splice(i, 1); GA.rings++; } } } catch (e) {} };
+  setInterval(function () { try { if (window.__groundGuardOff) return; if (typeof G !== 'undefined' && G && !G.over) scan(true); } catch (e) { GA.err = String(e).slice(0, 120); } }, 1000);
+  var hookS = function () { if (window.__hkGA || typeof step !== 'function') return false; window.__hkGA = 1; var st = step; step = function (dt) { dropRings(); st(dt); dropRings(); }; return true; };
+  var iv2 = setInterval(function () { try { if (hookS()) clearInterval(iv2); } catch (e) {} }, 500);
+  window.__groundAudit = function () { var list = scan(false); return { count: list.length, list: list, hiddenSoFar: GA.hidden, ringsDropped: GA.rings }; };
+})();
