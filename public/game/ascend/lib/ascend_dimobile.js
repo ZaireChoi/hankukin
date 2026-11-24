@@ -31,7 +31,13 @@
     '#dimSk .atk{background:radial-gradient(circle at 40% 35%,rgba(120,40,60,.85),rgba(30,6,12,.85));border-color:rgba(255,154,170,.6)}' +
     'body.dim #touchUI #tA1,body.dim #touchUI #tA2,body.dim #touchUI #tUl,body.dim #touchUI #tAb,body.dim #touchUI #tMsl,body.dim #touchUI #tDash{display:none!important}' +
     'body.dim #skb2>div:nth-child(2)>*:nth-child(-n+5){display:none!important}body.dim #skb2{left:14px!important;transform:scale(var(--dimBar,.78))!important;transform-origin:0 100%!important}' + /* the desktop bar keeps items 1-6 and the orbs, moved to the left; attack/Q/E/R/T live in the thumb cluster */
-    'body.dim #touchUI #tFly{right:14px!important;bottom:var(--dimTop,300px)!important;width:56px!important;height:56px!important}';
+    'body.inb canvas,body.dim,body.dim #touchUI{touch-action:none!important}' + /* v4.10 (user: phone could not move): the page allowed browser panning, so the browser cancelled the thumb drag (pointercancel) */
+    'body.dim #touchUI #tFly,body.dim #touchUI #tTF2,body.dim #touchUI #tArt{width:50px!important;height:50px!important;border-radius:50%!important;font-size:0!important;color:transparent!important;background-color:rgba(6,10,20,.72)!important;background-repeat:no-repeat!important;background-position:center!important;background-size:62%!important;border:2px solid rgba(207,224,242,.4)!important;padding:0!important;left:auto!important;top:auto!important;transform:none!important}' +
+    'body.dim #touchUI #tFly{right:14px!important;bottom:var(--dimTop,300px)!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%239ff6ff%27 stroke-width=%271.8%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M2 16l20-6-20-6 4 6z%27/%3E%3Cpath d=%27M6 10h8%27/%3E%3C/svg%3E")!important;border-color:#9ff6ff!important}' +
+    'body.dim #touchUI #tTF2{right:72px!important;bottom:var(--dimTop,300px)!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ff8a70%27 stroke-width=%271.8%27 stroke-linecap=%27round%27%3E%3Cpath d=%27M12 3v7M5 13l7-3 7 3M8 21l4-3 4 3M12 10v8%27/%3E%3C/svg%3E")!important;border-color:#ff8a70!important}' +
+    'body.dim #touchUI #tArt{right:130px!important;bottom:var(--dimTop,300px)!important;background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23ffd166%27 stroke-width=%271.8%27 stroke-linecap=%27round%27%3E%3Cpath d=%27M4 20L20 4M14 4h6v6M4 4l7 7M15 15l5 5M17 20l3-3%27/%3E%3C/svg%3E")!important;border-color:#ffd166!important}' +
+    'body.dim #touchUI #tAuto{left:auto!important;right:calc(50% - 250px)!important;top:max(8px,env(safe-area-inset-top))!important;bottom:auto!important;transform:none!important}body.dim #touchUI #tSq{left:auto!important;right:calc(50% - 300px)!important;top:max(8px,env(safe-area-inset-top))!important;bottom:auto!important;transform:none!important}' + /* AUTO and squad sit on the top bar, away from the thumb cluster; FLY, MORPH and the weapon art are three picture buttons in one row above it - no text */
+    '';
   var POS = { atk: [205, 205, 92], q: [103, 207, 60], e: [133, 133, 60], c: [207, 103, 60], r: [52, 140, 54], t: [140, 52, 54], dash: [40, 240, 50] };
   var root = null, joy = null, hint = null, built = false;
   var build = function () {
@@ -70,8 +76,20 @@
   var setCd = function (k, left, total) { var b = root && root.querySelector('[data-k="' + k + '"]'); if (!b) return; var f = left > .05 ? Math.min(1, left / (total || 10)) : 0; b.style.setProperty('--p', Math.round(f * 100) + '%'); var em = b.querySelector('em'), tx = left > .05 ? String(Math.ceil(left)) : ''; if (em.textContent !== tx) em.textContent = tx; };
   // ---------------------------------------------------------------- left joystick (anywhere on the left side)
   var interactive = function (el) { while (el && el !== document.body) { if (el.id === 'dimSk' || el.id === 'wrSk' || el.id === 'skb2' || el.id === 'hkPause') return true; var tg = el.tagName; if (tg === 'BUTTON' || tg === 'INPUT' || tg === 'SELECT' || tg === 'A' || tg === 'TEXTAREA') return true; if (el.classList && (el.classList.contains('tb') || el.classList.contains('b'))) return true; el = el.parentElement; } return false; };
+  /* v4.10 (user: phone still could not move): the stick now also runs on touch events. On a real phone the browser may cancel the
+     pointer stream (pointercancel) as soon as it thinks the drag is a scroll; touch events keep coming, so the stick keeps working. */
+  var TJ = null; var hasTouchEv = ('ontouchstart' in window);
+  var jStart = function (id, x, y) { J.id = id; J.ox = x; J.oy = y; J.dx = J.dy = J.mag = 0; if (joy) { joy.style.left = J.ox + 'px'; joy.style.top = J.oy + 'px'; joy.style.display = 'block'; joy.firstChild.style.transform = 'translate(0,0)'; } try { touchMode = true; } catch (er) {} };
+  var jMove = function (x, y) { var R = 56, dx = x - J.ox, dy = y - J.oy, m = Math.hypot(dx, dy);
+    if (m > R * 1.6) { J.ox += dx * (1 - R * 1.6 / m); J.oy += dy * (1 - R * 1.6 / m); dx = x - J.ox; dy = y - J.oy; m = Math.hypot(dx, dy); if (joy) { joy.style.left = J.ox + 'px'; joy.style.top = J.oy + 'px'; } }
+    var k = m > R ? R / m : 1; J.dx = dx / R * k; J.dy = dy / R * k; J.mag = Math.min(1, m / R); if (joy) joy.firstChild.style.transform = 'translate(' + (dx * k) + 'px,' + (dy * k) + 'px)'; };
+  var jEnd = function () { J.id = null; J.dx = J.dy = J.mag = 0; TJ = null; if (joy) joy.style.display = 'none'; };
+  addEventListener('touchstart', function (e) { if (!active() || J.id !== null) return; for (var i = 0; i < e.changedTouches.length; i++) { var t = e.changedTouches[i]; if (interactive(t.target)) continue; if (t.clientX > innerWidth * .48 || t.clientY < innerHeight * .2) continue; TJ = t.identifier; jStart('t' + t.identifier, t.clientX, t.clientY); try { e.preventDefault(); } catch (er) {} break; } }, { passive: false, capture: true });
+  addEventListener('touchmove', function (e) { if (TJ === null) return; for (var i = 0; i < e.changedTouches.length; i++) { var t = e.changedTouches[i]; if (t.identifier === TJ) { jMove(t.clientX, t.clientY); if (e.cancelable) try { e.preventDefault(); } catch (er) {} } } }, { passive: false, capture: true });
+  var tEnd = function (e) { if (TJ === null) return; for (var i = 0; i < e.changedTouches.length; i++) if (e.changedTouches[i].identifier === TJ) jEnd(); };
+  addEventListener('touchend', tEnd, true); addEventListener('touchcancel', tEnd, true);
   addEventListener('pointerdown', function (e) {
-    if (e.pointerType !== 'touch' || !active() || J.id !== null) return; if (interactive(e.target)) return;
+    if (e.pointerType !== 'touch' || !active() || J.id !== null || hasTouchEv) return; if (interactive(e.target)) return;
     if (e.clientX > innerWidth * .48 || e.clientY < innerHeight * .2) return;
     J.id = e.pointerId; J.ox = e.clientX; J.oy = e.clientY; J.dx = J.dy = J.mag = 0;
     if (joy) { joy.style.left = J.ox + 'px'; joy.style.top = J.oy + 'px'; joy.style.display = 'block'; joy.firstChild.style.transform = 'translate(0,0)'; }
@@ -82,7 +100,8 @@
     if (m > R * 1.6) { J.ox += dx * (1 - R * 1.6 / m); J.oy += dy * (1 - R * 1.6 / m); dx = e.clientX - J.ox; dy = e.clientY - J.oy; m = Math.hypot(dx, dy); if (joy) { joy.style.left = J.ox + 'px'; joy.style.top = J.oy + 'px'; } } // the base follows a far thumb
     var k = m > R ? R / m : 1; J.dx = dx / R * k; J.dy = dy / R * k; J.mag = Math.min(1, m / R); if (joy) joy.firstChild.style.transform = 'translate(' + (dx * k) + 'px,' + (dy * k) + 'px)';
   }, true);
-  var endJ = function (e) { if (e.pointerId !== J.id) return; J.id = null; J.dx = J.dy = J.mag = 0; if (joy) joy.style.display = 'none'; };
+  addEventListener('touchmove', function (e) { if (J.id !== null && active()) { try { e.preventDefault(); } catch (er) {} } }, { passive: false, capture: true });   /* keep the browser from turning the thumb drag into a scroll */
+  var endJ = function (e) { if (e.pointerId !== J.id || TJ !== null) return; J.id = null; J.dx = J.dy = J.mag = 0; if (joy) joy.style.display = 'none'; };
   addEventListener('pointerup', endJ, true); addEventListener('pointercancel', endJ, true);
   // ---------------------------------------------------------------- input
   var target = function (u, rng) {
@@ -138,11 +157,11 @@
   };
   setInterval(pauseUI, 300);
   /* v4.09 (user): a phone call, switching apps or opening another window pauses the battle by itself (resume from the pause menu) */
-  var autoPause = function () { try { if (window.__noAutoPause || !G || G.over || G.paused || !G.local || !G.local.unit) return; if (typeof NET !== 'undefined' && NET && NET.mode === 'client') return; var pz = document.getElementById('pause'); if (pz && !pz.classList.contains('hidden')) return; togglePause(); window.__autoPaused = Date.now(); } catch (e) {} };
+  var autoPause = function () { try { if (window.__noAutoPause || !G || G.over || G.paused || !G.local || !G.local.unit) return; if (typeof NET !== 'undefined' && NET && NET.mode === 'client') return; var pz = document.getElementById('pause'); if (pz && !pz.classList.contains('hidden')) return; togglePause(); window.__autoPaused = Date.now(); var pz2 = document.getElementById('pause'); if (pz2) { pz2.style.animation = 'none'; pz2.style.opacity = '1'; } } catch (e) {} };
   document.addEventListener('visibilitychange', function () { if (document.hidden) autoPause(); });
   addEventListener('pagehide', autoPause);
-  var hadFocus = false; addEventListener('focus', function () { hadFocus = true; }); ['pointerdown', 'keydown'].forEach(function (n) { addEventListener(n, function (e) { if (e.isTrusted && document.hasFocus()) hadFocus = true; }, true); });
-  addEventListener('blur', function () { if (!hadFocus) return; setTimeout(function () { if (!document.hasFocus() && hadFocus) { hadFocus = false; autoPause(); } }, 250); });   /* only a window that had the player's focus pauses when another window takes it */
+  /* v4.10 hotfix (user: "manual play does nothing at all"): v4.09 also paused on window blur - clicking the side panel or any other window
+     froze the battle, and the pause card could stay unseen. Only a hidden page (phone call, app switch, minimised / other tab) pauses now. */
   try { if (navigator.audioSession) navigator.audioSession.addEventListener && navigator.audioSession.addEventListener('statechange', function () { if (navigator.audioSession.state === 'interrupted') autoPause(); }); } catch (e) {}
   // ---------------------------------------------------------------- frames must never disappear: no frustum culling on frame models
   // (skinned + compressed models can carry a too-small bounding sphere, so a frame vanished when it sat near the screen edge -

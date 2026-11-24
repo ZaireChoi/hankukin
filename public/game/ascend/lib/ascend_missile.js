@@ -435,7 +435,7 @@
       try {
         if (o && MISK[o.kind] && u && attach() && !(typeof MAP !== 'undefined' && MAP.space)) {
           // robot frame missiles: vertical launch from the shoulder pods (a 16-shot ultimate becomes 20, 10 per pod)
-          if (u.cls === 'arkframe' && o.kind === 6 && !u._tfFly) {
+          if (u.cls === 'arkframe' && o.kind === 6 && !u._tfFly) { if (G.local && u === G.local.unit) { if (o.home) o = Object.assign({}, o, { home: scrTarget(u, o.home) }); o = Object.assign({}, o, { range: scrDist(u, a, Math.min(900, o.range || 900)) }); }
             var t = G.t || 0; if (u._swT !== t) { u._swT = t; u._swN = 0; }
             var idx = u._swN++, extra = (idx % 4 === 3) ? 1 : 0, per = (o.dmg || 0) * (idx < 16 ? .8 : 1);
             for (var e = 0; e <= extra; e++) { var k = idx + Math.floor(idx / 4) + e, sh = shoulders(u)[k % 2], f = u.aa != null ? u.aa : u.a, side = k % 2 ? -1 : 1;
@@ -473,10 +473,15 @@
     w.__msle = 1; shoot = w;
   };
   // the lock-on salvo (C) and other scripted swarms still push to G.hm — take them over
+  /* v4.10 (user): shoulder missiles only reach what is on the screen - targets off screen are swapped for the nearest foe on screen or dropped */
+  var PV = null; var onScr = function (x, h, y) { try { var T = window.THREE, c = window.R3 && R3.cam; if (!T || !c) return true; PV = PV || new T.Vector3(); PV.set(x, h || 20, y).project(c); return PV.z < 1 && Math.abs(PV.x) <= .96 && Math.abs(PV.y) <= .94; } catch (e) { return true; } };
+  var scrTarget = function (u, tg) { if (!tg) return null; if (onScr(tg.x, 20, tg.y)) return tg; var best = null, bd = 1e18; for (var i = 0; i < G.units.length; i++) { var e = G.units[i]; if (e.dead || e.team === u.team || e.team === 2) continue; if (!onScr(e.x, 20, e.y)) continue; var d = (e.x - tg.x) * (e.x - tg.x) + (e.y - tg.y) * (e.y - tg.y); if (d < bd) { bd = d; best = e; } } return best; };
+  var scrDist = function (u, a, d0) { var d = d0; while (d > 120 && !onScr(u.x + Math.cos(a) * d, 8, u.y + Math.sin(a) * d)) d -= 60; return d; };
+  window.__mslOnScr = onScr;
   var drainHM = function () {
     if (!G || !G.hm || !G.hm.length || !attach()) return; var u = G.local && G.local.unit; if (!u || u.dead) { G.hm.length = 0; return; }
     var list = G.hm.splice(0, G.hm.length), sh = shoulders(u), f = u.aa != null ? u.aa : (u.a || 0), fx = Math.cos(f), fy = Math.sin(f);
-    for (var i = 0; i < list.length; i++) { var h = list[i], s = sh[i % 2], side = i % 2 ? -1 : 1;
+    for (var i = 0; i < list.length; i++) { var h = list[i], s = sh[i % 2], side = i % 2 ? -1 : 1; if (h.tg) { var nt = scrTarget(u, h.tg); if (!nt) continue; h.tg = nt; }
       spawn({ wh: u.mslWH || (window.__mslPick ? window.__mslPick(u) : null) || 'he', profile: 'vertical', kind: 'micro', x: s[0], h: s[1], y: s[2], dir: [-fy * side * .22 - fx * .12 + (Math.random() - .5) * .1, 1, fx * side * .22 - fy * .12 + (Math.random() - .5) * .1],
         target: h.tg || null, dmg: h.dmg, src: G.local, dt: 'x', sw: 1, team: u.team, delay: (h.delay || 0) + (i >> 1) * .01 }); }
     try { for (var q = 0; q < 2; q++) SMOKE.add(sh[q][0], sh[q][1], sh[q][2], 0, 40, 0, 14, 40, .5, .7, .72, .76, .45, 1); } catch (e) {}
