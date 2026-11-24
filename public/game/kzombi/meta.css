@@ -376,3 +376,8 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .xcpn{width:440px;height:74px;border-radius:16px;border:3px solid #ffd36b;background:#0e1430;color:#fff;font-size:30px;font-weight:800;text-align:center;letter-spacing:2px;font-family:inherit;outline:none}
 .xcpn::placeholder{color:#7f8ab8;letter-spacing:0;font-weight:600}
 .modal .row .btn.p,.modal .row .btn.b{min-width:200px}
+
+/* 영웅 정보 상자가 아래 탭에 가리지 않게 */
+.compinfo{top:auto!important;bottom:140px!important;min-height:330px}
+.comps{height:600px!important}.comps.tall{height:930px!important}
+.infotab{bottom:148px!important}
