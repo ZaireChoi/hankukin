@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v4.07 RPG</div>
+   <div class="ver"><i></i>ASCEND · v4.09 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -2478,7 +2478,7 @@ const COMMS={last:0,next:8,flags:{},
 // ================= v0.5 : GAME EVENT HOOKS =================
 (function(){
  const _newMatch=newMatch;newMatch=function(size,mode){_newMatch(size,mode);Object.assign(G,{comms:[],cfl:{},dmgDir:[],streak:0,multi:0,lastKillT:-99,banner:null,ai:null,order:null,hqLine:null,killMark:0});COMMS.next=9;COMMS.last=0;};
- const _hurt=hurt;hurt=function(u,amt,src,ang,dt){const hp0=u.hp;_hurt(u,amt,src,ang,dt);if(u.hp<hp0){u.hitAt=G.t;if(ang!=null)u.hitAng=ang;if(u.slot===G.local&&!u.drone&&ang!=null&&G.dmgDir){G.dmgDir.push({a:ang+Math.PI,t:G.t});if(G.dmgDir.length>6)G.dmgDir.shift();}}};
+ const _hurt=hurt;hurt=function(u,amt,src,ang,dt){const hp0=u.hp;_hurt(u,amt,src,ang,dt);if(u.hp<hp0){u.hitAt=G.t;if(ang!=null)u.hitAng=ang;if(u.slot===G.local&&!u.drone&&ang!=null&&G.dmgDir&&window.__dmgDirOn){/* v4.09 (user): the red hit-direction arcs around my frame are off */G.dmgDir.push({a:ang+Math.PI,t:G.t});if(G.dmgDir.length>6)G.dmgDir.shift();}}};
  const _kill=killUnit;killUnit=function(u,src){const wasLocal=u.slot===G.local&&!u.drone;_kill(u,src);const ks=src?(src.ownerSlot||src):null,lt=G.local.team;
   if(ks&&ks.kind!=='env'&&isLocal(ks)&&u.team!==lt){const now=G.t;G.multi=(now-G.lastKillT<4.5)?(G.multi||1)+1:1;G.lastKillT=now;G.streak=(G.streak||0)+1;G.killMark=.45;
    G.banner={txt:t('kill'+Math.min(5,G.multi)),sub:u.drone?rs('#'+u.cls):u.slot.name,t:now,multi:G.multi,streak:G.streak};SFX.kill(G.multi);
@@ -5262,7 +5262,7 @@ function skb2(){let el=document.getElementById('skb2');if(el)return el;el=docume
  const orb=(id,c1,c2,lb)=>`<div style="position:relative;width:92px;height:92px;border-radius:50%;border:3px solid #6a5a3a;background:#0a0a12;overflow:hidden;box-shadow:inset 0 0 20px #000,0 0 12px rgba(0,0,0,.8)"><div id="${id}" style="position:absolute;left:0;right:0;bottom:0;height:100%;background:radial-gradient(circle at 40% 30%,${c1},${c2})"></div><div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.35),transparent 40%)"></div><b id="${id}T" style="position:absolute;left:0;right:0;top:36px;text-align:center;font:800 14px Rajdhani,sans-serif;text-shadow:0 0 4px #000">${lb}</b></div>`;
  const cell=(id,lab,key,c)=>`<div class="sk2" data-k="${id}" style="pointer-events:auto;position:relative;width:58px;height:58px;border-radius:9px;border:2px solid ${c};background:radial-gradient(circle,rgba(30,50,90,.95),rgba(6,10,20,.95));display:flex;align-items:center;justify-content:center;text-align:center;font-size:10px;font-weight:800;color:#fff;overflow:hidden;cursor:pointer"><span style="position:relative;z-index:2;padding:0 2px;line-height:1.1">${lab}</span><b style="position:absolute;left:4px;top:1px;z-index:2;color:${c};font-size:11px">${key}</b><i class="cdm" style="position:absolute;inset:0;z-index:1;background:conic-gradient(rgba(0,0,0,.75) var(--p,0%),transparent 0)"></i><em class="cdt" style="position:absolute;right:3px;bottom:1px;z-index:2;font-style:normal;font-size:11px;color:#ffd166"></em></div>`;
  el.innerHTML=orb('orbH','#ff5a5a','#5a0000',L('체력','HP'))+`<div style="display:flex;gap:5px;padding:7px 8px;background:rgba(4,8,18,.78);border:1px solid rgba(160,200,255,.25);border-radius:12px;backdrop-filter:blur(8px)">${cell('lmb',L('기본 공격','Attack'),'🖱','#9fb4d8')}${cell('Q',tx(SKB[0][2]),'Q','#9ff6ff')}${cell('E',tx(SKB[1][2]),'E','#ff7ae0')}${cell('R',tx(SKB[2][2]),'R','#ffd166')}${cell('T',L('절대기술','Absolute'),'T','#c58cff')}<div style="width:8px"></div>${[0,1,2,3,4,5].map(i=>cell('n'+i,'','\u200b'+(i+1),'#7dffb0')).join('')}</div>`+orb('orbE','#5ab4ff','#001a4a',L('에너지','Energy'));
- document.body.appendChild(el);el.querySelectorAll('.sk2').forEach(d=>{d.addEventListener('pointerdown',ev=>{ev.stopPropagation();const k=d.dataset.k;if(k==='lmb')return;if(/^n\d$/.test(k))return skUse(skMap()[+k[1]]);const code={Q:'KeyQ',E:'KeyE',R:'KeyR',T:'KeyT'}[k];window.dispatchEvent(new KeyboardEvent('keydown',{code}));setTimeout(()=>window.dispatchEvent(new KeyboardEvent('keyup',{code})),140);});d.addEventListener('dragover',e=>e.preventDefault());d.addEventListener('drop',e=>{e.preventDefault();const k=d.dataset.k;if(!/^n\d$/.test(k))return;const sk=e.dataTransfer.getData('text/plain');if(!SKL[sk])return;const m=skMap();const j=m.indexOf(sk);if(j>=0)m[j]=m[+k[1]];m[+k[1]]=sk;saveP();skb2Labels();});});skb2Labels();return el;}
+ document.body.appendChild(el);el.querySelectorAll('.sk2').forEach(d=>{d.addEventListener('pointerdown',ev=>{ev.stopPropagation();const k=d.dataset.k;if(k==='lmb')return;if(/^n\d$/.test(k))return skUse(skMap()[+k[1]]);const code={Q:'KeyQ',E:'KeyE',R:'KeyR',T:'KeyT'}[k];if(!code)return;window.dispatchEvent(new KeyboardEvent('keydown',{code}));if(window.__keyLatch)window.__keyLatch(code,4);setTimeout(()=>{const ev=new KeyboardEvent('keyup',{code});ev.__rel=1;window.dispatchEvent(ev);},140);});d.addEventListener('dragover',e=>e.preventDefault());d.addEventListener('drop',e=>{e.preventDefault();const k=d.dataset.k;if(!/^n\d$/.test(k))return;const sk=e.dataTransfer.getData('text/plain');if(!SKL[sk])return;const m=skMap();const j=m.indexOf(sk);if(j>=0)m[j]=m[+k[1]];m[+k[1]]=sk;saveP();skb2Labels();});});skb2Labels();return el;}
 function skb2Labels(){const el=document.getElementById('skb2');if(!el)return;const m=skMap();for(let i=0;i<6;i++){const d=el.querySelector('[data-k="n'+i+'"]');const S0=SKL[m[i]];d.querySelector('span').textContent=S0?tx(S0.n):'';d.style.borderColor=S0?S0.c:'#334';}}
 // J: skill list window — drag a skill onto slots 1–6 of the bar
 function skList(){let w=document.getElementById('skList');if(w){w.remove();return;}w=document.createElement('div');w.id='skList';w.style.cssText='position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:9;background:rgba(6,10,22,.94);border:1px solid #3a5a96;border-radius:12px;padding:12px 14px;width:min(560px,92vw)';
@@ -5310,7 +5310,7 @@ let gearOv=null;
 function gearOpen(focusStats){if(gearOv){gearClose();return;}gearOv=document.createElement('div');gearOv.style.cssText='position:fixed;inset:4vh 4vw;z-index:40;background:rgba(5,9,20,.95);border:1px solid #3a5a96;border-radius:14px;overflow:auto;padding:14px';gearOv.innerHTML=`<div style="display:flex;align-items:center;margin-bottom:8px"><b style="font-size:18px">${L('장비 (I) · 능력치 (C)','Gear (I) · Stats (C)')}</b><small style="margin-left:10px;opacity:.65">${L('드론·고유 장비 효과는 닫는 즉시, 기본 능력치는 다음 출격부터 적용','Drones and named effects apply on close; base stats from your next sortie')}</small><button id="gearX" style="margin-left:auto">✕</button></div><div id="gearB"></div>`;document.body.appendChild(gearOv);gearOv.querySelector('#gearX').onclick=gearClose;const rb=$('#rpgBody');if(rb)rb.innerHTML='';tab='hangar';renderHangar2(gearOv.querySelector('#gearB'));if(focusStats){const s=gearOv.querySelector('.pd-stats');if(s)s.scrollIntoView({block:'center'});}}
 function gearClose(){if(!gearOv)return;gearOv.remove();gearOv=null;tipHide();try{const u=G&&G.local&&G.local.unit;if(u&&u.cls==='arkframe'){u.drones=droneLoadout();try{u.drB=drBonus(u.drones);}catch(e){}G.uqStamp=(G.uqStamp||0)+1;try{mechFXCleanup&&mechFXCleanup(u);}catch(e){}}}catch(e){}}
 {const _rn=render;render=function(){if(gearOv&&tab==='hangar'){renderHangar2(gearOv.querySelector('#gearB'));return;}return _rn();};}
-addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.repeat)return;if(!(G&&!G.over&&G.rpg))return;if(e.code==='KeyI'){e.preventDefault();gearOpen(false);}else if(e.code==='KeyC'){e.preventDefault();gearOpen(true);}else if(e.code==='Escape'&&gearOv){e.stopImmediatePropagation();gearClose();}},true);
+addEventListener('keydown',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;if(e.repeat)return;if(!(G&&!G.over&&G.rpg))return;if(e.code==='KeyI'){e.preventDefault();gearOpen(false);}else if(e.code==='KeyC'&&!(G.local&&G.local.unit&&G.local.unit.cls==='arkframe')){e.preventDefault();gearOpen(true);}/* v4.09 fix (user: a skill button jumped to the frame screen): C is the missile key of a frame; in story/expedition battles it also opened the equipment screen */else if(e.code==='Escape'&&gearOv){e.stopImmediatePropagation();gearClose();}},true);
 {const _lm3=leaveMatch;leaveMatch=function(...a){gearClose();return _lm3.apply(this,a);};try{if(window.__ascend)window.__ascend.leaveMatch=leaveMatch;}catch(e){}}
 // skill-bar label wrapping
 {const st=document.createElement('style');st.textContent='#skb2 .sk2 span{word-break:keep-all;font-size:9.5px;letter-spacing:-.02em}';document.head.appendChild(st);}
@@ -5330,7 +5330,7 @@ const LINK_LOOK=[K('로봇형','Robot type'),K('로봇형','Robot type'),K('인�
 window.LINK_LOOK=LINK_LOOK;
 
 window.__mechTint=u=>{try{if(!G||!G.local||u!==G.local.unit||u.mon)return 0;const C=MECHS[R().mech];return C&&C.tint||0;}catch(e){return 0;}};
-window.__A={mkItem,mkDrone,R,render,saveP,MECHS,RAR,BANNERS,addUnit:(k,l)=>addUnit(k,l),get tab(){return tab;},set tab(v){tab=v;}};
+window.__A={mkItem,mkDrone,R,render,saveP,MECHS,RAR,BANNERS,get custGet(){try{return custGet;}catch(e){return null;}},get custMat(){try{return custMat;}catch(e){return null;}},get PAINTS(){try{return PAINTS;}catch(e){return null;}},addUnit:(k,l)=>addUnit(k,l),get tab(){return tab;},set tab(v){tab=v;}};
 
 
 // ================= v2.5 : LOBBY CHARACTERS — no synchronized swaying; each stands still and acts on its own schedule =================
@@ -6535,7 +6535,7 @@ button,.btn,[data-sk],.lb-row>*,.pd-slot{transition:transform .08s ease,filter .
 // immediate pressed look on touch/mouse down
 addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.btn,[data-sk],[role=button],.tb,.lb-row>*');if(!b)return;b.classList.add('hk-press');const off=()=>{b.classList.remove('hk-press');removeEventListener('pointerup',off,true);removeEventListener('pointercancel',off,true);};addEventListener('pointerup',off,true);addEventListener('pointercancel',off,true);setTimeout(off,600);},true);
 // heavy buttons: show the overlay first, then run the original click on the next frame; ignore repeats
-{const HEAVY={mSolo:'출격 준비 중…|Deploying…',rsAgain:'다음 판 준비 중…|Next battle…',mRpg:'원정 준비 중…|Loading expedition…',mChar:'불러오는 중…|Loading…',mHangar:'정비소 여는 중…|Opening hangar…',mArena:'전선 준비 중…|Loading…'};let lockUntil=0;const lastAt=new WeakMap();
+{const HEAVY={mSolo:'출격 준비 중…|Deploying…',rsAgain:'다음 판 준비 중…|Next battle…',mRpg:'원정 준비 중…|Loading expedition…',mChar:'불러오는 중…|Loading…',mHangar:'격납고 여는 중…|Opening hangar…',mArena:'전선 준비 중…|Loading…'};let lockUntil=0;const lastAt=new WeakMap();
  addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button,.btn,[data-sk],[role=button]');if(!b)return;if(b.dataset.hkgo){delete b.dataset.hkgo;return;}const now=performance.now();
   if(now<lockUntil&&b.id&&HEAVY[b.id]){e.preventDefault();e.stopImmediatePropagation();return;}
   const la=lastAt.get(b)||0;if(now-la<450&&b.id&&HEAVY[b.id]){e.preventDefault();e.stopImmediatePropagation();return;}lastAt.set(b,now);
@@ -7420,8 +7420,10 @@ window.__D={launch:(a,b)=>launch(a,b),get EPIS(){return EPIS;}};
 try{ENX.qCharge=.01;}catch(e){}
 {let stepN=0;const downAt={};const pendUp=new Set();const SK_KEYS=new Set(['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyZ','KeyC','Digit1','Digit2','Digit3','Digit4']);
  addEventListener('keydown',e=>{if(SK_KEYS.has(e.code)&&!e.repeat){downAt[e.code]=stepN;pendUp.delete(e.code);}},true);
- addEventListener('keyup',e=>{if(SK_KEYS.has(e.code)&&downAt[e.code]===stepN){e.stopImmediatePropagation();pendUp.add(e.code);}},true);
- const _stIN=step;step=function(dt){_stIN(dt);stepN++;if(pendUp.size){for(const c of pendUp){try{keys[c]=false;}catch(e){}window.dispatchEvent(new KeyboardEvent('keyup',{code:c}));}pendUp.clear();}};}
+ addEventListener('keyup',e=>{if(KL[e.code]>0){e.stopImmediatePropagation();return;}if(SK_KEYS.has(e.code)&&(downAt[e.code]===stepN||(!e.__rel&&stepN-(downAt[e.code]||0)<2))){e.stopImmediatePropagation();pendUp.add(e.code);}},true);/* v4.09 fix: a tap on a skill button is a 140 ms key pulse - on a slow phone or tab no game step ran with the key held, so the skill never fired. A key now stays down for at least two game steps */
+ /* v4.09: buttons (skill bar, phone) latch a key for a few game steps instead of a 140 ms timer - on slow devices no step ran inside 140 ms */
+ const KL={};window.__keyLatch=function(code,n){KL[code]=Math.max(KL[code]||0,n||3);try{keys[code]=true;}catch(e){}};
+ const _stIN=step;step=function(dt){for(const c in KL){if(KL[c]>0)keys[c]=true;}_stIN(dt);stepN++;for(const c in KL){if(KL[c]>0){KL[c]--;if(KL[c]<=0){delete KL[c];keys[c]=false;}}}if(pendUp.size){for(const c of [...pendUp]){if(stepN-(downAt[c]||0)<2)continue;pendUp.delete(c);try{keys[c]=false;}catch(e){}const ev=new KeyboardEvent('keyup',{code:c});ev.__rel=1;window.dispatchEvent(ev);}}};}
 // QWER: W is the 4th skill slot (flight / weapon art) when the frame is piloted with the mouse (click-to-move users); WASD players keep W for moving
 // ---- toasts: one small line under the objective (replaces centre banners) ----
 const TOAST=[];function rcToast(txt,col){if(!txt)return;txt=String(txt).replace(/<[^>]+>/g,'');if(TOAST.length&&TOAST[TOAST.length-1].txt===txt)return;TOAST.push({txt,col:col||'#d8c9a8',t:performance.now()/1000});if(TOAST.length>3)TOAST.shift();}
@@ -8282,7 +8284,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v407';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v409';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8386,7 +8388,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
 // auto battle is on by default (manual movement always takes over; it resumes when you let go). F / the button switches it off.
 try{if(!P.autoV2){P.autoV2=1;P.autoHunt=true;saveP();}}catch(e){}
 
-try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>rotW(b,q),part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE(),mdlGet:(f)=>mdlGet(f),mc:(f)=>MC[f]};}catch(e){window.__axErr=String(e);}
+try{window.__AX={SFX2:(typeof SFX2!=='undefined'?SFX2:null),motBones:(m)=>motBones(m),rotW:(b,q)=>{motInit();return rotW(b,q);},part:(...a)=>part(...a),unitH:(u)=>unitH(u),myMechKey:()=>myMechKey(),boltFire:(...a)=>window.boltFire(...a),myE:()=>myE(),mdlGet:(f)=>mdlGet(f),mc:(f)=>MC[f]};}catch(e){window.__axErr=String(e);}
 
 // ================= v3.15b : Saber's back panels become real wings — split from the skin at load, hinged on the upper spine; left opens clockwise, right counter-clockwise, then thrust =================
 const WSPLIT={mech3:{zc:.205,zg:.27,yLock:.86,yTop:.97,yBot:.25,hingeY:.86,open:1.7}};
@@ -8670,12 +8672,13 @@ window.__TX={EffectComposer,RenderPass,UnrealBloomPass,OutputPass,GLTFLoader,Ske
 <script>/* v3.98 (28-3): concrete slab picture for base and capture pads: panel seams, grit, oil stains; sand-tinted on the desert */
 window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__slabC||{};if(window.__slabC[k])return window.__slabC[k];const T=window.THREE;const w=512,c=document.createElement('canvas');c.width=c.height=w;const g=c.getContext('2d');g.fillStyle=dune?'#9c8a6e':'#646a73';g.fillRect(0,0,w,w);let s=7;const rn=()=>{s=(s*16807)%2147483647;return s/2147483647;};const im=g.getImageData(0,0,w,w),d=im.data;for(let i=0;i<d.length;i+=4){const n=(rn()-.5)*26;d[i]+=n;d[i+1]+=n;d[i+2]+=n;}g.putImageData(im,0,0);for(let i=0;i<14;i++){const x=rn()*w,y=rn()*w,r=20+rn()*70;const gr=g.createRadialGradient(x,y,0,x,y,r);gr.addColorStop(0,dune?'rgba(70,50,30,.22)':'rgba(20,24,30,.25)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(x-r,y-r,r*2,r*2);}g.strokeStyle=dune?'rgba(60,45,30,.55)':'rgba(25,28,34,.6)';g.lineWidth=3;const P=128;for(let i=0;i<=w;i+=P){g.beginPath();g.moveTo(i,0);g.lineTo(i,w);g.stroke();g.beginPath();g.moveTo(0,i);g.lineTo(w,i);g.stroke();}g.strokeStyle=dune?'rgba(230,210,170,.25)':'rgba(200,210,220,.18)';g.lineWidth=1;for(let i=0;i<=w;i+=P){g.beginPath();g.moveTo(i+2,0);g.lineTo(i+2,w);g.stroke();g.beginPath();g.moveTo(0,i+2);g.lineTo(w,i+2);g.stroke();}for(let i=0;i<40;i++){const x=rn()*w,y=rn()*w;g.fillStyle=dune?'rgba(80,60,40,.35)':'rgba(30,30,35,.35)';g.fillRect(x,y,2+rn()*6,1+rn()*2);}const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(3,3);t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;window.__slabC[k]=t;return t;};
 </script>
-<script src="lib/transform.js?v=361"></script>
+<script src="lib/transform.js?v=426"></script>
+<script src="lib/ascend_tf3.js?v=7"></script>
 <script src="lib/terrainfx.js?v=348"></script>
-<script src="lib/ascend348.js?v=372"></script>
+<script src="lib/ascend348.js?v=373"></script>
 <script src="lib/ascend_rank.js?v=348"></script>
 <script src="lib/ascend_event.js?v=348"></script>
-<script src="lib/ascend_grow.js?v=348"></script>
+<script src="lib/ascend_grow.js?v=349"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
 <script src="lib/ascend_boss.js?v=400"></script>
@@ -8688,7 +8691,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_clean.js?v=409"></script>
 <script src="lib/explosionfx.js?v=402"></script>
 <script src="lib/ascend_boom.js?v=349"></script>
-<script src="lib/ascend_lobby.js?v=350"></script>
+<script src="lib/ascend_lobby.js?v=412"></script>
 <script src="lib/ascend_voice.js?v=348"></script>
 <script src="lib/ascend_arena2.js?v=397"></script>
 <script src="lib/ascend_flight.js?v=361"></script>
@@ -8713,7 +8716,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_moves.js?v=373"></script>
 <script src="lib/ascend_hitfx.js?v=374"></script>
 <script src="lib/ascend_bladeghost.js?v=381"></script>
-<script src="lib/ascend_dimobile.js?v=390"></script>
+<script src="lib/ascend_dimobile.js?v=396"></script>
 <script src="lib/ascend_noground.js?v=402"></script>
 <script src="lib/ascend_genfree.js?v=394"></script>
 <script src="lib/ascend_mtree.js?v=394"></script>
@@ -8722,7 +8725,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_story2.js?v=402"></script>
 <script src="lib/ascend_foes.js?v=403"></script>
 <script src="lib/ascend_frames.js?v=406"></script>
-<script src="lib/ascend_garage.js?v=409"></script>
+<script src="lib/ascend_garage.js?v=420"></script>
 <script src="lib/ascend_pilot.js?v=406"></script>
 <script src="lib/ascend_floor2.js?v=370"></script>
 </body>
