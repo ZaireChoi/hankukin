@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v4.10 RPG</div>
+   <div class="ver"><i></i>ASCEND · v4.11 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -7419,11 +7419,12 @@ window.__D={launch:(a,b)=>launch(a,b),get EPIS(){return EPIS;}};
 // ---- instant skills: a key tap is never lost between frames, and charge-up delays are gone ----
 try{ENX.qCharge=.01;}catch(e){}
 {let stepN=0;const downAt={};const pendUp=new Set();const SK_KEYS=new Set(['KeyQ','KeyW','KeyE','KeyR','KeyT','KeyZ','KeyC','Digit1','Digit2','Digit3','Digit4']);
- addEventListener('keydown',e=>{if(SK_KEYS.has(e.code)&&!e.repeat){downAt[e.code]=stepN;pendUp.delete(e.code);}},true);
- addEventListener('keyup',e=>{if(KL[e.code]>0){e.stopImmediatePropagation();return;}if(SK_KEYS.has(e.code)&&(downAt[e.code]===stepN||(!e.__rel&&stepN-(downAt[e.code]||0)<2))){e.stopImmediatePropagation();pendUp.add(e.code);}},true);/* v4.09 fix: a tap on a skill button is a 140 ms key pulse - on a slow phone or tab no game step ran with the key held, so the skill never fired. A key now stays down for at least two game steps */
+ const TAPK=new Set(['KeyQ','KeyE','KeyR','KeyT','KeyZ','KeyC','Digit1','Digit2','Digit3','Digit4','Digit5','Digit6']);const KLup={};
+ addEventListener('keydown',e=>{if(SK_KEYS.has(e.code)&&!e.repeat){downAt[e.code]=stepN;pendUp.delete(e.code);if(TAPK.has(e.code)){KL[e.code]=Math.max(KL[e.code]||0,5);KLt[e.code]=performance.now();KLup[e.code]=false;}}},true);/* v4.10: a quick tap of a skill key is held for at least 5 game steps and 150 ms (hit-stop steps could swallow a 1-step press) */
+ addEventListener('keyup',e=>{if(KL[e.code]>0){KLup[e.code]=true;e.stopImmediatePropagation();return;}if(SK_KEYS.has(e.code)&&(downAt[e.code]===stepN||(!e.__rel&&stepN-(downAt[e.code]||0)<2))){e.stopImmediatePropagation();pendUp.add(e.code);}},true);/* v4.09 fix: a tap on a skill button is a 140 ms key pulse - on a slow phone or tab no game step ran with the key held, so the skill never fired. A key now stays down for at least two game steps */
  /* v4.09: buttons (skill bar, phone) latch a key for a few game steps instead of a 140 ms timer - on slow devices no step ran inside 140 ms */
- const KL={};window.__keyLatch=function(code,n){KL[code]=Math.max(KL[code]||0,n||3);try{keys[code]=true;}catch(e){}};
- const _stIN=step;step=function(dt){for(const c in KL){if(KL[c]>0)keys[c]=true;}_stIN(dt);stepN++;for(const c in KL){if(KL[c]>0){KL[c]--;if(KL[c]<=0){delete KL[c];keys[c]=false;}}}if(pendUp.size){for(const c of [...pendUp]){if(stepN-(downAt[c]||0)<2)continue;pendUp.delete(c);try{keys[c]=false;}catch(e){}const ev=new KeyboardEvent('keyup',{code:c});ev.__rel=1;window.dispatchEvent(ev);}}};}
+ const KL={},KLt={};window.__keyLatch=function(code,n){KL[code]=Math.max(KL[code]||0,n||3);KLt[code]=performance.now();KLup[code]=true;try{keys[code]=true;}catch(e){}};
+ const _stIN=step;step=function(dt){for(const c in KL){if(KL[c]>0)keys[c]=true;}_stIN(dt);stepN++;for(const c in KL){if(KL[c]>0){KL[c]--;if(KL[c]<=0&&performance.now()-(KLt[c]||0)<150)KL[c]=1;if(KL[c]<=0){delete KL[c];if(KLup[c]!==false)keys[c]=false;}}}if(pendUp.size){for(const c of [...pendUp]){if(stepN-(downAt[c]||0)<2)continue;pendUp.delete(c);try{keys[c]=false;}catch(e){}const ev=new KeyboardEvent('keyup',{code:c});ev.__rel=1;window.dispatchEvent(ev);}}};}
 // QWER: W is the 4th skill slot (flight / weapon art) when the frame is piloted with the mouse (click-to-move users); WASD players keep W for moving
 // ---- toasts: one small line under the objective (replaces centre banners) ----
 const TOAST=[];function rcToast(txt,col){if(!txt)return;txt=String(txt).replace(/<[^>]+>/g,'');if(TOAST.length&&TOAST[TOAST.length-1].txt===txt)return;TOAST.push({txt,col:col||'#d8c9a8',t:performance.now()/1000});if(TOAST.length>3)TOAST.shift();}
@@ -8284,7 +8285,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v410';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v411';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
