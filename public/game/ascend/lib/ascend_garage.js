@@ -12,7 +12,11 @@
   var L2 = function (k, e) { return EN() ? e : k; };
   var tx2 = function (o) { return o ? (EN() ? o.en : o.ko) || o.ko : ''; };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[<>&"]/g, function (c) { return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c]; }); };
-  var RK = [0, 2, 4, 7, 10, 15]; // rank licence per grade (rank = level / 3)
+  var RK = [0, 2, 4, 7, 10, 15];
+  /* frames that borrow another model get the same recolour the battle uses (AX-00: white and black) */
+  var GREY = {};
+  var paintAs = function (k, i) { try { var m = A().MECHS[k]; if (!m || !m.tint || !window.__axGrey) return; i.obj.traverse(function (o) { if (!o.isMesh || !o.material || o.userData.keep) return; var mat = o.material.clone(); if (mat.map) { var src = mat.map; var gt = GREY[src.uuid] || (GREY[src.uuid] = window.__axGrey(src)); if (gt) { mat.map = gt; mat.color.setScalar(1); } } if (mat.emissive) mat.emissive.multiplyScalar(.4); mat.needsUpdate = true; o.material = mat; }); } catch (e) {} };
+  var mkey = function (k) { try { var m = A().MECHS[k]; return (m && m.mdl) || k; } catch (e) { return k; } };   /* some frames reuse another model file (AX-00 = mech3 model, darker) */ // rank licence per grade (rank = level / 3)
   var rankOf = function (r) { return Math.floor((r.lv || 1) / 3); };
   var rkName = function (i) { try { return rankName(i); } catch (e) { return 'R' + i; } };
   var css = function () {
@@ -71,14 +75,15 @@
       cv.addEventListener('pointermove', function (e) { if (V.drag) V.yaw = V.drag.y + (e.clientX - V.drag.x) * .01; });
       cv.addEventListener('pointerup', function () { V.drag = null; cv.style.cursor = 'grab'; });
     }
-    if (!V.run) { V.run = true; var last = performance.now(); var loop = function () { if (!document.getElementById('garage')) { V.run = false; return; } var n = performance.now(), dt = Math.min(.05, (n - last) / 1000); last = n; if (!V.drag) V.yaw += dt * .25; var w = cv.clientWidth, h = cv.clientHeight; if (w && h && (cv.width !== Math.round(w * V.r.getPixelRatio()) || cv.height !== Math.round(h * V.r.getPixelRatio()))) { V.r.setSize(w, h, false); V.c.aspect = w / h; V.c.updateProjectionMatrix(); } if (V.m) V.m.wrap.rotation.y = V.yaw; if (V.mixer) V.mixer.update(dt); V.c.position.set(0, 5.4, 21); V.c.lookAt(0, 3.9, 0); V.r.render(V.s, V.c); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+    if (!V.run) { V.run = true; var last = performance.now(); var loop = function () { if (!document.getElementById('garage')) { V.run = false; return; } var n = performance.now(), dt = Math.min(.05, (n - last) / 1000); last = n; if (!V.drag) V.yaw += dt * .18; var w = cv.clientWidth, h = cv.clientHeight; if (w && h && (cv.width !== Math.round(w * V.r.getPixelRatio()) || cv.height !== Math.round(h * V.r.getPixelRatio()))) { V.r.setSize(w, h, false); V.c.aspect = w / h; V.c.updateProjectionMatrix(); } if (V.m) V.m.wrap.rotation.y = V.yaw; if (V.mixer) V.mixer.update(dt); V.c.position.set(0, 5.4, 21); V.c.lookAt(0, 3.9, 0); V.r.render(V.s, V.c); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
     return true;
   };
   var showModel = function (k) {
     var T = window.THREE; if (!V.s || !T) return; if (V.key === k && V.m) return; V.key = k;
     if (V.m) { V.s.remove(V.m.wrap); V.m = null; V.mixer = null; }
-    var tries = 0; var put = function () { if (V.key !== k) return; var i = null; try { i = mdlInstance(k, 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 60) setTimeout(put, 150); return; } V.m = i; V.s.add(i.wrap);
-      try { var c = mdlGet(k); if (c && c.g && c.g.animations && c.g.animations.length) { V.mixer = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; V.mixer.clipAction(cl).play(); } } catch (e) {}
+    var tries = 0; var put = function () { if (V.key !== k) return; var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 60) setTimeout(put, 150); return; } V.m = i; V.s.add(i.wrap); paintAs(k, i);
+      /* v4.06 (user): no idle sway in the hangar - the frame stands still (one held pose, chosen per window.__grPose: 'bind' = model pose, 'idle' = first idle frame) */
+      try { var c = mdlGet(mkey(k)); var pz = window.__grPose || 'bind'; if (pz !== 'bind' && c && c.g && c.g.animations && c.g.animations.length) { var mx = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; var ac = mx.clipAction(cl); ac.play(); mx.setTime(0); ac.paused = true; } } catch (e) {}
       try { var r = A().R(), pk = r.psel && r.psel[k]; if (pk && typeof custMat === 'function') {} } catch (e) {} };
     put();
   };
@@ -102,14 +107,14 @@
   };
   // ------------------------------------------------------------------ v4.06: roster pictures are rendered from the frame's REAL model (the old thumbnails were concept art and some did not match, e.g. Crimson Striker)
   var TH = { r: null, s: null, c: null, q: [], busy: false };
-  var thumbKey = function (k) { return 'grThumb2:' + k; };
+  var thumbKey = function (k) { return 'grThumb4:' + k; };
   var thumbOf = function (k) { try { return localStorage.getItem(thumbKey(k)); } catch (e) { return null; } };
   window.__frThumb = function (k) { return thumbOf(k) || ('models/thumbs/' + k + '.jpg'); };
   var thumbPump = function () {
     if (TH.busy || !TH.q.length) return; var T = window.THREE; if (!T) return; TH.busy = true; var k = TH.q.shift();
     try { if (!TH.r) { var cv = document.createElement('canvas'); cv.width = cv.height = 192; TH.r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, preserveDrawingBuffer: true }); TH.r.outputColorSpace = T.SRGBColorSpace; TH.r.toneMapping = T.ACESFilmicToneMapping; TH.s = new T.Scene(); TH.s.add(new T.HemisphereLight(0xcfe0ff, 0x202030, 1.6)); var d = new T.DirectionalLight(0xffffff, 2.4); d.position.set(3, 6, 6); TH.s.add(d); var d2 = new T.DirectionalLight(0x7fd8ff, 1); d2.position.set(-5, 3, -4); TH.s.add(d2); TH.c = new T.PerspectiveCamera(28, 1, .1, 100); } } catch (e) { TH.busy = false; return; }
-    var tries = 0; var go = function () { var i = null; try { i = mdlInstance(k, 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 80) { setTimeout(go, 150); return; } TH.busy = false; thumbPump(); return; }
-      try { i.wrap.rotation.y = .45; TH.s.add(i.wrap); var c = mdlGet(k); if (c && c.g && c.g.animations && c.g.animations.length) { var mx = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; mx.clipAction(cl).play(); mx.update(.3); }
+    var tries = 0; var go = function () { var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 80) { setTimeout(go, 150); return; } TH.busy = false; thumbPump(); return; }
+      try { i.wrap.rotation.y = .45; TH.s.add(i.wrap); paintAs(k, i);
         TH.c.position.set(0, 4.2, 17); TH.c.lookAt(0, 3.8, 0); TH.r.render(TH.s, TH.c); var url = TH.r.domElement.toDataURL('image/webp', .85); try { localStorage.setItem(thumbKey(k), url); } catch (e) {} TH.s.remove(i.wrap);
         document.querySelectorAll('#garage .fc[data-k="' + k + '"] img').forEach(function (im) { im.src = url; im.style.visibility = ''; }); } catch (e) {}
       TH.busy = false; setTimeout(thumbPump, 30); };
@@ -132,8 +137,8 @@
   var PARTS = [['Head', ['헤드 센서 유닛', 'Head sensor unit']], ['Spine02', ['흉부 반응로', 'Chest reactor']], ['LeftArm', ['견갑 추진 모듈', 'Shoulder thruster']], ['RightHand', ['무장 매니퓰레이터', 'Weapon manipulator']], ['Hips', ['고관절 구동계', 'Hip actuator']], ['LeftFoot', ['각부 완충 장치', 'Leg shock absorber']]];
   var bpBuild = function (k, done) {
     var T = window.THREE; var tries = 0;
-    var go = function () { var i = null; try { i = mdlInstance(k, 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 80) { setTimeout(go, 150); return; } done(null); return; }
-      try { var c = mdlGet(k); if (c && c.g && c.g.animations && c.g.animations.length) { var mx = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; mx.clipAction(cl).play(); mx.update(.3); } } catch (e) {}
+    var go = function () { var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 80) { setTimeout(go, 150); return; } done(null); return; }
+      try { var c = mdlGet(mkey(k)); if (c && c.g && c.g.animations && c.g.animations.length) { var mx = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; mx.clipAction(cl).play(); mx.update(.3); } } catch (e) {}
         try { i.wrap.updateMatrixWorld(true); var grp = new T.Group(), fill = new T.MeshBasicMaterial({ color: 0x1d5bb0, transparent: true, opacity: .35, depthWrite: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }), line = new T.LineBasicMaterial({ color: 0xe8f4ff, transparent: true, opacity: .9 }), v = new T.Vector3();
         i.obj.traverse(function (o) { if (!o.isMesh || !o.geometry || !o.geometry.attributes.position) return; var src = o.geometry, n = src.attributes.position.count, pos = new Float32Array(n * 3);
           for (var q = 0; q < n; q++) { if (o.isSkinnedMesh && o.getVertexPosition) o.getVertexPosition(q, v); else v.fromBufferAttribute(src.attributes.position, q); v.applyMatrix4(o.matrixWorld); pos[q * 3] = v.x; pos[q * 3 + 1] = v.y; pos[q * 3 + 2] = v.z; }
@@ -178,7 +183,7 @@
   var open = function () {
     if (!A() || !A().R) return; css(); close(); var r = A().R(); sel = r.mech || 'saber0';
     var g = document.createElement('div'); g.id = 'garage';
-    g.innerHTML = '<div class="bg"></div><div class="vg"></div><div class="scan"></div><div class="top"><div class="ttl"><small>HANGAR · BAY 07</small><b>' + L2('격납고', 'Hangar') + '</b></div><span style="flex:1"></span><span class="chip">' + L2('계급', 'Rank') + ' ' + esc(rkName(rankOf(r))) + ' · Lv' + (r.lv || 1) + '</span><button class="chip bpc" id="grBpBtn" title="' + L2('이 기종의 설계도 보기', 'View this frame\'s blueprint') + '">▦ ' + L2('설계도', 'Blueprint') + ' ' + (r.bp || 0) + '</button><button class="x" id="grX" title="' + L2('닫기', 'Close') + '">✕</button></div><div class="roster"></div><canvas></canvas><div class="name"></div><div class="sheet"></div>';
+    g.innerHTML = '<div class="bg"></div><div class="vg"></div><div class="scan"></div><div class="top"><div class="ttl"><small>HANGAR · BAY 07</small><b>' + L2('격납고', 'Hangar') + '</b></div><span style="flex:1"></span><span class="chip">' + L2('계급', 'Rank') + ' ' + esc(rkName(rankOf(r))) + ' · Lv' + (r.lv || 1) + '</span><button class="chip bpc" id="grBpBtn" title="' + L2('이 기종의 설계도 보기', 'View this frame\'s blueprint') + '">▦ ' + L2('설계도 보기', 'View blueprint') + '</button><button class="x" id="grX" title="' + L2('닫기', 'Close') + '">✕</button></div><div class="roster"></div><canvas></canvas><div class="name"></div><div class="sheet"></div>';
     document.body.appendChild(g); g.querySelector('#grX').onclick = close; g.querySelector('#grBpBtn').onclick = function () { blueprint(sel || r.mech); };
     roster(); sheet(sel); if (bay(g.querySelector('canvas'))) showModel(sel);
   };

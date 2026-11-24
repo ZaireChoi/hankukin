@@ -32,10 +32,10 @@ guard('props',function(){
 // ---- basic Saber: charcoal body. The tint in mechInit can run before the match knows which unit is mine, so it is applied here.
 guard('tidy',function(){var tick=0;
  // charcoal copy of a model texture (the Saber texture is red: multiplying the colour only gives dark red)
- var grey=function(tex){try{var im=tex&&tex.image;if(!im||!im.width)return null;var T3=window.THREE,w=Math.min(512,im.width),h=Math.min(512,im.height),c=document.createElement('canvas');c.width=w;c.height=h;var g=c.getContext('2d');g.drawImage(im,0,0,w,h);var d=g.getImageData(0,0,w,h),a=d.data;
+ var grey=window.__axGrey=function(tex){try{var im=tex&&tex.image;if(!im||!im.width)return null;var T3=window.THREE,w=Math.min(512,im.width),h=Math.min(512,im.height),c=document.createElement('canvas');c.width=w;c.height=h;var g=c.getContext('2d');g.drawImage(im,0,0,w,h);var d=g.getImageData(0,0,w,h),a=d.data;
    for(var i=0;i<a.length;i+=4){var r=a[i],gg=a[i+1],b=a[i+2],l=(r*.3+gg*.59+b*.11)/255,mx=Math.max(r,gg,b),mn=Math.min(r,gg,b),sat=mx?(mx-mn)/mx:0;
-    if(sat<.18&&l>.62){a[i]=Math.round(205*l);a[i+1]=Math.round(170*l);a[i+2]=Math.round(96*l);}       // pale trim -> muted gold
-    else{var v=Math.pow(l,.85)*.5+.035;a[i]=Math.round(255*v*.96);a[i+1]=Math.round(255*v);a[i+2]=Math.round(255*v*1.08);}}   // body -> charcoal with a little blue
+    /* v4.08 (user): AX-00 is a WHITE and BLACK frame - bright armour plates -> off-white, dark frame parts -> near-black, smooth step between */
+    var x=mx/255,t2=Math.max(0,Math.min(1,(x-.28)/.22)),t3=t2*t2*(3-2*t2),v=(.06+.18*x)*(1-t3)+(.80+.16*x)*t3;a[i]=Math.round(255*v*.97);a[i+1]=Math.round(255*v*.99);a[i+2]=Math.round(255*Math.min(1,v*1.03));}
    g.putImageData(d,0,0);var t=new T3.CanvasTexture(c);t.colorSpace=tex.colorSpace;t.flipY=tex.flipY;t.wrapS=tex.wrapS;t.wrapT=tex.wrapT;t.needsUpdate=true;return t;}catch(e){return null;}};
  var cache=null,cacheSrc=null;
  // used by the style-select preview too: turn a Saber model instance charcoal
