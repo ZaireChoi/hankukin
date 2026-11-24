@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v4.03 RPG</div>
+   <div class="ver"><i></i>ASCEND · v4.04 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3971,15 +3971,15 @@ function godAfter(){const r=R();try{const A=window.HKAccount;if(A&&A.user&&windo
  showDlg('astra',L('시련을 이겨낸 자여. 당신의 빛을 고르십시오. 한 번 고른 빛은 바뀌지 않습니다.','You who passed the trial—choose your light. Once chosen, it cannot be changed.'),GODS.map(c=>({l:tx(MECHS[c].n),pri:c==='god',f:()=>pickG(c)})));}
 // ---------- gacha ----------
 const wkKey=()=>{const d=new Date(Date.now()+9*3600e3);d.setUTCDate(d.getUTCDate()-(d.getUTCDay()+6)%7);return d.toISOString().slice(0,10);};
-const BANNERS={prem:{n:K('한정 소환','Premium Summon'),cur:'gem',cost:100,rates:[0,25,45,27.7,2.3],pity:100,soft:90,myth:.3,no10:1},mech:{n:K('기동전사 소환','Mech Summon'),cost:300,rates:[50,30,14.5,5,.5],pity:100,soft:90,wk:20},link:{n:K('안드로이드 소환','Android Summon'),cost:300,rates:[50,30,14.5,4.8,.7],pity:100,soft:90,wk:20},gear:{n:K('무기 소환','Weapon Summon'),cost:100,rates:[45,32,16,6,1],pity:0,slots:['mel','rng','shld','wing','msl','radar'],drone:.2},skill:{n:K('기술 소환','Skill Summon'),cost:150,rates:[45,32,16,6,1],pity:0,slots:['ult','lsk','mind']}};
+const BANNERS={prem:{n:K('한정 소환','Premium Summon'),cur:'gem',cost:100,rates:[0,25,45,27.7,2.3],pity:100,soft:90,myth:.3,no10:1},mech:{n:K('기체 부품·설계도 소환','Frame Parts & Blueprints'),cost:300,rates:[50,30,14.5,5,.5],pity:100,soft:90,wk:20},link:{n:K('안드로이드 소환','Android Summon'),cost:300,rates:[50,30,14.5,4.8,.7],pity:100,soft:90,wk:20},gear:{n:K('무기 소환','Weapon Summon'),cost:100,rates:[45,32,16,6,1],pity:0,slots:['mel','rng','shld','wing','msl','radar'],drone:.2},skill:{n:K('기술 소환','Skill Summon'),cost:150,rates:[45,32,16,6,1],pity:0,slots:['ult','lsk','mind']}};
 function rollR(b){const B=BANNERS[b];const r=R();if(B.pity){r.pity[b]=(r.pity[b]||0)+1;const p=r.pity[b];if(p>=B.pity)return 4;let leg=B.rates[4];if(p>B.soft)leg+=6*(p-B.soft);const x=Math.random()*100;if(x<leg)return 4;const rest=100-leg,base=100-B.rates[4];let acc=0;const y=Math.random()*rest;for(let i=0;i<4;i++){acc+=B.rates[i]*rest/base;if(y<acc)return i;}return 3;}
  const x=Math.random()*100;let acc=0;for(let i=0;i<5;i++){acc+=B.rates[i];if(x<acc)return i;}return 0;}
 function pullOne(b,log){const r=R();let rr=rollR(b);if(rr===4&&BANNERS[b].pity)r.pity[b]=0;if(rr===4&&BANNERS[b].myth&&Math.random()<BANNERS[b].myth/BANNERS[b].rates[4])rr=5;if(b==='prem'){r.pm=(r.pm||0)+1;if(rr===5)r.pm=0;else if(r.pm>=200){rr=5;r.pm=0;r.pity[b]=0;}}let res;
  if(BANNERS[b].slots){const Bs=BANNERS[b];let it=null;if(Bs.drone&&Math.random()<Bs.drone){try{it=mkDrone(null,rr*2+1);}catch(e){it=null;}}if(!it)it=mkItem(rr,pick(Bs.slots));r.inv.push(it);res={k:null,r:rr,n:it.n,item:it};}
- else{const cat=(b==='mech'||b==='prem')?MECHS:LINKS;const pool=Object.keys(cat).filter(k=>cat[k].r===rr&&!cat[k].god);if(!pool.length){rr=Math.min(rr,4);const it=mkItem(Math.min(rr,4),(b==='mech'||b==='prem')?pick(['main','melee','shoulder','def','mob','core']):pick(['core','helm']));r.inv.push(it);res={k:null,r:rr,n:it.n,item:it};}
+ else{const cat=(b==='mech'||b==='prem')?MECHS:LINKS;const pool=Object.keys(cat).filter(k=>cat[k].r===rr&&!cat[k].god&&!((b==='mech'||b==='prem')&&!window.__mechGacha));/* v4.04 (user): frames are no longer drawn from summons - they are earned grade by grade (lib/ascend_frames.js); mech summons give frame parts + blueprints */if(!pool.length){rr=Math.min(rr,4);const it=mkItem(Math.min(rr,4),(b==='mech'||b==='prem')?pick(['main','melee','shoulder','def','mob','core']):pick(['core','helm']));r.inv.push(it);res={k:null,r:rr,n:it.n,item:it};}
   else{const k=pick(pool);const had=((b==='mech'||b==='prem')?r.mechs:r.links).includes(k);addUnit(k,b==='link');res={k,r:rr,n:cat[k].n,dup:had};}}
  r.hist.unshift({b,r:rr,n:tx(res.n),t:Date.now()});if(r.hist.length>100)r.hist.length=100;return res;}
-function pull(b,times){const r=R(),B=BANNERS[b];if(B.no10&&times===10)times=1;const cur=B.cur||'shards';const cost=times===10?B.cost*9:B.cost;if(B.wk){const wk=wkKey();if(!r.wkp||r.wkp.wk!==wk)r.wkp={wk,n:{}};if((r.wkp.n[b]||0)+times>B.wk){toast(L('이번 주 소환 한도('+B.wk+'회)에 도달했습니다. 월요일에 초기화됩니다.','Weekly summon limit ('+B.wk+') reached. It resets on Monday.'),3200);return null;}}if((r[cur]||0)<cost){toast(cur==='gem'?L('크리스탈이 부족합니다. 상점에서 구할 수 있습니다.','Not enough crystals. See the shop.'):tx(K('금화이 부족합니다','Not enough gold')));return null;}r[cur]-=cost;if(B.wk)r.wkp.n[b]=(r.wkp.n[b]||0)+times;const out=[];for(let i=0;i<times;i++)out.push(pullOne(b));if(times===10&&!out.some(o=>o.r>=2)){out[9]=pullOne(b);if(out[9].r<2){const it=mkItem(2);r.inv.push(it);out[9]={k:null,r:2,n:it.n,item:it};}}saveP();return out;}
+function pull(b,times){const r=R(),B=BANNERS[b];if(B.no10&&times===10)times=1;const cur=B.cur||'shards';const cost=times===10?B.cost*9:B.cost;if(B.wk){const wk=wkKey();if(!r.wkp||r.wkp.wk!==wk)r.wkp={wk,n:{}};if((r.wkp.n[b]||0)+times>B.wk){toast(L('이번 주 소환 한도('+B.wk+'회)에 도달했습니다. 월요일에 초기화됩니다.','Weekly summon limit ('+B.wk+') reached. It resets on Monday.'),3200);return null;}}if((r[cur]||0)<cost){toast(cur==='gem'?L('크리스탈이 부족합니다. 상점에서 구할 수 있습니다.','Not enough crystals. See the shop.'):tx(K('금화이 부족합니다','Not enough gold')));return null;}r[cur]-=cost;if(B.wk)r.wkp.n[b]=(r.wkp.n[b]||0)+times;const out=[];for(let i=0;i<times;i++)out.push(pullOne(b));try{if(b==='mech'||b==='prem'){const BP=[1,2,3,5,8,12];let g=0;out.forEach(o=>{g+=BP[Math.min(5,o.r||0)]*(b==='prem'?2:1);});r.bp=(r.bp||0)+g;setTimeout(()=>{try{toast(L('설계도 조각 +'+g,'Blueprints +'+g),2400);}catch(e){}},600);}}catch(e){}if(times===10&&!out.some(o=>o.r>=2)){out[9]=pullOne(b);if(out[9].r<2){const it=mkItem(2);r.inv.push(it);out[9]={k:null,r:2,n:it.n,item:it};}}saveP();return out;}
 // ---------- UI ----------
 const css=document.createElement('style');css.textContent=`
 #rpg{z-index:30}#rpg .panel{max-width:1180px;width:96vw;max-height:94vh;display:flex;flex-direction:column;padding:16px 18px}
@@ -5330,7 +5330,7 @@ const LINK_LOOK=[K('로봇형','Robot type'),K('로봇형','Robot type'),K('인�
 window.LINK_LOOK=LINK_LOOK;
 
 window.__mechTint=u=>{try{if(!G||!G.local||u!==G.local.unit||u.mon)return 0;const C=MECHS[R().mech];return C&&C.tint||0;}catch(e){return 0;}};
-window.__A={mkItem,mkDrone,R,render,saveP,addUnit:(k,l)=>addUnit(k,l),get tab(){return tab;},set tab(v){tab=v;}};
+window.__A={mkItem,mkDrone,R,render,saveP,MECHS,RAR,BANNERS,addUnit:(k,l)=>addUnit(k,l),get tab(){return tab;},set tab(v){tab=v;}};
 
 
 // ================= v2.5 : LOBBY CHARACTERS — no synchronized swaying; each stands still and acts on its own schedule =================
@@ -8282,7 +8282,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v403';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v404';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8721,6 +8721,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_feel.js?v=400"></script>
 <script src="lib/ascend_story2.js?v=402"></script>
 <script src="lib/ascend_foes.js?v=403"></script>
+<script src="lib/ascend_frames.js?v=404"></script>
 <script src="lib/ascend_floor2.js?v=370"></script>
 </body>
 </html>
