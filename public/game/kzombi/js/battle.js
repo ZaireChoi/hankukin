@@ -30,7 +30,7 @@ const SPR = {};
 const HOV = { player: 118, yisunsin: 136, eulji: 136, gangamchan: 136, kimchungseon: 134, sadaham: 132, jeonwoochi: 118, samyeong: 118, daejanggeum: 116, bari: 116, wonhyo: 118, honggildong: 118, gumiho: 112, dokkaebi: 112, haetae: 104, samjoko: 92, imugi: 150, yeoksin: 124, mudang: 116 };
 /* 영웅 초상: 3D 그림이 없을 때 대신 쓴다 */
 const PORT = {};
-for (const id in COMP) { const im = new Image(); im.onload = () => { PORT[id] = im; }; im.src = 'img/ui/hero_' + id + '.webp'; }
+for (const id in COMP) { const im = new Image(); im.onload = () => { PORT[id] = im; }; im.src = 'img/ui/hero_' + id + '.webp?v=2'; }
 function drawPort(id, x, y, r, ring) { const im = PORT[id]; if (!im) return false; ctx.save(); circle(x, y, r); ctx.clip(); const s = Math.max(r * 2 / im.width, r * 2 / im.height) * 1.15; ctx.drawImage(im, x - im.width * s / 2, y - r - im.height * s * 0.04, im.width * s, im.height * s); ctx.restore(); circle(x, y, r); ctx.strokeStyle = ring || '#ffe08a'; ctx.lineWidth = 3; ctx.stroke(); return true; }
 for (const k in EN) HOV[k] = EN[k].h;
 function tint(img, col, a) {
