@@ -75,15 +75,28 @@ function bumpStats(keys) {
   setDoc(doc(db, 'stats', kstDay()), data, { merge: true }).catch(() => {});
 }
 function onceToday(name) { try { const k = 'hk_seen_' + name + '_' + kstDay(); if (localStorage.getItem(k)) return false; localStorage.setItem(k, '1'); return true; } catch (e) { return false; } }
+// 재방문 집계: 처음 온 날을 기기에 기억해 두고, 오늘이 그 다음 날(1일차)·7일차인지 센다. 개인 식별 정보는 저장하지 않는다
+function cohortTag(g) {
+  try {
+    const fk = 'hk_first_' + g, today = kstDay(); let f = localStorage.getItem(fk);
+    if (!f) {
+      const old = localStorage.getItem(g + '_ftue') || localStorage.getItem(g + '_maxst');
+      localStorage.setItem(fk, old ? 'old' : today);
+      return old ? '_ret_dx' : '_new';
+    }
+    const dd = Math.round((Date.parse(today) - Date.parse(f)) / 86400000);
+    return dd === 1 ? '_ret_d1' : dd === 7 ? '_ret_d7' : (dd === 0 ? '_ret_dx' : '_ret_dx');
+  } catch (e) { return '_ret_dx'; }
+}
 function trackVisit() {
   try {
     try { const today = kstDay(); for (let i = localStorage.length - 1; i >= 0; i--) { const k = localStorage.key(i); if (k && k.startsWith('hk_seen_') && !k.endsWith(today)) localStorage.removeItem(k); } } catch (e) {}
     const g = STAT_GAME, keys = [g + '_visit'];
-    if (onceToday(g)) { keys.push(g + '_users', g + '_src_' + trafficSrc(), g + '_dev_' + (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop')); }
+    if (onceToday(g)) { keys.push(g + '_users', g + '_src_' + trafficSrc(), g + '_dev_' + (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop')); if (g === 'anibrix') keys.push(g + cohortTag(g)); }
     bumpStats(keys);
   } catch (e) {}
 }
-const EXTRA_EV = ['quit', 'quit_t30', 'quit_t90', 'quit_tlong', 'quit_s1', 'quit_s4', 'quit_other', 'win', 'lose', 'end_t90', 'end_t150', 'end_tlong'];
+const EXTRA_EV = ['quit', 'quit_t30', 'quit_t90', 'quit_tlong', 'quit_s1', 'quit_s4', 'quit_other', 'win', 'lose', 'end_t90', 'end_t150', 'end_tlong', 'pt_2m', 'pt_5m', 'pt_10m', 'pt_20m'];
 function trackEvent(type) {
   if (EXTRA_EV.includes(type) && STAT_GAME === 'anibrix') { bumpStats([STAT_GAME + '_' + type]); return; }
   if (!['start', 'finish'].includes(type)) return;
