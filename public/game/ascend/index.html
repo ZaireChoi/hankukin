@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v3.98 RPG</div>
+   <div class="ver"><i></i>ASCEND · v3.99 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -3349,7 +3349,7 @@ function mechFX(e,m,u,dt,now,sp){const T3=window.THREE;if(!e.mfx)mechInit(e,m,u)
  fx.lights.forEach((l,i)=>{l.material.opacity=.45+.35*Math.sin(now*5+i*1.7)+(shotAge<.25?.4:0);});
  if(fx.core){fx.core.material.opacity=.7+.3*Math.sin(now*3);fx.core.scale.setScalar(fx.core.userData.s0||(fx.core.userData.s0=fx.core.scale.x));fx.core.scale.multiplyScalar(1+(u.ultC||0)*0);}
  // thrusters
- const thr=clamp(.25+sp/260+(fly?.9:0),0,1.8);fx.flames.forEach((f,i)=>{const k=thr*(.85+Math.random()*.3);f.scale.set(1,k,1);f.visible=thr>.3;});
+ const thr=clamp(.25+sp/260+(fly?.9:0),0,1.8);const jetForm=!!(u.tf&&u.tf.mode)||!!(e._jet&&e._jet.grp&&e._jet.grp.visible);/* v3.99: in jet form the robot's feet are folded away - their sole thrusters must not show */fx.flames.forEach((f,i)=>{const k=thr*(.85+Math.random()*.3);f.scale.set(1,k,1);f.visible=thr>.3&&!jetForm;});
  // light wings unfold in flight / dash
  const wv=fly?1:sp>220?.5:0;fx.wings.forEach((w,i)=>{const o=w.material.opacity;w.material.opacity=lerp(o,wv*.55,Math.min(1,dt*4));w.visible=w.material.opacity>.02;w.rotation.z=(i?-1:1)*(.2-wv*.2+Math.sin(now*3)*.05);});
  // charge orb + shot flash + beam
@@ -6443,7 +6443,7 @@ function jetSet(j,pos,dir,k){if(k<.04){j.visible=false;return;}j.visible=true;j.
 // ---- per-frame thrust model for the local frame ----
 function thrustTick(e,m,u,dt,B){const T3=window.THREE;const scene=e.root.parent;if(!scene||!B)return;const H=(e.wg&&e.wg.H)||((e.mfx&&e.mfx.H)||90);
  if(!e.jets){const col=new T3.Color(custGet().jet).getHex();e.jets={lf:jetMesh(T3,H*.42,H*.05,col),rf:jetMesh(T3,H*.42,H*.05,col),wl:[],wr:[]};scene.add(e.jets.lf);scene.add(e.jets.rf);for(let i=0;i<3;i++){const a=jetMesh(T3,H*.3,H*.03,col),b=jetMesh(T3,H*.3,H*.03,col);scene.add(a);scene.add(b);e.jets.wl.push(a);e.jets.wr.push(b);}}
- const J=e.jets;if(e.mfx)for(const f of e.mfx.flames||[])f.visible=false;
+ const J=e.jets;if(e.mfx)for(const f of e.mfx.flames||[])f.visible=false;/* v3.99 (user): in jet form the robot (and its feet) is folded away - its foot and wing thrusters must not fire from thin air */if((u.tf&&u.tf.mode)||(m&&m.wrap&&!m.wrap.visible)){J.lf.visible=false;J.rf.visible=false;J.wl.forEach(j=>j.visible=false);J.wr.forEach(j=>j.visible=false);return;}
  const ya=e.byaw||0;const fw=new T3.Vector3(Math.cos(ya),0,Math.sin(ya));const side=new T3.Vector3(-Math.sin(ya),0,Math.cos(ya));// side = frame's left in world? decide by bone positions
  const lp=new T3.Vector3(),rp=new T3.Vector3();(B.LeftToeBase||B.LeftFoot).getWorldPosition(lp);(B.RightToeBase||B.RightFoot).getWorldPosition(rp);const toLeft=lp.clone().sub(rp);toLeft.y=0;if(toLeft.lengthSq()>1e-4)toLeft.normalize();else toLeft.copy(side);
  // desired acceleration in world (game x→world x, game y→world z)
@@ -8282,7 +8282,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v398';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v399';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8718,7 +8718,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_genfree.js?v=394"></script>
 <script src="lib/ascend_mtree.js?v=394"></script>
 <script src="lib/ascend_posture.js?v=398"></script>
-<script src="lib/ascend_feel.js?v=398"></script>
+<script src="lib/ascend_feel.js?v=399"></script>
 <script src="lib/ascend_floor2.js?v=370"></script>
 </body>
 </html>
