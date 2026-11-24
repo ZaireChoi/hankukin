@@ -1,0 +1,32 @@
+{
+ "name": "K-ZOMBIE: 처용, 조선좀비",
+ "short_name": "K-ZOMBIE",
+ "description": "조선 땅에 쏟아진 좀비를 처용과 영웅들이 막아내는 디펜스 서바이벌",
+ "start_url": "/game/kzombi/?src=pwa",
+ "scope": "/game/kzombi/",
+ "display": "fullscreen",
+ "orientation": "portrait",
+ "background_color": "#120b18",
+ "theme_color": "#120b18",
+ "lang": "ko",
+ "icons": [
+  {
+   "src": "img/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "img/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "img/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

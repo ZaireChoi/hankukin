@@ -38,7 +38,7 @@ svg.ic{display:inline-block;vertical-align:middle}
 .rpill{position:relative;display:flex;align-items:center;height:46px;min-width:150px;padding:0 44px 0 52px;background:rgba(5,8,24,.72);border:2px solid rgba(255,255,255,.18);border-radius:24px;font-size:24px;justify-content:flex-end}
 .rpill svg{position:absolute;left:-4px;top:-6px;width:56px;height:56px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.5))}
 .rpill .plus{position:absolute;right:4px;top:5px;width:34px;height:34px;border-radius:10px;background:linear-gradient(#7fe05a,#2f9c22);border:2px solid #d8ffc9;font-size:28px;line-height:28px;text-align:center;box-shadow:0 3px 0 #145a0c}
-.rpill .sub{position:absolute;left:52px;bottom:-20px;font-size:16px;color:#cfe;opacity:.9}
+.rpill .tv{display:flex;flex-direction:column;align-items:flex-end;line-height:1;white-space:nowrap}.rpill .tv b{font-size:22px;font-weight:900}.rpill .tv small{font-size:13px;color:#cfe;margin-top:2px;opacity:.9}
 .res2{position:absolute;right:12px;top:72px;display:flex;gap:8px}
 
 /* 하단 탭 */
@@ -291,3 +291,88 @@ svg.ic{display:inline-block;vertical-align:middle}
 #s-title .logo.logo-left .t::before,#s-title .logo.logo-left .t::after{writing-mode:vertical-rl;text-orientation:upright}
 #s-title .logo.logo-left-en{position:absolute;left:34px;top:860px;right:auto;transform:none;width:auto;text-align:left;margin:0}
 #s-title .logo.logo-left-en .t{font-size:92px;line-height:1;letter-spacing:2px;margin:0;white-space:nowrap}
+
+/* 바깥 콘텐츠(패스·업적·도감·축제·랭킹·친구·문파) */
+.sidebtns{gap:24px!important;top:142px!important}.sidebtns .sb{width:74px;height:74px;border-radius:18px}.sidebtns .sb svg{width:50px;height:50px}.sidebtns .sb .lb{font-size:16px;bottom:-19px}
+.mbox.xwide{width:660px}
+.xscroll{max-height:720px;overflow-y:auto;padding:4px 6px;margin-top:6px}
+.xbar{position:relative;height:34px;border-radius:17px;background:rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.25);overflow:hidden;margin:6px 0}
+.xbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ffd34a,#ff9a2a);border-radius:17px}
+.xbar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+.xbar.sm{height:24px;margin:4px 0 0}.xbar.sm span{font-size:15px}
+.xphd{display:grid;grid-template-columns:60px 1fr 1fr;text-align:center;font-weight:900;color:#ffe27a;margin-top:6px}
+.xprow{display:grid;grid-template-columns:60px 1fr 1fr;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1);opacity:.6}.xprow.on{opacity:1}
+.xpn{font-size:26px;text-align:center}.xpc{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px;border-radius:14px;background:rgba(40,60,140,.35)}.xpc.paid{background:rgba(160,110,20,.35)}
+.xpc .rw{animation:none}.xpc .rw b{position:absolute;bottom:2px;font-size:16px}
+.xget{height:46px!important;min-width:76px!important;padding:0 12px!important;font-size:20px!important}.btn.no{filter:grayscale(.8);opacity:.6}
+.xchk{font-style:normal;font-size:30px;color:#7df06a;text-shadow:0 2px 0 #000}.xchk.sm{position:absolute;right:4px;top:0;font-size:22px}
+.xlock svg{width:34px;height:34px;opacity:.8}
+.xrow{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px 0}.xrow .xn{flex:1}.xrow .xn b{font-size:21px}.xrow .rw{animation:none}.xrow .rw b{position:absolute;bottom:2px;font-size:16px}
+.xtabs{display:flex;gap:10px;justify-content:center}.xtabs .btn{height:56px;min-width:130px;font-size:24px}
+.xcodex{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.xcell{position:relative;height:138px;border-radius:16px;border:3px solid;background:rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.xcell.off{filter:grayscale(1) brightness(.45)}.xcell .nm{font-size:15px;margin-top:2px;text-align:center;line-height:1.1}
+.xcimg{width:92px;height:92px;background:center/cover no-repeat;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.xcell .xrw{position:absolute;left:0;right:0;bottom:-2px;text-align:center;font-size:14px;color:#ffe27a}.xcell .dot{right:-6px;top:-6px}
+.xevs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.xev{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:16px;background:rgba(40,60,140,.35);border:3px solid rgba(255,255,255,.15)}
+.xev .rw{animation:none}.xev .rw b{position:absolute;bottom:2px;font-size:16px}.xev:last-child{grid-column:span 2;background:rgba(160,110,20,.4)}
+.xev.now{border-color:#ffd34a;box-shadow:0 0 18px rgba(255,210,80,.8);cursor:pointer;animation:curp 1.2s infinite}.xev.got{opacity:.55}.xev .xchk{position:absolute;right:6px;top:2px}
+.xrk{display:grid;grid-template-columns:60px 1fr 120px;align-items:center;padding:10px 12px;margin:6px 0;border-radius:14px;background:rgba(40,60,140,.35);font-size:22px}.xrk.me{background:rgba(200,150,30,.5);outline:2px solid #ffd34a}.xrk b{text-align:center;color:#ffe27a}.xrk em{font-style:normal;text-align:right}
+.xsoon{padding:16px;margin:14px 0;text-align:center}.xsoon b{font-size:28px;color:#ffe27a}
+
+/* 계정 · 구글 로그인 */
+.xacc{padding:16px 18px;margin:10px 0 14px;text-align:center}.xacc b{font-size:24px;color:#ffe27a}.xacc p{margin:6px 0 10px;font-size:18px;line-height:1.4}
+.xgoogle{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px auto;height:64px;max-width:420px;border-radius:16px;background:#fff;color:#3c4043;font-size:24px;font-weight:800;box-shadow:0 5px 0 #9aa0a6,0 8px 14px rgba(0,0,0,.35);cursor:pointer}
+.xgoogle .g,.xchip .g{display:inline-block;width:30px;height:30px;border-radius:50%;background:conic-gradient(from -45deg,#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0);-webkit-mask:radial-gradient(circle,transparent 38%,#000 40%);mask:radial-gradient(circle,transparent 38%,#000 40%)}
+.xchip{position:absolute;left:14px;top:118px;height:32px;padding:0 12px;display:flex;align-items:center;gap:6px;border-radius:16px;background:rgba(5,8,24,.75);border:2px solid rgba(255,255,255,.3);font-size:17px;cursor:pointer;z-index:2}.xchip .g{width:20px;height:20px}
+
+/* i18n en: 영어 글이 길어 칸을 넘지 않게 */
+html[lang=en] .startbtn span{font-size:34px;white-space:nowrap;letter-spacing:-.5px}
+html[lang=en] .sidebtns .lb{font-size:13px;white-space:nowrap;letter-spacing:-.4px}
+html[lang=en] .tab span,html[lang=en] .tabs .stroke-s{white-space:nowrap;letter-spacing:-.4px}
+html[lang=en] .btn{letter-spacing:-.3px;word-break:keep-all}
+html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:anywhere}
+
+/* 영웅 목록 스크롤: 아래 영웅 정보 상자에 가리지 않게 */
+.comps{grid-template-columns:repeat(4,1fr)!important;gap:10px!important;height:640px;overflow-y:auto;align-content:start;padding:4px 4px 12px}
+.comps .card{height:178px}.comps .card .nm{font-size:21px;bottom:32px}.comps .card .lv{font-size:15px}.comps .card .el{width:32px;height:32px}.comps .card .gr{font-size:15px;padding:2px 8px}
+
+/* 상점 물건 칸 겹침: 그림·이름·내용·가격 단추를 위에서 아래로 차례로 쌓는다 */
+.good{height:auto!important;min-height:250px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 10px 14px!important}
+.good .gi{height:92px!important;flex:0 0 auto}.good .gi svg{width:84px!important;height:84px!important}
+.good .gn{font-size:21px!important;line-height:1.2}
+.good > div[style*="font-size:18px"]{line-height:1.2;margin-bottom:6px}
+.good .btn{position:static!important;margin-top:auto;width:100%;height:54px!important;font-size:20px!important;flex:0 0 auto}
+/* 신력 칸 겹침: 설명이 길어도 아래 단추와 겹치지 않게 */
+.sk{height:auto!important;min-height:170px;padding-bottom:70px!important}
+
+/* 첫 화면 제목: 세로 '처용'을 글자 단위로 쌓아 잘림 방지, 왼쪽 위 K-ZOMBIE 표기 */
+#s-title .logo.logo-left{top:560px;left:30px;animation:logoIn .9s cubic-bezier(.2,1.6,.4,1) both}
+#s-title .logo.logo-left .t2{display:flex;flex-direction:column;align-items:center;gap:2px}
+#s-title .logo.logo-left .t2 span{position:relative;display:block;font-size:108px;font-weight:900;line-height:1.08;padding:4px 8px 12px;
+  background:linear-gradient(180deg,#fff7c2 0%,#ffd84a 38%,#ff9a1f 70%,#e2451c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:7px #3a0d0d;paint-order:stroke fill;filter:drop-shadow(0 7px 0 #2a0808) drop-shadow(0 12px 16px rgba(0,0,0,.6))}
+#s-title .logo.logo-left .t2 span:after{content:attr(data-t);position:absolute;inset:0;padding:4px 8px 12px;color:transparent;-webkit-text-stroke:0;background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(255,255,255,0) 45%);-webkit-background-clip:text;background-clip:text}
+.kzmark{position:absolute;left:30px;top:30px;display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:14px;align-items:center;z-index:3;animation:kzIn 1.1s .2s ease-out both}
+.kzmark .seal{grid-row:1/3;width:58px;height:58px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:36px;font-weight:900;color:#fff3e0;
+  background:linear-gradient(145deg,#d8322a,#8e1410);border-radius:10px;box-shadow:inset 0 0 0 3px rgba(255,220,180,.55),0 6px 14px rgba(0,0,0,.45);transform:rotate(-4deg);font-family:Georgia,"Times New Roman",serif}
+.kzmark b{font-family:"Trebuchet MS","Segoe UI",sans-serif;font-size:34px;font-weight:900;letter-spacing:7px;line-height:1;
+  background:linear-gradient(180deg,#fff9e0 0%,#f3d27a 55%,#c98a2a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #2a1408) drop-shadow(0 4px 10px rgba(0,0,0,.55))}
+.kzmark small{font-family:"Trebuchet MS","Segoe UI",sans-serif;font-size:14px;font-weight:700;letter-spacing:6.5px;color:rgba(255,236,200,.85);border-top:1.5px solid rgba(243,210,122,.6);padding-top:5px;margin-top:5px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+@keyframes kzIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+#s-title .logo.logo-left-en{top:880px}
+
+/* 영웅 화면: 정보 상자 닫기(✕)와 다시 열기 탭, 닫으면 목록이 아래까지 */
+.compinfo .xfold{position:absolute;right:12px;top:10px;width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;background:rgba(10,14,30,.85);border:2px solid rgba(255,255,255,.35);z-index:3;cursor:pointer}
+.compinfo .tsl{right:68px!important}
+.comps.tall{height:1000px!important}
+.infotab{position:absolute;left:50%;transform:translateX(-50%);bottom:14px;padding:10px 26px;border-radius:22px 22px 12px 12px;background:linear-gradient(180deg,#3a4a8a,#1e2650);border:2px solid #ffd36b;font-size:21px;color:#fff;box-shadow:0 6px 14px rgba(0,0,0,.5);cursor:pointer;z-index:3}
+
+/* 2026-11-25: 영웅 화면 머리글과 카드 겹침, 로비 능력치와 출전 칸 겹침 고침, 쿠폰 입력 칸 */
+.comps{top:100px!important;height:622px}
+.comps.tall{height:984px!important}
+.statline{left:14px!important;right:232px!important;justify-content:flex-start!important}
+.xcpn{width:440px;height:74px;border-radius:16px;border:3px solid #ffd36b;background:#0e1430;color:#fff;font-size:30px;font-weight:800;text-align:center;letter-spacing:2px;font-family:inherit;outline:none}
+.xcpn::placeholder{color:#7f8ab8;letter-spacing:0;font-weight:600}
+.modal .row .btn.p,.modal .row .btn.b{min-width:200px}
