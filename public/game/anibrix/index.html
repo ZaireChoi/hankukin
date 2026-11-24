@@ -1095,7 +1095,7 @@ function lock(p){
 /* ---- 보스 체력 & 필살기 (챌린지) ---- */
 function bossSetup(){const b=G.players[1],cfg=b.ai.cfg,lv=G.level;b.hpMax=cfg.hp;b.hp=b.hpMax;b.skillNext=G.t+cfg.skillEvery;b.warned=false;b.koByHP=false;}
 function updateHP(){if(!G.players)return;for(const p of G.players){const u=p.ui;if(!u||!u.hpfill||!p.hpMax)continue;const r=Math.max(0,p.hp/p.hpMax);u.hpfill.style.width=(r*100)+'%';u.hptxt.textContent=(p.isBoss?tr('boss_hp')+' ':'\u2764 ')+Math.ceil(p.hp)+' / '+p.hpMax;const st=r<0.3?'scared':'normal';if(u.porState!==st){u.porState=st;const pc=u.por.getContext('2d');pc.setTransform(DPR,0,0,DPR,0,0);pc.clearRect(0,0,34,34);drawAnimal(pc,u.info.por,34,st,false);}}}
-function bossDamage(d){const b=G.players&&G.players[1];if(!b||!b.hpMax||b.dead||d<=0)return;b.hp=Math.max(0,b.hp-d);addFloat(b,'-'+d,'#e03131');b.shakeUntil=G.t+250;Snd.punch();updateHP();if(b.hp<=0){b.koByHP=true;b.warned=false;b.dead=true;b.cur=null;bigK(b,'boss_down',null,'#e03131');Snd.boom();Snd.roar();}else if(Math.random()<0.3)say(b,lineOf(b.ai.cfg,'hit'),1400);}
+function bossDamage(d){const b=G.players&&G.players[1];if(!b||!b.hpMax||b.dead||d<=0)return;b.hp=Math.max(0,b.hp-d);addFloat(b,'-'+d,'#e03131');b.shakeUntil=G.t+250;Snd.punch();updateHP();if(b.hp<=0){b.koByHP=true;b.warned=false;b.dead=true;b.cur=null;bigK(b,'boss_down',null,'#e03131');Snd.boom();Snd.roar();G.hitstop=Math.max(G.hitstop||0,320);try{flashGold();vib([40,60,90]);}catch(e){}}else{if(d>=4)G.hitstop=Math.max(G.hitstop||0,45);if(Math.random()<0.3)say(b,lineOf(b.ai.cfg,'hit'),1400);}}
 function bossTick(){
   if(G.mode!=='ai'||!G.feat.skills)return;const b=G.players[1],me=G.players[0];if(!b.hpMax||b.dead||me.dead)return;
   const cfg=b.ai.cfg,left=b.skillNext-G.t;
@@ -2219,6 +2219,9 @@ for(const l in I18N_V12)if(I18N[l])Object.assign(I18N[l],I18N_V12[l]);
 Object.assign(I18N.ko,{legend_hdr2:'전설 영웅 (영웅 조각 30개로 획득)'});Object.assign(I18N.en,{legend_hdr2:'Legendary Heroes (get with 30 hero shards)'});if(I18N.ja)Object.assign(I18N.ja,{legend_hdr2:'伝説ヒーロー（かけら30個で獲得）'});if(I18N.zh)Object.assign(I18N.zh,{legend_hdr2:'传说英雄（30个碎片获得）'});
 /* v1.2 첫 1분: 미뤄 둔 알림, 손가락·키 안내 */
 const LIVEK='hk_live_anibrix';
+/* 하루 플레이 시간: 실제로 판이 돌아가는 동안만 1초씩 더하고, 2·5·10·20분을 넘을 때 하루 한 번씩 센다 */
+function ptTick(){try{if(!G.players||!G.running||G.paused||G.ended||G.countdown>0||G.mode==='demo'||document.hidden)return;const d=new Date(Date.now()+9*3600e3).toISOString().slice(0,10);let o=JSON.parse(localStorage.getItem('hk_pt_anibrix')||'null');if(!o||o.d!==d)o={d,s:0,x:[]};o.s+=1;for(const [sec,k] of [[120,'pt_2m'],[300,'pt_5m'],[600,'pt_10m'],[1200,'pt_20m']])if(o.s>=sec&&!o.x.includes(k)){o.x.push(k);hkT(k);}localStorage.setItem('hk_pt_anibrix',JSON.stringify(o));}catch(e){}}
+setInterval(ptTick,1000);
 function liveStart(mode,level){try{G.resSent=false;localStorage.setItem(LIVEK,JSON.stringify({m:mode,s:level||0,t:0}));}catch(e){}}
 function liveTick(){try{if(G.players&&!G.ended&&G.mode&&G.mode!=='demo'){const o=JSON.parse(localStorage.getItem(LIVEK)||'null');if(o){o.t=Math.round((G.t||0)/1000);localStorage.setItem(LIVEK,JSON.stringify(o));}}}catch(e){}}
 function liveSendQuit(o){if(!o)return;hkT('quit');hkT(o.t<30?'quit_t30':o.t<90?'quit_t90':'quit_tlong');hkT(o.m==='ai'?(o.s<=3?'quit_s1':'quit_s4'):'quit_other');}
