@@ -14,9 +14,10 @@
   // ---------------------------------------------------------------- state
   var J = { id: null, ox: 0, oy: 0, dx: 0, dy: 0, mag: 0 };
   var ATK = false, PULSE = {}; // PULSE[k] = time until which input k is held
-  var hold = function (k, ms) { PULSE[k] = performance.now() + (ms || 160); };
-  var held = function (k) { return (PULSE[k] || 0) > performance.now(); };
-  var key = function (code, ms) { try { window.dispatchEvent(new KeyboardEvent('keydown', { code: code })); setTimeout(function () { window.dispatchEvent(new KeyboardEvent('keyup', { code: code })); }, ms || 140); } catch (e) {} };
+  var PC = {};   /* v4.09 fix: a pulse also lasts at least 3 input reads, so a tap is never lost on a slow phone */
+  var hold = function (k, ms) { PULSE[k] = performance.now() + (ms || 160); PC[k] = 3; };
+  var held = function (k) { return (PULSE[k] || 0) > performance.now() || (PC[k] || 0) > 0; };
+  var key = function (code, ms) { try { if (window.__keyLatch) window.__keyLatch(code, Math.max(3, Math.round((ms || 140) / 50))); window.dispatchEvent(new KeyboardEvent('keydown', { code: code })); setTimeout(function () { window.dispatchEvent(new KeyboardEvent('keyup', { code: code })); }, ms || 140); } catch (e) {} };
   // ---------------------------------------------------------------- UI
   var css = '#dimJoy{position:fixed;z-index:38;pointer-events:none;width:128px;height:128px;margin:-64px 0 0 -64px;border-radius:50%;border:2px solid rgba(207,224,242,.28);background:radial-gradient(circle,rgba(20,30,50,.25),rgba(20,30,50,.08) 70%,transparent);display:none}' +
     '#dimJoy b{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:radial-gradient(circle at 40% 35%,rgba(234,243,252,.55),rgba(120,150,190,.3));border:2px solid rgba(234,243,252,.5)}' +
@@ -51,7 +52,7 @@
       var down = function (ev) { ev.preventDefault(); ev.stopPropagation(); b.classList.add('on'); try { SFX && SFX.init && SFX.init(); } catch (e) {}
         if (k === 'atk') { ATK = true; return; }
         if (k === 'q') { hold('a1', 220); key('KeyQ'); } else if (k === 'e') { hold('a2', 200); key('KeyE'); } else if (k === 'r') { hold('ul', 220); key('KeyR'); } else if (k === 't') { hold('ab', 220); key('KeyT'); }
-        else if (k === 'c') key('KeyC', 900); else if (k === 'dash') { hold('dash', 200); key('Space', 160); try { tbtn.dash = 1; setTimeout(function () { tbtn.dash = 0; }, 180); } catch (e) {} } };
+        else if (k === 'c') key('KeyC', 900); else if (k === 'dash') { hold('dash', 200); key('Space', 160); } };   /* v4.09: tbtn.dash is now driven from the input hook (held for 3 reads), a 180 ms timer was lost on slow phones */
       var up = function (ev) { b.classList.remove('on'); if (k === 'atk') ATK = false; };
       b.addEventListener('pointerdown', down, { passive: false }); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('pointerleave', up);
       b.addEventListener('touchstart', function (ev) { ev.preventDefault(); }, { passive: false });
@@ -92,7 +93,7 @@
   };
   var hook = function () {
     if (window.__hkDim || typeof window.localInput !== 'function') return; window.__hkDim = 1; var li = window.localInput;
-    var w = function (u) { var inp = li(u); try { if (!active() || !u || u !== meU()) return inp;
+    var w = function (u) { try { if (active() && u && u === meU()) tbtn.dash = held('dash') ? 1 : 0; } catch (e) {} var inp = li(u); try { if (!active() || !u || u !== meU()) return inp;
         var moving = J.id !== null && J.mag > .12;
         if (moving) { var r = (typeof camRot === 'function') ? camRot(J.dx, J.dy) : [J.dx, J.dy]; var mm = Math.hypot(r[0], r[1]) || 1, mg = Math.min(1, J.mag * 1.15);
           inp.mx = r[0] / mm * mg; inp.my = r[1] / mm * mg; var ang = Math.atan2(r[1], r[0]); if (u.layer > 0 && !(CL[u.cls] && CL[u.cls].hover)) inp.steer = ang; if (!ATK) inp.aim = ang; }
@@ -102,7 +103,7 @@
             if (ATK && Math.hypot(tg.x - u.x, tg.y - u.y) < 240 && !(u.cd2 > 0) && (u.en == null || u.en >= 12)) inp.a2 = true; }  // up close the attack button also swings the saber
           else if (!moving) { inp.tx = u.x + Math.cos(inp.aim) * 650; inp.ty = u.y + Math.sin(inp.aim) * 650; }
           if (ATK) inp.fire = true; }
-        if (held('a1')) inp.a1 = true; if (held('a2')) inp.a2 = true; if (held('ul')) inp.ul = true; if (held('ab')) inp.ab = true;
+        if (held('a1')) inp.a1 = true; if (held('a2')) inp.a2 = true; if (held('ul')) inp.ul = true; if (held('ab')) inp.ab = true; for (var pk in PC) if (PC[pk] > 0) PC[pk]--;
       } catch (e) { window.__dimErr = String(e).slice(0, 160); } return inp; };
     window.localInput = w;
   };
@@ -136,6 +137,13 @@
     } catch (e) { window.__dimErr = String(e).slice(0, 160); }
   };
   setInterval(pauseUI, 300);
+  /* v4.09 (user): a phone call, switching apps or opening another window pauses the battle by itself (resume from the pause menu) */
+  var autoPause = function () { try { if (window.__noAutoPause || !G || G.over || G.paused || !G.local || !G.local.unit) return; if (typeof NET !== 'undefined' && NET && NET.mode === 'client') return; var pz = document.getElementById('pause'); if (pz && !pz.classList.contains('hidden')) return; togglePause(); window.__autoPaused = Date.now(); } catch (e) {} };
+  document.addEventListener('visibilitychange', function () { if (document.hidden) autoPause(); });
+  addEventListener('pagehide', autoPause);
+  var hadFocus = false; addEventListener('focus', function () { hadFocus = true; }); ['pointerdown', 'keydown'].forEach(function (n) { addEventListener(n, function (e) { if (e.isTrusted && document.hasFocus()) hadFocus = true; }, true); });
+  addEventListener('blur', function () { if (!hadFocus) return; setTimeout(function () { if (!document.hasFocus() && hadFocus) { hadFocus = false; autoPause(); } }, 250); });   /* only a window that had the player's focus pauses when another window takes it */
+  try { if (navigator.audioSession) navigator.audioSession.addEventListener && navigator.audioSession.addEventListener('statechange', function () { if (navigator.audioSession.state === 'interrupted') autoPause(); }); } catch (e) {}
   // ---------------------------------------------------------------- frames must never disappear: no frustum culling on frame models
   // (skinned + compressed models can carry a too-small bounding sphere, so a frame vanished when it sat near the screen edge -
   // phones see this more because of their narrow, close camera). Only frames, a few dozen meshes at most.

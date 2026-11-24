@@ -76,7 +76,9 @@ var bookBind=function(ov,r,redraw){[].slice.call(ov.querySelectorAll('[data-lear
 // asked by index.html before the ultimate / absolute / fusion fire
 var lastMsg=0;
 window.__skLock=function(u,k){try{if(typeof G==='undefined'||!G||!G.local||u!==G.local.unit||u.cls!=='arkframe')return false;var r=st();if(!r||r.sk.got[k])return false;
-  var now=Date.now();if(now-lastMsg>4000){lastMsg=now;var nm=NODES.filter(function(q){return q[0]===k;})[0][3];try{pop(nm+L(' · 잠김 (성장에서 기술 포인트로 해금)',' · locked (unlock with skill points in Growth)'),'#ffd166',false);}catch(e){}}return true;}catch(e){return false;}};
+  /* v4.09 (user: skill bar R/T did nothing): the ultimate opens at pilot Lv 5 and the absolute tech at Lv 8 by themselves - the old growth unlock was left behind when the frame skill tree replaced it, so most pilots had R and T locked for good */
+  var plv=(r.lv||1);try{var R0=window.__A&&window.__A.R&&window.__A.R();if(R0&&R0.lv)plv=R0.lv;}catch(e){}if((k==='ult'&&plv>=5)||(k==='abs'&&plv>=8))return false;
+  var now=Date.now();if(now-lastMsg>4000){lastMsg=now;var nm=NODES.filter(function(q){return q[0]===k;})[0][3];var msg=nm+(k==='ult'?L(' · 파일럿 Lv 5에 열림',' · opens at pilot Lv 5'):k==='abs'?L(' · 파일럿 Lv 8에 열림',' · opens at pilot Lv 8'):L(' · 잠김 (성장에서 기술 포인트로 해금)',' · locked (unlock with skill points in Growth)'));try{if(window.rcToast)window.rcToast(msg,'#ffd166');pop(msg,'#ffd166',true);}catch(e){}}return true;}catch(e){return false;}};
 
 
 // ---------- game information (grade gaps · summon odds · skill slots): kept out of the growth screen ----------
