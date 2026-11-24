@@ -1,0 +1,192 @@
+/* 처용, 조선좀비 전투 수치표. 바깥 화면(meta.js)도 JZD를 읽어 챕터, 동료, 기술 이름을 쓴다. */
+(function () {
+'use strict';
+const D = window.JZD = {};
+D.W = 720; D.VH = 1280; D.H = 1500;
+D.SHRINE = { x: 360, y: 1262, r: 54 };
+D.WALL_Y = 1070; D.GATE = [292, 428];
+D.LANE_X = [150, 360, 570];
+D.PADS = [[96, 975], [198, 975], [522, 975], [624, 975], [205, 800], [515, 800], [130, 630], [590, 630], [140, 1165], [580, 1165]];
+
+/* 적. h: 그림 키(px), r: 몸 반지름 */
+D.EN = {
+  peasant: { n: '역병 백성', hp: 24, sp: 64, r: 12, dmg: 6, cd: 0.8, xp: 1, h: 60 },
+  archer:  { n: '좀비 궁수', hp: 20, sp: 54, r: 12, dmg: 7, cd: 1.9, xp: 2, range: 210, h: 62 },
+  spear:   { n: '좀비 군졸', hp: 44, sp: 56, r: 13, dmg: 10, cd: 1.1, xp: 2, reach: 46, h: 62 },
+  rider:   { n: '좀비 기마병', hp: 52, sp: 150, r: 16, dmg: 14, cd: 1.0, xp: 3, h: 90 },
+  harcher: { n: '좀비 기마궁수', hp: 36, sp: 130, r: 16, dmg: 7, cd: 1.7, xp: 3, range: 250, h: 90 },
+  yangban: { n: '좀비 양반', hp: 70, sp: 50, r: 13, dmg: 8, cd: 1.2, xp: 3, h: 64, aura: 1 },
+  munsin:  { n: '좀비 문신', hp: 48, sp: 46, r: 13, dmg: 9, cd: 2.4, xp: 3, range: 240, h: 62, caster: 1 },
+  zdog:    { n: '좀비 들개', hp: 16, sp: 150, r: 11, dmg: 5, cd: 0.7, xp: 1, h: 40, jump: 1 },
+  zrat:    { n: '역병 쥐', hp: 26, sp: 100, r: 11, dmg: 4, cd: 0.6, xp: 1, h: 36, split: 1 },
+  zcrow:   { n: '좀비 까마귀', hp: 12, sp: 120, r: 10, dmg: 4, cd: 0.9, xp: 1, h: 40, fly: 1 },
+  zboar:   { n: '좀비 멧돼지', hp: 70, sp: 85, r: 15, dmg: 14, cd: 1.0, xp: 3, h: 52, charger: 1, siege: 3 },
+  zox:     { n: '좀비 황소', hp: 190, sp: 40, r: 20, dmg: 22, cd: 1.4, xp: 6, h: 72, tank: 1, siege: 4 },
+  zbear:   { n: '좀비 반달곰', hp: 340, sp: 54, r: 22, dmg: 26, cd: 1.5, xp: 12, h: 82, slam: 1 },
+  ztiger:  { n: '좀비 범', hp: 280, sp: 96, r: 20, dmg: 20, cd: 1.1, xp: 12, h: 70, charger: 1 },
+  zsword:  { n: '좀비 검사', hp: 46, sp: 70, r: 13, dmg: 12, cd: 0.9, xp: 2, h: 62 },
+  zwaegun: { n: '좀비 왜군', hp: 30, sp: 50, r: 12, dmg: 15, cd: 2.6, xp: 2, range: 300, gun: 1, h: 60 },
+  zsamurai:{ n: '좀비 사무라이', hp: 95, sp: 78, r: 14, dmg: 18, cd: 1.0, xp: 4, h: 66, charger: 1 },
+  zmonk:   { n: '좀비 승려', hp: 60, sp: 48, r: 13, dmg: 8, cd: 1.4, xp: 3, h: 62, healer: 1 },
+  zgrand:  { n: '좀비 대장군', hp: 900, sp: 52, r: 26, dmg: 30, cd: 1.3, xp: 25, h: 100, armor: 3, slam: 1 },
+  zqueen2: { n: '좀비 왕비', hp: 800, sp: 44, r: 18, dmg: 16, cd: 1.6, xp: 18, h: 82, range: 250, caster: 1, summoner: 1 },
+  yeoksin: { n: '역신', hp: 4200, sp: 60, r: 24, dmg: 32, cd: 1.0, xp: 0, h: 124, armor: 2, blink: 1 },
+  mudang:  { n: '검은 무녀', hp: 3000, sp: 42, r: 22, dmg: 20, cd: 1.8, xp: 0, h: 116, range: 300, caster: 1, summoner: 1, warder: 1 },
+  mujang:  { n: '좀비 무장', hp: 560, sp: 60, r: 22, dmg: 22, cd: 1.2, xp: 15, h: 84, armor: 2, charger: 1 },
+  king:    { n: '역병 든 임금', hp: 3400, sp: 34, r: 28, dmg: 34, cd: 1.5, xp: 0, h: 100, armor: 1 }
+};
+
+/* 챕터: 땅 모습(theme), 밤 수, 나오는 적, 우두머리 */
+D.CHAPTERS = [
+  { n: 1, name: '역병 도는 마을', theme: 'village', nights: 4, pool: ['peasant', 'zdog', 'archer'], elite: 'mujang', boss: 'mujang' },
+  { n: 2, name: '버려진 장터', theme: 'market', nights: 4, pool: ['peasant', 'zrat', 'archer', 'spear', 'yangban'], elite: 'zboar', boss: 'zbear' },
+  { n: 3, name: '눈 덮인 고개', theme: 'snow', nights: 4, pool: ['peasant', 'spear', 'zdog', 'zcrow', 'rider'], elite: 'zbear', boss: 'ztiger' },
+  { n: 4, name: '불타는 관아', theme: 'burning', nights: 5, pool: ['archer', 'spear', 'zsword', 'munsin', 'zboar', 'rider'], elite: 'zox', boss: 'zgrand' },
+  { n: 5, name: '안개 낀 나루', theme: 'ferry', nights: 5, pool: ['peasant', 'zwaegun', 'zsamurai', 'zrat', 'zcrow'], elite: 'zsamurai', boss: 'zgrand' },
+  { n: 6, name: '무너진 산성', theme: 'fortress', nights: 5, pool: ['spear', 'archer', 'rider', 'harcher', 'zboar'], elite: 'mujang', boss: 'zbear' },
+  { n: 7, name: '귀신 나는 서원', theme: 'seowon', nights: 5, pool: ['yangban', 'munsin', 'zmonk', 'zcrow', 'peasant'], elite: 'zbear', boss: 'mudang' },
+  { n: 8, name: '얼어붙은 궁궐 뒤뜰', theme: 'frozen', nights: 6, pool: ['spear', 'zsword', 'zdog', 'harcher', 'yangban'], elite: 'ztiger', boss: 'zqueen2' },
+  { n: 9, name: '황천 다리', theme: 'hwangcheon', nights: 6, pool: ['peasant', 'zmonk', 'munsin', 'zcrow', 'zsamurai', 'zboar'], elite: 'zgrand', boss: 'mudang' },
+  { n: 10, name: '역병 든 궁궐', theme: 'palace', nights: 6, pool: ['spear', 'archer', 'zsword', 'zwaegun', 'yangban', 'munsin'], elite: 'zgrand', boss: 'king' }
+];
+/* 11~30장: 테마를 돌려 쓰고 적을 섞는다 */
+(function () {
+  const names = ['피어린 성곽길', '역병 돈 포구', '버려진 광산', '귀신 우는 대숲', '얼음 동굴', '무너진 탑골', '핏빛 단풍 산사', '저주받은 왕릉', '불타는 한양 저잣거리', '역병 군영', '안개 덮인 섬', '검은 늪', '쟿빛 고개', '저승 문턱', '해골 성채', '얼어붙은 백두', '독기 서린 궁궐 지하', '하늘 다리', '어둠의 종묘', '역신의 옥좌'];
+  const th = ['fortress', 'ferry', 'burning', 'seowon', 'frozen', 'fortress', 'burning', 'hwangcheon', 'market', 'fortress', 'ferry', 'hwangcheon', 'burning', 'hwangcheon', 'seowon', 'snow', 'palace', 'hwangcheon', 'palace', 'palace'];
+  const all = ['peasant', 'archer', 'spear', 'zsword', 'rider', 'zwaegun', 'yangban', 'zsamurai', 'munsin', 'zmonk', 'zdog', 'zrat', 'zcrow', 'zboar', 'zox'];
+  const bosses = ['zgrand', 'zqueen2', 'mudang', 'zbear', 'yeoksin', 'zgrand', 'ztiger', 'mudang', 'yeoksin'];
+  names.forEach((nm, i) => { const n = 11 + i, s = (i * 5) % all.length; const pool = [i % 2 ? 'spear' : 'peasant']; for (let k = 0; k < 5; k++) pool.push(all[(s + k * 3) % all.length]); D.CHAPTERS.push({ n, name: nm, theme: th[i], nights: 6, pool, elite: ['zgrand', 'zsamurai', 'zbear', 'ztiger', 'mujang'][i % 5], boss: n === 20 || n === 30 ? 'yeoksin' : bosses[i % bosses.length] }); });
+})();
+/* 판마다 다른 배치: 좀비 길(2~3갈래)과 건물 자리. 같은 챕터는 늘 같은 배치 */
+D.lanePt = (L, t, i) => { const k = t * t * (3 - 2 * t); return { x: L + (360 - L) * k * k + Math.sin(t * 9 + i * 2) * 16, y: -40 + t * (D.WALL_Y + 40) }; };
+D.layoutOf = function (ch) {
+  let s = (ch * 9973 + 17) >>> 0; const R = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; const rr = (a, b) => a + R() * (b - a);
+  const T = [[150, 360, 570], [200, 520], [120, 420, 600], [250, 590], [140, 470], [180, 360, 540], [110, 330, 610]];
+  const lanes = ch === 1 ? [150, 360, 570] : T[(ch * 3) % T.length].map(x => Math.round(x + rr(-35, 35)));
+  const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 30 && Math.abs(p.x - x) < 78) return true; } return false; });
+  const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 80);
+  const pads = [];
+  for (const row of [{ y: 975, n: 4 }, { y: 800, n: 3 }, { y: 640, n: 3 }]) {
+    const yy = row.y + Math.round(rr(-25, 25)); let tries = 0, got = 0;
+    while (got < row.n && tries++ < 60) { const x = Math.round(rr(80, 640)), y = yy + Math.round(rr(-20, 20)); if (nearLane(x, y) || guardNear(x, y) || pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 105)) continue; pads.push([x, y]); got++; }
+  }
+  for (const bx of [140 + rr(-20, 20), 580 + rr(-20, 20)]) pads.push([Math.round(bx), 1165 + Math.round(rr(-15, 15))]);
+  return { lanes, pads };
+};
+/* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
+D.nightsOf = function (ch) {
+  const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.55 * (ch - 1);
+  for (let i = 0; i < C.nights; i++) {
+    const last = i === C.nights - 1, k = i / Math.max(1, C.nights - 1);
+    const mix = {};
+    C.pool.forEach((t, j) => { if (j === 0) return; if (j <= 1 + i) mix[t] = 0.07 + 0.04 * Math.min(i, 3); });
+    out.push({
+      name: (i + 1) + '번째 밤', dur: 50 + i * 8 + (last ? 10 : 0),
+      rate: [1.6 + k * 1.4 + ch * 0.12, 3.2 + k * 2.6 + ch * 0.2], hp: hp0 * (1 + 0.28 * i), mix, base: C.pool[0],
+      kind: last ? 'boss' : (i % 2 === 1 ? 'elite' : 'normal'),
+      elites: last ? [0.4] : (i % 2 === 1 ? [0.5] : []), eliteType: C.elite, boss: last ? C.boss : null
+    });
+  }
+  return out;
+};
+
+D.TUR = {
+  general: { name: '천하대장군', d: '눈에서 붉은 광선을 쏜다', kind: 'beam', cost: 40, range: 230, rate: 0.9, dmg: 14, hp: 80, spr: 'tur_general', top: 62, col: '255,90,60' },
+  lady:    { name: '지하여장군', d: '푸른 기운으로 적을 느리게 한다', kind: 'aura', cost: 50, range: 140, slow: 0.5, dps: 8, hp: 90, spr: 'tur_lady', top: 62 },
+  arrow:   { name: '망루', d: '탑 위 병사가 쏜다 (궁수 → 연노병 → 조총수로 강화, 단계마다 인원 증가)', crew: 1, kind: 'shot', cost: 60, range: 270, rate: 0.36, dmg: 11, hp: 120, spr: 'tower_arrow', top: 112 },
+  mine:    { name: '금광', d: '밤을 넘길 때마다 엽전 +20', kind: 'mine', cost: 50, range: 0, hp: 90, spr: 'mine', top: 44, income: 20 },
+  fire:    { name: '화덕탑', d: '가까이 온 적에게 불길을 뿜는다', kind: 'flame', cost: 70, range: 150, rate: 0.08, dps: 26, hp: 130, spr: 'tower_fire', top: 96 },
+  hwacha:  { head: 'hwacha_head', name: '화차', d: '신기전 여덟 발을 한꺼번에', kind: 'rocket', cost: 85, range: 290, rate: 2.6, dmg: 12, shots: 8, hp: 70, spr: 'tower_hwacha', top: 60 },
+  cannon:  { head: 'cannon_head', name: '화포', d: '포탄이 날아가 넓게 터진다', kind: 'shell', cost: 90, range: 330, rate: 2.8, dmg: 42, splash: 80, hp: 80, spr: 'tower_cannon', top: 54 },
+  talisman:{ name: '부적탑', d: '번개가 적에서 적으로 옮겨 붙는다', kind: 'chain', cost: 80, range: 260, rate: 1.4, dmg: 18, hp: 90, spr: 'tower_talisman', top: 100 },
+  barracks:{ name: '병영', d: '조선 병사가 나와 성문 앞을 지킨다 (강화할수록 병종과 인원 증가)', kind: 'barracks', cost: 90, range: 0, rate: 7, hp: 170, spr: 'barracks', top: 100 },
+  well:    { name: '우물', d: '주변 처용과 시설의 체력을 되살린다', kind: 'heal', cost: 60, range: 170, rate: 1.0, heal: 6, hp: 100, spr: 'well', top: 90 }
+};
+/* 병영 병사: unlock 병영 단계, melee/range, dps, hp, sp */
+D.SOLDIER = {
+  s_sword:   { n: '검사', unlock: 1, reach: 26, dps: 14, hp: 90, sp: 120, col: '70,120,200' },
+  s_spear:   { n: '창수', unlock: 1, reach: 52, dps: 11, hp: 130, sp: 100, col: '60,90,160' },
+  s_archer:  { n: '궁수', unlock: 2, range: 270, dmg: 12, rate: 1.0, hp: 60, sp: 110, col: '70,150,80' },
+  s_geuk:    { n: '극사', unlock: 2, reach: 48, dps: 12, hp: 120, sp: 100, cleave: 1, col: '170,60,50' },
+  s_gun:     { n: '조총병', unlock: 3, range: 330, dmg: 34, rate: 2.2, hp: 60, sp: 100, gun: 1, col: '50,60,110' },
+  s_monk:    { n: '승병', unlock: 3, reach: 30, dps: 10, hp: 150, sp: 105, heal: 1, col: '150,140,120' },
+  s_cavalry: { n: '기마병', unlock: 4, reach: 34, dps: 20, hp: 160, sp: 210, charge: 1, col: '140,90,50' },
+  s_taoist:  { n: '도사', unlock: 4, range: 280, dmg: 16, rate: 1.4, hp: 55, sp: 100, chain: 1, col: '230,230,220' }
+};
+/* 본부(사당) 레벨: 시설 최대 레벨, 동료 칸, 밤마다 엽전 */
+D.HQ = [null, { max: 2, comps: 1, gold: 0, hp: 0 }, { max: 3, comps: 2, gold: 15, hp: 120, cost: 120 }, { max: 4, comps: 2, gold: 30, hp: 260, cost: 220 }, { max: 5, comps: 2, gold: 50, hp: 420, cost: 360 }, { max: 5, comps: 2, gold: 80, hp: 600, cost: 520 }];
+D.WALLS = [{ x: 78 }, { x: 164 }, { x: 250 }, { x: 360, gate: 1 }, { x: 470 }, { x: 556 }, { x: 642 }];
+
+D.WEAPON = {
+  bow:     { n: '각궁', d: '금빛 화살이 적 하나를 뚫고 나간다', rate: 0.40, dmg: 11, range: 340, sp: 900, shots: 1, pierce: 1, spread: 0.14, fx: 'arrow' },
+  nogi:    { n: '수노기', d: '푸른 쇠뇌살을 쉴 새 없이 쏜다', rate: 0.17, dmg: 6, range: 290, sp: 950, shots: 1, pierce: 0, spread: 0.10, fx: 'bolt' },
+  jochong: { n: '조총', d: '느리지만 세고 멀리 간다. 적 셋을 뚫는다', rate: 1.05, dmg: 30, range: 440, sp: 1500, shots: 1, pierce: 3, spread: 0.08, fx: 'tracer' },
+  manpa:   { n: '만파식적', d: '피리 소리가 부채꼴 음파로 퍼져 적을 밀어내고 뚫는다', rate: 0.55, dmg: 16, range: 300, sp: 520, shots: 3, pierce: 99, spread: 0.22, fx: 'wave' },
+  chilji:  { n: '칠지도', d: '일곱 갈래 검기를 한꺼번에 날린다', rate: 0.75, dmg: 14, range: 320, sp: 760, shots: 7, pierce: 1, spread: 0.13, fx: 'swordwave' },
+  seungja: { n: '승자총통', d: '철환 여러 알을 흩뿌린다', rate: 0.8, dmg: 11, range: 270, sp: 780, shots: 6, pierce: 0, spread: 0.13, fx: 'pellet' }
+};
+
+D.GUARD = {
+  turtle:  { n: '현무', side: '사당 왼편', d: '사당 피해 30% 감소. 영혼이 나와 물결 방패로 적을 밀어내고 느리게 한다', x: 196, y: 1300, range: 240, c: '90,200,170' },
+  phoenix: { n: '주작', side: '사당 오른편', d: '영혼이 날아올라 내리꽂으며 불길 자국을 남긴다', x: 524, y: 1300, range: 440, rate: 2.2, dmg: 32, c: '255,110,50' },
+  tiger:   { n: '백호', side: '성문 앞 왼편', d: '영혼이 적 무리로 뛰어들어 세 번 할퀴고 포효로 밀쳐 낸다', x: 262, y: 895, range: 180, rate: 0.75, dmg: 26, c: '235,240,255' },
+  dragon:  { n: '청룡', side: '성문 앞 오른편', d: '영혼이 하늘을 휘감으며 번개를 다섯 번 내리친다', x: 458, y: 895, range: 310, rate: 1.4, dmg: 22, c: '90,190,255' }
+};
+
+/* 동료: 처용을 따라다니며 싸운다 */
+D.COMP = {
+  yisunsin:    { n: '이순신', role: '원거리', el: 'metal', grade: 4, d: '화살 다섯 대를 부채꼴로 쏜다', spr: 'yisunsin', rate: 1.1, dmg: 16, range: 380, col: '255,90,70', ult: '학익진', ultD: '거북선이 나타나 포탄을 퍼붓는다' },
+  eulji:       { n: '을지문덕', role: '근거리', el: 'ice', grade: 4, d: '적에게 뛰어들어 회전 베기', spr: 'eulji', rate: 1.3, dmg: 34, range: 230, col: '120,200,255', ult: '살수대첩', ultD: '거대한 물결이 적을 쓸어 간다' },
+  wonhyo:      { n: '원효대사', role: '법사', el: 'qi', grade: 4, d: '염주에서 금빛 광선을 쏜다', spr: 'wonhyo', rate: 0.1, dmg: 26, range: 330, col: '255,210,120', ult: '정화 결계', ultD: '큰 결계로 적을 태우고 아군을 치유' },
+  gangamchan:  { n: '강감찬', role: '번개', el: 'thunder', grade: 3, d: '벼락이 적에서 적으로 옮겨 붙는다', spr: 'gangamchan', rate: 1.4, dmg: 22, range: 340, col: '140,190,255', ult: '귀주대첩', ultD: '화면 모든 적에게 벼락' },
+  honggildong: { n: '홍길동', role: '날쌘 공격', el: 'metal', grade: 3, d: '분신 둘이 함께 비수를 던진다', spr: 'honggildong', rate: 0.9, dmg: 12, range: 320, col: '200,60,60', ult: '둔갑 연속베기', ultD: '순간이동하며 적 열둘을 벤다' },
+  gumiho:      { n: '구미호', role: '마법', el: 'fire', grade: 3, d: '여우불 셋이 적을 쫓아간다', spr: 'gumiho', rate: 1.6, dmg: 18, range: 360, col: '120,200,255', ult: '홀림', ultD: '적 여덟을 홀려 서로 싸우게 한다' },
+  bari:        { n: '바리공주', role: '혼령술', el: 'qi', grade: 4, d: '쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 한다', spr: 'bari', rate: 1.4, dmg: 18, range: 320, col: '170,220,255', ult: '저승길 인도', ultD: '화면 안 적에게 피해를 주고 쓰러진 적을 혼령 아군으로 일으킨다' },
+  jeonwoochi:  { n: '전우치', role: '도술 검객', el: 'thunder', grade: 4, d: '칼을 휘둘러 적을 꿰뚫는 검기를 날린다', spr: 'jeonwoochi', rate: 1.0, dmg: 26, range: 340, col: '90,170,255', ult: '화중병', ultD: '그림 속 먹물 병사 여섯을 불러내 함께 싸운다' },
+  samyeong:    { n: '사명대사', role: '권법', el: 'metal', grade: 3, d: '권법 연타로 적을 기절시킨다', spr: 'samyeong', rate: 0.9, dmg: 20, range: 200, col: '255,190,90', ult: '승병 봉기', ultD: '승병 다섯을 불러 앞을 막는다' },
+  daejanggeum: { n: '대장금', role: '치유', el: 'qi', grade: 4, d: '약재 주머니를 던지고 주변 처용과 동료를 치유한다', spr: 'daejanggeum', rate: 1.3, dmg: 14, range: 320, col: '150,240,190', ult: '어의의 탕약', ultD: '사당과 처용, 시설을 크게 회복하고 잠시 받는 피해를 줄인다' },
+  sadaham:     { n: '화랑 사다함', role: '근거리', el: 'metal', grade: 3, d: '적 사이를 오가며 세 번 연달아 벤다', spr: 'sadaham', rate: 1.1, dmg: 22, range: 220, col: '90,220,200', ult: '화랑 검무', ultD: '일직선으로 돌진하며 앞의 적을 모두 벤다' },
+  kimchungseon: { n: '김충선', role: '암살', el: 'metal', grade: 4, d: '귀화한 사무라이. 적진의 원거리·마법 유닛만 노려 뒤로 파고들어 벤다', spr: 'kimchungseon', rate: 1.2, dmg: 70, range: 520, col: '220,60,60', ult: '귀순의 칼', ultD: '화면 안 원거리·마법 적을 차례로 순간이동하며 모두 벤다' },
+  imugi:       { n: '이무기', role: '비행', el: 'fire', grade: 4, d: '하늘을 날며 불길을 뿜는다', spr: 'imugi', rate: 0.1, dmg: 34, range: 260, col: '255,120,40', ult: '승천', ultD: '하늘로 솟구치며 불덩이 비를 쏟는다', fly: 1 },
+  dokkaebi:    { n: '도깨비', role: '근거리', el: 'fire', grade: 2, d: '도깨비방망이를 던져 되돌아오게 한다', spr: 'dokkaebi', rate: 1.5, dmg: 18, range: 300, col: '255,190,60', ult: '방망이 지진', ultD: '땅을 세 번 내리쳐 적을 기절시킨다' },
+  haetae:      { n: '해태', role: '수호', el: 'fire', grade: 2, d: '불길을 내뿜어 앞의 적을 태운다', spr: 'haetae', rate: 0.1, dmg: 30, range: 200, col: '255,120,40', ult: '해치의 불바다', ultD: '앞쪽 땅을 불바다로 만든다' },
+  samjoko:     { n: '삼족오', role: '원거리', el: 'qi', grade: 2, d: '태양 광선으로 여러 적을 꿰뚫는다', spr: 'samjoko', rate: 2.0, dmg: 26, range: 380, col: '255,220,90', ult: '태양 강림', ultD: '하늘에서 태양 광선이 쏟아진다' }
+};
+/* 원소 다섯: 불, 번개, 얼음, 기, 쇠 */
+D.EL = { fire: { n: '불', c: '#ff7a3a' }, thunder: { n: '번개', c: '#7fb8ff' }, ice: { n: '얼음', c: '#9ff0ff' }, qi: { n: '기', c: '#c08aff' }, metal: { n: '쇠', c: '#d8d8d8' } };
+/* 진화(탕탕특공대식): 공격 기술 5단계 + 짝 보조 기술 */
+D.EVO = { ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
+/* 각성(별 다섯) 효과 */
+D.AWAKE = {
+  ghost: '진화: 귀신불이 맞으면 작게 터진다, 발수 +3',
+  meteor: '진화: 불바다가 두 배로 넓고 오래 탄다',
+  thunder: '진화: 벼락이 주변 적 셋에게 옮겨 붙는다',
+  ice: '진화: 맞은 적이 반드시 얼어붙는다',
+  dance: '진화: 부채가 커지고 불꽃 자국을 남긴다',
+  talisman: '진화: 부적이 두 번 터진다',
+  beam: '진화: 광선이 굵어지고 맞은 적이 불탄다',
+  vortex: '진화: 불회오리가 둘로 나뉜다'
+};
+
+/* 전투 안 성장 카드. kind: atk(공격 기술) / buff */
+D.SKILLS = [
+  { id: 'ghost',    n: '귀화탄',     kind: 'atk', el: 'qi', max: 5, c: '#b066ff', d: l => '보랏빛 귀신불 ' + (2 + l) + '발이 적을 쫓아간다' },
+  { id: 'meteor',   n: '별똥불',     kind: 'atk', el: 'fire', max: 5, c: '#ff8a3a', d: l => '불타는 운석 ' + l + '개가 떨어져 불바다를 남긴다' },
+  { id: 'thunder',  n: '벼락',       kind: 'atk', el: 'thunder', max: 5, c: '#7fd0ff', d: l => '하늘에서 벼락 ' + (1 + l) + '줄기가 내리꽂힌다' },
+  { id: 'ice',      n: '얼음송곳',   kind: 'atk', el: 'ice', max: 5, c: '#9ff0ff', d: l => '얼음송곳 ' + (3 + l) + '개를 부채꼴로 쏘아 얼린다' },
+  { id: 'dance',    n: '처용무',     kind: 'atk', el: 'metal', max: 5, c: '#ff6a8a', d: l => '부채 ' + (1 + l) + '개가 처용 둘레를 돌며 벤다' },
+  { id: 'talisman', n: '벽사부',     kind: 'atk', el: 'fire', max: 5, c: '#ffd84a', d: l => '부적 ' + (1 + Math.floor(l / 2)) + '장이 날아가 터진다' },
+  { id: 'beam',     n: '신궁 광선',  kind: 'atk', el: 'qi', max: 5, c: '#ff5a4a', d: l => '붉은 광선이 이어지며 ' + l + '명을 꿰뚫는다' },
+  { id: 'vortex',   n: '불회오리',   kind: 'atk', el: 'fire', max: 5, c: '#ffb03a', d: l => '불회오리가 적을 빨아들이며 태운다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
+  { id: 'rapid',    n: '속사',       kind: 'buff', max: 5, c: '#8affc0', d: () => '쏘는 간격이 15% 짧아진다' },
+  { id: 'multi',    n: '겹발',       kind: 'buff', max: 3, c: '#8affc0', d: () => '한 번에 쏘는 발수가 하나 늘어난다' },
+  { id: 'pierce',   n: '관통',       kind: 'buff', max: 3, c: '#8affc0', d: () => '적 하나를 더 뚫는다' },
+  { id: 'power',    n: '신력',       kind: 'buff', max: 5, c: '#8affc0', d: () => '모든 공격 위력이 20% 오른다' },
+  { id: 'crit',     n: '급소',       kind: 'buff', max: 5, c: '#8affc0', d: () => '치명타 확률 +8% (치명타는 두 배)' },
+  { id: 'swift',    n: '축지',       kind: 'buff', max: 3, c: '#8affc0', d: () => '이동이 15% 빨라진다' },
+  { id: 'magnet',   n: '옥구슬 끌기', kind: 'buff', max: 3, c: '#8affc0', d: () => '옥구슬을 끌어오는 거리 +60%' },
+  { id: 'heal',     n: '정화수',     kind: 'buff', max: 99, c: '#8affc0', d: () => '체력 40 회복, 최대 체력 +20' },
+  { id: 'repair',   n: '사당 보수',  kind: 'buff', max: 99, c: '#8affc0', d: () => '사당 내구도를 100 되살린다', need: g => g.shrine.hp < g.shrine.max },
+  { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +25%', need: g => g.turrets.length > 0 }
+];
+})();
