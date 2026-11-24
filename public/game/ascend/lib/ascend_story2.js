@@ -76,7 +76,7 @@
       var n = enemyAt(M.x, M.y, 300); if (n) M.hp -= n * (6 + X.diff * 2) * dt; if (M.vis && !M.vis.dead) { try { M.vis.hp = Math.max(1, M.vis.mhp * M.hp / M.mhp); } catch (e) {} }
       if (M.hp <= M.mhp * .5 && !M.warn) { M.warn = 1; say('sera', L2(M.name + ' 손상 50%! 돌아와 주세요!', M.name + ' at 50%! Get back here!')); }
       if (M.hp <= 0 && !X.won && !G0.over) { X.won = 1; line(null); say('hq', L2(M.name + ' 상실. 작전 실패.', M.name + ' lost. Mission failed.')); setTimeout(function () { try { endMatch(1); } catch (e) {} }, 1200); return; }
-      txt += ' · ' + bar(M.hp / M.mhp) + ' ' + Math.ceil(M.hp / M.mhp * 100) + '%' + (M.t ? ' · ' + Math.max(0, Math.ceil(M.t - el2)) + L2('초', 's') : '');
+      txt += ' · ' + bar(M.hp / M.mhp) + ' ' + Math.ceil(M.hp / M.mhp * 100) + '%' + (M.t ? ' · ' + Math.max(0, Math.ceil(M.t - el2)) + L2('초', 's') : (I && X.waves ? (X.bossU ? ' · ' + L2('보스 처치까지', 'until the boss falls') : ' · ' + L2('파도 ', 'wave ') + Math.min(I.wave || 0, X.waves) + '/' + X.waves + (I.waveT > 0 && (I.wave || 0) < X.waves ? ' · ' + L2('다음 ', 'next ') + Math.ceil(I.waveT) + L2('초', 's') : '')) : ''));   /* v4.16: how long to hold - waves left, then the boss */
       if (M.t && el2 >= M.t && !M.done) { M.done = 1; say('sera', L2('수송대가 다리를 건넜습니다. 이제 여왕입니다.', 'The convoy is across. Now - the Queen.')); }
     }
     if (M.k === 'nests') { var left = M.list.filter(function (u) { return !u.dead; }).length; txt += ' · ' + (M.n - left) + '/' + M.n; if (!left && !M.done) { M.done = 1; say('sera', L2('둥지 전멸. 여왕이 움직입니다!', 'All nests down. The Queen is moving!')); } }
