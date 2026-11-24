@@ -1813,7 +1813,7 @@ const DAY={
   track(id,v){const s=this.state();let ch=false;for(const m of s.ms){if(m.id!==id||m.done)continue;m.v=m.max?Math.max(m.v,v):m.v+v;if(m.v>=m.n){m.v=m.n;m.done=true;ch=true;}}store.set('day',s);if(ch)toast(tr('mis_done'));},
 };
 const ATT_REW=[100,150,200,250,300,400,800];
-function attState(){const a=store.get('att',null);return (a&&typeof a==='object')?a:{last:'',streak:0,day:0};}
+function attState(){const a=store.get('att',null);if(a&&typeof a==='object'){if(a.total==null)a.total=Math.max(a.streak|0,a.day|0);return a;}return {last:'',streak:0,day:0,total:0};}
 const attCanClaim=()=>attState().last!==dstr(0);
 /* v1.9 출석 개편: 하루 빠져도 1일차로 돌아가지 않고 이어서 받음 + 누적 출석 보상 */
 const ATT2=[{c:100},{h:1},{c:200,s:1},{h:2},{c:300,box:1},{s:2},{c:800,s:3,sp:1}];
