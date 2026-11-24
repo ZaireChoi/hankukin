@@ -9,6 +9,8 @@
   var post = function (e, m, u, dt) {
     /* v3.96 safety net: a humanoid frame on foot never sits far above its own base; pull it back if something pushed it into the sky */
     try { if (u && u.cls === 'arkframe' && m && m.wrap && m.obj && !u.fly && !(u.kJump > 0) && Math.abs(m.wrap.position.y) > 400) { m.wrap.position.y = 0; m._kjAdd = 0; if (e._ps2A) { e._ps2A.py = 0; e._ps2A.vy = NaN; } window.__postFix = (window.__postFix || 0) + 1; } } catch (er) {}
+    /* v3.98 stability: lean / landing dip are OFF until reviewed on screen (user: frames look buried and move strangely). window.__postureOn=true re-enables */
+    if (!window.__postureOn) { if (e._ps2A && m && m.wrap) { var A9 = e._ps2A, w9 = m.wrap; if (w9.rotation.z === A9.vz) w9.rotation.z -= A9.rz; if (w9.rotation.x === A9.vx) w9.rotation.x -= A9.rx; if (w9.position.y === A9.vy) w9.position.y -= A9.py; A9.rz = A9.rx = A9.py = 0; A9.vz = A9.vx = A9.vy = NaN; } return; }
     if (!u || u.cls !== 'arkframe' || !m || !m.wrap || u.dead || u.fly || (u.tf && u.tf.mode)) { if (m && m.wrap && e._ps2) { e._ps2.x = e._ps2.z = 0; var A0 = e._ps2A, w0 = m.wrap; if (A0) { if (w0.rotation.z === A0.vz) w0.rotation.z -= A0.rz; if (w0.rotation.x === A0.vx) w0.rotation.x -= A0.rx; if (w0.position.y === A0.vy) w0.position.y -= A0.py; A0.rz = A0.rx = A0.py = 0; A0.vz = A0.vx = A0.vy = NaN; } } return; }
     T = T || window.THREE; if (!T) return; if (!Q) { Q = new T.Quaternion(); V = new T.Vector3(); }
     var P0 = e._ps2 || (e._ps2 = { x: 0, z: 0, land: 0, wasAir: false });
@@ -60,7 +62,8 @@
       if (m._dtSg == null && B.headfront) { var hp = new T3.Vector3(), hf = new T3.Vector3(); B.Head.getWorldPosition(hp); B.headfront.getWorldPosition(hf); var fx = hf.x - hp.x, fz = hf.z - hp.z; m._dtSg = (-rz * fx + rx * fz) >= 0 ? 1 : -1; }
       var sg = m._dtSg || 1, face = Math.atan2(rx * sg, -rz * sg); var a = face - aim; a = Math.atan2(Math.sin(a), Math.cos(a)); want = Math.abs(a) > 2.4 ? 0 : Math.max(-1.05, Math.min(1.05, a)); }
     D.tw += (want - D.tw) * Math.min(1, d * 9);
-    if (Math.abs(D.tw) > .01) { m.obj.updateMatrixWorld(true); twistBone(B.Spine01, D.tw * .3); twistBone(B.Spine02, D.tw * .35); twistBone(B.neck, D.tw * .35); }
+    /* v3.98: user 2026-11-24 "the robot moves grotesquely, arms swing for no reason" - the upper-body twist is OFF (window.__twistOn=true to try it again) */
+    if (window.__twistOn && Math.abs(D.tw) > .01) { m.obj.updateMatrixWorld(true); twistBone(B.Spine01, D.tw * .3); twistBone(B.Spine02, D.tw * .35); twistBone(B.neck, D.tw * .35); }
     // heavy footfalls for my own frame: dust, a low thud and a tiny camera bump each time a foot plants
     if (u === (G.local && G.local.unit) && B.LeftFoot && B.RightFoot && Math.hypot(u.vx || 0, u.vy || 0) > 40) {
       B.LeftFoot.getWorldPosition(VB); var yl = VB.y; B.RightFoot.getWorldPosition(VB); var yr = VB.y;
@@ -73,7 +76,7 @@
   var lastT = 0;
   var hook = function () {
     if (window.__hkPosture2 || !window.R3 || typeof R3.syncUnits !== 'function') return; window.__hkPosture2 = 1; var su = R3.syncUnits;
-    R3.syncUnits = function (dt) { var r = su.apply(this, arguments); try { if (typeof G !== 'undefined' && G && G.units) { var d = typeof dt === 'number' ? dt : 1 / 60; for (var i = 0; i < G.units.length; i++) { var u = G.units[i]; var e = R3.units.get(u.id); if (!e || !e.mdl) continue; if (u.cls === 'arkframe') { post(e, e.mdl, u, d); try { detail(e, e.mdl, u, d); } catch (er2) { window.__dtErr = String(er2).slice(0, 160); } } else if (u.boss) bossPost(e, e.mdl, u, d); } } } catch (er) { window.__postErr = String(er).slice(0, 160); } return r; };
+    R3.syncUnits = function (dt) { var r = su.apply(this, arguments); try { if (typeof G !== 'undefined' && G && G.units) { var d = typeof dt === 'number' ? dt : 1 / 60; for (var i = 0; i < G.units.length; i++) { var u = G.units[i]; var e = R3.units.get(u.id); if (!e || !e.mdl) continue; if (u.cls === 'arkframe') { post(e, e.mdl, u, d); try { detail(e, e.mdl, u, d); } catch (er2) { window.__dtErr = String(er2).slice(0, 160); } } else if (u.boss && window.__postureOn) bossPost(e, e.mdl, u, d); } } } catch (er) { window.__postErr = String(er).slice(0, 160); } return r; };
   };
   setInterval(function () { try { hook(); } catch (e) {} }, 700);
 })();

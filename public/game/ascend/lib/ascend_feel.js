@@ -12,7 +12,7 @@
   var vib = function (ms) { try { var p = pp(); if (p && p.haptic === false) return; if (!touch() || !navigator.vibrate) return; var n = performance.now(); if (n - lastVib < 70) return; lastVib = n; navigator.vibrate(ms); } catch (e) {} };
   // ---------------------------------------------------------------- camera punch
   var K = { x: 0, z: 0, vx: 0, vz: 0, fov: 0 };
-  var punch = function (ang, amt) { if (!isFinite(ang) || !isFinite(amt)) return; K.x = Math.max(-30, Math.min(30, K.x + Math.cos(ang) * amt * 9)); K.z = Math.max(-30, Math.min(30, K.z + Math.sin(ang) * amt * 9)); };
+  var punch = function (ang, amt) { if (!window.__punchOn) return; /* v3.98 stability: camera punch off by default */ if (!isFinite(ang) || !isFinite(amt)) return; K.x = Math.max(-30, Math.min(30, K.x + Math.cos(ang) * amt * 9)); K.z = Math.max(-30, Math.min(30, K.z + Math.sin(ang) * amt * 9)); };
   var camHook = function () {
     if (window.__hkFeelCam || !window.R3 || !R3.r || !R3.cam) return; window.__hkFeelCam = 1;
     var rr = R3.r.render.bind(R3.r), lastT = performance.now();
@@ -31,7 +31,7 @@
   var CB = { n: 0, t: 0, el: null, hideT: 0 };
   var comboEl = function () {
     if (CB.el) return CB.el; var el = document.createElement('div'); el.id = 'feelCombo';
-    el.style.cssText = 'position:fixed;right:22%;top:30%;z-index:60;pointer-events:none;font:900 34px Rajdhani,"Noto Sans KR",sans-serif;font-style:italic;letter-spacing:.02em;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.8),0 2px 0 rgba(0,0,0,.6);opacity:0;transition:opacity .25s;transform-origin:center';
+    el.style.cssText = 'position:fixed;left:58%;top:28%;white-space:nowrap;z-index:60;pointer-events:none;font:900 34px Rajdhani,"Noto Sans KR",sans-serif;font-style:italic;letter-spacing:.02em;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.8),0 2px 0 rgba(0,0,0,.6);opacity:0;transition:opacity .25s;transform-origin:center';
     document.body.appendChild(el); CB.el = el; return el;
   };
   var comboHit = function () {
