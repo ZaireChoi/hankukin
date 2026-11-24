@@ -1,0 +1,293 @@
+/* 처용, 조선좀비 바깥 화면 (첫 화면, 로비, 챕터, 동료, 장비, 신력, 상점, 결과) */
+#meta{position:fixed;inset:0;z-index:50;background:#0b0f1c;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+#meta.off{display:none}
+#mroot{position:absolute;width:720px;height:1280px;left:0;top:0;transform-origin:0 0;overflow:hidden;
+  font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;font-weight:800;color:#fff;letter-spacing:-.5px}
+#mroot *{box-sizing:border-box}
+.m-scr{position:absolute;inset:0;display:none}
+.m-scr.on{display:block}
+.stroke{text-shadow:0 3px 0 #1a1030,2px 0 0 #1a1030,-2px 0 0 #1a1030,0 -2px 0 #1a1030,2px 2px 0 #1a1030,-2px 2px 0 #1a1030,2px -2px 0 #1a1030,-2px -2px 0 #1a1030}
+.stroke-s{text-shadow:0 2px 0 #1a1030,1px 0 0 #1a1030,-1px 0 0 #1a1030,0 -1px 0 #1a1030}
+svg.ic{display:inline-block;vertical-align:middle}
+
+/* ---------- 첫 화면 ---------- */
+#s-title{background:#120b18 url(img/ui/title.jpg) center/cover}
+#s-title:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,5,25,.55) 0%,rgba(10,5,25,0) 28%,rgba(10,5,25,0) 62%,rgba(10,5,25,.85) 100%)}
+.logo{position:absolute;left:0;right:0;top:70px;text-align:center;animation:logoIn .9s cubic-bezier(.2,1.6,.4,1) both}
+.logo .t{display:inline-block;font-size:132px;font-weight:900;line-height:1;letter-spacing:4px;position:relative;
+  background:linear-gradient(180deg,#fff7c2 0%,#ffd84a 38%,#ff9a1f 70%,#e2451c 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-stroke:7px #3a0d0d;paint-order:stroke fill;filter:drop-shadow(0 8px 0 #2a0808) drop-shadow(0 14px 18px rgba(0,0,0,.6))}
+.logo .t:after{content:attr(data-t);position:absolute;inset:0;color:transparent;-webkit-text-stroke:0;background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,0) 45%);-webkit-background-clip:text;background-clip:text}
+.logo .rib{display:inline-block;margin-top:14px;padding:10px 46px;font-size:30px;color:#fff;background:linear-gradient(180deg,#b3242a,#7a1018);
+  border:3px solid #ffd36b;border-radius:10px;box-shadow:0 6px 0 #3e0710,0 10px 20px rgba(0,0,0,.5);clip-path:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%)}
+.tap{position:absolute;left:0;right:0;bottom:150px;text-align:center;font-size:40px;animation:blink 1.4s ease-in-out infinite}
+.ver{position:absolute;right:18px;bottom:14px;font-size:18px;opacity:.7}
+.cpy{position:absolute;left:0;right:0;bottom:60px;text-align:center;font-size:18px;opacity:.75;font-weight:600}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.96)}}
+@keyframes logoIn{0%{transform:scale(2.2);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* ---------- 로비 공통 ---------- */
+#s-lobby{background:#141a33 url(img/ui/lobby_bg.jpg) center/cover}
+#s-lobby:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,10,30,.75) 0,rgba(8,10,30,0) 18%,rgba(8,10,30,0) 70%,rgba(8,10,30,.9) 100%);pointer-events:none}
+.topbar{position:absolute;left:0;right:0;top:0;height:140px;z-index:5;padding:16px 16px 0}
+.prof{position:absolute;left:14px;top:14px;width:96px;height:96px;border-radius:18px;border:4px solid #ffd36b;background:#2a3b6e url(img/ui/hero_face.webp) center/cover;box-shadow:0 5px 0 #6b4a12,0 8px 16px rgba(0,0,0,.5)}
+.prof .lv{position:absolute;left:-8px;bottom:-12px;background:linear-gradient(#3fa2ff,#1c5fd1);border:3px solid #fff;border-radius:14px;padding:0 10px;font-size:22px;line-height:30px}
+.pname{position:absolute;left:124px;top:16px;font-size:26px}
+.power{position:absolute;left:122px;top:52px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.45);border-radius:20px;padding:4px 16px 4px 8px;font-size:26px;color:#ffe27a}
+.res{position:absolute;right:12px;top:14px;display:flex;gap:8px}
+.rpill{position:relative;display:flex;align-items:center;height:46px;min-width:150px;padding:0 44px 0 52px;background:rgba(5,8,24,.72);border:2px solid rgba(255,255,255,.18);border-radius:24px;font-size:24px;justify-content:flex-end}
+.rpill svg{position:absolute;left:-4px;top:-6px;width:56px;height:56px;filter:drop-shadow(0 3px 2px rgba(0,0,0,.5))}
+.rpill .plus{position:absolute;right:4px;top:5px;width:34px;height:34px;border-radius:10px;background:linear-gradient(#7fe05a,#2f9c22);border:2px solid #d8ffc9;font-size:28px;line-height:28px;text-align:center;box-shadow:0 3px 0 #145a0c}
+.rpill .sub{position:absolute;left:52px;bottom:-20px;font-size:16px;color:#cfe;opacity:.9}
+.res2{position:absolute;right:12px;top:72px;display:flex;gap:8px}
+
+/* 하단 탭 */
+.tabs{position:absolute;left:0;right:0;bottom:0;height:132px;z-index:6;display:flex;align-items:flex-end;
+  background:linear-gradient(180deg,#2b3566 0%,#1a2048 100%);border-top:4px solid #5d6fb8;box-shadow:0 -6px 18px rgba(0,0,0,.5)}
+.tab{position:relative;flex:1;height:124px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:14px;font-size:24px;color:#aab5e8;cursor:pointer;transition:transform .12s}
+.tab svg{width:62px;height:62px;margin-bottom:4px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.4));transition:transform .15s}
+.tab.on{color:#fff;background:linear-gradient(180deg,rgba(255,214,107,.28),rgba(255,214,107,0));}
+.tab.on svg{transform:translateY(-8px) scale(1.15)}
+.tab.big svg{width:96px;height:96px;margin-top:-50px}
+.tab.big{flex:1.25}
+.dot{position:absolute;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8b8b,#e0141b 60%);border:3px solid #fff;box-shadow:0 2px 4px rgba(0,0,0,.5);animation:dotp 1.2s infinite}
+.tab .dot{right:28px;top:8px}
+@keyframes dotp{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+
+/* 패널, 버튼 */
+.panel{position:absolute;left:0;right:0;top:140px;bottom:132px;overflow:hidden}
+.pg{position:absolute;inset:0;display:none}
+.pg.on{display:block;animation:pgIn .22s ease-out}
+@keyframes pgIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;position:relative;cursor:pointer;border-radius:18px;font-weight:900;color:#fff;
+  border:3px solid rgba(255,255,255,.75);transition:transform .08s,filter .1s}
+.btn:active{transform:translateY(4px) scale(.98)}
+.btn.y{background:linear-gradient(180deg,#ffe066 0%,#ffb020 55%,#f08a00 100%);box-shadow:0 7px 0 #8a4a00,0 12px 18px rgba(0,0,0,.45),inset 0 3px 0 rgba(255,255,255,.6);color:#5a2500;text-shadow:0 2px 0 rgba(255,255,255,.5)}
+.btn.g{background:linear-gradient(180deg,#9df27a 0%,#4cc23a 55%,#2b9520 100%);box-shadow:0 7px 0 #165a0d,0 12px 18px rgba(0,0,0,.45),inset 0 3px 0 rgba(255,255,255,.55)}
+.btn.b{background:linear-gradient(180deg,#7fd0ff 0%,#3593f0 55%,#1d62c9 100%);box-shadow:0 7px 0 #0d3577,0 12px 18px rgba(0,0,0,.45),inset 0 3px 0 rgba(255,255,255,.5)}
+.btn.r{background:linear-gradient(180deg,#ff8a7a 0%,#ee4433 55%,#c0231a 100%);box-shadow:0 7px 0 #6a0d07,0 12px 18px rgba(0,0,0,.45),inset 0 3px 0 rgba(255,255,255,.5)}
+.btn.p{background:linear-gradient(180deg,#d59bff 0%,#9a4ef0 55%,#6b26c4 100%);box-shadow:0 7px 0 #3a0f73,0 12px 18px rgba(0,0,0,.45),inset 0 3px 0 rgba(255,255,255,.5)}
+.btn.dis{filter:grayscale(1) brightness(.75);pointer-events:none}
+.box{background:linear-gradient(180deg,rgba(32,40,86,.94),rgba(18,22,52,.96));border:3px solid #6d7fd0;border-radius:22px;box-shadow:inset 0 2px 0 rgba(255,255,255,.18),0 8px 20px rgba(0,0,0,.45)}
+.gold-frame{border:4px solid #ffd36b;box-shadow:0 0 0 3px #6b4a12,inset 0 0 18px rgba(255,211,107,.35),0 10px 22px rgba(0,0,0,.5)}
+.hdr{position:absolute;left:0;right:0;top:8px;text-align:center;font-size:40px}
+.hdr .sub{display:block;font-size:20px;color:#ffe9a8;font-weight:700;margin-top:2px}
+
+/* 홈(모험) */
+.chapcard{position:absolute;left:110px;right:110px;top:18px;height:110px;border-radius:22px;overflow:hidden;cursor:pointer}
+.chapcard .bg{position:absolute;inset:0;background:url(img/ui/map_bg.jpg) center 70%/cover;filter:saturate(1.2)}
+.chapcard .bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,40,.85),rgba(10,10,40,.25))}
+.chapcard .n{position:absolute;left:22px;top:12px;font-size:22px;color:#ffe27a}
+.chapcard .nm{position:absolute;left:22px;top:42px;font-size:36px}
+.chapcard .best{position:absolute;right:20px;bottom:12px;font-size:20px;color:#cfe}
+.chapcard .arr{position:absolute;right:20px;top:20px;font-size:20px;background:rgba(0,0,0,.4);padding:4px 12px;border-radius:12px}
+.arrowbtn{position:absolute;top:44px;width:64px;height:76px;cursor:pointer;filter:drop-shadow(0 4px 0 rgba(0,0,0,.5))}
+.arrowbtn.l{left:30px}.arrowbtn.r{right:30px}
+.herostage{position:absolute;left:110px;right:110px;top:150px;height:560px}
+.herostage .glow{position:absolute;left:50%;bottom:8px;width:380px;height:90px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(255,220,120,.65),rgba(255,180,60,.15) 55%,rgba(0,0,0,0) 70%)}
+.herostage .hero{position:absolute;left:50%;bottom:0;width:560px;height:560px;transform:translateX(-50%);background:url(img/ui/hero_full.webp) center bottom/contain no-repeat;animation:idle 2.4s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes idle{0%,100%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(1.02) translateY(-4px)}}
+.sidebtns{position:absolute;top:150px;display:flex;flex-direction:column;gap:22px}
+.sidebtns.l{left:14px}.sidebtns.r{right:14px}
+.sb{position:relative;width:86px;height:86px;border-radius:20px;background:linear-gradient(180deg,#3b4a8f,#222a5c);border:3px solid #8fa3ff;box-shadow:0 5px 0 #10163a,0 8px 14px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sb svg{width:58px;height:58px}
+.sb .lb{position:absolute;bottom:-18px;left:-10px;right:-10px;text-align:center;font-size:18px}
+.sb .dot{right:-6px;top:-6px}
+.patrol{position:absolute;left:24px;bottom:28px;width:200px;height:170px;cursor:pointer}
+.patrol .chest{position:absolute;left:30px;top:0;width:140px;height:120px;animation:bob 1.8s ease-in-out infinite}
+.patrol .bar{position:absolute;left:10px;right:10px;bottom:10px;height:30px;border-radius:15px;background:rgba(0,0,0,.6);border:2px solid #ffd36b;overflow:hidden}
+.patrol .bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#ffe27a,#f09a10)}
+.patrol .bar span{position:absolute;inset:0;text-align:center;font-size:18px;line-height:26px}
+.patrol .lb{position:absolute;left:0;right:0;bottom:42px;text-align:center;font-size:20px}
+.patrol .dot{right:20px;top:4px}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.startwrap{position:absolute;left:230px;right:150px;bottom:40px;text-align:center}
+.startbtn{width:340px;height:120px;font-size:46px;flex-direction:column;gap:0}
+.startbtn small{font-size:22px;display:flex;align-items:center;gap:4px;color:#7a3300}
+.startbtn small svg{width:30px;height:30px}
+.statline{position:absolute;left:0;right:0;top:718px;display:flex;justify-content:center;gap:16px}
+.stat{display:flex;align-items:center;gap:8px;padding:6px 20px 6px 10px;background:rgba(0,0,0,.55);border-radius:22px;font-size:26px}
+.stat svg{width:36px;height:36px}
+.teamrow{position:absolute;right:20px;bottom:180px;display:flex;gap:10px}
+.mini{width:84px;height:84px;border-radius:16px;border:3px solid #fff;background:#334 center/cover;box-shadow:0 4px 0 rgba(0,0,0,.5);position:relative}
+.mini.empty{background:rgba(0,0,0,.45);border-style:dashed;display:flex;align-items:center;justify-content:center;font-size:40px;color:#9ab}
+
+/* 장비 */
+.eqwrap{position:absolute;left:0;right:0;top:70px;height:560px}
+.eqhero{position:absolute;left:150px;right:150px;top:10px;height:520px;background:url(img/ui/hero_full.webp) center/contain no-repeat;filter:drop-shadow(0 10px 18px rgba(0,0,0,.6))}
+.slots{position:absolute;top:20px;display:flex;flex-direction:column;gap:24px}
+.slots.l{left:28px}.slots.r{right:28px}
+.slot{position:relative;width:126px;height:126px;border-radius:20px;border:4px solid #6e7cb0;background:linear-gradient(180deg,#3a4372,#232a52);box-shadow:0 5px 0 #121633,inset 0 2px 0 rgba(255,255,255,.15);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.slot svg{width:80px;height:80px}
+.slot .nm{position:absolute;left:0;right:0;bottom:-2px;text-align:center;font-size:16px}
+.slot .lv{position:absolute;left:6px;top:4px;font-size:18px}
+.slot.emp svg{opacity:.35}
+.slot.emp .nm{color:#9ab}
+.g0{border-color:#a7adb8;background:linear-gradient(180deg,#8d939f,#5b6170)}
+.g1{border-color:#7df06a;background:linear-gradient(180deg,#4db53d,#22721a)}
+.g2{border-color:#6cc6ff;background:linear-gradient(180deg,#3a8ff0,#1d4fb0)}
+.g3{border-color:#e39bff;background:linear-gradient(180deg,#a650f0,#6122b0)}
+.g4{border-color:#ffd36b;background:linear-gradient(180deg,#ffa531,#d4600a)}
+.g5{border-color:#ff8e8e;background:linear-gradient(180deg,#f0443a,#a01212)}
+.g4,.g5{animation:shine 2s infinite}
+@keyframes shine{0%,100%{box-shadow:0 5px 0 #121633,0 0 10px rgba(255,210,90,.4)}50%{box-shadow:0 5px 0 #121633,0 0 26px rgba(255,210,90,.95)}}
+.eqstats{position:absolute;left:40px;right:40px;top:640px;height:70px;display:flex;justify-content:center;gap:18px}
+.eqbtns{position:absolute;left:0;right:0;top:720px;display:flex;justify-content:center;gap:18px}
+.eqbtns .btn{width:200px;height:72px;font-size:26px}
+.inv{position:absolute;left:20px;right:20px;top:810px;bottom:10px;padding:14px;overflow-y:auto;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-content:start}
+.it{position:relative;aspect-ratio:1;border-radius:14px;border:3px solid;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.4)}
+.it svg{width:62%;height:62%}
+.it .lv{position:absolute;left:4px;top:2px;font-size:15px}
+.it .eqd{position:absolute;right:3px;top:3px;background:#2fbf3a;border-radius:8px;padding:0 5px;font-size:13px}
+
+/* 영웅 */
+.comps{position:absolute;left:20px;right:20px;top:80px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{position:relative;height:206px;border-radius:20px;overflow:hidden;cursor:pointer;border:4px solid;box-shadow:0 6px 0 rgba(0,0,0,.45),0 10px 16px rgba(0,0,0,.4);transition:transform .12s}
+.card.sel{transform:translateY(-4px);outline:4px solid #fff;outline-offset:-2px}
+.card .art{position:absolute;inset:0;background:center 25%/cover}
+.card .art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.88))}
+.card .gr{position:absolute;left:0;top:0;padding:2px 12px;border-bottom-right-radius:14px;font-size:18px}
+.card .el{position:absolute;right:6px;top:6px;width:40px;height:40px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.6))}
+.card .nm{position:absolute;left:0;right:0;bottom:36px;text-align:center;font-size:27px}
+.card .lv{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-size:17px;color:#ffe27a;display:flex;justify-content:center;align-items:center;gap:4px}
+.card .cst{display:inline-flex}
+.card.lock .art{filter:grayscale(1) brightness(.4)}
+.card .lk{position:absolute;left:50%;top:42%;width:64px;height:64px;transform:translate(-50%,-50%)}
+.card .team{position:absolute;left:6px;top:34px;background:#2fbf3a;border:2px solid #fff;border-radius:10px;padding:0 8px;font-size:16px}
+.card .shard{position:absolute;left:10px;right:10px;bottom:4px;height:6px;border-radius:3px;background:rgba(255,255,255,.2);overflow:hidden}
+.card .shard i{position:absolute;left:0;top:0;bottom:0;background:#ffd36b}
+.compinfo{position:absolute;left:20px;right:20px;top:740px;bottom:12px;padding:16px 22px}
+.compinfo h3{margin:0;font-size:34px}
+.compinfo .tags{display:flex;gap:8px;margin:6px 0 4px;flex-wrap:wrap;max-width:440px}
+.compinfo .tags span{font-size:17px;padding:2px 10px;border-radius:10px;background:rgba(255,255,255,.14)}
+.compinfo p{margin:6px 0;font-size:19px;font-weight:600;line-height:1.4;color:#dfe6ff;max-width:660px}
+.compinfo .row{display:flex;gap:12px;margin-top:10px}
+.compinfo .btn{height:70px;flex:1;font-size:23px}
+.tsl{position:absolute;right:18px;top:14px;display:flex;gap:8px;align-items:center}
+.tsl .mini{width:74px;height:74px;border-radius:16px}
+.tsl .lbl{font-size:20px}
+/* 신력(스킬) */
+.skills{position:absolute;left:20px;right:20px;top:84px;bottom:20px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start;padding:4px}
+.sk{position:relative;height:170px;padding:14px 14px 0 124px}
+.sk .ico{position:absolute;left:14px;top:16px;width:96px;height:96px;border-radius:20px;border:3px solid #fff;display:flex;align-items:center;justify-content:center}
+.sk .ico svg{width:70px;height:70px}
+.sk h4{margin:0;font-size:26px}
+.sk p{margin:4px 0;font-size:17px;font-weight:600;color:#cdd6ff;line-height:1.3}
+.sk .stars{position:absolute;left:14px;top:120px;display:flex;gap:1px}
+.sk .stars svg{width:20px;height:20px}
+.sk .btn{position:absolute;right:12px;bottom:12px;height:48px;padding:0 14px;font-size:20px}
+.skcur{position:absolute;left:0;right:0;top:20px;text-align:center}
+
+/* 상점 */
+.shop{position:absolute;left:20px;right:20px;top:84px;bottom:20px;overflow-y:auto;padding:4px}
+.banner{position:relative;height:300px;border-radius:24px;overflow:hidden;margin-bottom:18px}
+.banner .art{position:absolute;inset:0;background:center/cover}
+.banner .art:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,0,40,.9) 0,rgba(20,0,40,.4) 55%,rgba(20,0,40,0))}
+.banner h3{position:absolute;left:26px;top:22px;margin:0;font-size:40px}
+.banner .d{position:absolute;left:26px;top:80px;font-size:20px;color:#ffe9a8;font-weight:700;width:320px;line-height:1.35}
+.banner .bb{position:absolute;left:22px;bottom:22px;display:flex;gap:14px}
+.banner .btn{height:84px;width:180px;font-size:24px;flex-direction:column;gap:0}
+.banner .btn small{display:flex;align-items:center;gap:4px;font-size:20px}
+.banner .btn small svg{width:26px;height:26px}
+.banner .prob{position:absolute;right:16px;top:16px;font-size:18px;padding:6px 14px;background:rgba(0,0,0,.55);border-radius:12px;border:2px solid rgba(255,255,255,.5);cursor:pointer}
+.goods{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.good{position:relative;height:240px;padding:12px;text-align:center}
+.good .gi{height:110px;display:flex;align-items:center;justify-content:center}
+.good .gi svg{width:96px;height:96px}
+.good .gn{font-size:22px}
+.good .btn{position:absolute;left:12px;right:12px;bottom:12px;height:56px;font-size:22px}
+.good .tag{position:absolute;left:-4px;top:10px;background:#e0141b;padding:2px 12px;border-radius:0 10px 10px 0;font-size:16px}
+.sect{font-size:28px;margin:8px 6px 12px}
+
+/* 지도 */
+#s-map{background:#0c1430}
+.mapscroll{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden}
+.mapbody{position:relative;width:720px;height:2100px;background:url(img/ui/map_bg.jpg) center/720px 1050px repeat-y}
+.mapbody:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,0,60,.35),rgba(0,0,0,0) 30%,rgba(0,0,0,.1))}
+.mpath{position:absolute;inset:0;pointer-events:none}
+.node{position:absolute;width:170px;margin-left:-85px;text-align:center;cursor:pointer}
+.node .ball{position:relative;margin:0 auto;width:118px;height:118px;border-radius:50%;border:6px solid #ffd36b;background:radial-gradient(circle at 35% 30%,#ff9b6b,#c0301b 70%);box-shadow:0 8px 0 #5a1208,0 12px 20px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;font-size:52px}
+.node.done .ball{background:radial-gradient(circle at 35% 30%,#9df27a,#2b9520 70%);box-shadow:0 8px 0 #145a0c,0 12px 20px rgba(0,0,0,.6)}
+.node.lock .ball{background:radial-gradient(circle at 35% 30%,#8a93a8,#3a4054 70%);border-color:#9aa;box-shadow:0 8px 0 #222,0 12px 20px rgba(0,0,0,.6)}
+.node.cur .ball{animation:curp 1.2s infinite}
+@keyframes curp{0%,100%{box-shadow:0 8px 0 #5a1208,0 0 0 0 rgba(255,220,100,.9)}50%{box-shadow:0 8px 0 #5a1208,0 0 0 22px rgba(255,220,100,0)}}
+.node .lab{margin-top:10px;display:inline-block;padding:4px 14px;background:rgba(8,8,30,.82);border:2px solid rgba(255,255,255,.35);border-radius:14px;font-size:21px;white-space:nowrap}
+.node .st{display:flex;justify-content:center;gap:2px;margin-top:4px}
+.node .st svg{width:28px;height:28px}
+.node .ch{position:absolute;right:-6px;top:-10px;width:56px;height:50px}
+.mapbar{position:absolute;left:0;right:0;top:0;height:110px;background:linear-gradient(180deg,rgba(8,10,30,.95),rgba(8,10,30,0));z-index:3;display:flex;align-items:center;padding:0 20px;gap:16px}
+.mapbar .back{width:76px;height:76px;font-size:40px}
+.mapbar .t{font-size:38px}
+
+/* 결과 */
+#s-result{background:radial-gradient(circle at 50% 30%,#3b2a6e,#0b0b22 70%)}
+#s-result.lose{background:radial-gradient(circle at 50% 30%,#4a1a22,#0b0b12 70%)}
+.rays{position:absolute;left:50%;top:250px;width:1400px;height:1400px;margin:-700px 0 0 -700px;background:repeating-conic-gradient(rgba(255,220,120,.16) 0 9deg,rgba(255,220,120,0) 9deg 22deg);animation:spin 18s linear infinite;border-radius:50%;mask:radial-gradient(circle,#000 20%,transparent 65%);-webkit-mask:radial-gradient(circle,#000 20%,transparent 65%)}
+#s-result.lose .rays{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rtitle{position:absolute;left:0;right:0;top:120px;text-align:center;font-size:120px;font-weight:900;animation:logoIn .6s cubic-bezier(.2,1.6,.4,1) both}
+.rtitle span{background:linear-gradient(180deg,#fff7c2,#ffd84a 45%,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:6px #3a1a00;paint-order:stroke fill;filter:drop-shadow(0 8px 0 #2a0f00)}
+#s-result.lose .rtitle span{background:linear-gradient(180deg,#e8eef8,#9aa8c0 50%,#5d6a85);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke-color:#111}
+.rsub{position:absolute;left:0;right:0;top:268px;text-align:center;font-size:30px;color:#ffe9a8}
+.rinfo{position:absolute;left:0;right:0;top:318px;display:flex;justify-content:center;gap:16px}
+.rinfo .stat{font-size:22px}
+.dmg{position:absolute;left:50px;right:50px;top:400px;padding:22px 26px}
+.dmg h4{margin:0 0 14px;font-size:28px;text-align:center}
+.drow{display:flex;align-items:center;gap:12px;margin:12px 0}
+.drow .ic2{width:60px;height:60px;border-radius:14px;border:3px solid #fff;display:flex;align-items:center;justify-content:center;flex:none}
+.drow .ic2 svg{width:42px;height:42px}
+.drow .nm{width:100px;font-size:24px;flex:none}
+.drow .bar{flex:1;height:34px;border-radius:17px;background:rgba(0,0,0,.5);overflow:hidden;position:relative;border:2px solid rgba(255,255,255,.2)}
+.drow .bar i{position:absolute;left:0;top:0;bottom:0;width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1);border-radius:17px}
+.drow .pc{width:92px;text-align:right;font-size:24px;flex:none}
+.rew{position:absolute;left:50px;right:50px;top:800px;padding:18px}
+.rew h4{margin:0 0 10px;font-size:26px;text-align:center}
+.rewl{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.rw{position:relative;width:110px;height:110px;border-radius:18px;border:3px solid;display:flex;align-items:center;justify-content:center;animation:pop .4s cubic-bezier(.2,1.6,.4,1) both}
+.rw svg{width:64px;height:64px}
+.rw b{position:absolute;right:6px;bottom:2px;font-size:22px}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.rbtns{position:absolute;left:0;right:0;bottom:90px;display:flex;justify-content:center;gap:24px}
+.rbtns .btn{width:280px;height:100px;font-size:30px;flex-direction:column;gap:0}
+.rbtns .btn small{font-size:18px;font-weight:700}
+
+/* 모달, 토스트, 뽑기 */
+.modal{position:absolute;inset:0;z-index:30;background:rgba(0,0,10,.7);display:flex;align-items:center;justify-content:center;animation:fade .15s}
+@keyframes fade{from{opacity:0}}
+.mbox{position:relative;width:600px;max-height:1000px;padding:30px 30px 34px;animation:pop .25s cubic-bezier(.2,1.4,.4,1)}
+.mbox h3{margin:0 0 16px;text-align:center;font-size:38px}
+.mbox p{font-size:22px;font-weight:600;line-height:1.5;color:#dfe6ff;margin:8px 0}
+.mbox .x{position:absolute;right:-16px;top:-16px;width:64px;height:64px;font-size:34px}
+.mbox .row{display:flex;gap:16px;justify-content:center;margin-top:20px}
+.mbox .row .btn{height:80px;min-width:200px;font-size:26px;padding:0 20px}
+.mbox table{width:100%;border-collapse:collapse;font-size:22px}
+.mbox td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.12)}
+.mbox td:last-child{text-align:right}
+.toast{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:40;padding:18px 34px;border-radius:20px;background:rgba(0,0,0,.82);border:2px solid #ffd36b;font-size:26px;white-space:nowrap;animation:toast 1.6s forwards;pointer-events:none}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-30%)}12%{opacity:1;transform:translate(-50%,-50%)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%)}}
+.gacha{position:absolute;inset:0;z-index:35;background:radial-gradient(circle at 50% 45%,#40207a,#07051a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gacha .rays{top:560px}
+.gcards{position:relative;display:grid;grid-template-columns:repeat(5,120px);gap:14px;justify-content:center}
+.gcards.one{grid-template-columns:200px}
+.gc{position:relative;width:100%;aspect-ratio:.78;perspective:800px}
+.gc .in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s;transform:rotateY(180deg)}
+.gc.open .in{transform:rotateY(0)}
+.gc .f,.gc .bk{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:4px solid;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.gc .bk{transform:rotateY(180deg);background:linear-gradient(160deg,#3a2b7a,#1a1240);border-color:#ffd36b}
+.gc .bk svg{width:60%;height:60%;opacity:.8}
+.gc .f svg{width:62%;height:55%}
+.gc .f b{font-size:16px;margin-top:4px;text-align:center;line-height:1.1}
+.gc.hi .f{animation:shine 1.2s infinite}
+.gres{margin-top:50px;display:flex;gap:20px}
+.gres .btn{width:220px;height:86px;font-size:28px}
+.fakebattle{position:absolute;inset:0;z-index:45;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:36px;gap:20px}
+.bar2{width:400px;height:24px;border-radius:12px;background:#333;overflow:hidden}.bar2 i{display:block;height:100%;width:0;background:#ffb020;transition:width 3s linear}
+.soundbtn{position:absolute;right:18px;top:18px;z-index:3;width:70px;height:70px}
+.soundbtn svg{width:40px;height:40px}
+
+/* 첫 화면 제목: 왼쪽 세로쓰기, 갓과 얼굴을 가리지 않게 */
+#s-title .logo.logo-left{position:absolute;left:34px;top:620px;right:auto;transform:none;width:auto;text-align:left;margin:0}
+#s-title .logo.logo-left .t{writing-mode:vertical-rl;text-orientation:upright;font-size:124px;line-height:1;letter-spacing:10px;margin:0}
+#s-title .logo.logo-left .t::before,#s-title .logo.logo-left .t::after{writing-mode:vertical-rl;text-orientation:upright}
+#s-title .logo.logo-left-en{position:absolute;left:34px;top:860px;right:auto;transform:none;width:auto;text-align:left;margin:0}
+#s-title .logo.logo-left-en .t{font-size:92px;line-height:1;letter-spacing:2px;margin:0;white-space:nowrap}
