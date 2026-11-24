@@ -89,4 +89,5 @@
   var iv = setInterval(function () { try { install(); } catch (e) {} }, 50);
   setInterval(function () { try { if (install()) { clearInterval(iv); sweep(); } } catch (e) { N.err = String(e).slice(0, 160); } }, 500);
   window.__noGround = { stat: function () { return { refused: N.refused, swept: N.swept, kinds: N.kinds, err: N.err || null }; }, sweep: sweep };
+
 })();

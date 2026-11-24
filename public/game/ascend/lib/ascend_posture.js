@@ -40,11 +40,40 @@
     B.rz = ease * .28 - sn * .22; B.sy = 1 + ease * .07 - sn * .05;   /* rear back (+z tilts the top backward for +x-forward models) */
     w.rotation.z += B.rz; w.scale.y *= B.sy; B.vz = w.rotation.z; B.vs = w.scale.y;
   };
+  // ---------------------------------------------------------------- v3.97 detail: upper body turns to the aim, head follows, heavy footfalls
+  // the legs keep walking where the frame moves; spine and neck twist toward where it shoots (up to ~60 deg), eased.
+  var Y = null, QA = null, QB = null, VA = null, VB = null;
+  var twistBone = function (b, ang) {
+    // rotate bone about world up by ang, expressed in its parent's frame; undo last frame's twist first if the animation did not overwrite it
+    var s = b.userData._tw; if (s && b.quaternion.equals(s.after)) b.quaternion.copy(s.before);
+    var before = b.quaternion.clone(); b.parent.getWorldQuaternion(QA); VA.set(0, 1, 0).applyQuaternion(QA.invert()); QB.setFromAxisAngle(VA, ang); b.quaternion.premultiply(QB);
+    b.userData._tw = { before: before, after: b.quaternion.clone() };
+  };
+  var detail = function (e, m, u, dt) {
+    if (!m.obj || u.fly || (u.tf && u.tf.mode)) return; var T3 = window.THREE; if (!T3) return; if (!QA) { QA = new T3.Quaternion(); QB = new T3.Quaternion(); VA = new T3.Vector3(); VB = new T3.Vector3(); }
+    var B = m._dtB; if (B === undefined) { B = null; var f = {}; m.obj.traverse(function (o) { if (o.isBone) f[o.name] = o; }); if (f.Spine01 && f.Spine02 && f.neck && f.Head) { B = f; B.headfront = m.obj.getObjectByName('headfront'); } m._dtB = B; } if (!B) return;
+    // facing of the body from the hips, aim from u.aa
+    var D = e._dt || (e._dt = { tw: 0, fL: 0, fR: 0, mnL: 1e9, mnR: 1e9, st: 0 }), d = dt || 1 / 60;
+    var aim = u.aa, hasAim = typeof aim === 'number' && isFinite(aim) && (u.tgt || u.fireT > 0 || u.atkT > 0 || u.cd > 0 || u === (G.local && G.local.unit));
+    // where the hips actually face (the model may already be turned toward the aim by the game): perpendicular to the hip line, sign fixed once from the head
+    var want = 0; if (hasAim && B.LeftUpLeg && B.RightUpLeg) { m.obj.updateMatrixWorld(true); B.LeftUpLeg.getWorldPosition(VA); B.RightUpLeg.getWorldPosition(VB); var rx = VB.x - VA.x, rz = VB.z - VA.z;
+      if (m._dtSg == null && B.headfront) { var hp = new T3.Vector3(), hf = new T3.Vector3(); B.Head.getWorldPosition(hp); B.headfront.getWorldPosition(hf); var fx = hf.x - hp.x, fz = hf.z - hp.z; m._dtSg = (-rz * fx + rx * fz) >= 0 ? 1 : -1; }
+      var sg = m._dtSg || 1, face = Math.atan2(rx * sg, -rz * sg); var a = face - aim; a = Math.atan2(Math.sin(a), Math.cos(a)); want = Math.abs(a) > 2.4 ? 0 : Math.max(-1.05, Math.min(1.05, a)); }
+    D.tw += (want - D.tw) * Math.min(1, d * 9);
+    if (Math.abs(D.tw) > .01) { m.obj.updateMatrixWorld(true); twistBone(B.Spine01, D.tw * .3); twistBone(B.Spine02, D.tw * .35); twistBone(B.neck, D.tw * .35); }
+    // heavy footfalls for my own frame: dust, a low thud and a tiny camera bump each time a foot plants
+    if (u === (G.local && G.local.unit) && B.LeftFoot && B.RightFoot && Math.hypot(u.vx || 0, u.vy || 0) > 40) {
+      B.LeftFoot.getWorldPosition(VB); var yl = VB.y; B.RightFoot.getWorldPosition(VB); var yr = VB.y;
+      D.mnL = Math.min(D.mnL + d * 4, yl); D.mnR = Math.min(D.mnR + d * 4, yr); D.st -= d;
+      var plant = function (y, mn, key) { var was = D[key]; var up = y > mn + 6; D[key] = up ? 1 : 0; return was === 1 && !up; };
+      if ((plant(yl, D.mnL, 'fL') || plant(yr, D.mnR, 'fR')) && D.st <= 0) { D.st = .18; try { G.shake = Math.max(G.shake || 0, 1.6); } catch (er) {} try { for (var i = 0; i < 4; i++) { var q = Math.random() * 6.28; part(u.x + Math.cos(q) * 10, u.y + Math.sin(q) * 10, Math.cos(q) * 60, Math.sin(q) * 60, .45, '#c8a27a', 7, 3); } } catch (er) {} try { SFX2.tone(70, 40, .09, .05, 'sine'); } catch (er) {} }
+    }
+  };
   /* the render pass keeps its own reference to mdlAnimate, so the posture is applied right after R3.syncUnits (which runs it) */
   var lastT = 0;
   var hook = function () {
     if (window.__hkPosture2 || !window.R3 || typeof R3.syncUnits !== 'function') return; window.__hkPosture2 = 1; var su = R3.syncUnits;
-    R3.syncUnits = function (dt) { var r = su.apply(this, arguments); try { if (typeof G !== 'undefined' && G && G.units) { var d = typeof dt === 'number' ? dt : 1 / 60; for (var i = 0; i < G.units.length; i++) { var u = G.units[i]; var e = R3.units.get(u.id); if (!e || !e.mdl) continue; if (u.cls === 'arkframe') post(e, e.mdl, u, d); else if (u.boss) bossPost(e, e.mdl, u, d); } } } catch (er) { window.__postErr = String(er).slice(0, 160); } return r; };
+    R3.syncUnits = function (dt) { var r = su.apply(this, arguments); try { if (typeof G !== 'undefined' && G && G.units) { var d = typeof dt === 'number' ? dt : 1 / 60; for (var i = 0; i < G.units.length; i++) { var u = G.units[i]; var e = R3.units.get(u.id); if (!e || !e.mdl) continue; if (u.cls === 'arkframe') { post(e, e.mdl, u, d); try { detail(e, e.mdl, u, d); } catch (er2) { window.__dtErr = String(er2).slice(0, 160); } } else if (u.boss) bossPost(e, e.mdl, u, d); } } } catch (er) { window.__postErr = String(er).slice(0, 160); } return r; };
   };
   setInterval(function () { try { hook(); } catch (e) {} }, 700);
 })();

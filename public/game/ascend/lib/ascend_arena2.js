@@ -222,7 +222,7 @@
   // ---------------------------------------------------------------- HUD: gold, buffs, shop button
   var hud = null;
   var hudTick = function () {
-    var s = mySlot(); if (!s) return;
+    var s = mySlot(); if (!s) { if (hud) hud.style.display = 'none'; if (shopEl) shopEl.style.display = 'none'; return; }   /* v3.97 (28-8): no 5v5 slot (left the match) -> hide gold/shop */
     if (!hud) { hud = document.createElement('div'); hud.id = 'arGold'; hud.style.cssText = 'position:fixed;right:12px;top:232px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-family:"Noto Sans KR",sans-serif;pointer-events:auto';
       hud.innerHTML = '<button id="arShopB" style="all:unset;cursor:pointer;padding:6px 12px;border-radius:16px;background:rgba(8,12,22,.7);border:1px solid rgba(255,209,102,.6);color:#ffd166;font:800 13px Rajdhani,\'Noto Sans KR\',sans-serif"></button><div id="arBuffs" style="font-size:11px;text-align:right;line-height:1.5"></div>'; document.body.appendChild(hud); hud.querySelector('#arShopB').onclick = shopOpen; }
     hud.style.display = on() ? 'flex' : 'none'; if (!on()) { if (shopEl) shopEl.style.display = 'none'; return; }
