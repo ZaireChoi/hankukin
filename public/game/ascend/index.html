@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v4.09 RPG</div>
+   <div class="ver"><i></i>ASCEND · v4.10 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -5837,7 +5837,7 @@ window.__pilotTitle=r=>{const R0=RANKS[LANG]||RANKS.ko;return R0[clamp(r,0,MAXRA
 /* v3.83 (manager 22-9): the rank comes from the pilot level, so the result's promotion line reads the rank the battle started with and the rank now (it used to promote by merit and then fall back to the level rank: 'Sergeant ->' twice) */{const _arw=applyReward;applyReward=function(rw){const r=_arw(rw);try{const now=clamp(Math.floor(plv()/3),0,MAXRANK);const st=(G&&G._rk0!=null)?G._rk0:now;r.from=st;r.to=now;P.rank=now;}catch(e){}return r;};}
 try{const lv=plv();P.rank=clamp(Math.floor(lv/3),0,MAXRANK);}catch(e){}
 // ---- quick battle: you always deploy in your ARK frame (gear, drones and skin apply) ----
-{const _od2=openDeploy;openDeploy=function(...a){if(G&&!G.rpg&&!G.client&&G.local&&window.__mechOnly){hide('#deploy');G.local.want={cls:'arkframe',sp:'base'};if(!G.local.unit&&!(G.local.respT>0))G.local.respT=.1;return;}return _od2.apply(this,a);};}
+{const _od2=openDeploy;openDeploy=function(...a){if(G&&!G.client&&G.local&&(window.__mechOnly||(G.rpg&&(G.local.cls==='arkframe'||(G.local.want&&G.local.want.cls==='arkframe')||P.lastCls==='arkframe')))){/* v4.10 (user: a skill press jumped to the frame-select screen): in story / expedition battles a downed frame used to open the old deploy screen - the frame now relaunches by itself */hide('#deploy');G.local.want={cls:'arkframe',sp:'base'};if(!G.local.unit&&!(G.local.respT>0))G.local.respT=.1;return;}return _od2.apply(this,a);};}
 // skill bar & drones for the ARK frame in every battle
 {const _stS2=step;step=function(dt){_stS2(dt);try{const u=G&&G.local&&G.local.unit;const el=document.getElementById('skb2');if(!el||!u||G.rpg)return;const on=!u.dead&&u.cls==='arkframe'&&!touchMode&&!G.over;el.style.display=on?'flex':'none';}catch(e){}};}
 // ---- arena clean-up: no faction radio / story banners / tickets; top bars show fortress HP ----
@@ -8284,7 +8284,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v409';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v410';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8700,7 +8700,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_mem.js?v=370"></script>
 <script src="lib/ascend_tension.js?v=360"></script>
 <script src="lib/ascend_palm.js?v=391"></script>
-<script src="lib/ascend_missile.js?v=392"></script>
+<script src="lib/ascend_missile.js?v=393"></script>
 <script src="lib/ascend_floor.js?v=362"></script>
 <script src="lib/ascend_planet.js?v=364"></script>
 <script src="lib/ascend_planetwar.js?v=364"></script>
@@ -8716,7 +8716,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_moves.js?v=373"></script>
 <script src="lib/ascend_hitfx.js?v=374"></script>
 <script src="lib/ascend_bladeghost.js?v=381"></script>
-<script src="lib/ascend_dimobile.js?v=396"></script>
+<script src="lib/ascend_dimobile.js?v=399"></script>
 <script src="lib/ascend_noground.js?v=402"></script>
 <script src="lib/ascend_genfree.js?v=394"></script>
 <script src="lib/ascend_mtree.js?v=394"></script>
