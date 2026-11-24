@@ -23,13 +23,16 @@
       if (S.done) return;
       var u = G.local && G.local.unit; if (!u) { if (performance.now() - S.t0 > 10000) finish(); return; }
       var R = window.R3, e = R && R.units && R.units.get(u.id);
-      var el0 = (performance.now() - S.t0) / 1000; var ready = !!(e && e.root && e.root.parent && ((e.mdl && e.mdl.obj) || (e.root.children.length > 0 && el0 > 1.5)));   // frames drawn without e.mdl count as ready once built
+      var el0 = (performance.now() - S.t0) / 1000; var A0 = window.__AX, want = e && e.mdlWant, wc = want && A0 && A0.mc ? A0.mc(want) : null; if (want && !wc) { try { A0 && A0.mdlGet && A0.mdlGet(want); } catch (er) {} }
+      var ready = !!(e && e.root && e.root.parent && ((e.mdl && e.mdl.obj) || (wc && wc.st === 'fail') || (!want && el0 > 1.5) || (typeof gfxMode === 'function' && gfxMode() === '2d')));   /* v4.13: wait until MY frame's model is really attached (only a failed file or 2D mode skip it), up to 12 s */
       if (!S.held && !ready) { S.held = true; G.paused = true; }
       var el = (performance.now() - S.t0) / 1000;
       if (ready && !S.warm) { S.warm = true; if (S.held) show(L('셰이더 준비 중…', 'Preparing shaders…'), .85); try { R.r.compile(R.scene, R.cam); } catch (er) {} return; }
-      if (ready || el > 10) { finish(); return; }
-      if (S.held) show(L('기체 불러오는 중…', 'Loading your frame…'), Math.min(.8, el / 6));
+      if (ready || el > 12) { finish(); return; }
+      if (S.held) show(L('기체 불러오는 중…', 'Loading your frame…'), Math.min(.8, el / 8));
     } catch (er) { try { finish(); } catch (e2) {} }
   }, 100);
+  /* v4.13: whenever the chosen frame changes (hangar, sortie pick, promotion) its model is fetched right away, so the next sortie starts with it */
+  setInterval(function () { try { var A = window.__A, AX = window.__AX; if (!A || !AX || !AX.mc || !AX.mdlGet) return; var r = A.R && A.R(); if (!r || !r.mech) return; var M = A.MECHS && A.MECHS[r.mech]; var f = (M && M.mdl) || r.mech; if (f !== S.pre || !AX.mc(f)) { S.pre = f; if (!AX.mc(f)) AX.mdlGet(f); } } catch (e) {} }, 1500);
   window.__ready = S;
 })();
