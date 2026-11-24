@@ -37,6 +37,7 @@
       '#garage .fc b{display:block;font-size:13px}#garage .fc small{display:block;font-size:11px;opacity:.75}#garage .fc .tag{position:absolute;right:8px;top:6px;font:700 10px Rajdhani,"Noto Sans KR";padding:1px 6px;border:1px solid currentColor;letter-spacing:.06em}' +
       '#garage .lock{filter:grayscale(.7);opacity:.75}' +
       '#garage canvas{position:absolute;left:290px;right:360px;top:64px;bottom:120px;z-index:2;cursor:grab;width:calc(100% - 650px);height:calc(100% - 184px)}' +
+      '#garage .pose{position:absolute;left:290px;right:360px;bottom:118px;z-index:4;display:flex;justify-content:center;gap:6px}#garage .pose button{all:unset;cursor:pointer;padding:6px 14px;font:700 12px "Noto Sans KR";border:1px solid rgba(255,255,255,.18);background:rgba(8,12,22,.6);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}#garage .pose button.on{background:rgba(255,209,102,.2);border-color:#ffd166;color:#ffd166}' +
       '#garage .name{position:absolute;left:290px;right:360px;bottom:28px;z-index:3;text-align:center;pointer-events:none}#garage .name .gd{font:700 12px Rajdhani,"Noto Sans KR";letter-spacing:.35em}#garage .name b{display:block;font:800 34px Rajdhani,"Noto Sans KR";letter-spacing:.03em;text-shadow:0 2px 18px rgba(0,0,0,.8)}#garage .name .nick{font-size:13px;color:#ffd166;letter-spacing:.08em}' +
       '#garage .sheet{position:absolute;right:22px;top:84px;bottom:22px;width:330px;z-index:3;display:flex;flex-direction:column;gap:10px;overflow:auto}' +
       '#garage .pn{background:linear-gradient(180deg,rgba(12,18,32,.88),rgba(8,12,22,.78));border:1px solid rgba(255,255,255,.08);padding:14px 16px;clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}' +
@@ -53,11 +54,12 @@
       '#grBp .dec{position:absolute;right:30px;top:30px;width:300px;display:flex;flex-direction:column;gap:3px}#grBp .dec small{font:700 10.5px Rajdhani,"Noto Sans KR";letter-spacing:.25em;opacity:.85}#grBp .dec b{font:800 24px Rajdhani}#grBp .dec span{font-size:12px;opacity:.85}#grBp .dec .bar{height:8px;border:1px solid rgba(234,244,255,.6);margin-top:6px}#grBp .dec .bar em{display:block;height:100%;background:linear-gradient(90deg,#7fd8ff,#ffffff)}' +
       '#grBp .vw{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;gap:6px}#grBp .vw button{all:unset;cursor:pointer;padding:5px 14px;border:1px solid rgba(234,244,255,.6);font:700 12px "Noto Sans KR"}#grBp .vw button.on{background:#eaf4ff;color:#0b3570}#grBp .x{all:unset;cursor:pointer;position:absolute;right:30px;top:-2px;margin-top:0;width:34px;height:34px;display:none}' +
       '@media(max-width:900px){#grBp canvas{left:0;right:0;width:100%}#grBp .parts,#grBp .dim{display:none}#grBp .tb{width:auto;left:20px;right:20px;grid-template-columns:1fr 1fr 1fr}#grBp .dec{left:20px;right:20px;width:auto;top:100px}}' +
-      '@media(max-width:900px){#garage .roster{width:150px;left:8px}#garage .fc img{display:none}#garage canvas{left:160px;right:0;width:calc(100% - 160px);bottom:300px;height:auto}#garage .name{left:160px;right:0;bottom:300px}#garage .sheet{left:160px;right:8px;top:auto;height:290px;width:auto;bottom:8px;overflow:auto}}';
+      '@media(max-width:900px){#garage .pose{left:160px;right:0;bottom:340px}#garage .roster{width:150px;left:8px}#garage .fc img{display:none}#garage canvas{left:160px;right:0;width:calc(100% - 160px);bottom:300px;height:auto}#garage .name{left:160px;right:0;bottom:300px}#garage .sheet{left:160px;right:8px;top:auto;height:290px;width:auto;bottom:8px;overflow:auto}}';
     document.head.appendChild(s);
   };
   // ------------------------------------------------------------------ 3D bay
-  var V = { r: null, s: null, c: null, m: null, mixer: null, key: '', yaw: .4, drag: null, run: false, cv: null, t0: 0 };
+  var V = { r: null, s: null, c: null, m: null, mixer: null, key: '', yaw: 0, drag: null, run: false, cv: null, t0: 0, pose: 'still', jet: null, tf: 0, tfDir: 0 };
+  var FRONT = Math.PI;   /* measured: the game models' wraps face -z here, so turn them half a turn to face the camera */ window.__grV = V;   /* game models face +x; the hangar camera looks from +z */
   var bay = function (cv) {
     var T = window.THREE; if (!T) return false;
     if (!V.r || V.cv !== cv) {
@@ -72,20 +74,67 @@
       var cone = new T.Mesh(new T.ConeGeometry(4.2, 16, 32, 1, true), new T.MeshBasicMaterial({ color: 0xbfe0ff, transparent: true, opacity: .05, side: T.DoubleSide, depthWrite: false, blending: T.AdditiveBlending })); cone.position.y = 8; V.s.add(cone);
       V.c = new T.PerspectiveCamera(30, 1, .1, 200);
       cv.addEventListener('pointerdown', function (e) { V.drag = { x: e.clientX, y: V.yaw }; cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing'; });
-      cv.addEventListener('pointermove', function (e) { if (V.drag) V.yaw = V.drag.y + (e.clientX - V.drag.x) * .01; });
+      cv.addEventListener('pointermove', function (e) { if (V.drag) { V.yaw = V.drag.y + (e.clientX - V.drag.x) * .01; V.touched = performance.now(); } });   /* free turn by hand - the back can be seen only when the player turns it */
       cv.addEventListener('pointerup', function () { V.drag = null; cv.style.cursor = 'grab'; });
     }
-    if (!V.run) { V.run = true; var last = performance.now(); var loop = function () { if (!document.getElementById('garage')) { V.run = false; return; } var n = performance.now(), dt = Math.min(.05, (n - last) / 1000); last = n; if (!V.drag) V.yaw += dt * .18; var w = cv.clientWidth, h = cv.clientHeight; if (w && h && (cv.width !== Math.round(w * V.r.getPixelRatio()) || cv.height !== Math.round(h * V.r.getPixelRatio()))) { V.r.setSize(w, h, false); V.c.aspect = w / h; V.c.updateProjectionMatrix(); } if (V.m) V.m.wrap.rotation.y = V.yaw; if (V.mixer) V.mixer.update(dt); V.c.position.set(0, 5.4, 21); V.c.lookAt(0, 3.9, 0); V.r.render(V.s, V.c); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
+    if (!V.run) { V.run = true; var last = performance.now(); var loop = function () { if (!document.getElementById('garage')) { V.run = false; return; } var n = performance.now(), dt = Math.min(.05, (n - last) / 1000); last = n; if (!V.drag) { V.free = (V.free || 0) + dt; var idle = performance.now() - (V.touched || 0) > 4000; if (idle) { var tgtY = V.pose === 'walk' ? .15 : (Math.sin(V.free * .22) * .3 + .25); V.yaw = Math.atan2(Math.sin(V.yaw), Math.cos(V.yaw)); V.yaw += (tgtY - V.yaw) * Math.min(1, dt * 1.2); } }   /* 4 s after the hand lets go it turns back to face the camera */ var w = cv.clientWidth, h = cv.clientHeight; if (w && h && (cv.width !== Math.round(w * V.r.getPixelRatio()) || cv.height !== Math.round(h * V.r.getPixelRatio()))) { V.r.setSize(w, h, false); V.c.aspect = w / h; V.c.updateProjectionMatrix(); } if (V.m) V.m.wrap.rotation.y = (V.face != null ? -V.face : FRONT) + V.yaw; if (V.jet) V.jet.wrap.rotation.y = FRONT + V.yaw; if (V.mixer && V.pose === 'walk') { V.mixer.update(dt); if (V.hips) { V.hips.position.x = V.h0.x; V.hips.position.z = V.h0.z; } }   /* walk in place: cancel the clip's root motion */ tfTick(dt); var fh = (V.tf > .5 ? 7.6 : (V.fitH || 7.6)), cd = fh * 2.55 + 4; V.cd = (V.cd || cd) + (cd - (V.cd || cd)) * Math.min(1, dt * 4); V.c.position.set(0, fh * .62 + .6, V.cd); V.c.lookAt(0, fh * .5, 0); V.r.render(V.s, V.c); requestAnimationFrame(loop); }; requestAnimationFrame(loop); }
     return true;
   };
   var showModel = function (k) {
     var T = window.THREE; if (!V.s || !T) return; if (V.key === k && V.m) return; V.key = k;
-    if (V.m) { V.s.remove(V.m.wrap); V.m = null; V.mixer = null; }
-    var tries = 0; var put = function () { if (V.key !== k) return; var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 60) setTimeout(put, 150); return; } V.m = i; V.s.add(i.wrap); paintAs(k, i);
+    if (V.m) { V.s.remove(V.m.wrap); V.m = null; V.mixer = null; } if (V.jet) { V.s.remove(V.jet.wrap); V.jet = null; } if (V.e && V.e._jet && V.e._jet.grp.parent) V.e._jet.grp.parent.remove(V.e._jet.grp); V.e = null; V.useEng = true; V.tf = 0; V.tfDir = 0; V.pose = 'still'; poseBtns(); try { var tb = document.querySelector('#garage .pose button[data-p="tf"]'); if (tb) tb.style.display = jetOf(k) ? '' : 'none'; } catch (e) {}
+    var tries = 0; var put = function () { if (V.key !== k) return; var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 60) setTimeout(put, 150); return; } V.m = i; V.s.add(i.wrap); paintAs(k, i); custPaint(k, i); V.base = i.wrap.scale.x; frameModel(i);
       /* v4.06 (user): no idle sway in the hangar - the frame stands still (one held pose, chosen per window.__grPose: 'bind' = model pose, 'idle' = first idle frame) */
-      try { var c = mdlGet(mkey(k)); var pz = window.__grPose || 'bind'; if (pz !== 'bind' && c && c.g && c.g.animations && c.g.animations.length) { var mx = new T.AnimationMixer(i.obj); var cl = c.g.animations.find(function (a) { return /idle/i.test(a.name); }) || c.g.animations[0]; var ac = mx.clipAction(cl); ac.play(); mx.setTime(0); ac.paused = true; } } catch (e) {}
+      try { var c = mdlGet(mkey(k)); if (c && c.g && c.g.animations && c.g.animations.length) { var wk = c.g.animations.find(function (a) { return /walk/i.test(a.name); }); V.rest = []; i.obj.traverse(function (o) { if (o.isBone) V.rest.push([o, o.position.clone(), o.quaternion.clone(), o.scale.clone()]); });   /* rest pose snapshot (skeleton.pose() rebuilt bones from the baked inverse-bind matrices and blew the model up) */
+          if (wk) { V.hips = null; i.obj.traverse(function (o) { if (!V.hips && o.isBone && /hips/i.test(o.name)) V.hips = o; }); if (V.hips) V.h0 = V.hips.position.clone(); V.mixer = new T.AnimationMixer(i.obj); V.walkA = V.mixer.clipAction(wk); V.walkA.play(); V.mixer.setTime(0); if (V.pose !== 'walk') { V.mixer.stopAllAction(); restPose(); } } } } catch (e) {}
       try { var r = A().R(), pk = r.psel && r.psel[k]; if (pk && typeof custMat === 'function') {} } catch (e) {} };
     put();
+  };
+  // ------------------------------------------------------------------ v4.08: pose bar - still / walk / transform
+  var JETM = { mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet' };
+  /* v4.08: each new frame's OWN transform form (33 designed earlier, now compressed into models/<frame>_alt.glb); ground forms sit on the deck */
+  var ALT = 'fed_myth_libertas alp_myth_genesis alp_hero_glyph alp_hero_oracle alp_hero_seeker alp_leg_solaris alp_hero_prism alp_leg_aeon fed_hero_atlas fed_hero_mortar fed_leg_tempest fed_leg_orion fed_leg_astra fed_hero_bastion fed_hero_longshot omg_leg_nocturne omg_hero_venom omg_myth_eclipse omg_hero_wraith omg_hero_crusher omg_hero_hive omg_leg_warlord emp_myth_sol emp_leg_aurelian emp_mp_assault emp_mp_heavy emp_mp_artillery emp_hero_archer emp_hero_inquisitor emp_hero_herald emp_leg_gravis emp_leg_valerian emp_hero_lancer'.split(' ');
+  var GROUND = 'fed_hero_mortar fed_leg_astra fed_hero_bastion omg_leg_nocturne omg_hero_venom omg_hero_crusher omg_hero_hive emp_leg_aurelian emp_mp_assault emp_mp_heavy emp_mp_artillery emp_hero_inquisitor emp_hero_herald emp_leg_gravis alp_hero_prism'.split(' ');
+  var JSPEC = {}; ALT.forEach(function (k) { JSPEC[k] = k + '_alt'; });
+  var jetOf = function (k) { if (JSPEC[k]) return JSPEC[k]; var mk = mkey(k); if (JETM[mk]) return JETM[mk]; var nm = (window.__NEWMECH || {})[k]; if (nm && JETM[nm] && nm !== 'mech_leg') return JETM[nm]; return null; };   /* null = no transform form for this frame: the button is hidden */
+  /* v4.08: every model faces the camera (its own head direction is measured, models differ) and the camera pulls back to fit the whole frame */
+  var frameModel = function (i) { var T = window.THREE; V.face = 0; V.fitH = 7.6; try { i.wrap.rotation.set(0, 0, 0); i.wrap.updateMatrixWorld(true); var hd = null, hf = null, ft = null, ft2 = null; i.obj.traverse(function (o) { if (!o.isBone) return; if (o.name === 'Head') hd = o; else if (o.name === 'headfront') hf = o; else if (o.name === 'LeftFoot') ft = o; else if (o.name === 'RightFoot') ft2 = o; });
+      var a = new T.Vector3(), b = new T.Vector3(); if (hd && hf) { hd.getWorldPosition(a); hf.getWorldPosition(b); var dx = b.x - a.x, dz = b.z - a.z; if (Math.hypot(dx, dz) > 1e-4) V.face = Math.atan2(dx, dz); }
+      if (hd && ft) { hd.getWorldPosition(a); ft.getWorldPosition(b); V.fitH = Math.max(3, (a.y - b.y) * 1.25 + 1); } else { var bb = new T.Box3().setFromObject(i.wrap); if (isFinite(bb.max.y)) V.fitH = Math.max(3, Math.min(14, bb.max.y - bb.min.y)); } } catch (e) {} };
+  var custPaint = function (k, i) { try { var r = A().R(); if (r.mech !== k) return; var cg = A().custGet, cm = A().custMat, T = window.THREE; if (!cg || !cm) return; var c = cg(); if (!c || c.orig) return; i.obj.traverse(function (o) { if (!o.isMesh || !o.material || o.userData.keep) return; o.material = cm(o.material, c, T); }); } catch (e) {} };
+  var restPose = function () { (V.rest || []).forEach(function (r) { r[0].position.copy(r[1]); r[0].quaternion.copy(r[2]); r[0].scale.copy(r[3]); }); };
+  var poseBtns = function () { var b = document.querySelector('#garage .pose'); if (!b) return; b.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.p === (V.tfDir > 0 || V.tf > .5 ? 'tf' : V.pose)); }); };
+  var setPose = function (p) {
+    var T = window.THREE; if (!V.m) return;
+    if (p === 'tf') { if (V.tf > .5 || V.tfDir > 0) { V.tfDir = -1; } else { V.tfDir = 1; V.pose = 'still'; V.useEng = true; restPose(); if (V.mixer) V.mixer.stopAllAction(); if (!V.jet && !(window.__tfPose && V.m && V.m.obj && (function(){var h=false;V.m.obj.traverse(function(o){if(o.isBone&&o.name==='Hips')h=true;});return h;})())) { var jk = jetOf(V.key), tries = 0; if (!jk) { V.tfDir = 0; return; } var put = function () { var j = null; try { j = mdlInstance(jk, 0, /_alt$/.test(jk) ? 8.5 : 6.5, 'l'); } catch (e) {} if (!j) { try { mdlGet(jk); } catch (e) {} if (++tries < 60) { setTimeout(put, 150); return; } V.tfDir = -1; return; } V.jet = j; V.jetY = GROUND.indexOf(V.key) >= 0 ? 0 : 4.2; j.wrap.scale.setScalar(.001); j.wrap.position.y = V.jetY; V.s.add(j.wrap); paintAs(V.key, j); custPaint(V.key, j); }; put(); } } }
+    else { if (V.tf > .02) V.tfDir = -1; V.pose = p; if (V.mixer) { if (p === 'walk') { V.mixer.stopAllAction(); V.walkA.reset().play(); } else { V.mixer.stopAllAction(); restPose(); } } }
+    poseBtns();
+  };
+  /* v4.08 (user): the hangar uses the GAME's staged transform engine (lib/transform.js): crouch, legs fold into a tail, arms lock to the flanks,
+     the body pitches forward, the jet's armour pieces launch from head / chest / arms / feet and lock in one after another, the robot
+     tucks inside, ignition. Frames without a skeleton fall back to the simple swap below. */
+  var engineTf = function () {
+    if (!window.__tfPose || !V.m) return false; var T = window.THREE; var jk = jetOf(V.key); if (!jk) return false;
+    if (!V.e || V.e.mdl !== V.m) { if (V.e && V.e._jet && V.e._jet.grp.parent) V.e._jet.grp.parent.remove(V.e._jet.grp); V.root = V.root || (function () { var o = new T.Object3D(); V.s.add(o); return o; })(); V.e = { mdl: V.m, root: V.root, fk: V.key }; V.u = { vx: 0, vy: 0, tf: { k: 0, mode: 'jet' } }; V.eng = null; }
+    restPose(); var w = V.m.wrap; w.rotation.z = 0; w.rotation.x = 0; w.position.set(0, 0, 0); w.scale.setScalar(V.base || 1); w.visible = true; w.updateMatrixWorld(true);
+    try { window.__tfPose(V.e, V.m, V.u, V.tf, { jk: jk, pk: mkey(V.key), H: 7.6, alt: 4.6 }); } catch (er) { window.__grTfErr = String(er).slice(0, 160); return false; }
+    if (V.e._jet && !V.e._jet.__painted) { V.e._jet.__painted = 1; paintAs(V.key, { obj: V.e._jet.grp }); custPaint(V.key, { obj: V.e._jet.grp }); }
+    if (V.e._jet) V.e._jet.grp.rotation.y = w.rotation.y;
+    V.eng = !!V.e._jet; return true;
+  };
+  var tfTick = function (dt) {
+    if (!V.m || (!V.tfDir && !V.tf)) return;
+    if (V.tfDir) { var hero = window.__tf3 && window.__tf3.HERO[V.key]; V.tf = Math.max(0, Math.min(1, V.tf + V.tfDir * dt / (hero ? 5.2 : 3.4))); if (V.tf === 0 || V.tf === 1) V.tfDir = 0;
+      /* showcase camera: while the parts move the bay turns the frame from a front three-quarter view to its side, like a film transformation shot */ if (performance.now() - (V.touched || 0) > 4000) { var sw = V.tf * V.tf * (3 - 2 * V.tf); V.yaw = .55 - 1.25 * sw; V.touched = 0; V.tfCam = 1; } }
+    if (V.useEng !== false && engineTf()) { if (V.jet) V.jet.wrap.visible = false; if (V.flash) V.flash.visible = false; if (V.tf === 0 && V.e && V.e._jet) V.e._jet.grp.visible = false; poseBtns(); return; }
+    V.useEng = false; var was = V.tf;
+    var t = V.tf, e = function (x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+    var a = e(t / .55), b = e((t - .4) / .6);   // robot folds away 0-0.55, jet assembles 0.4-1
+    V.m.wrap.scale.setScalar((V.base || 1) * Math.max(.001, 1 - a * .999)); V.m.wrap.position.y = a * 3.5; V.m.wrap.rotation.z = a * .6; V.m.wrap.visible = a < .995;
+    if (V.jet) { var sc = Math.max(.001, b); V.jet.wrap.scale.setScalar(sc); V.jet.wrap.position.y = (V.jetY == null ? 4.2 : V.jetY) + (V.jetY ? Math.sin((V.free || 0) * 1.6) * .25 * b : 0); V.jet.wrap.rotation.z = (1 - b) * -1.2; V.jet.wrap.visible = b > .005; }
+    if (V.flash) { V.flash.material.opacity = Math.max(0, Math.sin(Math.min(1, t / 1) * Math.PI)) * .55; V.flash.scale.setScalar(2 + t * 6); }
+    else { var T = window.THREE; V.flash = new T.Sprite(new T.SpriteMaterial({ map: (function () { var c = document.createElement('canvas'); c.width = c.height = 64; var x = c.getContext('2d'), g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.4, 'rgba(160,220,255,.5)'); g.addColorStop(1, 'rgba(160,220,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); return new T.CanvasTexture(c); })(), transparent: true, depthWrite: false, blending: T.AdditiveBlending, opacity: 0 })); V.flash.position.set(0, 4.2, 1); V.s.add(V.flash); }
+    if ((was < .5) !== (V.tf < .5)) poseBtns();
   };
   // ------------------------------------------------------------------ sheet
   var kitRows = function (k) { var o = (window.__SK2KIT || {})[k] || {}, T2 = window.__SK2T || {}, out = ''; ['q', 'e', 'r'].forEach(function (s) { var id = o[s]; if (!id || !T2[id]) return; out += '<div class="sk"><kbd>' + s.toUpperCase() + '</kbd><span>' + esc(tx2(T2[id].n)) + '</span></div>'; }); if (!out) out = '<div class="sk"><kbd>Q</kbd><span>' + L2('손바닥 레이저', 'Palm laser') + '</span></div><div class="sk"><kbd>E</kbd><span>' + L2('빔 세이버', 'Beam saber') + '</span></div><div class="sk"><kbd>R</kbd><span>' + L2('군집 미사일', 'Missile swarm') + '</span></div>'; return out + '<div class="sk"><kbd>T</kbd><span>' + L2('절대 기술', 'Absolute art') + '</span></div>'; };
@@ -107,14 +156,14 @@
   };
   // ------------------------------------------------------------------ v4.06: roster pictures are rendered from the frame's REAL model (the old thumbnails were concept art and some did not match, e.g. Crimson Striker)
   var TH = { r: null, s: null, c: null, q: [], busy: false };
-  var thumbKey = function (k) { return 'grThumb4:' + k; };
+  var thumbKey = function (k) { return 'grThumb6:' + k; };
   var thumbOf = function (k) { try { return localStorage.getItem(thumbKey(k)); } catch (e) { return null; } };
   window.__frThumb = function (k) { return thumbOf(k) || ('models/thumbs/' + k + '.jpg'); };
   var thumbPump = function () {
     if (TH.busy || !TH.q.length) return; var T = window.THREE; if (!T) return; TH.busy = true; var k = TH.q.shift();
     try { if (!TH.r) { var cv = document.createElement('canvas'); cv.width = cv.height = 192; TH.r = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, preserveDrawingBuffer: true }); TH.r.outputColorSpace = T.SRGBColorSpace; TH.r.toneMapping = T.ACESFilmicToneMapping; TH.s = new T.Scene(); TH.s.add(new T.HemisphereLight(0xcfe0ff, 0x202030, 1.6)); var d = new T.DirectionalLight(0xffffff, 2.4); d.position.set(3, 6, 6); TH.s.add(d); var d2 = new T.DirectionalLight(0x7fd8ff, 1); d2.position.set(-5, 3, -4); TH.s.add(d2); TH.c = new T.PerspectiveCamera(28, 1, .1, 100); } } catch (e) { TH.busy = false; return; }
     var tries = 0; var go = function () { var i = null; try { i = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!i) { if (++tries < 80) { setTimeout(go, 150); return; } TH.busy = false; thumbPump(); return; }
-      try { i.wrap.rotation.y = .45; TH.s.add(i.wrap); paintAs(k, i);
+      try { frameModel(i); var f0 = V.face; i.wrap.rotation.y = -(V.face || 0) + .35; TH.s.add(i.wrap); paintAs(k, i);
         TH.c.position.set(0, 4.2, 17); TH.c.lookAt(0, 3.8, 0); TH.r.render(TH.s, TH.c); var url = TH.r.domElement.toDataURL('image/webp', .85); try { localStorage.setItem(thumbKey(k), url); } catch (e) {} TH.s.remove(i.wrap);
         document.querySelectorAll('#garage .fc[data-k="' + k + '"] img').forEach(function (im) { im.src = url; im.style.visibility = ''; }); } catch (e) {}
       TH.busy = false; setTimeout(thumbPump, 30); };
@@ -183,11 +232,27 @@
   var open = function () {
     if (!A() || !A().R) return; css(); close(); var r = A().R(); sel = r.mech || 'saber0';
     var g = document.createElement('div'); g.id = 'garage';
-    g.innerHTML = '<div class="bg"></div><div class="vg"></div><div class="scan"></div><div class="top"><div class="ttl"><small>HANGAR · BAY 07</small><b>' + L2('격납고', 'Hangar') + '</b></div><span style="flex:1"></span><span class="chip">' + L2('계급', 'Rank') + ' ' + esc(rkName(rankOf(r))) + ' · Lv' + (r.lv || 1) + '</span><button class="chip bpc" id="grBpBtn" title="' + L2('이 기종의 설계도 보기', 'View this frame\'s blueprint') + '">▦ ' + L2('설계도 보기', 'View blueprint') + '</button><button class="x" id="grX" title="' + L2('닫기', 'Close') + '">✕</button></div><div class="roster"></div><canvas></canvas><div class="name"></div><div class="sheet"></div>';
-    document.body.appendChild(g); g.querySelector('#grX').onclick = close; g.querySelector('#grBpBtn').onclick = function () { blueprint(sel || r.mech); };
+    g.innerHTML = '<div class="bg"></div><div class="vg"></div><div class="scan"></div><div class="top"><div class="ttl"><small>HANGAR · BAY 07</small><b>' + L2('격납고', 'Hangar') + '</b></div><span style="flex:1"></span><span class="chip">' + L2('계급', 'Rank') + ' ' + esc(rkName(rankOf(r))) + ' · Lv' + (r.lv || 1) + '</span><button class="chip bpc" id="grBpBtn" title="' + L2('이 기종의 설계도 보기', 'View this frame\'s blueprint') + '">▦ ' + L2('설계도 보기', 'View blueprint') + '</button><button class="x" id="grX" title="' + L2('닫기', 'Close') + '">✕</button></div><div class="roster"></div><canvas></canvas><div class="pose"><button data-p="still" class="on">' + L2('정지', 'Stand') + '</button><button data-p="walk">' + L2('걷기', 'Walk') + '</button><button data-p="tf">' + L2('변신 보기', 'Transform') + '</button></div><div class="name"></div><div class="sheet"></div>';
+    document.body.appendChild(g); g.querySelector('#grX').onclick = close; g.querySelectorAll('.pose button').forEach(function (b) { b.onclick = function () { setPose(b.dataset.p); }; }); g.querySelector('#grBpBtn').onclick = function () { blueprint(sel || r.mech); };
     roster(); sheet(sel); if (bay(g.querySelector('canvas'))) showModel(sel);
   };
   window.__garage = open;
+  /* test harness (user: "test the transform of every frame"): renders one frame at given transform stages and returns pictures */
+  window.__grShot = function (k, tfs, cb) { var t0 = performance.now(); showModel(k); var jk = jetOf(k); try { if (jk) mdlGet(jk); } catch (e) {}
+    var wait = function () { var ready = V.m && V.key === k; var jr = !jk || (window.__AX && window.__AX.mc && window.__AX.mc(jk) && window.__AX.mc(jk).st === 'ok'); if ((!ready || !jr) && performance.now() - t0 < 9000) { setTimeout(wait, 150); return; }
+      var out = [], info = { k: k, jet: jk, model: !!V.m, jetLoaded: jr };
+      V.yaw = .5; tfs.forEach(function (t) { V.tfDir = 0; V.tf = t; V.useEng = true; window.__grTfErr = null; window.__tfErr = null; try { tfTick(0); } catch (e) { info.e = String(e).slice(0, 100); } if (V.m) V.m.wrap.rotation.y = (V.face != null ? -V.face : FRONT) + V.yaw; if (V.e && V.e._jet) V.e._jet.grp.rotation.y = V.m.wrap.rotation.y; var fh = (t > .5 ? 7.6 : (V.fitH || 7.6)), cd = fh * 2.55 + 4; V.c.position.set(0, fh * .62 + .6, cd); V.c.lookAt(0, fh * .5, 0); V.r.render(V.s, V.c); out.push(V.r.domElement.toDataURL('image/jpeg', .55)); info['eng' + t] = !!V.eng; if (window.__tfErr || window.__grTfErr) info.err = window.__tfErr || window.__grTfErr; });
+      V.tf = 0; try { tfTick(0); } catch (e) {} cb(out, info); };
+    wait(); };
+  /* v4.08 audit (user: "run the simulation yourself"): renders every frame front-on in the hangar light and reports load / height / jet form */
+  window.__grAudit = function (keys, done) { var T = window.THREE, M = A().MECHS, out = [], i = 0; keys = keys || Object.keys(M).filter(function (k) { return !M[k].god; });
+    var one = function () { if (i >= keys.length) { done && done(out); return; } var k = keys[i++], t0 = performance.now(), tries = 0;
+      var go = function () { var inst = null; try { inst = mdlInstance(mkey(k), 0, 7.6, 'h'); } catch (e) {} if (!inst) { if (++tries < 60) { setTimeout(go, 150); return; } out.push({ k: k, ok: 0 }); one(); return; }
+        try { if (!TH.r) { TH.q = []; thumbPump(); } } catch (e) {} if (!TH.r) { setTimeout(go, 200); return; }
+        frameModel(inst); inst.wrap.rotation.y = -(V.face || 0) + .35; TH.s.add(inst.wrap); paintAs(k, inst); inst.wrap.updateMatrixWorld(true); var bb = new T.Box3().setFromObject(inst.wrap); TH.c.position.set(0, 4.2, 17); TH.c.lookAt(0, 3.8, 0); TH.r.render(TH.s, TH.c); var url = TH.r.domElement.toDataURL('image/jpeg', .8); TH.s.remove(inst.wrap);
+        try { localStorage.setItem(thumbKey(k), url); } catch (e) {} out.push({ k: k, ok: 1, h: +(bb.max.y - bb.min.y).toFixed(1), jet: jetOf(k), url: url, ms: Math.round(performance.now() - t0) }); setTimeout(one, 20); };
+      go(); };
+    one(); };
   // the lobby dock "정비소" opens the hangar
   var mine = function () { open(); };
   var hook = function () { var b = document.getElementById('mHangar'); if (!b || b.onclick === mine) return; b.onclick = mine; };   /* replace the dock button's own handler (a listener would run after it and open both screens) */

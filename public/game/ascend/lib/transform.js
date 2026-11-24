@@ -37,6 +37,9 @@ addEventListener('keydown',function(e){if(e.code==='KeyY'&&!e.repeat){var u=me()
 function hookInput(){var li=window.localInput;if(!li||li.__tf||window.__hkTfI)return;window.__hkTfI=1;var w=function(u){var inp=li(u);try{if(isJet(u)){inp.a1=false;inp.a2=false;inp.ul=false;inp.ab=false;var g=G();var moving=u.tf.mode==='jet';if(inp.fire&&moving){u._tfFire=(u._tfFire||0)-1/60;if(u._tfFire<=0&&AX().boltFire){u._tfFire=.16;var a=inp.aim!=null?inp.aim:(u.aa||0);try{AX().boltFire(u,a+(Math.random()-.5)*.03,{dmg:22*(1+((window.__plv&&window.__plv())||1)*.03),w:44,vis:46,r:4,spd:3000});}catch(e){}}}inp.fire=false;if(!moving){inp.mx*=.2;inp.my*=.2;}}}catch(e){}return inp;};w.__tf=1;window.localInput=w;}
 // ---------- per-frame: progress, speed, protection, sounds ----------
 function hookStep(){var st=window.step;if(!st||st.__tf||window.__hkTfS)return;window.__hkTfS=1;var w=function(dt){st(dt);try{var u=me();if(!u||!u.tf)return;var T=u.tf,p=prof(AX().myMechKey?AX().myMechKey():'');
+  /* v4.09 fix (user: "manual play does not respond"): the battle entrance holds the frame half-transformed (mode 'hold'); when the entrance ends
+     by its time-out (slow phones / slow tabs) nobody released it, so the frame stayed a jet forever and every skill was locked. Release it. */
+  var g0=G();if(T.mode==='hold'&&g0&&(g0._intDone===1||(g0._int0==null&&(g0.t||0)>5))&&!window.__tfHoldOK){T.mode=T.k>.02?'toRobot':'robot';}
   if(T.mode==='toJet'){T.k=Math.min(1,(T.k||0)+dt/DUR);if(T.k>=1)T.mode='jet';}else if(T.mode==='toRobot'){T.k=Math.max(0,(T.k||0)-dt/(DUR*.9));if(T.k<=0){T.mode='robot';land(u);}}
   if(T.mode==='toJet'||T.mode==='toRobot')u.spawnProt=Math.max(u.spawnProt||0,.12);// invulnerable while parts move
   // flight physics: the existing flight mode carries the frame; jets add the speed
@@ -62,16 +65,16 @@ function parts(e,m,H,p){if(e._tfP)return e._tfP;var T=T3();var B=AX().motBones(m
   var ft=s2<0?B.LeftFoot:B.RightFoot;if(ft){var ring=mk(new T.CylinderGeometry(H*.035*p.bulk,H*.045*p.bulk,H*.05,10,1,true),dark);ft.add(ring);o.thr.push(ring);var cg=(window.flameGeo?window.flameGeo(T,H*.03*p.bulk,H*.28):new T.ConeGeometry(H*.03*p.bulk,H*.28,10,1,true));cg.translate(0,-H*.14,0);var fl=new T.Mesh(cg,new T.MeshBasicMaterial({map:(window.flameTex?window.flameTex():null),color:p.flame,transparent:true,opacity:.6,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fl.userData.keep=1;fl.frustumCulled=false;ft.add(fl);o.fl.push(fl);}}
  e._tfP=o;return o;}
 function scaleLocal(obj,s,H){obj.scale.setScalar(Math.max(.001,s));}
-function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf||window.__hkTfM)return;window.__hkTfM=1;var w=function(e,m,u,dt,now){ma(e,m,u,dt,now);try{if(!u||!u.tf||!m||!m.obj||!m.wrap)return;var A=AX();var B=A.motBones&&A.motBones(m);if(!B)return;var T=T3();var k=u.tf.k||0;var p=prof(A.myMechKey?A.myMechKey():'');
-  var H=(e.wg&&e.wg.H)||((e.mfx&&e.mfx.H)||90);
-  var jk=jetKey();var mcj=jk&&A.mc?A.mc(jk):null;if(jk&&!mcj){try{A.mdlGet&&A.mdlGet(jk);}catch(er){}}
+function tfPose(e,m,u,k,opt){opt=opt||{};var A=AX();var B=A.motBones&&A.motBones(m);if(!B)return;var T=T3();var p=prof(opt.pk||(A.myMechKey?A.myMechKey():''));if(opt.alt!=null)p.alt=opt.alt;
+  var H=opt.H||(e.wg&&e.wg.H)||((e.mfx&&e.mfx.H)||90);
+  var jk=opt.jk||jetKey();var mcj=jk&&A.mc?A.mc(jk):null;if(jk&&!mcj){try{A.mdlGet&&A.mdlGet(jk);}catch(er){}}
   var shellOK=!!(mcj&&mcj.st==='ok');
   var c=seg(k,0,.18),l=seg(k,.1,.42),a=seg(k,.25,.52),pt=seg(k,.4,.7),pa=seg(k,.68,.92),ig=seg(k,.9,1);
   var dip=c*(1-pt);
   // 2 legs fold back into a tail (thighs together and straight back, knees locked)
   var fwd=new T.Vector3(0,0,1),upv=new T.Vector3(0,1,0);
   var qL=function(bone,axis,ang){if(!bone||!ang)return;bone.quaternion.multiply(new T.Quaternion().setFromAxisAngle(axis,ang));};
-  m.wrap.rotation.z+=(window.__TFSIGN||-1)*pt*p.pitch;m.wrap.position.y+=-H*.08*dip;
+  m.wrap.rotation.z+=(window.__TFSIGN||-1)*pt*p.pitch;m.wrap.position.y+=H*(GROUNDF[jk]?.12:.3)*c*(1-pt*.0);   /* v4.09 (user: the robot sank into the deck and lost its legs): it now springs up off the ground as the transformation starts, never dips below it */
   // 2–3 legs straighten into a twin tail along the body, arms lock along the flanks (direction-based, works on any rig)
   m.wrap.updateMatrixWorld(true);var wp=function(b){var v=new T.Vector3();b.getWorldPosition(v);return v;};var bodyUp=(B.Head&&B.Hips)?wp(B.Head).sub(wp(B.Hips)).normalize():new T.Vector3(0,1,0);var down=new T.Vector3(0,-1,0);
   var point=function(a1,b1,dir,kk){if(!a1||!b1||kk<.01||!A.rotW)return;var cur=wp(b1).sub(wp(a1)).normalize();var q=new T.Quaternion().setFromUnitVectors(cur,dir.clone().normalize());A.rotW(a1,new T.Quaternion().slerp(q,kk));a1.updateMatrixWorld(true);};
@@ -84,17 +87,34 @@ function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf||window.__hkTfM)ret
    var sp=Math.hypot(u.vx||0,u.vy||0);for(var q=0;q<o.fl.length;q++){var fl=o.fl[q];fl.visible=ig>.02;fl.scale.set(1,ig*(.7+Math.min(1,sp/900)*.8)*(1+Math.random()*.15),1);}
    if(k>.45){try{if(e.eq&&e.eq.o)for(var n in e.eq.o){var eo=e.eq.o[n];if(eo&&eo.isObject3D)eo.visible=false;}if(e.grip)['hilt','sgun','blade2','palm'].forEach(function(n2){if(e.grip[n2])e.grip[n2].visible=false;});if(e.mfx&&e.mfx.saber)e.mfx.saber.visible=false;}catch(er){}}
    var vis=k>.01&&!shellOK;o.nose.visible=vis;if(shellOK){o.fl.forEach(function(f){f.visible=false;});}
-   if(shellOK){if(m._ws0==null)m._ws0=m.wrap.scale.x;m.wrap.scale.setScalar(m._ws0);shellPose(e,m,u,k,p,H,B);}else if(e._jet){e._jet.grp.visible=false;m.wrap.visible=true;}
+   if(shellOK){if(m._ws0==null)m._ws0=m.wrap.scale.x;m.wrap.scale.setScalar(m._ws0);shellPose(e,m,u,k,p,H,B,jk);}else if(e._jet){e._jet.grp.visible=false;m.wrap.visible=true;}
    // keep the hips over the unit at flight height (pitching about the feet would push the body ahead of the frame)
-   if(B.Hips&&e.root&&pt>0){m.wrap.updateMatrixWorld(true);var hp=new T.Vector3();B.Hips.getWorldPosition(hp);var rp=new T.Vector3();e.root.getWorldPosition(rp);var tgt=new T.Vector3(rp.x,rp.y+H*.5+p.alt*pt,rp.z);var par=m.wrap.parent;if(par){var a1=par.worldToLocal(hp.clone());var a2=par.worldToLocal(hp.clone().lerp(tgt,pt));m.wrap.position.add(a2.sub(a1));m.wrap.updateMatrixWorld(true);}}o.fins.forEach(function(f){f.visible=vis;});o.thr.forEach(function(t){t.visible=vis;});}
- }catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
+   if(B.Hips&&e.root&&pt>0){m.wrap.updateMatrixWorld(true);var hp=new T.Vector3();B.Hips.getWorldPosition(hp);var rp=new T.Vector3();e.root.getWorldPosition(rp);var tgt=new T.Vector3(rp.x,rp.y+(GROUNDF[jk]?H*.32:H*.5+p.alt*pt),rp.z);var par=m.wrap.parent;if(par){var a1=par.worldToLocal(hp.clone());var a2=par.worldToLocal(hp.clone().lerp(tgt,pt));m.wrap.position.add(a2.sub(a1));m.wrap.updateMatrixWorld(true);}}o.fins.forEach(function(f){f.visible=vis;});o.thr.forEach(function(t){t.visible=vis;});}
+ }
+window.__tfPose=tfPose;   /* v4.08: the same staged transform drives the hangar preview */
+function hookPose(){var ma=window.mdlAnimate;if(!ma||ma.__tf||window.__hkTfM)return;window.__hkTfM=1;var w=function(e,m,u,dt,now){ma(e,m,u,dt,now);try{if(!u||!u.tf||!m||!m.obj||!m.wrap)return;tfPose(e,m,u,u.tf.k||0,null);}catch(er){window.__tfErr=String(er&&er.stack||er).slice(0,200);}};w.__tf=1;window.mdlAnimate=w;}
 
+
+/* v4.08 (user): the flying form wears the SAME colours as the robot (original or the player's paint).
+   The robot's own texture x material colour is sampled into two tones (armour, frame); the jet texture is re-tinted by brightness onto them. */
+var PALC={};
+function robotPal(obj){var T=T3();var px=[];try{obj.traverse(function(o){if(!o.isMesh||!o.material||o.userData.keep||px.length>6000)return;var m=Array.isArray(o.material)?o.material[0]:o.material;var im=m.map&&m.map.image;var mc=m.color||{r:1,g:1,b:1};if(!im||!im.width){px.push([mc.r*255,mc.g*255,mc.b*255]);return;}var c=document.createElement('canvas');c.width=c.height=48;var g=c.getContext('2d');try{g.drawImage(im,0,0,48,48);}catch(e){return;}var d=g.getImageData(0,0,48,48).data;for(var i=0;i<d.length;i+=4){if(d[i+3]<128)continue;px.push([d[i]*mc.r,d[i+1]*mc.g,d[i+2]*mc.b]);}});}catch(e){}
+ if(!px.length)return null;var L=function(p){return Math.max(p[0],p[1],p[2]);};   /* sort by brightness VALUE so saturated reds/blues count as the armour colour */px.sort(function(a,b){return L(a)-L(b);});var avg=function(a){var s=[0,0,0];a.forEach(function(p){s[0]+=p[0];s[1]+=p[1];s[2]+=p[2];});return s.map(function(v){return v/Math.max(1,a.length);});};
+ var n=px.length,dark=avg(px.slice(Math.floor(n*.05),Math.floor(n*.35))),main=avg(px.slice(Math.floor(n*.55),Math.floor(n*.95)));return {main:main,dark:dark,key:main.map(Math.round).join(',')+'|'+dark.map(Math.round).join(',')};}
+function recolorMat(mat,pal){if(!mat||!pal||!mat.map||!mat.map.image)return mat;var key=mat.map.uuid+'|'+pal.key;if(PALC[key])return PALC[key];var T=T3();var im=mat.map.image;var w=Math.min(512,im.width),h=Math.min(512,im.height),c=document.createElement('canvas');c.width=w;c.height=h;var g=c.getContext('2d');try{g.drawImage(im,0,0,w,h);}catch(e){return mat;}var D=g.getImageData(0,0,w,h),a=D.data;
+ for(var i=0;i<a.length;i+=4){var r=a[i],gg=a[i+1],b=a[i+2],mx=Math.max(r,gg,b),l=(mx*.7+(.3*r+.59*gg+.11*b)*.3)/255,mn=Math.min(r,gg,b),sat=mx?(mx-mn)/mx:0;var s=Math.max(0,Math.min(1,(l-.22)/.5));s=s*s*(3-2*s);
+  var tr=pal.dark[0]*(1-s)+pal.main[0]*s,tg=pal.dark[1]*(1-s)+pal.main[1]*s,tb=pal.dark[2]*(1-s)+pal.main[2]*s;var k2=(sat>.5&&mx>238)?.4:.05;   /* bright saturated lights (engines, visors) keep some of their glow */
+  a[i]=Math.round(tr*(1-k2)+r*k2);a[i+1]=Math.round(tg*(1-k2)+gg*k2);a[i+2]=Math.round(tb*(1-k2)+b*k2);}
+ g.putImageData(D,0,0);var t=new T.CanvasTexture(c);t.colorSpace=mat.map.colorSpace;t.flipY=mat.map.flipY;t.wrapS=mat.map.wrapS;t.wrapT=mat.map.wrapT;var m2=mat.clone();m2.map=t;if(m2.color)m2.color.setScalar(1);m2.needsUpdate=true;PALC[key]=m2;return m2;}
+window.__tfPal=robotPal;window.__tfRecolor=recolorMat;
 // ================= v2: "shell" transform — a Meshy jet model split into armour pieces; each piece launches from the robot part it comes from and locks into the jet =================
 var JETM={mech3:'saberjet',mech3n:'saberjet',mech3w:'saberjet',mech3g:'saberjet',mech4:'mech4_jet',m_sky:'m_sky_jet',m_striker:'m_striker_jet',m_titan:'m_titan_jet',m_ranger:'m_ranger_jet',m_artillery:'m_artillery_jet',m_wizard:'m_wizard_jet',m_phantom:'m_phantom_jet',m_samurai:'m_samurai_jet',m_origin:'m_origin_jet',m_guardian:'m_guardian_jet',mech_leg:'mech_leg_jet'};
 /* v3.56: the jet follows the frame actually being flown (the arena skin first); frames without their own jet model borrow the closest one of their faction
    instead of falling back to a robot lying flat in the air */
 var JFAC=[[/^emp_|^god_red|^arkos/,'m_striker_jet'],[/^fed_|^god_white|^seraph/,'m_sky_jet'],[/^alp_|^god$|^m_wizard/,'m_wizard_jet'],[/^omg_|^god_black|^omega/,'m_phantom_jet']];
-function jetKey(u){var uu=u||me();var k=(uu&&uu.skin)||'';var j=JETM[k];if(!j){var k2=AX().myMechKey?AX().myMechKey():'';j=JETM[k2];if(!j){k=k||k2;for(var i=0;i<JFAC.length;i++)if(JFAC[i][0].test(k)){j=JFAC[i][1];break;}}}return j||'saberjet';}
+/* v4.08: frames with their own designed flying form use it (Libertas: space frigate). Checked by frame key first, before the borrowed skin model */
+var ALTF={fed_myth_libertas:1,alp_myth_genesis:1,alp_hero_glyph:1,alp_hero_oracle:1,alp_hero_seeker:1,alp_leg_solaris:1,alp_leg_aeon:1,fed_hero_atlas:1,fed_leg_tempest:1,fed_leg_orion:1,fed_hero_longshot:1,omg_myth_eclipse:1,omg_hero_wraith:1,omg_leg_warlord:1,emp_myth_sol:1,emp_hero_archer:1,emp_leg_valerian:1,emp_hero_lancer:1};
+function jetKey(u){var uu=u||me();try{var fk=AX().myMechKey?AX().myMechKey():'';if(uu&&uu===me()&&ALTF[fk])return fk+'_alt';}catch(e){}var k=(uu&&uu.skin)||'';var j=JETM[k];if(!j){var k2=AX().myMechKey?AX().myMechKey():'';j=JETM[k2];if(!j){k=k||k2;for(var i=0;i<JFAC.length;i++)if(JFAC[i][0].test(k)){j=JFAC[i][1];break;}}}return j||'saberjet';}
 var JC={};// split cache per jet model
 function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);if(!c||c.st!=='ok'||!c.g)return null;var src=c.g.scene;src.updateMatrixWorld(true);var tris=[];var mat=null;var box=new T.Box3();
  src.traverse(function(o){if(!o.isMesh)return;mat=mat||(Array.isArray(o.material)?o.material[0]:o.material);var g=o.geometry.index?o.geometry.toNonIndexed():o.geometry.clone();g.applyMatrix4(o.matrixWorld);var P=g.attributes.position,N=g.attributes.normal,U=g.attributes.uv;for(var i=0;i<P.count;i+=3){var t={p:[],n:[],u:[]};for(var j=0;j<3;j++){t.p.push(P.getX(i+j),P.getY(i+j),P.getZ(i+j));if(N)t.n.push(N.getX(i+j),N.getY(i+j),N.getZ(i+j));if(U)t.u.push(U.getX(i+j),U.getY(i+j));box.expandByPoint(new T.Vector3(P.getX(i+j),P.getY(i+j),P.getZ(i+j)));}tris.push(t);}});
@@ -115,13 +135,21 @@ function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);
 // where each jet piece comes from on the robot
 var SRC={nose:'Head',body:'Spine',wingL:'LeftArm',wingR:'RightArm',tailL:'LeftFoot',tailR:'RightFoot'};
 var ORDER={body:0,wingL:.12,wingR:.12,nose:.24,tailL:.32,tailR:.32};
-function shellBuild(e,f,H,pf){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,S.mat);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
+/* v4.08: ground forms (tanks, trucks, walkers, bikes) sit on the deck with no jet flames; tall round forms are scaled so they don't balloon */
+var GROUNDF={};'fed_hero_mortar fed_leg_astra fed_hero_bastion omg_leg_nocturne omg_hero_venom omg_hero_crusher omg_hero_hive emp_leg_aurelian emp_mp_assault emp_mp_heavy emp_mp_artillery emp_hero_inquisitor emp_hero_herald emp_leg_gravis alp_hero_prism alp_hero_glyph'.split(' ').forEach(function(k){GROUNDF[k+'_alt']=1;});window.__tfGround=GROUNDF;
+function shellBuild(e,f,H,pf){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();
+ /* v4.08 (user): the jet wears the frame's colours - AX-00 white/black recolour and the player's own paint, same as the robot */
+ var JM=S.mat;try{if(e&&e.mdl&&typeof G!=='undefined'&&G&&G.local&&G.local.unit&&R3.units.get(G.local.unit.id)===e){var tn=window.__mechTint?window.__mechTint(G.local.unit):0;if(tn&&window.__axGrey&&JM.map){JM=JM.clone();var gt=window.__axGrey(JM.map);if(gt){JM.map=gt;JM.color.setScalar(1);}}}var palR=(e&&e.mdl&&e.mdl.obj)?robotPal(e.mdl.obj):null;if(palR)JM=recolorMat(JM,palR);}catch(er){}var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,JM);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
  // engine flames at the tail
  var fl=[];for(var s=-1;s<=1;s+=2){var cg=(window.flameGeo?window.flameGeo(T,len*.035,len*.32):new T.ConeGeometry(len*.035,len*.32,10,1,true));cg.rotateZ(Math.PI/2);cg.translate(-len*.16,0,0);var fm=new T.Mesh(cg,new T.MeshBasicMaterial({map:(window.flameTex?window.flameTex():null),color:(pf&&pf.flame)||0xff7a4a,transparent:true,opacity:.65,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fm.position.set(-len*.5,len*.0,s*len*.06);fm.userData.keep=1;fm.frustumCulled=false;grp.add(fm);fl.push(fm);}
- grp.userData.keep=1;e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len};return e._jet;}
-function shellPose(e,m,u,k,p,H,B){var T=T3();var J=shellBuild(e,jetKey(),H,p);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
+ grp.userData.keep=1;
+ /* measure the finished form: squash balloon shapes (spheres, pods) to at most .62 x length tall, and remember the bottom for ground forms */
+ var gnd=!!GROUNDF[f],bot=0;try{var bx=new T.Box3(),tv=new T.Vector3();for(var k1 in pcs){var hh=pcs[k1].hold;hh.position.copy(pcs[k1].home);hh.rotation.set(0,0,0);hh.scale.setScalar(len);}grp.updateMatrixWorld(true);bx.setFromObject(grp);var hgt=bx.max.y-bx.min.y;var fz=hgt>len*.62?len*.62/hgt:1;if(fz<1){len*=fz;for(var k2 in pcs)pcs[k2].home.multiplyScalar(fz);fl.forEach(function(f2){f2.scale.multiplyScalar(fz);f2.position.multiplyScalar(fz);});}bot=bx.min.y*fz;if(gnd)fl.forEach(function(f3){f3.visible=false;});}catch(er){}
+ e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len,gnd:gnd,bot:bot};return e._jet;}
+function shellPose(e,m,u,k,p,H,B,jk){var T=T3();var J=shellBuild(e,jk||jetKey(),H,p);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
+ if(window.__tf3&&!window.__tf3Off){try{if(window.__tf3.pose(e,m,u,k,p,H,B,jk,J))return true;}catch(er){window.__tf3Err=String(er&&er.stack||er).slice(0,300);}}   /* v4.09 panel engine */
  // jet frame: same place/heading as the robot, lifted to flight height (robot wrap faces +X)
- var lift=seg(k,.35,.9);J.grp.position.set(m.wrap.position.x,H*.45+p.alt*lift,m.wrap.position.z);J.grp.rotation.set(0,m.wrap.rotation.y,0);J.grp.visible=k>.02;J.grp.updateMatrixWorld(true);
+ var lift=seg(k,.35,.9);var y1=J.gnd?(-J.bot+(m.wrap.position.y>0&&!window.__grV?0:0)):H*.45+p.alt;var y0=H*.45;J.grp.position.set(m.wrap.position.x,y0+(y1-y0)*lift,m.wrap.position.z);J.grp.rotation.set(0,m.wrap.rotation.y,0);J.grp.visible=k>.02;J.grp.updateMatrixWorld(true);
  var inv=new T.Matrix4().copy(J.grp.matrixWorld).invert();var wp=new T.Vector3();
  for(var key in J.pcs){var pc=J.pcs[key];var st=ORDER[key]||0;var kk=seg(k,.18+st,.62+st);var src=B[SRC[key]]||B.Spine||B.Hips;src.getWorldPosition(wp);var from=wp.clone().applyMatrix4(inv);
   pc.hold.position.copy(from).lerp(pc.home,kk);var ov=Math.sin(kk*Math.PI)*.18;pc.hold.position.y+=ov*J.len*.15;
@@ -130,7 +158,7 @@ function shellPose(e,m,u,k,p,H,B){var T=T3();var J=shellBuild(e,jetKey(),H,p);if
   if(kk<.9)pc.locked=0;}
  // the robot folds and shrinks into the hull, then hides inside it
  var hide=seg(k,.55,.92);m.wrap.scale.setScalar((m._ws0||1)*(1-.55*hide));m.wrap.visible=k<.93;
- var ig=seg(k,.9,1);var sp=Math.hypot(u.vx||0,u.vy||0);J.fl.forEach(function(f){f.visible=ig>.02;f.scale.set(1,ig*(.7+Math.min(1,sp/900)*.9)*(1+Math.random()*.15),1);});
+ var ig=seg(k,.9,1);var sp=Math.hypot(u.vx||0,u.vy||0);J.fl.forEach(function(f){f.visible=ig>.02&&!J.gnd;f.scale.set(1,ig*(.7+Math.min(1,sp/900)*.9)*(1+Math.random()*.15),1);});
  return true;}
 
 // ---------- skill bar: rightmost cell + phone button ----------
