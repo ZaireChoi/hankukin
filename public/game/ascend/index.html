@@ -3890,7 +3890,7 @@ const EPIS=[
    {l:K('처치한다','Destroy it'),rw:{shards:250},say:['sera',K('목표 제거. …알에서 마지막 신호가 끊겼습니다.','Target eliminated. …The eggs\' last signals have gone silent.')]},
    {l:K('관찰한다','Watch it'),set:'observeZeta',trust:{sera:1,luna:1},say:['sera',K('흥미롭습니다. 명령 신호가 없을 때 제타는 온순합니다. 누군가 그들을 조종하고 있습니다.','Fascinating. Without a command signal, the Zeta are docile. Someone has been pulling their strings.')]}]},
   {t:'choice',w:'luna',x:K('동굴 깊은 곳에 잠든 안드로이드가 있어요! 길이 위험하지만…','There\'s an android sleeping deep in the cave! The way down looks nasty, though…'),o:[
-   {l:K('위험을 감수하고 구출한다 (전투)','Risk it — go in after her (battle)'),battle:{waves:3,boss:'ztitan',diff:2},rw:{link:'a_fire',chance:1,shards:200},set:'igni'},
+   {l:K('위험을 감수하고 구출한다 (전투)','Risk it — go in after her (battle)'),battle:{waves:3,boss:'zguard',diff:2},rw:{link:'a_fire',chance:1,shards:200},set:'igni'},
    {l:K('신호만 기록하고 물러난다','Log the signal and pull back'),rw:{shards:150,item:1}}]},
   S('igni','…날 깨운 게 너야? 좋아, 불타는 놈들은 내가 다 맡지.','…You\'re the one who woke me? Fine. Leave anything that burns to me.',{if:fl('igni')}),
   {t:'battle',x:K('이그니스의 시즈 타이탄을 쓰러뜨려라.','Bring down the Siege Titan of Ignis.'),waves:4,boss:'ztitan',diff:3,rw:{shards:400,item:3}},
@@ -8723,7 +8723,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_mtree.js?v=394"></script>
 <script src="lib/ascend_posture.js?v=398"></script>
 <script src="lib/ascend_feel.js?v=400"></script>
-<script src="lib/ascend_story2.js?v=403"></script>
+<script src="lib/ascend_story2.js?v=404"></script>
 <script src="lib/ascend_foes.js?v=403"></script>
 <script src="lib/ascend_frames.js?v=406"></script>
 <script src="lib/ascend_garage.js?v=423"></script>
