@@ -18,9 +18,9 @@
   var phone = function () { return !!window.__phone; };
   // ------------------------------------------------------------------ kinds (sizes in world units)
   var KIND = {
-    micro: { len: 17, flame: 10, fw: 4.2, ex: 60, puff: 7, puffL: .5, puffDt: .022, ring: 0 },   // small: 20 of them fit the two shoulder pods
-    heavy: { len: 46, flame: 30, fw: 10, ex: 150, puff: 16, puffL: .7, puffDt: .03, ring: 0 },
-    rocket: { len: 34, flame: 22, fw: 7, ex: 100, puff: 11, puffL: .5, puffDt: .03, ring: 0 }
+    micro: { len: 17, flame: 10, fw: 4.2, ex: 60, puff: 6, puffL: .2, puffDt: .03, ring: 0 },   // small: 20 of them fit the two shoulder pods
+    heavy: { len: 46, flame: 30, fw: 10, ex: 150, puff: 14, puffL: .28, puffDt: .035, ring: 0 },
+    rocket: { len: 34, flame: 22, fw: 7, ex: 100, puff: 10, puffL: .22, puffDt: .035, ring: 0 }   /* v4.17: short smoke tails - no long white columns */
   };
   // ------------------------------------------------------------------ WARHEADS (the body stays black/grey/blue; the warhead shows in the nose light, the flame and the blast)
   //   he    red-orange : full damage, fire blast                       emp   silver : stuns machines 1.8 s (organics 0.5 s), 40 % damage
@@ -180,7 +180,7 @@
       GLOW.add(x + Math.cos(a) * r, h + Math.random() * r, y + Math.sin(a) * r, Math.cos(a) * 40, 30, Math.sin(a) * 40, ex * .35, ex * 1.05, .34 + Math.random() * .1, 1, .55 + Math.random() * .2, .18, .9, 2); }
     GLOW.add(x, h, y, 0, 0, 0, ex * .3, ex * .9, .2, .45, .75, 1, .7);                                     // blue core (the missile colour)
     for (var j = 0; j < (ph ? 2 : 3); j++) { var b = Math.random() * 6.28;
-      SMOKE.add(x + Math.cos(b) * ex * .2, h + 6, y + Math.sin(b) * ex * .2, Math.cos(b) * 30, 46 + Math.random() * 30, Math.sin(b) * 30, ex * .45, ex * 1.35, .8 + Math.random() * .4, .2, .21, .23, .55, 1.2); }
+      SMOKE.add(x + Math.cos(b) * ex * .2, h + 26, y + Math.sin(b) * ex * .2, Math.cos(b) * 40, 70 + Math.random() * 30, Math.sin(b) * 40, ex * .3, ex * .8, .45 + Math.random() * .2, .2, .21, .23, .45, 1.2);   /* v4.17: blast smoke rises and goes - no round brown blob left on the ground */ }
     try { for (var q = 0; q < (ph ? 3 : 5); q++) { var c = Math.random() * 6.28, sp = 110 + Math.random() * 220; part(x, y, Math.cos(c) * sp, Math.sin(c) * sp, .32, q % 2 ? '#ff9a3c' : '#ffe2a0', 4.5, h); } } catch (e) {}
     try { if (big || Math.random() < .35) G.parts.push({ x: x, y: y, vx: 0, vy: 0, l: .26, ml: .26, c: 'ring', s: ex * 1.3 }); } catch (e) {}
     var t = G.t || 0; if (t - sndT > .07) { sndT = t; try { SFX.noise(.16, .1 + (big ? .1 : 0), big ? 380 : 700); } catch (e) {} }
