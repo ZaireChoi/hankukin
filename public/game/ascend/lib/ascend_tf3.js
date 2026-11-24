@@ -12,6 +12,9 @@
   'use strict';
   var T3 = function () { return window.THREE; };
   var HERO = { mech3: { fx: '#ff8a3a', n: 72, style: 'fire' }, fed_myth_libertas: { fx: '#8fd0ff', n: 72, style: 'elegant' }, emp_myth_sol: { fx: '#ffd36a', n: 72, style: 'royal' }, alp_myth_genesis: { fx: '#eef6ff', n: 72, style: 'elegant' }, omg_myth_eclipse: { fx: '#c77bff', n: 72, style: 'aggressive' } };
+  /* v4.11 (user): Seraphim Prime is legendary - its flight-form parts are called down from space and lock together into a form twice the usual size */
+  var SCALE = { mech_leg: 2 }, SKY = { mech_leg: { fx: '#fff3b0' } };
+  HERO.mech_leg = { fx: '#fff3b0', n: 72, style: 'elegant' };
   var styleOf = function (fk) { if (HERO[fk]) return HERO[fk].style; if (/^(emp|omg)_/.test(fk)) return 'aggressive'; return 'elegant'; };
   var STY = {
     elegant: { over: .07, steps: 0, flip: 1.0, spread: .55 },
@@ -109,7 +112,8 @@
   var pose = function (e, m, u, k, p, H, B, jk, J) {
     var T = T3(); if (!T || !J || !B) return false; if (!V1) { V1 = new T.Vector3(); V2 = new T.Vector3(); V3 = new T.Vector3(); Q1 = new T.Quaternion(); Q2 = new T.Quaternion(); M1 = new T.Matrix4(); }
     var fk = e.fk || (window.__AX && window.__AX.myMechKey ? window.__AX.myMechKey() : '');
-    var panels = build(e, J, fk); if (!panels.length) return false; var S = J.style;
+    var panels = build(e, J, fk); if (!panels.length) return false; var S = J.style; var sky = !!SKY[fk];
+    if (sky) { if (!J.gate) { var gs = new T.Sprite(new T.SpriteMaterial({ map: J.sparks[0].s.material.map, color: new T.Color(SKY[fk].fx), transparent: true, blending: T.AdditiveBlending, depthWrite: false })); gs.userData.keep = 1; J.grp.add(gs); J.gate = gs; } var gk = clamp(k / .12) * (1 - clamp((k - .7) / .2)); J.gate.visible = gk > .01; J.gate.position.set(0, H * 6 + J.len * 1.6, 0); J.gate.scale.setScalar(J.len * (1.6 + gk * 1.4)); J.gate.material.opacity = gk * .85; }
     // shell frame: same place/heading as the robot; ground forms sit on the deck, flyers rise
     var lift = clamp((k - .35) / .55); lift = lift * lift * (3 - 2 * lift); var y0 = H * .45, y1 = J.gnd ? -J.bot : H * .45 + p.alt;
     /* v4.09: the hull forms where the robot's body is (the robot springs up first), then settles to flight height / the deck */
@@ -135,9 +139,10 @@
       P.piv.visible = true; if (t > 0 && t < 1) moving++;
       // anchor on the robot: the chain bone this panel belongs to, pushed out of the armour surface
       var bone = null; for (var b = P.bi; b >= 0 && !bone; b--) bone = B[P.bone[b]]; if (!bone) for (var b2 = 0; b2 < P.bone.length && !bone; b2++) bone = B[P.bone[b2]]; bone = bone || B.Spine || B.Hips;
-      bone.getWorldPosition(V1); var A = V1.applyMatrix4(inv); var out = V2.copy(A).sub(hipL); out.y *= .3; if (out.lengthSq() < 1e-4) out.set(-1, 0, 0); out.normalize(); if (P.grp === 'body') out.set(-1, .2, 0).normalize();   // backpack panels sit on the back
-      var surf = A.clone().addScaledVector(out, H * .05);
-      bone.getWorldQuaternion(Q1); var qA = gq.clone().multiply(Q1);
+      bone.getWorldPosition(V1); var A = V1.applyMatrix4(inv);
+      if (sky) { A = new T.Vector3(P.home.x * 1.6 + (P.seed - .5) * J.len * .8, H * 6 + J.len * (1.2 + P.seed * 1.4), P.home.z * 1.6 + (rnd(P.seed * 7) - .5) * J.len * .8); }   /* called down from orbit */ var out = V2.copy(A).sub(hipL); out.y *= .3; if (out.lengthSq() < 1e-4) out.set(-1, 0, 0); out.normalize(); if (P.grp === 'body') out.set(-1, .2, 0).normalize();   // backpack panels sit on the back
+      var surf = sky ? A.clone() : A.clone().addScaledVector(out, H * .05);
+      bone.getWorldQuaternion(Q1); var qA = sky ? new T.Quaternion().setFromAxisAngle(P.axis, (P.seed - .5) * 1.2) : gq.clone().multiply(Q1);
       var pos = new T.Vector3(), q = new T.Quaternion(), sc;
       if (t < .2) {   // 1) unlatch: the plate slides out of the armour and shakes once
         var a = ease(t / .2); pos.copy(A).lerp(surf, a); if (a > .7) pos.addScaledVector(out, Math.sin(t * 160 + P.seed * 9) * H * .006); q.copy(qA); sc = J.len * (.12 + .38 * a);
@@ -147,6 +152,7 @@
         var flip = Math.PI * S.flip * P.flipS * (1 - v); var qh = new T.Quaternion().setFromAxisAngle(P.axis, flip); q.copy(qA).slerp(new T.Quaternion(), v).premultiply(qh);
         // turn about the hinge edge instead of the centre
         var hv = P.hinge.clone(); pos.add(hv.clone().sub(hv.clone().applyQuaternion(qh)).multiplyScalar(v)); sc = J.len * (.5 + .5 * v);
+        if (sky) { sc = J.len * (.75 + .25 * v); if (Math.random() < .25) burst(J, pos, 1, false); }
       } else {   // 3) lock: overshoot past the seat, bounce back, clank
         var l = (t - .82) / .18; var ov = Math.sin(l * Math.PI) * (1 - l) * S.over; pos.copy(P.home).addScaledVector(P.nrm, J.len * ov * .25); q.setFromAxisAngle(P.axis, ov * P.flipS * .8); sc = J.len;
         if (t >= 1 && !P.locked) { P.locked = 1; if (P.big || J.hero || (P.ord % 3 === 0)) { burst(J, pos, J.hero ? 6 : 3, P.big); clank(P.big); } }
@@ -155,15 +161,15 @@
       P.piv.position.copy(pos); P.piv.quaternion.copy(q); P.piv.scale.setScalar(sc);
     }
     // hydraulic rams (hero): from the robot bone to the travelling panel, outer sleeve + inner rod
-    if (J.struts) J.struts.forEach(function (s) { var P = s.p; var vis = P.piv.visible && !done; var tt = 0; if (vis) { var w = WIN[P.grp] || WIN.body; tt = clamp((k - w[0]) / (w[1] - w[0])); vis = tt > .15 && tt < .9; } s.a.visible = s.b.visible = vis; if (!vis) return;
+    if (J.struts) J.struts.forEach(function (s) { var P = s.p; var vis = P.piv.visible && !done && !sky; var tt = 0; if (vis) { var w = WIN[P.grp] || WIN.body; tt = clamp((k - w[0]) / (w[1] - w[0])); vis = tt > .15 && tt < .9; } s.a.visible = s.b.visible = vis; if (!vis) return;
       var bone = B[P.bone[0]] || B.Spine || B.Hips; bone.getWorldPosition(V1); var a = V1.applyMatrix4(inv); var b = P.piv.position; var d = V2.copy(b).sub(a); var L = d.length(); if (L < 1e-3) { s.a.visible = s.b.visible = false; return; } d.normalize(); var Lm = J.len * .18; if (L > Lm) { a = b.clone().addScaledVector(d, -Lm); L = Lm; }   /* short rams only - never a long line across the screen */ var qq = new T.Quaternion().setFromUnitVectors(new T.Vector3(0, 1, 0), d); var r = J.len * .032;
       s.a.position.copy(a).addScaledVector(d, L * .3); s.a.quaternion.copy(qq); s.a.scale.set(r * 1.6, L * .6, r * 1.6); s.b.position.copy(a).addScaledVector(d, L * .7); s.b.quaternion.copy(qq); s.b.scale.set(r, L * .6, r); });
     if (moving > 0 && J.hero) servo(up, true); else if (moving > 2) servo(up, false);
     sparkTick(J);
     // the robot shrinks only a little and only once the hull has closed around it
     var hide = clamp((k - .42) / .2); m.wrap.scale.setScalar((m._ws0 || 1) * (1 - .6 * hide)); m.wrap.visible = k < .62;   /* tucked inside the hull before the last panels close */
-    var ig = clamp((k - .9) / .1), sp2 = Math.hypot(u.vx || 0, u.vy || 0); J.fl.forEach(function (f) { f.visible = ig > .02 && !J.gnd; f.scale.set(1, ig * (.7 + Math.min(1, sp2 / 900) * .9) * (1 + Math.random() * .15), 1); });
+    var ig = clamp((k - .9) / .1), sp2 = Math.hypot(u.vx || 0, u.vy || 0); J.fl.forEach(function (f) { f.visible = ig > .02 && !J.gnd && !J.nofl; f.scale.set(1, ig * (.7 + Math.min(1, sp2 / 900) * .9) * (1 + Math.random() * .15), 1); });
     return true;
   };
-  window.__tf3 = { pose: pose, HERO: HERO, STY: STY, WIN: WIN };
+  window.__tf3 = { pose: pose, HERO: HERO, STY: STY, WIN: WIN, SCALE: SCALE, SKY: SKY };
 })();

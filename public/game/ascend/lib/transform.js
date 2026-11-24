@@ -122,7 +122,7 @@ function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);
  // length axis = longest horizontal; the nose end is the narrower end
  // length axis: the fuselage holds most vertices, so its spread is wider than the thin wings' spread
  var vx=0,vz=0,nv=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var dx=t.p[i]-ctr.x,dz=t.p[i+2]-ctr.z;vx+=dx*dx;vz+=dz*dz;nv++;}});var JAX={m_phantom_jet:'x'};var LX=JAX[f]?JAX[f]==='x':vx>=vz;var len=LX?sz.x:sz.z,wid=LX?sz.z:sz.x;var ax=function(p,i){return LX?p[i]-ctr.x:p[i+2]-ctr.z;},sd=function(p,i){return LX?p[i+2]-ctr.z:p[i]-ctr.x;};
- var wA=0,wB=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var a=ax(t.p,i)/len,s=Math.abs(sd(t.p,i))/wid;if(a>.35)wA=Math.max(wA,s);if(a<-.35)wB=Math.max(wB,s);}});var noseSign=wA<wB?1:-1;
+ var wA=0,wB=0;tris.forEach(function(t){for(var i=0;i<9;i+=3){var a=ax(t.p,i)/len,s=Math.abs(sd(t.p,i))/wid;if(a>.35)wA=Math.max(wA,s);if(a<-.35)wB=Math.max(wB,s);}});var noseSign=wA<wB?1:-1;if({emp_hero_herald_alt:1}[f])noseSign=-noseSign;   /* helicopters: the cockpit end is the wide one, the thin end is the tail boom */
  var groups={nose:[],body:[],wingL:[],wingR:[],tailL:[],tailR:[]};
  tris.forEach(function(t){var a=0,s=0;for(var i=0;i<9;i+=3){a+=ax(t.p,i);s+=sd(t.p,i);}a=a/3/len*noseSign;s=s/3/wid;var key;if(a>.22)key='nose';else if(Math.abs(s)>.2&&a>-.3)key=s>0?'wingL':'wingR';else if(a<-.18)key=s>=0?'tailL':'tailR';else key='body';groups[key].push(t);});
  // build part meshes in a frame where +X is the nose, +Y up, scaled to unit length
@@ -136,16 +136,17 @@ function splitJet(f){if(JC[f])return JC[f];var T=T3();var c=AX().mc&&AX().mc(f);
 var SRC={nose:'Head',body:'Spine',wingL:'LeftArm',wingR:'RightArm',tailL:'LeftFoot',tailR:'RightFoot'};
 var ORDER={body:0,wingL:.12,wingR:.12,nose:.24,tailL:.32,tailR:.32};
 /* v4.08: ground forms (tanks, trucks, walkers, bikes) sit on the deck with no jet flames; tall round forms are scaled so they don't balloon */
-var GROUNDF={};'fed_hero_mortar fed_leg_astra fed_hero_bastion omg_leg_nocturne omg_hero_venom omg_hero_crusher omg_hero_hive emp_leg_aurelian emp_mp_assault emp_mp_heavy emp_mp_artillery emp_hero_inquisitor emp_hero_herald emp_leg_gravis alp_hero_prism alp_hero_glyph'.split(' ').forEach(function(k){GROUNDF[k+'_alt']=1;});window.__tfGround=GROUNDF;
+var GROUNDF={};'fed_hero_mortar fed_leg_astra fed_hero_bastion omg_leg_nocturne omg_hero_venom omg_hero_crusher omg_hero_hive emp_leg_aurelian emp_mp_assault emp_mp_heavy emp_mp_artillery emp_hero_inquisitor emp_leg_gravis alp_hero_prism alp_hero_glyph'.split(' ').forEach(function(k){GROUNDF[k+'_alt']=1;});   /* v4.11: IK-44 Herald became an attack helicopter - it flies */window.__tfGround=GROUNDF;
 function shellBuild(e,f,H,pf){if(e._jet&&e._jet.f===f)return e._jet;var S=splitJet(f);if(!S)return null;var T=T3();var grp=new T.Group();
  /* v4.08 (user): the jet wears the frame's colours - AX-00 white/black recolour and the player's own paint, same as the robot */
- var JM=S.mat;try{if(e&&e.mdl&&typeof G!=='undefined'&&G&&G.local&&G.local.unit&&R3.units.get(G.local.unit.id)===e){var tn=window.__mechTint?window.__mechTint(G.local.unit):0;if(tn&&window.__axGrey&&JM.map){JM=JM.clone();var gt=window.__axGrey(JM.map);if(gt){JM.map=gt;JM.color.setScalar(1);}}}var palR=(e&&e.mdl&&e.mdl.obj)?robotPal(e.mdl.obj):null;if(palR)JM=recolorMat(JM,palR);}catch(er){}var len=H*1.15;var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,JM);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
+ var JM=S.mat;try{if(e&&e.mdl&&typeof G!=='undefined'&&G&&G.local&&G.local.unit&&R3.units.get(G.local.unit.id)===e){var tn=window.__mechTint?window.__mechTint(G.local.unit):0;if(tn&&window.__axGrey&&JM.map){JM=JM.clone();var gt=window.__axGrey(JM.map);if(gt){JM.map=gt;JM.color.setScalar(1);}}}var palR=(e&&e.mdl&&e.mdl.obj)?robotPal(e.mdl.obj):null;if(palR)JM=recolorMat(JM,palR);}catch(er){}var len=H*1.15;try{var fk0=(e&&e.fk)||(AX().myMechKey?AX().myMechKey():'');var sc0=window.__tf3&&window.__tf3.SCALE&&window.__tf3.SCALE[fk0];if(sc0)len*=sc0;}catch(er){}   /* v4.11: legendary forms can be bigger than the robot (Seraphim x2) */
+ var pcs={};for(var k in S.parts){var m=new T.Mesh(S.parts[k].g,JM);m.castShadow=false;m.userData.keep=1;m.frustumCulled=false;var hold=new T.Group();hold.add(m);grp.add(hold);pcs[k]={hold:hold,home:S.parts[k].home.clone().multiplyScalar(len),spin:new T.Euler((Math.random()-.5)*3,(Math.random()-.5)*3,(Math.random()-.5)*3)};hold.scale.setScalar(len);}
  // engine flames at the tail
  var fl=[];for(var s=-1;s<=1;s+=2){var cg=(window.flameGeo?window.flameGeo(T,len*.035,len*.32):new T.ConeGeometry(len*.035,len*.32,10,1,true));cg.rotateZ(Math.PI/2);cg.translate(-len*.16,0,0);var fm=new T.Mesh(cg,new T.MeshBasicMaterial({map:(window.flameTex?window.flameTex():null),color:(pf&&pf.flame)||0xff7a4a,transparent:true,opacity:.65,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));fm.position.set(-len*.5,len*.0,s*len*.06);fm.userData.keep=1;fm.frustumCulled=false;grp.add(fm);fl.push(fm);}
  grp.userData.keep=1;
  /* measure the finished form: squash balloon shapes (spheres, pods) to at most .62 x length tall, and remember the bottom for ground forms */
  var gnd=!!GROUNDF[f],bot=0;try{var bx=new T.Box3(),tv=new T.Vector3();for(var k1 in pcs){var hh=pcs[k1].hold;hh.position.copy(pcs[k1].home);hh.rotation.set(0,0,0);hh.scale.setScalar(len);}grp.updateMatrixWorld(true);bx.setFromObject(grp);var hgt=bx.max.y-bx.min.y;var fz=hgt>len*.62?len*.62/hgt:1;if(fz<1){len*=fz;for(var k2 in pcs)pcs[k2].home.multiplyScalar(fz);fl.forEach(function(f2){f2.scale.multiplyScalar(fz);f2.position.multiplyScalar(fz);});}bot=bx.min.y*fz;if(gnd)fl.forEach(function(f3){f3.visible=false;});}catch(er){}
- e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len,gnd:gnd,bot:bot};return e._jet;}
+ e._jet={f:f,grp:grp,pcs:pcs,fl:fl,len:len,gnd:gnd,bot:bot,nofl:!!{emp_hero_herald_alt:1}[f]};if(e._jet.nofl)fl.forEach(function(f4){f4.visible=false;});return e._jet;}
 function shellPose(e,m,u,k,p,H,B,jk){var T=T3();var J=shellBuild(e,jk||jetKey(),H,p);if(!J)return false;var par=m.wrap.parent;if(!par)return false;if(J.grp.parent!==par)par.add(J.grp);
  if(window.__tf3&&!window.__tf3Off){try{if(window.__tf3.pose(e,m,u,k,p,H,B,jk,J))return true;}catch(er){window.__tf3Err=String(er&&er.stack||er).slice(0,300);}}   /* v4.09 panel engine */
  // jet frame: same place/heading as the robot, lifted to flight height (robot wrap faces +X)
@@ -158,7 +159,7 @@ function shellPose(e,m,u,k,p,H,B,jk){var T=T3();var J=shellBuild(e,jk||jetKey(),
   if(kk<.9)pc.locked=0;}
  // the robot folds and shrinks into the hull, then hides inside it
  var hide=seg(k,.55,.92);m.wrap.scale.setScalar((m._ws0||1)*(1-.55*hide));m.wrap.visible=k<.93;
- var ig=seg(k,.9,1);var sp=Math.hypot(u.vx||0,u.vy||0);J.fl.forEach(function(f){f.visible=ig>.02&&!J.gnd;f.scale.set(1,ig*(.7+Math.min(1,sp/900)*.9)*(1+Math.random()*.15),1);});
+ var ig=seg(k,.9,1);var sp=Math.hypot(u.vx||0,u.vy||0);J.fl.forEach(function(f){f.visible=ig>.02&&!J.gnd&&!J.nofl;f.scale.set(1,ig*(.7+Math.min(1,sp/900)*.9)*(1+Math.random()*.15),1);});
  return true;}
 
 // ---------- skill bar: rightmost cell + phone button ----------
