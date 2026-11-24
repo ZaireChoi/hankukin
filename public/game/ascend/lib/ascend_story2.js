@@ -96,12 +96,27 @@
     if (X.bossU && txt) txt = L2('보스 처치', 'Defeat the boss') + ' · ' + (X.bossU.slot && X.bossU.slot.name || '');
     var dp = document.getElementById('deploy'); line(G0.over || (dp && !dp.classList.contains('hidden')) ? null : txt);
   };
+  // ------------------------------------------------------------------ v4.02: earlier choices change later battles
+  var ORDER = ['e_p', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6'];
+  var after = function (X, ep) { return ORDER.indexOf(X.epi) > ORDER.indexOf(ep); };
+  var carry = function (X, dt) {
+    var G0 = g(), me = G0.local && G0.local.unit; if (!me) return; var C = X._c || (X._c = { t: 0, said: {} }); C.t += dt;
+    var once = function (k, who, txt) { if (!C.said[k]) { C.said[k] = 1; say(who, txt); } };
+    // saved the imperial fleet in ch.2 -> Admiral Adelhard's ships shell the thickest enemy cluster every 25 s
+    if (flag('reinhard') && after(X, 'e1')) { once('rh', 'hq', L2('아델하르트 함대 연결. "그때 빚을 갚지." 함포 지원이 들어간다.', 'Adelhard\'s fleet on the line. "I owe you one." Naval fire inbound.')); C.rh = (C.rh || 8) - dt; if (C.rh <= 0) { C.rh = 25; var best = null, bn = 0; for (var i = 0; i < G0.units.length; i++) { var u = G0.units[i]; if (u.dead || u.team === me.team || u.team === 2 || u.boss) continue; if (Math.hypot(u.x - me.x, u.y - me.y) > 1300) continue; var n = enemyAt(u.x, u.y, 220); if (n > bn) { bn = n; best = u; } } if (best && bn >= 3) { var bx = best.x, by = best.y; (G0.tele = G0.tele || []).push({ k: 'circle', x: bx, y: by, r: 230, dmg: 0, src: null, t: 1.2 }); setTimeout(function () { try { var G1 = g(); if (!G1 || G1.over) return; fx(1, bx, by, 0); for (var q = 0; q < G1.units.length; q++) { var v = G1.units[q]; if (v.dead || v.team === G1.local.team || v.team === 2) continue; if (Math.hypot(v.x - bx, v.y - by) < 230) hurt(v, 260 + 60 * (X.diff || 0), G1.local, Math.atan2(v.y - by, v.x - bx), 'x'); } } catch (e) {} }, 1200); } } }
+    // saved the federation transports in ch.2 -> Aiden Seo's supply drops repair the frame every 40 s
+    if (flag('yang') && after(X, 'e1')) { once('yg', 'hq', L2('에이든 서 참모: "보급선 대기 중. 필요하면 내려 보내겠다."', 'Aiden Seo: "Supply runs standing by. Say the word."')); C.yg = (C.yg || 30) - dt; if (C.yg <= 0 && me.hp < me.mhp * .75) { C.yg = 40; me.hp = Math.min(me.mhp, me.hp + me.mhp * .25); try { pop(L2('보급 투하 · 수리 +25%', 'Supply drop · repair +25%'), '#7fe8a0', true); } catch (e) {} } }
+    // trusted Luna in ch.4 -> Luna sorties with you from then on
+    if (flag('trustLuna') && after(X, 'e3') && !C.luna && C.t > 6) { try { var b0 = BASES[0]; C.luna = spawnMinion(me, 'mech', me.x - 80, me.y + 60, 99999, 0); C.luna.slot.name = L2('루나', 'Luna'); C.luna.mhp *= 3; C.luna.hp = C.luna.mhp; } catch (e) { C.luna = 1; } say('sera', L2('루나가 합류합니다. "이번엔 내가 등을 맡을게."', 'Luna is joining. "This time I\'ve got your back."')); }
+    if (flag('sealLuna') && after(X, 'e3')) once('sl', 'sera', L2('루나의 봉인 신호는 안정적입니다. …제가 두 배로 일하겠습니다.', 'Luna\'s seal is holding. …I will simply work twice as hard.'));
+    if (flag('mercy') && X._m && X._m.k === 'final') once('mc', 'sera', L2('아르코스의 근위대 일부가 무기를 내렸습니다. 당신의 말이 닿았습니다.', 'Part of Arkos\'s guard has lowered their weapons. Your words reached them.'));
+  };
   // ------------------------------------------------------------------ hooks
   var hook = function () {
     if (window.__hkStory2 || typeof storyStep !== 'function' || typeof spawnWave !== 'function' || typeof hurt !== 'function') return; window.__hkStory2 = 1;
-    var ss = storyStep; storyStep = function (dt) { try { var G0 = g(); if (G0 && G0.rpg && G0.inv && !G0.over) { var X = G0.rpg; if (X._m === undefined) X._m = pick(X); if (X._m) tick(X, G0.inv, dt); } else line(null); } catch (e) { window.__story2Err = String(e && e.stack || e).slice(0, 200); } return ss.apply(this, arguments); };
+    var ss = storyStep; storyStep = function (dt) { try { var G0 = g(); if (G0 && G0.rpg && G0.inv && !G0.over) { var X = G0.rpg; if (X._m === undefined) X._m = pick(X); if (X._m) tick(X, G0.inv, dt); if (!X.quest && !X.obj && !X.patrol) carry(X, dt); } else line(null); } catch (e) { window.__story2Err = String(e && e.stack || e).slice(0, 200); } return ss.apply(this, arguments); };
     var sw = spawnWave; spawnWave = function (n) { var r = sw.apply(this, arguments); try { var G0 = g(), X = G0 && G0.rpg; if (X && X._m && X._m.k === 'air') { var b = BASES[1], c = 6 + (X.diff || 0) * 2; for (var i = 0; i < c; i++) invSpawn('zhopper', b.x - 200 + (Math.random() - .5) * 600, b.y + (Math.random() - .5) * 900); } } catch (e) {} return r; };
-    var hu = hurt; hurt = function (e) { var d0 = e && e.dead; var r = hu.apply(this, arguments); try { var G0 = g(), X = G0 && G0.rpg; if (X && X._m && X._m.k === 'air' && e && e.dead && !d0 && e.cls === 'zhopper' && e.team !== G0.local.team) X._m.kills++; } catch (er) {} return r; };
+    var hu = hurt; hurt = function (e, amt, src) { try { var Gq = g(), Xq = Gq && Gq.rpg; if (Xq && e && Gq.local && e.team !== Gq.local.team && amt > 0) { if (flag('observeZeta') && /^z/.test(e.cls || '')) arguments[1] = amt * 1.15; if (flag('judge') && e.cls === 'arkos') arguments[1] = amt * 1.2; } if (Xq && Xq._m && Xq._m.k === 'final' && flag('mercy') && e && Gq.local && e.team !== Gq.local.team && !e.boss && amt > 0) arguments[1] = amt * 1.25; } catch (er) {} var d0 = e && e.dead; var r = hu.apply(this, arguments); try { var G0 = g(), X = G0 && G0.rpg; if (X && X._m && X._m.k === 'air' && e && e.dead && !d0 && e.cls === 'zhopper' && e.team !== G0.local.team) X._m.kills++; } catch (er) {} return r; };
   };
   setInterval(function () { try { hook(); var G0 = g(); if (!G0 || !G0.rpg || G0.over) line(null); } catch (e) {} }, 500);
 })();

@@ -52,6 +52,8 @@
     if (o && o.isSprite && !o.userData.groundOK) { var sm = o.material; var sc = Math.max(o.scale.x, o.scale.y); if (sm && sm.map && sc > 300 && o.position.y < 220 && ringPic(sm.map)) return 'Sprite-ring #' + (sm.color ? sm.color.getHexString() : ''); return null; }
     if (!o || !o.isMesh || o.isInstancedMesh || o.isSkinnedMesh || o.userData.groundOK) return null;
     var g = o.geometry, gt = g && g.type, m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m) return null;
+    /* v4.02 (29-1): see-through shield bubbles (big faint spheres around frames) read from above as white discs - refused */
+    if (gt === 'SphereGeometry' && m.transparent && !isRed(m) && (m.blending === 2 || (m.opacity != null && m.opacity <= .35))) { var sr = (g.parameters && g.parameters.radius || 0) * Math.max(Math.abs(o.scale.x), Math.abs(o.scale.y), Math.abs(o.scale.z)); if (sr >= 40 && sr < 2000 && !o.userData.keep2) return 'Sphere-bubble #' + (m.color ? m.color.getHexString() : ''); }
     var round = ROUND.test(gt || ''), plate = !round && gt === 'PlaneGeometry' && m.map && roundPic(m.map);
     if (!round && !plate) return null;
     if (isRed(m)) return null;                                   // attack warnings stay
@@ -65,19 +67,26 @@
     var rm = []; root.traverse(function (o) { if (o !== root) { var k = banned(o, false); if (k) { rm.push(o); note(k); } } });
     for (var i = 0; i < rm.length; i++) { if (rm[i].parent) rm[i].parent.remove(rm[i]); N.refused++; }
   };
+  /* v4.02 (28-2/29-2): point clouds without a picture are drawn as hard white SQUARES (ambient dust/snow, heal-zone sparks) - give them a soft round dot */
+  var DOT = null;
+  var dotTex = function () { if (DOT) return DOT; var c = document.createElement('canvas'); c.width = c.height = 64; var x = c.getContext('2d'); var g2 = x.createRadialGradient(32, 32, 0, 32, 32, 32); g2.addColorStop(0, 'rgba(255,255,255,1)'); g2.addColorStop(.45, 'rgba(255,255,255,.55)'); g2.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g2; x.fillRect(0, 0, 64, 64); DOT = new T.CanvasTexture(c); return DOT; };
+  var roundPts = function (o) { var fix = function (p) { if (!p || !p.isPoints) return; var m = p.material; if (!m || Array.isArray(m) || !m.isPointsMaterial || m.map || m.__rd) return; m.__rd = 1; m.map = dotTex(); m.transparent = true; m.depthWrite = false; m.alphaTest = .02; m.needsUpdate = true; N.rounded = (N.rounded || 0) + 1; }; fix(o); if (o.traverse) o.traverse(fix); };
   var install = function () {
     T = window.THREE; if (!T || !T.Object3D || T.Object3D.prototype.__ngAdd) return !!(T && T.Object3D && T.Object3D.prototype.__ngAdd);
     var add = T.Object3D.prototype.add;
     T.Object3D.prototype.add = function (o) {
       if (arguments.length === 1 && o && o !== this) {
         try { var k = banned(o, false); if (k) { N.refused++; note(k); return this; } if (o.children && o.children.length) strip(o); } catch (e) {}
+        try { roundPts(o); } catch (e) {}
       }
       return add.apply(this, arguments);
     };
     T.Object3D.prototype.__ngAdd = 1; return true;
   };
+  var ptsScene = null, ptsT = 0;
   var sweep = function () {
     if (!window.R3 || !R3.scene) return; var rm = [];
+    try { var nw = Date.now(); if (ptsScene !== R3.scene || nw - ptsT > 5000) { ptsScene = R3.scene; ptsT = nw; roundPts(R3.scene); } } catch (e) {}
     /* v3.94 (27-1): the coloured ring under every unit (red under enemies) is not an attack warning - taken off too */
     try { R3.units.forEach(function (e) { if (e && e.ring && e.ring.parent) { e.ring.parent.remove(e.ring); N.swept++; note('unit ring'); } }); } catch (e) {}
     R3.scene.traverse(function (o) { var k = banned(o, true); if (k) { rm.push(o); note(k); } });

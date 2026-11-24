@@ -27,11 +27,11 @@
 
     // ---------- 진영·크기 규칙 ----------
     const FACTION = {
-      emp: { debris: [0x5a0f1c, 0x3a2a22, 0xb08038], spark: [0xffd27a, 0xff7a1a], smoke: [0x8a7a70, 0x4a4440], fireTint: [0xffffff, 0x8a3a1a], fireKind: 'fire' },
+      emp: { debris: [0x8a3a3a, 0x8a7060, 0xb08038], spark: [0xffd27a, 0xff7a1a], smoke: [0x8a7a70, 0x4a4440], fireTint: [0xffffff, 0x8a3a1a], fireKind: 'fire' },
       fed: { debris: [0xc9d0da, 0x2a4f9a, 0x55606e], spark: [0xffd27a, 0xff7a1a], smoke: [0x8a7a70, 0x4a4440], fireTint: [0xffffff, 0x8a3a1a], fireKind: 'fire' },
       alp: { debris: [0xe6dcc8, 0xc9a85c], spark: [0xfff6d8, 0xffb04a], smoke: [0x8a7a70, 0x4a4440], fireTint: [0xffffff, 0x9a5a2a], fireKind: 'fire', lightMotes: true },
-      omg: { debris: [0x101014, 0x2a2333], spark: [0xe0b8ff, 0x8a3cff], smoke: [0x5a3a7a, 0x3a3044], fireTint: [0xffffff, 0x7a3ab0], fireKind: 'omega' },
-      zeta: { debris: [0x2a1e14, 0x5a3a1a], spark: [0xffe0a0, 0xff6a10], smoke: [0x6a5a40, 0x3a3020], fireTint: [0xffffff, 0x8a4a10], fireKind: 'fire' },
+      omg: { debris: [0x4a4458, 0x5a4a6a], spark: [0xe0b8ff, 0x8a3cff], smoke: [0x5a3a7a, 0x3a3044], fireTint: [0xffffff, 0x7a3ab0], fireKind: 'omega' },
+      zeta: { debris: [0x6a5038, 0x7a5a30], spark: [0xffe0a0, 0xff6a10], smoke: [0x6a5a40, 0x3a3020], fireTint: [0xffffff, 0x8a4a10], fireKind: 'fire' },
     };
     const TIER = {
       grunt: { chain: 0, shake: 0,    wreck: false, big: 1.0 },
@@ -220,7 +220,7 @@
         const center = base.clone(); center.y += S * .5;
         this.at(tBig, () => this.blast(center, .44 * S * tier.big, true, F, q, groundY, S, tier));
         this.at(tBig + .05, () => {
-          this.b.scorch.spawn({ pos: new THREE.Vector3(base.x, groundY + .002 * S, base.z), life: 3, s0: 1.25 * S * tier.big, s1: 1.25 * S * tier.big, c0: 0xffffff, a0: .85, hold: .66, rot: Math.random() * 6.28 });
+          if (window.__scorchOn) this.b.scorch.spawn({ pos: new THREE.Vector3(base.x, groundY + .002 * S, base.z), life: 3, s0: 1.25 * S * tier.big, s1: 1.25 * S * tier.big, c0: 0xffffff, a0: .85, hold: .66, rot: Math.random() * 6.28 });
           if (tier.wreck && this.wreckSrc) this.spawnWreck(base, groundY, S);
         });
         return tBig + .05;
