@@ -45,7 +45,7 @@
       if (!hook()) return; var g = (typeof G !== 'undefined') ? G : null; var t = now();
       if (g !== lastG) { if (lastG) { pend = t + (g ? 6000 : 3500); pendWhy = g ? 'new battle' : 'menu'; } lastG = g; }
       /* v3.94 (27-7): also when the main menu comes up while a battle object is still around (leaving midway, story/RPG exits) */
-      var mv = false; try { var mn = document.getElementById('menu'); mv = !!(mn && !mn.classList.contains('hidden') && mn.offsetParent !== null); } catch (e) {}
+      var mv = false; try { var vis = function (id) { var el = document.getElementById(id); return !!(el && !el.classList.contains('hidden') && el.offsetParent !== null); }; mv = vis('menu') || vis('rpg') || vis('garage') || vis('result') && !!(typeof G !== 'undefined' && G && G.over); } catch (e) {}   /* v4.20 (32-9): the expedition hub / hangar after a story battle count as leaving the battle too */
       if (mv && !lastMenu && !pend) { pend = t + 3500; pendWhy = 'menu shown'; } lastMenu = mv;
       if (pend && t > pend) { pend = 0; sweep(g && !mv ? 5000 : 3000, pendWhy); }
     } catch (e) { window.__genErr = String(e).slice(0, 160); }
