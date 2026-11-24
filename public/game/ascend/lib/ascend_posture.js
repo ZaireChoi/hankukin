@@ -7,6 +7,8 @@
   'use strict';
   var T = null, Q = null, V = null;
   var post = function (e, m, u, dt) {
+    /* v3.96 safety net: a humanoid frame on foot never sits far above its own base; pull it back if something pushed it into the sky */
+    try { if (u && u.cls === 'arkframe' && m && m.wrap && m.obj && !u.fly && !(u.kJump > 0) && Math.abs(m.wrap.position.y) > 400) { m.wrap.position.y = 0; m._kjAdd = 0; if (e._ps2A) { e._ps2A.py = 0; e._ps2A.vy = NaN; } window.__postFix = (window.__postFix || 0) + 1; } } catch (er) {}
     if (!u || u.cls !== 'arkframe' || !m || !m.wrap || u.dead || u.fly || (u.tf && u.tf.mode)) { if (m && m.wrap && e._ps2) { e._ps2.x = e._ps2.z = 0; var A0 = e._ps2A, w0 = m.wrap; if (A0) { if (w0.rotation.z === A0.vz) w0.rotation.z -= A0.rz; if (w0.rotation.x === A0.vx) w0.rotation.x -= A0.rx; if (w0.position.y === A0.vy) w0.position.y -= A0.py; A0.rz = A0.rx = A0.py = 0; A0.vz = A0.vx = A0.vy = NaN; } } return; }
     T = T || window.THREE; if (!T) return; if (!Q) { Q = new T.Quaternion(); V = new T.Vector3(); }
     var P0 = e._ps2 || (e._ps2 = { x: 0, z: 0, land: 0, wasAir: false });
