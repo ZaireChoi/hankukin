@@ -3742,7 +3742,7 @@ const SLOTS={mel:{ko:'근접 무기',en:'Melee weapon'},rng:{ko:'원거리 무�
  paint:{ko:'도색',en:'Paint'},trail:{ko:'추진 궤적',en:'Thruster trail'},aura:{ko:'오라',en:'Aura'},emb:{ko:'엠블럼',en:'Emblem'}};
 const SGROUP=[['mech',{ko:'기동전사 장비',en:'Mech equipment'},['mel','rng','wing','shld','radar','msl','ult','fuel']],['link',{ko:'안드로이드(링크) 장비',en:'Android (LINK) equipment'},['neck','ear','brace','glove','sens','cpu','lsk']],['pilot',{ko:'조종사',en:'Pilot'},['vit1','vit2','mind']],['style',{ko:'꾸미기',en:'Customize'},['paint','trail','aura','emb']]];
 // sub-types: [key, ko|en, stat, factor]
-const SUBS={mel:[['sword','빔 검|Beam Sword','dmg',1],['axe','히트 도끼|Heat Axe','dmg',1.25],['whip','에너지 채찍|Energy Whip','dmg',.8],['twin','쌍칼|Twin Blades','dmg',.9],['staff','전투 봉|Battle Staff','dmg',.85],['glaive','언월도|Crescent Glaive','dmg',1.05],['halberd','극|Halberd','dmg',1.1]],
+const SUBS={mel:[['sword','빔 검|Beam Sword','dmg',1],['axe','히트 도끼|Heat Axe','dmg',1.25],['whip','에너지 채찍|Energy Whip','dmg',.8],['twin','쌍칼|Twin Blades','dmg',.9],['staff','전투 철퇴|War Mace','dmg',.85],['glaive','언월도|Crescent Glaive','dmg',1.05],['halberd','극|Halberd','dmg',1.1]],
  rng:[['power','파워형 빔 캐논|Heavy Beam Cannon','dmg',1.2],['range','사거리형 레일 라이플|Long Rail Rifle','dmg',.85],['rapid','연사형 개틀링 빔|Gatling Beam','cd',.9],['buff','버프형 서포트 라이플|Support Pulse Rifle','dmg',.75],['nerf','너프형 디스럽터|Disruptor Rifle','dmg',.75]],
  wing:[['wing','추진 날개|Thruster Wings','spd',.8],['wing2','광자 날개|Photon Wings','spd',.9]],shld:[['s','소형 방패|Small Shield','taken',.5],['m','중형 방패|Medium Shield','taken',.8],['l','대형 방패|Large Shield','taken',1.15]],
  radar:[['radar','전술 레이다|Tactical Radar','crit',.35]],msl:[['msl','마이크로 미사일 포드|Micro Missile Pod','msl',1.2],['msl2','다탄두 미사일|Multi-warhead Missiles','msl',1.35]],ult:[['ult','궁극 증폭 모듈|Ultimate Amplifier','msl',1],['ult2','오버드라이브 회로|Overdrive Circuit','cd',.8]],fuel:[['fuel','고밀도 에너지 셀|Dense Energy Cell','fly',2],['fuel2','스태미나 리액터|Stamina Reactor','cd',.7]],
@@ -4940,7 +4940,7 @@ try{const r0=P.rpg;if(r0){const A1='"'+'rein'+'hard"',A2='"'+'ya'+'ng"';let s=JS
 // ================= v2.5 : FULL ITEM CATALOG (every sub-type × 4 models) · ITEM & DRONE ART =================
 // [sub, noun ko, noun en, codename v2 (ko|en), codename v3 (ko|en)]
 const IVAR={
- sword:['빔 검','Beam Sword','스위프트|Swift','아크라이트|Arclight'],axe:['히트 도끼','Heat Axe','클리버|Cleaver','볼케이노|Volcano'],whip:['에너지 채찍','Energy Whip','바이퍼|Viper','레비아|Levia'],twin:['쌍칼','Twin Blades','제미니|Gemini','팰컨 윙|Falcon Wing'],staff:['전투 봉','Battle Staff','템플러|Templar','사이클론|Cyclone'],glaive:['언월도','Crescent Glaive','루나|Luna','이클립스|Eclipse'],halberd:['극','Halberd','센티넬|Sentinel','썬더볼트|Thunderbolt'],
+ sword:['빔 검','Beam Sword','스위프트|Swift','아크라이트|Arclight'],axe:['히트 도끼','Heat Axe','클리버|Cleaver','볼케이노|Volcano'],whip:['에너지 채찍','Energy Whip','바이퍼|Viper','레비아|Levia'],twin:['쌍칼','Twin Blades','제미니|Gemini','팰컨 윙|Falcon Wing'],staff:['전투 철퇴','War Mace','템플러|Templar','사이클론|Cyclone'],glaive:['언월도','Crescent Glaive','루나|Luna','이클립스|Eclipse'],halberd:['극','Halberd','센티넬|Sentinel','썬더볼트|Thunderbolt'],
  power:['빔 캐논','Beam Cannon','버스터|Buster','헬리오스|Helios'],range:['레일 라이플','Rail Rifle','롱샷|Longshot','호라이즌|Horizon'],rapid:['개틀링 빔','Gatling Beam','스톰|Storm','템페스트|Tempest'],buff:['서포트 라이플','Support Rifle','가디언|Guardian','오로라|Aurora'],nerf:['디스럽터','Disruptor','재머|Jammer','나이트셰이드|Nightshade'],
  wing:['추진 날개','Thruster Wings','스카이|Sky','제트스트림|Jetstream'],wing2:['광자 날개','Photon Wings','프리즘|Prism','세라프|Seraph'],
  s:['소형 방패','Small Shield','버클러|Buckler','미러|Mirror'],m:['중형 방패','Medium Shield','바스티온|Bastion','크레스트|Crest'],l:['대형 방패','Large Shield','포트리스|Fortress','모놀리스|Monolith'],
@@ -4950,7 +4950,7 @@ const IVAR={
  barrier:['보호막 전개 칩','Barrier Chip','실드라|Shieldra','아이언월|Ironwall'],heal:['나노 수복 칩','Nano Repair Chip','메디|Medi','리버스|Rebirth'],focus:['동기 집중 칩','Sync Focus Chip','렌즈|Lens','제니스|Zenith'],
  vit:['체력 보조제','Vital Booster','스파크|Spark','에테르|Ether'],vit3:['재생 패치','Regen Patch','블룸|Bloom','피닉스 셀|Phoenix Cell'],vit2:['근력 강화 슈트','Assist Suit','타이탄|Titan','헤라클레스 II|Hercules II'],
  calm:['냉정 모듈','Calm Module','미스트|Mist','글래시어|Glacier'],berserk:['광전사 모듈','Berserker Module','레드라인|Redline','인페르노|Inferno'],insight:['통찰 모듈','Insight Module','루멘|Lumen','판옵티콘|Panopticon']};
-const IVIS={sword:'beam sword',axe:'heat axe',whip:'energy whip',twin:'pair of twin short blades',staff:'battle staff',glaive:'crescent glaive polearm',halberd:'halberd polearm',power:'heavy beam cannon',range:'long rail rifle',rapid:'gatling beam gun',buff:'support pulse rifle',nerf:'disruptor rifle',wing:'mechanical thruster wings',wing2:'photon energy wings',s:'small round shield',m:'medium kite shield',l:'large tower shield',radar:'tactical radar sensor dish helmet',msl:'micro missile pod',msl2:'multi-warhead missile launcher',ult:'glowing ultimate amplifier module',ult2:'overdrive circuit board chip',fuel:'dense energy cell battery',fuel2:'stamina reactor core',neck:'psi amplifier necklace',ear:'pair of resonance earrings',brace:'assault bracelet',glove:'precision control glove',sens:'threat sensor visor',cpu:'intercept CPU chip',barrier:'barrier emitter chip',heal:'nano repair chip with green cross',focus:'sync focus lens chip',vit:'vital booster injector',vit3:'regen patch',vit2:'muscle assist suit',calm:'calm mind crystal module',berserk:'berserker red mind module',insight:'insight eye mind module'};
+const IVIS={sword:'beam sword',axe:'heat axe',whip:'energy whip',twin:'pair of twin short blades',staff:'spiked war mace',glaive:'crescent glaive polearm',halberd:'halberd polearm',power:'heavy beam cannon',range:'long rail rifle',rapid:'gatling beam gun',buff:'support pulse rifle',nerf:'disruptor rifle',wing:'mechanical thruster wings',wing2:'photon energy wings',s:'small round shield',m:'medium kite shield',l:'large tower shield',radar:'tactical radar sensor dish helmet',msl:'micro missile pod',msl2:'multi-warhead missile launcher',ult:'glowing ultimate amplifier module',ult2:'overdrive circuit board chip',fuel:'dense energy cell battery',fuel2:'stamina reactor core',neck:'psi amplifier necklace',ear:'pair of resonance earrings',brace:'assault bracelet',glove:'precision control glove',sens:'threat sensor visor',cpu:'intercept CPU chip',barrier:'barrier emitter chip',heal:'nano repair chip with green cross',focus:'sync focus lens chip',vit:'vital booster injector',vit3:'regen patch',vit2:'muscle assist suit',calm:'calm mind crystal module',berserk:'berserker red mind module',insight:'insight eye mind module'};
 const VTIER=[K('훈련용','Training'),K('제식','Service'),K('개량형','Improved'),K('정예','Elite')];
 const VFLV=[K('사관학교 훈련장에서 쓰던 장비. 낡았지만 믿을 만하다.','Academy training gear. Worn, but dependable.'),K('연합 정비창에서 대량 생산되는 제식 장비.','Mass-produced service gear from the Coalition yards.'),K('일선 정비사들이 손봐 성능을 끌어올린 개량형.','Improved by frontline mechanics for extra performance.'),K('정예 부대에만 지급되는 한정 생산품.','Limited production, issued only to elite units.')];
 function ivName(sub,v){const I=IVAR[sub];if(!I)return null;if(v<2)return{ko:VTIER[v].ko+' '+I[0]+(v?' M-7':' TR-1'),en:VTIER[v].en+' '+I[1]+(v?' M-7':' TR-1')};const c=I[v===2?2:3].split('|');return{ko:VTIER[v].ko+' '+I[0]+' 「'+c[0]+'」',en:VTIER[v].en+' '+I[1]+' "'+c[1]+'"'};}
@@ -7013,7 +7013,7 @@ function eqModel(key,len,axis){try{const i=mdlInstance(key,0,100,'h');if(!i)retu
  if(axis==='y'){if(long==='x')rot.rotation.z=Math.PI/2;else if(long==='z')rot.rotation.x=Math.PI/2;}else{if(long==='y')rot.rotation.z=-Math.PI/2;else if(long==='z')rot.rotation.y=Math.PI/2;}
  g.add(rot);g.scale.setScalar(len/L);g.userData={len,rot,holder};g.traverse(o=>{if(o.isMesh){o.castShadow=false;o.userData.keep=1;o.frustumCulled=false;}});return g;}catch(e){return null;}}
 const EQ_FLIP={};// per-model flips found by eye
-const MSTYLE_MDL={twin:'w_saber',katana:'wm_katana',axe:'w_axe',hammer:'wm_hammer',mace:'wm_mace',lance:'wm_lance',dagger:'w_saber',staff:'wm_staff',great:'wm_great'};
+const MSTYLE_MDL={twin:'w_saber',katana:'wm_katana',axe:'w_axe',hammer:'wm_hammer',mace:'wm_mace',lance:'wm_lance',dagger:'w_saber',staff:'wm_mace',great:'wm_great'};
 const PRIM_GUN={rifle:'w_laserrifle',twin:'wm_pistol',charge:'w_railsniper',shotgun:'w_plasmacannon',gatling:'wm_gatling',homing:'w_laserrifle',burst:'w_laserrifle',beam:'w_plasmacannon',bits:null,mortar:null,melee:null,feather:null};
 function eqPlan(u){const k=myMechKey();const S=styleOf(u);const pm=(window.__PRIM[k]||{m:'rifle'}).m;let shield=null;try{const r=R();const id=r.eq&&r.eq.shld;const it=id&&r.inv.find(x=>x.id===id);if(it)shield=it.sub==='l'?'wm_tshield':'w_shield';}catch(e){}if(k==='m_guardian')shield='wm_tshield';
  let mel=MSTYLE_MDL[k==='mech3'||S===MSTYLE.saber?'':Object.keys(MSTYLE).find(n=>MSTYLE[n]===S)]||null;try{const r=R();const id=r.eq&&r.eq.mel;const it=id&&r.inv.find(x=>x.id===id);if(it&&(it.sub==='glaive'||it.sub==='halberd')&&!mel)mel='wm_glaive';}catch(e){}
@@ -7271,13 +7271,13 @@ const LOADOUT={
  m_titan:{main:'wm_gatling',kind:'gun2',off:'grip'},
  m_sky:{main:'w_laserrifle',kind:'gun1',off:'palm'},
  m_striker:{main:'w_saber',kind:'sword1',off:'blade'},
- m_wizard:{main:'wm_staff',kind:'pole2',off:'grip'},
+ m_wizard:{main:'wm_mace',kind:'pole2',off:'grip'},
  m_phantom:{main:'w_laserrifle',kind:'gun1',off:'palm'},
  m_origin:{main:'beamsaber',kind:'sword1',off:'palm'},
  m_samurai:{main:'wm_katana',kind:'sword2',off:'grip'},
  mech_leg:{main:'wm_great',kind:'sword2',off:'grip'}};
 try{for(const k in window.__NEWMECH)if(!LOADOUT[k]&&LOADOUT[window.__NEWMECH[k]])LOADOUT[k]=LOADOUT[window.__NEWMECH[k]];}catch(e){}
-const TWO_HAND_SUB={halberd:['wm_glaive','pole2'],glaive:['wm_glaive','pole2'],staff:['wm_staff','pole2'],axe:['w_axe','pole2']};
+const TWO_HAND_SUB={halberd:['wm_glaive','pole2'],glaive:['wm_glaive','pole2'],axe:['w_axe','pole2']};
 window.__LOADOUT=LOADOUT;
 function loadoutOf2(u){const k=myMechKey();let L0=Object.assign({},LOADOUT[k]||LOADOUT.mech3);try{const r=R();const get=sl=>{const id=r.eq&&r.eq[sl];return id&&r.inv.find(x=>x.id===id);};const mel=get('mel'),sh=get('shld');
   // equipped two-handers override the main weapon (no shield then)
@@ -8682,7 +8682,7 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_grow.js?v=349"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
-<script src="lib/ascend_boss.js?v=402"></script>
+<script src="lib/ascend_boss.js?v=403"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
