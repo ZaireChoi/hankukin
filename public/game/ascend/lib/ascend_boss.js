@@ -124,3 +124,6 @@ X.wbChip=function(){var s=st();if(!s)return '';var l=TRIES-s.n;return '<button i
   var dx=b.x-u.x,dy=b.y-u.y,d=Math.hypot(dx,dy)||1,a=Math.atan2(dy,dx);var want=Math.max(260,(u.w&&u.w.range?u.w.range*.7:420));
   if(d>want){inp.mx=dx/d;inp.my=dy/d;if(inp.steer!=null)inp.steer=a;}else if(d<180){inp.mx=-dx/d*.5;inp.my=-dy/d*.5;}
   inp.aim=a;inp.tx=b.x;inp.ty=b.y;inp.fire=true;if(d<700){if(!(u.cd1>0))inp.a1=true;if(d<300&&!(u.cd2>0))inp.a2=true;}u._autoBoss=1;}catch(e){}return inp;};w.__bossFocus=1;window.localInput=w;};setInterval(function(){try{hk();}catch(e){}},700);})();
+
+/* v4.20 (user: "what is this purple drum-on-a-pole weapon? replace it with a mace"): the battle staff became a spiked war mace - old item names follow */
+(function(){var done=false;setInterval(function(){try{if(done||!window.__A||!window.__A.R)return;var r=window.__A.R();if(!r||!r.inv)return;var ch=0;r.inv.forEach(function(it){if(!it||!it.n)return;if(it.n.ko&&it.n.ko.indexOf('전투 봉')>=0){it.n.ko=it.n.ko.replace('전투 봉','전투 철퇴');ch++;}if(it.n.en&&it.n.en.indexOf('Battle Staff')>=0){it.n.en=it.n.en.replace('Battle Staff','War Mace');ch++;}});done=true;if(ch&&window.__A.saveP)window.__A.saveP();}catch(e){}},3000);})();
