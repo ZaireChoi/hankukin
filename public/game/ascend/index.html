@@ -219,7 +219,7 @@ button.abs.on{border-color:var(--ac);box-shadow:0 0 0 1px var(--ac) inset,0 0 14
  <div id="embers"></div>
  <div class="lb">
   <div class="lb-top">
-   <div class="ver"><i></i>ASCEND · v4.17 RPG</div>
+   <div class="ver"><i></i>ASCEND · v4.18 RPG</div>
    <button id="mHelp" class="sm ghost" data-t="howTo"></button>
    <button id="mSet" class="sm ghost" data-t="settings"></button>
    <button id="mLang" class="sm"></button>
@@ -1973,7 +1973,7 @@ R.bugify=function(e,c,ch){const C=this.std(ch.col,.55,.3),D=this.std(shade(ch.co
  g.scale.setScalar(c==='zguard'?2.4:1.3);if(c==='zguard'){this.mesh(this.sph(3,10,8),this.glow('#9dff3a',1.8),9,-1,0,0,0,0,g);for(const s of[-1,1])this.mesh(this.cone(.8,8,6),D,6,-3,s*3,0,0,Math.PI,g);}e.bugG=g;return e;};
 R.hiveDeco=function(on){if(this._hiveG){this.scene.remove(this._hiveG);this._hiveG=null;}if(!on||!G||!G.inv)return;const b=BASES[1],g=new T.Group();g.position.set(b.x-120,0,b.y);
  const A=this.std('#3a1f3f',.7,.2),B=this.std('#5a3a24',.6,.3),V=this.glow('#ff8a1c',1.6),P2=this.std('#2a1030',.9,.05);
- const cr=this.mesh(this.cyl(520,560,3,48),P2,0,1.5,0,0,0,0,g);cr.material.transparent=true;cr.material.opacity=.85;
+ const cr=this.mesh(this.cyl(520,560,3,48),P2,0,1.5,0,0,0,0,g);cr.material.transparent=true;cr.material.opacity=.85;cr.visible=false;/* v4.18: the hive's big round purple floor disc is off */
  for(let i=0;i<14;i++){const a=i/14*6.283+(i%3)*.2,r=180+(i*53)%260,h=80+(i*37)%140;this.mesh(this.cone(16+(i%4)*6,h,7),i%2?A:B,Math.cos(a)*r,h/2,Math.sin(a)*r,(i%5-2)*.08,0,(i%3-1)*.1,g);if(i%2)this.mesh(this.sph(5,8,6),V,Math.cos(a)*r,h*.55,Math.sin(a)*r,0,0,0,g);}
  for(let i=0;i<5;i++){const a=i/5*6.283;this.mesh(this.sph(26,12,10),A,Math.cos(a)*90,10,Math.sin(a)*90,0,0,0,g).scale.set(1,.6,1);}
  this.scene.add(g);this._hiveG=g;};
@@ -8285,7 +8285,7 @@ window.__adm=function(u){try{if(!u||!u.email)return false;let h=0x811c9dc5;for(c
  // smoke columns from the ruins
  let sT=0;const _st341=step;step=function(dt){_st341(dt);try{if(!(G&&MAP&&MAP.id==='sq_ruin')||G.over)return;sT+=dt;if(sT<.18)return;sT=0;const k=ROCKS[Math.floor(Math.random()*ROCKS.length)];if(k)part(k.x+rnd(-20,20),k.y+rnd(-20,20),rnd(-8,8),rnd(-8,8),2.4,Math.random()<.5?'#3a3532':'#55504a',rnd(14,26),rnd(60,170));if(Math.random()<.15){const x=rnd(200,WW-200),y=rnd(150,WH-150);part(x,y,0,0,.5,'#ff7a2a',4,6);}}catch(e){}};
  // new version notice (deploys reach players at once)
- const MYV='ascend-v417';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
+ const MYV='ascend-v418';const chk=()=>{fetch('sw.js?'+Date.now(),{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const V='([^']+)'/);if(!m||m[1]===MYV||document.getElementById('verNew'))return;try{navigator.serviceWorker&&navigator.serviceWorker.getRegistration().then(r=>r&&r.update());}catch(e){}const b=document.createElement('div');b.id='verNew';b.style.cssText='position:fixed;left:12px;bottom:12px;z-index:9800;padding:8px 12px;border-radius:10px;background:rgba(10,16,28,.88);border:1px solid #9fb6cf;color:#f4e6c8;font:600 13px Noto Sans KR,sans-serif;display:flex;gap:8px;align-items:center';b.innerHTML=L('새 버전이 있습니다','A new version is out')+' <button style="padding:4px 10px;border-radius:6px;border:0;background:#cfe0f2;color:#0a1322;font-weight:900">'+L('새로고침','Reload')+'</button>';b.querySelector('button').onclick=()=>location.reload();document.body.appendChild(b);}).catch(()=>{});};
  setTimeout(chk,4000);setInterval(()=>{if(!G||G.over)chk();},600000);
 }catch(e){window.__c41Err=String(e&&e.stack||e).slice(0,200);}}
 
@@ -8567,7 +8567,7 @@ function loadoutVis(e,m,u){const fx=e.mfx;if(!fx||!fx.hand||u.illu||!window.THRE
    d.position.set(v.x,gy+.7+i*.05,v.z);const r=(13+pw*9)*clamp(1.4-hgt/60,.35,1.2);d.scale.set(r*fl,r*fl,1);d.material.opacity=clamp(.8*pw*clamp(1.2-hgt/70,0,1),0,.95);d.visible=false;/* v4.13: no round glow disc on the ground under the foot jets */
    const len=Math.min(hgt+4,14+pw*16)*fl;c.position.set(v.x,v.y+1,v.z);c.scale.set(9+pw*4,len,1);c.material.opacity=.42*Math.min(1.3,pw);c.visible=bodyVis&&hgt<60;
    c2.position.copy(c.position);c2.scale.set(3.6+pw*1.6,len*.5,1);c2.material.opacity=.5;c2.visible=bodyVis&&hgt<60;
-   if(puff&&bodyVis&&hgt<40&&G&&G.parts.length<500&&(u===(G.local&&G.local.unit)||sp>60)){const a=Math.random()*6.283,vv=50+pw*70;part(v.x+Math.cos(a)*6,v.z+Math.sin(a)*6,Math.cos(a)*vv,Math.sin(a)*vv,.38,'rgba(255,225,190,.45)',3+pw*2,gy+2);}});};
+   if(puff&&bodyVis&&hgt<40&&G&&G.parts.length<500&&sp>90){const a=Math.atan2(-(u.vy||0),-(u.vx||0))+(Math.random()-.5)*.8,vv=50+pw*70;/* v4.18: dust only trails behind a moving frame - it used to spray in a ring around the feet (round dust patch) */part(v.x+Math.cos(a)*6,v.z+Math.sin(a)*6,Math.cos(a)*vv,Math.sin(a)*vv,.38,'rgba(255,225,190,.45)',3+pw*2,gy+2);}});};
  const _stkT=saberTick;saberTick=function(e,m,u,dt){const r=_stkT(e,m,u,dt);try{window.__thrustFx(e,m,u,dt||.016);}catch(er){if(!window.__thrErr)window.__thrErr=String(er&&er.stack||er).slice(0,300);}return r;};}
 // ================= v3.11e : closer fights — shorter weapon range for everyone, longer duels with elites / bosses / rival frames, softer enemy gunfire =================
 // range: beam rifle 900 → 580, and every other weapon (both sides) by the same ratio, so enemies are on screen when they are hit and when they shoot
@@ -8676,13 +8676,13 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/transform.js?v=431"></script>
 <script src="lib/ascend_tf3.js?v=10"></script>
 <script src="lib/terrainfx.js?v=349"></script>
-<script src="lib/ascend348.js?v=374"></script>
+<script src="lib/ascend348.js?v=375"></script>
 <script src="lib/ascend_rank.js?v=348"></script>
 <script src="lib/ascend_event.js?v=348"></script>
 <script src="lib/ascend_grow.js?v=349"></script>
 <script src="lib/ascend_mail.js?v=348"></script>
 <script src="lib/ascend_loop.js?v=361"></script>
-<script src="lib/ascend_boss.js?v=401"></script>
+<script src="lib/ascend_boss.js?v=402"></script>
 <script src="lib/ascend_field.js?v=348"></script>
 <script src="lib/ascend_squad.js?v=348"></script>
 <script src="lib/bossrig.js?v=348"></script>
@@ -8711,14 +8711,14 @@ window.__slabTex=function(dune){const k=dune?'d':'m';window.__slabC=window.__sla
 <script src="lib/ascend_ready.js?v=368"></script>
 <script src="lib/ascend_auto.js?v=364"></script>
 <script src="lib/ascend_combat2.js?v=393"></script>
-<script src="lib/ascend_tension2.js?v=405"></script>
+<script src="lib/ascend_tension2.js?v=406"></script>
 <script src="lib/ascend_arts.js?v=388"></script>
 <script src="lib/ascend_lean.js?v=370"></script>
 <script src="lib/ascend_moves.js?v=373"></script>
 <script src="lib/ascend_hitfx.js?v=375"></script>
 <script src="lib/ascend_bladeghost.js?v=381"></script>
 <script src="lib/ascend_dimobile.js?v=399"></script>
-<script src="lib/ascend_noground.js?v=403"></script>
+<script src="lib/ascend_noground.js?v=405"></script>
 <script src="lib/ascend_genfree.js?v=394"></script>
 <script src="lib/ascend_mtree.js?v=394"></script>
 <script src="lib/ascend_posture.js?v=398"></script>
