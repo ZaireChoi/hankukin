@@ -293,7 +293,7 @@ whenR3(function(){var r=R3.r;
  //      and each map gets its own light and haze colour. The ground stays flat for the simulation; the relief is shading + a normal map.
  var TLIGHT={sq_ruin:[0xffe6c8,0x6e665c],sq_arena:[0xff9c6c,0x3c1612],sq_ice:[0xdcedff,0x8cb2d6],s01:[0xffe9d0,0x5c6470],s02:[0xffa474,0x42221c],s03:[0xdcedff,0x8cb2d6],
   s04:[0xfff0c0,0x8a7c54],s05:[0xd4c4ff,0x4a4468],s06:[0xd2b4ff,0x2c1a44],s07:[0xffc48c,0x7c4232],s08:[0xc8f0ff,0x3c5c6c],s09:[0xdcffc8,0x3a5a3c],s10:[0xffd0a0,0x5c4232]};
- var FIELD={h1:'s01',h3:'s02',h4:'s03',h5:'s04',h6:'s05',h7:'s06',rift:'s06',h8:'s08',h9:'s09',h10:'s10'},EPI={e_p:'s01',e0:'s01',e2:'s02',e3:'s03',e4:'s04',e5:'s05',e6:'s06'};
+ var FIELD={h1:'s01',h3:'s02',h4:'s03',h5:'s04',h6:'s05',h7:'s06',rift:'s06',h8:'s08',h9:'s09',h10:'s10'},EPI={e_p:'s01',e0:'s01',e2:'s11',e3:'s03',e4:'s04',e5:'s05',e6:'s06'};
  var terrKey=X.terrKey=function(){if(!G||!MAP||MAP.space)return null;var id=MAP.id;if(id==='sq_ruin'||id==='sq_arena'||id==='sq_ice')return id;var q=G.rpg;
   if(q){var o=q.obj;if(o&&(o.k==='squad'||o.k==='duel'))return null;if(o&&o.k==='field')return FIELD[o.zone]||null;return EPI[q.epi]||null;}return id==='dune'?'s07':null;};
  var TC={},MCACHE={};
