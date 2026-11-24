@@ -106,7 +106,7 @@ var ringBreak = function () {
   for (var c in by) { var L = by[c]; if (L.length < 6) continue; var cx = 0, cy = 0; L.forEach(function (p) { cx += p.x; cy += p.y; }); cx /= L.length; cy /= L.length;
     var ds = L.map(function (p) { return Math.hypot(p.x - cx, p.y - cy); }), m = ds.reduce(function (s, d) { return s + d; }, 0) / ds.length; if (m < 25) continue;
     var v = Math.sqrt(ds.reduce(function (s, d) { return s + (d - m) * (d - m); }, 0) / ds.length); if (v / m > .22) continue;
-    L.forEach(function (p) { var kk = .15 + Math.random() * .85; p.x = cx + (p.x - cx) * kk; p.y = cy + (p.y - cy) * kk; p.h = (p.h || 4) + Math.random() * 30; });
+    L.forEach(function (p, ix) { if (ix % 5) { p.l = 0; p.ml = p.ml || .01; return; } var kk = .15 + Math.random() * .85; p.x = cx + (p.x - cx) * kk; p.y = cy + (p.y - cy) * kk; p.h = (p.h || 4) + Math.random() * 30; });   /* v4.18: a ring of dots is mostly removed (1 in 5 kept, scattered) - no dotted arcs left */
     window.__ringBroke = (window.__ringBroke || 0) + 1; }
 };
 var fxHook = function () { if (window.__hkRingBreak || typeof updateFx !== 'function') return; window.__hkRingBreak = 1; var u0 = updateFx; updateFx = function () { try { ringBreak(); } catch (e) {} return u0.apply(this, arguments); }; };
@@ -157,4 +157,39 @@ var fxHook = function () { if (window.__hkRingBreak || typeof updateFx !== 'func
   var hookS = function () { if (window.__hkGA || typeof step !== 'function') return false; window.__hkGA = 1; var st = step; step = function (dt) { dropRings(); st(dt); dropRings(); }; return true; };
   var iv2 = setInterval(function () { try { if (hookS()) clearInterval(iv2); } catch (e) {} }, 500);
   window.__groundAudit = function () { var list = scan(false); return { count: list.length, list: list, hiddenSoFar: GA.hidden, ringsDropped: GA.rings }; };
+})();
+
+/* v4.18 (evaluation 32-1/2): wider net - flat round sprites and see-through spheres near the ground, and long thin effect strips
+   (beams, light lines, smoke columns 300+ long) are counted and hidden too. window.__lineAudit() / __groundAudit() report what is left. */
+(function () {
+  'use strict';
+  var B = null, S = null;
+  var vis = function (o) { var p = o; while (p) { if (!p.visible) return false; p = p.parent; } return true; };
+  var redish = function (m) { var c = m && m.color; return !!c && c.r > .55 && c.g < .4 && c.b < .4; };
+  var scanX = function (hide, kind) {
+    var T = window.THREE; if (!T || !window.R3 || !R3.scene) return []; B = B || new T.Box3(); S = S || new T.Vector3(); var out = [];
+    R3.scene.traverse(function (o) {
+      if (!(o.isMesh || o.isSprite || o.isLine) || o.isInstancedMesh || o.name === 'lean_batch' || !o.visible || !vis(o) || o.userData.keepGround) return;   /* instanced particle pools span the whole field - not one strip */
+      var m = Array.isArray(o.material) ? o.material[0] : o.material; if (!m || m.visible === false) return;
+      try { B.setFromObject(o); } catch (e) { return; } if (B.isEmpty()) return; B.getSize(S);
+      var d = [S.x, S.y, S.z].sort(function (a, b) { return b - a; });
+      var fx = m.transparent || m.blending === 2 || o.isLine;
+      if (kind === 'line') {
+        if (d[0] < 300 || d[0] > 4000 || B.min.y > 500) return; if (d[0] / Math.max(1, d[1]) < 6) return; if (!fx) return; if (redish(m) && o.userData.tele) return;
+        out.push({ t: o.isLine ? 'line' : o.isSprite ? 'sprite' : 'mesh', g: o.geometry && o.geometry.type, len: Math.round(d[0]), y: Math.round(B.min.y), col: m.color ? m.color.getHexString() : '' });
+        if (hide) { o.visible = false; o.userData.gaHidden = 1; }
+      } else {
+        var cy = (B.min.y + B.max.y) / 2;
+        if (o.isSprite) { var w = Math.max(S.x, S.z, S.y); if (w < 60 || cy > 30 || !fx || redish(m)) return; }
+        else if (o.isMesh && /Sphere/.test((o.geometry && o.geometry.type) || '')) { if (!m.transparent || d[0] < 60 || B.min.y > 30 || redish(m)) return; }
+        else return;
+        out.push({ t: o.isSprite ? 'sprite' : 'sphere', w: Math.round(d[0]), y: Math.round(cy), col: m.color ? m.color.getHexString() : '' });
+        if (hide) { o.visible = false; o.userData.gaHidden = 1; if (o.isSprite) m.visible = false; }   /* some owners show their glow again every frame - the material stays off */
+      }
+    });
+    return out;
+  };
+  setInterval(function () { try { if (window.__groundGuardOff) return; if (typeof G !== 'undefined' && G && !G.over) { scanX(true, 'line'); scanX(true, 'disc'); } } catch (e) {} }, 1000);
+  window.__lineAudit = function () { var l = scanX(false, 'line'); return { count: l.length, list: l }; };
+  var ga0 = window.__groundAudit; window.__groundAudit = function () { var a = ga0 ? ga0() : { count: 0, list: [] }; var x = scanX(false, 'disc'); return { count: a.count + x.length, list: a.list.concat(x), hiddenSoFar: a.hiddenSoFar, ringsDropped: a.ringsDropped }; };
 })();
