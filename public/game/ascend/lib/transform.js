@@ -25,6 +25,23 @@ function seg(k,a,b){var x=Math.max(0,Math.min(1,(k-a)/(b-a)));return x*x*(3-2*x)
 function G(){return window.__T&&window.__T.G;}
 function me(){var g=G();return g&&g.local&&g.local.unit;}
 // ---------- state ----------
+
+/* v4.14 (user): a transformed frame fires missiles only - a pair from under both wings, through the missile engine (lib/ascend_missile.js).
+   Wing points come from the flight form itself (outermost wing pieces); forms without wings fire from the hull sides. */
+function wingPts(e){var J=e&&e._jet;if(!J||!J.pcs)return null;if(J._wing)return J._wing;var T=T3();var zMax=0,xs=0,n=0,yM=0;for(var k in J.pcs){var h=J.pcs[k].home;if(Math.abs(h.z)>zMax)zMax=Math.abs(h.z);}
+ var wl=J.pcs.wingL&&J.pcs.wingL.home,wr=J.pcs.wingR&&J.pcs.wingR.home;var L,R;if(wl&&wr){L=wl.clone();R=wr.clone();L.z=Math.sign(L.z||1)*Math.max(Math.abs(L.z),zMax*.75);R.z=Math.sign(R.z||-1)*Math.max(Math.abs(R.z),zMax*.75);L.y-=J.len*.04;R.y-=J.len*.04;}
+ else{var w=Math.max(zMax,J.len*.12);L=new T.Vector3(0,0,w);R=new T.Vector3(0,0,-w);}
+ J._wing=[L,R];return J._wing;}
+function wingMissile(u,a){try{var M=window.MSLE;if(!M||!M.fire||!window.R3)return false;var e=R3.units.get(u.id);var W=wingPts(e);if(!W)return false;var J=e._jet;J.grp.updateMatrixWorld(true);
+  var tg=null,bd=1e18,on=window.__mslOnScr;var g=G();for(var i=0;i<g.units.length;i++){var o=g.units[i];if(o.dead||o.team===u.team||o.team===2)continue;if(on&&!on(o.x,20,o.y))continue;var dd=(o.x-u.x)*(o.x-u.x)+(o.y-u.y)*(o.y-u.y);var ang=Math.atan2(o.y-u.y,o.x-u.x);var df=Math.abs(Math.atan2(Math.sin(ang-a),Math.cos(ang-a)));dd*=1+df*1.5;if(dd<bd){bd=dd;tg=o;}}
+  var dmg=46*(1+((window.__plv&&window.__plv())||1)*.03);var P=AX().part;
+  for(var s=0;s<2;s++){var wp=W[s].clone();J.grp.localToWorld(wp);var ca=Math.cos(a),sa=Math.sin(a);
+   M.fire({profile:'aa',kind:'micro',x:wp.x,h:wp.y,y:wp.z,dir:[ca,-.05,sa],target:tg,tx:tg?null:u.x+ca*800,ty:tg?null:u.y+sa*800,th:tg?null:20,dmg:dmg,src:u.slot,team:u.team,dt:'x',delay:s*.06});
+   if(P)for(var q=0;q<3;q++)P(wp.x,wp.z,ca*120+(Math.random()-.5)*60,sa*120+(Math.random()-.5)*60,.12,'#ffe2b0',3,wp.y);}
+  return true;}catch(er){window.__tfMslErr=String(er).slice(0,160);return false;}}
+window.__tfWing=wingPts;
+/* no weapon arts (Z / art button, auto battle) while transformed */
+setInterval(function(){try{var ao=window.__artOverride;if(ao&&ao.__tf)return;var w=function(u){if(isJet(u))return true;return ao?ao(u):false;};w.__tf=1;window.__artOverride=w;}catch(e){}},1000);
 function isJet(u){return !!(u&&u.tf&&u.tf.mode!=='robot');}
 function toggle(u){u=u||me();if(!u||u.dead||u.cls!=='arkframe')return;var g=G();if(!g||g.over)return;u.tf=u.tf||{mode:'robot',k:0};
  if(u.tf.mode==='robot'||u.tf.mode==='toRobot'){u.tf.mode='toJet';}else{u.tf.mode='toRobot';}
@@ -34,7 +51,7 @@ window.ascendTransform=toggle;
 var LOCK={KeyQ:1,KeyE:1,KeyR:1,KeyT:1,KeyZ:1,KeyC:1,KeyX:1,Digit1:1,Digit2:1,Digit3:1,Digit4:1,Digit5:1,Digit6:1};
 addEventListener('keydown',function(e){if(e.code==='KeyY'&&!e.repeat){var u=me();if(u&&u.cls==='arkframe'){e.preventDefault();toggle(u);}return;}var u2=me();if(isJet(u2)&&LOCK[e.code]){e.stopImmediatePropagation();e.preventDefault();}},true);
 ['touchstart','pointerdown','mousedown'].forEach(function(ev){addEventListener(ev,function(e){var u=me();if(!isJet(u))return;var t=e.target;if(!t||!t.closest)return;if(t.closest('#tA1,#tA2,#tUl,#tArt,#tMsl,#tFly,#tDash')||(t.closest('.sk2')&&!t.closest('[data-k="TF"]'))){e.stopImmediatePropagation();e.preventDefault();}},true);});
-function hookInput(){var li=window.localInput;if(!li||li.__tf||window.__hkTfI)return;window.__hkTfI=1;var w=function(u){var inp=li(u);try{if(isJet(u)){inp.a1=false;inp.a2=false;inp.ul=false;inp.ab=false;var g=G();var moving=u.tf.mode==='jet';if(inp.fire&&moving){u._tfFire=(u._tfFire||0)-1/60;if(u._tfFire<=0&&AX().boltFire){u._tfFire=.16;var a=inp.aim!=null?inp.aim:(u.aa||0);try{AX().boltFire(u,a+(Math.random()-.5)*.03,{dmg:22*(1+((window.__plv&&window.__plv())||1)*.03),w:44,vis:46,r:4,spd:3000});}catch(e){}}}inp.fire=false;if(!moving){inp.mx*=.2;inp.my*=.2;}}}catch(e){}return inp;};w.__tf=1;window.localInput=w;}
+function hookInput(){var li=window.localInput;if(!li||li.__tf||window.__hkTfI)return;window.__hkTfI=1;var w=function(u){var inp=li(u);try{if(isJet(u)){inp.a1=false;inp.a2=false;inp.ul=false;inp.ab=false;var g=G();var moving=u.tf.mode==='jet';if(inp.fire&&moving){var gt=(g&&g.t)||0;if(u._tfNext==null||u._tfNext>gt+2)u._tfNext=0;u._tfFire=u._tfNext-gt;if(u._tfFire<=0){var a=inp.aim!=null?inp.aim:(u.aa||0);if(wingMissile(u,a))u._tfNext=gt+.42;else if(AX().boltFire){u._tfNext=gt+.16;try{AX().boltFire(u,a+(Math.random()-.5)*.03,{dmg:22*(1+((window.__plv&&window.__plv())||1)*.03),w:44,vis:46,r:4,spd:3000});}catch(e){}}}}inp.fire=false;if(!moving){inp.mx*=.2;inp.my*=.2;}}}catch(e){}return inp;};w.__tf=1;window.localInput=w;}
 // ---------- per-frame: progress, speed, protection, sounds ----------
 function hookStep(){var st=window.step;if(!st||st.__tf||window.__hkTfS)return;window.__hkTfS=1;var w=function(dt){st(dt);try{var u=me();if(!u||!u.tf)return;var T=u.tf,p=prof(AX().myMechKey?AX().myMechKey():'');
   /* v4.09 fix (user: "manual play does not respond"): the battle entrance holds the frame half-transformed (mode 'hold'); when the entrance ends

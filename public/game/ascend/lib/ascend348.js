@@ -404,7 +404,7 @@ whenR3(function(){var r=R3.r;
  // ENERGY WHIP: the whip had no body, only an arc flash. It is now a chain of 14 light beads from the weapon hand — it hangs
  // in a loose curl at rest, and on a swing the tip lashes out along the swing arc with the beads trailing behind it.
  var WHP=null;
- function whipTick(e,u,dt,now){var on=u.melSub==='whip'&&!u.dead&&e.mdl&&e.root.visible;
+ function whipTick(e,u,dt,now){var on=u.melSub==='whip'&&!u.dead&&e.mdl&&e.root.visible&&!(u.tf&&u.tf.mode!=='robot')&&!(e.mdl.wrap&&!e.mdl.wrap.visible);/* v4.14: no whip while transformed */
   if(!on){if(WHP)WHP.g.visible=false;return;}
   if(!WHP){WHP={g:new T.Group(),s:[],p:[],k:0};var tex=(typeof glowTex==='function')?glowTex():null;for(var i=0;i<14;i++){var sp=new T.Sprite(new T.SpriteMaterial({map:tex,color:i%3?0xff5a98:0xffd0e4,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));sp.userData.keep=1;WHP.g.add(sp);WHP.s.push(sp);WHP.p.push(new T.Vector3());}WHP.g.userData.keep=1;WHP.g.userData.core=1;}
   if(WHP.g.parent!==R3.scene)R3.scene.add(WHP.g);WHP.g.visible=true;
