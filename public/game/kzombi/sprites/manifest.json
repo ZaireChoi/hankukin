@@ -1,0 +1,2327 @@
+{
+ "player": {
+  "src": "player_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 118,
+  "anchorX": 0.465,
+  "anchorY": 0.973,
+  "ch": 0.762,
+  "anims": {
+   "walk": {
+    "src": "player_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "player_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "player_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "player_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 11165
+ },
+ "peasant": {
+  "src": "peasant_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 58,
+  "anchorX": 0.503,
+  "anchorY": 0.963,
+  "ch": 0.731,
+  "anims": {
+   "walk": {
+    "src": "peasant_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "peasant_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "peasant_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "peasant_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "peasant_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "peasant_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "peasant_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "peasant_climb.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "limp": {
+    "src": "peasant_limp.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "backward": {
+    "src": "peasant_backward.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "crawl": {
+    "src": "peasant_crawl.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "handstand": {
+    "src": "peasant_handstand.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "onearm": {
+    "src": "peasant_onearm.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "oneleg": {
+    "src": "peasant_oneleg.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 48712
+ },
+ "archer": {
+  "src": "archer_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.544,
+  "anchorY": 1,
+  "ch": 0.775,
+  "anims": {
+   "walk": {
+    "src": "archer_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "archer_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "archer_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "archer_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "archer_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "archer_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "archer_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "archer_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 60306
+ },
+ "spear": {
+  "src": "spear_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.491,
+  "anchorY": 0.969,
+  "ch": 0.694,
+  "anims": {
+   "walk": {
+    "src": "spear_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "spear_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "spear_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "spear_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "spear_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "spear_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "spear_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "spear_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 92197
+ },
+ "mujang": {
+  "src": "mujang_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.545,
+  "anchorY": 0.965,
+  "ch": 0.52,
+  "anims": {
+   "walk": {
+    "src": "mujang_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "mujang_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "mujang_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "mujang_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "mujang_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "mujang_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "mujang_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "mujang_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 77338
+ },
+ "king": {
+  "src": "king_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 94,
+  "anchorX": 0.545,
+  "anchorY": 0.985,
+  "ch": 0.47,
+  "anims": {
+   "walk": {
+    "src": "king_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "king_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "king_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "king_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "king_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "king_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "king_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "king_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 72191
+ },
+ "yangban": {
+  "src": "yangban_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.478,
+  "anchorY": 0.938,
+  "ch": 0.675,
+  "anims": {
+   "walk": {
+    "src": "yangban_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "yangban_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "yangban_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "yangban_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "yangban_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "yangban_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "yangban_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "yangban_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 24231
+ },
+ "munsin": {
+  "src": "munsin_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.475,
+  "anchorY": 0.969,
+  "ch": 0.738,
+  "anims": {
+   "walk": {
+    "src": "munsin_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "munsin_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "munsin_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "munsin_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "munsin_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "munsin_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "munsin_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "munsin_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 45593
+ },
+ "dokkaebi": {
+  "src": "dokkaebi.png",
+  "cell": 256,
+  "frames": 8,
+  "fps": 10,
+  "height": 64,
+  "anchorX": 0.498,
+  "anchorY": 0.879,
+  "ch": 0.793,
+  "v": 74290
+ },
+ "rider": {
+  "src": "rider.png",
+  "cell": 256,
+  "frames": 1,
+  "fps": 10,
+  "height": 88,
+  "anchorX": 0.498,
+  "anchorY": 0.891,
+  "ch": 0.664,
+  "v": 74290
+ },
+ "harcher": {
+  "src": "harcher.png",
+  "cell": 256,
+  "frames": 1,
+  "fps": 10,
+  "height": 88,
+  "anchorX": 0.498,
+  "anchorY": 0.969,
+  "ch": 0.719,
+  "v": 74290
+ },
+ "zdog": {
+  "src": "zdog_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 40,
+  "anchorX": 0.497,
+  "anchorY": 1,
+  "ch": 0.647,
+  "anims": {
+   "walk": {
+    "src": "zdog_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zdog_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zdog_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zdog_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zdog_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 56843
+ },
+ "zrat": {
+  "src": "zrat_walk.webp",
+  "cell": 128,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 36,
+  "anchorX": 0.496,
+  "anchorY": 1,
+  "ch": 0.547,
+  "anims": {
+   "walk": {
+    "src": "zrat_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zrat_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zrat_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zrat_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zrat_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 67782
+ },
+ "zcrow": {
+  "src": "zcrow_walk.webp",
+  "cell": 128,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 40,
+  "anchorX": 0.5,
+  "anchorY": 1,
+  "ch": 0.523,
+  "anims": {
+   "walk": {
+    "src": "zcrow_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zcrow_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zcrow_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zcrow_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zcrow_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 88973
+ },
+ "zboar": {
+  "src": "zboar_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 52,
+  "anchorX": 0.5,
+  "anchorY": 1,
+  "ch": 0.55,
+  "anims": {
+   "walk": {
+    "src": "zboar_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zboar_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zboar_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zboar_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zboar_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 79633
+ },
+ "zox": {
+  "src": "zox_walk.webp",
+  "cell": 192,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 72,
+  "anchorX": 0.503,
+  "anchorY": 0.974,
+  "ch": 0.448,
+  "anims": {
+   "walk": {
+    "src": "zox_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zox_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zox_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zox_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zox_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 44864
+ },
+ "zbear": {
+  "src": "zbear_walk.webp",
+  "cell": 192,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 78,
+  "anchorX": 0.529,
+  "anchorY": 0.979,
+  "ch": 0.422,
+  "anims": {
+   "walk": {
+    "src": "zbear_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zbear_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zbear_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zbear_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 85396
+ },
+ "ztiger": {
+  "src": "ztiger_walk.webp",
+  "cell": 176,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.503,
+  "anchorY": 0.989,
+  "ch": 0.466,
+  "anims": {
+   "walk": {
+    "src": "ztiger_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "ztiger_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "ztiger_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "ztiger_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "ztiger_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 28726
+ },
+ "tur_general": {
+  "src": "tur_general.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 95,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14640
+ },
+ "tur_lady": {
+  "src": "tur_lady.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 95,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14732
+ },
+ "guard_turtle": {
+  "src": "guard_turtle.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 86,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14777
+ },
+ "guard_phoenix": {
+  "src": "guard_phoenix.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 100,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14817
+ },
+ "guard_tiger": {
+  "src": "guard_tiger.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 92,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14855
+ },
+ "guard_dragon": {
+  "src": "guard_dragon.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 104,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 14884
+ },
+ "haetae": {
+  "src": "haetae.png",
+  "cell": 320,
+  "frames": 1,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.498,
+  "anchorY": 0.969,
+  "ch": 0.8,
+  "v": 74291
+ },
+ "samjoko": {
+  "src": "samjoko.png",
+  "cell": 320,
+  "frames": 1,
+  "fps": 10,
+  "height": 50,
+  "anchorX": 0.498,
+  "anchorY": 0.9,
+  "ch": 0.772,
+  "v": 74291
+ },
+ "shrine": {
+  "src": "shrine.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 210,
+  "anchorX": 0.499,
+  "anchorY": 0.936,
+  "ch": 0.768
+ },
+ "base": {
+  "src": "base.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 230,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.73,
+  "v": 13455
+ },
+ "wall": {
+  "src": "wall.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.615,
+  "v": 13509
+ },
+ "gate": {
+  "src": "gate.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 140,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.774,
+  "v": 13482
+ },
+ "tower_arrow": {
+  "src": "tower_arrow.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 140,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 13541
+ },
+ "tower_cannon": {
+  "src": "tower_cannon.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.689,
+  "v": 13662
+ },
+ "tower_hwacha": {
+  "src": "tower_hwacha.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 85,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.835,
+  "v": 13704
+ },
+ "tower_catapult": {
+  "src": "tower_catapult.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 84,
+  "anchorX": 0.499,
+  "anchorY": 0.922,
+  "ch": 0.619
+ },
+ "tower_fire": {
+  "src": "tower_fire.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 115,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 13575
+ },
+ "tower_talisman": {
+  "src": "tower_talisman.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 120,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 13744
+ },
+ "mine": {
+  "src": "mine.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 75,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.832,
+  "v": 13778
+ },
+ "barracks": {
+  "src": "barracks.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 130,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.761,
+  "v": 13815
+ },
+ "well": {
+  "src": "well.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 100,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.9,
+  "v": 13865
+ },
+ "build_pad": {
+  "src": "build_pad.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 44,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.466,
+  "v": 13892
+ },
+ "barricade": {
+  "src": "barricade.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 64,
+  "anchorX": 0.499,
+  "anchorY": 0.848,
+  "ch": 0.695
+ },
+ "yisunsin": {
+  "src": "yisunsin_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.515,
+  "anchorY": 0.95,
+  "ch": 0.635,
+  "anims": {
+   "walk": {
+    "src": "yisunsin_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "yisunsin_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "yisunsin_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "yisunsin_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 4743
+ },
+ "eulji": {
+  "src": "eulji_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.512,
+  "anchorY": 0.94,
+  "ch": 0.605,
+  "anims": {
+   "walk": {
+    "src": "eulji_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "eulji_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "eulji_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "eulji_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 19062
+ },
+ "wonhyo": {
+  "src": "wonhyo_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.495,
+  "anchorY": 0.955,
+  "ch": 0.63,
+  "anims": {
+   "walk": {
+    "src": "wonhyo_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "wonhyo_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "wonhyo_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "wonhyo_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 50790
+ },
+ "gangamchan": {
+  "src": "gangamchan_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.48,
+  "anchorY": 0.965,
+  "ch": 0.615,
+  "anims": {
+   "walk": {
+    "src": "gangamchan_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "gangamchan_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "gangamchan_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "gangamchan_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 78944
+ },
+ "honggildong": {
+  "src": "honggildong_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.49,
+  "anchorY": 0.87,
+  "ch": 0.68,
+  "anims": {
+   "walk": {
+    "src": "honggildong_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "honggildong_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "honggildong_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "honggildong_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 74
+ },
+ "gumiho": {
+  "src": "gumiho_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.5,
+  "anchorY": 0.91,
+  "ch": 0.645,
+  "anims": {
+   "walk": {
+    "src": "gumiho_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "gumiho_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "gumiho_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "gumiho_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 22678
+ },
+ "kimchungseon": {
+  "src": "kimchungseon_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 88,
+  "anchorX": 0.492,
+  "anchorY": 0.95,
+  "ch": 0.55,
+  "anims": {
+   "walk": {
+    "src": "kimchungseon_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "kimchungseon_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "kimchungseon_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "kimchungseon_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 92080
+ },
+ "bari": {
+  "src": "bari_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.507,
+  "anchorY": 0.97,
+  "ch": 0.77,
+  "anims": {
+   "walk": {
+    "src": "bari_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "bari_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "bari_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "bari_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 69409
+ },
+ "zgrand": {
+  "src": "zgrand_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 100,
+  "anchorX": 0.477,
+  "anchorY": 0.975,
+  "ch": 0.375,
+  "anims": {
+   "walk": {
+    "src": "zgrand_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zgrand_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zgrand_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zgrand_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "zgrand_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "zgrand_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "zgrand_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "zgrand_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 8533
+ },
+ "zqueen2": {
+  "src": "zqueen2_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 82,
+  "anchorX": 0.485,
+  "anchorY": 1,
+  "ch": 0.475,
+  "anims": {
+   "walk": {
+    "src": "zqueen2_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zqueen2_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zqueen2_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zqueen2_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "zqueen2_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "zqueen2_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "zqueen2_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "zqueen2_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 44042
+ },
+ "zwaegun": {
+  "src": "zwaegun_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.491,
+  "anchorY": 0.975,
+  "ch": 0.756,
+  "anims": {
+   "walk": {
+    "src": "zwaegun_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zwaegun_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zwaegun_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zwaegun_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "zwaegun_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "zwaegun_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "zwaegun_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "zwaegun_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 71490
+ },
+ "zsamurai": {
+  "src": "zsamurai_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 66,
+  "anchorX": 0.478,
+  "anchorY": 0.969,
+  "ch": 0.606,
+  "anims": {
+   "walk": {
+    "src": "zsamurai_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zsamurai_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zsamurai_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zsamurai_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "zsamurai_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "zsamurai_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "zsamurai_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "zsamurai_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 12567
+ },
+ "zmonk": {
+  "src": "zmonk_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 62,
+  "anchorX": 0.497,
+  "anchorY": 1,
+  "ch": 0.781,
+  "anims": {
+   "walk": {
+    "src": "zmonk_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zmonk_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zmonk_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zmonk_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "run": {
+    "src": "zmonk_run.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "rise": {
+    "src": "zmonk_rise.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "scream": {
+    "src": "zmonk_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "climb": {
+    "src": "zmonk_climb.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 41040
+ },
+ "zsword": {
+  "src": "zsword_walk.webp",
+  "cell": 160,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 62,
+  "anchorX": 0.5,
+  "anchorY": 0.969,
+  "ch": 0.725,
+  "anims": {
+   "walk": {
+    "src": "zsword_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "zsword_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "zsword_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "zsword_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "zsword_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 55886
+ },
+ "sadaham": {
+  "src": "sadaham_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 76,
+  "anchorX": 0.497,
+  "anchorY": 0.995,
+  "ch": 0.79,
+  "anims": {
+   "walk": {
+    "src": "sadaham_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "sadaham_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "sadaham_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "sadaham_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "sadaham_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 79865
+ },
+ "imugi": {
+  "src": "imugi_walk.webp",
+  "cell": 220,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 110,
+  "anchorX": 0.498,
+  "anchorY": 0.809,
+  "ch": 0.391,
+  "anims": {
+   "walk": {
+    "src": "imugi_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "imugi_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "imugi_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "imugi_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "imugi_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 28100
+ },
+ "daejanggeum": {
+  "src": "daejanggeum_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.5,
+  "anchorY": 0.955,
+  "ch": 0.73,
+  "anims": {
+   "walk": {
+    "src": "daejanggeum_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "daejanggeum_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "daejanggeum_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "daejanggeum_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 88634
+ },
+ "jeonwoochi": {
+  "src": "jeonwoochi_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 84,
+  "anchorX": 0.522,
+  "anchorY": 0.965,
+  "ch": 0.69,
+  "anims": {
+   "walk": {
+    "src": "jeonwoochi_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "jeonwoochi_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "jeonwoochi_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "jeonwoochi_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 33181
+ },
+ "yeoksin": {
+  "src": "yeoksin_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 124,
+  "anchorX": 0.485,
+  "anchorY": 1,
+  "ch": 0.729,
+  "anims": {
+   "walk": {
+    "src": "yeoksin_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "yeoksin_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "yeoksin_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "yeoksin_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "atk2": {
+    "src": "yeoksin_atk2.webp",
+    "frames": 8,
+    "loop": false
+   }
+  },
+  "v": 4401
+ },
+ "mudang": {
+  "src": "mudang_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 116,
+  "anchorX": 0.531,
+  "anchorY": 0.975,
+  "ch": 0.613,
+  "anims": {
+   "walk": {
+    "src": "mudang_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "mudang_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "mudang_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "scream": {
+    "src": "mudang_scream.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "mudang_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 23202
+ },
+ "cannon_head": {
+  "src": "cannon_head.webp",
+  "cell": 256,
+  "frames": 1,
+  "dirs": 16,
+  "fps": 1,
+  "height": 78,
+  "anchorX": 0.498,
+  "anchorY": 0.984,
+  "ch": 0.445,
+  "v": 72337,
+  "rowOff": 12
+ },
+ "hwacha_head": {
+  "src": "hwacha_head.webp",
+  "cell": 256,
+  "frames": 1,
+  "dirs": 16,
+  "fps": 1,
+  "height": 88,
+  "anchorX": 0.498,
+  "anchorY": 0.996,
+  "ch": 0.539,
+  "v": 75935,
+  "rowOff": 4
+ },
+ "sp_dragon": {
+  "src": "sp_dragon_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 150,
+  "anchorX": 0.537,
+  "anchorY": 0.995,
+  "ch": 0.675,
+  "anims": {
+   "walk": {
+    "src": "sp_dragon_walk.webp",
+    "frames": 10,
+    "loop": true
+   },
+   "atk": {
+    "src": "sp_dragon_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "idle": {
+    "src": "sp_dragon_idle.webp",
+    "frames": 8,
+    "loop": true
+   }
+  },
+  "v": 81782
+ },
+ "sp_tiger": {
+  "src": "sp_tiger_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 110,
+  "anchorX": 0.5,
+  "anchorY": 1,
+  "ch": 0.53,
+  "anims": {
+   "walk": {
+    "src": "sp_tiger_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "sp_tiger_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "idle": {
+    "src": "sp_tiger_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 16839
+ },
+ "sp_phoenix": {
+  "src": "sp_phoenix_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 140,
+  "anchorX": 0.497,
+  "anchorY": 0.935,
+  "ch": 0.67,
+  "anims": {
+   "walk": {
+    "src": "sp_phoenix_walk.webp",
+    "frames": 10,
+    "loop": true
+   },
+   "atk": {
+    "src": "sp_phoenix_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "idle": {
+    "src": "sp_phoenix_idle.webp",
+    "frames": 10,
+    "loop": true
+   }
+  },
+  "v": 47441
+ },
+ "sp_turtle": {
+  "src": "sp_turtle_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 110,
+  "anchorX": 0.497,
+  "anchorY": 1,
+  "ch": 0.39,
+  "anims": {
+   "walk": {
+    "src": "sp_turtle_walk.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "sp_turtle_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "idle": {
+    "src": "sp_turtle_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 85092
+ },
+ "s_sword": {
+  "src": "s_sword_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.49,
+  "anchorY": 0.967,
+  "ch": 0.76,
+  "anims": {
+   "walk": {
+    "src": "s_sword_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_sword_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_sword_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_sword_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_sword_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 68819
+ },
+ "s_spear": {
+  "src": "s_spear_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.483,
+  "anchorY": 0.953,
+  "ch": 0.667,
+  "anims": {
+   "walk": {
+    "src": "s_spear_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_spear_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_spear_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_spear_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_spear_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 82585
+ },
+ "s_geuk": {
+  "src": "s_geuk_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.497,
+  "anchorY": 0.953,
+  "ch": 0.667,
+  "anims": {
+   "walk": {
+    "src": "s_geuk_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_geuk_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_geuk_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_geuk_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_geuk_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 98784
+ },
+ "s_archer": {
+  "src": "s_archer_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.45,
+  "anchorY": 0.973,
+  "ch": 0.767,
+  "anims": {
+   "walk": {
+    "src": "s_archer_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_archer_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_archer_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_archer_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_archer_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 11269
+ },
+ "s_monk": {
+  "src": "s_monk_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.483,
+  "anchorY": 0.967,
+  "ch": 0.7,
+  "anims": {
+   "walk": {
+    "src": "s_monk_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_monk_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_monk_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_monk_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_monk_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 27054
+ },
+ "s_taoist": {
+  "src": "s_taoist_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.487,
+  "anchorY": 0.953,
+  "ch": 0.733,
+  "anims": {
+   "walk": {
+    "src": "s_taoist_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_taoist_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_taoist_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_taoist_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_taoist_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 43369
+ },
+ "samyeong": {
+  "src": "samyeong_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.54,
+  "anchorY": 0.96,
+  "ch": 0.695,
+  "anims": {
+   "walk": {
+    "src": "samyeong_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "samyeong_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "samyeong_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "samyeong_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "v": 57335
+ },
+ "s_cavalry": {
+  "src": "s_cavalry_walk.webp",
+  "cell": 170,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 78,
+  "anchorX": 0.506,
+  "anchorY": 0.988,
+  "ch": 0.747,
+  "anims": {
+   "walk": {
+    "src": "s_cavalry_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_cavalry_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_cavalry_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_cavalry_die.webp",
+    "frames": 10,
+    "loop": false
+   },
+   "idle": {
+    "src": "s_cavalry_idle.webp",
+    "frames": 6,
+    "loop": true
+   }
+  },
+  "v": 77566
+ },
+ "s_crossbow": {
+  "src": "s_crossbow_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.493,
+  "anchorY": 0.973,
+  "ch": 0.72,
+  "anims": {
+   "walk": {
+    "src": "s_crossbow_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_crossbow_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_crossbow_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_crossbow_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_crossbow_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 56395
+ },
+ "s_gun": {
+  "src": "s_gun_walk.webp",
+  "cell": 150,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 60,
+  "anchorX": 0.49,
+  "anchorY": 0.947,
+  "ch": 0.733,
+  "anims": {
+   "walk": {
+    "src": "s_gun_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_gun_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "s_gun_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "s_gun_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "s_gun_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  },
+  "v": 43060
+ }
+}
