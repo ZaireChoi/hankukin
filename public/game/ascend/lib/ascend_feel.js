@@ -31,16 +31,16 @@
   var CB = { n: 0, t: 0, el: null, hideT: 0 };
   var comboEl = function () {
     if (CB.el) return CB.el; var el = document.createElement('div'); el.id = 'feelCombo';
-    el.style.cssText = 'position:fixed;left:58%;top:28%;white-space:nowrap;z-index:60;pointer-events:none;font:900 34px Rajdhani,"Noto Sans KR",sans-serif;font-style:italic;letter-spacing:.02em;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.8),0 2px 0 rgba(0,0,0,.6);opacity:0;transition:opacity .25s;transform-origin:center';
+    el.style.cssText = 'position:fixed;left:58%;top:28%;white-space:nowrap;z-index:60;pointer-events:none;font:900 24px Rajdhani,"Noto Sans KR",sans-serif;font-style:italic;letter-spacing:.02em;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.8),0 2px 0 rgba(0,0,0,.6);opacity:0;transition:opacity .25s;transform-origin:center';
     document.body.appendChild(el); CB.el = el; return el;
   };
   var comboHit = function () {
     var now = performance.now(); if (now - CB.t > 1600) CB.n = 0; CB.n++; CB.t = now;
     if (CB.n < 3) return; var el = comboEl(), n = CB.n;
     el.innerHTML = n + '<span style="font-size:.5em;margin-left:4px">HIT</span>';
-    el.style.color = n >= 25 ? '#ff6b6b' : n >= 10 ? '#ffd166' : '#ffffff';
-    el.style.transition = 'none'; el.style.opacity = '1'; el.style.transform = 'scale(' + (1.35 + Math.min(.5, n / 60)) + ')';
-    void el.offsetWidth; el.style.transition = 'transform .14s ease-out, opacity .4s'; el.style.transform = 'scale(' + (1 + Math.min(.35, n / 80)) + ')';
+    el.style.color = n >= 50 ? '#ffb070' : n >= 10 ? '#ffd166' : '#ffffff';
+    el.style.transition = 'none'; el.style.opacity = '1'; el.style.transform = 'scale(1.25)';
+    void el.offsetWidth; el.style.transition = 'transform .14s ease-out, opacity .4s'; el.style.transform = 'scale(1)';
     clearTimeout(CB.hideT); CB.hideT = setTimeout(function () { el.style.opacity = '0'; }, 1500);
   };
   // ---------------------------------------------------------------- hurt hook
