@@ -234,7 +234,7 @@
   "height": 80,
   "anchorX": 0.545,
   "anchorY": 0.965,
-  "ch": 0.52,
+  "ch": 0.515,
   "anims": {
    "walk": {
     "src": "mujang_walk.webp",
@@ -277,7 +277,8 @@
     "loop": true
    }
   },
-  "v": 77338
+  "v": 75932,
+  "toon": 1
  },
  "king": {
   "src": "king_walk.webp",
@@ -395,8 +396,8 @@
   "fps": 10,
   "height": 60,
   "anchorX": 0.475,
-  "anchorY": 0.969,
-  "ch": 0.738,
+  "anchorY": 0.963,
+  "ch": 0.731,
   "anims": {
    "walk": {
     "src": "munsin_walk.webp",
@@ -439,7 +440,8 @@
     "loop": true
    }
   },
-  "v": 75274
+  "v": 48782,
+  "toon": 1
  },
  "dokkaebi": {
   "src": "dokkaebi_walk.webp",
@@ -1440,8 +1442,8 @@
   "fps": 10,
   "height": 60,
   "anchorX": 0.491,
-  "anchorY": 0.975,
-  "ch": 0.756,
+  "anchorY": 0.969,
+  "ch": 0.744,
   "anims": {
    "walk": {
     "src": "zwaegun_walk.webp",
@@ -1484,7 +1486,8 @@
     "loop": true
    }
   },
-  "v": 75274
+  "v": 18183,
+  "toon": 1
  },
  "zsamurai": {
   "src": "zsamurai_walk.webp",
@@ -3266,5 +3269,40 @@
     "loop": true
    }
   }
+ },
+ "bheukryong": {
+  "src": "bheukryong_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 110,
+  "anchorX": 0.487,
+  "anchorY": 0.954,
+  "ch": 0.571,
+  "v": 46953,
+  "anims": {
+   "walk": {
+    "src": "bheukryong_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "bheukryong_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "bheukryong_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "bheukryong_hit.webp",
+    "frames": 6,
+    "loop": false
+   }
+  },
+  "toon": 1
  }
 }
