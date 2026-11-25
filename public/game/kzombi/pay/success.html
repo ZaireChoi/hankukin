@@ -1,0 +1,20 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>결제 확인 중 · 조선좀비</title>
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1b1430;color:#fff;font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;text-align:center}
+.box{max-width:340px;padding:28px 22px;border-radius:22px;background:#2b2148;box-shadow:0 0 0 3px #f0c35a}h1{font-size:24px;margin:0 0 10px}p{font-size:17px;line-height:1.6;color:#e8dcff}a.b{display:inline-block;margin-top:16px;padding:12px 28px;border-radius:14px;background:#f0c35a;color:#2b1a05;font-weight:800;text-decoration:none}</style></head>
+<body><div class="box"><h1 id="t">결제를 확인하고 있어요…</h1><p id="m">잠시만 기다려 주세요.</p><a class="b" id="go" href="../?lang=ko" style="display:none">게임으로 돌아가기</a></div>
+<script>
+(async function(){
+  var q=new URLSearchParams(location.search),paymentKey=q.get('paymentKey'),orderId=q.get('orderId'),amount=+q.get('amount'),item=(orderId||'').split('-')[1]||'';
+  var M={jade300:'jade300',jade1k:'jade1k',starter:'starter',pass:'pass'};item=M[item]||item;
+  var t=document.getElementById('t'),m=document.getElementById('m'),go=document.getElementById('go');
+  try{
+    var r=await fetch('/api/kzpay/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paymentKey:paymentKey,orderId:orderId,amount:amount,item:item})});
+    var j=await r.json();
+    if(!j.ok) throw new Error(j.message||j.code||'승인 실패');
+    var a=[];try{a=JSON.parse(localStorage.getItem('kz_pay_rcpt')||'[]');}catch(e){}
+    if(!a.some(function(x){return x.orderId===j.receipt.orderId;})){a.push(j.receipt);localStorage.setItem('kz_pay_rcpt',JSON.stringify(a.slice(-50)));}
+    t.textContent=j.live?'결제가 끝났어요!':'시험 결제가 끝났어요!';m.innerHTML='게임으로 돌아가면 바로 지급돼요.'+(j.live?'':'<br><small>(시험 결제라 실제 돈은 나가지 않았어요)</small>');
+    go.style.display='inline-block';setTimeout(function(){location.replace('../?lang=ko&paid='+encodeURIComponent(orderId));},1800);
+  }catch(e){t.textContent='결제를 확인하지 못했어요';m.textContent=String(e.message||e)+' · 돈이 빠져나갔다면 고객센터로 주문번호 '+(orderId||'-')+' 를 알려 주세요.';go.style.display='inline-block';}
+})();
+</script></body></html>
