@@ -562,3 +562,9 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .lsh-bar{position:relative;flex:1;height:26px;border-radius:13px;background:rgba(0,0,0,.45);overflow:hidden}.lsh-bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ff8a1a,#ffd36b);border-radius:13px}.lsh-bar b{position:relative;display:block;text-align:center;line-height:26px;font-size:16px;color:#fff;text-shadow:0 1px 2px #000}
 .lsh-btn{padding:9px 16px;border-radius:12px;font-weight:900;font-size:17px;color:#2a1a05;background:linear-gradient(#ffe08a,#e0a43a);box-shadow:0 2px 0 #8a5a14;cursor:pointer;white-space:nowrap}.lsh-btn.dis{filter:grayscale(1) brightness(.7);cursor:default}.lsh-btn.open{background:linear-gradient(#ffb36a,#ff7a2a);color:#fff;text-shadow:0 1px 2px #6a2a00}.lsh-q{width:30px;height:30px;border-radius:50%;text-align:center;line-height:30px;font-weight:900;color:#ffe08a;border:1px solid rgba(255,215,120,.5);cursor:pointer}
 .lbox-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:8px 0}.lbox-c{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px;border-radius:16px;border:2px solid #ff9a2a;background:radial-gradient(circle at 50% 35%,rgba(255,160,50,.35),rgba(30,20,20,.7));cursor:pointer}.lbox-c img{width:70%;aspect-ratio:1;object-fit:contain}.lbox-c b{font-size:17px;color:#ffe2b0}
+
+/* 3막 바다 너머로(11-27) */
+#s-map.a3map .mapbody{filter:hue-rotate(175deg) saturate(1.2) brightness(.85)}
+#s-map.a3map .node .ball{border-color:#5ac8ff!important}
+#s-map.a3map .mapbar .t{font-size:22px;white-space:nowrap}
+.nmsw div.on.a3{background:linear-gradient(#5ac8ff,#1a5fa8);color:#fff}
