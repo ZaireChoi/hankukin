@@ -95,14 +95,14 @@ if (window.IS_EN) document.title = 'K Zombi';
   const SLOT = Object.fromEntries(SLOTS.map(s => [s.id, s]));
   /* 영웅: g 는 등급 번호 (0 일반, 2 희귀, 3 영웅, 4 전설) */
   const COMPS = [
-    { id: 'jangyeongsil', n: '장영실', g: 4, el: 'skGun', eln: '발명 · 화포', img: 'img/ui/hero_jangyeongsil.webp?v=1', role: '장치 설치', ult: '자격루의 종', desc: '조선 최고의 발명가예요. 작은 화포 장치를 세워 한동안 저절로 쏘게 해요. 큰 기술 자격루의 종은 아군 공격 속도를 크게 올려요. 화차와 짝이면 장치가 더 세고 오래가요.', bonus: 'atk' },
-    { id: 'kimchungseon', n: '김충선', g: 4, el: 'sword', eln: '암살 · 왜검', img: 'img/ui/hero_kimchungseon.webp?v=2', role: '암살', ult: '귀순의 칼', desc: '임진왜란 때 조선에 귀화한 사무라이 사야가예요. 적진의 원거리·마법 좀비만 노려 뒤로 순간이동해 베어요. 큰 기술 귀순의 칼은 화면 안 원거리·마법 적을 차례로 벱니다.', bonus: 'atk' },
-    { id: 'daejanggeum', n: '대장금', g: 4, el: 'tPower', eln: '치유 · 약선', img: 'img/ui/hero_daejanggeum.webp?v=2', role: '회복', ult: '어의의 탕약', desc: '조선 최초의 어의녀예요. 약재 주머니를 던지며 처용과 동료를 치유해요. 큰 기술 어의의 탕약은 사당과 시설을 크게 회복하고 받는 피해를 줄여요.', bonus: 'hp' },
-    { id: 'jeonwoochi', n: '전우치', g: 4, el: 'skThunder', eln: '도술 · 검기', img: 'img/ui/hero_jeonwoochi.webp?v=2', role: '도술 검객', ult: '화중병', desc: '도술을 부리는 검객이에요. 칼을 휘둘러 적을 꿰뚫는 검기를 날려요. 큰 기술 화중병은 그림 속 먹물 병사 여섯을 불러내요.', bonus: 'atk' },
+    { id: 'jangyeongsil', n: '장영실', g: 4, el: 'skGun', eln: '발명 · 화포', img: 'img/ui/hero_jangyeongsil.webp?v=4', role: '장치 설치', ult: '자격루의 종', desc: '조선 최고의 발명가예요. 작은 화포 장치를 세워 한동안 저절로 쏘게 해요. 큰 기술 자격루의 종은 아군 공격 속도를 크게 올려요. 화차와 짝이면 장치가 더 세고 오래가요.', bonus: 'atk' },
+    { id: 'kimchungseon', n: '김충선', g: 4, el: 'sword', eln: '암살 · 왜검', img: 'img/ui/hero_kimchungseon.webp?v=4', role: '암살', ult: '귀순의 칼', desc: '임진왜란 때 조선에 귀화한 사무라이 사야가예요. 적진의 원거리·마법 좀비만 노려 뒤로 순간이동해 베어요. 큰 기술 귀순의 칼은 화면 안 원거리·마법 적을 차례로 벱니다.', bonus: 'atk' },
+    { id: 'daejanggeum', n: '대장금', g: 4, el: 'tPower', eln: '치유 · 약선', img: 'img/ui/hero_daejanggeum.webp?v=4', role: '회복', ult: '어의의 탕약', desc: '조선 최초의 어의녀예요. 약재 주머니를 던지며 처용과 동료를 치유해요. 큰 기술 어의의 탕약은 사당과 시설을 크게 회복하고 받는 피해를 줄여요.', bonus: 'hp' },
+    { id: 'jeonwoochi', n: '전우치', g: 4, el: 'skThunder', eln: '도술 · 검기', img: 'img/ui/hero_jeonwoochi.webp?v=4', role: '도술 검객', ult: '화중병', desc: '도술을 부리는 검객이에요. 칼을 휘둘러 적을 꿰뚫는 검기를 날려요. 큰 기술 화중병은 그림 속 먹물 병사 여섯을 불러내요.', bonus: 'atk' },
     { id: 'bari', n: '바리공주', g: 4, el: 'skGhost', eln: '혼령술', img: 'img/ui/hero_bari.webp?v=2', role: '혼령 소환', ult: '저승길 인도', desc: '저승길을 안내하는 무조신이에요. 곁에서 쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 해요.', bonus: 'atk' },
     { id: 'imugi', n: '이무기', g: 4, el: 'elFire', eln: '비행 · 불', img: 'img/ui/hero_imugi.webp?v=2', role: '비행 화염', ult: '승천', desc: '승천을 꿈꾸는 비룡이에요. 하늘을 날며 불길을 뿜어요. 큰 기술 승천은 날아오르며 불덩이 비를 쏟아요.', bonus: 'atk' },
-    { id: 'sadaham', n: '화랑 사다함', g: 3, el: 'sword', eln: '근거리 · 검무', img: 'img/ui/hero_sadaham.webp?v=2', role: '근거리', ult: '화랑 검무', desc: '열다섯에 대가야를 친 신라 화랑이에요. 적 사이를 오가며 세 번 연달아 베어요.', bonus: 'atk' },
-    { id: 'samyeong', n: '사명대사', g: 3, el: 'tPower', eln: '권법 · 승병', img: 'img/ui/hero_samyeong.webp?v=2', role: '권법', ult: '승병 봉기', desc: '임진왜란의 승병장이에요. 권법 연타로 적을 기절시키고, 큰 기술로 승병을 불러 앞을 막아요.', bonus: 'hp' },
+    { id: 'sadaham', n: '화랑 사다함', g: 3, el: 'sword', eln: '근거리 · 검무', img: 'img/ui/hero_sadaham.webp?v=4', role: '근거리', ult: '화랑 검무', desc: '열다섯에 대가야를 친 신라 화랑이에요. 적 사이를 오가며 세 번 연달아 베어요.', bonus: 'atk' },
+    { id: 'samyeong', n: '사명대사', g: 3, el: 'tPower', eln: '권법 · 승병', img: 'img/ui/hero_samyeong.webp?v=4', role: '권법', ult: '승병 봉기', desc: '임진왜란의 승병장이에요. 권법 연타로 적을 기절시키고, 큰 기술로 승병을 불러 앞을 막아요.', bonus: 'hp' },
     { id: 'yisunsin', n: '이순신', g: 4, el: 'skArrow', eln: '원거리 · 활', img: 'img/ui/hero_yisunsin.webp?v=2', role: '원거리', ult: '학익진', desc: '멀리서 화살을 쏟아부어요. 큰 기술 학익진은 학의 날개처럼 펼친 화살비로 적 무리를 덮어요.', bonus: 'atk' },
     { id: 'gangamchan', n: '강감찬', g: 4, el: 'skThunder', eln: '번개', img: 'img/ui/hero_gangamchan.webp?v=2', role: '번개', ult: '귀주대첩', desc: '칼끝에서 번개를 내리쳐요. 큰 기술 귀주대첩은 넓은 땅에 벼락을 연달아 떨어뜨려요.', bonus: 'atk' },
     { id: 'samjoko', n: '삼족오', g: 4, el: 'elSun', eln: '해', img: 'img/ui/hero_samjoko.webp?v=2', role: '원거리 화력', ult: '태양 강림', desc: '태양 광선으로 여러 적을 한꺼번에 꿰뚫어요. 큰 기술은 태양 강림이에요.', bonus: 'atk' },
