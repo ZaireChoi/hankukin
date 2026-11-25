@@ -260,6 +260,7 @@ const RULES = [
   [/(\d+)년 (\d+)월 시즌 · 전투를 하면 패스 점수가 쌓여요/g, (m, y, mo) => y + '-' + mo + ' season · Battles earn pass points'],
   [/(\d+)년 (\d+)월 시즌/g, (m, y, mo) => y + '-' + mo + ' season'],
   [/^(\d+)번째 밤$/, (m, n) => 'Night ' + n],
+[/^(.+) 분노!$/, (m, a) => (DICT[a] || a) + ' is enraged!'],
   [/(\d+)\/(\d+)번째 밤/g, (m, a, b) => 'Night ' + a + '/' + b],
   [/(\d+)번째 밤/g, (m, n) => 'Night ' + n],
   [/본부 (\d+)레벨!?/g, (m, n) => 'HQ Lv.' + n + (m.endsWith('!') ? '!' : '')],

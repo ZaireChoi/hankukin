@@ -838,7 +838,7 @@ function update(dtr) {
   const bossAlive = G.bossRef && !G.bossRef.dead;
   const rate = G.time > N.dur ? (bossAlive ? 1.2 : 0) : N.rate[0] + (N.rate[1] - N.rate[0]) * prog;
   if (N.elites && G.eliteIdx < N.elites.length && prog >= N.elites[G.eliteIdx]) { G.eliteIdx++; if (N.boss) { spawnBig(N.boss, true); G.bossOut = true; } else spawnBig(N.eliteType, false); }
-  if (G.enemies.length < 230) { G.spawnAcc += rate * dt; while (G.spawnAcc >= 1) { G.spawnAcc -= 1; spawnWave(); } }
+  if (G.enemies.length < 230) { G.spawnAcc += rate * dt * (G.bossRef && !G.bossRef.dead ? 0.65 : 1);   /* 우두머리 결투 중엔 졸개를 줄여 결투에 집중, 후반 늘어짐 완화 */ while (G.spawnAcc >= 1) { G.spawnAcc -= 1; spawnWave(); } }
 
   movePlayer(dt); moveComps(dt);
   playerAttack(dt);
@@ -1412,7 +1412,7 @@ function updZones(dt) {
     if (v.tick <= 0) { v.tick = 0.3; for (const e of G.enemies) if (Math.hypot(e.x - v.x, e.y - v.y) < v.r) hurtEnemy(e, v.dps * 0.3, 'skill', { acc: 1 }); }
   }
   G.vortexes = G.vortexes.filter(v => v.t > 0);
-  for (const t of G.tele) t.t -= dt; G.tele = G.tele.filter(t => t.t > 0);
+  for (const t of G.tele) { t.t -= dt; if (t.boom && t.t <= 0) { FX.explode(t.x, t.y - 10, t.r); sfx('boom', 0.5); const pl = G.player; if (Math.hypot(pl.x - t.x, (pl.y - t.y) / 0.62) < t.r) hurtT(pl, t.boom); t.boom = 0; } } G.tele = G.tele.filter(t => t.t > 0);
   /* 살수대첩 물결 */
   for (const w of G.waves) {
     w.t -= dt; w.y -= 560 * dt;
@@ -1483,6 +1483,16 @@ function enemies(dt) {
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
     const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1);
 
+    /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
+    if (e.boss && !e.p2 && e.hp < e.max * 0.5) {
+      e.p2 = true; e.sp *= 1.3; e.dmgK = (e.dmgK || 1) * 1.25; e.t1 = Math.min(e.t1 || 0, 1); e.t2 = Math.min(e.t2 || 0, 1.5);
+      G.banner = { s: EN[e.type].n + ' 분노!', t: 2.2, kind: 'boss' }; G.crisisT = 2.5; sfx('warn'); vib([80, 50, 80, 50, 200]); FX.shake = 0.6;
+      FX.ring(e.x, e.y, 260, '255,70,40', 0.6, 14); FX.explode(e.x, e.y - 40, 110);
+      const pl = G.player; if (Math.hypot(pl.x - e.x, pl.y - e.y) < 220) hurtT(pl, pl.max * 0.08);
+      for (const a of (G.allies || [])) if (Math.hypot(a.x - e.x, a.y - e.y) < 220) { const an = Math.atan2(a.y - e.y, a.x - e.x); a.x += Math.cos(an) * 60; a.y += Math.sin(an) * 60; }
+      const C2 = D.CHAPTERS[G.ch - 1]; for (let i = 0; i < 6; i++) { const an = i / 6 * TAU; spawnEnemy(C2.pool[i % C2.pool.length], e.x + Math.cos(an) * 110, e.y + Math.sin(an) * 70, { small: true }); }
+    }
+    if (e.boss && e.p2 && Math.random() < dt * 0.35) { /* 분노 중: 땅 갈라짐 예고 후 폭발 */ const tx2 = G.player.x + rnd(-80, 80), ty2 = G.player.y + rnd(-60, 60); G.tele.push({ x: tx2, y: ty2, r: 80, t: 0.9, life: 0.9, c: '255,60,40', boom: dmg * 1.2 }); }
     /* 돌진: 붉은 선으로 미리 알린 뒤 달려든다 */
     if (d.charger && (e.elite || e.boss || e.type === 'zboar')) {
       e.t1 -= dt;
