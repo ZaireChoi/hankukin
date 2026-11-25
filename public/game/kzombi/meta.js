@@ -99,19 +99,19 @@ if (window.IS_EN) document.title = 'K Zombi';
     { id: 'kimchungseon', n: '김충선', g: 4, el: 'sword', eln: '암살 · 왜검', img: 'img/ui/hero_kimchungseon.webp?v=4', role: '암살', ult: '귀순의 칼', desc: '임진왜란 때 조선에 귀화한 사무라이 사야가예요. 적진의 원거리·마법 좀비만 노려 뒤로 순간이동해 베어요. 큰 기술 귀순의 칼은 화면 안 원거리·마법 적을 차례로 벱니다.', bonus: 'atk' },
     { id: 'daejanggeum', n: '대장금', g: 4, el: 'tPower', eln: '치유 · 약선', img: 'img/ui/hero_daejanggeum.webp?v=4', role: '회복', ult: '어의의 탕약', desc: '조선 최초의 어의녀예요. 약재 주머니를 던지며 처용과 동료를 치유해요. 큰 기술 어의의 탕약은 사당과 시설을 크게 회복하고 받는 피해를 줄여요.', bonus: 'hp' },
     { id: 'jeonwoochi', n: '전우치', g: 4, el: 'skThunder', eln: '도술 · 검기', img: 'img/ui/hero_jeonwoochi.webp?v=4', role: '도술 검객', ult: '화중병', desc: '도술을 부리는 검객이에요. 칼을 휘둘러 적을 꿰뚫는 검기를 날려요. 큰 기술 화중병은 그림 속 먹물 병사 여섯을 불러내요.', bonus: 'atk' },
-    { id: 'bari', n: '바리공주', g: 4, el: 'skGhost', eln: '혼령술', img: 'img/ui/hero_bari.webp?v=2', role: '혼령 소환', ult: '저승길 인도', desc: '저승길을 안내하는 무조신이에요. 곁에서 쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 해요.', bonus: 'atk' },
+    { id: 'bari', n: '바리공주', g: 4, el: 'skGhost', eln: '혼령술', img: 'img/ui/hero_bari.webp?v=4', role: '혼령 소환', ult: '저승길 인도', desc: '저승길을 안내하는 무조신이에요. 곁에서 쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 해요.', bonus: 'atk' },
     { id: 'imugi', n: '이무기', g: 4, el: 'elFire', eln: '비행 · 불', img: 'img/ui/hero_imugi.webp?v=4', role: '비행 화염', ult: '승천', desc: '승천을 꿈꾸는 비룡이에요. 하늘을 날며 불길을 뿜어요. 큰 기술 승천은 날아오르며 불덩이 비를 쏟아요.', bonus: 'atk' },
     { id: 'sadaham', n: '화랑 사다함', g: 3, el: 'sword', eln: '근거리 · 검무', img: 'img/ui/hero_sadaham.webp?v=4', role: '근거리', ult: '화랑 검무', desc: '열다섯에 대가야를 친 신라 화랑이에요. 적 사이를 오가며 세 번 연달아 베어요.', bonus: 'atk' },
     { id: 'samyeong', n: '사명대사', g: 3, el: 'tPower', eln: '권법 · 승병', img: 'img/ui/hero_samyeong.webp?v=4', role: '권법', ult: '승병 봉기', desc: '임진왜란의 승병장이에요. 권법 연타로 적을 기절시키고, 큰 기술로 승병을 불러 앞을 막아요.', bonus: 'hp' },
-    { id: 'yisunsin', n: '이순신', g: 4, el: 'skArrow', eln: '원거리 · 활', img: 'img/ui/hero_yisunsin.webp?v=2', role: '원거리', ult: '학익진', desc: '멀리서 화살을 쏟아부어요. 큰 기술 학익진은 학의 날개처럼 펼친 화살비로 적 무리를 덮어요.', bonus: 'atk' },
-    { id: 'gangamchan', n: '강감찬', g: 4, el: 'skThunder', eln: '번개', img: 'img/ui/hero_gangamchan.webp?v=2', role: '번개', ult: '귀주대첩', desc: '칼끝에서 번개를 내리쳐요. 큰 기술 귀주대첩은 넓은 땅에 벼락을 연달아 떨어뜨려요.', bonus: 'atk' },
+    { id: 'yisunsin', n: '이순신', g: 4, el: 'skArrow', eln: '원거리 · 활', img: 'img/ui/hero_yisunsin.webp?v=4', role: '원거리', ult: '학익진', desc: '멀리서 화살을 쏟아부어요. 큰 기술 학익진은 학의 날개처럼 펼친 화살비로 적 무리를 덮어요.', bonus: 'atk' },
+    { id: 'gangamchan', n: '강감찬', g: 4, el: 'skThunder', eln: '번개', img: 'img/ui/hero_gangamchan.webp?v=4', role: '번개', ult: '귀주대첩', desc: '칼끝에서 번개를 내리쳐요. 큰 기술 귀주대첩은 넓은 땅에 벼락을 연달아 떨어뜨려요.', bonus: 'atk' },
     { id: 'samjoko', n: '삼족오', g: 4, el: 'elSun', eln: '해', img: 'img/ui/hero_samjoko.webp?v=4', role: '원거리 화력', ult: '태양 강림', desc: '태양 광선으로 여러 적을 한꺼번에 꿰뚫어요. 큰 기술은 태양 강림이에요.', bonus: 'atk' },
-    { id: 'eulji', n: '을지문덕', g: 3, el: 'sword', eln: '근거리 · 검', img: 'img/ui/hero_eulji.webp?v=2', role: '근거리', ult: '살수대첩', desc: '앞장서서 검으로 적을 베어요. 큰 기술 살수대첩은 거센 물살로 적을 쓸어 버려요.', bonus: 'hp' },
-    { id: 'wonhyo', n: '원효대사', g: 3, el: 'tPower', eln: '법사 · 염주', img: 'img/ui/hero_wonhyo.webp?v=2', role: '법사', ult: '정화 결계', desc: '염주에서 빛줄기를 쏘아요. 큰 기술 정화 결계는 둘레의 역병을 씻어 내고 아군을 지켜요.', bonus: 'hp' },
-    { id: 'gumiho', n: '구미호', g: 3, el: 'skGhost', eln: '여우불', img: 'img/ui/hero_gumiho.webp?v=2', role: '유도탄', ult: '홀림', desc: '여우불이 적을 쫓아가 터져요. 큰 기술 홀림은 적들을 잠시 멍하게 만들어요.', bonus: 'atk' },
-    { id: 'honggildong', n: '홍길동', g: 2, el: 'skFan', eln: '분신', img: 'img/ui/hero_honggildong.webp?v=2', role: '분신', ult: '둔갑 연속베기', desc: '분신을 만들어 함께 싸워요. 큰 기술 둔갑 연속베기는 순식간에 여러 적을 베어요.', bonus: 'atk' },
+    { id: 'eulji', n: '을지문덕', g: 3, el: 'sword', eln: '근거리 · 검', img: 'img/ui/hero_eulji.webp?v=4', role: '근거리', ult: '살수대첩', desc: '앞장서서 검으로 적을 베어요. 큰 기술 살수대첩은 거센 물살로 적을 쓸어 버려요.', bonus: 'hp' },
+    { id: 'wonhyo', n: '원효대사', g: 3, el: 'tPower', eln: '법사 · 염주', img: 'img/ui/hero_wonhyo.webp?v=4', role: '법사', ult: '정화 결계', desc: '염주에서 빛줄기를 쏘아요. 큰 기술 정화 결계는 둘레의 역병을 씻어 내고 아군을 지켜요.', bonus: 'hp' },
+    { id: 'gumiho', n: '구미호', g: 3, el: 'skGhost', eln: '여우불', img: 'img/ui/hero_gumiho.webp?v=4', role: '유도탄', ult: '홀림', desc: '여우불이 적을 쫓아가 터져요. 큰 기술 홀림은 적들을 잠시 멍하게 만들어요.', bonus: 'atk' },
+    { id: 'honggildong', n: '홍길동', g: 2, el: 'skFan', eln: '분신', img: 'img/ui/hero_honggildong.webp?v=4', role: '분신', ult: '둔갑 연속베기', desc: '분신을 만들어 함께 싸워요. 큰 기술 둔갑 연속베기는 순식간에 여러 적을 베어요.', bonus: 'atk' },
     { id: 'haetae', n: '해태', g: 2, el: 'elFire', eln: '불', img: 'img/ui/hero_haetae.webp?v=3', role: '화염 방어', ult: '해치의 불바다', desc: '불길을 내뿜어 앞의 적을 태워요. 큰 기술은 해치의 불바다예요.', bonus: 'hp' },
-    { id: 'dokkaebi', n: '도깨비', g: 0, el: 'elWater', eln: '도깨비불', img: 'img/ui/hero_dokkaebi.webp?v=2', role: '돌격', ult: '방망이 지진', desc: '도깨비방망이를 던지면 적을 뚫고 되돌아와요. 큰 기술은 방망이 지진이에요.', bonus: 'atk' }];
+    { id: 'dokkaebi', n: '도깨비', g: 0, el: 'elWater', eln: '도깨비불', img: 'img/ui/hero_dokkaebi.webp?v=4', role: '돌격', ult: '방망이 지진', desc: '도깨비방망이를 던지면 적을 뚫고 되돌아와요. 큰 기술은 방망이 지진이에요.', bonus: 'atk' }];
   const COMP = Object.fromEntries(COMPS.map(c => [c.id, c]));
   const SKILLS = [
     { id: 'ghost', n: '귀화탄', ic: 'skGhost', c: '#6a2ab0', d: '보랏빛 귀신불이 적을 쫓아가요.' },
@@ -493,7 +493,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     return '<div class="hdr stroke">상점<span class="sub">옥으로 장비와 동료를 뽑아요</span></div><div class="shop" style="top:96px">' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/title.jpg);background-position:center 30%"></div><h3 class="stroke">장비 뽑기</h3><div class="d stroke-s">10번 뽑으면 희귀 이상 1개 보장. 전설, 신화 장비가 나올 수 있어요.</div>' +
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
-      '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=2);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
+      '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=4);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
       '<div class="prob" data-act="prob" data-v="cp">확률 안내</div><div class="bb"><div class="btn p" data-act="gacha" data-v="cp1"><span>1번</span><small>' + ic('jade') + '100</small></div><div class="btn y" data-act="gacha" data-v="cp10"><span>10번</span><small>' + ic('jade') + '900</small></div></div></div>' +
       '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
         '<div class="good box">' + (tag ? '<div class="tag stroke-s">' + tag + '</div>' : '') + '<div class="gi">' + ic(i) + '</div><div class="gn stroke-s">' + n + '</div><div style="font-size:18px;color:#ffe9a8">' + what + '</div><div class="btn ' + c + '" data-act="buy" data-v="' + id + '">' + price + '</div></div>').join('') + '</div></div>';
@@ -738,7 +738,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     modal('<h3 class="stroke">신규 스타트팩을 받았어요!</h3><div style="text-align:center;font-size:19px;line-height:1.6">영웅 <b style="color:#e39bff">홍길동</b>' + (hc && hc.sh >= 10 && hc.own ? ' (이미 있어 조각 10개)' : '') + '<br>영웅 등급 장비 ' + got.length + '점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20</div><div class="row"><div class="btn y" data-act="tab" data-v="equip">장비 끼러 가기</div></div>');
   }
   function starterModal() {
-    modal('<h3 class="stroke">신규 스타트팩</h3><div style="text-align:center"><div style="width:220px;height:220px;margin:0 auto;border-radius:20px;background:#2a1a3a url(img/ui/hero_honggildong.webp?v=2) center/cover;box-shadow:0 0 0 4px #e39bff"></div>' +
+    modal('<h3 class="stroke">신규 스타트팩</h3><div style="text-align:center"><div style="width:220px;height:220px;margin:0 auto;border-radius:20px;background:#2a1a3a url(img/ui/hero_honggildong.webp?v=4) center/cover;box-shadow:0 0 0 4px #e39bff"></div>' +
       '<p style="font-size:19px;line-height:1.6;margin:10px 0">영웅 <b style="color:#e39bff">홍길동</b> 바로 합류<br>영웅 등급 장비 4점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20<br><small style="color:#ffd36b">계정당 한 번 · ' + (S.starter ? '이미 받았어요' : '남은 기간 ' + stDays() + '일') + '</small></p></div>' +
       '<div class="row">' + (S.starter ? '<div class="btn b dis">받음</div>' : '<div class="btn p" data-act="passBuy" style="flex-direction:column;gap:0;min-width:300px"><span>990원</span><small style="font-size:16px">결제 준비 중</small></div>') + '</div>' +
       '<div class="row"><div class="btn b" data-act="coupon">시험 쿠폰 입력</div></div>');
