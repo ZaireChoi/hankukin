@@ -2332,44 +2332,45 @@
   "n2": 1
  },
  "s_cavalry": {
-  "src": "s_cavalry_walk.webp",
+  "src": "s_cavalry_still.webp",
   "cell": 170,
-  "frames": 8,
+  "frames": 1,
   "dirs": 8,
   "fps": 10,
-  "height": 78,
-  "anchorX": 0.506,
-  "anchorY": 0.988,
-  "ch": 0.747,
+  "height": 100,
+  "anchorX": 0.5,
+  "anchorY": 0.976,
+  "ch": 0.694,
   "anims": {
    "walk": {
-    "src": "s_cavalry_walk.webp",
-    "frames": 8,
+    "src": "s_cavalry_still.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "idle": {
+    "src": "s_cavalry_still.webp",
+    "frames": 1,
     "loop": true
    },
    "atk": {
-    "src": "s_cavalry_atk.webp",
-    "frames": 8,
+    "src": "s_cavalry_still.webp",
+    "frames": 1,
     "loop": false
    },
    "hit": {
-    "src": "s_cavalry_hit.webp",
-    "frames": 6,
+    "src": "s_cavalry_still.webp",
+    "frames": 1,
     "loop": false
    },
    "die": {
-    "src": "s_cavalry_die.webp",
-    "frames": 10,
+    "src": "s_cavalry_still.webp",
+    "frames": 1,
     "loop": false
-   },
-   "idle": {
-    "src": "s_cavalry_idle.webp",
-    "frames": 6,
-    "loop": true
    }
   },
-  "v": 82359,
-  "toon": 1
+  "v": 58362,
+  "toon": 1,
+  "still": 1
  },
  "s_crossbow": {
   "src": "s_crossbow_walk.webp",
@@ -2418,10 +2419,10 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 60,
-  "anchorX": 0.49,
+  "height": 90,
+  "anchorX": 0.527,
   "anchorY": 0.947,
-  "ch": 0.733,
+  "ch": 0.667,
   "anims": {
    "walk": {
     "src": "s_gun_walk.webp",
@@ -2449,7 +2450,7 @@
     "loop": false
    }
   },
-  "v": 82359,
+  "v": 91598,
   "toon": 1
  },
  "player_amhaeng": {
