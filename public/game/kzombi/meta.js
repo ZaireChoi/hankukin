@@ -760,7 +760,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     try {
       await putEntry('kzp', accName(), myScoreVal());
       if (S.codeOk && S.codeOk !== u.uid) { S.codeOk = null; S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase(); }
-      if (!S.codeOk) { for (let i = 0; i < 4; i++) { const r = await window.HKAccount.claimUnique('kzcode-' + S.myCode, { g: 'kzombi' }); if (r.ok) { S.codeOk = u.uid; break; } S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase(); } save(); }
+      /* 친구 코드 → uid: 누구나 읽을 수 있는 보드 kzc-{코드} 에 내 줄을 둔다 */
+      if (!S.codeOk) { for (let i = 0; i < 5; i++) { const ex = (await listBoard('kzc-' + S.myCode, 3)).filter(r => r.id !== u.uid); if (!ex.length) { await putEntry('kzc-' + S.myCode, accName(), 1); S.codeOk = u.uid; break; } S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase(); } save(); }
       return 'ok';
     } catch (e) { socialErr = String(e && e.code || e); console.warn('[social]', e); return 'err'; }
   }
@@ -797,7 +798,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       if (a === 'frAdd') {
         const code = (($('#frIn', root) || {}).value || '').trim().toUpperCase(); if (code.length < 4) { toast('친구 코드를 넣어 주세요'); return; }
         if (code === S.myCode) { toast('내 코드예요'); return; }
-        const u2 = await window.HKAccount.getUnique('kzcode-' + code); if (!u2 || !u2.uid) { toast('없는 친구 코드예요'); return; }
+        const hit = (await listBoard('kzc-' + code, 3)).sort((x, y) => (x.at || 0) - (y.at || 0))[0], u2 = hit ? { uid: hit.id } : null; if (!u2) { toast('없는 친구 코드예요'); return; }
         if (u2.uid === me) { toast('내 코드예요'); return; }
         if (S.fr.list[u2.uid]) { toast('이미 친구예요'); return; } if (Object.keys(S.fr.list).length >= 30) { toast('친구는 30명까지예요'); return; }
         const back = await getEntry('kzf-' + me, u2.uid);   /* 상대가 먼저 나에게 신청했으면 바로 친구 */
@@ -874,7 +875,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       if (a === 'gMake') {
         const id = gidOf(($('#gnIn', root) || {}).value || ''); if (id.length < 2) { toast('문파 이름은 2~12자예요'); return; }
         if (S.gold < GCOST) { toast('엽전이 모자라요'); return; }
-        const r = await window.HKAccount.claimUnique('kzguild-' + id, { g: 'kzombi', name: id }); if (!r.ok) { toast('이미 있는 문파 이름이에요'); return; }
+        const taken = (await listBoard('kzguilds', 300)).some(g => g.name === id && g.score > 0 && g.id !== me); if (taken) { toast('이미 있는 문파 이름이에요'); return; }
+        const r = await window.HKAccount.claimUnique('kzguild-' + id, { g: 'kzombi', name: id }); if (!r.ok && r.reason === 'taken' && !/permission/.test(String(r.err || '')) && r.owner && r.owner.uid !== me) { toast('이미 있는 문파 이름이에요'); return; }
         S.gold -= GCOST; S.guild = { id, owner: me, emb: S.gemb | 0 }; save();
         await putEntry('kzguilds', id, (S.gemb | 0) * 1000 + 1); await putEntry('kzgm-' + id, accName(), myScoreVal());
         toast('문파 「' + id + '」를 세웠어요!'); guildModal('mine'); refresh(); return;
