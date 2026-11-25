@@ -132,7 +132,7 @@ D.OBJ = {
   for (const k in R4P) for (const n of R4P[k]) { const C = D.CHAPTERS[n - 1]; if (C && D.EN[k] && !C.pool.includes(k)) C.pool.push(k); }
   { const seen2 = new Set(); for (const C of D.CHAPTERS) { C.fresh = C.pool.filter(k => !seen2.has(k)); C.pool.forEach(k => seen2.add(k)); } }
   /* 우두머리: 같은 우두머리가 두 번 넘게 나오지 않게 (30장 역신은 최종 결전이라 예외) */
-  const BOSS = [0, 'mujang', 'zbear', 'ztiger', 'zgrand', 'zsamurai', 'bdukkeobi', 'mudang', 'zqueen2', 'byeomra', 'king', 'zgrand', 'bdokryong', 'mudang', 'zbear', 'yeoksin', 'bulgasari', 'ztiger', 'byeomra', 'jangsanbeom', 'yeoksin', 'zqueen2', 'bulgasari', 'bdukkeobi', 'bdokryong', 'jangsanbeom', 'zox', 'king', 'mujang', 'zox', 'yeoksin'];
+  const BOSS = [0, 'mujang', 'zbear', 'ztiger', 'zgrand', 'zsamurai', 'zsamurai', 'mudang', 'zqueen2', 'byeomra', 'king', 'zgrand', 'bdokryong', 'mudang', 'zbear', 'yeoksin', 'bulgasari', 'ztiger', 'byeomra', 'jangsanbeom', 'yeoksin', 'zqueen2', 'bulgasari', 'bdukkeobi', 'bdokryong', 'jangsanbeom', 'bdukkeobi', 'king', 'mujang', 'zox', 'yeoksin'];
   for (const C of D.CHAPTERS) if (BOSS[C.n] && D.EN[BOSS[C.n]]) C.boss = BOSS[C.n];
   D.revealed = ch => { const s = new Set(); for (const C of D.CHAPTERS) { if (C.n > ch) break; C.pool.forEach(k => s.add(k)); } return s; };
 })();
@@ -293,8 +293,8 @@ D.SKILLS = [
   const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
   for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
   /* 장별 체력 보정 (시뮬로 맞춤) */
-  D.CHHP = Object.assign(D.CHHP || {}, {"7":0.62,"8":0.8,"9":0.66,"10":0.8,"11":0.78,"12":0.74,"13":0.52,"14":0.6,"15":0.6,"16":0.6,"17":0.6,"18":0.58,"19":0.6,"20":0.6,"21":0.6,"22":0.58,"23":0.58,"24":0.56,"25":0.55,"26":0.55,"27":0.54,"28":0.54,"29":0.53,"30":0.53});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  D.CHHP = Object.assign(D.CHHP || {}, {"6":0.92,"7":0.59,"8":0.8,"9":0.58,"10":0.8,"11":0.78,"12":0.74,"13":0.52,"14":0.6,"15":0.6,"16":0.57,"17":0.6,"18":0.5,"19":0.6,"20":0.52,"21":0.6,"22":0.5,"23":0.58,"24":0.49,"25":0.48,"26":0.55,"27":0.51,"28":0.54,"29":0.5,"30":0.47});   /* 시뮬(11-25 진행 계정) 맞춤 */
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
-  const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; }); return o; };
+  const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };
 })();
