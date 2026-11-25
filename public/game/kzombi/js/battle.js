@@ -280,7 +280,15 @@ function objUpdate(dt) {
   if (O.type === 'bossTime' && G.bossRef && !G.bossRef.dead && !O.enr) { O.bt += dt; if (O.bt > 75) { O.enr = true; const b = G.bossRef; b.sp *= 1.5; b.dmgK = (b.dmgK || 1) * 1.6; G.shrine.hp -= G.shrine.max * 0.2; G.shrine.hitT = 0.3; FX.shake = 0.6; G.banner = { s: '우두머리가 분노했다!', t: 2.4, kind: 'boss' }; sfx('warn'); vib([120, 60, 200]); } }
   if (O.type === 'beacon') { const B = O.beacon; B.hitT -= dt; if (B.hp > 0) B.hp = Math.min(B.max, B.hp + B.max * 0.01 * dt); if (Math.random() < dt * 10) FX.ember(B.x + rnd(-8, 8), B.y - 70, Math.random() < 0.5 ? '255,150,40' : '255,220,110', 1, 90); if (B.hp < B.max * 0.3 && !O.bwarn) { O.bwarn = 1; G.banner = { s: '봉화대가 무너진다!', t: 2, kind: 'boss' }; sfx('warn'); vib([80, 50, 80]); } }
 }
+/* 판 목표 소품 그림: 피난민 3종, 봉화대 */
+const OBJIMG = {}; for (const k of ['refugee_a', 'refugee_b', 'refugee_c', 'beacon']) { const im = new Image(); im.onload = () => { OBJIMG[k] = im; }; im.src = 'sprites/' + k + '.png?v=1'; }
 function drawObjThing(o) {
+  if (o.kind === 'beacon' && OBJIMG.beacon) { const x = o.x, y = o.y, im = OBJIMG.beacon, h = 150, w2 = im.width * h / im.height; shadowE(x, y + 10, 46);
+    const shake = o.hitT > 0 ? rnd(-2, 2) : 0; ctx.drawImage(im, x - w2 / 2 + shake, y + 14 - h, w2, h); if (o.hitT > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.35; ctx.drawImage(im, x - w2 / 2 + shake, y + 14 - h, w2, h); ctx.restore(); }
+    if (o.hp < o.max * 0.5 && Math.random() < 0.2) FX.p({ kind: 'smoke', x: x + rnd(-20, 20), y: y - 40, vx: rnd(-8, 8), vy: -rnd(20, 40), life: 1.6, s: 6, s2: 20, c: '70,60,55', rot: 0, vr: 0.4 });
+    if (Math.random() < 0.3) FX.p({ kind: 'smoke', x: x + rnd(-6, 6), y: y - h + 10, vx: rnd(-6, 6), vy: -rnd(30, 50), life: 2, s: 6, s2: 22, c: '110,100,95', rot: 0, vr: 0.4 });
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - h + 22, 40 + Math.sin(G.t * 11) * 6, '255,140,40', 0.6); ctx.restore();
+    txt('봉화대', o.x, o.y + 34, 17, '#ffd36b', 'center', '#2a1408', 4); hpBar(o.x - 34, o.y - h - 6, 68, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
   if (o.kind === 'beacon') { const x = o.x, y = o.y, w = o.hitT > 0; shadowE(x, y + 14, 40);
     /* 돌을 쌓은 봉수대: 아래 넓고 위 좁은 돌무더기 + 큰 횃불 */
     for (let r = 0; r < 4; r++) { const ww = 70 - r * 12, yy = y + 6 - r * 16; for (let i = 0; i < 4 - r * 0.5; i++) { const sx = x - ww / 2 + (i + 0.5) * ww / Math.max(1, 4 - r * 0.5); rrPath(sx - 10, yy - 12, 20, 15, 5); ctx.fillStyle = w ? '#fff' : (i + r) % 2 ? '#9a8f80' : '#7e7466'; ctx.fill(); ctx.strokeStyle = '#3a3026'; ctx.lineWidth = 2; ctx.stroke(); } }
@@ -288,7 +296,12 @@ function drawObjThing(o) {
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - 80, 52 + Math.sin(G.t * 11) * 7, '255,140,40', 0.85); FX.glow(ctx, x, y - 76, 22, '255,230,140', 0.9, 1); ctx.restore();
     if (Math.random() < 0.3) FX.p({ kind: 'smoke', x: x + rnd(-6, 6), y: y - 100, vx: rnd(-6, 6), vy: -rnd(30, 50), life: 2, s: 6, s2: 22, c: '90,80,75', rot: 0, vr: 0.4 });
     txt('봉화대', o.x, o.y + 46, 17, '#ffd36b', 'center', '#2a1408', 4); hpBar(o.x - 30, o.y - 96, 60, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
-  if (o.kind === 'ref') { const bob = Math.abs(Math.sin((o.mvT || 0) * 9)) * 3, x = o.x, y = o.y - bob; shadowE(o.x, o.y + 2, 12, 0.3);
+  if (o.kind === 'ref') { if (o.v == null) o.v = (Math.random() * 3) | 0; const RI = OBJIMG[['refugee_a', 'refugee_b', 'refugee_c'][o.v]];
+    if (RI) { const bob = Math.abs(Math.sin((o.mvT || 0) * 9)) * 3, h = [104, 100, 86][o.v], w2 = RI.width * h / RI.height, x = o.x, y = o.y - bob; shadowE(o.x, o.y + 2, 13, 0.3);
+      const tl = Math.sin((o.mvT || 0) * 9) * 0.05; ctx.save(); ctx.translate(x, y + 2); ctx.rotate(tl); if (o.flip) ctx.scale(-1, 1); ctx.drawImage(RI, -w2 / 2, -h, w2, h); if (o.hitT > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.5; ctx.drawImage(RI, -w2 / 2, -h, w2, h); } ctx.restore();
+      if (o.hitT > 0 && Math.random() < 0.3) txt('살려줘요!', x, y - h - 22, 13, '#ffd0d0', 'center', '#2a0c0c', 3);
+      txt('피난민', x, y - h - 8, 14, '#bfffd0', 'center', '#0c1a10', 3); hpBar(x - 18, y - h - 2, 36, 5, o.hp / o.max, '#7ee060'); return; }
+    const bob = Math.abs(Math.sin((o.mvT || 0) * 9)) * 3, x = o.x, y = o.y - bob; shadowE(o.x, o.y + 2, 12, 0.3);
     ctx.fillStyle = o.hitT > 0 ? '#fff' : '#e8dcc4'; rrPath(x - 11, y - 34, 22, 30, 8); ctx.fill(); ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.fillStyle = '#8a5a3a'; rrPath(x + 4, y - 36, 14, 14, 4); ctx.fill(); ctx.stroke();
     circle(x, y - 44, 11); ctx.fillStyle = o.hitT > 0 ? '#fff' : '#f2c9a0'; ctx.fill(); ctx.stroke(); ctx.fillStyle = '#222'; circle(x - 4, y - 45, 1.8); ctx.fill(); circle(x + 4, y - 45, 1.8); ctx.fill(); ctx.fillStyle = '#2a2a2a'; ctx.beginPath(); ctx.arc(x, y - 49, 11, Math.PI, 0); ctx.fill();
@@ -2205,8 +2218,12 @@ function drawHUD(day) {
   if (G.bubble && G.comps.length) {
     const a = Math.min(1, G.bubble.t * 3), C = COMP[G.comps[0].id]; ctx.globalAlpha = a;
     panel(24, 1010, 100, 100, 50, 'rgba(' + C.col + ',.9)', '#fff'); if (!drawPort(G.comps[0].id, 74, 1060, 46, '#fff')) { ctx.save(); circle(74, 1060, 46); ctx.clip(); drawSprite(C.spr, 74, 1130, { h: 120 }); ctx.restore(); }
-    panel(120, 1020, 300, 70, 16, '#fffaf0', '#3a2a1a'); ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.moveTo(122, 1050); ctx.lineTo(104, 1062); ctx.lineTo(122, 1066); ctx.fill();
-    txt(G.bubble.s, 270, 1055, 24, '#2a1a10', 'center', false);
+    /* 긴 말은 상자 안에서 줄을 바꾼다 (최대 3줄) */
+    const BW = 470, fs0 = 22; ctx.font = '800 ' + fs0 + 'px ' + FONT; const words = String(G.bubble.s).split(' '), lines = []; let cur = '';
+    for (const w of words) { const t = cur ? cur + ' ' + w : w; if (ctx.measureText(t).width > BW - 36 && cur) { lines.push(cur); cur = w; } else cur = t; } if (cur) lines.push(cur); if (lines.length > 3) { lines.length = 3; lines[2] += '…'; }
+    const BH = 26 + lines.length * 28, by0 = 1060 - BH / 2;
+    panel(120, by0, BW, BH, 16, '#fffaf0', '#3a2a1a'); ctx.fillStyle = '#fffaf0'; ctx.beginPath(); ctx.moveTo(122, 1050); ctx.lineTo(104, 1062); ctx.lineTo(122, 1066); ctx.fill();
+    lines.forEach((l, i) => txt(l, 120 + BW / 2, by0 + 27 + i * 28, fs0, '#2a1a10', 'center', false));
     ctx.globalAlpha = 1;
   }
   /* 경고 띠 */
