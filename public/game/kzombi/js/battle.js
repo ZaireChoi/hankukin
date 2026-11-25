@@ -2449,7 +2449,7 @@ function drawHUD(day) {
     ctx.restore();
   }
   /* 화면 밖 적 무리 예고: 테두리 쪽 붉은 해골 + 마릿수 */
-  if (isNight()) { const Bk = {}; for (const e of G.enemies) { if (e.hp <= 0 || onScreen(e)) continue; const sx = (e.x - camX) * zoom, sy = (e.y - camY) * zoom, k = Math.round(Math.atan2(sy - VH / 2, sx - W / 2) / (TAU / 10)); const b = Bk[k] || (Bk[k] = { n: 0, x: 0, y: 0, boss: 0 }); b.n++; b.x += sx; b.y += sy; if (e.boss) b.boss = 1; }
+  if (false && isNight()) { /* 사용자 요청(11-25): 산만해서 끔 */ const Bk = {}; for (const e of G.enemies) { if (e.hp <= 0 || onScreen(e)) continue; const sx = (e.x - camX) * zoom, sy = (e.y - camY) * zoom, k = Math.round(Math.atan2(sy - VH / 2, sx - W / 2) / (TAU / 10)); const b = Bk[k] || (Bk[k] = { n: 0, x: 0, y: 0, boss: 0 }); b.n++; b.x += sx; b.y += sy; if (e.boss) b.boss = 1; }
     for (const k in Bk) { const b = Bk[k], x = clamp(b.x / b.n, 44, W - 104), y = clamp(b.y / b.n, 250, VH - 250), r = b.boss ? 26 : 21; circle(x, y, r + 3); ctx.fillStyle = '#3a0808'; ctx.fill(); circle(x, y, r); ctx.fillStyle = b.boss ? '#e02a1a' : '#c8281e'; ctx.fill(); circle(x, y - 2, r * 0.58); ctx.fillStyle = '#fff'; ctx.fill(); ctx.fillStyle = '#3a0808'; ctx.beginPath(); ctx.ellipse(x - r * 0.22, y - 2, r * 0.13, r * 0.17, 0.4, 0, TAU); ctx.ellipse(x + r * 0.22, y - 2, r * 0.13, r * 0.17, -0.4, 0, TAU); ctx.fill(); ctx.fillRect(x - r * 0.18, y + r * 0.3, r * 0.36, r * 0.1);
       circle(x + r * 0.8, y - r * 0.75, 12); ctx.fillStyle = '#7a0a0a'; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); txt(String(b.n), x + r * 0.8, y - r * 0.75, 13, '#fff', 'center', false); } }
   /* 조이스틱 */
