@@ -57,6 +57,20 @@ D.CHAPTERS = [
   const bosses = ['zgrand', 'zqueen2', 'mudang', 'zbear', 'yeoksin', 'zgrand', 'ztiger', 'mudang', 'yeoksin'];
   names.forEach((nm, i) => { const n = 11 + i, s = (i * 5) % all.length; const pool = [i % 2 ? 'spear' : 'peasant']; for (let k = 0; k < 5; k++) pool.push(all[(s + k * 3) % all.length]); D.CHAPTERS.push({ n, name: nm, theme: th[i], nights: 6, pool, elite: ['zgrand', 'zsamurai', 'zbear', 'ztiger', 'mujang'][i % 5], boss: n === 20 || n === 30 ? 'yeoksin' : bosses[i % bosses.length] }); });
 })();
+/* 판마다 다른 목표 (1~3장은 기본 사당 지키기) */
+D.OBJ = {
+  defend:     { n: '사당 지키기', d: '사당 내구도를 절반 넘게 지켜라' },
+  survive:    { n: '시간 버티기', d: '우두머리 없이 더 많은 물량을 끝까지 버텨라' },
+  escort:     { n: '피난민 호위', d: '밤마다 오는 피난민을 사당까지 절반 넘게 데려와라' },
+  bossTime:   { n: '우두머리 속전', d: '우두머리를 75초 안에 쓰러뜨려라 (넘기면 분노)' },
+  beacon:     { n: '봉화대 지키기', d: '성 밖 봉화대가 무너지면 진다' },
+  annihilate: { n: '섬멸', d: '정해진 수만큼 좀비를 쓰러뜨려라' }
+};
+(function () { const fixed = { 1: 'defend', 2: 'defend', 3: 'defend', 4: 'survive', 5: 'escort', 6: 'bossTime', 7: 'beacon', 8: 'annihilate', 9: 'defend', 10: 'bossTime' }; const rot = ['escort', 'beacon', 'survive', 'annihilate', 'bossTime', 'defend'];
+  D.CHAPTERS.forEach(C => { C.objective = fixed[C.n] || rot[(C.n - 11) % rot.length]; });
+  /* 18장 첫 밤 튐: 강한 무리(왜군 조총·문신)를 뒤로 미룬다 */
+  if (D.CHAPTERS[17]) D.CHAPTERS[17].pool = ['peasant', 'spear', 'zrat', 'munsin', 'zwaegun', 'zox'];
+})();
 /* 판마다 다른 배치: 좀비 길(2~3갈래)과 건물 자리. 같은 챕터는 늘 같은 배치 */
 D.lanePt = (L, t, i) => { const k = t * t * (3 - 2 * t); return { x: L + (360 - L) * k * k + Math.sin(t * 9 + i * 2) * 16, y: -40 + t * (D.WALL_Y + 40) }; };
 D.layoutOf = function (ch) {
@@ -82,7 +96,7 @@ D.nightsOf = function (ch) {
     C.pool.forEach((t, j) => { if (j === 0) return; if (j <= 1 + i) mix[t] = 0.07 + 0.04 * Math.min(i, 3); });
     out.push({
       name: (i + 1) + '번째 밤', dur: 50 + i * 8 + (last ? 10 : 0),
-      rate: [1.5 + k * 1.6 + ch * 0.07, 3.0 + k * 3.0 + ch * 0.12], hp: hp0 * (0.7 + 0.3 * k) * (1 + 0.22 * i) * (last && ch <= 3 ? 0.8 : 1), mix, base: C.pool[0], /* 시뮬 조정: 첫 밤은 약하게, 밤마다 가파르게 */
+      rate: [1.5 + k * 1.6 + ch * 0.07, 3.0 + k * 3.0 + ch * 0.12], hp: hp0 * (0.7 + 0.3 * k) * (1 + 0.22 * i) * (last && ch <= 3 ? 0.8 : 1) * (ch >= 4 && ch <= 6 ? 0.78 : 1) * (ch >= 8 ? 1.12 : 1), mix, base: C.pool[0], /* 시뮬 조정: 첫 밤은 약하게, 밤마다 가파르게 */
       kind: last ? 'boss' : (i % 2 === 1 ? 'elite' : 'normal'),
       elites: last ? [0.4] : (i % 2 === 1 ? [0.5] : []), eliteType: C.elite, boss: last ? C.boss : null
     });
@@ -178,15 +192,16 @@ D.SKILLS = [
   { id: 'talisman', n: '벽사부',     kind: 'atk', el: 'fire', max: 5, c: '#ffd84a', d: l => '부적 ' + (1 + Math.floor(l / 2)) + '장이 날아가 터진다' },
   { id: 'beam',     n: '신궁 광선',  kind: 'atk', el: 'qi', max: 5, c: '#ff5a4a', d: l => '붉은 광선이 이어지며 ' + l + '명을 꿰뚫는다' },
   { id: 'vortex',   n: '불회오리',   kind: 'atk', el: 'fire', max: 5, c: '#ffb03a', d: l => '불회오리가 적을 빨아들이며 태운다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
-  { id: 'rapid',    n: '속사',       kind: 'buff', max: 5, c: '#8affc0', d: () => '쏘는 간격이 15% 짧아진다' },
+  { id: 'rapid',    n: '속사',       kind: 'buff', max: 5, c: '#8affc0', d: () => '쏘는 간격이 20% 짧아진다' },
   { id: 'multi',    n: '겹발',       kind: 'buff', max: 3, c: '#8affc0', d: () => '한 번에 쏘는 발수가 하나 늘어난다' },
   { id: 'pierce',   n: '관통',       kind: 'buff', max: 3, c: '#8affc0', d: () => '적 하나를 더 뚫는다' },
-  { id: 'power',    n: '신력',       kind: 'buff', max: 5, c: '#8affc0', d: () => '모든 공격 위력이 20% 오른다' },
-  { id: 'crit',     n: '급소',       kind: 'buff', max: 5, c: '#8affc0', d: () => '치명타 확률 +8% (치명타는 두 배)' },
+  { id: 'power',    n: '신력',       kind: 'buff', max: 5, c: '#8affc0', d: () => '모든 공격 위력이 30% 오른다' },
+  { id: 'crit',     n: '급소',       kind: 'buff', max: 5, c: '#8affc0', d: () => '치명타 확률 +12% (치명타는 두 배 반)' },
   { id: 'swift',    n: '축지',       kind: 'buff', max: 3, c: '#8affc0', d: () => '이동이 15% 빨라진다' },
   { id: 'magnet',   n: '옥구슬 끌기', kind: 'buff', max: 3, c: '#8affc0', d: () => '옥구슬을 끌어오는 거리 +60%' },
   { id: 'heal',     n: '정화수',     kind: 'buff', max: 99, c: '#8affc0', d: () => '체력 40 회복, 최대 체력 +20' },
   { id: 'repair',   n: '사당 보수',  kind: 'buff', max: 99, c: '#8affc0', d: () => '사당 내구도를 100 되살린다', need: g => g.shrine.hp < g.shrine.max },
-  { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +25%', need: g => g.turrets.length > 0 }
+  { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +40%', need: g => g.turrets.length > 0 },
+{ id: 'bond',     n: '영웅 결속',  kind: 'buff', max: 3, c: '#ffc85a', d: () => '함께한 영웅의 위력 +40%, 큰 기술이 빨리 찬다', need: g => g.comps.some(c => c.active) }
 ];
 })();
