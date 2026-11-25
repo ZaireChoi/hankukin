@@ -283,7 +283,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="res">' +
       '<div class="rpill stroke-s" data-act="buyTorch">' + ic('torch') + '<span class="tv"><b id="torchv">' + S.torch + '/' + TORCH_MAX + '</b><small id="torcht">' + left + '</small></span><div class="plus">+</div></div>' +
       '<div class="rpill stroke-s" data-act="goShop">' + ic('coin') + fmt(S.gold) + '<div class="plus">+</div></div>' +
-      '</div><div class="res2"><div class="rpill stroke-s" data-act="goShop">' + ic('jade') + fmt(S.jade) + '<div class="plus">+</div></div></div>' +
+      '</div><div class="res2"><div class="rpill stroke-s" data-act="goShop">' + ic('jade') + fmt(S.jade) + '<div class="plus">+</div></div>' +
+      '<div class="rpill stroke-s rstone" data-act="tab" data-v="power" title="신력석">' + ic('stone') + fmt(S.stone) + '<div class="plus">+</div></div></div>' +
       '</div>';
   }
   function tabsBar() {

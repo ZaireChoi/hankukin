@@ -436,3 +436,7 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 /* 모두 받기 */
 .xall{display:flex;margin:4px auto 10px;width:fit-content;min-width:260px;height:56px;padding:0 26px;font-size:22px;animation:xallPulse 1.4s ease-in-out infinite}
 @keyframes xallPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+
+/* 상단 재화: 옥 아래에 신력석 */
+.res2{flex-direction:column;align-items:flex-end;gap:6px}
+.res2 .rpill.rstone{transform:scale(.92);transform-origin:right center}
