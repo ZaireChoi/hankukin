@@ -491,7 +491,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       ['jade300', '옥 주머니', 'jade', '옥 300', '결제 준비 중', 'b dis', ''],
       ['jade1k', '옥 상자', 'jade', '옥 1,000', '결제 준비 중', 'b dis', '']];
     return '<div class="hdr stroke">상점<span class="sub">옥으로 장비와 동료를 뽑아요</span></div><div class="shop" style="top:96px">' +
-      '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/title.jpg);background-position:center 30%"></div><h3 class="stroke">장비 뽑기</h3><div class="d stroke-s">10번 뽑으면 희귀 이상 1개 보장. 전설, 신화 장비가 나올 수 있어요.</div>' +
+      '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/bn_gear.webp?v=1);background-position:right center"></div><h3 class="stroke">장비 뽑기</h3><div class="d stroke-s">10번 뽑으면 희귀 이상 1개 보장. 전설, 신화 장비가 나올 수 있어요.</div>' +
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=4);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
       '<div class="prob" data-act="prob" data-v="cp">확률 안내</div><div class="bb"><div class="btn p" data-act="gacha" data-v="cp1"><span>1번</span><small>' + ic('jade') + '100</small></div><div class="btn y" data-act="gacha" data-v="cp10"><span>10번</span><small>' + ic('jade') + '900</small></div></div></div>' +
