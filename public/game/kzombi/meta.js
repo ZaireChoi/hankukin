@@ -640,7 +640,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     S.pass.xp += (win ? 120 : 50) + Math.floor(k / 10);
     const C = (window.JZD && JZD.CHAPTERS) || []; const ch = C[(r.chapter || 1) - 1];
     if (ch) { for (const z of [...ch.pool, ch.elite]) S.codex.seenZ[z] = 1; if (win) S.codex.seenZ[ch.boss] = 1; }
-    S.wk.score += k + (win ? 300 : 0);
+    S.wk.score += k + (win ? 300 : 0); S.wk.kills = (S.wk.kills || 0) + k;
+    try { if (S.guild && accUser()) putEntry('kzgw-' + S.wk.key, S.guild.id, S.wk.kills).catch(() => {}); } catch (e) {}
     try { const A = window.HKAccount; if (A && A.user && A.submitScore && S.wk.score > 0) A.submitScore('kzombi-' + S.wk.key, S.wk.score, accName()).catch(() => {}); } catch (e) {}
   }
   /* 시즌 패스: 30단계, 단계마다 100점. 유료 줄은 990원(결제 준비 중) */
@@ -717,11 +718,183 @@ if (window.IS_EN) document.title = 'K Zombi';
     box().innerHTML = (arr.length ? arr.map((e, i) => '<div class="xrk' + (e.uid === me || e.id === me ? ' me' : '') + '"><b class="stroke-s">' + (i + 1) + '</b><span class="stroke-s">' + String(e.name || '처용').replace(/[<>&]/g, '') + '</span><em class="stroke-s">' + fmt(e.score || 0) + '</em></div>').join('') : '<p style="text-align:center">아직 이번 주 기록이 없어요. 첫 번째가 되어 보세요!</p>') +
       (A.user ? '' : '<div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 로그인하고 내 점수 올리기</div>');
   }
-  /* 친구, 문파: 화면과 저장 틀만. 서버 연결은 곧 */
-  function friendModal() { xinit(); modal('<h3 class="stroke">친구</h3><div class="box" style="padding:16px;text-align:center"><p>내 친구 코드</p><div class="stroke" style="font-size:40px;letter-spacing:6px;color:#ffe27a">' + S.myCode + '</div></div>' +
-    '<div class="xsoon box"><b class="stroke-s">곧 열려요</b><p>친구 추가, 하루 한 번 횃불 선물 주고받기, 친구 동료 빌려 쓰기를 준비하고 있어요.</p></div><p style="text-align:center">친구 ' + S.friends.length + '/30</p>'); }
-  function guildModal() { xinit(); modal('<h3 class="stroke">문파</h3><div class="xsoon box"><b class="stroke-s">곧 열려요</b><p>문파를 세우거나 들어가서 문파원과 함께 우두머리 좀비를 잡고, 문파 상점과 문파 출석 보상을 받게 돼요.</p></div>' +
-    '<div class="row"><div class="btn b no">문파 만들기</div><div class="btn b no">문파 찾기</div></div><p style="text-align:center">' + (S.guild ? '내 문파: ' + S.guild.name : '아직 문파가 없어요') + '</p>'); }
+  /* ---------------- 친구 · 문파 (HANKUKIN 계정 Firestore) ----------------
+     새 컬렉션 없이 이미 열려 있는 두 곳만 쓴다.
+     - leaderboards/{보드}/entries/{내 uid} : 내 문서만 쓰고 누구나 읽는다. 필드는 {name, score, at}만.
+     - unique/{키} : 먼저 만든 사람이 영구 소유 (친구 코드, 문파 이름)
+     보드 이름 약속 (kz = K Zombi)
+       kzp                 내 공개 정보: name=이름, score=레벨*1e6+전투력, at=마지막 접속
+       kzf-{상대uid}       친구 신청/수락: 내가 상대 보드에 한 줄 (score 1=신청, 2=수락)
+       kzg-{상대uid}-{날}  횃불 선물: 내가 상대에게 오늘 보낸 선물
+       kzguilds            문파 목록: 문주가 씀. name=문파이름, score=문양*1000+인원 (0=해산)
+       kzgm-{문파}         문파원: 내가 씀. score=레벨*1e6+전투력 (0=탈퇴)
+       kzgk-{문파}-{uid}   강퇴 표시: 문주가 씀
+       kzga-{문파}-{날}    문파 출석
+       kzgw-{주}           문파 주간 공헌: name=문파이름, score=그 주 처치 수 → 문파별로 합쳐 순위 */
+  const GEMB = ['龍', '虎', '鳳', '龜', '劍', '月', '火', '山'];
+  const FB = { db: null, fs: null };
+  async function fbDb() {
+    if (FB.db) return FB;
+    const appM = await import('https://www.gstatic.com/firebasejs/' + FB_VER + '/firebase-app.js');
+    const fsM = await import('https://www.gstatic.com/firebasejs/' + FB_VER + '/firebase-firestore.js');
+    const app = appM.getApps()[0]; if (!app) throw new Error('noapp');
+    FB.fs = fsM; FB.db = fsM.getFirestore(app); return FB;
+  }
+  const esc = s => String(s == null ? '' : s).replace(/[<>&"]/g, '');
+  const dayKey = () => today();
+  const nm20 = s => String(s || '처용').replace(/[|<>&"]/g, '').slice(0, 20);
+  async function putEntry(board, name, score) {
+    const u = accUser(); if (!u) throw new Error('login');
+    const { fs: F, db } = await fbDb();
+    await F.setDoc(F.doc(db, 'leaderboards', board, 'entries', u.uid), { name: nm20(name), score: Math.max(0, Math.min(99999999, Math.floor(score) || 0)), at: Date.now() });
+  }
+  async function getEntry(board, uid) { if (!uid) return null; const { fs: F, db } = await fbDb(); const s = await F.getDoc(F.doc(db, 'leaderboards', board, 'entries', uid)); return s.exists() ? Object.assign({ id: uid }, s.data()) : null; }
+  async function listBoard(board, n) { const { fs: F, db } = await fbDb(); const qs = await F.getDocs(F.query(F.collection(db, 'leaderboards', board, 'entries'), F.limit(n || 100))); const out = []; qs.forEach(d => out.push(Object.assign({ id: d.id }, d.data()))); return out; }
+  const myScoreVal = () => { const st = stats(); return S.lv * 1e6 + Math.min(999999, Math.round(st.power)); };
+  const lvOf = sc => Math.floor((sc || 0) / 1e6), pwOf = sc => (sc || 0) % 1e6;
+  const ago = t => { if (!t) return '-'; const m = Math.floor((Date.now() - t) / 60000); return m < 5 ? '접속 중' : m < 60 ? m + '분 전' : m < 1440 ? Math.floor(m / 60) + '시간 전' : Math.floor(m / 1440) + '일 전'; };
+  let socialErr = '';
+  async function socialReady(depth) {
+    if (!accOnline()) return 'offline'; const u = accUser(); if (!u) return 'login';
+    S.fr = S.fr || { list: {}, rej: {}, sent: {}, gotDay: '', gotN: 0, got: {} };
+    try {
+      await putEntry('kzp', accName(), myScoreVal());
+      if (S.codeOk && S.codeOk !== u.uid) { S.codeOk = null; S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase(); }
+      if (!S.codeOk) { for (let i = 0; i < 4; i++) { const r = await window.HKAccount.claimUnique('kzcode-' + S.myCode, { g: 'kzombi' }); if (r.ok) { S.codeOk = u.uid; break; } S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase(); } save(); }
+      return 'ok';
+    } catch (e) { socialErr = String(e && e.code || e); console.warn('[social]', e); return 'err'; }
+  }
+  const loginBox = what => '<div class="xsoon box"><b class="stroke-s">로그인이 필요해요</b><p>구글 로그인하면 ' + what + '</p></div><div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 가입·로그인</div>';
+  const offBox = '<div class="xsoon box"><b class="stroke-s">온라인 연결 안 됨</b><p>hankuk-in.com 에서 열면 친구·문파를 쓸 수 있어요.</p></div>';
+  const errBox = () => '<div class="xsoon box"><b class="stroke-s">서버에 연결하지 못했어요</b><p>잠시 뒤 다시 열어 주세요. (' + esc(socialErr.replace('firestore/', '')) + ')</p></div>';
+
+  /* ---- 친구 ---- */
+  async function friendModal() {
+    xinit();
+    modal('<h3 class="stroke">친구</h3><div id="frbox"><p style="text-align:center">불러오는 중...</p></div>', 'xwide');
+    const st = await socialReady(), box = () => $('#frbox', root); if (!box()) return;
+    if (st === 'offline') { box().innerHTML = offBox; return; } if (st === 'login') { box().innerHTML = loginBox('친구 코드로 친구를 맺고 날마다 횃불을 주고받을 수 있어요.'); return; } if (st === 'err') { box().innerHTML = errBox(); return; }
+    const me = accUser().uid, d = dayKey(); if (S.fr.gotDay !== d) { S.fr.gotDay = d; S.fr.gotN = 0; S.fr.got = {}; }
+    let inbox = []; try { inbox = await listBoard('kzf-' + me, 100); } catch (e) { socialErr = String(e.code || e); box().innerHTML = errBox(); return; }
+    /* 상대가 내 보드에 남긴 줄: 신청(1) 또는 수락(2) */
+    for (const r of inbox) if (r.score === 2 && S.fr.sent[r.id]) { S.fr.list[r.id] = 1; delete S.fr.sent[r.id]; }
+    const reqs = inbox.filter(r => r.score === 1 && !S.fr.list[r.id] && !S.fr.rej[r.id]);
+    const ids = Object.keys(S.fr.list).slice(0, 30); save();
+    const prof = {}, gifts = {}; await Promise.all(ids.map(async id => { try { prof[id] = await getEntry('kzp', id); } catch (e) {} try { gifts[id] = await getEntry('kzg-' + me + '-' + d, id); } catch (e) {} }));
+    if (!box()) return;
+    const giftSent = S.fr.giftDay === d ? S.fr.giftTo || {} : {};
+    const rows = ids.map(id => { const p = prof[id] || {}, g = gifts[id], got = S.fr.got[id];
+      return '<div class="xfr box"><div class="xav stroke">' + esc((p.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(p.name || '알 수 없음') + '</b><small>레벨 ' + lvOf(p.score) + ' · 전투력 ' + fmt(pwOf(p.score)) + ' · ' + ago(p.at) + '</small></div>' +
+        '<div class="xfb">' + (g && !got ? '<div class="btn y sm" data-act="frTake" data-v="' + id + '">🔥 받기</div>' : '') + (giftSent[id] ? '<div class="btn b sm dis">보냄</div>' : '<div class="btn g sm" data-act="frGift" data-v="' + id + '">🔥 보내기</div>') + '</div></div>'; }).join('');
+    box().innerHTML = '<div class="box xmycode"><span>내 친구 코드</span><b class="stroke" style="color:#ffe27a">' + S.myCode + '</b></div>' +
+      '<div class="row xfadd"><input id="frIn" class="xcpn" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="친구 코드 6자리"><div class="btn p" data-act="frAdd">신청</div></div>' +
+      (reqs.length ? '<div class="sect stroke-s">받은 신청 ' + reqs.length + '</div>' + reqs.map(r => '<div class="xfr box"><div class="xav stroke">' + esc((r.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(r.name) + '</b><small>' + ago(r.at) + '</small></div><div class="xfb"><div class="btn g sm" data-act="frOk" data-v="' + r.id + '">수락</div><div class="btn r sm" data-act="frNo" data-v="' + r.id + '">거절</div></div></div>').join('') : '') +
+      '<div class="sect stroke-s">친구 ' + ids.length + '/30 · 오늘 받은 횃불 ' + S.fr.gotN + '/10</div><div class="xscroll xfrl">' + (rows || '<p style="text-align:center">아직 친구가 없어요. 친구 코드를 주고받아 보세요!</p>') + '</div>';
+  }
+  async function frAct(a, v) {
+    const me = accUser() && accUser().uid; if (!me) return;
+    try {
+      if (a === 'frAdd') {
+        const code = (($('#frIn', root) || {}).value || '').trim().toUpperCase(); if (code.length < 4) { toast('친구 코드를 넣어 주세요'); return; }
+        if (code === S.myCode) { toast('내 코드예요'); return; }
+        const u2 = await window.HKAccount.getUnique('kzcode-' + code); if (!u2 || !u2.uid) { toast('없는 친구 코드예요'); return; }
+        if (u2.uid === me) { toast('내 코드예요'); return; }
+        if (S.fr.list[u2.uid]) { toast('이미 친구예요'); return; } if (Object.keys(S.fr.list).length >= 30) { toast('친구는 30명까지예요'); return; }
+        const back = await getEntry('kzf-' + me, u2.uid);   /* 상대가 먼저 나에게 신청했으면 바로 친구 */
+        await putEntry('kzf-' + u2.uid, accName(), back ? 2 : 1);
+        if (back) { S.fr.list[u2.uid] = 1; toast('친구가 되었어요!'); } else { S.fr.sent[u2.uid] = 1; toast('친구 신청을 보냈어요'); }
+      } else if (a === 'frOk') { if (Object.keys(S.fr.list).length >= 30) { toast('친구는 30명까지예요'); return; } await putEntry('kzf-' + v, accName(), 2); S.fr.list[v] = 1; toast('친구가 되었어요!'); }
+      else if (a === 'frNo') { S.fr.rej[v] = 1; toast('신청을 거절했어요'); }
+      else if (a === 'frGift') { const d = dayKey(); await putEntry('kzg-' + v + '-' + d, accName(), 1); if (S.fr.giftDay !== d) { S.fr.giftDay = d; S.fr.giftTo = {}; } S.fr.giftTo[v] = 1; toast('횃불을 선물했어요'); }
+      else if (a === 'frTake') { if (S.fr.gotN >= 10) { toast('오늘은 10개까지 받을 수 있어요'); return; } S.fr.got[v] = 1; S.fr.gotN++; S.torch += 1; toast('횃불 +1'); }
+      save(); friendModal(); refresh();
+    } catch (e) { console.warn(e); toast('실패했어요: ' + String(e && e.code || e).replace('firestore/', '')); }
+  }
+
+  /* ---- 문파 ---- */
+  const GCOST = 5000;
+  const gidOf = n => String(n).trim().replace(/\s+/g, ' ').replace(/[\/|<>&"#?.\[\]*~]/g, '').slice(0, 12);
+  async function guildMembers(g) {
+    const rows = (await listBoard('kzgm-' + g.id, 60)).filter(r => r.score > 0);
+    const kicked = {}; await Promise.all(rows.map(async r => { if (r.id === g.owner) return; try { if (await getEntry('kzgk-' + g.id + '-' + r.id, g.owner)) kicked[r.id] = 1; } catch (e) {} }));
+    return rows.filter(r => !kicked[r.id]);
+  }
+  let gTab = 'mine';
+  async function guildModal(tab) {
+    xinit(); if (tab) gTab = tab;
+    modal('<h3 class="stroke">문파</h3><div id="gdbox"><p style="text-align:center">불러오는 중...</p></div>', 'xwide');
+    const st = await socialReady(), box = () => $('#gdbox', root); if (!box()) return;
+    if (st === 'offline') { box().innerHTML = offBox; return; } if (st === 'login') { box().innerHTML = loginBox('문파를 세우거나 들어가 문파원과 함께 출석 보상과 주간 순위를 겨룰 수 있어요.'); return; } if (st === 'err') { box().innerHTML = errBox(); return; }
+    const me = accUser().uid;
+    try {
+      if (S.guild) {
+        if (S.guild.owner !== me && await getEntry('kzgk-' + S.guild.id + '-' + me, S.guild.owner)) { toast('문파에서 내보내졌어요'); S.guild = null; save(); return guildModal('find'); }
+        if (S.guild.owner !== me) { const gl = await getEntry('kzguilds', S.guild.owner); if (gl && gl.score === 0) { toast('문파가 해산되었어요'); S.guild = null; save(); return guildModal('find'); } }
+        if (S.guild) { await putEntry('kzgm-' + S.guild.id, accName(), myScoreVal()); await putEntry('kzgw-' + S.wk.key, S.guild.id, S.wk.kills || 0); }
+      }
+      if (!S.guild || gTab !== 'mine') {
+        const all = (await listBoard('kzguilds', 200)).filter(g => g.score > 0);
+        const q = gTab === 'find' ? (S.gq || '') : '';
+        const list = all.filter(g => !q || String(g.name).includes(q)).sort((a, b) => (b.score % 1000) - (a.score % 1000)).slice(0, 40);
+        let rank = [];
+        if (gTab === 'rank') { const wk = await listBoard('kzgw-' + S.wk.key, 500), sum = {}; for (const r of wk) if (all.some(g => g.name === r.name)) sum[r.name] = (sum[r.name] || 0) + (r.score || 0); rank = Object.entries(sum).sort((a, b) => b[1] - a[1]).slice(0, 20); }
+        if (!box()) return;
+        const tabs = '<div class="xgtabs">' + (S.guild ? '<div class="btn b sm" data-act="gTab" data-v="mine">내 문파</div>' : '') + '<div class="btn ' + (gTab === 'rank' ? 'b' : 'p') + ' sm" data-act="gTab" data-v="find">문파 찾기</div><div class="btn ' + (gTab === 'rank' ? 'p' : 'b') + ' sm" data-act="gTab" data-v="rank">주간 순위</div></div>';
+        if (gTab === 'rank') {
+          box().innerHTML = tabs + '<p style="text-align:center">이번 주(' + S.wk.key + ') 문파원이 물리친 좀비 수 합계</p><div class="xscroll xfrl">' + (rank.length ? rank.map(([n, v], i) => { const g = all.find(x => x.name === n); return '<div class="xrk' + (S.guild && S.guild.id === n ? ' me' : '') + '"><b class="stroke-s">' + (i + 1) + '</b><span class="stroke-s">' + (g ? '<i class="xemb sm">' + GEMB[Math.floor(g.score / 1000) % GEMB.length] + '</i> ' : '') + esc(n) + '</span><em class="stroke-s">' + fmt(v) + '</em></div>'; }).join('') : '<p style="text-align:center">이번 주 문파 기록이 아직 없어요</p>') + '</div>';
+          return;
+        }
+        box().innerHTML = tabs + '<div class="row xfadd"><input id="gqIn" class="xcpn" maxlength="12" autocomplete="off" placeholder="문파 이름 검색" value="' + esc(q) + '"><div class="btn p" data-act="gFind">검색</div></div>' +
+          '<div class="xscroll xfrl">' + (list.length ? list.map(g => '<div class="xfr box"><i class="xemb">' + GEMB[Math.floor(g.score / 1000) % GEMB.length] + '</i><div class="xfi"><b class="stroke-s">' + esc(g.name) + '</b><small>문파원 ' + (g.score % 1000) + '/20 · ' + ago(g.at) + '</small></div><div class="xfb">' + (S.guild ? '' : '<div class="btn g sm" data-act="gJoin" data-v="' + esc(g.name) + '|' + g.id + '">가입</div>') + '</div></div>').join('') : '<p style="text-align:center">문파가 없어요. 직접 세워 보세요!</p>') + '</div>' +
+          (S.guild ? '' : '<div class="sect stroke-s">문파 세우기 (엽전 ' + fmt(GCOST) + ')</div><div class="xembs">' + GEMB.map((e, i) => '<i class="xemb' + ((S.gemb | 0) === i ? ' on' : '') + '" data-act="gEmb" data-v="' + i + '">' + e + '</i>').join('') + '</div><div class="row xfadd"><input id="gnIn" class="xcpn" maxlength="12" autocomplete="off" placeholder="문파 이름 (2~12자)"><div class="btn y" data-act="gMake">세우기</div></div>');
+        return;
+      }
+      /* 내 문파 */
+      const g = S.guild, mem = await guildMembers(g), d = dayKey(), att = await listBoard('kzga-' + g.id + '-' + d, 60), attIds = new Set(att.map(x => x.id).filter(id => mem.some(m => m.id === id)));
+      const wk = (await listBoard('kzgw-' + S.wk.key, 500)).filter(r => r.name === g.id && mem.some(m => m.id === r.id)), wsum = wk.reduce((s, r) => s + (r.score || 0), 0);
+      if (g.owner === me) { try { await putEntry('kzguilds', g.id, (g.emb | 0) * 1000 + Math.min(20, mem.length)); } catch (e) {} }
+      if (!box()) return;
+      const did = attIds.has(me), claimed = S.gAttGot === d, n = attIds.size;
+      box().innerHTML = '<div class="xgtabs"><div class="btn p sm">내 문파</div><div class="btn b sm" data-act="gTab" data-v="find">문파 찾기</div><div class="btn b sm" data-act="gTab" data-v="rank">주간 순위</div></div>' +
+        '<div class="box xghd"><i class="xemb big">' + GEMB[(g.emb | 0) % GEMB.length] + '</i><div><b class="stroke" style="font-size:30px;color:#ffe27a">' + esc(g.id) + '</b><small>문파원 ' + mem.length + '/20 · 이번 주 공헌 ' + fmt(wsum) + '마리</small></div></div>' +
+        '<div class="box xgatt"><div><b class="stroke-s">문파 출석 ' + n + '/' + mem.length + '</b><small>출석한 문파원이 많을수록 모두의 보상이 커져요 (엽전 200×출석 인원, 5명 이상이면 옥 20 추가)</small></div>' +
+        (!did ? '<div class="btn y" data-act="gAtt">출석</div>' : claimed ? '<div class="btn b dis">받음</div>' : '<div class="btn g" data-act="gAttGet">보상 받기</div>') + '</div>' +
+        '<div class="sect stroke-s">문파원</div><div class="xscroll xfrl">' + mem.sort((x, y) => y.score - x.score).map(m => { const w = wk.find(r => r.id === m.id);
+          return '<div class="xfr box"><div class="xav stroke">' + esc((m.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(m.name) + (m.id === g.owner ? ' <span class="xboss">문주</span>' : '') + (attIds.has(m.id) ? ' ✔' : '') + '</b><small>레벨 ' + lvOf(m.score) + ' · 전투력 ' + fmt(pwOf(m.score)) + ' · 이번 주 ' + fmt(w ? w.score : 0) + '마리 · ' + ago(m.at) + '</small></div>' +
+            '<div class="xfb">' + (g.owner === me && m.id !== me ? '<div class="btn r sm" data-act="gKick" data-v="' + m.id + '">강퇴</div>' : '') + '</div></div>'; }).join('') + '</div>' +
+        '<div class="row"><div class="btn r" data-act="gLeave">' + (g.owner === me ? '문파 해산' : '탈퇴') + '</div></div>';
+    } catch (e) { socialErr = String(e && e.code || e); console.warn('[guild]', e); if (box()) box().innerHTML = errBox(); }
+  }
+  async function gAct(a, v) {
+    const me = accUser() && accUser().uid; if (!me) return;
+    try {
+      if (a === 'gTab') { guildModal(v); return; }
+      if (a === 'gFind') { S.gq = (($('#gqIn', root) || {}).value || '').trim(); guildModal('find'); return; }
+      if (a === 'gEmb') { S.gemb = +v; root.querySelectorAll('.xembs .xemb').forEach((e, i) => e.classList.toggle('on', i === +v)); return; }
+      if (a === 'gMake') {
+        const id = gidOf(($('#gnIn', root) || {}).value || ''); if (id.length < 2) { toast('문파 이름은 2~12자예요'); return; }
+        if (S.gold < GCOST) { toast('엽전이 모자라요'); return; }
+        const r = await window.HKAccount.claimUnique('kzguild-' + id, { g: 'kzombi', name: id }); if (!r.ok) { toast('이미 있는 문파 이름이에요'); return; }
+        S.gold -= GCOST; S.guild = { id, owner: me, emb: S.gemb | 0 }; save();
+        await putEntry('kzguilds', id, (S.gemb | 0) * 1000 + 1); await putEntry('kzgm-' + id, accName(), myScoreVal());
+        toast('문파 「' + id + '」를 세웠어요!'); guildModal('mine'); refresh(); return;
+      }
+      if (a === 'gJoin') {
+        const [id, owner] = String(v).split('|'); const mem = (await listBoard('kzgm-' + id, 60)).filter(r => r.score > 0); if (mem.length >= 20) { toast('문파원이 가득 찼어요'); return; }
+        if (await getEntry('kzgk-' + id + '-' + me, owner)) { toast('이 문파에는 들어갈 수 없어요'); return; }
+        const gl = await getEntry('kzguilds', owner); S.guild = { id, owner, emb: gl ? Math.floor(gl.score / 1000) : 0 }; save();
+        await putEntry('kzgm-' + id, accName(), myScoreVal()); toast('「' + id + '」에 들어왔어요!'); guildModal('mine'); return;
+      }
+      if (a === 'gAtt') { await putEntry('kzga-' + S.guild.id + '-' + dayKey(), accName(), 1); toast('문파 출석!'); guildModal('mine'); return; }
+      if (a === 'gAttGet') { if (S.gAttGot === dayKey()) return; const att = await listBoard('kzga-' + S.guild.id + '-' + dayKey(), 60), n = Math.max(1, Math.min(20, att.length)); S.gold += 200 * n; if (n >= 5) S.jade += 20; S.gAttGot = dayKey(); save(); toast('문파 출석 보상: 엽전 ' + fmt(200 * n) + (n >= 5 ? ', 옥 20' : '')); guildModal('mine'); refresh(); return; }
+      if (a === 'gKick') { if (!confirm('이 문파원을 내보낼까요?')) return; await putEntry('kzgk-' + S.guild.id + '-' + v, 'kick', 1); toast('내보냈어요'); guildModal('mine'); return; }
+      if (a === 'gLeave') {
+        const boss = S.guild.owner === me; if (!confirm(boss ? '문파를 해산할까요? 문파 이름은 다시 쓸 수 없어요.' : '문파에서 나갈까요?')) return;
+        await putEntry('kzgm-' + S.guild.id, accName(), 0); if (boss) await putEntry('kzguilds', S.guild.id, 0);
+        S.guild = null; save(); toast(boss ? '문파를 해산했어요' : '문파에서 나왔어요'); guildModal('find'); return;
+      }
+    } catch (e) { console.warn(e); toast('실패했어요: ' + String(e && e.code || e).replace('firestore/', '')); }
+  }
   /* 온라인 계정(hankuk-in.com 에서만): 순위표용 */
   (function loadAccount() { try { if (!/hankuk-in\.com$/.test(location.hostname) || document.querySelector('script[src*="/game/account.js"]')) return; const s = document.createElement('script'); s.type = 'module'; s.src = '/game/account.js'; s.dataset.game = 'kzombi'; s.dataset.prefix = 'jz_save'; document.head.appendChild(s); } catch (e) {} })();
 
@@ -787,6 +960,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'rank': rankModal(); break;
       case 'rkLogin': try { window.HKAccount && window.HKAccount.openLogin && window.HKAccount.openLogin(); } catch (e) {} break;
       case 'friend': friendModal(); break;
+      case 'frAdd': case 'frOk': case 'frNo': case 'frGift': case 'frTake': frAct(a, v); break;
+      case 'gTab': case 'gFind': case 'gEmb': case 'gMake': case 'gJoin': case 'gAtt': case 'gAttGet': case 'gKick': case 'gLeave': gAct(a, v); break;
       case 'gLogin': googleLogin(); break;
       case 'eLogin': try { window.HKAccount.openLogin(); } catch (e) {} break;
       case 'accOut': try { if (confirm('로그아웃할까요? 이 기기 저장은 그대로 남아요.')) window.HKAccount.logout(); } catch (e) {} closeModal(); break;
