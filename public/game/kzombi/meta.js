@@ -322,7 +322,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="rank">' + ic('power') + '<div class="lb stroke-s">랭킹</div></div>' +
       '<div class="sb wbsb" data-act="wb">' + ic('skull' in I ? 'skull' : 'sword') + '<div class="lb stroke-s">월드보스</div>' + (wbDay().n < 3 ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb arsb" data-act="ar">' + ic('sword') + '<div class="lb stroke-s">아레나</div>' + (arDay().n < AR_FREE ? '<i class="dot"></i>' : '') + '</div>' +
-      '</div><div class="sidebtns r">' +
+      '</div><div class="sidebtns r' + (stShow() ? ' n7' : '') + '">' + (stShow() ? '<div class="sb stsb" data-act="starter">' + ic('gift') + '<div class="lb stroke-s">스타트팩</div><i class="dot"></i><i class="rcb stroke-s">' + stDays() + '일</i></div>' : '') +
       '<div class="sb" data-act="mailbox">' + ic('mail') + '<div class="lb stroke-s">우편</div>' + (!S.mail ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="settings">' + ic('gear') + '<div class="lb stroke-s">설정</div></div>' +
       '<div class="sb" data-act="ach">' + ic('chest') + '<div class="lb stroke-s">업적</div>' + (achDot() ? '<i class="dot"></i>' : '') + '</div>' +
@@ -407,7 +407,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       const lv = S.skills[s.id] || 1, cost = lv * 15, gc = lv * 400;
       const stars = [1, 2, 3, 4, 5].map(k => ic(lv >= k ? 'star' : 'star0')).join('');
       return '<div class="sk box"><div class="ico" style="background:' + s.c + ';overflow:hidden">' + ic(s.ic) + '<img src="img/skills/' + s.id + '.webp?v=2" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:17px" onerror="this.remove()"></div><h4 class="stroke-s">' + s.n + '</h4><p>' + s.d + '</p>' +
-        '<p style="color:#ffe27a">위력 ' + (100 + (lv - 1) * 25) + '%</p><div class="stars">' + stars + '</div>' +
+        '<p style="color:#ffe27a">위력 ' + (100 + (lv - 1) * 25) + '%' + ((window.JZD && JZD.SK_UNLOCK && (JZD.SK_UNLOCK[s.id] || 1) > Math.max(1, S.chap || 1)) ? ' <b style="color:#ffb0a0">🔒 ' + JZD.SK_UNLOCK[s.id] + '장에서 열림</b>' : '') + '</p><div class="stars">' + stars + '</div>' +
         (lv >= 5 ? '<div class="btn y dis">최고</div>' : '<div class="btn g ' + (S.stone >= cost && S.gold >= gc ? '' : 'dis') + '" data-act="skUp" data-v="' + s.id + '">' + ic('stone').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + cost + '</div>') + '</div>';
     }).join('');
     const EVO = window.JZD && JZD.EVO ? JZD.EVO : {}; const SN = id => (window.JZD ? (JZD.SKILLS.find(s => s.id === id) || {}).n : id);
@@ -484,6 +484,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const free = S.freeGold !== today();
     const goods = [
       ['freeGold', '무료 엽전', 'coin', '엽전 500', free ? '무료' : '내일 다시', free ? 'g' : 'b dis', free ? '매일' : ''],
+      ['starterPk', '신규 스타트팩', 'gift', '홍길동 + 영웅 장비 4점', S.starter ? '받음' : '990원', S.starter ? 'b dis' : 'p', S.starter ? '' : '1회'],
       ['gold3k', '엽전 꾸러미', 'coin', '엽전 5,000', '옥 50', 'b', ''],
       ['stone20', '신력석 상자', 'stone', '신력석 20', '옥 80', 'p', '인기'],
       ['torch30', '횃불 묶음', 'torch', '횃불 30', '옥 40', 'r', ''],
@@ -722,8 +723,25 @@ if (window.IS_EN) document.title = 'K Zombi';
      코드 원문은 넣지 않고 해시만 둔다. rep: 여러 번 쓸 수 있는 시험용. 이 검사는 기기 안에서만 하므로
      정식 유료 판매 전에는 서버 검사로 바꿔야 한다. */
   const CPN_SALT = 'jz:MQMRT2QLZ2';
-  const CPN = { 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 } };
+  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 } };
   const cpnHash = (str, seed) => { let h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0); for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
+  /* 신규 스타트팩(990원, 계정당 1회): 홍길동 + 영웅 장비 4점 + 옥 300 + 횃불 20. 결제 전에는 시험 쿠폰으로만 받는다 */
+  const stBorn = () => { if (!S.born) S.born = Date.now(); return S.born; };
+  const stShow = () => !S.starter && Date.now() - stBorn() < 7 * 864e5;
+  const stDays = () => Math.max(1, Math.ceil((stBorn() + 7 * 864e5 - Date.now()) / 864e5));
+  function grantStarter() {
+    if (S.starter) return; S.starter = Date.now();
+    const hc = S.comps.honggildong; if (hc) { if (hc.own) hc.sh += 10; else hc.own = true; }
+    ITEM_SRC = '신규 스타트팩'; const got = ['weapon', 'hat', 'robe', 'arm'].map(sl => { const it = mkItem(sl, 3, 'bow'); S.inv.push(it); return it; }); ITEM_SRC = '';
+    S.jade += 300; S.torch = Math.min(99, (S.torch || 0) + 20); save(); closeModal(); refresh();
+    modal('<h3 class="stroke">신규 스타트팩을 받았어요!</h3><div style="text-align:center;font-size:19px;line-height:1.6">영웅 <b style="color:#e39bff">홍길동</b>' + (hc && hc.sh >= 10 && hc.own ? ' (이미 있어 조각 10개)' : '') + '<br>영웅 등급 장비 ' + got.length + '점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20</div><div class="row"><div class="btn y" data-act="tab" data-v="equip">장비 끼러 가기</div></div>');
+  }
+  function starterModal() {
+    modal('<h3 class="stroke">신규 스타트팩</h3><div style="text-align:center"><div style="width:220px;height:220px;margin:0 auto;border-radius:20px;background:#2a1a3a url(img/ui/hero_honggildong.webp?v=2) center/cover;box-shadow:0 0 0 4px #e39bff"></div>' +
+      '<p style="font-size:19px;line-height:1.6;margin:10px 0">영웅 <b style="color:#e39bff">홍길동</b> 바로 합류<br>영웅 등급 장비 4점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20<br><small style="color:#ffd36b">계정당 한 번 · ' + (S.starter ? '이미 받았어요' : '남은 기간 ' + stDays() + '일') + '</small></p></div>' +
+      '<div class="row">' + (S.starter ? '<div class="btn b dis">받음</div>' : '<div class="btn p" data-act="passBuy" style="flex-direction:column;gap:0;min-width:300px"><span>990원</span><small style="font-size:16px">결제 준비 중</small></div>') + '</div>' +
+      '<div class="row"><div class="btn b" data-act="coupon">시험 쿠폰 입력</div></div>');
+  }
   function couponModal() {
     modal('<h3 class="stroke">쿠폰 입력</h3><p style="text-align:center">행사 코드를 입력하세요</p>' +
       '<div class="row"><input id="cpnIn" class="xcpn" type="text" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="쿠폰 코드"></div>' +
@@ -737,6 +755,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     S.cpn = S.cpn || {};
     if (!c) { toast('없는 코드예요'); return; }
     if (S.cpn[k] && !c.rep) { toast('이미 쓴 코드예요'); return; }
+    if (c.starter) { if (S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; } S.cpn[k] = 1; grantStarter(); return; }
     S.cpn[k] = (S.cpn[k] || 0) + 1; S.jade += c.jade; save(); closeModal(); toast('쿠폰 보상: 옥 ' + fmt(c.jade)); refresh();
   }
   function settingsModal() {
@@ -1268,6 +1287,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'mailGet': S.mail = true; S.jade += 500; S.gold += 5000; S.stone += 30; closeModal(); toast('첫 선물을 받았어요'); refresh(); break;
       case 'settings': settingsModal(); break;
       case 'coupon': couponModal(); break;
+      case 'starter': starterModal(); break;
       case 'cpnUse': useCoupon(); break;
       case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
       case 'toggleMusic': S.music = !S.music; save(); if (S.music) music('bgm_lobby'); else stopMusic(); settingsModal(); break;
@@ -1326,6 +1346,7 @@ if (window.IS_EN) document.title = 'K Zombi';
         else if (v === 'gold3k') { if (S.jade < 50) { toast('옥이 부족해요'); break; } S.jade -= 50; S.gold += 5000; toast('엽전 5,000'); }
         else if (v === 'stone20') { if (S.jade < 80) { toast('옥이 부족해요'); break; } S.jade -= 80; S.stone += 20; toast('신력석 20'); }
         else if (v === 'torch30') { if (S.jade < 40) { toast('옥이 부족해요'); break; } S.jade -= 40; S.torch = Math.min(99, S.torch + 30); toast('횃불 30'); closeModal(); }
+        else if (v === 'starterPk') { starterModal(); break; }
         else if (v === 'jade300' || v === 'jade1k') { toast('결제는 준비 중이에요. 곧 열려요!'); break; }   /* 유료 상품: 결제가 붙기 전에는 지급하지 않는다 */
         refresh(); if ($('#s-map').classList.contains('on')) renderMap(); break;
       }

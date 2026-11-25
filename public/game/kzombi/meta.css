@@ -495,3 +495,6 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .arfoe{display:flex;align-items:center;gap:10px;padding:10px 12px;margin:8px 0}.arfoe .arf1{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}.arfoe .arai{font-size:15px;color:#9fe0ff}.arfoe .arh{display:flex;gap:4px}.arfoe .arh .mini{width:52px;height:52px;border-radius:10px;background-size:cover;background-position:center;border:2px solid #8fa3ff}.arfoe .btn{min-width:96px;height:58px;font-size:24px}
 .sb .rcb{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#c0301b;border:2px solid #ffd34a;border-radius:9px;padding:0 6px;font-size:13px;font-style:normal;white-space:nowrap;line-height:20px;z-index:2}
 .sidebtns.l.n7{gap:20px!important}.sidebtns.l.n7 .sb{width:64px!important;height:64px!important;border-radius:16px}.sidebtns.l.n7 .sb svg{width:44px!important;height:44px!important}.sidebtns.l.n7 .sb .lb{font-size:15px!important;bottom:-18px!important}
+
+.sidebtns.r.n7{gap:20px!important}.sidebtns.r.n7 .sb{width:64px!important;height:64px!important;border-radius:16px}.sidebtns.r.n7 .sb svg{width:44px!important;height:44px!important}.sidebtns.r.n7 .sb .lb{font-size:15px!important;bottom:-18px!important}
+.sb.stsb{background:linear-gradient(#b07cff,#6a3ad0)!important;box-shadow:0 0 14px #e39bff}
