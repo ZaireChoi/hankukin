@@ -847,46 +847,7 @@
   "ch": 0.898,
   "v": 91082
  },
- "haetae": {
-  "src": "haetae_walk.webp",
-  "cell": 220,
-  "frames": 8,
-  "dirs": 8,
-  "fps": 10,
-  "height": 70,
-  "anchorX": 0.498,
-  "anchorY": 0.9,
-  "ch": 0.482,
-  "v": 74440,
-  "toon": 1,
-  "anims": {
-   "walk": {
-    "src": "haetae_walk.webp",
-    "frames": 8,
-    "loop": true
-   },
-   "idle": {
-    "src": "haetae_idle.webp",
-    "frames": 6,
-    "loop": true
-   },
-   "atk": {
-    "src": "haetae_atk2.webp",
-    "frames": 8,
-    "loop": false
-   },
-   "atk2": {
-    "src": "haetae_atk2.webp",
-    "frames": 8,
-    "loop": true
-   },
-   "hit": {
-    "src": "haetae_hit.webp",
-    "frames": 4,
-    "loop": false
-   }
-  }
- },
+ "haetae": {"src":"haetae_walk.webp","cell":220,"frames":8,"dirs":8,"fps":10,"height":70,"anchorX":0.484,"anchorY":0.985,"ch":0.468,"v":35121,"toon":1,"anims":{"walk":{"src":"haetae_walk.webp","frames":8,"loop":true},"idle":{"src":"haetae_idle.webp","frames":6,"loop":true},"atk":{"src":"haetae_atk.webp","frames":8,"loop":false},"atk2":{"src":"haetae_atk2.webp","frames":8,"loop":true},"hit":{"src":"haetae_hit.webp","frames":4,"loop":false}}},
  "samjoko": {
   "src": "samjoko_walk.webp",
   "cell": 200,
