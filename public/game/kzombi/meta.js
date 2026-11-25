@@ -378,7 +378,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="statline"><div class="stat stroke-s">' + ic('sword') + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + fmt(st.hp) + '</div></div>' +
       '<div class="teamrow">' + team + '</div>' +
       '<div class="patrol" data-act="patrol">' + ic(p.h >= 1 ? 'chestOpen' : 'chest', 'chest') + '<div class="lb stroke-s">순찰 보상</div><div class="bar"><i style="width:' + (p.ms / PATROL_MAX * 100) + '%"></i><span class="stroke-s">' + hm(p.ms) + '</span></div>' + (p.h >= 1 ? '<i class="dot"></i>' : '') + '</div>' +
-      '<div class="startwrap"><div class="btn y startbtn" data-act="start"><span>모험 시작</span><small>' + ic('torch') + '5</small></div></div>';
+      '<div class="startwrap"><div class="btn y startbtn" data-act="start"><span>모험 시작</span><small>' + ic('torch') + '5</small></div>' + (isApp() ? '' : '<a class="rbxlink stroke-s" href="https://www.roblox.com/games/97862450605218/K-Zombie-Cheoyong-Defense" target="_blank" rel="noopener" style="display:block;text-align:center;margin-top:6px;font-size:14px;font-weight:800;color:#fff;text-decoration:underline;opacity:.9">' + (window.IS_EN ? 'Play on Roblox ↗' : '로블록스에서 하기 ↗') + '</a>') + '</div>';
   }
   const hm = ms => { const m = Math.floor(ms / 60000); return Math.floor(m / 60) + '시간 ' + String(m % 60).padStart(2, '0') + '분'; };
 
