@@ -2354,5 +2354,141 @@
    }
   },
   "v": 43060
+ },
+ "player_amhaeng": {
+  "src": "player_amhaeng_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 118,
+  "anchorX": 0.498,
+  "anchorY": 0.938,
+  "ch": 0.723,
+  "v": 72425,
+  "anims": {
+   "walk": {
+    "src": "player_amhaeng_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "player_amhaeng_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "player_amhaeng_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "player_amhaeng_idle.webp",
+    "frames": 6,
+    "loop": false
+   }
+  }
+ },
+ "player_jeoseung": {
+  "src": "player_jeoseung_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 118,
+  "anchorX": 0.496,
+  "anchorY": 0.918,
+  "ch": 0.703,
+  "v": 49335,
+  "anims": {
+   "walk": {
+    "src": "player_jeoseung_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "player_jeoseung_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "player_jeoseung_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "player_jeoseung_idle.webp",
+    "frames": 6,
+    "loop": false
+   }
+  }
+ },
+ "player_gonryong": {
+  "src": "player_gonryong_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 118,
+  "anchorX": 0.494,
+  "anchorY": 0.953,
+  "ch": 0.738,
+  "v": 84256,
+  "anims": {
+   "walk": {
+    "src": "player_gonryong_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "player_gonryong_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "player_gonryong_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "player_gonryong_idle.webp",
+    "frames": 6,
+    "loop": false
+   }
+  }
+ },
+ "player_janggun": {
+  "src": "player_janggun_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 118,
+  "anchorX": 0.498,
+  "anchorY": 0.949,
+  "ch": 0.594,
+  "v": 42513,
+  "anims": {
+   "walk": {
+    "src": "player_janggun_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "player_janggun_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "player_janggun_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "player_janggun_idle.webp",
+    "frames": 6,
+    "loop": false
+   }
+  }
  }
 }
