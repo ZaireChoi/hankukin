@@ -1775,7 +1775,7 @@ function drawSlots() {
 }
 function drawBuild() {
   const m = MECH(save.mech);
-  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
+  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg?v=12" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
     + Object.keys(UP).filter((k) => P.w[k] > 0).map((k) => { const u = UP[k], an = k === 'rifle' && ARM_NAME[PRIM], lv = P.w[k];
       return `<div>${ico(k === 'rifle' ? PRIM : k)}<span><b>${an ? an.nm : u.nm} Lv ${lv}/${u.max}</b><small>${an && lv === 1 ? an.ds0 : u.ds[Math.min(lv - 1, u.ds.length - 1)]}</small></span></div>`; }).join('');
 }
@@ -2122,7 +2122,7 @@ async function startRun() {
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
   { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico(m.ult.k); $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico(m.auto.k); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
-    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
+    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=12)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
   $('#btns').style.display = ''; drawSlots(); G.state = 'play'; last = performance.now();
@@ -2664,7 +2664,7 @@ function doPull(n) {
   persist(); sfx.lvl();
   const best = out.reduce((a, o) => Math.max(a, RAR_ORDER.indexOf(o.tier)), -1); { const top = out.filter((o) => o.m).sort((a, b) => RAR_ORDER.indexOf(b.tier) - RAR_ORDER.indexOf(a.tier))[0]; if (top && RAR_ORDER.indexOf(top.tier) >= 3) gachaTop = top.m.id; } if (best >= 3) { screenFlash(best === 4 ? '#ff5a7a' : '#ffb84a', .5, .9); tone(400, 1600, .6, 'triangle', .1); }
   $('#gres').innerHTML = out.map((o, i) => { const R0 = RAR[o.tier] || { nm: '코어', col: '#5fe3ff' };
-    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg" alt="">` : `<div class="ic">${ico('core')}</div>`}`
+    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg?v=12" alt="">` : `<div class="ic">${ico('core')}</div>`}`
       + `${o.isNew ? '<span class="new">NEW</span>' : ''}<b>${o.m ? o.m.nm : '코어 ' + o.v}</b><small>${o.m ? R0.nm + (o.up ? ' · ★' + o.up : o.back ? ' · ✦' + o.back : '') : '재화'}</small></div>`; }).join('');
   drawGacha(); drawTitle();
 }
@@ -2675,7 +2675,7 @@ function drawGacha() {
   const names = (t) => MECHS.filter((m) => m.rar === t).map((m) => m.nm).join(', ');
   $('#rates').innerHTML = GACHA.rates.map(([k, w]) => `<tr><td style="color:${(RAR[k] || {}).col || '#5fe3ff'}">${RAR[k] ? RAR[k].nm : '코어 꾸러미'}</td><td style="opacity:.7">${RAR[k] ? names(k) : '코어 80 · 120 · 200'}</td><td>${w}%</td></tr>`).join('')
     + `<tr><td colspan="3" style="opacity:.6;text-align:left">같은 등급 안에서는 같은 확률 · 10회 뽑기는 영웅 이상 1개 확정 · ${GACHA.pity}회 안에 신화 1개 확정 · 별 5개 이후 중복은 결정으로 돌려받음</td></tr>`;
-  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg" alt="">`).join('');
+  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=12" alt="">`).join('');
   ADS.offer('gem', $('#adGem'), `광고 보고 ${ico('gem')} 30`, () => { save.gem += 30; save.daily.ads = (save.daily.ads || 0) + 1; persist(); drawGacha(); drawTitle(); }, () => (save.daily.ads || 0) < 5);
 }
 function flashMsg(t) { banner(t, 1400); const b = $('#banner'); b.style.zIndex = 9; }
@@ -2762,7 +2762,7 @@ function drawTitle() {
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg?v=12" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -2798,7 +2798,7 @@ function drawChapters() {
   // 막 정보 + 장 목록
   const A = ACTS[mapAct], rm = MECH(A.rw), done = !!save.stars[mapAct * 4 + 4], cl = MECH(save.mech).cls;
   $('#actHead').style.setProperty('--ac', A.col);
-  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
+  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg?v=12" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
   $('#chList').innerHTML = [0, 1, 2, 3].map((k) => { const i = mapAct * 4 + k, c = CHAPTERS[i], lock = i + 1 > save.chMax;
     return `<button class="cc ${lock ? 'lock' : ''} ${i + 1 === save.ch ? 'on' : ''}" data-i="${i + 1}" style="--c1:${c.c[0]};--c2:${c.c[1]}" ${lock ? 'disabled' : ''}><small>${stLabel(i)}</small><b>${c.nm}</b><p>${c.ds}</p>${recHtml(c, cl)}<span class="s">${chStarsTxt(i)}</span><span class="rw">${save.stars[i + 1] ? '클리어' : `첫 클리어 ${ico('gem')} ${CH_CLEAR_GEM(i)}`}</span></button>`; }).join('');
   $('#chList').querySelectorAll('.cc').forEach((b) => b.addEventListener('click', () => { save.ch = +b.dataset.i; persist(); $('#chapters').classList.add('hide'); drawTitle(); }));
