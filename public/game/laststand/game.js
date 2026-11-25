@@ -387,7 +387,7 @@ function makeArm(key) {
 // 기체에 무기를 단다(뼈에 붙여 동작을 그대로 따라간다). 뼈의 세계 배율을 상쇄해 무기 안쪽은 세계 단위로 다룬다
 function dressMech(g, mech) {
   if (g.userData.armed) return g.userData.armed;
-  const bones = {}; g.scene.traverse((o) => { if (o.isBone) bones[o.name] = o; });
+  const bones = {}; g.scene.traverse((o) => { if (o.isBone) { bones[o.name] = o; o.userData.q0 = o.quaternion.clone(); o.userData.p0 = o.position.clone(); } });
   const out = { bones, main: null, off: null };
   for (const [slot, key] of [['main', mech.arm], ['off', mech.off]]) {
     if (!key || !WPN[key] || ARMS[key].world) continue; const b = bones[ARMS[key].bone]; if (!b) continue;
@@ -2116,8 +2116,47 @@ function pointArm(arm, hand, dir, k) {
   arm.getWorldPosition(_vd); hand.getWorldPosition(_ve); _ve.sub(_vd).normalize();
   const q = new THREE.Quaternion().setFromUnitVectors(_ve, dir); rotW(arm, new THREE.Quaternion().slerp(q, k));
 }
+const _sa = new THREE.Vector3(), _sb = new THREE.Vector3(), _ss = new THREE.Vector3(), _sf = new THREE.Vector3(), _sd = new THREE.Vector3();
+const STAND_BLADE = { katana: 1, saber: .9 }, _sbox = new THREE.Box3();
+const STAND_REST = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head', 'LeftShoulder', 'RightShoulder', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', 'LeftHand', 'RightHand'];
+function lobbyStand() {
+  const B = armed && armed.bones; if (!B || !B.Hips || !B.LeftUpLeg || !B.RightUpLeg || !B.LeftArm || !B.RightArm) return;
+  // 몸통·머리·다리는 기본 자세로 되돌려 비틀림을 없앤다
+  for (const n of STAND_REST) { const b = B[n]; if (b && b.userData.q0) b.quaternion.copy(b.userData.q0); }
+  if (B.Hips.userData.p0) B.Hips.position.copy(B.Hips.userData.p0);
+  P.group.updateMatrixWorld(true);
+  _sf.set(Math.sin(P.yaw), 0, Math.cos(P.yaw));                                                                                                       // 앞 방향
+  // 엉덩이·가슴이 정확히 정면을 보게: 좌우 선을 앞 방향과 직각으로 돌린다
+  const squareUp = (bone, la, ra) => { if (!bone || !la || !ra) return; la.getWorldPosition(_sa); ra.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb); _sd.y = 0; if (_sd.lengthSq() < 1e-6) return; _sd.normalize();
+    const want = _sb.set(_sf.z, 0, -_sf.x); if (want.dot(_sd) < 0) want.negate(); rotW(bone, new THREE.Quaternion().setFromUnitVectors(_sd, want)); };
+  squareUp(B.Hips, B.LeftUpLeg, B.RightUpLeg); squareUp(B.Spine || B.Spine1, B.LeftArm, B.RightArm);
+  B.LeftUpLeg.getWorldPosition(_sa); B.RightUpLeg.getWorldPosition(_sb); _ss.copy(_sa).sub(_sb); _ss.y = 0; const hipW = _ss.length(); _ss.normalize();   // 왼쪽 방향
+  B.LeftArm.getWorldPosition(_sa); B.RightArm.getWorldPosition(_sb); const shW = Math.hypot(_sa.x - _sb.x, _sa.z - _sb.z);
+  for (const s of [1, -1]) {
+    const L = s > 0 ? 'Left' : 'Right';
+    // 다리: 곧게 펴고 발 간격을 어깨너비에 맞춘다
+    const up = B[L + 'UpLeg'], kn = B[L + 'Leg'], ft = B[L + 'Foot'];
+    if (up && kn && ft) {
+      up.getWorldPosition(_sa); ft.getWorldPosition(_sb); const len = _sa.distanceTo(_sb) || 1, out = clamp((shW - hipW) / 2 / len, 0, .3);
+      _sd.copy(_ss).multiplyScalar(s * out); _sd.y = -1; _sd.normalize(); pointArm(up, kn, _sd, 1); pointArm(kn, ft, _sd, 1);
+      // 발끝은 정면으로 나란히
+      if (ft.userData.q0) { ft.quaternion.copy(ft.userData.q0); ft.updateMatrixWorld(true); }
+      const toe = B[L + 'ToeBase']; if (toe) { ft.getWorldPosition(_sa); toe.getWorldPosition(_sb); _sd.copy(_sb).sub(_sa); _sd.y = 0; if (_sd.lengthSq() > 1e-6) { _sd.normalize(); rotW(ft, new THREE.Quaternion().setFromUnitVectors(_sd, _sf)); } }
+    }
+    // 팔: 몸 옆으로 내리고 팔꿈치는 살짝 굽힌다
+    const ua = B[L + 'Arm'], fa = B[L + 'ForeArm'], hd = B[L + 'Hand'];
+    if (ua && fa && hd) {
+      _sd.copy(_ss).multiplyScalar(s * .26).addScaledVector(_sf, .02); _sd.y = -1; _sd.normalize(); pointArm(ua, fa, _sd, 1);
+      _sd.copy(_ss).multiplyScalar(s * .14).addScaledVector(_sf, .2); _sd.y = -1; _sd.normalize(); pointArm(fa, hd, _sd, 1);
+    }
+  }
+  // 칼을 든 손: 칼끝이 앞쪽 아래를 향하게 자연스럽게 든다
+  const mw = armed.main; if (mw && STAND_BLADE[ARM] && B.RightHand) { mw.updateMatrixWorld(true); _sbox.setFromObject(mw); _sbox.getCenter(_sa); mw.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb);
+    if (_sd.lengthSq() > 1e-4) { _sd.normalize(); _sb.copy(_sf).multiplyScalar(STAND_BLADE[ARM]).addScaledVector(_ss, -.18); _sb.y = -1; _sb.normalize(); rotW(B.RightHand, new THREE.Quaternion().setFromUnitVectors(_sd, _sb)); } }
+}
 function placeArms(dt) {
   if (!armed) return;
+  if (lobby.on && G.state === 'title') lobbyStand();
   P.group.updateMatrixWorld(true);
   const B = armed.bones, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw), mw = armed.main;
   // 왼손 레이저(손바닥 빔·알파 빔·빛 깃털): 쏘는 동안 왼팔을 적 쪽으로 뻗는다
@@ -2141,7 +2180,7 @@ function placeArms(dt) {
   // 총을 든 기체는 쏘는 동안 사격 자세: 오른팔은 표적을 겨누고, 두 손 총은 왼손이 총신 앞을 받친다
   const gk = GUNS[ARM];
   if (gk) {
-    const tg = nearest(P.x, P.z, 160), pose = G.state === 'thumb' || (lobby.on && G.state === 'title'), want = (G.state === 'play' || pose) && P.dashT <= 0 && !P.fly && !P.mv && !P.sw && (!!tg || pose) ? 1 : 0;
+    const tg = nearest(P.x, P.z, 160), pose = G.state === 'thumb', want = (G.state === 'play' || pose) && P.dashT <= 0 && !P.fly && !P.mv && !P.sw && (!!tg || pose) ? 1 : 0;
     P.aimK = lerp(P.aimK || 0, want, Math.min(1, dt * (want ? 12 : 5))); if (pose) P.aimK = 1;
     if (P.aimK > .02 && B.RightArm && B.RightForeArm && B.RightHand) {
       const ax = tg ? tg.x - P.x : fx, az = tg ? tg.z - P.z : fz, al = Math.hypot(ax, az) || 1;
@@ -2477,7 +2516,7 @@ const ADS = {
 let muted0 = false;
 
 // ── 대기실(격납고): 가운데 회전대 위에 실제 3D 기체
-const LOBBY_FRONT = .3;
+const LOBBY_FRONT = 0;
 const lobby = { sc: new THREE.Scene(), cam: new THREE.PerspectiveCamera(30, 1, 1, 3000), on: false, rot: LOBBY_FRONT, vr: 0, drag: null };
 function buildLobby() {
   lobby.cam.aspect = W / H; lobby.cam.updateProjectionMatrix();
@@ -2509,7 +2548,7 @@ function buildLobby() {
 }
 function lobbyFrame(dt) {
   if (!lobby.on) return;
-  if (!lobby.drag) { const now = performance.now() / 1000; if (now - (lobby.rel || 0) > 1.8) { const tgt = LOBBY_FRONT + Math.sin(now * .45) * .3; let d = tgt - lobby.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); lobby.rot += d * Math.min(1, dt * 2.4); } }
+  if (!lobby.drag) { const now = performance.now() / 1000; if (now - (lobby.rel || 0) > 1.8) { const tgt = LOBBY_FRONT; let d = tgt - lobby.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); lobby.rot += d * Math.min(1, dt * 2.4); } }
   P.wrap.rotation.set(0, lobby.rot - Math.PI / 2, 0); P.yaw = lobby.rot;
   if (lobby.r2) lobby.r2.rotation.y += dt * .4; if (lobby.dust) lobby.dust.position.y = Math.sin(performance.now() / 3000) * 2;
   // 화면이 넓으면 기체를 가운데 칸(목록과 정보 사이)에 맞춘다
