@@ -156,5 +156,21 @@
 <script>(function(){var s=document.getElementById('selCh');JZD.CHAPTERS.forEach(function(c){var o=document.createElement('option');o.value=c.n;o.textContent=c.n+'. '+c.name;s.appendChild(o);});})();</script>
 <link rel="stylesheet" href="meta.css?v=20261127h">
 <script src="meta.js?v=20261127h"></script>
+
+<!-- 큰 화면(태블릿·폴더블·PC): 양옆 빈 자리에 흐린 판 배경 + 한지 테두리 (11-26) -->
+<style>
+#kzBg{position:fixed;inset:-4%;width:108%;height:108%;z-index:-2;object-fit:cover;filter:blur(16px) brightness(.5) saturate(1.15);opacity:0;transition:opacity .6s;pointer-events:none}
+body.kzwide #kzBg{opacity:1}
+#kzFrame{position:fixed;z-index:-1;pointer-events:none;display:none;border-radius:6px;box-shadow:0 0 0 5px #c9a24a,0 0 0 11px #3a2614,0 0 0 13px #e8cf8a,0 0 70px 20px rgba(0,0,0,.75)}
+body.kzwide #kzFrame{display:block}
+body.kzwide{background:transparent!important}html.kzwide #meta{background:transparent!important}html.kzwide{background:#0b0a0c url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 40h80M40 0v80' stroke='%23ffffff' stroke-opacity='.035'/%3E%3C/svg%3E")}
+</style>
+<canvas id="kzBg" width="72" height="128"></canvas><div id="kzFrame"></div>
+<script>
+(function(){var W=720,H=1280,bg=document.getElementById('kzBg'),fr=document.getElementById('kzFrame'),g=bg.getContext('2d'),title=new Image();title.src='img/ui/title.jpg';
+function lay(){var s=Math.min(innerWidth/W,innerHeight/H),w=W*s,h=H*s,wide=(innerWidth-w>24)||(innerHeight-h>24);document.body.classList.toggle('kzwide',wide);document.documentElement.classList.toggle('kzwide',wide);if(wide){fr.style.left=((innerWidth-w)/2)+'px';fr.style.top=((innerHeight-h)/2)+'px';fr.style.width=w+'px';fr.style.height=h+'px';}}
+function paint(){if(!document.body.classList.contains('kzwide'))return;try{var cv=document.getElementById('cv'),G=window.JZB&&window.JZB.G;if(G&&cv&&cv.width){g.drawImage(cv,0,0,72,128);}else if(title.complete&&title.naturalWidth){var r=title.naturalWidth/title.naturalHeight,sw=title.naturalHeight*72/128;g.drawImage(title,(title.naturalWidth-sw)/2,0,sw,title.naturalHeight,0,0,72,128);}}catch(e){}}
+addEventListener('resize',lay);lay();setInterval(paint,1200);title.onload=paint;})();
+</script>
 </body>
 </html>
