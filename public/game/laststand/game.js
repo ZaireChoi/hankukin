@@ -55,7 +55,7 @@ const MECHS = [
   { id: 'm_phantom', nm: '팬텀', ty: '은신형 · 소음 소총', hp: .85, dmg: 1.15, spd: 1.2, cd: .9, arm: 'rifle', prim: 'burst', cost: 2000, rar: 'SR',
     pass: '은신 뒤 첫 공격 3배 · 정밀 3점사', auto: { k: 'cloak', nm: '광학 은신', ic: '👻', cd: 10 }, ult: { k: 'execute', nm: '그림자 처형', ic: '🌑' },
     init(p) { p.crit += .08; } },
-  { id: 'm_wizard', nm: '위저드', ty: '비트형 · 비트 레이저', hp: .95, dmg: 1.08, spd: 1, cd: .85, arm: 'staff', prim: 'bits', cost: 2200, rar: 'SR',
+  { id: 'm_wizard', nm: '위저드', ty: '비트형 · 장창·비트 레이저', hp: .95, dmg: 1.08, spd: 1, cd: .85, arm: 'spear', prim: 'bits', cost: 2200, rar: 'SR',
     pass: '모든 재사용 -15% · 비트가 적을 저격', auto: { k: 'bitstorm', nm: '비트 사출', ic: '🔷', cd: 7 }, ult: { k: 'allrange', nm: '전방위 공격', ic: '🌐' },
     init(p) { p.cdMul *= .85; } },
   { id: 'm_origin', nm: '오리진', ty: '알파 원형기 · 알파 빔', hp: 1.1, dmg: 1.1, spd: 1.05, cd: .9, arm: 'saber', prim: 'beam', cost: 2600, rar: 'SR',
@@ -68,7 +68,7 @@ const MECHS = [
   { id: 'god', nm: '솔라리스', ty: '신화 · 태양 대검·빛 깃털', hp: 1.6, dmg: 1.5, spd: 1.18, cd: .75, arm: 'great', prim: 'feather', cost: 9000, rar: 'UR',
     pass: '모든 피해 +15% · 피격 20% 확률로 피해 무효', auto: { k: 'featherstorm', nm: '태양 깃털', ic: '☀️', cd: 3.5 }, ult: { k: 'descent', nm: '태양 강림', ic: '🌞' },
     init(p) { p.dmgMul *= 1.15; p.dodge = .2; } },
-  { id: 'god_white', nm: '아크엔젤', ty: '신화 · 성광 비트', hp: 1.5, dmg: 1.45, spd: 1.2, cd: .72, arm: 'staff', prim: 'bits', cost: 9000, rar: 'UR',
+  { id: 'god_white', nm: '아크엔젤', ty: '신화 · 장창·성광 비트', hp: 1.5, dmg: 1.45, spd: 1.2, cd: .72, arm: 'spear', prim: 'bits', cost: 9000, rar: 'UR',
     pass: '비트 +2 · 모든 재사용 -25%', auto: { k: 'bitstorm', nm: '성광 비트', ic: '💠', cd: 5 }, ult: { k: 'allrange', nm: '천상 포위', ic: '🌐' },
     init(p) { p.cdMul *= .75; p.bitPlus = 2; } },
   { id: 'god_red', nm: '블러드 이클립스', ty: '신화 · 혈광 세이버', hp: 1.65, dmg: 1.55, spd: 1.2, cd: .8, arm: 'saber', prim: 'saber', cost: 9000, rar: 'UR',
@@ -296,32 +296,157 @@ async function loadMissile() {
   geo.computeBoundingSphere(); MODELS.msl = { geo, map: mesh.material.map };
 }
 const mechCache = {};
-// 같은 몸체를 쓰는 기체는 색을 바꿔 구분한다(본편 m_striker 파일이 발레리안과 같은 모양이라 검정·빨강으로)
-const TINT = { m_striker: { from: [18, 75], to: 356, sat: 1.25, lum: 1 } };
-function tintTex(tex, filter) {
+// ───────── 기체 도색: 기체마다 두 가지 색 조합으로 다시 칠한다(세이버 「불사조」는 원래 빨강·검정 그대로)
+// swap: [색상 시작, 끝, 새 색상, 채도 배율, 밝기 배율]  dark: 색 없는 부분 중 어두운 곳을 검게  colorize: 전체를 한 색으로  two: 밝은 곳/어두운 곳을 두 색으로
+const PAINT = {
+  m_striker: { swap: [[18, 75, 322, 1.25, 1.15]] },                                                     // 분홍 + 검정
+  m_guardian: { swap: [[180, 262, 222, 1.15, .6]], swapDark: .34, dark: [.55, .3] },                                   // 아주 파란색 + 검정
+  m_titan: { dark: [.46, .34], gray: .25 },                                                              // 회색 + 검정
+  m_ranger: { swap: [[328, 360, 24, 1.15, 1.18], [0, 24, 24, 1.15, 1.18]], stripes: 1 },                 // 주황 + 검정 호랑이 줄무늬
+  m_artillery: { two: { h: [38, 175], t: .44, hi: [214, .06, 1.42], lo: [218, .82, .95] }, dark: [.4, .55], unsat: [219, .75, .9, .36] }, // 파랑 + 흰색
+  m_sky: { swap: [[0, 52, 356, 1.5, .95], [330, 360, 356, 1.5, .95]] },                                  // 흰색 + 빨강
+  m_phantom: { colorize: [.12, 281, .62, 1.2], dark: [.12, .5] },                                                         // 자주 + 검정
+  m_origin: { swap: [[150, 215, 189, 1.6, 1.05]] },                                                      // 흰색 + 청록
+};
+const _hsl2rgb = (h, s, l) => { const C = (1 - Math.abs(2 * l - 1)) * s, H = (((h % 360) + 360) % 360) / 60, X = C * (1 - Math.abs(H % 2 - 1)), m = l - C / 2;
+  const [R, G, B] = H < 1 ? [C, X, 0] : H < 2 ? [X, C, 0] : H < 3 ? [0, C, X] : H < 4 ? [0, X, C] : H < 5 ? [X, 0, C] : [C, 0, X]; return [(R + m) * 255, (G + m) * 255, (B + m) * 255]; };
+const _paintCache = new Map();
+function repaintTex(tex, P) {
+  if (_paintCache.has(tex)) return _paintCache.get(tex);
   const im = tex.image, c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d'); x.drawImage(im, 0, 0);
-  // 정해진 색 범위(금색)만 골라 다른 색(빨강)으로 바꾼다. 어두운 몸통은 그대로
-  const D = x.getImageData(0, 0, c.width, c.height), d = D.data, F = filter;
+  const W = c.width, D = x.getImageData(0, 0, W, c.height), d = D.data;
   for (let i = 0; i < d.length; i += 4) {
-    const r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, dl = mx - mn;
-    if (dl < .12) continue; const s = dl / (1 - Math.abs(2 * l - 1) || 1);
-    let h = mx === r ? ((g - b) / dl) % 6 : mx === g ? (b - r) / dl + 2 : (r - g) / dl + 4; h *= 60; if (h < 0) h += 360;
-    if (h < F.from[0] || h > F.from[1]) continue;
-    const S = Math.min(1, s * F.sat), L = Math.min(1, l * F.lum), C = (1 - Math.abs(2 * L - 1)) * S, H = F.to / 60, X = C * (1 - Math.abs(H % 2 - 1)), m = L - C / 2;
-    const [R, G, B] = H < 1 ? [C, X, 0] : H < 2 ? [X, C, 0] : H < 3 ? [0, C, X] : H < 4 ? [0, X, C] : H < 5 ? [X, 0, C] : [C, 0, X];
-    d[i] = (R + m) * 255; d[i + 1] = (G + m) * 255; d[i + 2] = (B + m) * 255;
+    const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), l = (mx + mn) / 2, dl = mx - mn;
+    const s = dl / (1 - Math.abs(2 * l - 1) || 1); let h = dl < 1e-6 ? 0 : mx === r ? ((gg - b) / dl) % 6 : mx === gg ? (b - r) / dl + 2 : (r - gg) / dl + 4; h *= 60; if (h < 0) h += 360;
+    let out = null, hit = false;
+    if (P.swap && dl >= .12) for (const [h0, h1, to, sm, lm] of P.swap) if (h >= h0 && h <= h1) { out = P.swapDark && l < P.swapDark ? [d[i] * .18, d[i + 1] * .18, d[i + 2] * .22] : _hsl2rgb(to, Math.min(1, s * sm), Math.min(1, l * lm)); hit = true; break; }
+    if (!out && P.two && dl >= .04 && h >= P.two.h[0] && h <= P.two.h[1]) { const q = l > P.two.t ? P.two.hi : P.two.lo; out = _hsl2rgb(q[0], q[1], Math.min(1, l * q[2])); }
+    if (!out && P.colorize && l > P.colorize[0]) { const [, ch, cs, cl] = P.colorize; out = _hsl2rgb(ch, Math.max(s, cs), Math.min(1, l * cl)); }
+    if (!out && P.unsat && dl < .12 && l < P.unsat[3] && l > .05) out = _hsl2rgb(P.unsat[0], P.unsat[1], l * P.unsat[2]);
+    if (!out && P.dark && dl < .12 && l < P.dark[0]) out = [d[i] * P.dark[1], d[i + 1] * P.dark[1], d[i + 2] * P.dark[1]];
+    if (!out && P.gray && dl < .12) { const k = 1 + P.gray; out = [Math.min(255, d[i] * k), Math.min(255, d[i + 1] * k), Math.min(255, d[i + 2] * k)]; }
+    if (out && P.stripes && hit) { const px = (i / 4) % W, py = (i / 4 - px) / W, X = px / W, Y = py / c.height;
+      const v = Math.sin(X * 62 + 4.2 * Math.sin(Y * 8.5) + 2.4 * Math.sin(X * 14 + Y * 23)); if (v > .5) out = [18, 13, 10]; }
+    if (out) { d[i] = out[0]; d[i + 1] = out[1]; d[i + 2] = out[2]; }
   }
   x.putImageData(D, 0, 0);
-  const t = new THREE.CanvasTexture(c); t.flipY = tex.flipY; t.colorSpace = tex.colorSpace; t.wrapS = tex.wrapS; t.wrapT = tex.wrapT; return t;
+  const t = new THREE.CanvasTexture(c); t.flipY = tex.flipY; t.colorSpace = tex.colorSpace; t.wrapS = tex.wrapS; t.wrapT = tex.wrapT; _paintCache.set(tex, t); return t;
+}
+// ───────── 파일럿 스티커: 비행기 기수 그림처럼 파일럿이 직접 새긴 문양·글귀·태극기. 기체마다 자리와 내용이 다르다
+// 자리(키 대비 비율): 가슴 왼쪽·오른쪽, 어깨(바깥쪽) 왼쪽·오른쪽, 등, 허벅지
+const MK_SLOT = {
+  lch: { ax: 1, x: .055, y: .7, s: .06 }, rch: { ax: 1, x: -.055, y: .7, s: .06 }, chest: { ax: 1, x: 0, y: .69, s: .09 },
+  lsh: { ax: 1, x: .15, y: .76, s: .065 }, rsh: { ax: 1, x: -.15, y: .76, s: .065 }, lsx: { ax: 2, z: 0, y: .745, s: .08 }, rsx: { ax: -2, z: 0, y: .745, s: .08 },
+  back: { ax: -1, x: 0, y: .64, s: .27 }, lth: { ax: 1, x: .07, y: .37, s: .06 }, rth: { ax: 1, x: -.07, y: .37, s: .06 },
+};
+const MARKS = {
+  mech4: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#f3e6b0' }, { at: 'back', img: 'wolf', c: '#ffd34a' }],
+  m_samurai: [{ at: 'back', img: 'dragon', c: '#ffcf5a' }],
+  m_striker: [{ at: 'rsh', img: 'taegukgi', w: 1.5, c: '#ff9ee6' }, { at: 'back', img: 'eagle', c: '#ff7ad9' }],
+  m_guardian: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#d8ecff' }, { at: 'back', img: 'wolf', c: '#bfe6ff' }],
+  m_titan: [{ at: 'back', img: 'tiger', c: '#f4f4f4' }, { at: 'rch', img: 'tiger', c: '#f4f4f4' }],
+  m_ranger: [{ at: 'lsh', img: 'skull', c: '#fff6ea' }, { at: 'back', img: 'skull', c: '#fff6ea' }],
+  m_artillery: [{ at: 'rsh', img: 'taegukgi', w: 1.5, c: '#1e4db8' }, { at: 'back', img: 'dragon', c: '#1e4db8' }],
+  m_sky: [{ at: 'lsh', img: 'eagle', c: '#e8323c' }, { at: 'back', img: 'eagle', c: '#e8323c' }],
+  m_wizard: [{ at: 'back', img: 'crane', c: '#ff5fbf' }, { at: 'lsh', img: 'crane', c: '#ff5fbf' }],
+  m_origin: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#2fd6ff' }, { at: 'back', img: 'eagle', c: '#2fd6ff' }],
+  god_white: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#3a7fe0' }],
+};
+const _decImg = {};
+const loadDecal = (k) => _decImg[k] ??= new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = `img/decal_${k}.png`; });
+const KFONT = '"Black Han Sans","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif', EFONT = 'Impact,"Arial Black","Noto Sans KR",sans-serif';
+async function markAtlas(list) {
+  const c = document.createElement('canvas'); c.width = 1536; c.height = 1024; const x = c.getContext('2d');
+  for (let k = 0; k < list.length && k < 6; k++) {
+    const d = list[k], w = d.w || 1, col = k % 3, row = Math.floor(k / 3);
+    const o = document.createElement('canvas'); o.width = o.height = 512; const ox = o.getContext('2d');
+    ox.save(); ox.translate(256, 256); ox.scale(1 / w, 1);
+    const BW = 512 * w * .92, BH = 512 * .92; let top = -BH / 2, avail = BH;
+    if (d.img) { const im = await loadDecal(d.img); if (im) { const ih = d.t ? BH * .68 : BH, ar = im.width / im.height; const dw = Math.min(BW, ih * ar), dh = dw / ar; ox.drawImage(im, -dw / 2, top + (ih - dh) / 2, dw, dh); top += ih; avail -= ih; } }
+    if (d.t) { const lh = avail / d.t.length; ox.fillStyle = '#fff'; ox.textAlign = 'center'; ox.textBaseline = 'middle';
+      d.t.forEach((s, i) => { const ko = /[가-힣]/.test(s), fam = ko ? KFONT : EFONT; let fs = lh * .8; ox.font = `900 ${fs}px ${fam}`; const mw = ox.measureText(s).width; if (mw > BW) { fs *= BW / mw; ox.font = `900 ${fs}px ${fam}`; } ox.fillText(s, 0, top + lh * (i + .5)); }); }
+    ox.restore(); ox.globalCompositeOperation = 'source-in'; ox.fillStyle = d.c; ox.fillRect(0, 0, 512, 512);
+    x.drawImage(o, col * 512, (1 - row) * 512);
+  }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+// 스티커를 몸에 붙인다: 기본 자세 기준 좌표로 앞·뒤·옆에서 투사하므로 움직여도 몸을 따라간다
+async function applyMarks(g, id) {
+  const list = MARKS[id]; if (!list) return; const tex = await markAtlas(list);
+  g.scene.traverse((o) => {
+    if (!o.isSkinnedMesh || !o.material || Array.isArray(o.material)) return;
+    const geo = o.geometry; geo.computeBoundingBox(); const b = geo.boundingBox, H = b.max.y - b.min.y, cx = (b.min.x + b.max.x) / 2, cz = (b.min.z + b.max.z) / 2;
+    // 기본 자세의 뼈 위치(어깨 관절·가슴·허벅지)를 읽어 기체마다 정확한 자리에 붙인다
+    const bp = {}; if (o.skeleton) o.skeleton.bones.forEach((bn, i) => { const m4 = new THREE.Matrix4().copy(o.skeleton.boneInverses[i]).invert(); bp[bn.name.replace(/^mixamorig:?/, '')] = new THREE.Vector3().setFromMatrixPosition(m4); });
+    const L3 = (a, c, t) => (a && c ? a.clone().lerp(c, t) : null);
+    const shB = o.skeleton && o.skeleton.bones.find((x) => /LeftShoulder$/.test(x.name)), chN = shB && shB.parent && shB.parent.isBone ? shB.parent.name.replace(/^mixamorig:?/, '') : null, chP = shB && shB.parent && shB.parent.parent && shB.parent.parent.isBone ? shB.parent.parent.name.replace(/^mixamorig:?/, '') : null;
+    const anchor = (at) => { const S2 = (chN && bp[chN]) || bp.Spine2 || bp.Spine1, NK = bp.Neck || bp.neck, S1 = (chP && bp[chP]) || bp.Spine1 || bp.Spine;
+      switch (at) {
+        case 'lsh': return bp.LeftArm && [bp.LeftArm.x, bp.LeftArm.y - .012 * H];
+        case 'rsh': return bp.RightArm && [bp.RightArm.x, bp.RightArm.y - .012 * H];
+        case 'lsx': return bp.LeftArm && [bp.LeftArm.z, bp.LeftArm.y - .05 * H];
+        case 'rsx': return bp.RightArm && [bp.RightArm.z, bp.RightArm.y - .05 * H];
+        case 'lch': { const c = L3(S2, NK, .3), s = bp.LeftArm; return c && s && [c.x + (s.x - c.x) * .45, c.y]; }
+        case 'rch': { const c = L3(S2, NK, .3), s = bp.RightArm; return c && s && [c.x + (s.x - c.x) * .45, c.y]; }
+        case 'chest': { const c = L3(S2, NK, .3); return c && [c.x, c.y]; }
+        case 'back': { const c = L3(S1, S2, .7); return c && [c.x, c.y]; }
+        case 'lth': { const c = L3(bp.LeftUpLeg, bp.LeftLeg, .42); return c && [c.x, c.y]; }
+        case 'rth': { const c = L3(bp.RightUpLeg, bp.RightLeg, .42); return c && [c.x, c.y]; }
+      } return null; };
+    const R = [], I = [];
+    for (let k = 0; k < 6; k++) {
+      const d = list[k]; if (!d) { R.push(new THREE.Vector4()); I.push(new THREE.Vector4()); continue; }
+      const S = MK_SLOT[d.at], s = (S.s * (d.s || 1)) * H * .5, w = d.w || 1, side = Math.abs(S.ax) === 2, an = anchor(d.at);
+      const c0 = an ? an[0] : side ? cz + (S.z || 0) * H : cx + (S.x || 0) * H, c1 = (an ? an[1] : b.min.y + S.y * H) + (d.dy || 0) * H;
+      R.push(new THREE.Vector4(c0 + (d.dx || 0) * H, c1, s * w, s));
+      I.push(new THREE.Vector4(S.ax, k % 3, Math.floor(k / 3), d.o ?? .95));
+    }
+    const m = o.material;
+    m.onBeforeCompile = (sh) => {
+      sh.uniforms.uMkT = { value: tex }; sh.uniforms.uMkR = { value: R }; sh.uniforms.uMkI = { value: I };
+      sh.vertexShader = 'varying vec3 vMkP; varying vec3 vMkN;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n vMkP = position; vMkN = normal;');
+      sh.fragmentShader = 'uniform sampler2D uMkT; uniform vec4 uMkR[6]; uniform vec4 uMkI[6]; varying vec3 vMkP; varying vec3 vMkN;\n' + sh.fragmentShader.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+  for (int k = 0; k < 6; k++) { vec4 r = uMkR[k], inf = uMkI[k]; if (inf.w <= 0.) continue;
+    float face; vec2 uv;
+    if (abs(inf.x) < 1.5) { face = vMkN.z * inf.x; uv = vec2((vMkP.x - r.x) * inf.x, vMkP.y - r.y); }
+    else { float sd = sign(inf.x); face = vMkN.x * sd; uv = vec2(-(vMkP.z - r.x) * sd, vMkP.y - r.y); }
+    if (face < .15) continue;
+    uv = uv / r.zw * .5 + .5; if (uv.x < 0. || uv.x > 1. || uv.y < 0. || uv.y > 1.) continue;
+    vec4 tx = texture2D(uMkT, vec2((uv.x + inf.y) / 3., (uv.y + inf.z) / 2.));
+    float a = tx.a * inf.w * smoothstep(.15, .4, face);
+    diffuseColor.rgb = mix(diffuseColor.rgb, tx.rgb, a); totalEmissiveRadiance = mix(totalEmissiveRadiance, tx.rgb, a);
+  }`);
+    };
+    m.customProgramCacheKey = () => 'mk6'; m.needsUpdate = true;
+  });
+}
+// 신화 기체: 날개 때문에 작아진 몸을 몸 기준으로 키우고, 다리는 길게·머리는 작게(8등신)
+const UR_BODY = 22.5, UR_LEG = 1.1, UR_HEAD = .84;
+function heroicBody(g) {
+  const B = {}; g.scene.traverse((o) => { if (o.isBone) B[o.name.replace(/^mixamorig:?/, '')] = o; });
+  if (!B.Hips || !B.Head || !B.LeftFoot) return;
+  const wp = (o) => (g.scene.updateMatrixWorld(true), o.getWorldPosition(new THREE.Vector3()));
+  const foot0 = wp(B.LeftFoot).y;
+  for (const n of ['LeftUpLeg', 'RightUpLeg']) if (B[n]) B[n].scale.y *= UR_LEG;
+  B.Head.scale.multiplyScalar(UR_HEAD);
+  // 다리가 길어진 만큼 엉덩이를 올려 발이 땅에 닿게(동작 속 엉덩이 높이도 같이)
+  const drop = foot0 - wp(B.LeftFoot).y, ps = B.Hips.parent ? B.Hips.parent.getWorldScale(new THREE.Vector3()).y : 1, dl = drop / (ps || 1);
+  B.Hips.position.y += dl;
+  for (const clip of g.animations) for (const tr of clip.tracks) if (/^Hips\.position$/.test(tr.name)) for (let i = 1; i < tr.values.length; i += 3) tr.values[i] += dl;
+  // 몸 높이(머리 꼭대기까지, 날개 제외)를 UR_BODY로
+  const headY = wp(B.Head).y, minY = new THREE.Box3().setFromObject(g.scene).min.y, bodyH = (headY - minY) * 1.1;
+  if (bodyH > 1) g.scene.scale.multiplyScalar(UR_BODY / bodyH);
 }
 async function loadMech(id) {
   if (mechCache[id]) return mechCache[id];
   const g = await gltfL.loadAsync(`models/${id}.glb`);
   // 본편 모델은 크기가 제각각이라 키를 19로 맞춘다(이 게임의 기존 기체 키)
   { g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene), h = bb.max.y - bb.min.y; if (h > 0 && Math.abs(h - 19) > .5) g.scene.scale.multiplyScalar(19 / h); }
+  if (MECH(id).rar === 'UR') heroicBody(g);
   g.scene.traverse((o) => {
-    if (o.isMesh) { o.frustumCulled = false; const m = o.material; if (TINT[id] && m.map) m.map = tintTex(m.map, TINT[id]); m.metalness = Math.min(m.metalness, .15); m.roughness = Math.max(m.roughness, .6); m.metalnessMap = null; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 1.05; m.color.setScalar(1.6); m.needsUpdate = true; }
+    if (o.isMesh) { o.frustumCulled = false; const m = o.material; if (PAINT[id] && m.map) m.map = repaintTex(m.map, PAINT[id]); m.metalness = Math.min(m.metalness, .15); m.roughness = Math.max(m.roughness, .6); m.metalnessMap = null; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 1.05; m.color.setScalar(1.6); m.needsUpdate = true; }
   });
+  try { await applyMarks(g, id); } catch (e) { console.warn('marks', e); }
   // 달리기 동작에 섞인 전진 이동을 지워 제자리에서 뛰게 한다
   for (const clip of g.animations) for (const tr of clip.tracks) {
     if (!/^Hips\.position$/.test(tr.name)) continue;
@@ -361,12 +486,35 @@ const ARMS = {
   cannon: { file: 'w_plasmacannon', bone: 'RightHand', len: 10, grip: [.27, -.15, 0], basis: [[0, -1, 0], [0, 0, 1], [-1, 0, 0]], palm: [-.35, 1.05, 0], muzzle: [-.5, 0, 0], col: 0xffb04a },
   gatling: { file: 'wm_gatling', bone: 'RightHand', len: 14, grip: [.07, -.2, 0], basis: [[0, 1, 0], [0, 0, 1], [1, 0, 0]], palm: [-.35, 1.05, 0], muzzle: [.5, 0, 0], col: 0xffd27a },
   hammer: { file: 'wm_hammer', bone: 'RightHand', len: 15, pre: [0, 0, -.61], grip: [-.32, 0, 0], basis: [[0, 0, 1], [1, 0, 0], [0, 1, 0]], palm: [-.35, 1.0, 0], col: 0xffb04a },
+  spear: { proc: 'spear', bone: 'RightHand', len: 20, grip: [0, -.1, 0], basis: [[0, 1, 0], [0, 0, 1], [1, 0, 0]], palm: [-.35, 1.0, 0], tip: [0, .5, 0], col: 0x9fe8ff },   // 장창: 기체 키만 한 창(코드로 만든 모델, 창끝 +Y)
   staff: { file: 'wm_mace', bone: 'RightHand', len: 21, grip: [0, 0, -.12], basis: [[1, 0, 0], [0, 1, 0], [0, 0, 1]], palm: [-.35, 1.0, 0], col: 0x7fe6ff },
   great: { file: 'wm_great', bone: 'RightHand', len: 21, grip: [.38, 0, 0], basis: [[0, 0, -1], [-1, 0, 0], [0, 1, 0]], palm: [-.35, 1.0, 0], col: 0xfff3b0 },
   howitzer: { file: 'wm_howitzer', world: true, len: 13 },   // 아틸러리 어깨 곡사포(총구 -X)
 };
 const WPN = {};        // 무기 원본(가운데 정렬, 가장 긴 변 = 1)
+// 장창 모델: 길이 1(아래 -0.5 ~ 창끝 +0.5), 금테 두른 자루 + 날개 코등이 + 빛나는 잎 모양 창날
+function buildSpear() {
+  const grp = new THREE.Group();
+  const shaftM = new THREE.MeshStandardMaterial({ color: 0x2b3140, metalness: .55, roughness: .35, emissive: 0x141a26 });
+  const goldM = new THREE.MeshStandardMaterial({ color: 0xe0b860, metalness: .8, roughness: .28, emissive: 0x3a2a08 });
+  const bladeM = new THREE.MeshStandardMaterial({ color: 0xe6f4ff, metalness: .75, roughness: .18, emissive: 0x5fd6ff, emissiveIntensity: .45 });
+  const add = (geo, m, y, rx = 0, rz = 0) => { const o = new THREE.Mesh(geo, m); o.position.y = y; o.rotation.set(rx, 0, rz); grp.add(o); return o; };
+  add(new THREE.CylinderGeometry(.011, .012, .77, 12), shaftM, -.115);                       // 자루
+  add(new THREE.ConeGeometry(.016, .045, 12), goldM, -.478, Math.PI);                       // 물미(아래 끝)
+  for (const y of [-.40, -.06, .04, .2]) add(new THREE.CylinderGeometry(.016, .016, .016, 12), goldM, y);   // 금테
+  // 날개 모양 코등이
+  const wing = new THREE.Shape(); wing.moveTo(0, 0); wing.lineTo(.07, .018); wing.lineTo(.095, .05); wing.lineTo(.06, .03); wing.lineTo(0, .022); wing.lineTo(-.06, .03); wing.lineTo(-.095, .05); wing.lineTo(-.07, .018); wing.closePath();
+  const wg = new THREE.ExtrudeGeometry(wing, { depth: .014, bevelEnabled: false }); wg.translate(0, 0, -.007); add(wg, goldM, .262);
+  add(new THREE.CylinderGeometry(.018, .014, .03, 12), goldM, .28);
+  // 잎 모양 창날
+  const leaf = new THREE.Shape(); leaf.moveTo(0, 0); leaf.bezierCurveTo(.045, .03, .05, .11, 0, .21); leaf.bezierCurveTo(-.05, .11, -.045, .03, 0, 0);
+  const lg = new THREE.ExtrudeGeometry(leaf, { depth: .008, bevelEnabled: true, bevelThickness: .006, bevelSize: .004, bevelSegments: 2, curveSegments: 16 }); lg.translate(0, 0, -.004); add(lg, bladeM, .29);
+  add(new THREE.BoxGeometry(.006, .19, .02), new THREE.MeshStandardMaterial({ color: 0x9fe8ff, emissive: 0x6fe0ff, emissiveIntensity: 1.2, toneMapped: false }), .385);   // 창날 가운데 빛줄기
+  grp.traverse((o) => { if (o.isMesh) o.frustumCulled = false; });
+  const box = new THREE.Group(); box.add(grp); return box;
+}
 async function loadWeapon(key, file) {
+  if (ARMS[key] && ARMS[key].proc === 'spear') { WPN[key] = buildSpear(); return; }
   const g = await gltfL.loadAsync(`models/${file}.glb`); let s = g.scene;
   const pre = ARMS[key] && ARMS[key].pre; if (pre) { const w0 = new THREE.Group(); s.rotation.set(pre[0], pre[1], pre[2]); w0.add(s); s = w0; }
   s.updateMatrixWorld(true);
@@ -381,8 +529,31 @@ function makeArm(key) {
   body.scale.setScalar(A.len); body.position.set(-A.grip[0] * A.len, -A.grip[1] * A.len, -A.grip[2] * A.len);
   rot.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(vA(A.basis[0]), vA(A.basis[1]), vA(A.basis[2])));
   rot.position.set(A.palm[0], A.palm[1], A.palm[2]); rot.add(body); wrap.add(rot);
-  wrap.userData = { key, rot, body, muzzle: A.muzzle ? new THREE.Vector3(A.muzzle[0], A.muzzle[1], A.muzzle[2]) : null };
+  wrap.userData = { key, rot, body, muzzle: A.muzzle ? new THREE.Vector3(A.muzzle[0], A.muzzle[1], A.muzzle[2]) : null, tip: A.tip ? vA(A.tip) : null };
   return wrap;
+}
+// 손 기준틀: 중지 방향(F), 새끼→검지 방향(A), 손등 방향(B = F×A). 무기 축 표(ARMS.basis)는 X=손등·Y=손가락·Z=검지 쪽 기준이다
+function handFrame(hand, hs, bonesAll) {
+  const side = /Left/.test(hand.name) ? 'Left' : 'Right', nm = (o) => o.name.replace(/^mixamorig:?/, '');
+  const ch = (n) => hand.children.find((c) => nm(c) === side + 'Hand' + n);
+  const mid = ch('Middle1'), idx = ch('Index1'), pin = ch('Pinky1') || ch('Ring1');
+  let F, A, len;
+  if (mid && idx && pin) {
+    F = mid.position.clone(); len = F.length() * hs; F.normalize();
+    A = idx.position.clone().sub(pin.position);
+  } else {
+    // 손가락 뼈가 없는 기체: 손가락 방향 = 아래팔→손, 검지 쪽 = 몸 앞쪽(기본 자세에서 엄지가 앞을 본다)
+    const fa = hand.parent, B0 = bonesAll || {}; if (!fa || !B0.LeftUpLeg || !B0.RightUpLeg) return null;
+    const hw = hand.getWorldPosition(new THREE.Vector3()), fw = fa.getWorldPosition(new THREE.Vector3()), Fw = hw.clone().sub(fw); len = Fw.length() * .62; Fw.normalize();
+    const left = B0.LeftUpLeg.getWorldPosition(new THREE.Vector3()).sub(B0.RightUpLeg.getWorldPosition(new THREE.Vector3())); left.y = 0; left.normalize();
+    const fwd = new THREE.Vector3().crossVectors(left, new THREE.Vector3(0, 1, 0)).normalize();
+    const qi = hand.getWorldQuaternion(new THREE.Quaternion()).invert(); F = Fw.applyQuaternion(qi); A = fwd.applyQuaternion(qi);
+  }
+  if (!len || len < 1e-4) return null; F.normalize();
+  A.addScaledVector(F, -A.dot(F)); if (A.lengthSq() < 1e-8) return null; A.normalize();
+  const B = new THREE.Vector3().crossVectors(F, A).normalize();
+  const q = new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().makeBasis(B, F, A));
+  return { q, len, info: { len: +len.toFixed(2), F: F.toArray().map((v) => +v.toFixed(2)), A: A.toArray().map((v) => +v.toFixed(2)), B: B.toArray().map((v) => +v.toFixed(2)) } };
 }
 // 기체에 무기를 단다(뼈에 붙여 동작을 그대로 따라간다). 뼈의 세계 배율을 상쇄해 무기 안쪽은 세계 단위로 다룬다
 function dressMech(g, mech) {
@@ -393,7 +564,10 @@ function dressMech(g, mech) {
     if (!key || !WPN[key] || ARMS[key].world) continue; const b = bones[ARMS[key].bone]; if (!b) continue;
     // 뼈의 실제 세계 배율을 재서 상쇄(본편 모델마다 내부 배율이 다르다)
     P.group.updateMatrixWorld(true); const hs = new THREE.Vector3(); b.getWorldScale(hs);
-    const w = makeArm(key); w.scale.setScalar(1 / (hs.x || .0125)); b.add(w); out[slot] = w;
+    const w = makeArm(key); w.scale.setScalar((key === 'spear' && mech.rar === 'UR' ? 1.2 : 1) / (hs.x || .0125));
+    // 기체마다 손 뼈 방향이 달라, 손가락 뼈로 실제 손바닥 방향을 재서 무기를 손바닥에 쥐게 한다
+    P.group.updateMatrixWorld(true); const fr = handFrame(b, hs.x || .0125, bones); if (fr) { w.quaternion.copy(fr.q); w.userData.rot.position.set(-.22 * fr.len, .6 * fr.len, 0); (window.__hand ??= {})[mech.id] = fr.info; }
+    b.add(w); out[slot] = w;
   }
   return (g.userData.armed = out);
 }
@@ -2117,19 +2291,20 @@ function pointArm(arm, hand, dir, k) {
   const q = new THREE.Quaternion().setFromUnitVectors(_ve, dir); rotW(arm, new THREE.Quaternion().slerp(q, k));
 }
 const _sa = new THREE.Vector3(), _sb = new THREE.Vector3(), _ss = new THREE.Vector3(), _sf = new THREE.Vector3(), _sd = new THREE.Vector3();
-const STAND_BLADE = { katana: 1, saber: .9 }, _sbox = new THREE.Box3();
+// 대기창에서 손에 든 무기 방향: [앞쪽 기울기, 바깥쪽 기울기] (아래 1 기준). 칼끝·총구가 앞쪽 아래를 향하게
+const STAND_HOLD = { spear: [.06, .1, 1], katana: [1, .18], saber: [.9, .18], pistol: [.65, .12], rifle: [.9, .28], rail: [.9, .28], gatling: [.75, .32], cannon: [.75, .3] }, _sbox = new THREE.Box3();
 const STAND_REST = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head', 'LeftShoulder', 'RightShoulder', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', 'LeftHand', 'RightHand'];
 function lobbyStand() {
   const B = armed && armed.bones; if (!B || !B.Hips || !B.LeftUpLeg || !B.RightUpLeg || !B.LeftArm || !B.RightArm) return;
   // 몸통·머리·다리는 기본 자세로 되돌려 비틀림을 없앤다
-  for (const n of STAND_REST) { const b = B[n]; if (b && b.userData.q0) b.quaternion.copy(b.userData.q0); }
+  for (const n in B) { const b = B[n]; if (b && b.userData.q0) b.quaternion.copy(b.userData.q0); }
   if (B.Hips.userData.p0) B.Hips.position.copy(B.Hips.userData.p0);
   P.group.updateMatrixWorld(true);
   _sf.set(Math.sin(P.yaw), 0, Math.cos(P.yaw));                                                                                                       // 앞 방향
   // 엉덩이·가슴이 정확히 정면을 보게: 좌우 선을 앞 방향과 직각으로 돌린다
   const squareUp = (bone, la, ra) => { if (!bone || !la || !ra) return; la.getWorldPosition(_sa); ra.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb); _sd.y = 0; if (_sd.lengthSq() < 1e-6) return; _sd.normalize();
     const want = _sb.set(_sf.z, 0, -_sf.x); if (want.dot(_sd) < 0) want.negate(); rotW(bone, new THREE.Quaternion().setFromUnitVectors(_sd, want)); };
-  squareUp(B.Hips, B.LeftUpLeg, B.RightUpLeg); squareUp(B.Spine || B.Spine1, B.LeftArm, B.RightArm);
+  squareUp(B.Hips, B.LeftUpLeg, B.RightUpLeg); squareUp((B.LeftShoulder && B.LeftShoulder.parent) || B.Spine2 || B.Spine, B.LeftArm, B.RightArm);
   B.LeftUpLeg.getWorldPosition(_sa); B.RightUpLeg.getWorldPosition(_sb); _ss.copy(_sa).sub(_sb); _ss.y = 0; const hipW = _ss.length(); _ss.normalize();   // 왼쪽 방향
   B.LeftArm.getWorldPosition(_sa); B.RightArm.getWorldPosition(_sb); const shW = Math.hypot(_sa.x - _sb.x, _sa.z - _sb.z);
   for (const s of [1, -1]) {
@@ -2151,8 +2326,10 @@ function lobbyStand() {
     }
   }
   // 칼을 든 손: 칼끝이 앞쪽 아래를 향하게 자연스럽게 든다
-  const mw = armed.main; if (mw && STAND_BLADE[ARM] && B.RightHand) { mw.updateMatrixWorld(true); _sbox.setFromObject(mw); _sbox.getCenter(_sa); mw.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb);
-    if (_sd.lengthSq() > 1e-4) { _sd.normalize(); _sb.copy(_sf).multiplyScalar(STAND_BLADE[ARM]).addScaledVector(_ss, -.18); _sb.y = -1; _sb.normalize(); rotW(B.RightHand, new THREE.Quaternion().setFromUnitVectors(_sd, _sb)); } }
+  const mw = armed.main, hk = STAND_HOLD[ARM]; if (mw && hk && B.RightHand) { mw.updateMatrixWorld(true); mw.getWorldPosition(_sb);
+    const tl = mw.userData.muzzle || mw.userData.tip; if (tl) mw.userData.body.localToWorld(_sa.copy(tl)); else { _sbox.setFromObject(mw); _sbox.getCenter(_sa); }
+    _sd.copy(_sa).sub(_sb);
+    if (_sd.lengthSq() > 1e-4) { _sd.normalize(); _sb.copy(_sf).multiplyScalar(hk[0]).addScaledVector(_ss, -hk[1]); _sb.y = hk[2] ? 1 : -1; _sb.normalize(); rotW(B.RightHand, new THREE.Quaternion().setFromUnitVectors(_sd, _sb)); } }
 }
 function placeArms(dt) {
   if (!armed) return;
@@ -2552,7 +2729,7 @@ function lobbyFrame(dt) {
   P.wrap.rotation.set(0, lobby.rot - Math.PI / 2, 0); P.yaw = lobby.rot;
   if (lobby.r2) lobby.r2.rotation.y += dt * .4; if (lobby.dust) lobby.dust.position.y = Math.sin(performance.now() / 3000) * 2;
   // 화면이 넓으면 기체를 가운데 칸(목록과 정보 사이)에 맞춘다
-  const wide = W > 820, h = viewMech.startsWith('god') ? 30 : 24;
+  const wide = W > 820, h = viewMech.startsWith('god') ? 35 : 24;
   lobby.cam.position.set(wide ? 0 : 0, h * .62, wide ? 74 : 92); lobby.cam.lookAt(0, h * .48, 0);
   if (wide) { const off = ((270 - 340) / 2) / W * 2; lobby.cam.setViewOffset(W, H, -off * W / 2, 0, W, H); } else lobby.cam.setViewOffset(W, H, 0, H * .06, W, H);
 }
@@ -2715,7 +2892,7 @@ async function makeThumb(id, size = 512, bg = 0x0d1428) {
   for (const k in acts) acts[k].stop(); acts.idle.reset().play(); mixer.update(.6);
   const par = P.wrap.parent, st = G.state, sm = save.mech; save.mech = id; sc.add(P.wrap); P.wrap.position.set(0, 0, 0); P.wrap.rotation.set(0, .42 - Math.PI / 2, 0);
   G.state = 'thumb'; P.fly = false; P.palmT = 0; P.lAimK = 0; P.mv = null; P.sw = null; P.dashT = 0; P.yaw = .42; P.group.visible = true; P.wrap.updateMatrixWorld(true);
-  try { placeArms(0); } catch (e) { }
+  try { placeArms(0); if (!GUNS[ARM]) { P.wrap.rotation.set(0, -Math.PI / 2, 0); P.yaw = 0; P.wrap.updateMatrixWorld(true); lobbyStand(); } } catch (e) { }
   const extra = [shieldW, howW].filter((o) => o && o.visible); extra.forEach((o) => sc.add(o));
   const bb = new THREE.Box3().setFromObject(P.wrap); for (const o of extra) bb.expandByObject(o);
   const c = bb.getCenter(new THREE.Vector3()), s = bb.getSize(new THREE.Vector3()), h = Math.max(s.y, s.x * .9);
@@ -2724,4 +2901,4 @@ async function makeThumb(id, size = 512, bg = 0x0d1428) {
   thumbR.render(sc, cam2); const url = thumbR.domElement.toDataURL('image/jpeg', .9);
   par.add(P.wrap); extra.forEach((o) => scene.add(o)); G.state = st; save.mech = sm; return url;
 }
-if (location.search.includes('dev')) window.__g = { G, P, ET, UP, inp, keys, stick, get ebs() { return ebs; }, get cards() { return cardKeys; }, sim(sec, auto, bot) { for (let t = 0; t < sec && G.state !== 'over'; t += 1 / 30) { if (G.state === 'levelup') { if (auto) pickCard(typeof auto === 'function' ? auto() : 0); else break; } bot && bot(); step(1 / 30, 1 / 30); } }, get E() { return E; }, spawn, kill, endRun, addXp, pickCard, startRun, camPos, AN, oneShot, setMech, ARMS, get acts() { return acts; }, get mixer() { return mixer; }, get armed() { return armed; }, get msl() { return msl; }, launchSalvo, scene, cam, renderer, get composer() { return composer; }, TF_E, startFly, endFly, FLY, save, MECHS, castUlt, doAuto, drawTitle, drawHangar, drawDaily, persist, get PRIM() { return PRIM; }, get ARM() { return ARM; }, get shells() { return shells; }, flare, mark, lightFlash, explode, ring, beamFx, screenFlash, xfBoom, crescent, castUlt2: castUlt, fire, mortar, MODELS, IM, midBoss, makeThumb, dropGem, get picks() { return picks; } };
+if (location.search.includes('dev')) window.__g = { get lobby() { return lobby; }, G, P, ET, UP, inp, keys, stick, get ebs() { return ebs; }, get cards() { return cardKeys; }, sim(sec, auto, bot) { for (let t = 0; t < sec && G.state !== 'over'; t += 1 / 30) { if (G.state === 'levelup') { if (auto) pickCard(typeof auto === 'function' ? auto() : 0); else break; } bot && bot(); step(1 / 30, 1 / 30); } }, get E() { return E; }, spawn, kill, endRun, addXp, pickCard, startRun, camPos, AN, oneShot, setMech, ARMS, get acts() { return acts; }, get mixer() { return mixer; }, get armed() { return armed; }, get msl() { return msl; }, launchSalvo, scene, cam, renderer, get composer() { return composer; }, TF_E, startFly, endFly, FLY, save, MECHS, castUlt, doAuto, drawTitle, drawHangar, drawDaily, persist, get PRIM() { return PRIM; }, get ARM() { return ARM; }, get shells() { return shells; }, flare, mark, lightFlash, explode, ring, beamFx, screenFlash, xfBoom, crescent, castUlt2: castUlt, fire, mortar, MODELS, IM, midBoss, makeThumb, dropGem, get picks() { return picks; } };
