@@ -23,5 +23,17 @@
         "5A:19:44:18:E0:3F:8A:DF:11:B4:18:3A:8E:A7:6F:55:91:63:99:57:44:B5:BF:01:85:F8:14:EF:4D:4A:BE:B4"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.hankukin.kzombi",
+      "sha256_cert_fingerprints": [
+        "15:C8:AA:8D:6D:14:6A:21:9D:8E:64:F6:2F:DE:9A:34:54:2E:6B:42:5F:98:85:AF:B7:26:DE:19:E4:F7:72:46"
+      ]
+    }
   }
 ]
