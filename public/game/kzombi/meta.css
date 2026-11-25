@@ -432,3 +432,7 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .nmsw div{white-space:nowrap;font-size:18px;padding:6px 12px}
 #s-map.nmmap .mapbar .t{font-size:26px;white-space:nowrap}
 #s-map.nmmap .mapbody{filter:sepia(.35) hue-rotate(-40deg) saturate(1.8) brightness(.7)}
+
+/* 모두 받기 */
+.xall{display:flex;margin:4px auto 10px;width:fit-content;min-width:260px;height:56px;padding:0 26px;font-size:22px;animation:xallPulse 1.4s ease-in-out infinite}
+@keyframes xallPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}

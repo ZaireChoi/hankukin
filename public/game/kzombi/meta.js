@@ -614,8 +614,14 @@ if (window.IS_EN) document.title = 'K Zombi';
     }).join('') + '</div><div class="row"><div class="btn y ' + (can ? '' : 'dis') + '" data-act="attGet">' + (can ? day + '일째 받기' : '내일 또 와요') + '</div></div>');
     attModal.R = R;
   }
+  /* 모두 받기: 받을 수 있는 보상을 한 번에 */
+  const allBtn = (act, n) => n > 0 ? '<div class="btn y xall" data-act="' + act + '">모두 받기 (' + n + ')</div>' : '';
+  const achReady = () => ACH.filter(a => !S.ach[a.id] && a.v() >= a.need);
+  const passReady = () => { const lv = Math.min(PASS_N, Math.floor(S.pass.xp / PASS_XP)), o = []; for (let i = 0; i < lv; i++) { if (!S.pass.f[i]) o.push('f' + i); if (S.pass.paid && !S.pass.p[i]) o.push('p' + i); } return o; };
+  const cdReady = () => { const o = [], keep = cdTab; for (const t of ['hero', 'zom', 'item']) { cdTab = t; for (const x of codexItems()) if (x.own && !S.codex[t][x.k]) o.push([t, x]); } cdTab = keep; return o; };
+  const qReady = () => QUESTS.filter(q => (S.quests[q.id] || 0) >= q.need && !(S.quests.got || {})[q.id]);
   function questModal() {
-    modal('<h3 class="stroke">오늘의 임무</h3>' + QUESTS.map(q => {
+    modal('<h3 class="stroke">오늘의 임무</h3>' + allBtn('qAll', qReady().length) + QUESTS.map(q => {
       const v = Math.min(q.need, S.quests[q.id] || 0), got = (S.quests.got || {})[q.id];
       return '<div class="box" style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin:10px 0"><div style="flex:1"><div class="stroke-s" style="font-size:24px">' + q.n + '</div><div style="font-size:18px;color:#cdd6ff">' + v + '/' + q.need + '</div></div>' +
         '<div style="display:flex;align-items:center;gap:4px;font-size:22px" class="stroke-s">' + ic('jade').replace('class="ic ', 'style="width:34px;height:34px" class="ic ') + q.r + '</div>' +
@@ -696,7 +702,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       const ps = S.pass.p[i] ? '<i class="xchk">✔</i>' : ok && S.pass.paid ? '<div class="btn g xget" data-act="passGet" data-v="p' + i + '">받기</div>' : '<i class="xlock">' + ic('lock') + '</i>';
       rows += '<div class="xprow' + (ok ? ' on' : '') + '"><div class="xpn stroke-s">' + (i + 1) + '</div><div class="xpc">' + rwBox(fk, fv, 2, 1) + fs + '</div><div class="xpc paid">' + rwBox(pk, pv, 4, 1) + ps + '</div></div>';
     }
-    modal('<h3 class="stroke">시즌 패스</h3><p style="text-align:center;margin:0 0 8px">' + S.pass.season.replace('-', '년 ') + '월 시즌 · 전투를 하면 패스 점수가 쌓여요</p>' +
+    modal('<h3 class="stroke">시즌 패스</h3>' + allBtn('passAll', passReady().length) + '<p style="text-align:center;margin:0 0 8px">' + S.pass.season.replace('-', '년 ') + '월 시즌 · 전투를 하면 패스 점수가 쌓여요</p>' +
       '<div class="xbar"><i style="width:' + (lv >= PASS_N ? 100 : into) + '%"></i><span class="stroke-s">' + lv + '단계 · ' + (lv >= PASS_N ? '최고' : into + '/' + PASS_XP) + '</span></div>' +
       '<div class="xphd"><span>단계</span><span>무료</span><span>황금 패스</span></div><div class="xscroll">' + rows + '</div>' +
       '<div class="row">' + (S.pass.paid ? '<div class="btn y" style="min-width:300px">황금 패스 사용 중</div>' : '<div class="btn p" data-act="passBuy" style="min-width:320px;flex-direction:column;gap:0"><span>황금 패스 열기 990원</span><small style="font-size:16px">결제 준비 중</small></div>') + '</div>', 'xwide');
@@ -717,7 +723,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const list = ACH.map(a => { const v = Math.min(a.need, a.v()), done = S.ach[a.id], ok = v >= a.need;
       return '<div class="xrow box"><div class="xn"><b class="stroke-s">' + a.n + '</b><div class="xbar sm"><i style="width:' + (v / a.need * 100) + '%"></i><span class="stroke-s">' + fmt(v) + '/' + fmt(a.need) + '</span></div></div>' + rwBox(a.r[0], a.r[1], 3, 1) +
         (done ? '<i class="xchk">✔</i>' : '<div class="btn ' + (ok ? 'g' : 'b no') + ' xget" data-act="achGet" data-v="' + a.id + '">' + (ok ? '받기' : '진행') + '</div>') + '</div>'; }).join('');
-    modal('<h3 class="stroke">업적</h3><div class="xscroll">' + list + '</div>', 'xwide');
+    modal('<h3 class="stroke">업적</h3>' + allBtn('achAll', achReady().length) + '<div class="xscroll">' + list + '</div>', 'xwide');
   }
   /* 도감 */
   let cdTab = 'hero', MAN = null;
@@ -731,7 +737,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     xinit(); if (!MAN) { fetch('sprites/manifest.json').then(r => r.json()).then(j => { MAN = j; if ($('#mdl', root) && $('.xcodex', root)) codexModal(); }).catch(() => { MAN = {}; }); }
     const list = codexItems(), have = list.filter(x => x.own).length, box = S.codex[cdTab];
     const cells = list.map(x => { const got = box[x.k]; return '<div class="xcell' + (x.own ? '' : ' off') + '" style="border-color:' + GR[Math.min(5, x.g)].c + '"' + (x.own && !got ? ' data-act="cdGet" data-v="' + x.k + '"' : '') + '>' + x.img + '<div class="nm stroke-s">' + (x.own ? x.n : '???') + '</div>' + (x.own && !got ? '<i class="dot"></i><div class="xrw stroke-s">옥 ' + x.r + '</div>' : got ? '<i class="xchk sm">✔</i>' : '') + '</div>'; }).join('');
-    modal('<h3 class="stroke">도감</h3><div class="xtabs">' + [['hero', '영웅'], ['zom', '좀비'], ['item', '장비']].map(([k, n]) => '<div class="btn ' + (k === cdTab ? 'y' : 'b') + '" data-act="cdTab" data-v="' + k + '">' + n + '</div>').join('') + '</div>' +
+    modal('<h3 class="stroke">도감</h3>' + allBtn('cdAll', cdReady().length) + '<div class="xtabs">' + [['hero', '영웅'], ['zom', '좀비'], ['item', '장비']].map(([k, n]) => '<div class="btn ' + (k === cdTab ? 'y' : 'b') + '" data-act="cdTab" data-v="' + k + '">' + n + '</div>').join('') + '</div>' +
       '<p style="text-align:center;margin:6px 0">모은 것 ' + have + '/' + list.length + ' · 새로 모은 칸을 누르면 옥을 받아요</p><div class="xscroll xcodex">' + cells + '</div>', 'xwide');
   }
   const cdDot = () => { xinit(); for (const t of ['hero', 'zom', 'item']) { const o = cdTab; cdTab = t; const any = codexItems().some(x => x.own && !S.codex[t][x.k]); cdTab = o; if (any) return true; } return false; };
@@ -1084,6 +1090,10 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'att': attModal(); break;
       case 'attGet': { const R = attModal.R, k = S.att % 7, [i, val] = R[k]; if (i === 'coin') S.gold += val; else if (i === 'jade') S.jade += val; else S.stone += val; S.att++; S.attDay = today(); closeModal(); toast(k + 1 + '일째 출석 보상을 받았어요'); refresh(); break; }
       case 'quest': questModal(); break;
+      case 'achAll': { xinit(); const L = achReady(); for (const a of L) { S.ach[a.id] = 1; give(a.r[0], a.r[1]); } save(); toast('업적 보상 ' + L.length + '개를 받았어요'); try { refresh(); } catch (e2) {} achModal(); break; }
+      case 'passAll': { xinit(); const L = passReady(); for (const k of L) { const i = +k.slice(1); if (k[0] === 'f') { const [a, b] = passFree(i); give(a, b); S.pass.f[i] = 1; } else { const [a, b] = passPaid(i); give(a, b); S.pass.p[i] = 1; } } save(); toast('패스 선물 ' + L.length + '개를 받았어요'); try { refresh(); } catch (e2) {} passModal(); break; }
+      case 'cdAll': { xinit(); const L = cdReady(); let j = 0; for (const [t, x] of L) { S.codex[t][x.k] = 1; j += x.r; } S.jade += j; save(); toast('도감 보상 옥 ' + fmt(j)); try { refresh(); } catch (e2) {} codexModal(); break; }
+      case 'qAll': { const L = qReady(); S.quests.got = S.quests.got || {}; let j = 0; for (const q of L) { S.quests.got[q.id] = 1; j += q.r; } S.jade += j; save(); toast('임무 보상 옥 ' + fmt(j)); try { refresh(); } catch (e2) {} questModal(); break; }
       case 'qGet': { const q = QUESTS.find(x => x.id === v); S.quests.got = S.quests.got || {}; S.quests.got[v] = 1; S.jade += q.r; save(); questModal(); refresh(); break; }
       case 'mailbox': mailModal(); break;
       case 'mailGet': S.mail = true; S.jade += 500; S.gold += 5000; S.stone += 30; closeModal(); toast('첫 선물을 받았어요'); refresh(); break;
