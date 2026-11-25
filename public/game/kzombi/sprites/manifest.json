@@ -2096,10 +2096,11 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 60,
-  "anchorX": 0.483,
-  "anchorY": 0.953,
-  "ch": 0.667,
+  "height": 90,
+  "anchorX": 0.507,
+  "anchorY": 0.973,
+  "ch": 0.74,
+  "v": 85423,
   "anims": {
    "walk": {
     "src": "s_spear_walk.webp",
@@ -2127,8 +2128,8 @@
     "loop": false
    }
   },
-  "v": 82586,
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "s_geuk": {
   "src": "s_geuk_walk.webp",
@@ -2136,10 +2137,11 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 60,
-  "anchorX": 0.497,
-  "anchorY": 0.953,
-  "ch": 0.667,
+  "height": 90,
+  "anchorX": 0.483,
+  "anchorY": 0.913,
+  "ch": 0.533,
+  "v": 45925,
   "anims": {
    "walk": {
     "src": "s_geuk_walk.webp",
@@ -2167,8 +2169,8 @@
     "loop": false
    }
   },
-  "v": 98785,
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "s_archer": {
   "src": "s_archer_walk.webp",
@@ -2176,10 +2178,11 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 60,
-  "anchorX": 0.45,
-  "anchorY": 0.973,
-  "ch": 0.767,
+  "height": 90,
+  "anchorX": 0.453,
+  "anchorY": 0.94,
+  "ch": 0.713,
+  "v": 69176,
   "anims": {
    "walk": {
     "src": "s_archer_walk.webp",
@@ -2207,8 +2210,8 @@
     "loop": false
    }
   },
-  "v": 82359,
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "s_monk": {
   "src": "s_monk_walk.webp",
@@ -2374,10 +2377,11 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 60,
-  "anchorX": 0.493,
-  "anchorY": 0.973,
-  "ch": 0.72,
+  "height": 90,
+  "anchorX": 0.453,
+  "anchorY": 0.94,
+  "ch": 0.713,
+  "v": 27031,
   "anims": {
    "walk": {
     "src": "s_crossbow_walk.webp",
@@ -2405,8 +2409,8 @@
     "loop": false
    }
   },
-  "v": 82359,
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "s_gun": {
   "src": "s_gun_walk.webp",
