@@ -95,6 +95,8 @@ const ET = {
   behemoth: { file: 'zbehemoth', h: 27, r: 12,  hp: 760,  spd: 21, dmg: 22, xp: 0,  max: 3,   yaw: 0, col: 0xffb04a },
   queen:    { file: 'zqueen',    h: 46, r: 15,  hp: 5200, spd: 25, dmg: 25, xp: 0, max: 1,   yaw: 0, col: 0xff7ac4 },
   // ASCEND 본편 유닛: 보병(달리기 동작 4장면을 굳혀 번갈아 보인다)·공중·중간 보스
+  aat:      { file: 'emp_trooper', h: 14, r: 3.6, hp: 40, spd: 28, dmg: 11, xp: 3, max: 16, yaw: 0, col: 0xff9a6a, anim: 'run', frames: 4, mech: 1 },
+  aagun:    { file: 'v_aa', h: 22, fit: 1, r: 8, hp: 230, spd: 16, dmg: 0, xp: 8, max: 4, yaw: 0, col: 0xffc07a, mech: 1 },
   trooper:  { file: 'fed_trooper', h: 14, r: 3.6, hp: 34, spd: 30, dmg: 9, xp: 2, max: 30, yaw: 0, col: 0x9bc06a, anim: 'run', frames: 4, mech: 1 },
   robo:     { file: 'robo', h: 14.5, r: 3.6, hp: 28, spd: 54, dmg: 12, xp: 2, max: 30, yaw: 0, col: 0x7fd8ff, anim: 'run', frames: 4, mech: 1 },
   spit:     { file: 'zspit', h: 15, r: 4.2, hp: 46, spd: 27, dmg: 12, xp: 3, max: 16, yaw: 0, col: 0xb06bff },
@@ -1456,8 +1458,9 @@ function castBarrier() {
   tone(420, 880, .3, 'sine', .07); tone(880, 1320, .25, 'triangle', .04, .08); ring(P.x, P.z, 6, 24, .35, 0x5fd8ff);
   num(P.x, 30 + P.alt, P.z, '보호막', '#9ff3ff', 16);
 }
-function hurtPlayer(d) {
-  if (P.inv > 0 || G.state !== 'play' || G.won || P.alt > 10 || P.cloakT > 0) return;
+// air: 공중·대공 공격은 날고 있는 기체도 맞힌다(지상 공격은 날면 피한다)
+function hurtPlayer(d, air) {
+  if (P.inv > 0 || G.state !== 'play' || G.won || (P.alt > 10 && !air) || P.cloakT > 0) return;
   d = Math.round(d * (1 + .2 * (G.threat - 1)) * (P.taken || 1));
   if (P.bar > 0) {          // 보호막이 먼저 받는다
     const a = Math.min(P.bar, d); P.bar -= a; d -= a; P.barHit = 1; if (P.bar <= 0) { P.barT = 0; burst(P.x, 12, P.z, 30, 0x9ff3ff, 90, .4, 9); tone(900, 200, .25, 'square', .05); }
@@ -1486,7 +1489,7 @@ function updShots(dt) {
   for (const b of ebs) {
     b.x += b.vx * dt; b.z += b.vz * dt; b.life -= dt;
     const dx = b.x - P.x, dz = b.z - P.z;
-    if (dx * dx + dz * dz < (P.r + 2.2) ** 2) { hurtPlayer(b.dmg); b.life = 0; }
+    if ((P.alt <= 10 || b.air) && dx * dx + dz * dz < (P.r + (b.air && P.alt > 10 ? 4 : 2.2)) ** 2) { hurtPlayer(b.dmg, b.air); b.life = 0; if (b.air && P.alt > 10) { flare(b.x, P.alt + 6, b.z, 0xffb060, 10, .1); burst(b.x, P.alt + 6, b.z, 8, 0xffa040, 50, .3, 8, .2); } }
   }
   ebs = ebs.filter((b) => b.life > 0);
 }
@@ -1584,7 +1587,7 @@ function pickType() {
   const t = G.t, w = [['ling', 6]];
   if (t > 35) w.push(['roach', 1.5]); if (t > 75) w.push(['bane', 1.5]); if (t > 120) w.push(['plasma', 1.1]); if (t > 165) w.push(['lurk', 1]);
   if (t > 20) w.push(['trooper', 1.3]); if (t > 60) w.push(['wing', 1.1]); if (t > 90) w.push(['robo', 1.2]); if (t > 125) w.push(['spit', .9]);
-  if (t > 140) w.push(['jet', .22]); if (t > 195) w.push(['heli', .18]);
+  if (t > 140) w.push(['jet', .22]); if (t > 195) w.push(['heli', .18]); if (t > 40) w.push(['aat', .8]); if (t > 110) w.push(['aagun', .3]);
   let tot = 0; for (const a of w) tot += a[1]; let r = Math.random() * tot;
   for (const a of w) { if ((r -= a[1]) < 0) return a[0]; } return 'ling';
 }
@@ -1610,6 +1613,8 @@ function swarm(n) {
 }
 function updSpawner(dt) {
   while (G.ev < EVENTS.length && G.t >= EVENTS[G.ev][0]) EVENTS[G.ev++][1]();
+  // 날고 있으면 날벌레·대공 보병이 더 몰려온다(하늘도 안전하지 않게)
+  if (P.fly && !G.won && (G.flyAcc = (G.flyAcc || 0) + dt) > Math.max(.7, 1.6 - G.t / 300)) { G.flyAcc = 0; const [x, z] = spawnPos(120, 150); if (Math.random() < .55) { spawn('wing', x, z); spawn('wing', x + 8, z + 6); } else spawn('aat', x, z); }
   let rate = (1.5 + Math.min(G.t, RUN_TIME) / 60 * 1.05) * (1 + .15 * (G.threat - 1));   // 초당 무리 수
   if (G.bossOn) rate *= .3;
   G.spawnAcc += rate * dt;
@@ -1621,7 +1626,12 @@ function updSpawner(dt) {
     else spawn(ty, x, z);
   }
 }
-function eShot(x, z, ang, sp, dmg, life = 5, col) { if (ebs.length < 270) ebs.push({ x, z, vx: Math.sin(ang) * sp, vz: Math.cos(ang) * sp, dmg, life, col }); }
+function eShot(x, z, ang, sp, dmg, life = 5, col, air) { if (ebs.length < 270) ebs.push({ x, z, vx: Math.sin(ang) * sp, vz: Math.cos(ang) * sp, dmg, life, col, air, y: air && P.alt > 10 ? P.alt + 6 : 8 }); }
+// 날고 있는 기체를 노리는 대공탄: 움직이는 방향을 조금 앞서 겨눈다
+function aaShot(e, sp, dmg, spread = 0, col = 0xffa040) {
+  const lead = Math.hypot(P.x - e.x, P.z - e.z) / sp, hx = P.fly ? Math.sin(P.hd) * FLY.spd * lead * .7 : inp.x * 40 * lead, hz = P.fly ? Math.cos(P.hd) * FLY.spd * lead * .7 : inp.z * 40 * lead;
+  const a = Math.atan2(P.x + hx - e.x, P.z + hz - e.z) + rand(-spread, spread); eShot(e.x, e.z, a, sp, dmg, 2.4, col, true);
+}
 // 적의 곡사 산성탄: 내 자리에 초록 경고를 띄우고 포물선으로 떨어져 터진다
 function eLob(e, x1, z1, r, dmg, T = .95) {
   const rr = Math.hypot(x1, z1); if (rr > ARENA_R - 6) { x1 *= (ARENA_R - 6) / rr; z1 *= (ARENA_R - 6) / rr; }
@@ -1648,6 +1658,7 @@ function unitAI(e, dt, d, dx, dz) {
       return T.spd * (d < 95 ? .6 : 1);
     }
     case 'wing': {
+      if (P.fly) { e.alt = lerp(e.alt || 0, P.alt - T.fly + 2, Math.min(1, dt * 3)); e.bank = 0; e.st = 'move'; return T.spd * 1.5; }   // 날고 있는 기체를 곧장 쫓는다
       if (e.st === 'dive') { e.mv = e.ang; e.alt = lerp(e.alt || 0, -14, Math.min(1, dt * 6)); e.bank = 0; if (e.tm <= 0) { e.st = 'move'; e.tm = rand(2.2, 3.4); } return T.spd * 2.5; }
       e.alt = lerp(e.alt || 0, 0, Math.min(1, dt * 3)); const orb = Math.atan2(e.x - P.x, e.z - P.z) + .9;
       e.mv = Math.atan2(P.x + Math.sin(orb) * 55 - e.x, P.z + Math.cos(orb) * 55 - e.z); e.bank = -.45;
@@ -1658,15 +1669,30 @@ function unitAI(e, dt, d, dx, dz) {
       if (e.ang == null || Math.hypot(e.x, e.z) > ARENA_R + 45 && Math.cos(e.ang - Math.atan2(-e.x, -e.z)) < .2) e.ang = toP + rand(-.25, .25);
       e.mv = e.ang; e.yaw = e.ang; e.bank = Math.sin(e.ph * 1.3) * .25; e.ct = (e.ct || 0) - dt;
       const ahead = Math.cos(toP - e.ang) > .6;
-      if (ahead && d < 130 && e.ct <= 0) { e.ct = .16; for (const s of [-1, 1]) { const ox = Math.cos(e.ang) * 4 * s, oz = -Math.sin(e.ang) * 4 * s; eShot(e.x + ox, e.z + oz, toP + rand(-.05, .05), 150, 7, 1.6, 0x9fe0ff); } tone(1200, 700, .03, 'square', .01); }
+      if (ahead && d < 130 && e.ct <= 0) { e.ct = .16; for (const s of [-1, 1]) { const ox = Math.cos(e.ang) * 4 * s, oz = -Math.sin(e.ang) * 4 * s; eShot(e.x + ox, e.z + oz, toP + rand(-.05, .05), 150, 7, 1.6, 0x9fe0ff, true); } tone(1200, 700, .03, 'square', .01); }
       return T.spd;
     }
     case 'heli': {
       const orb = Math.atan2(e.x - P.x, e.z - P.z) + .5; e.mv = Math.atan2(P.x + Math.sin(orb) * 88 - e.x, P.z + Math.cos(orb) * 88 - e.z); e.yaw = toP; e.bank = .12;
-      if (e.tm <= 0 && d < 160) { e.tm = rand(2.8, 3.6); for (let i = 0; i < 2; i++) { const tx = P.x + inp.x * 18 + rand(-14, 14), tz = P.z + inp.z * 18 + rand(-14, 14), eta = enemyMissile(e, tx, tz, 12, .15 + i * .25); if (eta) decal(tx, tz, 16, eta, 0x9be05a); } }
+      if (e.tm <= 0 && d < 160) { e.tm = rand(2.8, 3.6);
+        if (P.fly) { e.cnt = 6; e.ct = 0; } else for (let i = 0; i < 2; i++) { const tx = P.x + inp.x * 18 + rand(-14, 14), tz = P.z + inp.z * 18 + rand(-14, 14), eta = enemyMissile(e, tx, tz, 12, .15 + i * .25); if (eta) decal(tx, tz, 16, eta, 0x9be05a); } }
+      if (e.cnt > 0 && (e.ct -= dt) <= 0) { e.cnt--; e.ct = .12; aaShot(e, 150, 7, .06, 0x9fe0ff); flare(e.x, T.fly, e.z, 0xbfe8ff, 7, .06); }
       return T.spd;
     }
-    case 'goliath': case 'scorp': case 'brood': return bossAI(e, dt, d, toP, rage);
+    case 'aat': {        // 대공 보병: 날고 있으면 대공 로켓, 땅에 있으면 직사 로켓
+      const R = P.fly ? 150 : 95;
+      if (e.st === 'fire') { e.yaw = toP; if ((e.ct -= dt) <= 0) { e.st = 'move'; e.tm = rand(2, 2.8); if (P.fly) aaShot(e, 135, 13, .03, 0xff8a3a); else eShot(e.x, e.z, toP, 110, T.dmg, 2.2, 0xff8a3a); flare(e.x + Math.sin(toP) * 4, 12, e.z + Math.cos(toP) * 4, 0xffb060, 9, .08); burst(e.x, 10, e.z, 4, 0x8a7a70, 20, .5, 8, .5); tone(300, 900, .12, 'sawtooth', .03); } return 0; }
+      if (d < R && e.tm <= 0) { e.st = 'fire'; e.ct = .45; return 0; }
+      return d < R * .7 ? T.spd * .3 : T.spd;
+    }
+    case 'aagun': {      // 대공 전차: 거리를 두고 고사포 연사
+      if (d < 85) e.mv = toP + Math.PI * .6; e.yaw = e.mv;
+      if (e.tm <= 0 && d < 190) { e.tm = rand(1.8, 2.4); e.cnt = P.fly ? 5 : 3; e.ct = 0; }
+      if (e.cnt > 0 && (e.ct -= dt) <= 0) { e.cnt--; e.ct = .14; if (P.fly) aaShot(e, 170, 9, .08, 0xffd27a); else eShot(e.x, e.z, toP + rand(-.08, .08), 120, 10, 2.2, 0xffd27a); flare(e.x + Math.sin(toP) * 6, 10, e.z + Math.cos(toP) * 6, 0xffe08a, 9, .06); tone(260, 140, .06, 'square', .03); }
+      return d < 110 ? T.spd * .5 : T.spd;
+    }
+    case 'goliath': case 'scorp': case 'brood': if (P.fly && (e.flk = (e.flk || 0) - dt) <= 0) { e.flk = rage ? .5 : .8; for (let i = -1; i <= 1; i++) aaShot(e, 140, 9, .02 + Math.abs(i) * .12, T.col); }   // 보스도 날고 있으면 대공탄
+      return bossAI(e, dt, d, toP, rage);
   }
   return T.spd;
 }
@@ -1774,7 +1800,7 @@ function updEnemies(dt) {
         if (e.tm <= 0) { e.st = 'move'; e.tm = 4.2; e.sc = 1; e.dec = null; ring(e.x, e.z, 8, 40, .35, 0xff7a3a); burst(e.x, 3, e.z, 40, 0xffb04a, 90, .5, 11); sfx.boom(); G.shake = 4; if (d < 40 + P.r) hurtPlayer(26); }
       }
     } else if (e.t === 'queen') { sp = queenAI(e, dt, d, dx, dz); if (e.st === 'dash') { mx = Math.sin(e.ang); mz = Math.cos(e.ang); } }
-    else if (T.anim || T.fly || T.boss || e.t === 'spit') { sp = unitAI(e, dt, d, dx, dz) * e.sm; mx = Math.sin(e.mv); mz = Math.cos(e.mv); }
+    else if (T.anim || T.fly || T.boss || e.t === 'spit' || e.t === 'aagun') { sp = unitAI(e, dt, d, dx, dz) * e.sm; mx = Math.sin(e.mv); mz = Math.cos(e.mv); }
 
     if (e.stun > 0) { e.stun -= dt; sp = 0; if (Math.random() < .08) burst(e.x, e.T.h + 2, e.z, 1, 0xfff07a, 10, .3, 6, .2); }
     if (P.cloakT > 0 && e.st === 'move') { sp *= .35; mx = Math.sin(e.ph); mz = Math.cos(e.ph * .7); }   // 은신 중에는 헤맨다
@@ -1790,7 +1816,10 @@ function updEnemies(dt) {
     const er = Math.hypot(e.x, e.z), lim = e.t === 'jet' ? ARENA_R + 70 : ARENA_R - 4; if (er > lim) { e.x *= lim / er; e.z *= lim / er; }
     if (e.st !== 'fuse' && e.st !== 'stomp' && sp > 0) { const want = Math.atan2(mx, mz); let da = want - e.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; e.yaw += da * Math.min(1, dt * 9); }
     // 접촉 피해
-    if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0 && (!T.fly || (e.alt || 0) < -T.fly * .6)) hurtPlayer(e.st === 'dash' ? T.dmg * 1.3 : T.dmg);
+    if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0) {
+      if (P.alt > 10) { if (T.fly) hurtPlayer(T.dmg, true); }
+      else if (!T.fly || (e.alt || 0) < -T.fly * .6) hurtPlayer(e.st === 'dash' ? T.dmg * 1.3 : T.dmg);
+    }
   }
   E = E.filter((e) => { if (e.dead && e.px) e.px.dead = true; return !e.dead; });
 }
@@ -1935,7 +1964,7 @@ function drawInstances(time) {
 
   i = 0; let so = 0;
   const soft = (x, y, z, s, r, g, b) => { if (so >= 720) return; dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0); dummy.scale.set(s, 1, s); dummy.updateMatrix(); imSoft.setMatrixAt(so, dummy.matrix); imSoft.setColorAt(so++, tmpC.setRGB(r, g, b)); };
-  for (const b of ebs) { if (i >= 280) break; const pl = 1 + Math.sin(time * 12 + b.x) * .12; dummy.position.set(b.x, 8, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(pl); dummy.updateMatrix(); if (b.col) { tmpC.set(b.col); dummy.scale.setScalar(pl * .62); dummy.updateMatrix(); } else tmpC.setRGB(1.2, .25, .8); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.multiplyScalar(b.col ? 1.4 : 1));
+  for (const b of ebs) { if (i >= 280) break; const pl = 1 + Math.sin(time * 12 + b.x) * .12; dummy.position.set(b.x, b.y || 8, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(pl); dummy.updateMatrix(); if (b.col) { tmpC.set(b.col); dummy.scale.setScalar(pl * .62); dummy.updateMatrix(); } else tmpC.setRGB(1.2, .25, .8); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.multiplyScalar(b.col ? 1.4 : 1));
     if (b.col) { tmpC.set(b.col); soft(b.x, 8, b.z, 8 * pl, tmpC.r * .8, tmpC.g * .8, tmpC.b * .8); } else { soft(b.x, 8, b.z, 13 * pl, .9, .1, .55); soft(b.x, .6, b.z, 9, .5, .05, .3); } }
   for (const s of shells) { if (i >= 280) break; const [x, y, z] = shellPos(s); dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(.9); dummy.updateMatrix(); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, s.foe ? tmpC.setRGB(.7, 1.5, .3) : tmpC.setRGB(1.6, .9, .3));
     soft(x, y, z, 11, s.foe ? .3 : 1, s.foe ? .8 : .5, .12); if (Math.random() < .6) burst(x, y, z, 1, 0x8a7a70, 4, .5, 7, .1); if (Math.random() < .5) burst(x, y, z, 1, 0xffa040, 6, .2, 5, .1); }
