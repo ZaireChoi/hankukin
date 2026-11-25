@@ -440,3 +440,17 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 /* 상단 재화: 옥 아래에 신력석 */
 .res2{flex-direction:column;align-items:flex-end;gap:6px}
 .res2 .rpill.rstone{transform:scale(.92);transform-origin:right center}
+
+/* 장별 원소 약점 */
+.xel{border:2px solid;border-radius:14px;padding:8px 12px;margin:0 0 10px;background:rgba(0,0,0,.35);font-size:17px;font-weight:700;line-height:1.45}
+.xel b{font-size:19px}
+.card .xadv{position:absolute;left:6px;right:6px;bottom:52px;text-align:center;font-size:14px;color:#1a1008;border-radius:8px;padding:1px 0;text-shadow:none}
+
+/* 월드 보스 · 문파 보스 · 탈것 */
+.wbspr{background-repeat:no-repeat;flex:0 0 auto;margin:0 auto;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.wbhd{display:flex;gap:14px;align-items:center;padding:12px}.wbhd p{margin:4px 0;font-size:18px;font-weight:600;color:#dfe6ff}
+.gbbox{display:flex;gap:12px;align-items:center;padding:10px;margin:8px 0}.gbbox .btn{height:60px;padding:0 20px;font-size:22px}
+.gbbox small{display:block;font-size:15px;color:#cdd6ff;margin-top:4px}
+.gbst{display:flex;gap:8px;margin-top:6px}.gbs{text-align:center;font-size:14px;opacity:.55}.gbs.ok{opacity:1}.gbs[data-act]{cursor:pointer;animation:xallPulse 1.4s infinite}
+.eqmount{position:absolute;right:14px;bottom:6px;height:52px;padding:0 22px;font-size:21px;z-index:3}
+.skin .si .wbspr{margin-top:5px}
