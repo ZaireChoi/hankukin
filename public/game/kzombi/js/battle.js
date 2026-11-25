@@ -1934,9 +1934,17 @@ function drawTurret(t, day) {
   if (d.kind === 'aura' && !day) { ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.62); const gr = ctx.createRadialGradient(0, 0, d.range * 0.3, 0, 0, d.range); gr.addColorStop(0, 'rgba(110,190,255,0)'); gr.addColorStop(1, 'rgba(110,190,255,' + (0.18 + 0.06 * Math.sin(t.pulse * 3)) + ')'); ctx.fillStyle = gr; circle(0, 0, d.range); ctx.fill(); ctx.strokeStyle = 'rgba(160,220,255,.45)'; ctx.lineWidth = 3; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(0, 0, d.range * (0.5 + 0.17 * i), t.pulse * (1 + i * 0.3), t.pulse * (1 + i * 0.3) + 1.6); ctx.stroke(); } ctx.restore(); }
   shadowE(x, y + 16, 26);
   drawSprite('build_pad', x, y + 22, {});
-  const headKey = d.head && SPR[d.head] ? d.head : null;
+  /* 만화체(11-25): 화포·화차는 받침 그림 + 옆모습 포신 1장을 캔버스로 돌린다 */
+  const barKey = d.head ? (t.type === 'cannon' ? 'tower_cannon_barrel' : 'tower_hwacha_rack') : null;
   let ok;
-  if (headKey) { const hs = SPR[headKey], aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0); const back = rc * rc * 10;
+  if (barKey && !SPR[barKey]) need(barKey);
+  if (barKey && SPR[barKey] && SPR[d.spr]) { const aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0), back = rc * rc * 10, lvS = 1 + 0.07 * Math.min(4, (t.lv || 1) - 1);
+    ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sc: lvS, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
+    const py = y + 18 - SPR[d.spr].height * lvS * rise * 0.92; ctx.save(); ctx.translate(x - Math.cos(aim) * back, py - Math.sin(aim) * back * 0.6); ctx.rotate(Math.atan2(Math.sin(aim) * 0.75, Math.cos(aim))); if (Math.cos(aim) < 0) ctx.scale(1, -1);
+    drawSprite(barKey, 0, 0, { mode: t.hitT > 0 ? 'white' : null, sc: lvS * rise, alpha: t.seal > 0 ? 0.6 : 1 }); ctx.restore(); }
+  const headKey = !ok && d.head && SPR[d.head] ? d.head : null;
+  if (ok) {}
+  else if (headKey) { const hs = SPR[headKey], aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0); const back = rc * rc * 10;
     ok = drawSprite(headKey, x - Math.cos(aim) * back, y + 18 - Math.sin(aim) * back * 0.6, { dir: dirN(aim, hs.dirs || 16), mode: t.hitT > 0 ? 'white' : null, sy: rise * (1 - rc * 0.06), sx: 1 + (1 - rise) * 0.3 + rc * 0.04, alpha: t.seal > 0 ? 0.6 : 1 }); }
   else ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sc: 1 + 0.07 * Math.min(4, (t.lv || 1) - 1) /* 강화할수록 커짐 */, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
   /* 생동감: 깃발, 불꽃, 물빛, 금가루, 등불 */
