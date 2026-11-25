@@ -488,8 +488,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       ['gold3k', '엽전 꾸러미', 'coin', '엽전 5,000', '옥 50', 'b', ''],
       ['stone20', '신력석 상자', 'stone', '신력석 20', '옥 80', 'p', '인기'],
       ['torch30', '횃불 묶음', 'torch', '횃불 30', '옥 40', 'r', ''],
-      ['jade300', '옥 주머니', 'jade', '옥 300', '결제 준비 중', 'b dis', ''],
-      ['jade1k', '옥 상자', 'jade', '옥 1,000', '결제 준비 중', 'b dis', '']];
+      ['jade300', '옥 주머니', 'jade', '옥 300', '500원', 'y', ''],
+      ['jade1k', '옥 상자', 'jade', '옥 1,000', '990원', 'y', '']];
     return '<div class="hdr stroke">상점<span class="sub">옥으로 장비와 동료를 뽑아요</span></div><div class="shop" style="top:96px">' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/bn_gear.webp?v=1);background-position:right center"></div><h3 class="stroke">장비 뽑기</h3><div class="d stroke-s">10번 뽑으면 희귀 이상 1개 보장. 전설, 신화 장비가 나올 수 있어요.</div>' +
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
@@ -737,10 +737,69 @@ if (window.IS_EN) document.title = 'K Zombi';
     S.jade += 300; S.torch = Math.min(99, (S.torch || 0) + 20); save(); closeModal(); refresh();
     modal('<h3 class="stroke">신규 스타트팩을 받았어요!</h3><div style="text-align:center;font-size:19px;line-height:1.6">영웅 <b style="color:#e39bff">홍길동</b>' + (hc && hc.sh >= 10 && hc.own ? ' (이미 있어 조각 10개)' : '') + '<br>영웅 등급 장비 ' + got.length + '점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20</div><div class="row"><div class="btn y" data-act="tab" data-v="equip">장비 끼러 가기</div></div>');
   }
+
+  /* ---------------- 결제 (웹: 토스페이먼츠 결제창 v2 / 앱: 구글 플레이 결제) ----------------
+     지금은 '시험 결제'(토스 문서의 공개 시험 키) — 실제 돈은 나가지 않는다. 실결제는 PAY_CK 를 live_ck 로, 서버 환경변수 TOSS_SECRET_KEY 를 live_sk 로 바꾸면 된다.
+     승인은 /api/kzpay/confirm (Cloudflare Pages Functions) 에서 하고, 받은 영수증(kz_pay_rcpt)의 주문번호마다 한 번만 지급한다. */
+  const PAY_CK = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq', PAY_TEST = /^test_/.test(PAY_CK);
+  const PAY_ITEMS = { jade300: [500, '옥 주머니 (옥 300)'], jade1k: [990, '옥 상자 (옥 1,000)'], starter: [990, '신규 스타트팩'], pass: [990, '황금 패스'] };
+  const PAY_PLAY = { jade300: 'kz_jade_s', jade1k: 'kz_jade_m', starter: 'kz_starter', pass: 'kz_pass' };
+  const isApp = () => { try { return /(^|[?&])src=app/.test(location.search) || sessionStorage.getItem('hk_src') === 'app' || document.referrer.indexOf('android-app://') === 0; } catch (e) { return false; } };
+  const payNote = () => isApp() ? '앱 결제 준비 중' : (PAY_TEST ? '시험 결제' : '');
+  function payModal(item) {
+    const P = PAY_ITEMS[item]; if (!P) return;
+    if (item === 'starter' && S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; }
+    if (item === 'pass' && S.pass && S.pass.paid) { toast('이미 황금 패스를 열었어요'); return; }
+    modal('<h3 class="stroke">' + P[1] + '</h3><p style="text-align:center;font-size:30px;margin:6px 0;color:#ffd36b"><b>' + P[0] + '원</b></p>' +
+      (PAY_TEST && !isApp() ? '<p style="text-align:center;color:#8fe0ff;font-size:16px">지금은 시험 결제예요. 실제 돈은 나가지 않아요.</p>' : '') +
+      '<p style="font-size:15px;line-height:1.55;color:#d8cdef;margin:8px 4px">결제 즉시 지급되는 디지털 상품이에요. 결제 후 7일 이내, 쓰지 않은 상품은 환불(청약 철회)할 수 있어요. 지급된 상품을 쓰면 환불이 제한될 수 있어요.</p>' +
+      '<div class="row"><div class="btn y" data-act="payGo" data-v="' + item + '" style="min-width:260px">' + (isApp() ? '구글 플레이로 결제' : '결제하기') + '</div></div>' +
+      '<p style="text-align:center;margin-top:8px"><a href="pay/terms.html" target="_blank" style="color:#f0c35a;font-size:15px">유료 상품 이용 안내 · 환불 정책</a></p>');
+  }
+  async function payGo(item) {
+    const P = PAY_ITEMS[item]; if (!P) return;
+    if (isApp()) return payPlay(item);
+    try {
+      if (!window.TossPayments) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://js.tosspayments.com/v2/standard'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
+      S.payCid = S.payCid || ('kzc_' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36)); save();
+      const orderId = 'kz-' + item.toLowerCase() + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      const base = location.origin + location.pathname.replace(/[^/]*$/, '');
+      const pay = window.TossPayments(PAY_CK).payment({ customerKey: S.payCid });
+      await pay.requestPayment({ method: 'CARD', amount: { currency: 'KRW', value: P[0] }, orderId, orderName: '조선좀비 ' + P[1], successUrl: base + 'pay/success.html', failUrl: base + 'pay/fail.html', card: { useEscrow: false, flowMode: 'DEFAULT', useCardPoint: false, useAppCardOnly: false } });
+    } catch (e) { if (e && e.code === 'USER_CANCEL') toast('결제를 취소했어요'); else { console.warn(e); toast('결제창을 열지 못했어요'); } }
+  }
+  /* 앱(TWA): Digital Goods API + Payment Request. Play Console 인앱 상품 등록 전이라 지금은 안내만 */
+  async function payPlay(item) {
+    try {
+      if (!('getDigitalGoodsService' in window)) { toast('앱 결제는 준비 중이에요'); return; }
+      const svc = await window.getDigitalGoodsService('https://play.google.com/billing'); const sku = PAY_PLAY[item];
+      const det = await svc.getDetails([sku]); if (!det || !det.length) { toast('앱 결제는 준비 중이에요'); return; }
+      const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'KRW', value: '0' } } });
+      const res = await req.show(); const token = res.details && res.details.purchaseToken;
+      /* TODO(실결제): 서버(/api/kzpay/play)에서 Google Play Developer API 로 token 확인 후 지급. 지금은 서버 확인 전이라 지급하지 않는다. */
+      await res.complete('fail'); toast('앱 결제 확인 기능을 준비 중이에요'); void token;
+    } catch (e) { console.warn(e); toast('앱 결제는 준비 중이에요'); }
+  }
+  /* 영수증 처리: 결제 성공 페이지가 남긴 영수증을 주문번호마다 한 번만 지급 */
+  function payClaim() {
+    let a = []; try { a = JSON.parse(localStorage.getItem('kz_pay_rcpt') || '[]'); } catch (e) {}
+    S.paidIds = S.paidIds || []; let got = '';
+    for (const r of a) {
+      if (!r || !r.orderId || !r.sig || S.paidIds.indexOf(r.orderId) >= 0 || !PAY_ITEMS[r.item] || r.amount !== PAY_ITEMS[r.item][0]) continue;
+      S.paidIds.push(r.orderId);
+      if (r.item === 'jade300') S.jade += 300; else if (r.item === 'jade1k') S.jade += 1000;
+      else if (r.item === 'starter') { if (!S.starter) grantStarter(); else S.jade += 300; }
+      else if (r.item === 'pass') { S.pass = S.pass || {}; S.pass.paid = 1; }
+      got = PAY_ITEMS[r.item][1];
+    }
+    if (got) { S.paidIds = S.paidIds.slice(-200); save(); toast(got + ' 지급 완료!'); try { refresh(); } catch (e) {} }
+  }
+  setTimeout(() => { try { payClaim(); } catch (e) { console.warn(e); } }, 1200);
+  window.addEventListener('storage', e => { if (e.key === 'kz_pay_rcpt') try { payClaim(); } catch (e2) {} });
   function starterModal() {
     modal('<h3 class="stroke">신규 스타트팩</h3><div style="text-align:center"><div style="width:220px;height:220px;margin:0 auto;border-radius:20px;background:#2a1a3a url(img/ui/hero_honggildong.webp?v=4) center/cover;box-shadow:0 0 0 4px #e39bff"></div>' +
       '<p style="font-size:19px;line-height:1.6;margin:10px 0">영웅 <b style="color:#e39bff">홍길동</b> 바로 합류<br>영웅 등급 장비 4점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20<br><small style="color:#ffd36b">계정당 한 번 · ' + (S.starter ? '이미 받았어요' : '남은 기간 ' + stDays() + '일') + '</small></p></div>' +
-      '<div class="row">' + (S.starter ? '<div class="btn b dis">받음</div>' : '<div class="btn p" data-act="passBuy" style="flex-direction:column;gap:0;min-width:300px"><span>990원</span><small style="font-size:16px">결제 준비 중</small></div>') + '</div>' +
+      '<div class="row">' + (S.starter ? '<div class="btn b dis">받음</div>' : '<div class="btn p" data-act="payBuy" data-v="starter" style="flex-direction:column;gap:0;min-width:300px"><span>990원</span><small style="font-size:16px">' + payNote() + '</small></div>') + '</div>' +
       '<div class="row"><div class="btn b" data-act="coupon">시험 쿠폰 입력</div></div>');
   }
   function couponModal() {
@@ -894,7 +953,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     modal('<h3 class="stroke">시즌 패스</h3>' + allBtn('passAll', passReady().length) + '<p style="text-align:center;margin:0 0 8px">' + S.pass.season.replace('-', '년 ') + '월 시즌 · 전투를 하면 패스 점수가 쌓여요</p>' +
       '<div class="xbar"><i style="width:' + (lv >= PASS_N ? 100 : into) + '%"></i><span class="stroke-s">' + lv + '단계 · ' + (lv >= PASS_N ? '최고' : into + '/' + PASS_XP) + '</span></div>' +
       '<div class="xphd"><span>단계</span><span>무료</span><span>황금 패스</span></div><div class="xscroll">' + rows + '</div>' +
-      '<div class="row">' + (S.pass.paid ? '<div class="btn y" style="min-width:300px">황금 패스 사용 중</div>' : '<div class="btn p" data-act="passBuy" style="min-width:320px;flex-direction:column;gap:0"><span>황금 패스 열기 990원</span><small style="font-size:16px">결제 준비 중</small></div>') + '</div>', 'xwide');
+      '<div class="row">' + (S.pass.paid ? '<div class="btn y" style="min-width:300px">황금 패스 사용 중</div>' : '<div class="btn p" data-act="passBuy" style="min-width:320px;flex-direction:column;gap:0"><span>황금 패스 열기 990원</span><small style="font-size:16px">' + payNote() + '</small></div>') + '</div>', 'xwide');
   }
   /* 업적 */
   const ACH = [
@@ -1328,7 +1387,9 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'close': closeModal(); try { refresh(); } catch (e2) {} break;   /* 보상을 받고 닫으면 빨간 점·재화를 바로 다시 계산 */
       case 'pass': passModal(); break;
       case 'passGet': { xinit(); const row = v[0], i = +v.slice(1), lv = Math.floor(S.pass.xp / PASS_XP); if (lv <= i) break; if (row === 'f' && !S.pass.f[i]) { const [k, n] = passFree(i); give(k, n); S.pass.f[i] = 1; toast('패스 선물을 받았어요'); } else if (row === 'p' && S.pass.paid && !S.pass.p[i]) { const [k, n] = passPaid(i); give(k, n); S.pass.p[i] = 1; toast('황금 패스 선물을 받았어요'); } save(); try { refresh(); } catch (e2) {} passModal(); break; }
-      case 'passBuy': toast('결제는 준비 중이에요. 곧 열려요!'); break;
+      case 'passBuy': payModal('pass'); break;
+      case 'payBuy': payModal(v); break;
+      case 'payGo': payGo(v); break;
       case 'ach': achModal(); break;
       case 'achGet': { xinit(); const a = ACH.find(x => x.id === v); if (!a || S.ach[a.id] || a.v() < a.need) break; S.ach[a.id] = 1; give(a.r[0], a.r[1]); save(); toast('업적 보상을 받았어요'); try { refresh(); } catch (e2) {} achModal(); break; }
       case 'codex': codexModal(); break;
@@ -1435,7 +1496,7 @@ if (window.IS_EN) document.title = 'K Zombi';
         else if (v === 'stone20') { if (S.jade < 80) { toast('옥이 부족해요'); break; } S.jade -= 80; S.stone += 20; toast('신력석 20'); }
         else if (v === 'torch30') { if (S.jade < 40) { toast('옥이 부족해요'); break; } S.jade -= 40; S.torch = Math.min(99, S.torch + 30); toast('횃불 30'); closeModal(); }
         else if (v === 'starterPk') { starterModal(); break; }
-        else if (v === 'jade300' || v === 'jade1k') { toast('결제는 준비 중이에요. 곧 열려요!'); break; }   /* 유료 상품: 결제가 붙기 전에는 지급하지 않는다 */
+        else if (v === 'jade300' || v === 'jade1k') { payModal(v); break; }   /* 유료 상품: 결제가 붙기 전에는 지급하지 않는다 */
         refresh(); if ($('#s-map').classList.contains('on')) renderMap(); break;
       }
       case 'prob': probModal(v); break;
