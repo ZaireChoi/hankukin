@@ -190,7 +190,7 @@ const DICT = {
 /* 로비 */
 '챕터 1번 도전하기': 'Play a chapter once', '장비 1번 강화하기': 'Upgrade gear once', '뽑기 1번 하기': 'Summon once', '터치하여 시작': 'Tap to Start', '역병 든 밤, 처용이 마을을 지킨다': 'A night of plague. Cheoyong guards the village.',
 '시제품 0.4': 'Prototype 0.4', '가득': 'Full', '상점': 'Shop', '장비': 'Gear', '모험': 'Adventure', '· 밤': '·', '번': '', '지도 ▸': 'Map ▸', '출석': 'Check-in', '임무': 'Quests', '패스': 'Pass', '축제': 'Event',
-'랭킹': 'Ranking', '우편': 'Mail', '설정': 'Settings', '업적': 'Achievements', '도감': 'Collection', '친구': 'Friends', '문파': 'Clan', '순찰 보상': 'Patrol Reward', '모험 시작': 'Start Adventure', '시간': 'h', '분': 'm',
+'랭킹': 'Ranking', '우편': 'Mail', '설정': 'Settings', '업적': 'Achievements', '도감': 'Collection', '이야기': 'Story', '깨어난 수호자': 'Awakened Guardians', '오프닝 다시 보기': 'Replay opening', '최후의 결전! ': 'Final Battle! ', '우두머리 출현! ': 'Boss appears! ', '친구': 'Friends', '문파': 'Clan', '순찰 보상': 'Patrol Reward', '모험 시작': 'Start Adventure', '시간': 'h', '분': 'm',
 '착용': 'Equip', '영웅까지 같은 장비 3개 · 전설·신화는 같은 칸 2개를 먹여 +1~+3 · 도면': 'Up to Epic: 3 identical items · Legendary/Mythic: feed 2 of the same slot for +1~+3 · Blueprints',
 '부위': 'pieces', '공격': 'ATK', '체력': 'HP', '일괄 착용': 'Equip best', '일괄 합성': 'Merge all', '가진 장비가 없어요. 상점에서 뽑아 보세요.': 'No gear yet. Try summoning in the Shop.',
 '출전': 'Deployed', '함께 싸울 영웅을 2명까지 데려가요': 'Bring up to 2 heroes into battle', '큰 기술 ·': 'Ultimate ·', '· 조각': '· Shards', '출전 빼기': 'Remove', '출전하기': 'Deploy', '레벨업': 'Level up',

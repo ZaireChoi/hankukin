@@ -6,6 +6,9 @@ const { W, VH, H, SHRINE, WALL_Y, GATE, EN, TUR, WEAPON, GUARD, COMP, SKILLS } =
 const WW = D.WW || W, CX = D.CX || W / 2;   /* WIDE_MAP2: W=화면 폭, WW=판 폭 */
 let PADS = D.PADS, LANE_X = D.LANE_X;   /* 판마다 layoutOf로 바뀐다 */
 const TAU = Math.PI * 2;
+/* 우두머리 한 줄 소개 (이야기\\세계관_스토리.md) */
+const BOSS_LINE = { mujang: ['검은 배의 선봉장. 가장 먼저 마을을 덮쳤다.', 'Vanguard of the black ship, first to strike the village.'], zbear: ['역병에 물든 산의 주인. 앞발 한 번에 담장이 무너진다.', 'The plagued lord of the mountain. One swipe topples a wall.'], ztiger: ['고개를 지키던 범. 이제는 눈보라 속 사냥꾼.', 'The tiger of the pass, now a hunter in the storm.'], zgrand: ['고을을 지키던 장수. 이제 역병 군대를 이끈다.', 'Once the town\'s general, now leading the plague army.'], zsamurai: ['역병에 물든 무사. 빠른 칼놀림을 조심하라.', 'A plagued swordsman. Watch his quick blade.'], mudang: ['좀비에게 의식을 불어넣는 어둠의 무녀.', 'The dark shaman who gives zombies their will.'], zqueen2: ['얼어붙은 뒤뜰의 왕비. 차가운 숨결로 얼린다.', 'The queen of the frozen garden, freezing with her breath.'], byeomra: ['저승 다리를 거꾸로 건너온 자. 사슬로 끌어당긴다.', 'He crossed back from the underworld. Beware his chains.'], king: ['역병에 물든 임금. 되돌려야 할 가장 큰 희생자.', 'The plagued king, the greatest victim we must save.'], bdokryong: ['바다 밑에서 깨어난 독룡. 독을 뿜어 땅을 물들인다.', 'A poison dragon from the deep, staining the land.'], bulgasari: ['쇠를 먹고 자라는 괴물. 탑과 성벽을 갉아먹는다.', 'The iron-eating beast that gnaws towers and walls.'], jangsanbeom: ['아는 사람 목소리를 흉내 내는 흰 괴수.', 'The white beast that mimics voices you know.'], bheukryong: ['검은 배의 주인. 돌진하며 베어 온다.', 'Master of the black ship. He charges and slashes.'], bdukkeobi: ['고개를 막은 바위 두꺼비. 뛰어올라 내리찍는다.', 'The rock toad of the pass. It leaps and slams.'], yeoksin: ['역병의 신. 모든 어둠의 세력의 우두머리.', 'The Plague God, ruler of all dark powers.'] };
+function bossLine(t) { const b = BOSS_LINE[t]; return b ? (window.IS_EN ? b[1] : b[0]) : ''; }
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];
 const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
@@ -508,7 +511,7 @@ function spawnBig(type, boss) {
   const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = camTop() - 90;
   const e = spawnEnemy(type, x, y, boss ? { boss: true } : { elite: true });
   if (boss) { /* 등장: 큰 그림자가 먼저 드리우고 땅이 흔들린다 */ FX.shake = Math.max(FX.shake || 0, 0.9); G.tele.push({ x: e.x, y: Math.max(e.y, camTop() + 140), r: e.r * 4.5, t: 1.2, life: 1.2, c: '120,0,0' }); for (let i = 0; i < 3; i++) G.queue.push({ t: 0.35 * i, fn: () => { FX.shake = 0.5; FX.debris(e.x + rnd(-80, 80), e.y + rnd(-20, 40), 8, '#4a3a2a', 260); } });
-    G.bossRef = e; G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss' }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
+    G.bossRef = e; G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
   else G.banner = { s: '정예 출현!', t: 2.4, kind: 'elite' };
   sfx('warn');
   return e;
@@ -2352,7 +2355,6 @@ function drawHUD(day) {
   const own = Object.keys(G.sk).filter(k => SKILLS.find(s => s.id === k).kind === 'atk');
   for (const id of own) {
     { const im = G.evo && G.evo[id] ? (SKI['ev_' + id] || SKI[id]) : SKI[id]; if (im) { ctx.save(); rrPath(632, ry - 32, 64, 64, 14); ctx.clip(); const s = Math.max(64 / im.width, 64 / im.height); ctx.drawImage(im, 664 - im.width * s / 2, ry - im.height * s / 2, im.width * s, im.height * s); ctx.restore(); rrPath(632, ry - 32, 64, 64, 14); ctx.strokeStyle = G.evo && G.evo[id] ? '#ffd34a' : '#c9a24a'; ctx.lineWidth = G.evo && G.evo[id] ? 4 : 2.5; ctx.stroke(); } else ctx.drawImage(skillIcon(id, 64), 632, ry - 32, 64, 64); }
-    /* 기술 쿨타임(사용자 11-26): 남은 시간 원형 가림 + 초 표시, 준비되면 반짝 */ { G.skMx = G.skMx || {}; G.skLast = G.skLast || {}; const tq = G.skT[id] || 0; if (tq > 0.5 && tq > (G.skLast[id] || 0) + 0.15) G.skMx[id] = tq; G.skLast[id] = tq; const mq = G.skMx[id] || 0; if (tq > 0.05 && mq > 0) { const fq = Math.min(1, tq / mq); ctx.save(); rrPath(632, ry - 32, 64, 64, 14); ctx.clip(); ctx.beginPath(); ctx.moveTo(664, ry); ctx.arc(664, ry, 62, -Math.PI / 2, -Math.PI / 2 + TAU * fq); ctx.closePath(); ctx.fillStyle = 'rgba(0,0,0,.58)'; ctx.fill(); ctx.restore(); ctx.font = '900 24px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 5; ctx.strokeStyle = '#0c1416'; const sq = tq >= 1 ? String(Math.ceil(tq)) : tq.toFixed(1); ctx.strokeText(sq, 664, ry + 9); ctx.fillStyle = '#fff'; ctx.fillText(sq, 664, ry + 9); } else if (mq > 0) { rrPath(632, ry - 32, 64, 64, 14); ctx.strokeStyle = 'rgba(255,236,140,' + (0.45 + 0.4 * Math.sin(G.t * 7)) + ')'; ctx.lineWidth = 4; ctx.stroke(); } }
     circle(690, ry + 22, 13); ctx.fillStyle = '#123a3a'; ctx.fill(); ctx.strokeStyle = '#9ef0e0'; ctx.lineWidth = 2; ctx.stroke(); txt(String(G.sk[id]), 690, ry + 23, 16, '#fff', 'center', false);
     ry += 74;
   }
@@ -2425,6 +2427,7 @@ function drawHUD(day) {
     ctx.fillStyle = 'rgba(255,230,160,.8)'; ctx.fillRect(60, by - 48, W - 120, 3); ctx.fillRect(60, by + 45, W - 120, 3);
     if (B.kind !== 'win') { ctx.fillStyle = '#ffd040'; ctx.beginPath(); ctx.moveTo(110, by - 34); ctx.lineTo(146, by + 30); ctx.lineTo(74, by + 30); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#3a1a00'; ctx.lineWidth = 4; ctx.stroke(); txt('!', 110, by + 10, 40, '#3a1a00', 'center', false); }
     txt(B.s, 380, by + 2, 40, '#fff6d8', 'center', '#2a0a00', 8);
+    if (B.sub) txt(B.sub, 380, by + 72, 19, '#ffe9c0', 'center', '#200800', 5);
     ctx.restore(); ctx.globalAlpha = 1;
   }
   /* 큰 제목 */
