@@ -261,6 +261,34 @@ if (window.IS_EN) document.title = 'K Zombi';
   function modal(html, cls) { closeModal(); const m = document.createElement('div'); m.className = 'modal'; m.id = 'mdl'; m.innerHTML = '<div class="mbox box gold-frame ' + (cls || '') + '">' + html + '<div class="btn r x" data-act="close">✕</div></div>'; root.appendChild(m); }
   function closeModal() { const m = $('#mdl', root); if (m) m.remove(); }
 
+  /* ---------------- 이야기 (세계관: 이야기\세계관_스토리.md) ---------------- */
+  const OP_CUTS = [
+    ['19세기 조선. 이상한 역병을 실은 검은 배가 남쪽 바다에 닿았다.', 'Joseon, 19th century. A black ship carrying a strange plague reached the southern sea.'],
+    ['배에서 내린 역병 든 무리가 마을과 장터를 덮쳤다.', 'A plague-stricken horde poured off the ship and swept over villages and markets.'],
+    ['쌓인 죽음 속에서 잠들어 있던 어둠의 세력, 역신이 깨어나 좀비에게 의식을 불어넣었다.', 'From all that death, the Plague God awoke and gave the zombies a will of their own.'],
+    ['그때, 사당의 처용 탈이 빛나기 시작했다. 신라의 수호자 처용이 다시 깨어난다!', 'Then the old Cheoyong mask in the shrine began to glow. The guardian Cheoyong rises again!'],
+    ['잠들어 있던 나라의 수호자들도 하나둘 깨어났다. 낮에는 지키고, 밤에는 막아라. 조선을 되찾자!', "Joseon's sleeping guardians wake one by one. Build by day, hold by night. Take Joseon back!"]
+  ];
+  const CH_STORY = ['검은 배에서 내린 무리가 마을을 덮쳤다. 사당의 처용 탈이 빛난다!', '장꾼들이 떠난 장터, 산에서 내려온 곰마저 역병에 물들었다.', '피란길 고개에 눈보라와 함께 범의 울음소리가 들린다.', '관아가 불탄다. 고을을 지키던 장수가 적이 되어 돌아왔다.', '안개 속 나루에 검은 배가 또 닿았다.', '산성이 무너졌다. 남은 병사들과 성문을 다시 세우자.', '서원에서 이상한 굿 소리. 좀비가 생각하고 움직이기 시작했다.', '궁궐 뒤뜰이 얼어붙었다. 왕비마저 역병에 물들었다.', '죽은 이들이 건너는 다리를 거꾸로 건너오는 자가 있다.', '임금이 역병에 물들었다. 궁궐을 되찾아야 한다.',
+    '성곽을 따라 역병 군대가 밀려온다.', '포구 물빛이 검게 변했다. 바다 밑에서 독룡이 깨어났다.', '광산 깊은 곳, 검은 무녀가 다시 굿판을 열었다.', '대숲이 운다. 숲의 짐승들이 모두 어둠에 물들었다.', "동굴 벽화에 그려진 이름, 역병의 신 '역신'이 모습을 드러낸다.", '쇠를 먹는 괴물 불가사리가 탑을 갉아먹고 있다.', '붉은 단풍 사이, 산사를 지키던 범이 적이 되었다.', '옛 왕들의 무덤이 열렸다. 염라가 다시 돌아왔다.', '저잣거리에서 아는 사람 목소리가 들린다. 장산범의 흉내다!', '역신이 군영을 세웠다. 처용과 역신의 첫 맞대결.',
+    '검은 배의 주인, 흑룡 대장이 섬에 진을 쳤다.', '늪에 빠진 쇳덩이를 먹고 불가사리가 더 커졌다.', '고개를 막은 바위가 움직인다. 두꺼비 거인이다.', '저승 문턱에서 독룡이 길을 막는다.', '해골로 쌓은 성채, 장산범의 울음이 메아리친다.', '백두의 얼음 아래 어둠의 뿌리가 뻗어 있다.', '궁궐 지하에 숨은 임금의 그림자를 되돌려야 한다.', '구름 위 다리, 처음 마을을 덮쳤던 무장이 다시 나타났다.', '종묘를 차지한 흑룡 대장과의 마지막 싸움.', '역신의 옥좌. 처용의 춤으로 역병을 걷어 내자!'];
+  const CH_STORY_EN = ['A horde from the black ship falls on the village. The Cheoyong mask glows!', 'The market is empty, and even the mountain bear has caught the plague.', 'Snow, wind, and a tiger\'s roar on the refugee pass.', 'The magistrate\'s hall burns. Its own general has come back as the enemy.', 'Another black ship lands at the misty ferry.', 'The fortress has fallen. Rebuild the gate with the last soldiers.', 'Strange chanting at the academy. The zombies have started to think.', 'The palace garden is frozen, and the queen has caught the plague.', 'Someone is crossing the River of the Dead the wrong way.', 'The king has caught the plague. Take back the palace!',
+    'The plague army marches along the walls.', 'The harbor turns black. A poison dragon wakes beneath the sea.', 'Deep in the mine, the Black Shaman begins another ritual.', 'The bamboo forest weeps. Its beasts have all turned dark.', 'A name on the cave wall: the Plague God shows himself.', 'Bulgasari, the iron-eating beast, is gnawing at the pagoda.', 'Among red maples, the temple tiger has turned.', 'The royal tombs are open. Yeomra is back.', 'A familiar voice in the streets... it is the Jangsan Tiger mimicking it!', 'The Plague God builds a war camp. First clash with Cheoyong.',
+    'The Black Dragon Captain camps on the island.', 'Fed on sunken iron, Bulgasari grows even larger.', 'The rock blocking the pass moves. It is the Toad Giant!', 'The poison dragon blocks the threshold of the underworld.', 'A fortress of skulls echoes with the Jangsan Tiger\'s cry.', 'Under Baekdu\'s ice, the roots of darkness spread.', 'Bring back the king\'s shadow from beneath the palace.', 'On the bridge above the clouds, the first warlord returns.', 'The last battle with the Black Dragon Captain at the royal shrine.', 'The Plague God\'s throne. End the plague with Cheoyong\'s dance!'];
+  function chStory(n) { const a = window.IS_EN ? CH_STORY_EN : CH_STORY; return a[(n - 1) % 30] || ''; }
+  function storyOpening(done) {
+    let i = 0; const ov = document.createElement('div'); ov.id = 'kzop';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:manipulation';
+    const draw = () => { const c = OP_CUTS[i], t = window.IS_EN ? c[1] : c[0];
+      ov.innerHTML = '<div style="position:relative;height:100%;max-width:100vw;aspect-ratio:9/16;background:url(img/story/op' + (i + 1) + '.webp?v=1) center/cover">' +
+        '<div style="position:absolute;left:0;right:0;bottom:0;padding:22px 20px 34px;background:linear-gradient(transparent,rgba(0,0,0,.85) 35%);color:#fff;font:800 19px/1.5 Pretendard,\'Malgun Gothic\',sans-serif;text-align:center;text-shadow:0 2px 3px #000">' + t +
+        '<div style="margin-top:10px;font-size:13px;opacity:.7">' + (i + 1) + ' / ' + OP_CUTS.length + (window.IS_EN ? ' · tap to continue' : ' · 화면을 누르면 넘어가요') + '</div></div>' +
+        '<div id="kzopSkip" style="position:absolute;top:14px;right:14px;padding:8px 16px;border-radius:20px;background:rgba(0,0,0,.55);color:#fff;font:700 15px sans-serif;border:1px solid rgba(255,255,255,.4)">' + (window.IS_EN ? 'Skip' : '건너뛰기') + '</div></div>'; };
+    const end = () => { ov.remove(); try { done && done(); } catch (e) { console.warn(e); } };
+    ov.addEventListener('click', e => { if (e.target && e.target.id === 'kzopSkip') return end(); i++; if (i >= OP_CUTS.length) end(); else draw(); });
+    draw(); document.body.appendChild(ov);
+  }
+
   /* ---------------- 첫 화면 ---------------- */
   function renderTitle() {
     $('#s-title').innerHTML =
@@ -573,7 +601,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<p>보상: 엽전·경험치 2배, 신화 장비 확률, 첫 클리어 옥 ' + (100 + 10 * n) + '</p>' +
       '<p>권장 전투력 <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
       '<div class="row"><div class="btn r" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>악몽 도전</span><small style="font-size:18px">횃불 5</small></div></div>'); return; }
-    modal('<h3 class="stroke">챕터 ' + n + ' · ' + c.name + '</h3>' +
+    modal('<h3 class="stroke">챕터 ' + n + ' · ' + c.name + '</h3>' + '<p style="text-align:center;color:#ffe3a3;font-weight:700;margin:-4px 0 10px">' + chStory(n) + '</p>' +
       '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ffd36b;margin-bottom:14px"></div>' +
       elInfo(n, false) + '<p>밤 ' + c.waves + '번을 버티면 이겨요. 마지막 밤에는 우두머리가 나와요.</p>' +
       '<p>권장 전투력 <b style="color:' + (st.power >= rec ? '#7df06a' : '#ff8e8e') + '">' + fmt(rec) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
@@ -856,7 +884,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function settingsModal() {
     modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
       '<div class="row"><div class="btn ' + (localStorage.getItem('kz_vib') === '0' ? 'b' : 'g') + '" data-act="toggleVib">' + (localStorage.getItem('kz_vib') === '0' ? '진동 끔' : '진동 켬') + '</div></div>' +
-      '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div><div class="btn b" data-act="runlog">판 기록</div></div>' +
+      '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div><div class="btn b" data-act="runlog">판 기록</div></div>' + '<div class="row"><div class="btn g" data-act="opening">' + (window.IS_EN ? 'Replay opening' : '오프닝 다시 보기') + '</div></div>' +
       '<p style="text-align:center;margin-top:20px">저장은 이 기기에 자동으로 돼요.</p><div class="row"><div class="btn r" data-act="reset">처음부터 다시</div></div>');
   }
 
@@ -1414,7 +1442,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     const t = e.target.closest('[data-act]'); if (!t) return;
     const a = t.dataset.act, v = t.dataset.v;
     switch (a) {
-      case 'enter': music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); break;
+      case 'enter': { const go = () => { music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); }; if (!S.seenOp) { S.seenOp = 1; save(); storyOpening(go); } else go(); break; }
+      case 'opening': closeModal(); storyOpening(null); break;
       case 'tab': tab = v; closeModal(); renderLobby(); break;
       case 'goShop': tab = 'shop'; renderLobby(); break;
       case 'buyTorch': torchHelp(); break;
