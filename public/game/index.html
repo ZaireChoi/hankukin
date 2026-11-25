@@ -102,6 +102,15 @@ header{padding:4px 0 2px}
 .sec-t{display:flex;align-items:baseline;justify-content:space-between;margin-top:26px;color:#cfdaf5}
 .sec-t b{font-size:18px;letter-spacing:.5px}.sec-t small{color:var(--sub);font-size:13px}
 .how{margin-top:30px}.how div{padding:13px}
+.news{display:none;margin:4px auto 8px;max-width:820px;border:1px solid var(--line);border-radius:18px;background:var(--card);backdrop-filter:blur(8px);padding:12px 16px}
+.news.on{display:block}
+.news .nh{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:14px}
+.news .nh b{letter-spacing:1px}.news .nh a{color:var(--sub);font-size:13px}
+.news a.ni{display:flex;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:14px}
+.news a.ni:first-of-type{border-top:none}
+.news .nt{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.news .nt.c-notice{color:#8fc8ff}.news .nt.c-update{color:#7fe0a8}.news .nt.c-event{color:#ffb84d}.news .nt.c-maint{color:#ff7a9a}.news .nt.c-post{color:#c9b8ff}
+.news .ttl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.news .dt{color:var(--sub);font-size:12px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -116,6 +125,7 @@ header{padding:4px 0 2px}
   <p data-t="lead">브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.</p>
   <div class="pills"><span class="pill" data-t="p1">무료</span><span class="pill" data-t="p2">설치 없음</span><span class="pill" data-t="p3">PC · 모바일</span><span class="pill" data-t="p4">한국어 · English</span></div>
  </section>
+ <section class="news" id="hkNews"><div class="nh"><b id="hkNewsH">📢 공지사항</b><a href="/game/notice/" id="hkNewsAll">전체 보기 →</a></div><div id="hkNewsList"></div></section>
  <div class="sec-t"><b data-t="secT">게임</b><small data-t="secS">웹에서 바로, 또는 로블록스에서</small></div>
  <section class="grid g3">
   <div class="game ani">
@@ -177,6 +187,34 @@ function rs(){W=c.width=innerWidth*devicePixelRatio;H=c.height=innerHeight*devic
 addEventListener('resize',rs);rs();
 (function f(t){const gr=g.createRadialGradient(W*.5,H*.1,0,W*.5,H*.1,H*1.1);gr.addColorStop(0,'#1c1640');gr.addColorStop(.5,'#0b1024');gr.addColorStop(1,'#05070d');g.fillStyle=gr;g.fillRect(0,0,W,H);
  for(const s of st){s.y+=(.05+s.z*.35)*devicePixelRatio;if(s.y>H)s.y=0;g.fillStyle=`rgba(200,220,255,${.25+s.z*.7})`;g.fillRect(s.x,s.y,1+s.z*2,1+s.z*2);}requestAnimationFrame(f);})();
+</script>
+<script type="module">
+// 공지사항 (관리자 페이지 /game/admin/ 에서 올린 글 중 공개된 것 최신 3개)
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+const cfg = { apiKey: "AIzaSyAqOGFP1fm-Aa18s1GAFGkUtLu-kvEo2cE", authDomain: "hankukin-play.firebaseapp.com", projectId: "hankukin-play", storageBucket: "hankukin-play.firebasestorage.app", messagingSenderId: "388085274912", appId: "1:388085274912:web:1c91b85b7f5deb6c459f45" };
+const napp = initializeApp(cfg, 'hk-news');
+const ndb = getFirestore(napp);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const CAT = { ko: { notice: '공지', update: '업데이트', event: '이벤트', maint: '점검', post: '소식' }, en: { notice: 'Notice', update: 'Update', event: 'Event', maint: 'Maintenance', post: 'News' } };
+let items = [];
+function render() {
+  const ko = (document.documentElement.lang || 'ko') === 'ko', C = ko ? CAT.ko : CAT.en;
+  document.getElementById('hkNewsH').textContent = ko ? '📢 공지사항' : '📢 News';
+  document.getElementById('hkNewsAll').textContent = ko ? '전체 보기 →' : 'See all →';
+  document.getElementById('hkNewsList').innerHTML = items.slice(0, 3).map(n => {
+    const t = (!ko && n.titleEn) ? n.titleEn : n.title; const d = new Date(n.createdAt || 0);
+    return '<a class="ni" href="/game/notice/?id=' + encodeURIComponent(n.id) + '"><span class="nt c-' + esc(n.cat) + '">' + (n.pinned ? '📌 ' : '') + esc(C[n.cat] || n.cat) + '</span><span class="ttl">' + esc(t) + '</span><span class="dt">' + (d.getMonth() + 1) + '.' + d.getDate() + '</span></a>';
+  }).join('');
+  document.getElementById('hkNews').classList.toggle('on', items.length > 0);
+}
+try {
+  const qs = await getDocs(query(collection(ndb, 'notices'), where('published', '==', true)));
+  qs.forEach(d => items.push({ id: d.id, ...d.data() }));
+  items.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdAt || 0) - (a.createdAt || 0));
+  render();
+  document.getElementById('langs').addEventListener('click', () => setTimeout(render, 0));
+} catch (e) {}
 </script>
 <script type="module" src="/game/account.js" data-mode="portal"></script>
 </body>
