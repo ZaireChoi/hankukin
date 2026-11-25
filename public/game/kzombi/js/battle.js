@@ -669,7 +669,9 @@ function build(pad, k) {
   G.padKey = '';
 }
 $('btnBattle').addEventListener('click', () => startNight());
-function startNight() {
+/* 밤이 끝나거나 새 밤이 시작될 때 남은 공격·효과를 모두 지운다(사용자 11-27: 이전 밤 발사체가 멈춰 남았다가 다음 밤에 이어서 날아감) */
+function clearCombat() { if (!G) return; G.eshots = []; G.shots = []; G.zones = []; G.queue = []; G.tele = []; G.beams = []; G.marks = []; G.vortexes = []; G.waves = []; if (G.pzs) G.pzs = []; G.spirits = []; if (G.gadgets) G.gadgets = []; for (const c of (G.comps || [])) { c.fire = 0; c.atkK = null; } if (G.player) { G.player.fire = 0; } }
+function startNight() { clearCombat();
   if (!G || G.phase !== 'day') return;
   $('btnBattle').classList.remove('on'); bPanel.classList.remove('on');
   if (G.log) G.log.nights.push(logSnap('dusk'));
@@ -971,7 +973,7 @@ function update(dtr) {
   if (G.mode === 'arena') { arenaTick(); if (G.arFoe && G.arFoe.dead) { G.title = null; G.banner = { s: '결투 승리!', t: 2, kind: 'win' }; return endGame(true); } if (G.time >= N.dur) { G.loseWhy = '시간 안에 이기지 못했다'; return endGame(false); } }
   if (G.time >= N.dur && !(N.boss && (!G.bossOut || bossAlive))) {
     for (const e of G.enemies) { FX.p({ kind: 'glow', x: e.x, y: e.y - 20, life: 0.5, s: 40, s2: 4, c: '255,230,160' }); FX.ember(e.x, e.y - 10, '255,230,160', 4, 120); }
-    G.kills += G.enemies.length; G.enemies = []; G.eshots = []; G.shots = []; G.zones = [];
+    G.kills += G.enemies.length; G.enemies = []; clearCombat();
     G.phase = 'dawn'; G.dawnT = 2.2; joy.on = false; G.bossRef = null;
     G.title = { s: '동이 튼다', sub: '보상 엽전 +' + (70 + G.night * 15), t: 2 };
   }
