@@ -71,7 +71,34 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 h1{margin:0;font-size:clamp(34px,8vw,68px);font-weight:900;letter-spacing:6px;line-height:1}
 h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-top:10px;font-weight:700}
 .sub{margin:14px 0 22px;font-size:15px;opacity:.85}
-#mechs{display:flex;gap:10px;margin-bottom:16px}
+#mechs{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;max-width:min(96vw,980px);padding:4px 4px 8px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+#mechs::-webkit-scrollbar{height:6px}#mechs::-webkit-scrollbar-thumb{background:#fff3;border-radius:3px}
+.mech{flex:0 0 auto;scroll-snap-align:center}
+.mech.locked img{filter:grayscale(1) brightness(.55)}.mech.locked em{color:#ffcf5a;opacity:1}
+#title{justify-content:safe center;overflow-y:auto;overflow-x:hidden;padding-top:60px}
+#topbar{position:fixed;top:max(10px,env(safe-area-inset-top));left:0;right:0;display:flex;gap:8px;justify-content:flex-end;align-items:center;padding:0 12px;z-index:3}
+#coreTop{margin-right:auto;font-weight:800;font-size:16px;background:#000a;border:1px solid #fff2;border-radius:999px;padding:7px 14px}
+.tb{position:relative;padding:8px 13px;border-radius:999px;border:1px solid #fff3;background:#000a;color:#fff;font:700 13px inherit;cursor:pointer}
+.dot{position:absolute;top:-2px;right:-2px;width:11px;height:11px;border-radius:50%;background:#ff4a4a;box-shadow:0 0 8px #ff4a4a}
+#mdet{width:min(560px,94vw);background:#000b;border:1px solid #fff2;border-radius:14px;padding:12px 14px;margin-bottom:14px;text-align:left}
+#mdet .mh{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}#mdet .mh b{font-size:19px}#mdet .mh span{font-size:12px;opacity:.7}
+#mdet .st{display:flex;gap:12px;margin-bottom:8px;font-size:11px;opacity:.9}#mdet .st span{flex:1;display:flex;flex-direction:column;gap:3px}
+#mdet .st i,.ms i{display:block;height:6px;border-radius:3px;background:#fff2;overflow:hidden}#mdet .st em,.ms em{display:block;height:100%;background:linear-gradient(90deg,#ffb04a,#ffd27a)}
+#mdet .sk{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}#mdet .sk span{background:#ffffff12;border:1px solid #fff2;border-radius:8px;padding:6px 9px;font-size:13px;font-weight:700}
+#mdet .sk small{display:block;font-size:10px;font-weight:500;opacity:.6;margin-top:2px}
+#mdet .ps{font-size:12px;opacity:.75}#mdet .req{font-size:12px;color:#ffb0a0;margin-top:6px}
+.go.small{padding:10px 22px;font-size:15px;letter-spacing:1px;margin-top:8px}
+#reward{margin:2px 0 14px}#reward .rw{font-size:22px;font-weight:900;color:#9ff3ff}#reward .rw small{font-size:13px;opacity:.7;margin-left:6px}#reward .rwd{font-size:12px;opacity:.7;margin-top:3px}#reward .rwm{font-size:13px;color:#7dff9a;margin-top:6px}
+#nextThreat{margin-bottom:10px;background:linear-gradient(180deg,#ff9a6a,#ff4a5a);color:#fff}
+.panel{background:#0a070bf2;z-index:5;overflow-y:auto;overflow-x:hidden;justify-content:safe center}.panel h2{margin:0 0 6px;font-size:24px}.panel h3{margin:16px 0 8px;font-size:16px}.pnote{opacity:.75;font-size:13px;margin:0 0 12px}
+#upList,#msList{width:min(520px,94vw);display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.up,.ms{display:flex;align-items:center;gap:10px;background:#ffffff0d;border:1px solid #fff2;border-radius:12px;padding:10px 12px;text-align:left}
+.up .ic{font-size:24px}.up .tx,.ms .tx{flex:1;display:flex;flex-direction:column;gap:3px}.up b,.ms b{font-size:14px}.up small,.ms small{font-size:11px;opacity:.65}.up em{font-style:normal;font-size:12px;opacity:.8}
+.up button,.ms button{min-width:74px;padding:9px 10px;border-radius:9px;border:0;font:800 13px inherit;background:linear-gradient(180deg,#ffd27a,#ff9a3a);color:#1a0f08;cursor:pointer}
+.up button:disabled,.ms button:disabled{filter:grayscale(1);opacity:.45;cursor:default}
+#loginRow{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:94vw}.day{width:64px;padding:8px 4px;border-radius:10px;background:#ffffff0d;border:1px solid #fff2;font-size:12px}.day b{display:block;font-size:13px;margin-top:3px}
+.day.got{opacity:.4}.day.now{border-color:#ffcf5a;box-shadow:0 0 14px #ffcf5a66}
+.rb.sm{width:58px;height:58px;position:absolute;right:8px;bottom:calc(100% + 14px)}.rb.sm span{font-size:24px}#bAuto.ready{border-color:#9ff3ff;box-shadow:0 0 14px #9ff3ff88}
 .mech{width:104px;padding:8px 6px 9px;border-radius:12px;border:2px solid #fff2;background:#000a;color:inherit;font:inherit}
 .mech img{width:84px;height:84px;object-fit:cover;border-radius:8px;display:block;margin:0 auto 6px;background:#222}
 .mech strong{display:block;font-size:14px}
@@ -121,6 +148,7 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
   <div id="hpwrap"><div id="slots"></div><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt"></div></div>
   <button id="bPause" aria-label="일시정지">Ⅱ</button>
   <div id="btns">
+<button class="rb sm" id="bAuto" aria-label="자동 스킬 (E)" title="자동 스킬 (E)"><i></i><span>⚡</span></button>
     <button class="rb" id="bDash" aria-label="대시 (Space)" title="대시 (Space)"><i></i><span>💨</span></button>
     <button class="rb" id="bFly" aria-label="비행 (F)" title="비행 / 착지 (F)"><i></i><span>✈️</span></button>
     <button class="rb" id="bUlt" aria-label="필살기 (Q)" title="필살기 (Q)"><i></i><span>💥</span></button>
@@ -130,27 +158,31 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
 <div id="hurt"></div>
 
 <div id="title" class="ov">
+<div id="topbar"><span id="coreTop">💎 0</span><button class="tb" id="bHangar">🛠️ 격납고</button><button class="tb" id="bDaily">📅 출석·임무<i id="dailyDot" class="dot hide"></i></button></div>
   <h1>ASCEND<small>라스트 스탠드</small></h1>
   <div class="sub">5분을 버티고, 여왕을 쓰러뜨려라</div>
   <div id="mechs"></div>
+<div id="mdet"></div>
   <div id="threat"><button id="thDn">−</button><span>위험도 <b id="thV">1</b></span><button id="thUp">＋</button></div>
   <button class="go" id="start" disabled>출격</button>
   <div id="rec"></div>
-  <div id="help">이동 WASD · 방향키 / 화면 드래그　대시 Space　비행 F　필살기 Q　공격·보호막은 자동</div>
+  <div id="help">이동 WASD · 방향키 / 화면 드래그　대시 Space　비행 F　필살기 Q　스킬 E　공격·보호막은 자동</div>
   <div id="load">불러오는 중</div>
 </div>
 
+<div id="hangar" class="ov hide panel"><h2>🛠️ 격납고 강화</h2><p class="pnote">모든 기체에 영구 적용됩니다 · 보유 💎 <b id="coreH">0</b></p><div id="upList"></div><button class="ghost" id="hClose">닫기</button></div>
+<div id="daily" class="ov hide panel"><h2>📅 출석 · 일일 임무</h2><p class="pnote" id="streak"></p><div id="loginRow"></div><button class="go small" id="claimLogin">출석 보상 받기</button><h3>오늘의 임무</h3><div id="msList"></div><button class="ghost" id="dClose">닫기</button></div>
 <div id="lvl" class="ov hide"><h2 id="lvlT">강화 선택</h2><p id="lvlS">하나를 고르세요</p><div id="cards"></div></div>
 <div id="pause" class="ov hide"><h2>일시정지</h2><button class="go" id="resume" style="margin-top:18px">계속</button>
   <button class="ghost" id="mute">소리 끄기</button><button class="ghost" id="quit">나가기</button></div>
 <div id="over" class="ov hide"><h2 id="ovT"></h2><div id="newrec" class="hide">신기록</div><div id="stats"></div>
-  <button class="go" id="retry">다시 출격</button><button class="ghost" id="toTitle">기체 바꾸기</button></div>
+  <div id="reward"></div><button class="go hide" id="nextThreat">🔥 다음 위험도 도전</button><button class="go" id="retry">다시 출격</button><button class="ghost" id="toTitle">기체 바꾸기</button></div>
 
 <script>window.__MSLE_BB=23.75/90;window.__phone=matchMedia("(pointer:coarse)").matches;window.step=function(){};window.mdlAnimate=function(){};window.__tfHoldOK=true;</script>
 <script src="lib/explosionfx.js?v=3"></script>
 <script src="lib/ascend_missile.js?v=3"></script>
 <script src="lib/transform.js?v=3"></script>
 <script src="lib/ascend_tf3.js?v=3"></script>
-<script type="module" src="game.js?v=4"></script>
+<script type="module" src="game.js?v=5"></script>
 </body>
 </html>
