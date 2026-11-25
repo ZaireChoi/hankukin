@@ -948,15 +948,15 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'tab': tab = v; closeModal(); renderLobby(); break;
       case 'goShop': tab = 'shop'; renderLobby(); break;
       case 'buyTorch': modal('<h3 class="stroke">횃불</h3><p>챕터에 들어갈 때 5개를 써요. 6분마다 1개씩 차오르고 최대 30개예요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개</div></div>'); break;
-      case 'close': closeModal(); break;
+      case 'close': closeModal(); try { refresh(); } catch (e2) {} break;   /* 보상을 받고 닫으면 빨간 점·재화를 바로 다시 계산 */
       case 'pass': passModal(); break;
-      case 'passGet': { xinit(); const row = v[0], i = +v.slice(1), lv = Math.floor(S.pass.xp / PASS_XP); if (lv <= i) break; if (row === 'f' && !S.pass.f[i]) { const [k, n] = passFree(i); give(k, n); S.pass.f[i] = 1; toast('패스 선물을 받았어요'); } else if (row === 'p' && S.pass.paid && !S.pass.p[i]) { const [k, n] = passPaid(i); give(k, n); S.pass.p[i] = 1; toast('황금 패스 선물을 받았어요'); } save(); passModal(); break; }
+      case 'passGet': { xinit(); const row = v[0], i = +v.slice(1), lv = Math.floor(S.pass.xp / PASS_XP); if (lv <= i) break; if (row === 'f' && !S.pass.f[i]) { const [k, n] = passFree(i); give(k, n); S.pass.f[i] = 1; toast('패스 선물을 받았어요'); } else if (row === 'p' && S.pass.paid && !S.pass.p[i]) { const [k, n] = passPaid(i); give(k, n); S.pass.p[i] = 1; toast('황금 패스 선물을 받았어요'); } save(); try { refresh(); } catch (e2) {} passModal(); break; }
       case 'passBuy': toast('결제는 준비 중이에요. 곧 열려요!'); break;
       case 'ach': achModal(); break;
-      case 'achGet': { xinit(); const a = ACH.find(x => x.id === v); if (!a || S.ach[a.id] || a.v() < a.need) break; S.ach[a.id] = 1; give(a.r[0], a.r[1]); save(); toast('업적 보상을 받았어요'); achModal(); break; }
+      case 'achGet': { xinit(); const a = ACH.find(x => x.id === v); if (!a || S.ach[a.id] || a.v() < a.need) break; S.ach[a.id] = 1; give(a.r[0], a.r[1]); save(); toast('업적 보상을 받았어요'); try { refresh(); } catch (e2) {} achModal(); break; }
       case 'codex': codexModal(); break;
       case 'cdTab': cdTab = v; codexModal(); break;
-      case 'cdGet': { xinit(); const x = codexItems().find(o => o.k === v); if (!x || !x.own || S.codex[cdTab][v]) break; S.codex[cdTab][v] = 1; S.jade += x.r; save(); toast('도감 보상 옥 ' + x.r); codexModal(); break; }
+      case 'cdGet': { xinit(); const x = codexItems().find(o => o.k === v); if (!x || !x.own || S.codex[cdTab][v]) break; S.codex[cdTab][v] = 1; S.jade += x.r; save(); toast('도감 보상 옥 ' + x.r); try { refresh(); } catch (e2) {} codexModal(); break; }
       case 'event': evModal(); break;
       case 'evGet': { xinit(); if (S.ev.got >= 7 || S.ev.last === today()) break; const [k, n] = EVR[S.ev.got]; give(k, n); S.ev.got++; S.ev.last = today(); save(); toast('축제 선물을 받았어요'); evModal(); break; }
       case 'rank': rankModal(); break;
