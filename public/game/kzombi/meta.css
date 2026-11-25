@@ -454,3 +454,31 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .gbst{display:flex;gap:8px;margin-top:6px}.gbs{text-align:center;font-size:14px;opacity:.55}.gbs.ok{opacity:1}.gbs[data-act]{cursor:pointer;animation:xallPulse 1.4s infinite}
 .eqmount{position:absolute;right:14px;bottom:6px;height:52px;padding:0 22px;font-size:21px;z-index:3}
 .skin .si .wbspr{margin-top:5px}
+
+/* 장비 화면 개편: 버튼 3개, 가방 거르기, 크게 보기, NEW·잠금, 강화 상자, 획득 알림 */
+.eqbtns{top:716px!important}.eqbtns .btn{width:200px!important;height:64px!important;font-size:24px!important}
+.bagbar{position:absolute;left:20px;right:20px;top:790px;height:50px;display:flex;gap:6px;align-items:center;z-index:4}
+.bagbar.big{top:96px;z-index:7}
+.bagbar .bf{flex:1;height:44px;border-radius:12px;background:rgba(14,20,44,.85);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;white-space:nowrap}
+.bagbar .bf.on{background:linear-gradient(#ffe08a,#f2b63a);color:#3a1a00;text-shadow:none;border-color:#fff3c0}
+.bagbar .bf.sort,.bagbar .bf.big{flex:1.3;background:rgba(60,40,120,.9)}
+.inv{top:846px!important}
+.inv.big{top:150px!important;z-index:6;background:rgba(12,16,38,.97)!important}
+.it .nwd{position:absolute;left:2px;bottom:2px;background:#ff4a3a;border-radius:7px;padding:0 4px;font-size:12px;color:#fff}
+.it .lkd{position:absolute;right:2px;bottom:0;font-size:16px}
+.xupbox{margin:12px 0 4px;padding:10px 14px;border-radius:14px;background:rgba(0,0,0,.35);border:2px solid rgba(255,220,120,.4);font-size:20px;text-align:center;line-height:1.4}
+.xupbox small{font-size:16px;opacity:.9}
+.btn.xbig{flex:1;height:72px;font-size:28px}
+.xbsg{display:flex;gap:10px;justify-content:center;margin:12px 0}.xbsg .btn{width:130px;height:56px;font-size:21px}
+.rwdrop{animation:rwflip 1s .5s both;box-shadow:0 0 18px var(--gc),0 0 40px var(--gc)!important}
+.rwdrop img,.rwdrop svg{width:70%;height:70%;object-fit:contain}
+@keyframes rwflip{0%{transform:rotateY(90deg) scale(.5);filter:brightness(3)}60%{transform:rotateY(-12deg) scale(1.18);filter:brightness(1.6)}100%{transform:none;filter:none}}
+.rwsrc{flex-basis:100%;width:100%;text-align:center;font-size:19px;margin-top:6px;animation:fadeUp .6s 1.2s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.gotit{position:absolute;left:50%;top:170px;transform:translateX(-50%);z-index:90;display:flex;gap:14px;align-items:center;padding:12px 20px;border-radius:18px;border:3px solid;background:rgba(14,18,40,.95);box-shadow:0 10px 24px rgba(0,0,0,.6);animation:gotIn .35s ease-out,gotOut .4s 2.4s forwards;min-width:420px}
+.gotit .gi{width:72px;height:72px;flex:none}.gotit b{font-size:22px}.gotit small{font-size:16px}
+@keyframes gotIn{from{opacity:0;transform:translate(-50%,-20px) scale(.9)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes gotOut{to{opacity:0;transform:translate(-50%,-14px)}}
+
+/* 신력석 칸과 챕터 카드가 겹치지 않게 */
+.chapcard{right:132px!important}

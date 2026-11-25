@@ -320,6 +320,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="pass">' + ic('star') + '<div class="lb stroke-s">패스</div>' + (passDot() ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="event">' + ic('gift') + '<div class="lb stroke-s">축제</div>' + (evDot() ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="rank">' + ic('power') + '<div class="lb stroke-s">랭킹</div></div>' +
+      '<div class="sb wbsb" data-act="wb">' + ic('skull' in I ? 'skull' : 'sword') + '<div class="lb stroke-s">월드보스</div>' + (wbDay().n < 3 ? '<i class="dot"></i>' : '') + '</div>' +
       '</div><div class="sidebtns r">' +
       '<div class="sb" data-act="mailbox">' + ic('mail') + '<div class="lb stroke-s">우편</div>' + (!S.mail ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="settings">' + ic('gear') + '<div class="lb stroke-s">설정</div></div>' +
@@ -327,7 +328,6 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="codex">' + ic('scroll') + '<div class="lb stroke-s">도감</div>' + (cdDot() ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="friend">' + ic('heart') + '<div class="lb stroke-s">친구</div></div>' +
       '<div class="sb" data-act="guild">' + ic('sword') + '<div class="lb stroke-s">문파</div></div>' +
-      '<div class="sb wbsb" data-act="wb">' + ic('skull' in I ? 'skull' : 'sword') + '<div class="lb stroke-s">월드보스</div>' + (wbDay().n < 3 ? '<i class="dot"></i>' : '') + '</div>' +
       '</div>' +
       '<div class="herostage"><div class="glow"></div><div class="hero" data-act="tab" data-v="equip"' + skinFull() + '></div></div>' +
       '<div class="statline"><div class="stat stroke-s">' + ic('sword') + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + fmt(st.hp) + '</div></div>' +
