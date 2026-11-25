@@ -1911,7 +1911,7 @@ function drawTitle() {
     b.addEventListener('click', () => { viewMech = m.id; if (own) { save.mech = m.id; persist(); ensureMech(m.id).catch(() => { }); } drawTitle(); });
     box.appendChild(b);
   }
-  box.scrollLeft = sx;
+  box.scrollLeft = sx; { const on = box.querySelector('.mech.on'); if (on) { const l = on.offsetLeft - box.offsetLeft, r = l + on.offsetWidth; if (l < box.scrollLeft) box.scrollLeft = l - 8; else if (r > box.scrollLeft + box.clientWidth) box.scrollLeft = r - box.clientWidth + 8; } }
   const m = MECH(viewMech), own = !!save.own[m.id], reqOk = !m.req || save.maxThreat >= m.req, an = ARM_NAME[m.prim];
   $('#mdet').innerHTML = `<div class="mh"><b>${m.nm}</b><span>${m.ty}</span></div>`
     + `<div class="st">${sbar('내구', m.hp / 1.5)}${sbar('화력', m.dmg / 1.35)}${sbar('속도', m.spd / 1.25)}</div>`
