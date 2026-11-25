@@ -64,6 +64,7 @@ Object.assign(D.EN, {
   zbat:    { n: '박쥐 떼', hp: 10, sp: 150, r: 9, dmg: 3, cd: 0.7, xp: 1, h: 40, fly: 1, swarm: 4, flap: 1 },
   byeomra:   { n: '역병 염라', hp: 2800, sp: 40, r: 26, dmg: 30, cd: 1.4, xp: 0, h: 110, summoner: 1, chain: 1 },
   bdokryong: { n: '독룡 이무기', hp: 3200, sp: 56, r: 28, dmg: 30, cd: 1.3, xp: 0, h: 104, breath: 1 },
+  bheukryong: { n: '흑룡 대장', hp: 3600, sp: 70, r: 26, dmg: 34, cd: 1.1, xp: 0, h: 110, armor: 3, charger: 1 },
   bdukkeobi: { n: '바위 두꺼비 거인', hp: 1800, sp: 36, r: 32, dmg: 36, cd: 1.5, xp: 0, h: 100, armor: 3, slam: 1, hop: 1 },
   xwisp:   { n: '도깨비불 정령', hp: 40, sp: 110, r: 11, dmg: 6, cd: 0.9, xp: 2, h: 50, fly: 1, tag: 'explore' },
   xlooter: { n: '폐허 약탈 좀비', hp: 60, sp: 140, r: 12, dmg: 7, cd: 0.8, xp: 2, h: 60, tag: 'explore' }
@@ -132,7 +133,7 @@ D.OBJ = {
   for (const k in R4P) for (const n of R4P[k]) { const C = D.CHAPTERS[n - 1]; if (C && D.EN[k] && !C.pool.includes(k)) C.pool.push(k); }
   { const seen2 = new Set(); for (const C of D.CHAPTERS) { C.fresh = C.pool.filter(k => !seen2.has(k)); C.pool.forEach(k => seen2.add(k)); } }
   /* 우두머리: 같은 우두머리가 두 번 넘게 나오지 않게 (30장 역신은 최종 결전이라 예외) */
-  const BOSS = [0, 'mujang', 'zbear', 'ztiger', 'zgrand', 'zsamurai', 'zsamurai', 'mudang', 'zqueen2', 'byeomra', 'king', 'zgrand', 'bdokryong', 'mudang', 'zbear', 'yeoksin', 'bulgasari', 'ztiger', 'byeomra', 'jangsanbeom', 'yeoksin', 'zqueen2', 'bulgasari', 'bdukkeobi', 'bdokryong', 'jangsanbeom', 'bdukkeobi', 'king', 'mujang', 'zox', 'yeoksin'];
+  const BOSS = [0, 'mujang', 'zbear', 'ztiger', 'zgrand', 'zsamurai', 'zsamurai', 'mudang', 'zqueen2', 'byeomra', 'king', 'zgrand', 'bdokryong', 'mudang', 'zbear', 'yeoksin', 'bulgasari', 'ztiger', 'byeomra', 'jangsanbeom', 'yeoksin', 'bheukryong', 'bulgasari', 'bdukkeobi', 'bdokryong', 'jangsanbeom', 'bdukkeobi', 'king', 'mujang', 'bheukryong', 'yeoksin'];
   for (const C of D.CHAPTERS) if (BOSS[C.n] && D.EN[BOSS[C.n]]) C.boss = BOSS[C.n];
   D.revealed = ch => { const s = new Set(); for (const C of D.CHAPTERS) { if (C.n > ch) break; C.pool.forEach(k => s.add(k)); } return s; };
 })();
