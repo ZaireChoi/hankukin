@@ -82,6 +82,10 @@ const MECHS = [
 const RAR = { N: { nm: '일반', col: '#a7b0c2', mul: 1 }, R: { nm: '희귀', col: '#4fb6ff', mul: 1.06 }, SR: { nm: '영웅', col: '#b67bff', mul: 1.14 }, SSR: { nm: '전설', col: '#ffb84a', mul: 1.24 }, UR: { nm: '신화', col: '#ff5a7a', mul: 1.36 } };
 const RAR_ORDER = ['N', 'R', 'SR', 'SSR', 'UR'];
 const MECH = (id) => MECHS.find((m) => m.id === id) || MECHS[0];
+// 기종 분류: 장마다 추천 기종이 있고, 맞춰 출격하면 보너스
+const CLS = { 근접: { k: 'katana', ds: '가까이 붙어 베는 기체' }, 사격: { k: 'rifle', ds: '멀리서 쏘는 기체' }, 기동: { k: 'dash', ds: '빠르게 움직이는 기체' }, 중장: { k: 'armor', ds: '튼튼하고 묵직한 기체' } };
+const CLS_OF = { mech4: '기동', m_samurai: '근접', m_striker: '사격', mech3: '근접', m_guardian: '중장', m_titan: '중장', m_ranger: '사격', m_artillery: '중장', m_sky: '기동', m_phantom: '기동', m_wizard: '사격', m_origin: '사격', mech_leg: '근접', god: '근접', god_white: '사격', god_red: '근접', god_black: '기동' };
+for (const m of MECHS) m.cls = CLS_OF[m.id] || '사격';
 // 기체별 전투기 모델(변신 엔진 JETM과 같은 이름)
 const JET_OF = { mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet', god: 'm_wizard_jet', god_white: 'm_sky_jet', god_red: 'm_striker_jet', god_black: 'm_phantom_jet' };
 // 주무기 이름: 같은 강화(rifle)라도 기체의 기본 무기에 맞춰 부른다
@@ -782,6 +786,7 @@ save.maxThreat ||= 1; save.best ||= {}; save.mech ||= 'mech4'; save.threat ||= 1
 save.core ??= 0; save.own ??= { mech4: 1, m_samurai: 1, m_striker: 1 }; save.up ??= {}; save.daily ??= {}; save.stat ??= { runs: 0, kills: 0, wins: 0 };
 if (!save.own[save.mech]) save.mech = 'mech4';
 save.gem ??= 300; save.stars ??= {}; save.pity ??= { n: 0 }; save.chMax ??= Math.min(10, Math.max(1, save.maxThreat || 1)); save.ch ??= Math.min(save.chMax, save.threat || 1);
+if (!save.stv) { const oc = save.chMax || 1; save.chMax = Math.min(24, 1 + Math.round((oc - 1) * 23 / 9)); const ns = {}; for (let i = 1; i < save.chMax; i++) ns[i] = 1; save.stars = ns; save.ch = save.chMax; save.stv = 2; }
 const persist = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) { } };
 
 const G = { state: 'title', t: 0, kills: 0, threat: 1, shake: 0, slow: 0, bossOn: false, boss: null, mid: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0 };
@@ -1596,7 +1601,7 @@ function drawSlots() {
 }
 function drawBuild() {
   const m = MECH(save.mech);
-  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>CHAPTER ${G.chi + 1} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
+  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
     + Object.keys(UP).filter((k) => P.w[k] > 0).map((k) => { const u = UP[k], an = k === 'rifle' && ARM_NAME[PRIM], lv = P.w[k];
       return `<div>${ico(k === 'rifle' ? PRIM : k)}<span><b>${an ? an.nm : u.nm} Lv ${lv}/${u.max}</b><small>${an && lv === 1 ? an.ds0 : u.ds[Math.min(lv - 1, u.ds.length - 1)]}</small></span></div>`; }).join('');
 }
@@ -1917,12 +1922,12 @@ function endRun(won) {
   if (better) save.best[key] = { t: Math.round(G.t), k: G.kills, w: won ? 1 : 0 };
   const rw = runReward(won); persist();
   $('#ovT').textContent = won ? '임무 완료' : '기체 대파'; $('#ovT').className = won ? 'win' : 'lose';
-  $('#ovSub').textContent = `CHAPTER ${G.chi + 1} · ${CHAPTERS[G.chi].nm}`;
+  $('#ovSub').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`;
   $('#ovStars').innerHTML = ['여왕 격파', '내구 50% 이상', '여왕 60초 안에'].map((s, i) => `<span class="${G.lastStars[i] ? 'on' : ''}"><i>★</i>${s}</span>`).join('');
   $('#newrec').classList.toggle('hide', !better);
   $('#stats').innerHTML = [['clock', fmt(G.t), '생존 시간'], ['skull', G.kills, '격파'], ['lv', P.lvl, '레벨'], ['star', G.st.big, '보스 격파']].map(([i, v, l]) => `<div>${ico(i)}<b class="num">${v}</b><small>${l}</small></div>`).join('');
   $('#reward').innerHTML = rw.html;
-  const nextOk = won && G.chi + 1 < CHAPTERS.length; $('#nextThreat').classList.toggle('hide', !nextOk); $('#nextThreat').textContent = `다음 챕터 ${G.chi + 2}`;
+  const nextOk = won && G.chi + 1 < CHAPTERS.length; $('#nextThreat').classList.toggle('hide', !nextOk); $('#nextThreat').textContent = nextOk ? `다음 · ${stLabel(G.chi + 1)}` : '';
   ADS.offer('double', $('#adDouble'), `광고 보고 보상 2배`, () => { save.core += rw.earned; save.gem += rw.gem; persist(); $('#reward').insertAdjacentHTML('beforeend', '<div class="rwm">광고 보상 2배 지급 완료</div>'); });
   setTimeout(() => { $('#over').classList.remove('hide'); countUp($('#reward')); }, won ? 300 : 700);
   $('#hud').classList.add('hide');
@@ -1941,14 +1946,15 @@ async function startRun() {
   $('#start').textContent = st0; $('#retry').disabled = false;
   G.chi = clamp(save.ch, 1, save.chMax) - 1; G.threat = CHAPTERS[G.chi].th; leaveLobby(); resetRun(); await setMech(save.mech);
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
+  G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
   { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico(m.ult.k); $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico(m.auto.k); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
-    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg)`; $('#chLabel').textContent = `CHAPTER ${G.chi + 1} · ${CHAPTERS[G.chi].nm}`; }
+    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
   $('#btns').style.display = ''; drawSlots(); G.state = 'play'; last = performance.now();
   music.currentTime = 0; if (!muted) music.play().catch(() => { });
   for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; spawn('ling', Math.cos(a) * 105, Math.sin(a) * 105); }
-  banner(`CHAPTER ${G.chi + 1} · ${CHAPTERS[G.chi].nm}`, 2200); $('#start').disabled = false;
+  banner(`${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}${G.recOk ? ' · 추천 기종 보너스' : ''}`, 2600); $('#start').disabled = false;
 }
 
 // ───────── 그리기 ─────────
@@ -2339,20 +2345,53 @@ const loginReady = () => save.daily.lastClaim !== dayKey();
 const dailyPending = () => loginReady() || (save.daily.ms || []).some((m) => m.done && !m.got);
 
 // ── 챕터: 1장은 처음 난이도 그대로. 장이 오를수록 적 구성·땅 색·중간 보스가 바뀌고 강해진다
-const CHAPTERS = [
-  { nm: '모래 전선', ds: '제타 무리의 첫 습격. 5분을 버티고 여왕을 쓰러뜨려라', th: 1, early: 0, mix: {}, mids: ['goliath', 'scorp', 'brood'], g: [1, 1, 1], sky: 0x2a1a24, c: ['#6a4a2a', '#2a1a14'] },
-  { nm: '붉은 협곡', ds: '감염 보병과 기계 병사가 협곡을 메운다', th: 1.5, early: 15, mix: { trooper: 2, robo: 1.8, aat: 1.3 }, mids: ['goliath', 'goliath', 'scorp'], g: [1.05, .72, .6], sky: 0x2e130e, c: ['#8a3a22', '#2a0e08'] },
-  { nm: '산성 늪', ds: '산성병과 플라즈마가 쏟아지는 늪지', th: 2, early: 25, mix: { spit: 2.4, plasma: 2, bane: 1.5 }, mids: ['scorp', 'scorp', 'brood'], g: [.72, .92, .6], sky: 0x132016, c: ['#3a6a2a', '#0e1a0a'] },
-  { nm: '제공권', ds: '하늘을 뒤덮은 날벌레와 전투기. 비행도 안전하지 않다', th: 2.5, early: 35, mix: { wing: 3, jet: 4, heli: 4, aat: 2, aagun: 2 }, mids: ['brood', 'goliath', 'brood'], g: [.85, .9, 1.05], sky: 0x14202e, c: ['#2a4a7a', '#0a1222'] },
-  { nm: '기계 반란', ds: '대공 전차와 골리앗이 전선을 밀고 온다', th: 3, early: 45, mix: { robo: 2.5, aat: 2, aagun: 3, trooper: 1.5 }, mids: ['goliath', 'goliath', 'goliath'], g: [.82, .82, .88], sky: 0x1a1a20, c: ['#5a5a66', '#16161c'] },
-  { nm: '칠흑의 밤', ds: '어둠 속에서 모든 적이 몰려온다', th: 3.6, early: 55, mix: { lurk: 2, wing: 2 }, mids: ['scorp', 'brood', 'goliath'], g: [.5, .52, .68], sky: 0x0a0a16, c: ['#22224a', '#05050e'] },
-  { nm: '화산 지대', ds: '용암빛 대지, 거대 개체가 쉬지 않는다', th: 4.2, early: 65, mix: { roach: 2, bane: 2 }, mids: ['goliath', 'scorp', 'scorp'], g: [1.05, .58, .42], sky: 0x2a0c06, c: ['#9a3a10', '#2a0802'] },
-  { nm: '얼음 평원', ds: '얼어붙은 평원 위의 총력전', th: 4.9, early: 75, mix: { trooper: 2, aat: 2, jet: 3 }, mids: ['brood', 'goliath', 'scorp'], g: [.92, 1, 1.12], sky: 0x18222e, c: ['#6a8aa8', '#141e2a'] },
-  { nm: '공허의 틈', ds: '차원의 틈에서 쏟아지는 제타 정예', th: 5.6, early: 90, mix: { spit: 2, lurk: 2, heli: 3 }, mids: ['scorp', 'brood', 'brood'], g: [.8, .62, 1], sky: 0x160a24, c: ['#5a2a8a', '#12061e'] },
-  { nm: '최후의 저항', ds: '모든 적, 모든 보스. 이 전장을 지켜라', th: 6.5, early: 110, mix: { jet: 3, aagun: 2, heli: 3 }, mids: ['goliath', 'scorp', 'brood'], g: [1.08, .86, .55], sky: 0x241608, c: ['#a8782a', '#2a1806'], twin: true },
+// 막 = ASCEND 은하 지도의 행성, 장 = 그 행성의 전장. 기체는 유저가 고르고, 장마다 추천 기종만 있다
+const ACTS = [
+  { pl: 'earth', nm: '지구 · 네오 서울', st: '첫 침공', col: '#5ad1ff', rw: 'm_guardian' },
+  { pl: 'aegis', nm: '궤도 기지 이지스', st: '망명자의 함대', col: '#9fe0ff', rw: 'm_ranger' },
+  { pl: 'ignis', nm: '화산 행성 이그니스', st: '불의 행성', col: '#ff7a2a', rw: 'm_titan' },
+  { pl: 'niv', nm: '빙하 위성 니브', st: '얼음 아래의 진실', col: '#bfe9ff', rw: 'm_sky' },
+  { pl: 'lumen', nm: '빛의 성운 루멘', st: '수호자의 각성', col: '#ffd166', rw: 'm_origin' },
+  { pl: 'hive', nm: '제타 대모 하이브', st: '최후의 저항', col: '#ffa040', rw: 'mech_leg' },
 ];
+const STG = [
+  // 1막 지구 · 네오 서울
+  ['모래 전선', '제타 무리의 첫 습격. 넓은 사막이니 빠르게 움직이며 싸워라', ['기동'], {}, ['goliath', 'scorp', 'brood'], [1, 1, 1], 0x2a1a24, ['#6a4a2a', '#2a1a14']],
+  ['무너진 고가도로', '좁은 도로로 보병이 밀려든다. 몰려오는 적을 베어 넘겨라', ['근접'], { trooper: 2, robo: 1.4 }, ['goliath', 'scorp', 'goliath'], [.9, .88, .95], 0x1c1a26, ['#4a4a5a', '#16141e']],
+  ['붉은 협곡', '대공 보병이 하늘을 노린다. 다가오기 전에 멀리서 쏴라', ['사격'], { trooper: 1.6, aat: 2, spit: 1.3 }, ['scorp', 'goliath', 'brood'], [1.05, .72, .6], 0x2e130e, ['#8a3a22', '#2a0e08']],
+  ['결전 · 네오 서울의 하늘', '도시를 지켜라. 제타 여왕이 직접 내려온다', ['근접', '사격'], { trooper: 1.5, robo: 1.5, wing: 1.6 }, ['goliath', 'brood', 'scorp'], [.95, .85, .9], 0x241a2e, ['#5a4a7a', '#1a1226']],
+  // 2막 궤도 기지 이지스
+  ['격납 갑판', '기계 병사가 갑판을 점령했다. 단단한 장갑으로 버티며 밀어내라', ['중장'], { robo: 2.6, trooper: 1.4 }, ['goliath', 'goliath', 'scorp'], [.82, .86, .95], 0x141a26, ['#4a5a7a', '#10141e']],
+  ['제공권', '날벌레와 전투기가 하늘을 덮었다. 비행은 위험하다. 대공 사격이 답이다', ['사격'], { wing: 3, jet: 4, heli: 3, aat: 1.5 }, ['brood', 'goliath', 'brood'], [.85, .9, 1.05], 0x14202e, ['#2a4a7a', '#0a1222']],
+  ['기계 반란', '대공 전차와 골리앗이 전선을 밀고 온다', ['중장'], { robo: 2.5, aat: 2, aagun: 3 }, ['goliath', 'goliath', 'goliath'], [.82, .82, .88], 0x1a1a20, ['#5a5a66', '#16161c']],
+  ['결전 · 망명자의 함대', '폭격이 쏟아진다. 멈추면 죽는다. 움직이며 여왕을 잡아라', ['기동'], { jet: 3, heli: 3, wing: 2, aagun: 1.5 }, ['brood', 'goliath', 'scorp'], [.78, .84, 1], 0x101a30, ['#3a5a9a', '#0a1020']],
+  // 3막 화산 행성 이그니스
+  ['용암 평원', '자폭충이 끝없이 굴러온다. 붙기 전에 쏴서 터뜨려라', ['사격'], { bane: 2.6, roach: 1.6 }, ['scorp', 'goliath', 'scorp'], [1.05, .58, .42], 0x2a0c06, ['#9a3a10', '#2a0802']],
+  ['재의 협곡', '바퀴충 떼가 좁은 길을 메운다. 베고 지나가라', ['근접'], { roach: 2.4, trooper: 1.4 }, ['goliath', 'scorp', 'brood'], [.8, .6, .52], 0x221010, ['#6a3a2a', '#1e0a06']],
+  ['분화구', '플라즈마가 쏟아지는 분화구. 한자리에 서 있지 마라', ['기동'], { plasma: 2.4, bane: 1.6, spit: 1.3 }, ['scorp', 'scorp', 'brood'], [1.1, .66, .4], 0x300e04, ['#b2501a', '#2a0a02']],
+  ['결전 · 불의 행성', '거대 개체가 쉬지 않는다. 버티는 쪽이 이긴다', ['중장'], { roach: 2, bane: 2, robo: 1.5 }, ['goliath', 'goliath', 'scorp'], [1.08, .5, .36], 0x2e0802, ['#a83410', '#2a0600']],
+  // 4막 빙하 위성 니브
+  ['얼음 평원', '탁 트인 설원. 저격과 대공 사격이 오간다', ['사격'], { trooper: 2, aat: 2, jet: 3 }, ['brood', 'goliath', 'scorp'], [.92, 1, 1.12], 0x18222e, ['#6a8aa8', '#141e2a']],
+  ['얼음 동굴', '어둠 속 잠복충이 바로 옆에서 튀어나온다', ['근접'], { lurk: 2.4, roach: 1.4 }, ['scorp', 'scorp', 'goliath'], [.55, .62, .8], 0x0a1018, ['#2a3a5a', '#060a12']],
+  ['눈보라', '시야가 짧다. 사방에서 무리가 몰려온다. 포위되기 전에 빠져나가라', ['기동'], { wing: 2, spit: 1.6 }, ['brood', 'scorp', 'brood'], [.86, .94, 1.08], 0x1a2430, ['#8aa8c8', '#18222e']],
+  ['결전 · 얼음 아래의 진실', '얼음 밑에서 여왕과 브루드로드가 함께 깨어난다', ['중장'], { lurk: 1.6, aat: 1.6, heli: 2.5 }, ['goliath', 'brood', 'scorp'], [.7, .82, 1.05], 0x0e1828, ['#4a6a9a', '#0a1220'], 1],
+  // 5막 빛의 성운 루멘
+  ['공허의 틈', '차원의 틈에서 정예가 쏟아진다. 거리를 두고 쏴라', ['사격'], { spit: 2, lurk: 2, heli: 3 }, ['scorp', 'brood', 'brood'], [.8, .62, 1], 0x160a24, ['#5a2a8a', '#12061e']],
+  ['빛의 사원', '사원 회랑에 기계 병사가 줄지어 선다. 파고들어 베어라', ['근접'], { robo: 2.4, trooper: 2 }, ['goliath', 'scorp', 'goliath'], [1.05, .95, .7], 0x221a0c, ['#a8883a', '#221808']],
+  ['성운 폭풍', '하늘 전력의 총공세. 대공 사격과 빠른 발이 필요하다', ['사격', '기동'], { jet: 3.5, heli: 3.5, wing: 2.5 }, ['brood', 'brood', 'goliath'], [.9, .8, 1.05], 0x1a1030, ['#7a5aaa', '#140a22']],
+  ['결전 · 수호자의 각성', '칠흑의 성운에서 모든 적이 몰려온다', ['중장'], { lurk: 2, wing: 2, robo: 1.6 }, ['scorp', 'brood', 'goliath'], [.5, .52, .68], 0x0a0a16, ['#22224a', '#05050e']],
+  // 6막 제타 대모 하이브
+  ['산성 늪', '산성병과 플라즈마가 쏟아지는 늪. 멈추지 마라', ['기동'], { spit: 2.4, plasma: 2, bane: 1.5 }, ['scorp', 'scorp', 'brood'], [.72, .92, .6], 0x132016, ['#3a6a2a', '#0e1a0a']],
+  ['하이브 외벽', '두꺼운 외벽 앞 총력전. 맞으면서도 밀고 나가라', ['중장'], { roach: 2, robo: 2, aagun: 2 }, ['goliath', 'goliath', 'brood'], [.85, .75, .55], 0x1e1408, ['#7a5a2a', '#1a1006']],
+  ['군체의 심장', '심장부의 정예 무리. 붙어서 끊어 내라', ['근접'], { lurk: 2, bane: 2, spit: 1.5 }, ['scorp', 'brood', 'scorp'], [.95, .6, .45], 0x200a06, ['#8a3a1a', '#1e0804']],
+  ['결전 · 최후의 저항', '모든 적, 여왕과 브루드로드. 은하의 운명이 이 전장에 달렸다', ['중장', '근접'], { jet: 3, aagun: 2, heli: 3 }, ['goliath', 'scorp', 'brood'], [1.08, .86, .55], 0x241608, ['#a8782a', '#2a1806'], 1],
+];
+const CHAPTERS = STG.map(([nm, ds, rec, mix, mids, gg, sky, c, twin], i) => ({ a: Math.floor(i / 4), n: i % 4 + 1, nm, ds, rec, mix, mids, g: gg, sky, c, twin: !!twin,
+  th: +(1 + i * .283).toFixed(2), early: Math.round(Math.min(115, i * 5)) }));
+const stLabel = (i) => `${CHAPTERS[i].a + 1}막 ${CHAPTERS[i].n}장`;
+const recHtml = (c, cls) => `<span class="rec">${c.rec.map((k) => `<span class="${k === cls ? 'ok' : ''}">${ico(CLS[k].k)}${k}</span>`).join('')}</span>`;
 const CH = () => CHAPTERS[(G.chi ?? save.ch - 1)] || CHAPTERS[0];
-const CH_CLEAR_GEM = (i) => 100 + i * 20, CH_STAR_GEM = 30;
+const CH_CLEAR_GEM = (i) => 80 + i * 12, CH_STAR_GEM = 30;
 function applyChapterLook(ch) {
   if (terrainMat) terrainMat.color.setRGB(ch.g[0], ch.g[1], ch.g[2]);
   scene.background.set(ch.sky); scene.fog.color.set(ch.sky);
@@ -2367,7 +2406,8 @@ function runReward(won) {
   // 별: 클리어 · 내구 50% 이상 · 여왕을 60초 안에
   const ci = G.chi, got = [won, won && P.hp >= P.maxHp * .5, won && G.t <= RUN_TIME + 60], n = got.filter(Boolean).length, prev = save.stars[ci + 1] || 0;
   let gem = 0; const notes = [];
-  if (won && !prev) { gem += CH_CLEAR_GEM(ci); notes.push(`챕터 ${ci + 1} 첫 클리어 ✦${CH_CLEAR_GEM(ci)}`); if (ci + 2 <= CHAPTERS.length) { save.chMax = Math.max(save.chMax, ci + 2); notes.push(`챕터 ${ci + 2} 「${CHAPTERS[ci + 1].nm}」 열림`); } }
+  if (won && !prev) { gem += CH_CLEAR_GEM(ci); notes.push(`${stLabel(ci)} 첫 클리어 ✦${CH_CLEAR_GEM(ci)}`); if (ci + 2 <= CHAPTERS.length) { save.chMax = Math.max(save.chMax, ci + 2); notes.push(`${stLabel(ci + 1)} 「${CHAPTERS[ci + 1].nm}」 열림`); }
+    if (CHAPTERS[ci].n === 4) { const A = ACTS[CHAPTERS[ci].a], rid = A.rw, rm = MECH(rid), s0 = starOf(rid); if (!s0) { save.own[rid] = 1; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 · ${rm.nm} 획득`); } else if (s0 < 5) { save.own[rid] = s0 + 1; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 · ${rm.nm} 별 +1`); } else { gem += 300; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 ✦300`); } } }
   if (n > prev) { gem += (n - prev) * CH_STAR_GEM; save.stars[ci + 1] = n; notes.push(`별 ${n - prev}개 ✦${(n - prev) * CH_STAR_GEM}`); }
   save.gem += gem; G.lastGem = gem; G.lastStars = got;
   // 임무 진행
@@ -2380,7 +2420,7 @@ function runReward(won) {
     if (m.p >= m.n) { m.done = true; done.push(MPOOL.find((q) => q.k === m.k).t(m.n)); }
   }
   const html = `<div class="rws"><div class="rw">${ico('core')}<span class="num" data-to="${earned}">0</span></div>${gem ? `<div class="rw g">${ico('gem')}<span class="num" data-to="${gem}">0</span></div>` : ''}</div>`
-    + `<div class="rwd">격파 ${a} · 생존 ${b}${c ? ` · 승리 ${c}` : ''}${d ? ` · 보스 ${d}` : ''}${mul > 1 ? ` · 챕터 ×${mul.toFixed(2)}` : ''}</div>`
+    + `<div class="rwd">격파 ${a} · 생존 ${b}${c ? ` · 승리 ${c}` : ''}${d ? ` · 보스 ${d}` : ''}${mul > 1 ? ` · 난이도 ×${mul.toFixed(2)}` : ''}</div>`
     + notes.map((t) => `<div class="rwm">${t}</div>`).join('') + done.map((t) => `<div class="rwm">임무 완료: ${t} — 출석·임무에서 보상을 받으세요</div>`).join('');
   return { earned, gem, html };
 }
@@ -2437,7 +2477,8 @@ const ADS = {
 let muted0 = false;
 
 // ── 대기실(격납고): 가운데 회전대 위에 실제 3D 기체
-const lobby = { sc: new THREE.Scene(), cam: new THREE.PerspectiveCamera(30, 1, 1, 3000), on: false, rot: .5, vr: 0, drag: null };
+const LOBBY_FRONT = .3;
+const lobby = { sc: new THREE.Scene(), cam: new THREE.PerspectiveCamera(30, 1, 1, 3000), on: false, rot: LOBBY_FRONT, vr: 0, drag: null };
 function buildLobby() {
   lobby.cam.aspect = W / H; lobby.cam.updateProjectionMatrix();
   const L = lobby.sc, c = document.createElement('canvas'); c.width = 4; c.height = 256; const x = c.getContext('2d'), gr = x.createLinearGradient(0, 0, 0, 256);
@@ -2464,11 +2505,11 @@ function buildLobby() {
   const el = $('#title');
   el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,#mdet,#roster,#deploy,#topbar,.panel')) return; lobby.drag = { x: e.clientX, r: lobby.rot }; });
   addEventListener('pointermove', (e) => { if (!lobby.drag) return; lobby.rot = lobby.drag.r + (e.clientX - lobby.drag.x) * .012; lobby.vr = 0; });
-  addEventListener('pointerup', () => { lobby.drag = null; });
+  addEventListener('pointerup', () => { if (lobby.drag) lobby.rel = performance.now() / 1000; lobby.drag = null; });
 }
 function lobbyFrame(dt) {
   if (!lobby.on) return;
-  if (!lobby.drag) lobby.rot += dt * .32;
+  if (!lobby.drag) { const now = performance.now() / 1000; if (now - (lobby.rel || 0) > 1.8) { const tgt = LOBBY_FRONT + Math.sin(now * .45) * .3; let d = tgt - lobby.rot; d = Math.atan2(Math.sin(d), Math.cos(d)); lobby.rot += d * Math.min(1, dt * 2.4); } }
   P.wrap.rotation.set(0, lobby.rot - Math.PI / 2, 0); P.yaw = lobby.rot;
   if (lobby.r2) lobby.r2.rotation.y += dt * .4; if (lobby.dust) lobby.dust.position.y = Math.sin(performance.now() / 3000) * 2;
   // 화면이 넓으면 기체를 가운데 칸(목록과 정보 사이)에 맞춘다
@@ -2480,6 +2521,7 @@ async function enterLobby() {
   if (!booted) return;
   if (!lobby.on) { lobby.on = true; lobby.sc.add(P.group); }
   P.group.position.set(0, 0, 0); P.group.visible = true; P.x = P.z = 0; P.alt = 0; P.fly = false;
+  lobby.rot = LOBBY_FRONT; lobby.rel = 0;
   await setMech(viewMech);
   if (!lobby.on) return;
   for (const o of [shieldW, howW]) if (o) lobby.sc.add(o);
@@ -2504,7 +2546,7 @@ function drawTitle() {
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -2512,7 +2554,7 @@ function drawTitle() {
   $('#ownCnt').textContent = `${MECHS.filter((m) => starOf(m.id)).length} / ${MECHS.length}`;
   const m = MECH(viewMech), st = starOf(m.id), R0 = rarOf(m), an = ARM_NAME[m.prim], pm = st ? powMul(m) : rarOf(m).mul;
   $('#mdet').style.setProperty('--rc', R0.col);
-  $('#mdet').innerHTML = `<span class="rar">${R0.nm}</span>${st ? `<span class="stars">${'★'.repeat(st)}${'☆'.repeat(5 - st)}</span>` : ''}<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
+  $('#mdet').innerHTML = `<span class="rar">${R0.nm}</span><span class="clsb">${ico(CLS[m.cls].k)}${m.cls}</span>${st ? `<span class="stars">${'★'.repeat(st)}${'☆'.repeat(5 - st)}</span>` : ''}<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
     + statBar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm)) + statBar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm)) + statBar('속도', m.spd, 1.3, Math.round(100 * m.spd)) + statBar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))
     + `<div class="kit"><div><span class="bd">${ico(m.prim)}</span><span><b>${an.nm}</b><small>기본 무기 · ${an.ds0}</small></span></div>`
     + `<div><span class="bd a">${ico(m.auto.k)}</span><span><b>${m.auto.nm}</b><small>스킬 · E · ${m.auto.cd}초</small></span></div>`
@@ -2524,18 +2566,41 @@ function drawTitle() {
   if (st && save.mech !== m.id) { save.mech = m.id; persist(); }
   // 챕터
   save.ch = clamp(save.ch, 1, save.chMax); const ci = save.ch - 1, C0 = CHAPTERS[ci];
-  $('#chNo').textContent = `CHAPTER ${ci + 1}`; $('#chNm').textContent = C0.nm; $('#chStars').textContent = chStarsTxt(ci);
+  $('#chNo').textContent = `${stLabel(ci)} · ${ACTS[C0.a].nm}`; $('#chNm').textContent = C0.nm; $('#chStars').textContent = chStarsTxt(ci);
+  { const cl = MECH(save.mech).cls, ok = C0.rec.includes(cl); $('#chRec').innerHTML = `<small>추천</small>${recHtml(C0, cl)}<em class="${ok ? 'ok' : ''}">${ok ? '보너스 적용 · 화력 +15% 내구 +10%' : '추천 기종이면 화력 +15% 내구 +10%'}</em>`; }
   $('#chPrev').disabled = save.ch <= 1; $('#chNext').disabled = save.ch >= save.chMax; $('#chPrev').style.opacity = save.ch <= 1 ? .3 : 1; $('#chNext').style.opacity = save.ch >= save.chMax ? .3 : 1;
 }
+let mapAct = null;
+function actOpen(a) { return a * 4 + 1 <= save.chMax; }
 function drawChapters() {
-  $('#chList').innerHTML = CHAPTERS.map((c, i) => { const lock = i + 1 > save.chMax;
-    return `<button class="cc ${lock ? 'lock' : ''} ${i + 1 === save.ch ? 'on' : ''}" data-i="${i + 1}" style="--c1:${c.c[0]};--c2:${c.c[1]}" ${lock ? 'disabled' : ''}><small>CHAPTER ${i + 1}</small><b>${c.nm}</b><p>${c.ds}</p><span class="s">${chStarsTxt(i)}</span><span class="rw">${save.stars[i + 1] ? '클리어' : `첫 클리어 ${ico('gem')} ${CH_CLEAR_GEM(i)}`}</span></button>`; }).join('');
+  if (mapAct == null || !actOpen(mapAct)) mapAct = CHAPTERS[save.ch - 1].a;
+  const GX = window.ASCEND_GALAXY, P0 = GX ? Object.fromEntries(GX.places.map((p) => [p.id, p])) : {};
+  // 막 노드
+  $('#gxn').innerHTML = ACTS.map((A, a) => { const p = P0[A.pl] || { x: 10 + a * 15, y: 50 }, open = actOpen(a), done = !!save.stars[a * 4 + 4], got = [1, 2, 3, 4].reduce((s, n) => s + (save.stars[a * 4 + n] || 0), 0);
+    return `<button class="an ${open ? '' : 'lock'} ${a === mapAct ? 'on' : ''} ${done ? 'done' : ''}" data-a="${a}" style="left:${p.x}%;top:${p.y}%;--ac:${A.col}" ${open ? '' : 'disabled'}><b>${a + 1}막</b><i>${A.nm}<small>${open ? `★ ${got}/12` : '잠김'}</small></i></button>`; }).join('');
+  $('#gxn').querySelectorAll('.an').forEach((b) => b.addEventListener('click', () => { mapAct = +b.dataset.a; drawChapters(); }));
+  // 막 정보 + 장 목록
+  const A = ACTS[mapAct], rm = MECH(A.rw), done = !!save.stars[mapAct * 4 + 4], cl = MECH(save.mech).cls;
+  $('#actHead').style.setProperty('--ac', A.col);
+  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
+  $('#chList').innerHTML = [0, 1, 2, 3].map((k) => { const i = mapAct * 4 + k, c = CHAPTERS[i], lock = i + 1 > save.chMax;
+    return `<button class="cc ${lock ? 'lock' : ''} ${i + 1 === save.ch ? 'on' : ''}" data-i="${i + 1}" style="--c1:${c.c[0]};--c2:${c.c[1]}" ${lock ? 'disabled' : ''}><small>${stLabel(i)}</small><b>${c.nm}</b><p>${c.ds}</p>${recHtml(c, cl)}<span class="s">${chStarsTxt(i)}</span><span class="rw">${save.stars[i + 1] ? '클리어' : `첫 클리어 ${ico('gem')} ${CH_CLEAR_GEM(i)}`}</span></button>`; }).join('');
   $('#chList').querySelectorAll('.cc').forEach((b) => b.addEventListener('click', () => { save.ch = +b.dataset.i; persist(); $('#chapters').classList.add('hide'); drawTitle(); }));
+  // 은하 지도 그리기 (화면이 보인 뒤 크기를 재서)
+  requestAnimationFrame(() => { const cv = $('#gxc'), r = cv.getBoundingClientRect(); if (!GX || !r.width) return; const k = Math.min(2, devicePixelRatio || 1);
+    cv.width = Math.round(r.width * k); cv.height = Math.round(r.height * k);
+    try { GX.draw(cv, { lang: 'ko', title: false, legend: false, skip: ACTS.map((x) => x.pl) }); } catch (e) { console.warn(e); }
+    const x = cv.getContext('2d'), X = (p) => p / 100 * cv.width, Y = (p) => p / 100 * cv.height;
+    x.lineCap = 'round';
+    for (let a = 0; a < ACTS.length - 1; a++) { const p = P0[ACTS[a].pl], q = P0[ACTS[a + 1].pl]; if (!p || !q) continue; const on = actOpen(a + 1);
+      x.setLineDash(on ? [] : [6 * k, 7 * k]); x.lineWidth = (on ? 3.2 : 2) * k; x.strokeStyle = on ? 'rgba(255,207,90,.9)' : 'rgba(200,210,230,.35)';
+      x.shadowColor = on ? 'rgba(255,207,90,.8)' : 'transparent'; x.shadowBlur = on ? 10 * k : 0; x.beginPath(); x.moveTo(X(p.x), Y(p.y)); x.lineTo(X(q.x), Y(q.y)); x.stroke(); }
+    x.setLineDash([]); x.shadowBlur = 0; });
 }
 function openGacha() { $('#gres').innerHTML = ''; drawGacha(); $('#gacha').classList.remove('hide'); }
 $('#chPrev').addEventListener('click', () => { save.ch = Math.max(1, save.ch - 1); persist(); drawTitle(); });
 $('#chNext').addEventListener('click', () => { save.ch = Math.min(save.chMax, save.ch + 1); persist(); drawTitle(); });
-$('#chMap').addEventListener('click', () => { drawChapters(); $('#chapters').classList.remove('hide'); });
+$('#chMap').addEventListener('click', () => { mapAct = null; $('#chapters').classList.remove('hide'); drawChapters(); });
 $('#cClose').addEventListener('click', () => $('#chapters').classList.add('hide'));
 $('#bGacha').addEventListener('click', openGacha);
 let gachaTop = null;
@@ -2579,7 +2644,7 @@ function drawStaticIcons() {
   $('#bGacha').innerHTML = `${ico('gacha')}<span>뽑기</span>`; $('#bHangar').innerHTML = `${ico('repair')}<span>강화</span>`;
   $('#bSound').innerHTML = ico(muted ? 'soundOff' : 'soundOn'); $('#chMap').innerHTML = `${ico('map')}<span>지도</span>`;
   $('#bPause').innerHTML = ico('pause'); $('#bDash').firstElementChild.innerHTML = ico('dash');
-  $('#chTitle').innerHTML = `${ico('map')} 챕터 지도`; $('#hTitle').innerHTML = `${ico('repair')} 격납고 강화`; $('#dTitle').innerHTML = `${ico('calendar')} 출석 · 일일 임무`;
+  $('#chTitle').innerHTML = `${ico('map')} 작전 지도<span class="gxs"> · ASCEND 은하</span>`; $('#hTitle').innerHTML = `${ico('repair')} 격납고 강화`; $('#dTitle').innerHTML = `${ico('calendar')} 출석 · 일일 임무`;
 }
 
 

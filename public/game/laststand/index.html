@@ -6,7 +6,7 @@
 <link rel="icon" href="img/mech4.jpg">
 <meta name="theme-color" content="#0b0e18">
 <title>ASCEND 라스트 스탠드</title>
-<meta name="description" content="기동전사 한 대로 5분을 버티고 여왕을 쓰러뜨리는 ASCEND 서바이벌. 챕터 10개, 기체 17종, 중간 보스와 공중전.">
+<meta name="description" content="기동전사 한 대로 5분을 버티고 여왕을 쓰러뜨리는 ASCEND 서바이벌. ASCEND 은하 6막 24장, 기체 17종, 중간 보스와 공중전.">
 <link rel="canonical" href="https://www.hankuk-in.com/game/laststand/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="HANKUKIN PLAY">
@@ -165,8 +165,42 @@ button{font-family:inherit;cursor:pointer}
 #load{position:fixed;left:0;right:0;bottom:4px;text-align:center;font-size:12px;opacity:.6;pointer-events:none}
 
 /* ───────── 챕터 지도 ───────── */
-#chList{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:min(1100px,96vw)}
-.cc{position:relative;text-align:left;padding:12px;border-radius:10px;border:1px solid #ffffff22;color:inherit;min-height:150px;overflow:hidden;
+.mapwrap{display:flex;gap:14px;width:min(1220px,96vw);align-items:flex-start}
+#gx{position:relative;flex:1 1 auto;aspect-ratio:16/10;border-radius:12px;overflow:hidden;border:1px solid #ffffff22;background:#03040b}
+#gxc{position:absolute;inset:0;width:100%;height:100%}
+#gxn{position:absolute;inset:0}
+.an{position:absolute;transform:translate(-50%,-50%);width:54px;height:54px;padding:0;border-radius:50%;border:2px solid var(--ac);color:#fff;cursor:pointer;
+  background:radial-gradient(circle,#0b1020 45%,color-mix(in srgb,var(--ac) 40%,#0b1020));box-shadow:0 0 16px color-mix(in srgb,var(--ac) 70%,transparent);display:grid;place-items:center}
+.an b{font:900 14px var(--ff);letter-spacing:1px}
+.an i{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:5px;white-space:nowrap;font:700 12px var(--ff);font-style:normal;text-shadow:0 1px 3px #000,0 0 6px #000;text-align:center}
+.an i small{display:block;font-size:10px;color:var(--gold);opacity:.9}
+.an.on{outline:3px solid var(--gold);outline-offset:4px;animation:anp 1.8s ease-in-out infinite}
+.an.done b{color:var(--gold)}
+.an.lock{filter:grayscale(1) brightness(.5);cursor:default}
+@keyframes anp{50%{box-shadow:0 0 34px var(--ac)}}
+#actPanel{flex:0 0 360px;display:flex;flex-direction:column;gap:8px}
+#actHead{text-align:left;padding:12px;border-radius:10px;border:1px solid #ffffff22;border-left:4px solid var(--ac);background:var(--pan)}
+#actHead small{font:800 11px var(--ff);letter-spacing:2px;color:var(--ac)}
+#actHead > b{display:block;font-size:20px;margin:2px 0 8px}
+.arw{display:flex;align-items:center;gap:10px;padding:6px;border-radius:8px;background:#ffffff0d}
+.arw img{width:44px;height:44px;border-radius:8px;object-fit:cover}
+.arw span{flex:1;font-weight:700;font-size:14px;line-height:1.3}
+.arw em{display:block;font-style:normal;font-size:10px;opacity:.65;font-weight:600}
+.arw i{font-style:normal;font-size:11px;opacity:.7;font-weight:600}
+.arw .ok{flex:0;font-size:11px;padding:3px 8px;border-radius:99px;background:#3ddc8433;color:#8ff0b8;white-space:nowrap}
+#chList{display:flex;flex-direction:column;gap:8px}
+.rec{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rec span{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#ffffff1c;letter-spacing:0;color:#fff}
+.rec span svg{width:12px;height:12px}
+.rec span.ok{background:#3ddc8440;color:#a6f5c8;box-shadow:inset 0 0 0 1px #3ddc8488}
+#chRec{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
+#chRec > small{font-size:10px;opacity:.6;letter-spacing:1px}
+#chRec .rec{margin:0}
+#chRec em{font-style:normal;font-size:10px;opacity:.6;width:100%}
+#chRec em.ok{color:#8ff0b8;opacity:1}
+#mdet .clsb{display:inline-flex;align-items:center;gap:4px;margin-left:6px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:#ffffff18;vertical-align:middle}
+#mdet .clsb svg{width:12px;height:12px}
+.cc{position:relative;text-align:left;padding:12px 12px 30px;border-radius:10px;border:1px solid #ffffff22;color:inherit;min-height:0;overflow:hidden;
   background:linear-gradient(160deg,var(--c1),var(--c2))}
 .cc::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 30%,#000a)}
 .cc > *{position:relative;z-index:1}
@@ -286,7 +320,7 @@ button{font-family:inherit;cursor:pointer}
   #mdet .mh{font-size:19px}.kit{flex-direction:row;overflow-x:auto}.kit div{flex:0 0 auto;min-width:150px}
   #deploy{flex-wrap:wrap;gap:8px;padding-top:6px}.go{padding:13px 40px;font-size:18px}.chinfo{min-width:120px}
   #help{display:none}.brand b{font-size:17px;letter-spacing:4px}.tb span{display:none}.tb{padding:8px 10px}
-  #chList{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mapwrap{flex-direction:column}.gxs{display:none}.an.lock i{opacity:.55}#gx{width:100%;flex:none;aspect-ratio:16/11}#actPanel{flex:none;width:100%}.an{width:42px;height:42px}.an b{font-size:12px}.an i{font-size:10px}
   #gres{grid-template-columns:repeat(5,minmax(0,1fr))}#gacha .bnr{height:180px}#gacha .bnr p{max-width:60%;font-size:12px}#gacha .bnr h4{font-size:22px}
   #stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .card{width:100%;min-height:0;display:grid!important;grid-template-columns:76px 1fr;align-items:center;text-align:left;padding-right:10px}
@@ -337,14 +371,14 @@ button{font-family:inherit;cursor:pointer}
     <section id="mdet"></section>
   </div>
   <footer id="deploy">
-    <div id="chap"><button id="chPrev" aria-label="이전 챕터">‹</button><div class="chinfo"><small id="chNo"></small><b id="chNm"></b><span id="chStars"></span></div><button id="chNext" aria-label="다음 챕터">›</button><button class="tb" id="chMap"></button></div>
+    <div id="chap"><button id="chPrev" aria-label="이전 장">‹</button><div class="chinfo"><small id="chNo"></small><b id="chNm"></b><span id="chStars"></span><div id="chRec"></div></div><button id="chNext" aria-label="다음 장">›</button><button class="tb" id="chMap"></button></div>
     <button class="go" id="start" disabled>출격</button>
   </footer>
   <div id="help">이동 WASD · 방향키 / 화면 드래그<br>대시 Space · 비행 F · 필살기 Q · 스킬 E<br>공격과 보호막은 자동</div>
   <div id="load">불러오는 중</div>
 </div>
 
-<div id="chapters" class="ov hide panel"><button class="close" id="cClose">✕</button><h2 id="chTitle"></h2><p class="pnote">챕터를 깨면 다음 챕터가 열립니다 · 별 3개 목표: 클리어 · 내구 50% 이상 · 여왕 60초 안에 격파</p><div id="chList"></div></div>
+<div id="chapters" class="ov hide panel"><button class="close" id="cClose">✕</button><h2 id="chTitle"></h2><p class="pnote">장을 깨면 다음 장, 막을 끝내면 새 기체 · 추천 기종으로 출격하면 화력 +15%, 내구 +10%<span class="gxs"> · 별: 클리어 · 내구 50% 이상 · 여왕 60초 안에 격파</span></p><div class="mapwrap"><div id="gx"><canvas id="gxc"></canvas><div id="gxn"></div></div><div id="actPanel"><div id="actHead"></div><div id="chList"></div></div></div></div>
 <div id="gacha" class="ov hide panel"><button class="close" id="gClose">✕</button>
   <div class="bnr"><div><h4>보급 신호 · 신화 강림</h4><p>신화 기체 솔라리스 · 아크엔젤 · 블러드 이클립스 · 녹턴. 중복으로 얻으면 별이 올라 더 강해집니다.</p><div class="pity" id="pity"></div></div><div class="gods" id="gods"></div></div>
   <div class="pulls"><button class="go" id="pull1"></button><button class="go alt" id="pull10"></button><button class="adbtn hide" id="adGem"></button></div>
@@ -357,13 +391,14 @@ button{font-family:inherit;cursor:pointer}
 <div id="pause" class="ov hide"><h2 style="margin:0;letter-spacing:6px;font-size:30px">일시정지</h2><div id="build"></div>
   <button class="go" id="resume">계속</button><div style="display:flex;gap:8px"><button class="ghost" id="mute">소리 끄기</button><button class="ghost" id="quit">나가기</button></div></div>
 <div id="over" class="ov hide"><h2 id="ovT"></h2><div id="ovSub"></div><div id="ovStars"></div><div id="newrec" class="hide">신기록</div><div id="stats"></div>
-  <div id="reward"></div><div id="ovBtns"><button class="go hide" id="nextThreat">다음 챕터</button><button class="go" id="retry">다시 출격</button><button class="adbtn hide" id="adDouble"></button><button class="ghost" id="toTitle">격납고로</button></div></div>
+  <div id="reward"></div><div id="ovBtns"><button class="go hide" id="nextThreat">다음 장</button><button class="go" id="retry">다시 출격</button><button class="adbtn hide" id="adDouble"></button><button class="ghost" id="toTitle">격납고로</button></div></div>
 
 <script>window.__MSLE_BB=23.75/90; window.__MSLE_PROF = { vertical: { climb: .2, v0: 120, vClimb: 250, vmax: 780, vEnd: 1050, endR: 300, acc: 1500, turn: 10, turnUp: 32, wob: .2 } };window.__phone=matchMedia("(pointer:coarse)").matches;window.step=function(){};window.mdlAnimate=function(){};window.__tfHoldOK=true;</script>
 <script src="lib/explosionfx.js?v=3"></script>
 <script src="lib/ascend_missile.js?v=4"></script>
 <script src="lib/transform.js?v=3"></script>
 <script src="lib/ascend_tf3.js?v=3"></script>
-<script type="module" src="game.js?v=9"></script>
+<script src="lib/galaxy.js?v=1"></script>
+<script type="module" src="game.js?v=10"></script>
 </body>
 </html>
