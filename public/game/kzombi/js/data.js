@@ -145,16 +145,11 @@ D.layoutOf = function (ch) {
   const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 30 && Math.abs(p.x - x) < 78) return true; } return false; });
   const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 80);
   const pads = [];
-  /* TIDY_PADS(11-25): 성벽 앞 두 줄 + 길 양옆 대칭 묶음. 같은 줄은 같은 높이, 좌우 거울 배치 우선, 길·수호물·서로 겹침 금지 */
-  const free = (x, y) => !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 100);
-  const COLS = [96, 178, 260, 342, 424, 506, 588];
-  const row = (y, n) => { let got = 0; const cand = []; for (const x of COLS) if (x <= 360) cand.push(x); cand.sort((a, b) => Math.abs(a - 200) - Math.abs(b - 200));
-    for (const x of cand) { if (got >= n) break; const xm = 720 - x; if (xm !== x && free(x, y) && free(xm, y)) { pads.push([x, y]); pads.push([xm, y]); got += 2; } }
-    for (const x of COLS) { if (got >= n) break; if (free(x, y)) { pads.push([x, y]); got++; } }
-    for (let t = 0; got < n && t < 40; t++) { const x = Math.round(80 + R() * 560); if (free(x, y)) { pads.push([x, y]); got++; } } };
-  const off = Math.round(rr(-12, 12));
-  row(985 + off, 4); row(855 + off, 2); row(760 + off, 2); row(640 + off, 2);
-  for (const bx of [140, 580]) pads.push([bx, 1165]);
+  for (const row of [{ y: 975, n: 4 }, { y: 800, n: 3 }, { y: 640, n: 3 }]) {
+    const yy = row.y + Math.round(rr(-25, 25)); let tries = 0, got = 0;
+    while (got < row.n && tries++ < 60) { const x = Math.round(rr(80, 640)), y = yy + Math.round(rr(-20, 20)); if (nearLane(x, y) || guardNear(x, y) || pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 105)) continue; pads.push([x, y]); got++; }
+  }
+  for (const bx of [140 + rr(-20, 20), 580 + rr(-20, 20)]) pads.push([Math.round(bx), 1165 + Math.round(rr(-15, 15))]);
   return { lanes, pads };
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
@@ -298,8 +293,36 @@ D.SKILLS = [
   const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
   for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
   /* 장별 체력 보정 (시뮬로 맞춤) */
-  D.CHHP = Object.assign(D.CHHP || {}, {"6":0.92,"7":0.59,"8":0.8,"9":0.58,"10":0.8,"11":0.78,"12":0.74,"13":0.52,"14":0.6,"15":0.6,"16":0.57,"17":0.6,"18":0.5,"19":0.6,"20":0.52,"21":0.6,"22":0.5,"23":0.58,"24":0.49,"25":0.48,"26":0.55,"27":0.51,"28":0.54,"29":0.5,"30":0.47});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.82,"3":1.32,"4":1.35,"5":1.55,"6":1,"7":0.64,"8":0.88,"9":0.63,"10":0.85,"11":0.72,"12":0.68,"13":0.5,"14":0.6,"15":0.6,"16":0.57,"17":0.6,"18":0.5,"19":0.6,"20":0.52,"21":0.6,"22":0.5,"23":0.58,"24":0.56,"25":0.55,"26":0.62,"27":0.58,"28":0.61,"29":0.57,"30":0.56});   /* 시뮬(11-25 진행 계정) 맞춤 */
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
   const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };
 })();
+
+/* SK_UNLOCK: 기술 카드는 장을 거듭하며 열린다 + 출전 영웅 전용 카드 (사용자 요청 11-25) */
+(function () {
+  const D = window.JZD; if (!D || !D.SKILLS) return;
+  D.SK_UNLOCK = { ghost: 1, thunder: 1, dance: 1, rapid: 1, power: 1, heal: 1, repair: 1, bless: 2, ice: 2, multi: 3, talisman: 3, bond: 4, crit: 5, meteor: 6, pierce: 8, swift: 10, beam: 12, magnet: 15, vortex: 18 };
+  D.skUnlocked = (id, ch, nm) => !!nm || (ch | 0) >= (D.SK_UNLOCK[id] || 1);
+  /* 영웅 전용 카드: 그 영웅을 데려가야 카드 풀에 들어온다. 효과는 그 영웅 위력(+35%/단계)과 특수 효과 */
+  const HS = {
+    honggildong: ['분신 둔갑', '홍길동 위력 +35%, 큰 기술이 10% 빨리 찬다'],
+    dokkaebi: ['방망이 잔치', '도깨비 위력 +35%, 좀비가 엽전을 더 자주 떨군다'],
+    haetae: ['해치 불길 돋우기', '해태 위력 +35%'],
+    yisunsin: ['학익 화살비', '이순신 위력 +35%, 시설 위력 +10%'],
+    eulji: ['살수 돌격', '을지문덕 위력 +35%'],
+    gumiho: ['여우불 홀림', '구미호 위력 +35%, 큰 기술이 10% 빨리 찬다'],
+    samjoko: ['세 발 햇살', '삼족오 위력 +35%'],
+    bari: ['저승길 인도', '바리공주 위력 +35%']
+  };
+  const COMP = D.COMP || {};
+  for (const id in COMP) {
+    if (D.SKILLS.some(s => s.id === 'h_' + id)) continue;
+    const h = HS[id] || [COMP[id].n + '의 결의', COMP[id].n + ' 위력 +35%'];
+    D.SKILLS.push({ id: 'h_' + id, hero: id, n: h[0], kind: 'buff', max: 3, c: '#ffc85a', img: COMP[id].spr, d: (desc => () => desc)(h[1]) });
+  }
+  if (D.TUR && D.TUR.mine) { D.TUR.mine.income = 35; D.TUR.mine.d = '밤을 넘길 때마다 엽전 +35'; }
+})();
+
+/* WIDE_MAP2: 넓은 판에 맞춰 탑 사거리 15% 늘림 */
+(function () { const D = window.JZD; if (!D || !D.TUR) return; for (const k in D.TUR) { const t = D.TUR[k]; if (t.range && !t.__wr) { t.range = Math.round(t.range * 1.15); t.__wr = 1; } } })();

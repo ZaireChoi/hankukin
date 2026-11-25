@@ -175,7 +175,7 @@ function newGame(cfg) {
   const shMax = Math.round((400 + (NMK ? ch + 29 : ch) * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
   G = {
     cfg, ch, C, nights, chEl: D.chEl ? D.chEl(ch, !!cfg.nightmare) : null, pkey: PKEY, nm: NMK, pzs: [], tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
-    gold: 120 + 12 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
+    gold: 170 + 14 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
     shrine: { x: SHRINE.x, y: SHRINE.y, r: SHRINE.r, hp: shMax, max: shMax, hitT: 0 },
@@ -193,7 +193,7 @@ function newGame(cfg) {
   if (mode === 'challenge') G.missions = [{ n: '적 ' + (150 + ch * 30) + '마리 물리치기', ok: () => G.kills >= 150 + ch * 30 }, { n: '사당 내구도 절반 넘게 지키기', ok: () => G.shrine.hp >= G.shrine.max * 0.5 }, { n: '신력 기술 하나 각성하기', ok: () => SKILLS.some(s => s.kind === 'atk' && aw(s.id)) }];
   FX.low = false;
   if ((SB.cheoyong || 0) >= 6) { G.sk.dance = 1; G.skT.dance = 0.5; }
-  if ((SB.seonbi || 0) >= 6) { const at = SKILLS.filter(s => s.kind === 'atk' && !G.sk[s.id]); const s0 = at[(Math.random() * at.length) | 0]; if (s0) { G.sk[s0.id] = 1; G.skT[s0.id] = 0.5; } }
+  if ((SB.seonbi || 0) >= 6) { const at = SKILLS.filter(s => s.kind === 'atk' && !G.sk[s.id] && (!D.skUnlocked || D.skUnlocked(s.id, ch, NMK))); const s0 = at[(Math.random() * at.length) | 0]; if (s0) { G.sk[s0.id] = 1; G.skT[s0.id] = 0.5; } }
   camX = 0; camY = H - VH; zoom = 1.1;
   stage.style.display = 'block';
   for (const id of ['ovEnd', 'ovLevel', 'ovPause', 'ovTitle']) $(id).classList.remove('on');
@@ -202,7 +202,12 @@ function newGame(cfg) {
 const skLv = id => G.sk[id] || 0;
 const fxN = k => (G.fx && G.fx[k]) || 0;
 const aw = id => !!(G.evo && G.evo[id]);
-const atkMul = () => G.atk0 * (1 + 0.08 * (G.cfg.heroLv - 1)) * (1 + 0.3 * skLv('power'));
+/* 디펜스 중심(11-25): 처용 무력 0.8배, 신력 카드 +25% — 영웅은 heroK 로 되돌린다 */
+const PNERF = 0.8;
+const atkMul = () => PNERF * G.atk0 * (1 + 0.08 * (G.cfg.heroLv - 1)) * (1 + 0.25 * skLv('power'));
+/* 시설은 적 체력에 맞춰 장별로 강해지고(위력·내구) 기술 피해는 0.6배 — 탑이 주력이 되게 */
+const tScale = () => { const N = G.nights && G.nights[Math.min(G.night, G.nights.length - 1)]; return Math.max(1, Math.pow((N && N.hp) || 1, 0.7)); };
+const heroK = id => (1 / PNERF) * (1 + 0.35 * skLv('h_' + id));
 /* 원소 배율: 공명 +25%, 동료 연계 +20% */
 const chElK = el => (G.chEl && el && el === G.chEl.el ? 1 + G.chEl.k : 1);   /* 이 장의 원소 약점 */
 const TUR_EL = { fire: 'fire', hwacha: 'fire', general: 'fire', talisman: 'thunder', cannon: 'metal', arrow: 'metal', lady: 'ice', well: null, mine: null, barracks: 'metal' };
@@ -250,7 +255,7 @@ function objInit() {
   if (type === 'annihilate') { let s = 0; for (const N of G.nights) s += N.dur * (N.rate[0] + N.rate[1]) / 2 * 1.35; G.obj.target = Math.round(s * 0.7 / 10) * 10; }
   if (type === 'escort') { G.obj.total = G.nights.length * 2; G.obj.need = Math.ceil(G.obj.total * 0.5); G.obj.refs = []; }
   if (type === 'beacon') { const yy = WALL_Y - 300; let bx = 140, bd = -1; for (const x of [90, 160, 240, 360, 480, 560, 630]) { const dl = Math.min(...LANE_X.map((L, i) => { let m = 1e9; for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - yy) < 40) m = Math.min(m, Math.abs(p.x - x)); } return m; }), ...PADS.map(pp => Math.hypot(pp[0] - x, pp[1] - yy) * 0.8)); if (dl > bd) { bd = dl; bx = x; } }
-    const hp = Math.round(G.shrine.max * 1.5); G.obj.beacon = { kind: 'beacon', x: bx, y: yy, r: 26, hp, max: hp, hitT: 0 }; }
+    const hp = Math.round(G.shrine.max * 2.2); G.obj.beacon = { kind: 'beacon', x: bx, y: yy, r: 26, hp, max: hp, hitT: 0 }; }
 }
 function objOk() {
   const O = G.obj, win = G.phase === 'win'; if (!O) return win;
@@ -319,6 +324,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
+  if (src === 'skill') dmg *= 0.6;
   dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   if (EN[e.type] && EN[e.type].shield && src !== 'skill' && e.y < G.player.y - 20) { dmg *= 0.45; if (Math.random() < 0.15) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 1.6, '200,170,110', 0.15, 3); }
@@ -352,7 +358,8 @@ function hurtT(tg, dmg) {
     if (fxN('lastStand') && !G.lastStandUsed && p.hp - dmg < p.max * 0.3) { G.lastStandUsed = true; p.invT = 2; FX.ring(p.x, p.y, 90, '255,240,160', 0.5, 8); G.banner = { s: '흑립의 가호! 잠시 무적', t: 1.6, kind: 'win' }; }
   }
   if (tg === G.shrine) { if (G.guards.some(g => g.id === 'turtle' && !(g.seal > 0))) dmg *= 0.7; if (G.shShield > 0) { const a = Math.min(G.shShield, dmg); G.shShield -= a; dmg -= a; if (dmg <= 0) { FX.ring(tg.x, tg.y - 40, 90, '255,215,110', 0.2, 4); return; } } G.alertT = 1.2; if (G.bubbleCd <= 0) { G.bubble = { s: '사당이 공격받고 있어!', t: 2.6 }; G.bubbleCd = 9; } }
-  if (tg.kind === 'beacon') dmg *= 0.5;
+  if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4);
+  if (tg.pad != null && TUR[tg.type]) dmg /= tScale();
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
   if (tg === G.player) { FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
@@ -394,7 +401,7 @@ function killEnemy(e) {
   if (!G.low && (big || Math.random() < 0.35)) { const n = big ? 6 : 1; for (let i = 0; i < n; i++) FX.p({ kind: 'glow', x: e.x + rnd(-8, 8), y: e.y - e.hh * 0.6, vx: rnd(-12, 12), vy: -rnd(70, 120), life: rnd(0.7, 1.1), s: big ? 18 : 11, s2: 2, c: big ? '255,210,120' : '150,240,200' }); }
   const xpM = (1 + 0.15 * fxN('xp15')) * (G.mode === 'xp' ? 3 : 1);
   G.orbs.push({ x: e.x, y: e.y, v: (d.xp || 1) * (big ? 4 : 1) * xpM, t: 0, vx: rnd(-60, 60), vy: rnd(-80, -20), z: 0, vz: 160 });
-  const coinP = G.mode === 'gold' ? 1 : 0.22 + (pairOn('p_dok') ? 0.1 : 0);
+  const coinP = G.mode === 'gold' ? 1 : 0.38 + (pairOn('p_dok') ? 0.1 : 0) + 0.05 * skLv('h_dokkaebi');
   if (big || Math.random() < coinP) { const n = e.boss ? 18 : e.elite ? 8 : 1; for (let i = 0; i < n; i++) G.coins.push({ x: e.x, y: e.y, vx: rnd(-140, 140), vy: rnd(-90, 60), z: 0, vz: rnd(180, 320), t: 0, v: (e.boss ? 3 : 1) * (G.mode === 'gold' ? 3 : 1) * (1 + 0.3 * fxN('coin30')) }); }
   if (!big && !e.small && G.comps.some(c => c.active && c.id === 'bari' && Math.hypot(c.x - e.x, c.y - e.y) < 280) && Math.random() < 0.25) summonAlly(e.type, e.x, e.y, 'soul', 6, 14 * atkMul());
   if (big) G.pickups.push({ x: e.x + rnd(-20, 20), y: e.y + rnd(-10, 10), kind: pick(['magnet', 'bomb', 'yakgwa', 'pouch']), t: 0 });
@@ -595,7 +602,7 @@ let selBuild = 'arrow';
 /* 장승 한 쌍: 천하대장군과 지하여장군이 함께 서면 서로 힘을 더한다 */
 function jangPair() { if (!G || !G.turrets) return false; let a = 0, b = 0; for (const o of G.turrets) { if (o.type === 'general') a = 1; else if (o.type === 'lady') b = 1; } return a && b; }
 function lvInfo(k, lv) {
-  const d = TUR[k], m = 1 + 0.4 * (lv - 1);
+  const d = TUR[k], m = 1.6 * (1 + 0.4 * (lv - 1));
   if (k === 'arrow') { const c = crewOf({ lv }); return (c[0] === 's_gun' ? '조총수' : c[0] === 's_crossbow' ? '연노병' : '궁수') + ' ' + c[1] + '명이 쏜다'; }
   if (k === 'barracks') return '병사 최대 ' + (2 + Math.floor(lv * 1.5)) + '명 · ' + Object.keys(D.SOLDIER).filter(s => D.SOLDIER[s].unlock <= lv).map(s => D.SOLDIER[s].n).join(', ');
   if (k === 'mine') return '밤마다 엽전 +' + d.income * lv;
@@ -631,7 +638,7 @@ function buildUI() {
     const d = TUR[selBuild];
     const lockS = D.tUnlocked && !D.tUnlocked(selBuild, G.ch, G.nm) ? D.TUR_UNLOCK[selBuild] : 0;
     info.innerHTML = '<b>1레벨 ' + d.name + '</b><p>' + d.d + '</p>' + (lockS ? '<p class="nx" style="color:#ffb0a0">🔒 ' + lockS + '장에서 열려요</p>' : '<p class="nx">' + lvInfo(selBuild, 1) + '</p>' + (G.chEl && TUR_EL[selBuild] === G.chEl.el ? '<p class="nx" style="color:' + D.EL[G.chEl.el].c + '">이 장 약점 속성 · 피해 +' + Math.round(G.chEl.k * 100) + '%</p>' : '')) + pairTxt(selBuild);
-    acts.appendChild(btn('건설', d.cost, !lockS && G.gold >= d.cost, () => build(pad, selBuild), 'big'));
+    acts.appendChild(btn(!lockS && G.gold < d.cost ? '건설 <span style="font-size:.7em;color:#ffd27a">' + (G.gold >= d.cost * 0.7 ? '곧! ' : '') + (d.cost - G.gold) + ' 더</span>' : '건설', d.cost, !lockS && G.gold >= d.cost, () => build(pad, selBuild), 'big'));
   } else {
     const d = TUR[t.type], up = Math.round(d.cost * (0.8 + t.lv * 0.6)), cap = D.HQ[G.hq].max;
     info.innerHTML = '<div class="bthumb" style="background-image:url(sprites/' + d.spr + '.png)"></div><b>' + t.lv + '레벨 ' + d.name + '</b><p>' + lvInfo(t.type, t.lv) + '</p>' + (t.lv < 5 ? '<p class="nx">다음 ' + (t.lv + 1) + '레벨: ' + lvInfo(t.type, t.lv + 1) + (t.lv >= cap ? ' (사당 레벨 필요)' : '') + '</p>' : '<p class="nx">최고 레벨</p>') + pairTxt(t.type);
@@ -708,8 +715,8 @@ function levelChoices() {
 }
 function levelChoicesBase() {
   const ownAtk = SKILLS.filter(s => s.kind === 'atk' && skLv(s.id) > 0).length;
-  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
-  const w = pool.map(s => (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
+  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
+  const w = pool.map(s => (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : s.hero ? 1.6 : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
   const out = [];
   while (out.length < 3 && pool.length) { let tot = w.reduce((a, b) => a + b, 0), r = Math.random() * tot, i = 0; while (r > w[i]) { r -= w[i]; i++; } out.push(pool.splice(i, 1)[0]); w.splice(i, 1); }
   return out;
@@ -735,7 +742,7 @@ function openLevel() {
     const link = s.el ? G.comps.find(c => c.active && COMP[c.id].el === s.el) : null;
     const elTag = s.el ? '<span class="el" style="background:' + D.EL[s.el].c + '">' + D.EL[s.el].n + (G.chEl && G.chEl.el === s.el ? ' · 유리' : '') + '</span>' : '';
     b.innerHTML = '<div class="ic"></div><div class="tx"><div class="n">' + elTag + s.n + (lv || s.evo ? '' : ' <em>새 기술</em>') + (willAw ? ' <em class="aw">진화</em>' : '') + '</div><div class="st">' + (s.evo ? '' : stars) + '</div><div class="d">' + (s.evo ? String(D.AWAKE[s.evo] || '').replace('각성:', '진화:') : s.d(lv + 1)) + '</div>' + (link ? '<div class="link">연계 · ' + COMP[link.id].n + ' (위력 +20%, 동료 피해 +15%)</div>' : '') + evoHint(s) + '</div>';
-    { const ic = b.querySelector('.ic'), src = s.evo ? 'img/skills/ev_' + s.evo + '.webp' : 'img/skills/' + s.id + '.webp'; const im = document.createElement('img'); im.src = src; im.style.cssText = 'width:96px;height:' + (s.evo ? 140 : 96) + 'px;object-fit:cover;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.5)'; im.onerror = () => { im.remove(); ic.appendChild(skillIcon(s.id, 96)); }; ic.appendChild(im); if (s.evo) { ic.style.flexBasis = '96px'; ic.style.height = '140px'; ic.style.borderRadius = '16px'; } }
+    { const ic = b.querySelector('.ic'), src = s.evo ? 'img/skills/ev_' + s.evo + '.webp' : s.hero ? 'img/ui/hero_' + s.hero + '.webp?v=' + (s.hero === 'haetae' ? 3 : 2) : 'img/skills/' + s.id + '.webp'; const im = document.createElement('img'); im.src = src; im.style.cssText = 'width:96px;height:' + (s.evo ? 140 : 96) + 'px;object-fit:cover;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.5)'; im.onerror = () => { im.remove(); ic.appendChild(skillIcon(s.id, 96)); }; ic.appendChild(im); if (s.evo) { ic.style.flexBasis = '96px'; ic.style.height = '140px'; ic.style.borderRadius = '16px'; } }
     if (willAw) b.classList.add('awk');
     b.addEventListener('click', () => pickSkill(s.id));
     cards.appendChild(b);
@@ -752,6 +759,7 @@ function pickSkill(id) {
   if (id === 'heal') { p.max += 20; p.hp = Math.min(p.max, p.hp + 40); }
   if (id === 'repair') G.shrine.hp = Math.min(G.shrine.max, G.shrine.hp + 100);
   if (id === 'bond') G.cult = Math.max(0, G.cult - 8);
+  if (id === 'h_honggildong' || id === 'h_gumiho') G.cultMax *= 0.9;
   if (!(id in G.skT)) G.skT[id] = 0.5;
   const S = SKILLS.find(s => s.id === id);
   if (S.el && G.sk[id] === 1 && G.comps.some(c => c.active && COMP[c.id].el === S.el)) G.linkBonus += 0.15;
@@ -786,7 +794,7 @@ function useCult() {
   const c = G.comps.find(o => o.active && !(o.drop > 0)); if (!c) return;
   const C = COMP[c.id]; G.cult = G.cultMax; sfx('ult');
   G.cutin = { t: 0.9, life: 0.9, who: c.id, name: C.ult, col: C.col, fn: () => {
-    const m = atkMul() * 1.2 * compMul() * elMul(C.el), p = G.player;
+    const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id), p = G.player;
     const vis = () => G.enemies.filter(onScreen);
     if (c.id === 'dokkaebi') {
       for (let i = 0; i < 3; i++) G.queue.push({ t: i * 0.35, fn: () => { const R = 160 + i * 60; FX.ring(p.x, p.y, R, '255,200,90', 0.5, 14, 20); FX.explode(p.x, p.y - 10, 70); FX.debris(p.x, p.y, 20, '#6a5040', 420); sfx('boom'); for (const e of G.enemies) if (Math.hypot(e.x - p.x, e.y - p.y) < R) { hurtEnemy(e, 60 * m, 'hero', { kb: 40, kx: p.x, ky: p.y }); e.stunT = 1.2; } } });
@@ -895,7 +903,7 @@ function update(dtr) {
     collectAll(dt);
     if (G.dawnT <= 0) {
       let inc = 0; for (const t of G.turrets) if (TUR[t.type].income) inc += TUR[t.type].income * t.lv * (pairOn('p_dok') ? 2 : 1);
-      G.gold += 70 + G.night * 15 + inc;
+      G.gold += 95 + G.night * 28 + inc;
       G.night++;
       if (G.obj && G.obj.beacon && G.obj.beacon.hp > 0) { G.obj.beacon.hp = Math.min(G.obj.beacon.max, G.obj.beacon.hp + G.obj.beacon.max * 0.5); G.obj.bwarn = 0; }
       if (G.mode === 'endless' && G.night >= G.nights.length) { const L = G.nights[G.nights.length - 1]; G.nights.push(Object.assign({}, L, { name: (G.night + 1) + '번째 밤', hp: L.hp * 1.22, rate: [L.rate[0] * 1.08, L.rate[1] * 1.08], kind: G.night % 3 === 2 ? 'boss' : 'elite', boss: G.night % 3 === 2 ? pick(['mujang', 'zbear', 'ztiger', 'zox']) : null, elites: [0.45] })); }
@@ -1236,7 +1244,7 @@ function turrets(dt) {
     const d = TUR[t.type];
     if (t.seal > 0) { t.seal -= dt; continue; }
     if (d.kind === 'mine') { if (Math.random() < dt * 0.6) FX.p({ kind: 'glow', x: t.x + rnd(-14, 14), y: t.y - rnd(10, 40), vy: -30, life: 0.8, s: 6, s2: 1, c: '255,220,90' }); continue; }
-    const bl = bl0 * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
+    const bl = bl0 * 1.6 * tScale() * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
     if (d.kind === 'barracks') {
       t.cd -= dt; const lv = t.lv, cap = 2 + Math.floor(lv * 1.5) + (G.setBarracks || 0), mine = (G.allies || []).filter(a => a.style === 'soldier' && a.home === t).length;
       if (t.cd <= 0 && mine < cap && isNight()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
@@ -1355,8 +1363,8 @@ function drawSpirit(s) {
 }
 
 function comps(dt) {
-  const m = atkMul() * compMul();
-  for (const c of G.comps) {
+  const m0 = atkMul() * compMul();
+  for (const c of G.comps) { const m = m0 * heroK(c.id);
     if (!c.active || c.drop > 0 || c.dash) continue;
     const C = COMP[c.id], el = elMul(C.el); c.cd -= dt;
     const dm = C.dmg * m * el;
@@ -1930,7 +1938,7 @@ function drawTurret(t, day) {
   let ok;
   if (headKey) { const hs = SPR[headKey], aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0); const back = rc * rc * 10;
     ok = drawSprite(headKey, x - Math.cos(aim) * back, y + 18 - Math.sin(aim) * back * 0.6, { dir: dirN(aim, hs.dirs || 16), mode: t.hitT > 0 ? 'white' : null, sy: rise * (1 - rc * 0.06), sx: 1 + (1 - rise) * 0.3 + rc * 0.04, alpha: t.seal > 0 ? 0.6 : 1 }); }
-  else ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sc: 1 + 0.07 * Math.min(4, (t.lv || 1) - 1) /* 강화할수록 커짐 */, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
+  else ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
   /* 생동감: 깃발, 불꽃, 물빛, 금가루, 등불 */
   if (!t.rise || t.rise <= 0) {
     if (t.type === 'fire' && Math.random() < 0.5) FX.ember(x + rnd(-10, 10), y - d.top * 0.92, Math.random() < 0.5 ? '255,150,40' : '255,220,110', 1, 70);
@@ -2437,7 +2445,7 @@ requestAnimationFrame(frame);
 /* ---------- 바깥과 잇는 창구 ---------- */
 const JZB = window.JZB = {
   buildWalls,
-  start: cfg => { newGame(cfg); try { newBuildIntro(); } catch (e) {} },
+  start: cfg => { newGame(cfg); try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
@@ -2445,6 +2453,25 @@ const JZB = window.JZB = {
   get G() { return G; }, startNight, pickSkill, build, useUlt, useCult, spawnBig, openLevel, levelChoices
 };
 const defaultEndRef = defaultEnd;
+/* 새 기술(카드)이 열린 장을 처음 시작할 때 소개 창. 건물 창이 떠 있으면 닫힌 뒤 띄운다 */
+function newSkillIntro() {
+  if (!G || G.nm || !D.SK_UNLOCK) return; let seen = {}; try { seen = JSON.parse(localStorage.getItem('kz_sseen') || '{}'); } catch (e) {}
+  const ks = Object.keys(D.SK_UNLOCK).filter(k => D.SK_UNLOCK[k] > 1 && D.SK_UNLOCK[k] <= G.ch && !seen[k]); if (!ks.length) return;
+  for (const k of ks) seen[k] = 1; try { localStorage.setItem('kz_sseen', JSON.stringify(seen)); } catch (e) {}
+  const show = ks.filter(k => D.SK_UNLOCK[k] === G.ch).concat(ks.filter(k => D.SK_UNLOCK[k] !== G.ch)).slice(0, 3).map(k => SKILLS.find(s => s.id === k)).filter(Boolean);
+  const nx = Object.keys(D.SK_UNLOCK).filter(k => D.SK_UNLOCK[k] > G.ch).sort((a, b) => D.SK_UNLOCK[a] - D.SK_UNLOCK[b])[0];
+  const pop = () => {
+    const box = document.createElement('div'); box.id = 'kzNewS';
+    box.style.cssText = 'position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.55)';
+    box.innerHTML = '<div style="width:min(86vw,420px);background:linear-gradient(#2a2a4a,#151528);border:3px solid #9ef0e0;border-radius:20px;padding:18px;color:#fff;text-align:center;font-family:inherit;box-shadow:0 10px 30px rgba(0,0,0,.6)">' +
+      '<div style="font-size:24px;font-weight:900;color:#9ef0e0;margin-bottom:10px">새 기술이 열렸어요!</div>' +
+      show.map(s => '<div style="display:flex;gap:12px;align-items:center;text-align:left;margin:8px 0;background:rgba(255,255,255,.06);border-radius:14px;padding:8px"><img src="img/skills/' + s.id + '.webp" style="flex:0 0 64px;width:64px;height:64px;object-fit:cover;border-radius:12px" onerror="this.style.visibility=\'hidden\'"><div><b style="font-size:19px">' + s.n + '</b><div style="font-size:15px;color:#dfe6ff;line-height:1.3">' + s.d(1) + '</div></div></div>').join('') +
+      '<div style="font-size:15px;color:#c8d0e8;margin-top:6px">신력이 차오를 때 카드로 나와요' + (nx ? ' · 다음 기술은 ' + D.SK_UNLOCK[nx] + '장' : '') + '<br>영웅을 데려가면 그 영웅 전용 카드도 나와요</div>' +
+      '<div id="kzNewSok" style="margin-top:12px;display:inline-block;padding:10px 40px;border-radius:14px;background:linear-gradient(#bff8ec,#5fd0b8);color:#08302a;font-weight:900;font-size:20px;cursor:pointer">확인</div></div>';
+    document.body.appendChild(box); const close = () => box.remove(); box.querySelector('#kzNewSok').addEventListener('click', close); setTimeout(() => { if (box.parentNode) close(); }, 12000);
+  };
+  if (document.getElementById('kzNewB')) { const iv = setInterval(() => { if (!document.getElementById('kzNewB')) { clearInterval(iv); pop(); } }, 300); } else pop();
+}
 /* 새 건물이 열린 장을 처음 시작할 때 소개 창 */
 function newBuildIntro() {
   if (!G || G.nm || !D.TUR_UNLOCK) return; let seen = {}; try { seen = JSON.parse(localStorage.getItem('kz_bseen') || '{}'); } catch (e) {}
