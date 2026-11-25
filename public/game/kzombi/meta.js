@@ -314,13 +314,14 @@ if (window.IS_EN) document.title = 'K Zombi';
       (S.sel < S.chap ? '<svg class="arrowbtn r" viewBox="0 0 64 76" data-act="chap" data-v="1">' + I.arrowR + '</svg>' : '') +
       '<div class="chapcard gold-frame" data-act="map"><div class="bg"></div><div class="n stroke-s">챕터 ' + c.n + ' · 밤 ' + c.waves + '번</div><div class="nm stroke">' + c.name + '</div>' +
       '<div class="arr stroke-s">지도 ▸</div><div class="best stroke-s" style="display:flex;gap:2px;align-items:center">' + stars.replace(/class="ic /g, 'style="width:26px;height:26px" class="ic ') + '</div></div>' +
-      '<div class="sidebtns l">' +
+      '<div class="sidebtns l n7">' +
       '<div class="sb" data-act="att">' + ic('gift') + '<div class="lb stroke-s">출석</div>' + (attDot() ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="quest">' + ic('scroll') + '<div class="lb stroke-s">임무</div>' + (qDot() ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="pass">' + ic('star') + '<div class="lb stroke-s">패스</div>' + (passDot() ? '<i class="dot"></i>' : '') + '</div>' +
-      '<div class="sb" data-act="event">' + ic('gift') + '<div class="lb stroke-s">축제</div>' + (evDot() ? '<i class="dot"></i>' : '') + '</div>' +
+      '<div class="sb" data-act="event">' + ic('gift') + '<div class="lb stroke-s">이벤트</div>' + (evDot() || raceDot() ? '<i class="dot"></i>' : '') + (raceLeft().on ? '<i class="rcb stroke-s">레이스 ' + raceLeft().short + '</i>' : '') + '</div>' +
       '<div class="sb" data-act="rank">' + ic('power') + '<div class="lb stroke-s">랭킹</div></div>' +
       '<div class="sb wbsb" data-act="wb">' + ic('skull' in I ? 'skull' : 'sword') + '<div class="lb stroke-s">월드보스</div>' + (wbDay().n < 3 ? '<i class="dot"></i>' : '') + '</div>' +
+      '<div class="sb arsb" data-act="ar">' + ic('sword') + '<div class="lb stroke-s">아레나</div>' + (arDay().n < AR_FREE ? '<i class="dot"></i>' : '') + '</div>' +
       '</div><div class="sidebtns r">' +
       '<div class="sb" data-act="mailbox">' + ic('mail') + '<div class="lb stroke-s">우편</div>' + (!S.mail ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="settings">' + ic('gear') + '<div class="lb stroke-s">설정</div></div>' +
@@ -366,8 +367,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="eqwrap"><div class="eqhero"' + skinFull() + '></div><div class="btn p eqskin" data-act="skins">의상</div><div class="btn y eqmount" data-act="mounts">탈것' + (S.mount ? ' ✔' : '') + '</div><div class="slots l">' + SLOTS.slice(0, 3).map(slot).join('') + '</div><div class="slots r">' + SLOTS.slice(3).map(slot).join('') + '</div></div>' +
       '<div class="eqstats"><div class="stat stroke-s">' + ic('sword') + '공격 ' + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + '체력 ' + fmt(st.hp) + '</div></div>' +
       '<div class="eqbtns"><div class="btn b" data-act="autoEq">일괄 착용</div><div class="btn p ' + (canMerge() ? '' : 'dis') + '" data-act="merge">일괄 승급' + (canMerge() ? '<i class="dot" style="right:-8px;top:-8px"></i>' : '') + '</div><div class="btn r" data-act="bulkSalv">일괄 분해</div></div>' +
-      '<div class="bagbar' + (eqBig ? ' big' : '') + '">' + [['all', '전체']].concat(SLOTS.map(s => [s.id, s.n])).map(f => '<div class="bf stroke-s' + (eqF === f[0] ? ' on' : '') + '" data-act="eqF" data-v="' + f[0] + '">' + f[1] + '</div>').join('') + '<div class="bf stroke-s sort" data-act="eqSort">' + ({ g: '등급순', lv: '레벨순', new: '새것순' })[eqSortK] + '</div><div class="bf stroke-s big" data-act="eqBig">' + (eqBig ? '▼ 접기' : '▲ 크게') + '</div></div>' +
-      '<div class="inv box' + (eqBig ? ' big' : '') + '">' + (inv || '<div style="grid-column:1/-1;text-align:center;opacity:.7;font-size:22px;padding:30px">가진 장비가 없어요. 상점에서 뽑아 보세요.</div>') + '</div>';
+      '<div class="bagbar' + (eqBig ? ' bx' : '') + '">' + [['all', '전체']].concat(SLOTS.map(s => [s.id, s.n])).map(f => '<div class="bf stroke-s' + (eqF === f[0] ? ' on' : '') + '" data-act="eqF" data-v="' + f[0] + '">' + f[1] + '</div>').join('') + '<div class="bf stroke-s sort" data-act="eqSort">' + ({ g: '등급순', lv: '레벨순', new: '새것순' })[eqSortK] + '</div><div class="bf stroke-s bxx" data-act="eqBig">' + (eqBig ? '▼ 접기' : '▲ 크게') + '</div></div>' +
+      '<div class="inv box' + (eqBig ? ' bx' : '') + '">' + (inv || '<div style="grid-column:1/-1;text-align:center;opacity:.7;font-size:22px;padding:30px">가진 장비가 없어요. 상점에서 뽑아 보세요.</div>') + '</div>';
   }
   function pgComp() {
     const stars = (n, sz) => [1, 2, 3, 4, 5].map(k => '<svg class="ic" viewBox="0 0 64 64" style="width:' + sz + 'px;height:' + sz + 'px">' + I[n >= k ? 'star' : 'star0'] + '</svg>').join('');
@@ -584,13 +585,13 @@ if (window.IS_EN) document.title = 'K Zombi';
   /* ---------------- 전투 시작과 결과 ---------------- */
   let lastCh = 1;
   function startBattle(n) {
-    tickTorch(); const WBX = S.nextWB || null;
-    if (!WBX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
-    if (!WBX && S.torch >= TORCH_MAX) S.torchT = now();
-    if (!WBX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
+    tickTorch(); const WBX = S.nextWB || null, ARX = S.nextMode === 'arena' ? S.nextAR || null : null;
+    if (!WBX && !ARX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
+    if (!WBX && !ARX && S.torch >= TORCH_MAX) S.torchT = now();
+    if (!WBX && !ARX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null }; S.nextMode = null; S.nextWB = null; lastWB = WBX;
+    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -607,6 +608,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   }
   let lastWB = null;
   function onEnd(r) {
+    if (r && r.mode === 'arena') { try { arEnd(r); } catch (e) { console.warn(e); meta.classList.remove('off'); } return; }
     try { if (lastWB && r && r.mode === 'boss') { wbRecord(lastWB, Math.round(r.bossDmg || 0)); } } catch (e) { console.warn(e); } lastWB = null;
     try { xOnEnd(r || {}); } catch (e) { console.warn(e); }
     try { if (arguments[0] && arguments[0].mode && arguments[0].mode !== 'adventure') { const r0 = arguments[0]; S.modeBest = S.modeBest || {}; const key = r0.mode + r0.chapter, val = r0.mode === 'endless' ? r0.wave + '밤' : r0.mode === 'boss' ? fmt(r0.bossDmg || 0) : r0.mode === 'challenge' ? '★' + (r0.stars || 0) : (r0.win ? '완료' : '실패'); S.modeBest[key] = val; } } catch (e) {}
@@ -676,7 +678,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       (it.w && window.JZD && JZD.WEAPON && JZD.WEAPON[it.w] ? '<p style="font-size:18px">' + JZD.WEAPON[it.w].d + '</p>' : '') + fxHtml(it) + (it.set ? '<p style="font-size:18px;color:' + SETS[it.set].c + '">' + SETS[it.set].n + ' (착용 ' + (setsOf()[it.set] || 0) + '/6) · 2부위 ' + SETS[it.set].b[0] + ' · 4부위 ' + SETS[it.set].b[1] + ' · 6부위 ' + SETS[it.set].b[2] + '</p>' : '') + (it.sg ? '<p style="font-size:18px;color:#ff8a8a">' + SG[it.sg].d + '</p>' : '') + '</div></div>' +
       '<div class="xupbox stroke-s">' + (it.lv < cap ? '강화 Lv' + it.lv + ' → ' + (it.lv + 1) + ' · ' + stN + ' +' + v0 + ' → <b style="color:#7df06a">+' + v1 + '</b><br><small>비용 엽전 ' + fmt(c.gold) + ' · 정련석 ' + c.ore + ' (보유 ' + fmt(S.ore || 0) + ')</small>' : '최대 레벨이에요. 같은 장비로 승급하면 더 올라가요') + '</div>' +
       '<div class="row">' + (eq ? '<div class="btn b" data-act="unequip" data-v="' + uid + '">해제</div><div class="btn p" data-act="swap" data-v="' + it.slot + '">교체</div>' : '<div class="btn y xbig" data-act="equip" data-v="' + uid + '">' + (cur ? '착용 (교체)' : '착용') + '</div>') + '</div>' +
-      '<div class="row"><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp" data-v="' + uid + '">강화</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp10" data-v="' + uid + '">×10</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUpMax" data-v="' + uid + '">최대</div></div>' +
+      '<div class="row xup3"><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp" data-v="' + uid + '">강화</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp10" data-v="' + uid + '">×10</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUpMax" data-v="' + uid + '">최대</div></div>' +
       '<div class="row"><div class="btn b" data-act="lock" data-v="' + uid + '">' + (it.lk ? '잠금 풀기' : '🔒 잠금') + '</div>' + (eq || it.lk ? '' : '<div class="btn r" data-act="salvage" data-v="' + uid + '">분해 (+' + salvVal(it).ore + ' 정련석)</div>') + '</div>');
   }
   function patrolModal() {
@@ -768,6 +770,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const C = (window.JZD && JZD.CHAPTERS) || []; const ch = C[(r.chapter || 1) - 1];
     if (ch) { for (const z of [...ch.pool, ch.elite]) S.codex.seenZ[z] = 1; if (win) S.codex.seenZ[ch.boss] = 1; }
     S.wk.score += k + (win ? 300 : 0); S.wk.kills = (S.wk.kills || 0) + k;
+    try { const Rc = raceSt(); if (Rc.id && k > 0) { Rc.k += k; if (accUser()) putEntry('kzrace-' + Rc.id, accName(), Rc.k).catch(() => {}); } } catch (e) {}
     try { if (S.guild && accUser()) putEntry('kzgw-' + S.wk.key, S.guild.id, S.wk.kills).catch(() => {}); } catch (e) {}
     try { const A = window.HKAccount; if (A && A.user && A.submitScore && S.wk.score > 0) A.submitScore('kzombi-' + S.wk.key, S.wk.score, accName()).catch(() => {}); } catch (e) {}
   }
@@ -823,13 +826,96 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<p style="text-align:center;margin:6px 0">모은 것 ' + have + '/' + list.length + ' · 새로 모은 칸을 누르면 옥을 받아요</p><div class="xscroll xcodex">' + cells + '</div>', 'xwide');
   }
   const cdDot = () => { xinit(); for (const t of ['hero', 'zom', 'item']) { const o = cdTab; cdTab = t; const any = codexItems().some(x => x.own && !S.codex[t][x.k]); cdTab = o; if (any) return true; } return false; };
+  /* ---------------- 비동기 아레나: 다른 처용의 '방어 편성'과 결투 ----------------
+     kzar-{주}  : name=닉네임, score=아레나 점수(주마다 1000에서 시작)
+     kzard-{주} : name=편성 요약(전투력36.의상.영웅.영웅 앞 4글자), score=전투력
+     남의 점수는 쓸 수 없으니 내 점수만 엘로식으로 바뀐다. 가상 상대는 언제나 '연습 상대(가상 AI)'로 표시하고 순위표엔 넣지 않는다 */
+  const AR_FREE = 5, AR_K = 32; let arList = [], lastAR = null;
+  function arDay() { xinit(); const d = today(); if (!S.ar) S.ar = { pts: 1000, best: 1000, wk: S.wk.key, day: d, n: 0, w: 0, l: 0, played: 0 }; const A = S.ar;
+    if (A.day !== d) { A.day = d; A.n = 0; A.foes = null; }
+    if (A.wk !== S.wk.key) { if (A.played) A.prev = { wk: A.wk, pts: A.pts, got: false }; Object.assign(A, { wk: S.wk.key, pts: 1000, best: 1000, w: 0, l: 0, played: 0, foes: null }); }
+    return A; }
+  const arTeam = () => S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2);
+  const arDef = () => Math.round(stats().power).toString(36) + '.' + String(S.skin || 'base').slice(0, 3) + arTeam().map(id => '.' + id.slice(0, 4)).join('');
+  const arParse = s => { const p = String(s || '').split('.'), sk = SKINS.find(x => x.id.slice(0, 3) === p[1]); return { pow: parseInt(p[0], 36) || 0, skin: sk && sk.id !== 'base' ? sk.id : null, heroes: p.slice(2, 4).map(x => (COMPS.find(c => c.id.slice(0, 4) === x) || {}).id).filter(Boolean) }; };
+  const arElo = (me, op, win) => { const e = 1 / (1 + Math.pow(10, ((op || 1000) - me) / 400)); let d = Math.round(AR_K * ((win ? 1 : 0) - e)); if (win && d < 3) d = 3; if (!win && d > -3) d = -3; return d; };
+  const arAI = () => { const p = Math.max(1, stats().power), own = COMPS.map(c => c.id); return [['연습 허수아비', 0.75, null], ['연습 목각 처용', 1, 'seonbi'], ['연습 그림자 처용', 1.3, 'jeoseung']].map(([n, k, sk], i) => ({ ai: 1, name: n, pts: 0, pow: Math.round(p * k), skin: sk, heroes: [own[(i * 2 + 3) % own.length], own[(i * 2 + 4) % own.length]] })); };
+  function arFoeHtml(list) { arList = list; const A = arDay();
+    return list.map((f, i) => '<div class="box arfoe"><div class="arf1"><b class="stroke-s" style="font-size:24px;color:' + (f.ai ? '#cdd6ff' : '#ff9a8a') + '">' + esc(f.name) + '</b>' + (f.ai ? '<span class="arai stroke-s">연습 상대 · 가상 AI (실제 사람 아님)</span>' : '<span class="stroke-s" style="color:#ffe27a">점수 ' + fmt(f.pts || 1000) + '</span>') + '<span class="stroke-s" style="font-size:17px">전투력 ' + fmt(f.pow) + '</span></div>' +
+      '<div class="arh">' + (f.heroes || []).map(id => COMP[id] ? '<div class="mini" style="background-image:url(' + COMP[id].img + ')"></div>' : '').join('') + '</div>' +
+      '<div class="btn ' + (f.ai ? 'b' : A.n >= AR_FREE ? 'b dis' : 'r') + '" data-act="arGo" data-v="' + i + '">' + (f.ai ? '연습' : A.n >= AR_FREE ? '내일' : '결투') + '</div></div>').join(''); }
+  async function arModal() {
+    const A = arDay(), st = stats(), tm = arTeam().map(id => COMP[id].n).join(', ') || '없음';
+    modal('<h3 class="stroke">아레나 결투</h3><div class="box" style="padding:10px 16px;font-size:19px"><p style="margin:2px 0">내 방어 편성 · 전투력 <b style="color:#ffe27a">' + fmt(st.power) + '</b> · 영웅 ' + esc(tm) + '</p><p style="margin:2px 0">이번 주(' + S.wk.key + ') 점수 <b style="color:#ffe27a">' + fmt(A.pts) + '</b> · ' + A.w + '승 ' + A.l + '패 · 오늘 결투 ' + A.n + '/' + AR_FREE + '</p><p style="margin:2px 0;font-size:16px">90초 안에 상대 처용을 쓰러뜨리면 승리. 이기면 점수가 오르고 지면 내려가요. 남이 나에게 도전해도 내 점수는 줄지 않아요.</p></div>' +
+      '<p style="text-align:center;font-size:16px;margin:6px 0">주간 보상: 1위 옥 800 · 2~3위 500 · 4~10위 300 · 11~50위 150 · 참여 50 (다음 주 첫 접속 때)</p><div id="arfoe"><p style="text-align:center">상대를 찾는 중...</p></div><h4 class="stroke-s" style="text-align:center;margin:8px 0 2px">이번 주 아레나 순위</h4><div class="xscroll" id="arbox" style="max-height:260px"></div>', 'xwide');
+    const fb = () => $('#arfoe', root), box = () => $('#arbox', root);
+    const s2 = await socialReady(); if (!fb()) return;
+    if (s2 !== 'ok') { fb().innerHTML = arFoeHtml(arAI()); box().innerHTML = s2 === 'login' ? loginBox('진짜 처용들과 결투하고 주간 순위에 올라요. 지금은 연습 상대(가상 AI)만 열려요.') : s2 === 'offline' ? offBox : errBox(); return; }
+    try { const me = accUser().uid, wk = S.wk.key;
+      if (A.prev && !A.prev.got) { const pl = (await listBoard('kzar-' + A.prev.wk, 300)).sort((a, b) => b.score - a.score); const rk = pl.findIndex(e => e.id === me) + 1; const j = rk === 1 ? 800 : rk && rk <= 3 ? 500 : rk && rk <= 10 ? 300 : rk && rk <= 50 ? 150 : 50; S.jade += j; A.prev.got = true; save(); toast('지난주 아레나 ' + (rk ? rk + '위' : '참여') + ' 보상: 옥 ' + j); refresh(); }
+      await putEntry('kzar-' + wk, accName(), A.pts); await putEntry('kzard-' + wk, arDef(), Math.round(st.power));
+      const L = (await listBoard('kzar-' + wk, 300)).sort((a, b) => b.score - a.score);
+      if (!A.foes || !A.foes.length) { const cand = L.filter(e => e.id !== me).sort((a, b) => Math.abs(a.score - A.pts) - Math.abs(b.score - A.pts)).slice(0, 6).sort(() => Math.random() - 0.5).slice(0, 3); const foes = [];
+        for (const e of cand) { const d = await getEntry('kzard-' + wk, e.id); if (!d) continue; const P = arParse(d.name); foes.push({ uid: e.id, name: nm20(e.name), pts: e.score || 1000, pow: P.pow || d.score || 1, skin: P.skin, heroes: P.heroes }); }
+        A.foes = foes.sort((a, b) => b.pts - a.pts); save(); }
+      if (!fb()) return;
+      fb().innerHTML = A.foes.length ? arFoeHtml(A.foes) + '<div class="row"><div class="btn b" data-act="arRe">상대 다시 찾기</div></div>' : '<p style="text-align:center">아직 이번 주에 편성을 올린 다른 처용이 없어요. 내 편성은 올라갔으니 곧 누군가 도전해 올 거예요. 그동안 연습해 보세요.</p>' + arFoeHtml(arAI());
+      box().innerHTML = L.length ? L.slice(0, 50).map((e, i) => '<div class="xrk' + (e.id === me ? ' me' : '') + '"><b class="stroke-s">' + (i + 1) + '</b><span class="stroke-s">' + esc(e.name) + '</span><em class="stroke-s">' + fmt(e.score || 0) + '</em></div>').join('') : '<p style="text-align:center">아직 이번 주 기록이 없어요.</p>';
+    } catch (e) { console.warn(e); if (fb()) { fb().innerHTML = arFoeHtml(arAI()); box().innerHTML = errBox(); } }
+  }
+  function arGo(i) { const A = arDay(), f = arList[i]; if (!f) return; if (!f.ai && A.n >= AR_FREE) { toast('오늘 결투를 다 했어요 (하루 ' + AR_FREE + '번)'); return; }
+    if (!f.ai) A.n++; const myP = Math.max(1, stats().power);
+    S.nextMode = 'arena'; S.nextAR = { name: f.name, pw: Math.max(0.4, Math.min(3, (f.pow || myP) / myP)), skin: f.skin || null, heroes: f.heroes || [], ai: f.ai ? 1 : 0 }; lastAR = f; save();
+    startBattle(Math.max(1, Math.min(S.chap, chapters().length))); }
+  function arEnd(r) {
+    meta.classList.remove('off'); try { window.JZB && window.JZB.hide && window.JZB.hide(); } catch (e) {}
+    const f = lastAR || { ai: 1, name: '' }, A = arDay(), win = !!r.win; lastAR = null; let d = 0, gold = 0;
+    if (!f.ai) { d = arElo(A.pts, f.pts, win); A.pts = Math.max(0, A.pts + d); A.best = Math.max(A.best || 0, A.pts); if (win) A.w++; else A.l++; A.played = 1; A.foes = null; gold = win ? 1500 : 400; S.gold += gold; S.quests.arena = (S.quests.arena || 0) + 1;
+      try { if (accUser()) putEntry('kzar-' + S.wk.key, accName(), A.pts).catch(() => {}); } catch (e) {} }
+    save(); tab = 'home'; renderLobby(); show('s-lobby'); try { music('bgm_lobby'); } catch (e) {}
+    modal('<h3 class="stroke" style="color:' + (win ? '#7df06a' : '#ff7a6a') + '">' + (win ? '결투 승리!' : '결투 패배') + '</h3><p style="text-align:center;font-size:24px">상대 ' + esc(f.name) + (f.ai ? ' (연습 상대 · 가상 AI)' : '') + '</p>' +
+      (f.ai ? '<p style="text-align:center">연습 결투는 점수와 보상이 없어요.</p>' : '<p style="text-align:center;font-size:26px">아레나 점수 <b style="color:#ffe27a">' + fmt(A.pts) + '</b> (' + (d >= 0 ? '+' : '−') + Math.abs(d) + ')</p><p style="text-align:center">엽전 +' + fmt(gold) + ' · 오늘 결투 ' + A.n + '/' + AR_FREE + '</p>') +
+      '<div class="row"><div class="btn y" data-act="ar">아레나로</div></div>');
+  }
+
+  /* ---------------- 한정 레이스: 매주 금~일, 물리친 좀비 수 경쟁 (kzrace-{금요일 날짜}) ---------------- */
+  const RACE_ST = [[500, 'jade', 30], [2000, 'stone', 20], [5000, 'jade', 80], [10000, 'coin', 20000], [20000, 'jade', 200]];
+  const ymd = d => d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  function raceNow() { const d = new Date(), wd = d.getDay(), back = wd === 5 ? 0 : wd === 6 ? 1 : wd === 0 ? 2 : -1;
+    if (back < 0) return { on: false, next: new Date(d.getFullYear(), d.getMonth(), d.getDate() + (5 - wd)).getTime() };
+    const fr = new Date(d.getFullYear(), d.getMonth(), d.getDate() - back); return { on: true, id: ymd(fr), end: new Date(fr.getFullYear(), fr.getMonth(), fr.getDate() + 3).getTime() }; }
+  function raceSt() { const R = raceNow(); S.race = S.race || { id: '', k: 0, got: {} }; const c = S.race;
+    if (c.id && (!R.on || R.id !== c.id)) { let auto = 0; RACE_ST.forEach(([need, k, v], i) => { if (c.k >= need && !c.got[i]) { give(k, v); auto++; } }); if (auto) setTimeout(() => toast('지난 레이스 단계 보상 ' + auto + '개를 받았어요'), 600); if (c.k > 0) c.prev = { id: c.id, k: c.k, got: false }; c.id = ''; c.k = 0; c.got = {}; save(); }
+    if (R.on && !c.id) { c.id = R.id; c.k = 0; c.got = {}; }
+    return c; }
+  const raceDot = () => { try { const c = raceSt(); return !!c.id && RACE_ST.some(([need], i) => c.k >= need && !c.got[i]); } catch (e) { return false; } };
+  const raceLeft = () => { const R = raceNow(), ms = Math.max(0, (R.on ? R.end : R.next) - Date.now()), h = Math.floor(ms / 36e5); return { on: R.on, s: (h >= 24 ? Math.floor(h / 24) + '일 ' : '') + (h % 24) + '시간 ' + Math.floor(ms / 6e4) % 60 + '분', short: h >= 24 ? Math.floor(h / 24) + '일' : h >= 1 ? h + '시간' : Math.floor(ms / 6e4) + '분' }; };
+  const evTabs = t => '<div class="xtabs" style="margin-bottom:6px"><div class="btn ' + (t === 'race' ? 'b' : 'y') + '" data-act="evTab" data-v="fest">출석 축제</div><div class="btn ' + (t === 'race' ? 'y' : 'b') + '" data-act="evTab" data-v="race">한정 레이스' + (raceDot() ? ' •' : '') + '</div></div>';
+  async function raceModal() {
+    const c = raceSt(), T = raceLeft();
+    const stg = RACE_ST.map(([need, k, v], i) => { const ok = c.k >= need, got = c.got[i]; return '<div class="xev' + (got ? ' got' : ok ? ' now' : '') + '"' + (ok && !got ? ' data-act="raceGet" data-v="' + i + '"' : '') + '><div class="stroke-s" style="font-size:17px">' + fmt(need) + '마리</div>' + rwBox(k, v, i >= 4 ? 5 : 3, 1) + (got ? '<i class="xchk">✔</i>' : '') + '</div>'; }).join('');
+    modal(evTabs('race') + '<h3 class="stroke">한정 레이스 · 좀비 사냥</h3><p style="text-align:center">' + (T.on ? '금~일 사흘 동안 물리친 좀비 수로 겨뤄요. 모든 전투가 들어가요.<br><b style="color:#ffe27a">남은 시간 ' + T.s + '</b> · 내 기록 <b style="color:#ffe27a">' + fmt(c.k) + '마리</b>' : '레이스는 매주 금요일 0시부터 일요일 밤 12시까지 열려요.<br><b style="color:#ffe27a">다음 레이스까지 ' + T.s + '</b>') + '</p>' +
+      (T.on ? '<div class="xevs">' + stg + '</div>' : '') + '<p style="text-align:center;font-size:16px">순위 보상: 1위 옥 1000 · 2~3위 600 · 4~10위 300 · 11~50위 150 · 참여 50 (끝난 뒤 첫 접속 때)</p><div class="xscroll" id="rcbox" style="max-height:280px"><p style="text-align:center">' + (T.on ? '순위 불러오는 중...' : '') + '</p></div>', 'xwide');
+    const box = () => $('#rcbox', root); const s2 = await socialReady(); if (!box()) return;
+    if (s2 !== 'ok') { box().innerHTML = s2 === 'login' ? loginBox('레이스 순위에 이름이 올라가고 순위 보상을 받아요.') : s2 === 'offline' ? offBox : errBox(); return; }
+    try { const me = accUser().uid;
+      if (c.prev && !c.prev.got) { const pl = (await listBoard('kzrace-' + c.prev.id, 300)).sort((a, b) => b.score - a.score); const rk = pl.findIndex(e => e.id === me) + 1; const j = rk === 1 ? 1000 : rk && rk <= 3 ? 600 : rk && rk <= 10 ? 300 : rk && rk <= 50 ? 150 : 50; S.jade += j; c.prev.got = true; save(); toast('지난 레이스 ' + (rk ? rk + '위' : '참여') + ' 보상: 옥 ' + j); refresh(); }
+      if (!T.on) { box().innerHTML = '<p style="text-align:center">레이스가 열리면 순위가 보여요.</p>'; return; }
+      if (c.k > 0) await putEntry('kzrace-' + c.id, accName(), c.k);
+      const L = (await listBoard('kzrace-' + c.id, 300)).sort((a, b) => b.score - a.score).slice(0, 50); if (!box()) return;
+      box().innerHTML = L.length ? L.map((e, i) => '<div class="xrk' + (e.id === me ? ' me' : '') + '"><b class="stroke-s">' + (i + 1) + '</b><span class="stroke-s">' + esc(e.name) + '</span><em class="stroke-s">' + fmt(e.score || 0) + '</em></div>').join('') : '<p style="text-align:center">아직 이번 레이스 기록이 없어요. 첫 번째가 되어 보세요!</p>';
+    } catch (e) { console.warn(e); if (box()) box().innerHTML = errBox(); }
+  }
+  function raceGet(i) { const c = raceSt(), s = RACE_ST[i]; if (!s || !c.id || c.got[i] || c.k < s[0]) return; c.got[i] = 1; give(s[1], s[2]); save(); toast('레이스 단계 보상을 받았어요'); raceModal(); refresh(); }
+
   /* 기간 이벤트: 이달의 7일 출석 축제 */
   const EVR = [['jade', 50], ['coin', 5000], ['stone', 15], ['torch', 15], ['jade', 80], ['coin', 10000], ['jade', 150]];
   const evDot = () => { xinit(); return S.ev.got < 7 && S.ev.last !== today(); };
-  function evModal() {
+  function evModal(tab) {
+    if (tab === 'race') return raceModal();
     xinit(); const d = new Date(), end = new Date(d.getFullYear(), d.getMonth() + 1, 0), left = end.getDate() - d.getDate();
     const cells = EVR.map(([k, v], i) => { const got = i < S.ev.got, now = i === S.ev.got && S.ev.last !== today(); return '<div class="xev' + (got ? ' got' : now ? ' now' : '') + '"' + (now ? ' data-act="evGet"' : '') + '><div class="stroke-s" style="font-size:20px">' + (i + 1) + '일째</div>' + rwBox(k, v, i === 6 ? 5 : 3, 1) + (got ? '<i class="xchk">✔</i>' : '') + '</div>'; }).join('');
-    modal('<h3 class="stroke">처용 맞이 축제</h3><p style="text-align:center">이번 달 안에 7일을 들르면 날마다 선물을 받아요. 하루에 한 칸씩!<br><b style="color:#ffe27a">남은 기간 ' + left + '일</b></p><div class="xevs">' + cells + '</div>' + (S.ev.got >= 7 ? '<p style="text-align:center;color:#7df06a">이번 축제 선물을 모두 받았어요</p>' : ''));
+    modal(evTabs('fest') + '<h3 class="stroke">처용 맞이 축제</h3><p style="text-align:center">이번 달 안에 7일을 들르면 날마다 선물을 받아요. 하루에 한 칸씩!<br><b style="color:#ffe27a">남은 기간 ' + left + '일</b></p><div class="xevs">' + cells + '</div>' + (S.ev.got >= 7 ? '<p style="text-align:center;color:#7df06a">이번 축제 선물을 모두 받았어요</p>' : ''));
   }
   /* 랭킹: 같은 HANKUKIN 계정·Firestore의 주간 순위표. 가짜 순위는 만들지 않는다 */
   async function rankModal() {
@@ -1227,6 +1313,11 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'mountBuy': { const m = MOUNTS.find(x => x.id === v); if (!m || mOwn(v)) break; if (S.jade < m.price) { toast('옥이 모자라요'); break; } S.jade -= m.price; S.mounts = S.mounts || {}; S.mounts[v] = 1; S.mount = v; save(); toast(m.n + '을(를) 얻었어요!'); mountModal(); refresh(); break; }
       case 'wb': wbModal(); break;
       case 'wbGo': closeModal(); wbGo(v); break;
+      case 'ar': arModal(); break;
+      case 'arGo': closeModal(); arGo(+v); break;
+      case 'arRe': { arDay().foes = null; save(); arModal(); break; }
+      case 'evTab': evModal(v); break;
+      case 'raceGet': raceGet(+v); break;
       case 'gbGet': { const s = wbDay(), i = +v; s.gGot = s.gGot || {}; if (s.gGot[i]) break; const [, kk, vv] = GB_STAGE[i]; give(kk, vv); s.gGot[i] = 1; save(); toast('문파 보스 단계 보상!'); refresh(); guildModal(); break; }
       case 'skinBuy': { const s = SKINS.find(x => x.id === v); if (!s || skinOwn(v)) break; if (S.jade < s.price) { toast('옥이 모자라요'); break; } S.jade -= s.price; S.skins = S.skins || {}; S.skins[v] = 1; S.skin = v; save(); toast(s.n + ' 의상을 얻었어요!'); if ($('#mdl', root)) skinModal(); refresh(); break; }
       case 'skinWear': if (skinOwn(v)) { S.skin = v; save(); toast('의상을 바꿨어요'); if ($('#mdl', root)) skinModal(); refresh(); } break;
