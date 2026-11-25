@@ -40,7 +40,7 @@
     aa: { v0r: .35, accT: .35, rings: 0 },
     bomb: { v0r: .3, accT: .3, rings: 0 },
     intercept: { v0r: .45, accT: .2, rings: 0 }
-  };
+  }; if (window.__MSLE_PROF) for (var _pk in window.__MSLE_PROF) Object.assign(PROF[_pk] || (PROF[_pk] = {}), window.__MSLE_PROF[_pk]);
   var MAXM = 160, LIVE = [], fr = 0;
   // ------------------------------------------------------------------ shared math scratch
   var V, Q, M4, SC, ZA, UP;
