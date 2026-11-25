@@ -8,6 +8,36 @@ let PADS = D.PADS, LANE_X = D.LANE_X;   /* 판마다 layoutOf로 바뀐다 */
 const TAU = Math.PI * 2;
 /* 우두머리 한 줄 소개 (이야기\\세계관_스토리.md) */
 const BOSS_LINE = { mujang: ['검은 배의 선봉장. 가장 먼저 마을을 덮쳤다.', 'Vanguard of the black ship, first to strike the village.'], zbear: ['역병에 물든 산의 주인. 앞발 한 번에 담장이 무너진다.', 'The plagued lord of the mountain. One swipe topples a wall.'], ztiger: ['고개를 지키던 범. 이제는 눈보라 속 사냥꾼.', 'The tiger of the pass, now a hunter in the storm.'], zgrand: ['고을을 지키던 장수. 이제 역병 군대를 이끈다.', 'Once the town\'s general, now leading the plague army.'], zsamurai: ['역병에 물든 무사. 빠른 칼놀림을 조심하라.', 'A plagued swordsman. Watch his quick blade.'], mudang: ['좀비에게 의식을 불어넣는 어둠의 무녀.', 'The dark shaman who gives zombies their will.'], zqueen2: ['얼어붙은 뒤뜰의 왕비. 차가운 숨결로 얼린다.', 'The queen of the frozen garden, freezing with her breath.'], byeomra: ['저승 다리를 거꾸로 건너온 자. 사슬로 끌어당긴다.', 'He crossed back from the underworld. Beware his chains.'], king: ['역병에 물든 임금. 되돌려야 할 가장 큰 희생자.', 'The plagued king, the greatest victim we must save.'], bdokryong: ['바다 밑에서 깨어난 독룡. 독을 뿜어 땅을 물들인다.', 'A poison dragon from the deep, staining the land.'], bulgasari: ['쇠를 먹고 자라는 괴물. 탑과 성벽을 갉아먹는다.', 'The iron-eating beast that gnaws towers and walls.'], jangsanbeom: ['아는 사람 목소리를 흉내 내는 흰 괴수.', 'The white beast that mimics voices you know.'], bheukryong: ['검은 배의 주인. 돌진하며 베어 온다.', 'Master of the black ship. He charges and slashes.'], bdukkeobi: ['고개를 막은 바위 두꺼비. 뛰어올라 내리찍는다.', 'The rock toad of the pass. It leaps and slams.'], yeoksin: ['역병의 신. 모든 어둠의 세력의 우두머리.', 'The Plague God, ruler of all dark powers.'] };
+/* 숙적 역신·영웅 대사 (사용자 11-27: 긴장감, 장 사이 이야기) */
+const HERO_SAY = {"_":[["오늘 밤도 지켜 내자!","Let us hold the line tonight!"],["큰 놈이 온다, 조심하시오!","A big one comes, be careful!"],["사당이 위험하오! 막아야 하오!","The shrine is in danger! Hold them!"],["지금이다, 받아라!","Now! Take this!"]],"dokkaebi":[["방망이 준비 완료! 뚝딱!","Club ready! Bonk!"],["덩치만 크면 다냐? 덤벼라!","Big isn't everything! Come on!"],["으앗, 사당이! 더는 못 들어온다!","The shrine! No further!"],["금 나와라 뚝딱, 혼 나와라 뚝딱!","Bonk for gold, bonk for doom!"]],"honggildong":[["동에 번쩍 서에 번쩍, 오늘도 간다!","Flash east, flash west, here I go!"],["우두머리라… 내 그림자를 잡아 보시지!","A boss? Try catching my shadow!"],["사당 쪽이 위험하오! 내가 가겠소!","The shrine needs help! I'm on it!"],["분신술! 어느 게 진짜일까?","Clones! Which one is real?"]],"haetae":[["크르릉… 정의의 불꽃이 깨어났다.","Grrr… the flame of justice wakes."],["악한 기운이 짙다. 태워 주마!","Foul energy! I'll burn it away!"],["사당은 내가 지킨다, 크앙!","I guard the shrine! Roar!"],["해치의 불바다를 보아라!","Behold the sea of flames!"]],"yisunsin":[["신에게는 아직 화살이 남아 있소.","I still have arrows left."],["적장이 나섰다! 침착하게 맞서라!","The enemy leader comes! Stay calm!"],["물러서지 마라! 사당을 지켜라!","Do not retreat! Guard the shrine!"],["모두 쏴라!","All arrows, fire!"]],"eulji":[["적을 유인해 한 번에 무찌르겠소.","Lure them in, crush them at once."],["큰 적일수록 꾀가 통하는 법!","The bigger the foe, the better the trick!"],["진형을 다시 짜라, 사당을 사수하라!","Re-form ranks! Hold the shrine!"],["살수의 물결이여, 휩쓸어라!","Waters of Salsu, sweep them away!"]],"gangamchan":[["귀주의 바람이 다시 분다!","The wind of Guiju blows again!"],["적장의 목은 내가 가져가겠소!","The enemy general is mine!"],["병사들이여, 사당 앞으로!","Soldiers, to the shrine!"],["하늘의 별이 내려온다!","The stars come down!"]],"gumiho":[["후후, 오늘 밤은 사냥하기 좋겠네.","Heh, a fine night for a hunt."],["어머, 덩치 큰 손님이네?","Oh my, a big guest tonight?"],["사당이 흔들려! 여우불아, 막아!","The shrine shakes! Foxfire, block them!"],["여우불의 춤을 보여 줄게.","Watch the foxfire dance."]],"bari":[["저승길에서 돌아온 몸, 두렵지 않아요.","I returned from the underworld. I fear nothing."],["저 원혼도 저승으로 보내 줄게요.","I'll send that spirit to rest too."],["사당을 살려야 해요! 생명수를!","Save the shrine! The water of life!"],["저승꽃이여, 피어라!","Bloom, flowers of the afterlife!"]],"wonhyo":[["마음 하나에 모든 길이 있소.","All paths lie in one mind."],["큰 어둠일수록 깨달음도 크지요.","Great darkness, great awakening."],["서두르지 마시오, 사당을 지키는 게 먼저요.","Calm. First, guard the shrine."],["한마음의 빛으로 비추리라!","The light of One Mind!"]],"jeonwoochi":[["그림 속 병사들도 준비됐소.","My painted soldiers are ready."],["도술 겨루기라면 지지 않지!","I never lose a duel of magic!"],["사당이 위험! 부적을 날려라!","The shrine! Throw the talismans!"],["화중병, 그림에서 나오너라!","Painted army, step out!"]],"samyeong":[["승병들이여, 나라를 구하러 가자.","Warrior monks, let us save the land."],["큰 적이라도 물러서지 않소.","Even a great foe will not move me."],["사당을 지켜라! 염불은 나중에!","Guard the shrine! Prayers can wait!"],["승병들이여, 일어나라!","Monks, rise!"]],"daejanggeum":[["다치면 바로 말씀하세요.","Tell me the moment you are hurt."],["저 놈의 독도 약으로 다스릴게요.","I'll treat even that poison."],["사당이 위험해요, 탕약을 올릴게요!","The shrine! I'll bring the remedy!"],["어의의 탕약, 드세요!","Drink the royal remedy!"]],"sadaham":[["화랑의 칼은 물러서지 않는다!","A Hwarang blade never retreats!"],["큰 적이다! 정면으로 간다!","A big foe! Head on!"],["사당을 지켜라, 화랑의 이름으로!","For the Hwarang, guard the shrine!"],["화랑 검무, 간다!","Hwarang sword dance!"]],"kimchungseon":[["귀순한 칼, 이제 조선을 위해 쓰리라.","My blade now serves Joseon."],["적장의 뒤를 노리겠소.","I'll strike from behind their leader."],["사당 쪽 적부터 베겠소!","I'll cut the ones at the shrine first!"],["귀순의 칼을 받아라!","Taste the blade of loyalty!"]],"jangyeongsil":[["장치 점검 끝, 언제든 가동!","Gadgets checked, ready to go!"],["저 덩치도 계산 안에 있소!","Even that brute is in my plans!"],["사당 수리 장치, 가동!","Shrine repair device, start!"],["자격루의 종이 울린다!","The water clock bell rings!"]],"imugi":[["천 년을 기다린 몸, 오늘도 싸운다.","A thousand years waiting, still I fight."],["여의주의 힘을 보여 주마!","Behold the pearl's power!"],["사당이 무너지면 승천도 없다!","No ascent if the shrine falls!"],["이무기의 숨결!","Breath of the Imugi!"]],"samjoko":[["해가 뜨기 전까지 비추리라.","I will shine until the dawn."],["어둠의 우두머리라… 태양을 받아라!","A lord of darkness? Face the sun!"],["사당을 감싸라, 태양의 날개여!","Wings of the sun, shield the shrine!"],["세 발 까마귀의 빛!","Light of the three-legged crow!"]]};
+function heroSay(k, id) { if (!G || !G.comps || !G.comps.length) return; const c = id || (G.comps.find(o => o.active) || G.comps[0]).id; const L = HERO_SAY[c] || HERO_SAY._, l = L[k] || HERO_SAY._[k]; G.bubble = { s: window.IS_EN ? l[1] : l[0], t: 2.6, who: c }; }
+const NEM_CH = { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } };
+const NEM_SAY = {"meet":["크크크… 처용이 깨어났다고? 재미있구나.","Heh heh… Cheoyong has awoken? How amusing."],"again":["또 만났구나, 처용. 이번엔 지난번과 다를 것이다.","We meet again, Cheoyong. This time will be different."],"peek":["오늘은 인사만 하마. 곧 다시 보자, 처용.","Just a greeting today. We will meet soon, Cheoyong."],"r14":["…제법이구나, 처용. 다음엔 살려두지 않겠다!","…Not bad, Cheoyong. Next time I will not spare you!"],"r22":["큭… 또인가. 궁궐에서 기다리마. 그곳이 네 무덤이다!","Tch… again? I wait in the palace. It will be your grave!"]};
+function nemSay(k, t) { const s = NEM_SAY[k]; if (!s) return; G.title = { s: window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
+function spawnNem(c) {
+  const x = LANE_X[(LANE_X.length / 2) | 0] || LANE_X[0], y = camTop() + 170;
+  const e = spawnEnemy('yeoksin', x, y, { boss: true }); const d = EN.yeoksin, sc = 300 / (d.h || 124);
+  e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; e.nemName = c.peek || G.ch < 22 ? '???' : (window.IS_EN ? 'Yeoksin' : '역신');
+  e.hp = e.max = Math.max(G.lastBossMax || 0, e.max) * (c.k || 1); G.nem = e; G.nemAt = c.at || 0; G.bossRef = e;
+  G.flash = { c: '70,0,60', t: 1.3 }; FX.shake = 0.9; FX.ring(e.x, e.y, 320, '170,60,220', 1.0, 14); FX.smoke(e.x, e.y - 40, 16, '50,20,60', 30, 80); sfx('warn'); vib([160, 80, 160]);
+  G.banner = { s: (window.IS_EN ? 'NEMESIS! ' : '숙적 난입! ') + e.nemName, t: 2.8, kind: 'boss', sub: window.IS_EN ? 'The shadow behind the plague appears.' : '역병의 배후, 그림자가 모습을 드러냈다.' };
+  G.queue.push({ t: 1.6, fn: () => nemSay(G.ch >= 22 ? 'again' : 'meet', 3) });
+  if (c.peek) { e.peek = 1; e.nemInv = 1; e.peekHold = 1; G.queue.push({ t: 4.8, fn: () => nemRetreat(e) }); }
+  return e;
+}
+function nemRetreat(e) { if (!e || e.leaving) return; e.nemInv = 1; e.leaving = 2.4; G.slowmo = 0.9; G.flash = { c: '30,0,25', t: 1.6 }; FX.shake = 0.6; sfx('ult'); nemSay(e.peek ? 'peek' : (G.ch >= 22 ? 'r22' : 'r14'), 3.6); FX.ring(e.x, e.y, 260, '120,40,160', 0.8, 12); }
+function nemTick(dt) { const e = G.nem; if (!e) return;
+  if (e.leaving) { e.leaving -= dt; e.y -= 40 * dt; if (Math.random() < dt * 20) FX.smoke(e.x + rnd(-60, 60), e.y - rnd(20, 200), 2, '40,20,50', 24, 60);
+    if (e.leaving <= 0) { FX.smoke(e.x, e.y - 80, 18, '40,20,50', 34, 90); G.enemies = G.enemies.filter(o => o !== e); G.nem = null; G.nemDone = 1; if (G.bossRef === e) G.bossRef = null;
+      if (!e.peek) { G.gold += 300; G.banner = { s: window.IS_EN ? 'The nemesis fled! +300 coins' : '숙적이 물러났다! 보상 엽전 +300', t: 2.6, kind: 'win' }; G.queue.push({ t: 2.8, fn: () => heroSay(0) }); } }
+    return; }
+  if (!e.peek && e.hp <= e.max * G.nemAt) { nemRetreat(e); return; }
+  if (e.peek) return;
+  e.nemT = (e.nemT == null ? 3.5 : e.nemT) - dt;
+  if (e.nemT <= 0) { e.nemT = 5; e.nemK = (e.nemK || 0) + 1; const p = G.player;
+    if (e.nemK % 2) { for (let i = 0; i < 6; i++) spawnEnemy('peasant', e.x + rnd(-140, 140), e.y + rnd(-30, 80), {}); FX.ring(e.x, e.y, 180, '150,40,180', 0.6, 10); }
+    else { const zx = p.x, zy = p.y; G.tele.push({ x: zx, y: zy, r: 115, t: 0.9, life: 0.9, c: '130,0,130' }); G.queue.push({ t: 0.9, fn: () => { if (G.pzs) G.pzs.push({ x: zx, y: zy, r: 115, t: 5, life: 5, tick: 0 }); FX.ring(zx, zy, 115, '150,40,180', 0.5, 10); } }); } }
+}
 function bossLine(t) { const b = BOSS_LINE[t]; return b ? (window.IS_EN ? b[1] : b[0]) : ''; }
 const rnd = (a, b) => a + Math.random() * (b - a);
 const pick = a => a[(Math.random() * a.length) | 0];
@@ -158,7 +188,7 @@ function newGame(cfg) {
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
   /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
   const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.nightmare ? ch + 29 : ch) - 1);
-  const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(2.4, Math.max(1, 1 + 0.6 * (POW / EXPV - 1.25))) : 1;
+  const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(4, Math.max(1, 1 + 0.75 * (POW / EXPV - 1.2))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
   try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool.map(k => (EN[k] && EN[k].spr) || k), C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {}
@@ -333,6 +363,7 @@ function drawObjThing(o) {
 /* ---------- 피해 ---------- */
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
+  if (e.nemInv) return 0;
   o = o || {};
   if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.05 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
@@ -403,6 +434,7 @@ function bombBlast(e, dmg, byFoe) {
 }
 function killEnemy(e) {
   if (e.dead) return;
+  if (e.nem) { e.hp = 1; nemRetreat(e); return; }
   if (EN[e.type] && EN[e.type].bomber && !e.blasted) bombBlast(e, 0, true);
   e.dead = true;
   if (e.mut === 'plague' && G.pzs) { G.pzs.push({ x: e.x, y: e.y, r: 62, t: 5, life: 5, tick: 0 }); FX.smoke(e.x, e.y, 5, '110,200,60', 16, 40); }
@@ -450,12 +482,13 @@ function spawnEnemy(type, x, y, o) {
   const d = EN[type], N = curN();
   let hp = d.hp * N.hp * (G.tierK || 1), sc = 1;
   const tr = TIER[type] || 2; if (!o.elite && !o.boss) hp *= (D.TIERHP && D.TIERHP[tr]) || 1; if (d.sc) sc = d.sc;
-  if (o.elite) { hp *= 5; sc = Math.min(2.6, 1.5 * (d.sc || 1)); }
+  const HK = Math.min(1, Math.max(0, ((G.tierK || 1) - 1) / 0.9, (G.ch - 8) / 30)); /* 강한 계정·뒤 장일수록 정예·우두머리 강화(사용자 11-27) */
+  if (o.elite) { hp *= 5 * (1 + 0.6 * HK); sc = Math.min(3.0, 1.85 * (d.sc || 1)); }   /* 중간보스: 크게, 강한 판일수록 단단하게 */
   if (o.small) { hp *= 0.25; sc = 0.6; }
-  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 1.6 : Math.min(2.2, 220 / (d.h || 100)); hp *= 1.35; }   /* 우두머리 화면 키 최대 약 220 */
+  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 2.0 : Math.min(2.9, 290 / (d.h || 100)); hp *= 1.35 * (1 + 0.8 * HK); }   /* 우두머리: 화면 키 최대 약 290, 체력 1.7배 더(사용자 11-27) */   /* 우두머리 화면 키 최대 약 220 */
   if (o.boss && G.cfg && G.cfg.wbBoss) { hp *= 60; sc *= 1.15; }
   const e = { type, x, y, r: d.r * sc, hp, max: hp, sp: d.sp * rnd(0.92, 1.08) * (o.boss ? 0.85 : 1), cd: rnd(0.3, 1), hitT: 0, wob: rnd(0, 6.28), turn: Math.random() < 0.5 ? 1 : -1,
-    gx: rnd(-46, 46), elite: !!o.elite, boss: !!o.boss, small: !!o.small, armor: d.armor || 0, sc, charmT: 0, burnT: 0, jumpT: 0, var: 'shamble', st: 'move', stT: 0, twT: rnd(1, 5), twA: 0, screamed: false, d8: 0, pile: 0, atkT: 0, hh: (d.h || 60) * sc, slowT: 0, frzT: 0, stunT: 0, t1: rnd(3, 5), t2: 6, chg: 0, tele: 0, squash: 0, flip: false };
+    gx: rnd(-46, 46), hk: (o.elite || o.boss) ? HK : 0, elite: !!o.elite, boss: !!o.boss, small: !!o.small, armor: d.armor || 0, sc, charmT: 0, burnT: 0, jumpT: 0, var: 'shamble', st: 'move', stT: 0, twT: rnd(1, 5), twA: 0, screamed: false, d8: 0, pile: 0, atkT: 0, hh: (d.h || 60) * sc, slowT: 0, frzT: 0, stunT: 0, t1: rnd(3, 5), t2: 6, chg: 0, tele: 0, squash: 0, flip: false };
   if (!o.boss && !o.elite && !d.fly && !o.small) { e.var = pickVar(type); const V = ZVAR[e.var]; e.sp *= V.sp; if (V.hp) { e.hp *= V.hp; e.max = e.hp; } if (V.low) e.hh *= 0.45; }
   mutate(e);
   if (!o.boss && G.C && G.C.fresh && G.C.fresh.includes(type)) { G.seenNew = G.seenNew || {}; if (!G.seenNew[type]) { G.seenNew[type] = 1; G.banner = { s: '새 좀비 등장: ' + d.n, t: 2.2, kind: 'boss' }; FX.ring(e.x, e.y, 120, d.tint || '255,220,120', 0.5, 6); } }
@@ -511,7 +544,7 @@ function spawnBig(type, boss) {
   const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = camTop() - 90;
   const e = spawnEnemy(type, x, y, boss ? { boss: true } : { elite: true });
   if (boss) { /* 등장: 큰 그림자가 먼저 드리우고 땅이 흔들린다 */ FX.shake = Math.max(FX.shake || 0, 0.9); G.tele.push({ x: e.x, y: Math.max(e.y, camTop() + 140), r: e.r * 4.5, t: 1.2, life: 1.2, c: '120,0,0' }); for (let i = 0; i < 3; i++) G.queue.push({ t: 0.35 * i, fn: () => { FX.shake = 0.5; FX.debris(e.x + rnd(-80, 80), e.y + rnd(-20, 40), 8, '#4a3a2a', 260); } });
-    G.bossRef = e; G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
+    G.bossRef = e; G.lastBossMax = e.max; G.queue.push({ t: 3.1, fn: () => heroSay(1) }); G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
   else G.banner = { s: '정예 출현!', t: 2.4, kind: 'elite' };
   sfx('warn');
   return e;
@@ -675,7 +708,7 @@ function startNight() { clearCombat();
   if (!G || G.phase !== 'day') return;
   $('btnBattle').classList.remove('on'); bPanel.classList.remove('on');
   if (G.log) G.log.nights.push(logSnap('dusk'));
-  G.phase = 'night'; G.time = 0; G.spawnAcc = 0; G.eliteIdx = 0; G.bossOut = false;
+  G.phase = 'night'; G.time = 0; G.spawnAcc = 0; G.eliteIdx = 0; G.bossOut = false; if (G.night === 0) G.queue.push({ t: 1.8, fn: () => heroSay(0) });
   if (fxN('shield')) G.shield = G.player.max * 0.25;
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
   const N = curN();
@@ -814,7 +847,7 @@ function useUlt() {
 function useCult() {
   if (!G || !isNight() || G.cult > 0 || G.cutin) return;
   const c = G.comps.find(o => o.active && !(o.drop > 0)); if (!c) return;
-  const C = COMP[c.id]; G.cult = G.cultMax; sfx('ult');
+  const C = COMP[c.id]; G.cult = G.cultMax; sfx('ult'); if (!G.saidUlt) { G.saidUlt = 1; G.queue.push({ t: 1.0, fn: () => heroSay(3, c.id) }); }
   G.cutin = { t: 0.9, life: 0.9, who: c.id, name: C.ult, col: C.col, fn: () => {
     const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id), p = G.player;
     const vis = () => G.enemies.filter(onScreen);
@@ -966,12 +999,15 @@ function update(dtr) {
 
   objUpdate(dt);
   if (pairOn('p_won')) { G.wonT = (G.wonT || 0) - dt; if (G.wonT <= 0) { G.wonT = 20; G.shShield = sh.max * 0.15; FX.ring(sh.x, sh.y - 40, 150, '255,215,110', 0.6, 10); } }
-  { const k = sh.hp / sh.max; if (k < 0.5 && !G.sh50) { G.sh50 = 1; G.crisisT = 2.5; G.banner = { s: '사당 내구도 절반!', t: 2, kind: 'boss' }; sfx('warn'); vib([100, 60, 100]); FX.shake = 0.35; } if (k < 0.25 && !G.sh25) { G.sh25 = 1; G.crisisT = 3.5; G.banner = { s: '사당이 무너지기 직전!', t: 2.4, kind: 'boss' }; sfx('warn'); vib([150, 80, 150, 80, 250]); FX.shake = 0.6; } }
+  { const k = sh.hp / sh.max; if (k < 0.3 && !G.sh30) { G.sh30 = 1; G.queue.push({ t: 0.6, fn: () => heroSay(2) }); } if (k < 0.5 && !G.sh50) { G.sh50 = 1; G.crisisT = 2.5; G.banner = { s: '사당 내구도 절반!', t: 2, kind: 'boss' }; sfx('warn'); vib([100, 60, 100]); FX.shake = 0.35; } if (k < 0.25 && !G.sh25) { G.sh25 = 1; G.crisisT = 3.5; G.banner = { s: '사당이 무너지기 직전!', t: 2.4, kind: 'boss' }; sfx('warn'); vib([150, 80, 150, 80, 250]); FX.shake = 0.6; } }
   if (p.hp <= 0 && pairOn('p_dae') && !G.daeRez) { G.daeRez = 1; p.hp = p.max * 0.5; p.invT = 2.5; FX.ring(p.x, p.y, 160, '160,255,180', 0.8, 14); G.banner = { s: '대장금의 탕약! 처용이 일어섰다', t: 2.2, kind: 'win' }; vib([60, 40, 60]); }
   if (G.obj && G.obj.beacon && G.obj.beacon.hp <= 0) { G.loseWhy = '봉화대가 무너졌다'; return endGame(false); }
   if (sh.hp <= 0 || p.hp <= 0) return endGame(false);
   if (G.mode === 'arena') { arenaTick(); if (G.arFoe && G.arFoe.dead) { G.title = null; G.banner = { s: '결투 승리!', t: 2, kind: 'win' }; return endGame(true); } if (G.time >= N.dur) { G.loseWhy = '시간 안에 이기지 못했다'; return endGame(false); } }
-  if (G.time >= N.dur && !(N.boss && (!G.bossOut || bossAlive))) {
+  const NEMC = (G.mode || 'adventure') === 'adventure' && !G.nm && !(G.cfg && G.cfg.wbBoss) && G.night === G.nights.length - 1 ? NEM_CH[G.ch] : null;
+  if (NEMC && !G.nemDone && !G.nem && G.time >= N.dur && !bossAlive && (!N.boss || G.bossOut)) spawnNem(NEMC);
+  nemTick(dt);
+  if (G.time >= N.dur && !(N.boss && (!G.bossOut || bossAlive)) && !(NEMC && !G.nemDone)) {
     for (const e of G.enemies) { FX.p({ kind: 'glow', x: e.x, y: e.y - 20, life: 0.5, s: 40, s2: 4, c: '255,230,160' }); FX.ember(e.x, e.y - 10, '255,230,160', 4, 120); }
     G.kills += G.enemies.length; G.enemies = []; clearCombat();
     G.phase = 'dawn'; G.dawnT = 2.2; joy.on = false; G.bossRef = null;
@@ -1604,7 +1640,7 @@ function enemies(dt) {
       continue;
     }
     if (e.jumpT > 0) { e.jumpT -= dt; e.y += 170 * dt; if (e.jumpT <= 0) FX.smoke(e.x, e.y, 3, '170,150,120', 10, 20); continue; }
-    if (e.frzT > 0 || e.stunT > 0) continue;
+    if (e.frzT > 0 || e.stunT > 0 || e.leaving || e.peekHold) continue;
     e.cd -= dt; e.wob += dt * 7;
     /* 노릴 대상 */
     let tg = sh;
@@ -1631,7 +1667,7 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.4 : 1) * (e.boss ? 1.3 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
+    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.4 + 0.45 * (e.hk || 0) : 1) * (e.boss ? 1.3 + 0.7 * (e.hk || 0) : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
     if (e.boss && !e.p2 && e.hp < e.max * (G.nm ? 0.85 : 0.5)) {
@@ -2366,7 +2402,7 @@ function drawHUD(day) {
   if (boss) {
     panel(90, 202, 540, 66, 14, 'rgba(10,6,8,.9)', '#8a1a1a');
     waveIcon('boss', 122, 236, 26, false, false);
-    txt(EN[boss.type].n + (boss.enr ? ' · 분노' : ''), 372, 220, 26, boss.enr ? '#ff7a5a' : '#ffcfb0', 'center');
+    txt((boss.nemName || EN[boss.type].n) + (boss.enr ? ' · 분노' : ''), 372, 220, 26, boss.enr ? '#ff7a5a' : '#ffcfb0', 'center');
     hpBar(156, 238, 452, 20, boss.hp / boss.max, boss.hp < boss.max * 0.5 ? '#ff3a1a' : '#e8322a');
   }
   if (isNight() || G.phase === 'level') {
@@ -2408,7 +2444,7 @@ function drawHUD(day) {
   }
   /* 말풍선 */
   /* 알림 한 줄 (예전 큰 말풍선 대신) */
-  if (G.bubble) { const a = Math.min(1, G.bubble.t * 3); ctx.globalAlpha = a; ctx.font = '800 17px ' + FONT; let s = String(G.bubble.s); while (s.length > 6 && ctx.measureText(s).width > 470) s = s.slice(0, -2); if (s !== String(G.bubble.s)) s += '…'; const bw = ctx.measureText(s).width + (G.comps.length ? 58 : 34), bx = Math.max(16, 300 - bw / 2); panel(bx, 1016, bw, 34, 17, 'rgba(10,14,18,.78)', 'rgba(255,211,107,.55)'); let tx = bx + 17; if (G.comps.length) { if (!drawPort(G.comps[0].id, bx + 19, 1033, 13, '#fff')) { circle(bx + 19, 1033, 12); ctx.fillStyle = 'rgba(' + COMP[G.comps[0].id].col + ',.9)'; ctx.fill(); } tx = bx + 38; } txt(s, tx, 1033, 17, '#fff6e0', 'left', false); ctx.globalAlpha = 1; }
+  if (G.bubble) { const a = Math.min(1, G.bubble.t * 3); ctx.globalAlpha = a; ctx.font = '800 17px ' + FONT; let s = String(G.bubble.s); while (s.length > 6 && ctx.measureText(s).width > 470) s = s.slice(0, -2); if (s !== String(G.bubble.s)) s += '…'; const bw = ctx.measureText(s).width + (G.comps.length ? 58 : 34), bx = Math.max(16, 300 - bw / 2); panel(bx, 1016, bw, 34, 17, 'rgba(10,14,18,.78)', 'rgba(255,211,107,.55)'); let tx = bx + 17; if (G.comps.length) { if (!drawPort((G.bubble.who && COMP[G.bubble.who] ? G.bubble.who : G.comps[0].id), bx + 19, 1033, 13, '#fff')) { circle(bx + 19, 1033, 12); ctx.fillStyle = 'rgba(' + COMP[G.comps[0].id].col + ',.9)'; ctx.fill(); } tx = bx + 38; } txt(s, tx, 1033, 17, '#fff6e0', 'left', false); ctx.globalAlpha = 1; }
   if (false) {
     const a = Math.min(1, G.bubble.t * 3), C = COMP[G.comps[0].id]; ctx.globalAlpha = a;
     panel(24, 1010, 100, 100, 50, 'rgba(' + C.col + ',.9)', '#fff'); if (!drawPort(G.comps[0].id, 74, 1060, 46, '#fff')) { ctx.save(); circle(74, 1060, 46); ctx.clip(); drawSprite(C.spr, 74, 1130, { h: 120 }); ctx.restore(); }
