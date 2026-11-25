@@ -203,12 +203,12 @@ FX.drawNums = function (ctx, toS) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   for (const n of nums) {
     const age = n.life - n.t, pop = age < 0.08 ? 1.7 - age / 0.08 * 0.7 : 1, s = toS(n.x, n.y);
-    const size = (n.crit ? 40 : 30) * pop;
+    const size = (n.crit ? 52 : 30) * pop;
     ctx.globalAlpha = Math.min(1, n.t / 0.25);
     ctx.font = '900 ' + size.toFixed(1) + 'px "Pretendard","Malgun Gothic",sans-serif';
     const txt = FX.fmt(n.v) + (n.crit ? '!' : '');
     ctx.lineWidth = n.crit ? 8 : 7; ctx.strokeStyle = n.crit ? '#3a0606' : '#141018'; ctx.strokeText(txt, s[0], s[1]);
-    ctx.fillStyle = n.col || (n.crit ? '#ff4a3a' : '#ffffff'); ctx.fillText(txt, s[0], s[1]);
+    if (n.crit && !n.col) { const gg = ctx.createLinearGradient(0, s[1] - size, 0, s[1]); gg.addColorStop(0, '#fff4a0'); gg.addColorStop(1, '#ff5a2a'); ctx.fillStyle = gg; } else ctx.fillStyle = n.col || '#ffffff'; ctx.fillText(txt, s[0], s[1]);
     if (n.crit) { ctx.fillStyle = 'rgba(255,230,120,.55)'; ctx.fillText(txt, s[0], s[1] - 2); }
   }
   ctx.globalAlpha = 1;

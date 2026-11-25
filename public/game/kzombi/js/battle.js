@@ -149,6 +149,9 @@ function newGame(cfg) {
   const IS = window.JZI && cfg.items && cfg.items.length ? window.JZI.sum(cfg.items) : { atk: 0, hp: 0, speed: 0, fx: {}, weapon: null };
   if (IS.weapon) cfg.weapon = IS.weapon;
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
+  /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
+  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * (ch - 1);
+  const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(2.4, Math.max(1, 1 + 0.6 * (POW / EXPV - 1.25))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
   try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool, C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {}
@@ -166,7 +169,7 @@ function newGame(cfg) {
   if (mode === 'adventure' && C.objective === 'survive') nights = nights.map((n, i) => Object.assign({}, n, { rate: [n.rate[0] * (ch <= 6 ? 1.12 : 1.25), n.rate[1] * (ch <= 6 ? 1.12 : 1.25)], boss: null, elites: n.boss ? [0.3, 0.7] : n.elites, kind: n.boss ? 'elite' : n.kind }));
   const shMax = Math.round((400 + ch * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
   G = {
-    cfg, ch, C, nights, pkey: PKEY, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
+    cfg, ch, C, nights, pkey: PKEY, tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
     gold: 120 + 12 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
@@ -249,6 +252,9 @@ function objOk() {
   if (O.type === 'annihilate') return win && G.kills >= O.target;
   return win;
 }
+/* 판 목표마다 유리한 빌드: 그 빌드 쪽 피해가 25% 세진다 */
+const OBJ_BUILD = { beacon: ['building', '건설 위주'], bossTime: ['player', '공격 위주'], escort: ['hero', '영웅·병사 위주'], survive: ['building', '건설 위주'], annihilate: ['skill', '신력(기술) 위주'], defend: [null, '자유'] };
+function objBuildK(src, e) { const B2 = G.obj && OBJ_BUILD[G.obj.type]; if (!B2 || !B2[0]) return 1; const s = src === 'skill' || src === 'player' ? (B2[0] === 'player' && src === 'skill' ? 'player' : src) : src; if (s !== B2[0]) return 1; return B2[0] === 'player' ? (e && (e.boss || e.elite) ? 1.35 : 1.15) : 1.25; }
 function objText() {
   const O = G.obj; if (!O) return '';
   if (O.type === 'defend') return '목표 · 사당 ' + Math.round(G.shrine.hp / G.shrine.max * 100) + '% (50% 이상)';
@@ -292,6 +298,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
+  dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   let crit = false;
   if (!o.nocrit && Math.random() < 0.05 + 0.12 * skLv('crit') + 0.1 * fxN('crit10') + 0.05 * fxN('crit5')) { dmg *= 2 + 0.5 * Math.min(1, skLv('crit')) + 0.3 * fxN('critDmg30'); crit = true; }
@@ -332,6 +339,7 @@ function killEnemy(e) {
   if (e.dead) return; e.dead = true;
   G.kills++;
   const d = EN[e.type], big = e.elite || e.boss;
+  if (!G.low && (big || Math.random() < 0.35)) { const n = big ? 6 : 1; for (let i = 0; i < n; i++) FX.p({ kind: 'glow', x: e.x + rnd(-8, 8), y: e.y - e.hh * 0.6, vx: rnd(-12, 12), vy: -rnd(70, 120), life: rnd(0.7, 1.1), s: big ? 18 : 11, s2: 2, c: big ? '255,210,120' : '150,240,200' }); }
   const xpM = (1 + 0.15 * fxN('xp15')) * (G.mode === 'xp' ? 3 : 1);
   G.orbs.push({ x: e.x, y: e.y, v: (d.xp || 1) * (big ? 4 : 1) * xpM, t: 0, vx: rnd(-60, 60), vy: rnd(-80, -20), z: 0, vz: 160 });
   const coinP = G.mode === 'gold' ? 1 : 0.22 + (pairOn('p_dok') ? 0.1 : 0);
@@ -371,7 +379,7 @@ function pickVar(type) {
 function spawnEnemy(type, x, y, o) {
   o = o || {};
   const d = EN[type], N = curN();
-  let hp = d.hp * N.hp, sc = 1;
+  let hp = d.hp * N.hp * (G.tierK || 1), sc = 1;
   if (o.elite) { hp *= 5; sc = 1.3; }
   if (o.small) { hp *= 0.25; sc = 0.6; }
   if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 1.15 : 1.6; }
@@ -422,7 +430,7 @@ function spawnWave() {
 function spawnBig(type, boss) {
   const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = camTop() - 90;
   const e = spawnEnemy(type, x, y, boss ? { boss: true } : { elite: true });
-  if (boss) { G.bossRef = e; G.banner = { s: '우두머리 출현! ' + EN[type].n, t: 2.8, kind: 'boss' }; G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
+  if (boss) { G.bossRef = e; G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss' }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
   else G.banner = { s: '정예 출현!', t: 2.4, kind: 'elite' };
   sfx('warn');
   return e;
@@ -584,7 +592,7 @@ function startNight() {
   if (fxN('shield')) G.shield = G.player.max * 0.25;
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
   const N = curN();
-  G.title = { s: N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d, t: 4 }, '목표 · ' + G.obj.n) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')), t: G.night === 0 ? 3 : 2.2 };
+  G.title = { s: N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')), t: G.night === 0 ? 3 : 2.2 };
   sfx('warn', 0.6);
 }
 
@@ -688,7 +696,9 @@ function pickSkill(id) {
 }
 function gainXp(v) {
   const p = G.player; p.xp += v;
+  const lv0 = p.lv;
   while (p.xp >= xpNeed(p.lv)) { p.xp -= xpNeed(p.lv); p.lv++; G.pendingLv++; }
+  if (p.lv > lv0) { G.slowmo = Math.max(G.slowmo || 0, 0.2); FX.ring(p.x, p.y, 120, '160,255,220', 0.45, 8); }
   if (G.pendingLv > 0 && G.phase === 'night') openLevel();
 }
 
@@ -1481,7 +1491,7 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1);
+    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
     if (e.boss && !e.p2 && e.hp < e.max * 0.5) {
@@ -1631,7 +1641,7 @@ function finish() {
   const res = { win: G.phase === 'win', chapter: G.ch, wave: Math.min(G.night + 1, G.nights.length), waves: G.nights.length,
     dmg: { skill: Math.round(G.dmg.skill), hero: Math.round(G.dmg.hero), building: Math.round(G.dmg.building), player: Math.round(G.dmg.player) },
     mode: G.mode, stars: G.missions ? G.missions.filter(m => m.ok()).length : null, bossDmg: Math.round(G.bossDmg), kills: G.kills, gold: G.gold, time: Math.round((performance.now() - G.startT) / 1000),
-    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, pairs: Object.keys(G.pairs || {}) };
+    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, pairs: Object.keys(G.pairs || {}) };
   if (typeof JZB.onEnd === 'function' && JZB.onEnd !== defaultEnd) JZB.onEnd(res); else defaultEnd(res);
 }
 function defaultEnd(res) {
