@@ -6,9 +6,9 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
+  "anchorX": 0.465,
+  "anchorY": 0.973,
+  "ch": 0.762,
   "anims": {
    "walk": {
     "src": "player_walk.webp",
@@ -31,7 +31,7 @@
     "loop": false
    }
   },
-  "v": 3865,
+  "v": 82359,
   "toon": 1
  },
  "peasant": {
@@ -1794,10 +1794,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 84,
-  "anchorX": 0.453,
-  "anchorY": 0.985,
-  "ch": 0.635,
-  "v": 38422,
+  "anchorX": 0.455,
+  "anchorY": 0.965,
+  "ch": 0.69,
+  "v": 56870,
   "anims": {
    "walk": {
     "src": "jeonwoochi_walk.webp",
@@ -2182,7 +2182,7 @@
   "anchorX": 0.453,
   "anchorY": 0.94,
   "ch": 0.713,
-  "v": 69176,
+  "v": 23887,
   "anims": {
    "walk": {
     "src": "s_archer_walk.webp",
@@ -2377,11 +2377,11 @@
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 90,
+  "height": 86,
   "anchorX": 0.453,
   "anchorY": 0.94,
   "ch": 0.713,
-  "v": 27031,
+  "v": 23886,
   "anims": {
    "walk": {
     "src": "s_crossbow_walk.webp",
@@ -2459,10 +2459,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
-  "v": 93877,
+  "anchorX": 0.498,
+  "anchorY": 0.938,
+  "ch": 0.723,
+  "v": 82359,
   "anims": {
    "walk": {
     "src": "player_amhaeng_walk.webp",
@@ -2480,7 +2480,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_amhaeng_hit.webp",
+    "src": "player_amhaeng_idle.webp",
     "frames": 6,
     "loop": false
    }
@@ -2494,10 +2494,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
+  "anchorX": 0.496,
+  "anchorY": 0.918,
   "ch": 0.703,
-  "v": 50731,
+  "v": 82359,
   "anims": {
    "walk": {
     "src": "player_jeoseung_walk.webp",
@@ -2515,7 +2515,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_jeoseung_hit.webp",
+    "src": "player_jeoseung_idle.webp",
     "frames": 6,
     "loop": false
    }
@@ -2529,10 +2529,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
-  "v": 10459,
+  "anchorX": 0.494,
+  "anchorY": 0.953,
+  "ch": 0.738,
+  "v": 84257,
   "anims": {
    "walk": {
     "src": "player_gonryong_walk.webp",
@@ -2550,7 +2550,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_gonryong_hit.webp",
+    "src": "player_gonryong_idle.webp",
     "frames": 6,
     "loop": false
    }
@@ -2564,10 +2564,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
-  "v": 2149,
+  "anchorX": 0.498,
+  "anchorY": 0.949,
+  "ch": 0.594,
+  "v": 82359,
   "anims": {
    "walk": {
     "src": "player_janggun_walk.webp",
@@ -2585,7 +2585,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_janggun_hit.webp",
+    "src": "player_janggun_idle.webp",
     "frames": 6,
     "loop": false
    }
@@ -2715,10 +2715,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
-  "v": 55113,
+  "anchorX": 0.49,
+  "anchorY": 0.953,
+  "ch": 0.742,
+  "v": 82359,
   "anims": {
    "walk": {
     "src": "player_seonbi_walk.webp",
@@ -2736,7 +2736,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_seonbi_hit.webp",
+    "src": "player_seonbi_idle.webp",
     "frames": 6,
     "loop": false
    }
@@ -2750,10 +2750,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 118,
-  "anchorX": 0.455,
-  "anchorY": 0.934,
-  "ch": 0.703,
-  "v": 10323,
+  "anchorX": 0.494,
+  "anchorY": 0.965,
+  "ch": 0.719,
+  "v": 82359,
   "anims": {
    "walk": {
     "src": "player_podo_walk.webp",
@@ -2771,7 +2771,7 @@
     "loop": false
    },
    "hit": {
-    "src": "player_podo_hit.webp",
+    "src": "player_podo_idle.webp",
     "frames": 6,
     "loop": false
    }
