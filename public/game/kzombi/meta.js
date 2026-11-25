@@ -530,8 +530,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (wave > (S.best[n] || 0)) S.best[n] = wave;
     const unlocked = win && n === S.chap && S.chap < C.length;
     if (unlocked) { S.chap++; S.sel = S.chap; }
-    const gold = Math.round((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2);
-    const exp = Math.round((win ? 90 : 40) * n);
+    const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
+    const exp = Math.round((win ? 90 : 40) * n * tk);
     const stone = win ? 4 + n * 2 : Math.floor(n * wave / waves * 2);
     const drop = win ? mkItem(rnd(SLOTS).id, Math.min(5, rollGrade(Math.min(3, Math.floor((n - 1) / 3))))) : null;
     const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
