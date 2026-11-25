@@ -895,9 +895,9 @@
   "fps": 10,
   "height": 60,
   "anchorX": 0.497,
-  "anchorY": 0.99,
-  "ch": 0.5,
-  "v": 82359,
+  "anchorY": 0.84,
+  "ch": 0.645,
+  "v": 51415,
   "anims": {
    "walk": {
     "src": "samjoko_walk.webp",
@@ -905,7 +905,8 @@
     "loop": true
    }
   },
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "shrine": {
   "src": "shrine.png",
@@ -1716,10 +1717,10 @@
   "dirs": 8,
   "fps": 10,
   "height": 110,
-  "anchorX": 0.502,
-  "anchorY": 0.927,
-  "ch": 0.318,
-  "v": 84059,
+  "anchorX": 0.518,
+  "anchorY": 0.982,
+  "ch": 0.673,
+  "v": 71760,
   "anims": {
    "walk": {
     "src": "imugi_walk.webp",
@@ -1747,7 +1748,8 @@
     "loop": false
    }
   },
-  "toon": 1
+  "toon": 1,
+  "n2": 1
  },
  "daejanggeum": {
   "src": "daejanggeum_walk.webp",
