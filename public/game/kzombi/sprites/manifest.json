@@ -2670,5 +2670,218 @@
     "loop": false
    }
   }
+ },
+ "wb_stone": {
+  "src": "wb_stone_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 150,
+  "anchorX": 0.51,
+  "anchorY": 0.926,
+  "ch": 0.535,
+  "v": 49703,
+  "anims": {
+   "walk": {
+    "src": "wb_stone_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "wb_stone_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "wb_stone_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "wb_stone_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "wb_stone_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  }
+ },
+ "wb_fire": {
+  "src": "wb_fire_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 150,
+  "anchorX": 0.496,
+  "anchorY": 0.961,
+  "ch": 0.488,
+  "v": 72577,
+  "anims": {
+   "walk": {
+    "src": "wb_fire_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "wb_fire_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "wb_fire_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "wb_fire_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "wb_fire_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  }
+ },
+ "wb_plague": {
+  "src": "wb_plague_walk.webp",
+  "cell": 256,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 150,
+  "anchorX": 0.5,
+  "anchorY": 0.977,
+  "ch": 0.48,
+  "v": 38485,
+  "anims": {
+   "walk": {
+    "src": "wb_plague_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "wb_plague_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "wb_plague_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "wb_plague_hit.webp",
+    "frames": 6,
+    "loop": false
+   },
+   "die": {
+    "src": "wb_plague_die.webp",
+    "frames": 10,
+    "loop": false
+   }
+  }
+ },
+ "mount_pony": {
+  "src": "mount_pony_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.5,
+  "anchorY": 0.97,
+  "ch": 0.37,
+  "v": 66476,
+  "anims": {
+   "walk": {
+    "src": "mount_pony_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "mount_pony_idle.webp",
+    "frames": 1,
+    "loop": true
+   }
+  }
+ },
+ "mount_tiger": {
+  "src": "mount_tiger_walk.webp",
+  "cell": 200,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.502,
+  "anchorY": 0.98,
+  "ch": 0.42,
+  "v": 74855,
+  "anims": {
+   "walk": {
+    "src": "mount_tiger_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "mount_tiger_idle.webp",
+    "frames": 1,
+    "loop": true
+   }
+  }
+ },
+ "mount_crane": {
+  "src": "mount_crane_walk.webp",
+  "cell": 200,
+  "frames": 1,
+  "dirs": 8,
+  "fps": 10,
+  "height": 80,
+  "anchorX": 0.497,
+  "anchorY": 0.935,
+  "ch": 0.44,
+  "v": 94142,
+  "anims": {
+   "walk": {
+    "src": "mount_crane_walk.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "idle": {
+    "src": "mount_crane_idle.webp",
+    "frames": 1,
+    "loop": true
+   }
+  }
+ },
+ "mount_haetae": {
+  "src": "mount_haetae_walk.webp",
+  "cell": 200,
+  "frames": 1,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.495,
+  "anchorY": 1,
+  "ch": 0.475,
+  "v": 21939,
+  "anims": {
+   "walk": {
+    "src": "mount_haetae_walk.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "idle": {
+    "src": "mount_haetae_idle.webp",
+    "frames": 1,
+    "loop": true
+   }
+  }
  }
 }
