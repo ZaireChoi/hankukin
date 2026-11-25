@@ -275,17 +275,33 @@ if (window.IS_EN) document.title = 'K Zombi';
   const CH_STORY_EN = ['A horde from the black ship falls on the village. The Cheoyong mask glows!', 'The market is empty, and even the mountain bear has caught the plague.', 'Snow, wind, and a tiger\'s roar on the refugee pass.', 'The magistrate\'s hall burns. Its own general has come back as the enemy.', 'Another black ship lands at the misty ferry.', 'The fortress has fallen. Rebuild the gate with the last soldiers.', 'Strange chanting at the academy. The zombies have started to think.', 'The palace garden is frozen, and the queen has caught the plague.', 'Someone is crossing the River of the Dead the wrong way.', 'The king has caught the plague. Take back the palace!',
     'The plague army marches along the walls.', 'The harbor turns black. A poison dragon wakes beneath the sea.', 'Deep in the mine, the Black Shaman begins another ritual.', 'The bamboo forest weeps. Its beasts have all turned dark.', 'A name on the cave wall: the Plague God shows himself.', 'Bulgasari, the iron-eating beast, is gnawing at the pagoda.', 'Among red maples, the temple tiger has turned.', 'The royal tombs are open. Yeomra is back.', 'A familiar voice in the streets... it is the Jangsan Tiger mimicking it!', 'The Plague God builds a war camp. First clash with Cheoyong.',
     'The Black Dragon Captain camps on the island.', 'Fed on sunken iron, Bulgasari grows even larger.', 'The rock blocking the pass moves. It is the Toad Giant!', 'The poison dragon blocks the threshold of the underworld.', 'A fortress of skulls echoes with the Jangsan Tiger\'s cry.', 'Under Baekdu\'s ice, the roots of darkness spread.', 'Bring back the king\'s shadow from beneath the palace.', 'On the bridge above the clouds, the first warlord returns.', 'The last battle with the Black Dragon Captain at the royal shrine.', 'The Plague God\'s throne. End the plague with Cheoyong\'s dance!'];
+  const GUARD = { dokkaebi: ['마을 뒷산의 장난꾸러기. 놀던 마을이 사라질까 봐 방망이를 들었다.', 'The mischief-maker of the village hill. He took up his club to save the village he loves.'], haetae: ['궁궐 앞을 지키던 불의 수호수. 나쁜 기운을 가려내는 눈으로 어둠을 알아챘다.', 'The fire beast that guarded the palace gate. Its eyes sensed the darkness first.'], honggildong: ['백성을 지키던 의적. 억울한 사람이 늘자 다시 부채를 폈다.', 'The outlaw hero of the people. He opened his fan again when the innocent suffered.'], yisunsin: ['바다를 지킨 장군. 검은 배가 오자 거북선 방패를 들었다.', 'The admiral who guarded the sea. When the black ship came, he raised his turtle-ship shield.'], gumiho: ['천 년 묵은 여우. 사람이 되고 싶은 마음으로 사람들을 지킨다.', 'A thousand-year fox who protects people because she longs to be one.'], gangamchan: ['별이 떨어진 날 태어난 장군. 다시 큰 군대를 막는다.', 'The general born under a falling star, ready to stop a great army again.'], eulji: ['살수에서 대군을 물리친 지략가. 꾀로 역병 군대를 무너뜨린다.', 'The strategist who beat a vast army at Salsu, now outwitting the plague horde.'], wonhyo: ['마음의 빛을 깨친 스님. 의식을 빼앗긴 좀비들의 마음을 일깨운다.', 'The awakened monk whose light stirs the stolen minds of zombies.'], bari: ['저승을 다녀온 공주. 뒤집힌 황천 다리를 바로잡으러 왔다.', 'The princess who returned from the underworld to set its bridge right.'], jeonwoochi: ['도술을 부리는 선비. 그림 속 병사를 불러내 싸운다.', 'A scholar-wizard who summons soldiers from his paintings.'], samyeong: ['승병을 이끈 스님. 산사가 위험해지자 지팡이를 들었다.', 'The warrior monk who took up his staff when the temples fell.'], daejanggeum: ['조선 최고의 의녀. 역병을 고칠 약을 찾으며 동료를 치료한다.', "Joseon's finest healer, seeking a cure while tending her friends."], sadaham: ['열다섯에 싸움터에 나선 신라 화랑. 칼춤으로 앞장선다.', 'The Silla hwarang who went to war at fifteen, leading with his sword dance.'], kimchungseon: ['바다를 건너와 조선 편에 선 무사. 역병에 물든 옛 동료를 구하려 칼을 든다.', 'A warrior who crossed the sea to stand with Joseon, fighting to free his plagued comrades.'], jangyeongsil: ['조선 최고의 발명가. 발명품으로 성을 지킨다.', "Joseon's greatest inventor, defending the walls with his machines."], imugi: ['용이 되기를 기다리던 아기 용. 여의주를 지키려 함께 싸운다.', 'A baby dragon waiting to ascend, fighting to protect its pearl.'], samjoko: ['해 속에 사는 세 발 까마귀. 어둠을 햇빛으로 걷어 낸다.', 'The three-legged crow of the sun, clearing darkness with sunlight.'] };
+  function guardLine(id) { const g = GUARD[id]; return g ? (window.IS_EN ? g[1] : g[0]) : ''; }
+  function storyBook() {
+    const E = window.IS_EN, C = chapters(), open = S.chap || 1;
+    const chs = C.map((c, i) => '<div style="padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.12)"><b style="color:#ffd36b">' + (i + 1) + '. ' + c.name + '</b><br>' + (i < open ? chStory(i + 1) : '???') + '</div>').join('');
+    const gs = COMPS.map(c => (S.comps[c.id] && S.comps[c.id].own) ? '<div style="padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.12)"><b style="color:#9ef0c0">' + c.n + '</b> · ' + guardLine(c.id) + '</div>' : '').join('');
+    modal('<h3 class="stroke">' + (E ? 'Story' : '이야기') + '</h3><p style="text-align:center">' + (E ? 'A plague ship lands in 19th-century Joseon. The Plague God wakes, and Joseon\'s sleeping guardians rise to stop him.' : '19세기 조선, 역병을 실은 검은 배가 닿자 어둠의 세력 역신이 깨어났다. 잠들어 있던 수호자들이 다시 일어선다.') + '</p>' +
+      '<div class="row"><div class="btn y" data-act="opening">' + (E ? 'Opening' : '오프닝') + '</div>' + (S.seenEnd1 ? '<div class="btn y" data-act="ending">' + (E ? 'Act 1 Ending' : '1막 엔딩') + '</div>' : '') + '</div>' +
+      '<div class="xscroll" style="text-align:left;font-size:17px"><h4 style="margin:8px 0">' + (E ? 'Chapters' : '장 이야기') + '</h4>' + chs + (gs ? '<h4 style="margin:12px 0 8px">' + (E ? 'Awakened Guardians' : '깨어난 수호자') + '</h4>' + gs : '') + '</div>', 'xwide');
+  }
   function chStory(n) { const a = window.IS_EN ? CH_STORY_EN : CH_STORY; return a[(n - 1) % 30] || ''; }
-  function storyOpening(done) {
+  const END_CUTS = [
+    ['역신의 옥좌. 처용이 마지막 춤을 추자, 역병의 신이 빛 속으로 흩어졌다.', 'At the throne, Cheoyong danced one last time, and the Plague God scattered into the light.'],
+    ['아침이 왔다. 역병이 걷히고, 사람들이 마을로 돌아온다. 수호자들 덕분이다!', 'Morning came. The plague lifted and people returned home, thanks to the guardians!'],
+    ['그러나 역신이 남긴 마지막 말. "어둠은 꿈속에도 있다." 악몽의 조선(2막)이 열렸다!', 'But the Plague God left a last whisper: "Darkness lives in dreams, too." Act 2, Nightmare Joseon, is open!']
+  ];
+  function storyOpening(done) { storyCuts(OP_CUTS, i => 'op' + (i + 1), done); }
+  function storyCuts(CUTS, imgOf, done) {
     let i = 0; const ov = document.createElement('div'); ov.id = 'kzop';
     ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;touch-action:manipulation';
-    const draw = () => { const c = OP_CUTS[i], t = window.IS_EN ? c[1] : c[0];
-      ov.innerHTML = '<div style="position:relative;height:100%;max-width:100vw;aspect-ratio:9/16;background:url(img/story/op' + (i + 1) + '.webp?v=1) center/cover">' +
+    const draw = () => { const c = CUTS[i], t = window.IS_EN ? c[1] : c[0];
+      ov.innerHTML = '<div style="position:relative;height:100%;max-width:100vw;aspect-ratio:9/16;background:url(img/story/' + imgOf(i) + '.webp?v=2) center/cover">' +
         '<div style="position:absolute;left:0;right:0;bottom:0;padding:22px 20px 34px;background:linear-gradient(transparent,rgba(0,0,0,.85) 35%);color:#fff;font:800 19px/1.5 Pretendard,\'Malgun Gothic\',sans-serif;text-align:center;text-shadow:0 2px 3px #000">' + t +
-        '<div style="margin-top:10px;font-size:13px;opacity:.7">' + (i + 1) + ' / ' + OP_CUTS.length + (window.IS_EN ? ' · tap to continue' : ' · 화면을 누르면 넘어가요') + '</div></div>' +
+        '<div style="margin-top:10px;font-size:13px;opacity:.7">' + (i + 1) + ' / ' + CUTS.length + (window.IS_EN ? ' · tap to continue' : ' · 화면을 누르면 넘어가요') + '</div></div>' +
         '<div id="kzopSkip" style="position:absolute;top:14px;right:14px;padding:8px 16px;border-radius:20px;background:rgba(0,0,0,.55);color:#fff;font:700 15px sans-serif;border:1px solid rgba(255,255,255,.4)">' + (window.IS_EN ? 'Skip' : '건너뛰기') + '</div></div>'; };
     const end = () => { ov.remove(); try { done && done(); } catch (e) { console.warn(e); } };
-    ov.addEventListener('click', e => { if (e.target && e.target.id === 'kzopSkip') return end(); i++; if (i >= OP_CUTS.length) end(); else draw(); });
+    ov.addEventListener('click', e => { if (e.target && e.target.id === 'kzopSkip') return end(); i++; if (i >= CUTS.length) end(); else draw(); });
     draw(); document.body.appendChild(ov);
   }
 
@@ -422,7 +438,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="xfold" data-act="infoFold" data-v="1" title="닫기">✕</div>' +
       '<div class="tsl"><div class="lbl stroke-s">출전</div>' + slots + '</div>' +
       '<h3 class="stroke" style="color:' + GR[sel.g].c + '">' + sel.n + '</h3><div class="tags"><span style="background:' + GR[sel.g].c + ';color:#2a1a00">' + GR[sel.g].n + '</span><span>' + sel.eln + '</span><span>큰 기술 · ' + sel.ult + '</span></div>' +
-      '<p>' + sel.desc + '</p>' +
+      '<p>' + sel.desc + '</p>' + (guardLine(sel.id) ? '<p style="color:#ffe3a3;font-size:17px;margin-top:-4px">' + (window.IS_EN ? 'Awakened guardian: ' : '깨어난 수호자 · ') + guardLine(sel.id) + '</p>' : '') +
       (ss.own ? '<p style="font-size:19px">' + stars(ss.star, 22) + ' 레벨 ' + ss.lv + '/' + maxLv + ' · 조각 ' + ss.sh + '</p>' +
         '<div class="row"><div class="btn ' + (S.team.includes(sel.id) ? 'r' : 'b') + '" data-act="team" data-v="' + sel.id + '">' + (S.team.includes(sel.id) ? '출전 빼기' : '출전하기') + '</div>' +
         '<div class="btn g ' + (S.gold >= lvCost && ss.lv < maxLv ? '' : 'dis') + '" data-act="compUp" data-v="' + sel.id + '" style="flex-direction:column;gap:0"><span>레벨업</span><small style="font-size:16px">' + (ss.lv < maxLv ? '엽전 ' + fmt(lvCost) : '별을 올려야 해요') + '</small></div>' +
@@ -654,6 +670,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const unlocked = NMr ? (win && n === S.nm.chap && S.nm.chap < C.length) : (win && n === S.chap && S.chap < C.length);
     if (unlocked) { if (NMr) S.nm.chap++; else { S.chap++; S.sel = S.chap; } }
     const nmFirst = NMr && win && !S.nm.first[n] ? 100 + 10 * n : 0; if (nmFirst) S.nm.first[n] = 1;
+    if (!NMr && win && n === C.length && !S.seenEnd1) { S.seenEnd1 = 1; setTimeout(() => { try { storyCuts(END_CUTS, i => 'end' + (i + 1), null); } catch (e) {} }, 1500); }
     const act2 = !NMr && !wasOpen && nmOpen(), nmTitle = NMr && win && n === 30 && !S.title; if (nmTitle) S.title = '악몽을 넘은 자';
     const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)) * (NMr ? 2 : 1), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
     const exp = Math.round((win ? 90 : 40) * n * tk);
@@ -1048,7 +1065,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     xinit(); if (!MAN) { fetch('sprites/manifest.json').then(r => r.json()).then(j => { MAN = j; if ($('#mdl', root) && $('.xcodex', root)) codexModal(); }).catch(() => { MAN = {}; }); }
     const list = codexItems(), have = list.filter(x => x.own).length, box = S.codex[cdTab];
     const cells = list.map(x => { const got = box[x.k]; return '<div class="xcell' + (x.own ? '' : ' off') + '" style="border-color:' + GR[Math.min(5, x.g)].c + '"' + (x.own && !got ? ' data-act="cdGet" data-v="' + x.k + '"' : '') + '>' + x.img + '<div class="nm stroke-s">' + (x.own ? x.n : '???') + '</div>' + (x.own && !got ? '<i class="dot"></i><div class="xrw stroke-s">옥 ' + x.r + '</div>' : got ? '<i class="xchk sm">✔</i>' : '') + '</div>'; }).join('');
-    modal('<h3 class="stroke">도감</h3>' + allBtn('cdAll', cdReady().length) + '<div class="xtabs">' + [['hero', '영웅'], ['zom', '좀비'], ['item', '장비']].map(([k, n]) => '<div class="btn ' + (k === cdTab ? 'y' : 'b') + '" data-act="cdTab" data-v="' + k + '">' + n + '</div>').join('') + '</div>' +
+    modal('<h3 class="stroke">도감</h3>' + allBtn('cdAll', cdReady().length) + '<div class="xtabs">' + [['hero', '영웅'], ['zom', '좀비'], ['item', '장비']].map(([k, n]) => '<div class="btn ' + (k === cdTab ? 'y' : 'b') + '" data-act="cdTab" data-v="' + k + '">' + n + '</div>').join('') + '<div class="btn g" data-act="storyBook">이야기</div></div>' +
       '<p style="text-align:center;margin:6px 0">모은 것 ' + have + '/' + list.length + ' · 새로 모은 칸을 누르면 옥을 받아요</p><div class="xscroll xcodex">' + cells + '</div>', 'xwide');
   }
   const cdDot = () => { xinit(); for (const t of ['hero', 'zom', 'item']) { const o = cdTab; cdTab = t; const any = codexItems().some(x => x.own && !S.codex[t][x.k]); cdTab = o; if (any) return true; } return false; };
@@ -1444,6 +1461,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     switch (a) {
       case 'enter': { const go = () => { music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); }; if (!S.seenOp) { S.seenOp = 1; save(); storyOpening(go); } else go(); break; }
       case 'opening': closeModal(); storyOpening(null); break;
+      case 'ending': closeModal(); storyCuts(END_CUTS, i => 'end' + (i + 1), null); break;
+      case 'storyBook': storyBook(); break;
       case 'tab': tab = v; closeModal(); renderLobby(); break;
       case 'goShop': tab = 'shop'; renderLobby(); break;
       case 'buyTorch': torchHelp(); break;
