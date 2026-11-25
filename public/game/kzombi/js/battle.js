@@ -13,11 +13,12 @@ const HERO_SAY = {"_":[["오늘 밤도 지켜 내자!","Let us hold the line ton
 function heroSay(k, id) { if (!G || !G.comps || !G.comps.length) return; const c = id || (G.comps.find(o => o.active) || G.comps[0]).id; const L = HERO_SAY[c] || HERO_SAY._, l = L[k] || HERO_SAY._[k]; G.bubble = { s: window.IS_EN ? l[1] : l[0], t: 2.6, who: c }; }
 const NEM_CH = { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } };
 const NEM_SAY = {"meet":["크크크… 처용이 깨어났다고? 재미있구나.","Heh heh… Cheoyong has awoken? How amusing."],"again":["또 만났구나, 처용. 이번엔 지난번과 다를 것이다.","We meet again, Cheoyong. This time will be different."],"peek":["오늘은 인사만 하마. 곧 다시 보자, 처용.","Just a greeting today. We will meet soon, Cheoyong."],"r14":["…제법이구나, 처용. 다음엔 살려두지 않겠다!","…Not bad, Cheoyong. Next time I will not spare you!"],"r22":["큭… 또인가. 궁궐에서 기다리마. 그곳이 네 무덤이다!","Tch… again? I wait in the palace. It will be your grave!"]};
-function nemSay(k, t) { const s = NEM_SAY[k]; if (!s) return; G.title = { s: window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
+function nemA() { const D2 = window.JZD, a = G && G.cfg && G.cfg.act === 3 ? 3 : G && G.nm ? 2 : 1; return a > 1 && D2 && D2.NEM_ACT ? D2.NEM_ACT[a] || null : null; }   /* 막마다 숙적: 2막 몽마, 3막 수귀 제독 */
+function nemSay(k, t) { const A = nemA(), s = A && A.lines && A.lines[k] ? A.lines[k] : NEM_SAY[k]; if (!s) return; G.title = { s: A ? (window.IS_EN ? A.nameEn : A.name) : window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
 function spawnNem(c) {
   const x = G.player.x + rnd(-60, 60), y = Math.max(camTop() + 380, G.player.y - 430);
   const e = spawnEnemy('yeoksin', x, y, { boss: true }); const d = EN.yeoksin, sc = 300 / (d.h || 124);
-  e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; e.nemName = c.peek || G.ch < 22 ? '???' : (window.IS_EN ? 'Yeoksin' : '역신');
+  e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; { const A = nemA(); e.nemName = c.peek || G.ch < 22 ? '???' : A ? (window.IS_EN ? A.nameEn : A.name) : (window.IS_EN ? 'Yeoksin' : '역신'); if (A && window.JZD.TINTF) e.tf = window.JZD.TINTF[A.tint]; }
   e.hp = e.max = Math.max(G.lastBossMax || 0, e.max) * (c.k || 1); G.nem = e; G.nemAt = c.at || 0; G.bossRef = e;
   G.flash = { c: '70,0,60', t: 1.3 }; FX.shake = 0.9; FX.ring(e.x, e.y, 320, '170,60,220', 1.0, 14); FX.smoke(e.x, e.y - 40, 16, '50,20,60', 30, 80); sfx('warn'); vib([160, 80, 160]);
   G.banner = { s: (window.IS_EN ? 'NEMESIS! ' : '숙적 난입! ') + e.nemName, t: 2.8, kind: 'boss', sub: window.IS_EN ? 'The shadow behind the plague appears.' : '역병의 배후, 그림자가 모습을 드러냈다.' };
@@ -29,7 +30,7 @@ function nemRetreat(e) { if (!e || e.leaving) return; e.nemInv = 1; e.leaving = 
 function finalTick(dt) { const e = G.bossRef; if (!e || e.dead || e.nem || G.ch !== D.CHAPTERS.length) return;
   if (!e.p2 && e.hp <= e.max * 0.5) { e.p2 = 1; e.nemInv = 1; G.queue.push({ t: 2.2, fn: () => { e.nemInv = 0; } }); e.sc *= 1.2; e.hh *= 1.2; e.r *= 1.2; e.hp = Math.min(e.max, e.hp + e.max * 0.1); e.dmgK = (e.dmgK || 1) * 1.3; e.sp *= 1.2;
     G.slowmo = 1.0; G.flash = { c: '90,0,70', t: 1.8 }; FX.shake = 1; FX.ring(e.x, e.y, 420, '200,60,255', 1.2, 16); FX.smoke(e.x, e.y - 60, 20, '50,10,60', 36, 90); sfx('warn'); vib([200, 100, 200]);
-    G.title = { s: window.IS_EN ? 'Yeoksin · True Form' : '역신 · 진노의 모습', sub: window.IS_EN ? 'Enough games, Cheoyong! Drown in the plague rain!' : '장난은 끝이다, 처용! 역병의 비에 잠겨라!', t: 3.2, big: 1 }; e.rainT = 3; }
+    G.title = { s: G.C.finP2 ? G.C.finP2[window.IS_EN ? 2 : 0] : window.IS_EN ? 'Yeoksin · True Form' : '역신 · 진노의 모습', sub: G.C.finP2 ? G.C.finP2[window.IS_EN ? 3 : 1] : window.IS_EN ? 'Enough games, Cheoyong! Drown in the plague rain!' : '장난은 끝이다, 처용! 역병의 비에 잠겨라!', t: 3.2, big: 1 }; e.rainT = 3; }
   if (e.p2) { e.rainT -= dt; if (e.rainT <= 0) { e.rainT = 6; const p = G.player, sh = G.shrine; for (let i = 0; i < 6; i++) { const tx = (i < 4 ? p.x : sh.x) + rnd(-220, 220), ty = (i < 4 ? p.y : sh.y - 60) + rnd(-160, 120); G.tele.push({ x: tx, y: ty, r: 85, t: 1.1, life: 1.1, c: '150,0,160' }); G.queue.push({ t: 1.1, fn: () => { if (G.pzs) G.pzs.push({ x: tx, y: ty, r: 85, t: 4, life: 4, tick: 0 }); FX.ring(tx, ty, 85, '170,60,220', 0.4, 8); if (Math.hypot(p.x - tx, p.y - ty) < 85) p.hp -= p.max * 0.08; if (Math.hypot(sh.x - tx, sh.y - ty) < 120) sh.hp -= sh.max * 0.03; } }); } } }
 }
 function nemTick(dt) { const e = G.nem; if (!e) return;
@@ -142,6 +143,7 @@ function drawSprite(key, x, y, o) {
   if (o.sx) ctx.scale(o.sx, o.sy);
   if (o.alpha != null) ctx.globalAlpha = o.alpha;
   let img = src;
+  if (o.tf && src.width) { src.__f = src.__f || {}; if (!src.__f[o.tf]) { try { const cv = document.createElement('canvas'); cv.width = src.width; cv.height = src.height; const c2 = cv.getContext('2d'); c2.filter = o.tf; c2.drawImage(src, 0, 0); src.__f[o.tf] = cv; } catch (e) { src.__f[o.tf] = src; } } img = src.__f[o.tf]; }   /* 색 바꾼 그림(3막 바다 좀비·숙적) 한 번만 만들어 둠 */
   if (o.mode) { const key2 = o.mode; src.__t = src.__t || {}; if (!src.__t[key2]) { try { src.__t[key2] = key2.indexOf('sp_') === 0 ? spiritTint(src, SPIRIT[key2.slice(3)].col, key2.slice(3)) : key2 === 'stone' ? tint(src, '#7d7a74', 0.62) : key2 === 'white' ? tint(src, '#fff', 0.85) : key2 === 'ice' ? tint(src, 'rgb(140,215,255)', 0.55) : tint(src, '#000', 0.9); } catch (e) { src.__t[key2] = src; } } img = src.__t[key2]; }
   const row = sp.dirs > 1 && o.dir != null ? ((o.dir + (sp.rowOff || 0)) % sp.dirs + sp.dirs) % sp.dirs : 0;
   ctx.drawImage(img, f * sp.cell, row * sp.cell, sp.cell, sp.cell, -w * sp.anchorX, -w * sp.anchorY, w, w);
@@ -223,13 +225,13 @@ const UI = {};   /* 캔버스 버튼 영역 */
 
 function newGame(cfg) {
   cfg = Object.assign({ chapter: 1, heroLv: 1, atk: 1, hp: 1, companions: ['dokkaebi'], skillStars: {}, weapon: 'bow', items: [], mode: 'adventure', hqLv: 1 }, cfg || {});
-  const ch = clamp(cfg.chapter | 0, 1, D.CHAPTERS.length), C = D.CHAPTERS[ch - 1];
+  const ch = clamp(cfg.chapter | 0, 1, D.CHAPTERS.length), C = cfg.act === 3 && D.ACT3C ? D.ACT3C[ch - 1] : D.CHAPTERS[ch - 1];   /* 3막(61~90장): 막 안 번호 1~30 */
   /* 장비 합계 */
   const IS = window.JZI && cfg.items && cfg.items.length ? window.JZI.sum(cfg.items) : { atk: 0, hp: 0, speed: 0, fx: {}, weapon: null };
   if (IS.weapon) cfg.weapon = IS.weapon;
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
   /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
-  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.nightmare ? ch + 29 : ch) - 1);
+  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.act === 3 ? ch + 59 : cfg.nightmare ? ch + 29 : ch) - 1);
   const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(4, Math.max(1, 1 + 0.75 * (POW / EXPV - 1.2))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
@@ -242,9 +244,9 @@ function newGame(cfg) {
   if ((SB.mugwan || 0) >= 4) fx.dmgCut10 = (fx.dmgCut10 || 0) + 1; if ((SB.seonbi || 0) >= 2) fx.xp15 = (fx.xp15 || 0) + 1; if ((SB.seonbi || 0) >= 4) fx.reroll1 = (fx.reroll1 || 0) + 1; if ((SB.cheoyong || 0) >= 4) fx.ultCd20 = (fx.ultCd20 || 0) + 1;
   const hpMax = Math.round(120 * hp0 * ((SB.mugwan || 0) >= 2 ? 1.1 : 1) * (1 + 0.06 * (cfg.heroLv - 1)));
   const mode = cfg.mode || 'adventure';
-  let nights = D.nightsOf(ch);
+  let nights = cfg.act === 3 && D.a3Nights ? D.a3Nights(ch) : D.nightsOf(ch);
   /* 2막 악몽: 같은 지도·목표, 적이 훨씬 세고 많다 (장마다 곡선) */
-  const NMK = cfg.nightmare && mode === 'adventure' ? D.nmK(ch) : null;
+  const NMK = mode !== 'adventure' ? null : cfg.act === 3 && D.a3K ? D.a3K(ch) : cfg.nightmare ? D.nmK(ch) : null;
   if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
   if (mode === 'gold' || mode === 'xp') nights = nights.slice(0, 3).map((n, i) => Object.assign({}, n, { name: (i + 1) + '번째 밤', kind: i === 2 ? 'elite' : 'normal', boss: null, elites: i === 2 ? [0.5] : [], dur: 45 }));
   if (mode === 'boss') nights = [Object.assign({}, nights[nights.length - 1], { name: '우두머리 토벌', dur: 90, elites: [0.01], rate: [0.8, 1.6] })];
@@ -548,7 +550,7 @@ function upgradeType(type) {
   const th = threat(), t0 = TIER[type] || 2; if (t0 >= 4) return type;
   if (Math.random() > Math.min(0.65, th * 0.045)) return type;
   /* 이 판 무리 중 더 높은 단계, 위협이 크면 전체 목록의 한 단계 위까지 */
-  const C = D.CHAPTERS[G.ch - 1]; let pool = C.pool.filter(k => (TIER[k] || 2) > t0 && EN[k]);
+  const C = G.C || D.CHAPTERS[G.ch - 1]; let pool = C.pool.filter(k => (TIER[k] || 2) > t0 && EN[k]);
   /* 아직 공개되지 않은 적은 끌어오지 않는다: 이번 장까지 나온 적 중 한 단계 위만 */
   if (th > 6) { const rv = D.revealed ? D.revealed(G.ch) : new Set(); pool = pool.concat([...rv].filter(k => TIER[k] === Math.min(5, t0 + 1) && EN[k] && !EN[k].fly)); }
   if (G.nm && D.VAR_OF && D.VAR_OF[type] && Math.random() < 0.45) return D.VAR_OF[type];
@@ -588,7 +590,7 @@ function spawnBig(type, boss) {
   const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = camTop() - 90;
   const e = spawnEnemy(type, x, y, boss ? { boss: true } : { elite: true });
   if (boss) { /* 등장: 큰 그림자가 먼저 드리우고 땅이 흔들린다 */ FX.shake = Math.max(FX.shake || 0, 0.9); G.tele.push({ x: e.x, y: Math.max(e.y, camTop() + 140), r: e.r * 4.5, t: 1.2, life: 1.2, c: '120,0,0' }); for (let i = 0; i < 3; i++) G.queue.push({ t: 0.35 * i, fn: () => { FX.shake = 0.5; FX.debris(e.x + rnd(-80, 80), e.y + rnd(-20, 40), 8, '#4a3a2a', 260); } });
-    G.bossRef = e; G.lastBossMax = e.max; G.queue.push({ t: 3.1, fn: () => heroSay(1) }); G.bossCam = { x: e.x, y: Math.max(e.y, camTop() + 260), t: 1.7 }; G.bossDim = 1.6; sfx('boss_in'); /* 우두머리 등장 연출(사용자 11-27 계획 4) */ G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: '역신 강림', sub: '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
+    G.bossRef = e; G.lastBossMax = e.max; G.queue.push({ t: 3.1, fn: () => heroSay(1) }); G.bossCam = { x: e.x, y: Math.max(e.y, camTop() + 260), t: 1.7 }; G.bossDim = 1.6; sfx('boss_in'); /* 우두머리 등장 연출(사용자 11-27 계획 4) */ G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: G.C.finIn ? G.C.finIn[window.IS_EN ? 2 : 0] : '역신 강림', sub: G.C.finIn ? G.C.finIn[window.IS_EN ? 3 : 1] : '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }
   else G.banner = { s: '정예 출현!', t: 2.4, kind: 'elite' };
   sfx('warn');
   return e;
@@ -768,7 +770,7 @@ function startNight() { clearCombat();
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
   const N = curN();
   const elNote = G.night === 0 && G.chEl ? ' · 약점 ' + D.EL[G.chEl.el].n + ' +' + Math.round(G.chEl.k * 100) + '%' : '';
-  G.title = { s: (G.nm ? '악몽 ' : '') + N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')) + elNote, t: G.night === 0 ? 3 : 2.2 };
+  G.title = { s: (G.nm && !(G.cfg && G.cfg.act) ? '악몽 ' : '') + N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')) + elNote, t: G.night === 0 ? 3 : 2.2 };
   sfx('warn', 0.6);
 }
 
@@ -1062,7 +1064,7 @@ function update(dtr) {
   if (G.obj && G.obj.beacon && G.obj.beacon.hp <= 0) { G.loseWhy = '봉화대가 무너졌다'; return endGame(false); }
   if (sh.hp <= 0 || p.hp <= 0) return endGame(false);
   if (G.mode === 'arena') { arenaTick(); if (G.arFoe && G.arFoe.dead) { G.title = null; G.banner = { s: '결투 승리!', t: 2, kind: 'win' }; return endGame(true); } if (G.time >= N.dur) { G.loseWhy = '시간 안에 이기지 못했다'; return endGame(false); } }
-  const NEMC = (G.mode || 'adventure') === 'adventure' && !G.nm && !(G.cfg && G.cfg.wbBoss) && G.night === G.nights.length - 1 ? NEM_CH[G.ch] : null;
+  const NEMC = (G.mode || 'adventure') === 'adventure' && (!G.nm || nemA()) && !(G.cfg && G.cfg.wbBoss) && G.night === G.nights.length - 1 ? NEM_CH[G.ch] : null;
   if (NEMC && !G.nemDone && !G.nem && G.time >= N.dur && !bossAlive && (!N.boss || G.bossOut)) spawnNem(NEMC);
   nemTick(dt); finalTick(dt);
   if (G.time >= N.dur && !(N.boss && (!G.bossOut || bossAlive)) && !(NEMC && !G.nemDone)) {
@@ -1735,7 +1737,7 @@ function enemies(dt) {
       FX.ring(e.x, e.y, 260, '255,70,40', 0.6, 14); FX.explode(e.x, e.y - 40, 110);
       const pl = G.player; if (Math.hypot(pl.x - e.x, pl.y - e.y) < 220) hurtT(pl, pl.max * 0.08);
       for (const a of (G.allies || [])) if (Math.hypot(a.x - e.x, a.y - e.y) < 220) { const an = Math.atan2(a.y - e.y, a.x - e.x); a.x += Math.cos(an) * 60; a.y += Math.sin(an) * 60; }
-      const C2 = D.CHAPTERS[G.ch - 1]; for (let i = 0; i < 6; i++) { const an = i / 6 * TAU; spawnEnemy(C2.pool[i % C2.pool.length], e.x + Math.cos(an) * 110, e.y + Math.sin(an) * 70, { small: true }); }
+      const C2 = G.C || D.CHAPTERS[G.ch - 1]; for (let i = 0; i < 6; i++) { const an = i / 6 * TAU; spawnEnemy(C2.pool[i % C2.pool.length], e.x + Math.cos(an) * 110, e.y + Math.sin(an) * 70, { small: true }); }
     }
     if (e.boss && e.p2 && Math.random() < dt * 0.35) { /* 분노 중: 땅 갈라짐 예고 후 폭발 */ const tx2 = G.player.x + rnd(-80, 80), ty2 = G.player.y + rnd(-60, 60); G.tele.push({ x: tx2, y: ty2, r: 80, t: 0.9, life: 0.9, c: '255,60,40', boom: dmg * 1.2 }); }
     /* 돌진: 붉은 선으로 미리 알린 뒤 달려든다 */
@@ -1904,7 +1906,7 @@ function finish() {
   const res = { win: G.phase === 'win', chapter: G.ch, wave: Math.min(G.night + 1, G.nights.length), waves: G.nights.length,
     dmg: { skill: Math.round(G.dmg.skill), hero: Math.round(G.dmg.hero), building: Math.round(G.dmg.building), player: Math.round(G.dmg.player) },
     mode: G.mode, stars: G.missions ? G.missions.filter(m => m.ok()).length : null, bossDmg: Math.round(G.bossDmg), kills: G.kills, gold: G.gold, time: Math.round((performance.now() - G.startT) / 1000),
-    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm, pairs: Object.keys(G.pairs || {}), nemBox: G.nemBox || 0 };
+    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm && !(G.cfg && G.cfg.act), act: (G.cfg && G.cfg.act) || 0, pairs: Object.keys(G.pairs || {}), nemBox: G.nemBox || 0 };
   try { res.log = logFinish(res); } catch (e) { console.warn(e); }
   if (typeof JZB.onEnd === 'function' && JZB.onEnd !== defaultEnd) JZB.onEnd(res); else defaultEnd(res);
 }
@@ -2043,7 +2045,8 @@ function drawEnemy(e) {
     py = -e.pile * 14;
   }
   const tw = e.twA > 0 ? e.twR * (e.twA / 0.18) : 0;
-  const ok = drawSprite(EK(e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
+  const TF = window.JZD && window.JZD.TINTF ? (e.tf || (EN[e.type] && EN[e.type].tf) || (G.C && G.C.tint && !e.nem ? window.JZD.TINTF[G.C.tint] : null)) : null;
+  const ok = drawSprite(EK(e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { tf: TF, anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
   if (!ok) {
     const r = e.r; circle(x, y - r, r); ctx.fillStyle = mode === 'white' ? '#fff' : (e.boss ? '#8a2a3a' : '#8ac04a'); ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 3; ctx.stroke();
     circle(x - r * 0.35, y - r * 1.15, r * 0.3); circle(x + r * 0.35, y - r * 1.15, r * 0.3); ctx.fillStyle = '#fff'; ctx.fill();
@@ -2440,7 +2443,7 @@ function drawHUD(day) {
   }
   /* 챕터 이름 */
   /* 정보칩: 1줄 장 이름, 2줄 약점 원소 + 목표 진행 (예전 배지 4~5개를 합침) */
-  { const nm = G.ch + '. ' + G.C.name + (G.mode !== 'adventure' ? ' · ' + ({ challenge: '극한 도전', endless: '무한 방어선', gold: '엽전 던전', xp: '경험치 던전', boss: '우두머리 토벌' }[G.mode] || '') : ''); ctx.font = '800 15px ' + FONT; const w1 = Math.min(300, ctx.measureText(nm).width + 22); panel(20, 160, w1, 28, 14, 'rgba(10,14,18,.5)', null); txt(nm, 31, 174, 15, '#ffe3a0', 'left', false);
+  { const nm = (G.C.gn || G.ch) + '. ' + G.C.name + (G.mode !== 'adventure' ? ' · ' + ({ challenge: '극한 도전', endless: '무한 방어선', gold: '엽전 던전', xp: '경험치 던전', boss: '우두머리 토벌' }[G.mode] || '') : ''); ctx.font = '800 15px ' + FONT; const w1 = Math.min(300, ctx.measureText(nm).width + 22); panel(20, 160, w1, 28, 14, 'rgba(10,14,18,.5)', null); txt(nm, 31, 174, 15, '#ffe3a0', 'left', false);
     const E = G.chEl && D.EL[G.chEl.el] ? D.EL[G.chEl.el] : null, os = G.obj && !day ? String(objText()).replace(/^목표\s*·\s*/, '') : ''; if (E || os) { const es = E ? E.n + ' +' + Math.round(G.chEl.k * 100) + '%' : ''; ctx.font = '800 14px ' + FONT; const we = E ? ctx.measureText(es).width + 30 : 0, wo = os ? Math.min(300, ctx.measureText(os).width + 16) : 0; const warn = G.obj && (G.obj.enr || (G.obj.beacon && G.obj.beacon.hp < G.obj.beacon.max * 0.3)); panel(20, 194, we + wo + (E && os ? 6 : 0) + 4, 26, 13, 'rgba(10,14,18,.5)', warn ? '#ff5a3a' : null); let xx = 24; if (E) { circle(xx + 11, 207, 7); ctx.fillStyle = E.c; ctx.fill(); txt(es, xx + 22, 207, 14, '#fff', 'left', false); xx += we + 6; } if (os) { let s3 = os; while (s3.length > 4 && ctx.measureText(s3).width > 290) s3 = s3.slice(0, -2); if (s3 !== os) s3 += '…'; txt(s3, xx + 4, 207, 14, warn ? '#ff9a7a' : '#ffe3a0', 'left', false); } } }
   if (G.missions) G.missions.forEach((m, i) => { const ok = m.ok(); panel(20, 264 + i * 34, 300, 30, 8, 'rgba(10,14,18,.6)', null); txt((ok ? '★ ' : '☆ ') + m.n, 30, 279 + i * 34, 16, ok ? '#ffd84a' : '#ddd', 'left', false); });
   /* 오른쪽: 동료 얼굴, 가진 기술 */
