@@ -31,10 +31,31 @@ D.EN = {
   zgrand:  { n: '좀비 대장군', hp: 900, sp: 52, r: 26, dmg: 30, cd: 1.3, xp: 25, h: 100, armor: 3, slam: 1 },
   zqueen2: { n: '좀비 왕비', hp: 800, sp: 44, r: 18, dmg: 16, cd: 1.6, xp: 18, h: 82, range: 250, caster: 1, summoner: 1 },
   yeoksin: { n: '역신', hp: 4200, sp: 60, r: 24, dmg: 32, cd: 1.0, xp: 0, h: 124, armor: 2, blink: 1 },
+  bulgasari: { n: '불가사리', hp: 5200, sp: 46, r: 30, dmg: 34, cd: 1.4, xp: 0, h: 120, armor: 4, slam: 1, eater: 1 },
+  jangsanbeom: { n: '장산범', hp: 3800, sp: 92, r: 24, dmg: 28, cd: 1.0, xp: 0, h: 104, charger: 1, mimic: 1 },
   mudang:  { n: '검은 무녀', hp: 3000, sp: 42, r: 22, dmg: 20, cd: 1.8, xp: 0, h: 116, range: 300, caster: 1, summoner: 1, warder: 1 },
   mujang:  { n: '좀비 무장', hp: 560, sp: 60, r: 22, dmg: 22, cd: 1.2, xp: 15, h: 84, armor: 2, charger: 1 },
   king:    { n: '역병 든 임금', hp: 3400, sp: 34, r: 28, dmg: 34, cd: 1.5, xp: 0, h: 100, armor: 1 }
 };
+
+/* 상위 종: 기존 그림(spr)을 쓰되 색 윤곽(tint)·크기(sc)·능력이 다른 새 적. 16장부터 차례로 공개 */
+Object.assign(D.EN, {
+  iron_spear:  { n: '철갑 군졸', spr: 'spear', tint: '150,180,230', sc: 1.2, hp: 300, sp: 50, r: 15, dmg: 18, cd: 1.1, xp: 5, reach: 50, h: 70, armor: 6 },
+  red_sword:   { n: '붉은눈 검귀', spr: 'zsword', tint: '255,40,40', sc: 1.2, hp: 260, sp: 96, r: 15, dmg: 24, cd: 0.8, xp: 5, h: 70, charger: 1, vtier: 1 },
+  black_archer:{ n: '흑염 궁수', spr: 'archer', tint: '255,120,20', sc: 1.15, hp: 170, sp: 52, r: 14, dmg: 18, cd: 1.6, xp: 5, range: 280, h: 70 },
+  blood_dog:   { n: '피굶주린 들개', spr: 'zdog', tint: '255,30,60', sc: 1.25, hp: 120, sp: 200, r: 13, dmg: 14, cd: 0.6, xp: 3, h: 48, jump: 1 },
+  skull_monk:  { n: '해골 승려', spr: 'zmonk', tint: '210,220,255', sc: 1.2, hp: 320, sp: 46, r: 15, dmg: 14, cd: 1.3, xp: 6, h: 70, healer: 1 },
+  plague_rider:{ n: '역병 기마대장', spr: 'rider', tint: '120,255,60', sc: 1.25, hp: 420, sp: 150, r: 19, dmg: 28, cd: 1.0, xp: 7, h: 108, charger: 1, vtier: 1 },
+  ghost_yangban:{ n: '원귀 양반', spr: 'yangban', tint: '80,230,255', sc: 1.2, hp: 380, sp: 52, r: 15, dmg: 16, cd: 1.1, xp: 6, h: 74, aura: 1 },
+  shadow_samurai:{ n: '그림자 사무라이', spr: 'zsamurai', tint: '170,80,255', sc: 1.25, hp: 520, sp: 88, r: 17, dmg: 30, cd: 0.9, xp: 8, h: 80, charger: 1, vtier: 1 },
+  war_ox:      { n: '철갑 황소', spr: 'zox', tint: '200,200,210', sc: 1.25, hp: 1100, sp: 40, r: 24, dmg: 34, cd: 1.4, xp: 12, h: 88, tank: 1, siege: 6, armor: 5 },
+  giant_bear:  { n: '거대 반달곰', spr: 'zbear', tint: '255,200,60', sc: 1.3, hp: 1600, sp: 50, r: 27, dmg: 38, cd: 1.5, xp: 18, h: 104, slam: 1, vtier: 1 }
+});
+/* 단계: 1 약함 ~ 4 강함, 5 상위 종. 단계가 높을수록 체력 배율이 크고 무리 짝이 적다 */
+D.TIER = { peasant: 1, zrat: 1, zdog: 1, zcrow: 2, archer: 2, spear: 2, yangban: 2, zsword: 3, rider: 3, munsin: 3, zwaegun: 3, zboar: 3, zmonk: 3, harcher: 3, zsamurai: 4, mujang: 4, zox: 4, zbear: 4, ztiger: 4,
+  iron_spear: 5, red_sword: 5, black_archer: 5, blood_dog: 5, skull_monk: 5, plague_rider: 5, ghost_yangban: 5, shadow_samurai: 5, war_ox: 5, giant_bear: 5 };
+D.TIERHP = [1, 1, 1.3, 2.0, 2.0, 1.0];   /* 기본 체력 차이에 곱한다: 평균이 대략 1 / 2.2 / 4.5 / 9 / 15 */
+D.VAR_OF = { spear: 'iron_spear', zsword: 'red_sword', archer: 'black_archer', zdog: 'blood_dog', zmonk: 'skull_monk', rider: 'plague_rider', yangban: 'ghost_yangban', zsamurai: 'shadow_samurai', zox: 'war_ox', zbear: 'giant_bear' };
 
 /* 챕터: 땅 모습(theme), 밤 수, 나오는 적, 우두머리 */
 D.CHAPTERS = [
@@ -56,6 +77,8 @@ D.CHAPTERS = [
   const all = ['peasant', 'archer', 'spear', 'zsword', 'rider', 'zwaegun', 'yangban', 'zsamurai', 'munsin', 'zmonk', 'zdog', 'zrat', 'zcrow', 'zboar', 'zox'];
   const bosses = ['zgrand', 'zqueen2', 'mudang', 'zbear', 'yeoksin', 'zgrand', 'ztiger', 'mudang', 'yeoksin'];
   names.forEach((nm, i) => { const n = 11 + i, s = (i * 5) % all.length; const pool = [i % 2 ? 'spear' : 'peasant']; for (let k = 0; k < 5; k++) pool.push(all[(s + k * 3) % all.length]); D.CHAPTERS.push({ n, name: nm, theme: th[i], nights: 6, pool, elite: ['zgrand', 'zsamurai', 'zbear', 'ztiger', 'mujang'][i % 5], boss: n === 20 || n === 30 ? 'yeoksin' : bosses[i % bosses.length] }); });
+  /* 새 우두머리: 뒤 장에 섞는다 (악몽 2막도 같은 목록을 쓴다) */
+  for (const c of D.CHAPTERS) { if ([16, 22, 28].includes(c.n)) c.boss = 'bulgasari'; if ([19, 25].includes(c.n)) c.boss = 'jangsanbeom'; }
 })();
 /* 판마다 다른 목표 (1~3장은 기본 사당 지키기) */
 D.OBJ = {
@@ -70,6 +93,24 @@ D.OBJ = {
   D.CHAPTERS.forEach(C => { C.objective = fixed[C.n] || rot[(C.n - 11) % rot.length]; });
   /* 18장 첫 밤 튐: 강한 무리(왜군 조총·문신)를 뒤로 미룬다 */
   if (D.CHAPTERS[17]) D.CHAPTERS[17].pool = ['peasant', 'spear', 'zrat', 'munsin', 'zwaegun', 'zox'];
+})();
+/* 등장 순서: 막마다 새 얼굴을 천천히 공개한다 (앞쪽 = 약한 것, 뒤 밤일수록 뒤쪽 것이 섞인다) */
+(function () {
+  const P = {
+    1: ['peasant', 'zdog'], 2: ['peasant', 'zrat', 'zdog'], 3: ['peasant', 'zdog', 'zrat'],
+    4: ['peasant', 'zrat', 'archer', 'spear'], 5: ['peasant', 'zrat', 'archer', 'zcrow', 'yangban'], 6: ['peasant', 'zdog', 'spear', 'archer', 'yangban', 'zcrow'],
+    7: ['spear', 'archer', 'yangban', 'zsword', 'munsin', 'zmonk'], 8: ['spear', 'zdog', 'archer', 'zsword', 'rider', 'zboar'], 9: ['peasant', 'zcrow', 'zmonk', 'munsin', 'zwaegun', 'harcher'], 10: ['spear', 'archer', 'zsword', 'zwaegun', 'rider', 'munsin'],
+    11: ['spear', 'zsword', 'zboar', 'munsin', 'zsamurai'], 12: ['spear', 'archer', 'harcher', 'zwaegun', 'zsamurai', 'zox'], 13: ['peasant', 'zsword', 'zmonk', 'rider', 'zox', 'zsamurai'], 14: ['spear', 'yangban', 'munsin', 'zboar', 'zsamurai', 'zox'], 15: ['zsword', 'zwaegun', 'harcher', 'rider', 'zsamurai', 'zox'],
+    16: ['spear', 'zsword', 'zwaegun', 'zsamurai', 'zox', 'iron_spear'], 17: ['spear', 'archer', 'zsword', 'rider', 'zsamurai', 'red_sword'], 18: ['spear', 'zsword', 'archer', 'munsin', 'iron_spear', 'black_archer'],
+    19: ['peasant', 'zdog', 'zsword', 'rider', 'red_sword', 'blood_dog'], 20: ['spear', 'zmonk', 'munsin', 'zsamurai', 'black_archer', 'skull_monk'], 21: ['zsword', 'rider', 'harcher', 'zox', 'iron_spear', 'plague_rider'],
+    22: ['spear', 'yangban', 'zsamurai', 'red_sword', 'skull_monk', 'ghost_yangban'], 23: ['zsword', 'zwaegun', 'zsamurai', 'black_archer', 'plague_rider', 'shadow_samurai'], 24: ['spear', 'zox', 'iron_spear', 'blood_dog', 'ghost_yangban', 'war_ox'],
+    25: ['zsword', 'zsamurai', 'red_sword', 'skull_monk', 'shadow_samurai', 'giant_bear'], 26: ['iron_spear', 'black_archer', 'blood_dog', 'plague_rider', 'war_ox', 'giant_bear'], 27: ['red_sword', 'ghost_yangban', 'skull_monk', 'shadow_samurai', 'war_ox', 'plague_rider'],
+    28: ['iron_spear', 'blood_dog', 'black_archer', 'shadow_samurai', 'giant_bear', 'war_ox'], 29: ['red_sword', 'plague_rider', 'ghost_yangban', 'skull_monk', 'giant_bear', 'shadow_samurai'], 30: ['iron_spear', 'red_sword', 'black_archer', 'plague_rider', 'shadow_samurai', 'giant_bear']
+  };
+  for (const C of D.CHAPTERS) if (P[C.n]) C.pool = P[C.n].filter(k => D.EN[k]);
+  /* 장마다 처음 나오는 적 */
+  const seen = new Set(); for (const C of D.CHAPTERS) { C.fresh = C.pool.filter(k => !seen.has(k)); C.pool.forEach(k => seen.add(k)); }
+  D.revealed = ch => { const s = new Set(); for (const C of D.CHAPTERS) { if (C.n > ch) break; C.pool.forEach(k => s.add(k)); } return s; };
 })();
 /* 판마다 다른 배치: 좀비 길(2~3갈래)과 건물 자리. 같은 챕터는 늘 같은 배치 */
 D.lanePt = (L, t, i) => { const k = t * t * (3 - 2 * t); return { x: L + (360 - L) * k * k + Math.sin(t * 9 + i * 2) * 16, y: -40 + t * (D.WALL_Y + 40) }; };
@@ -166,6 +207,7 @@ D.COMP = {
   imugi:       { n: '이무기', role: '비행', el: 'fire', grade: 4, d: '하늘을 날며 불길을 뿜는다', spr: 'imugi', rate: 0.1, dmg: 34, range: 260, col: '255,120,40', ult: '승천', ultD: '하늘로 솟구치며 불덩이 비를 쏟는다', fly: 1 },
   dokkaebi:    { n: '도깨비', role: '근거리', el: 'fire', grade: 2, d: '도깨비방망이를 던져 되돌아오게 한다', spr: 'dokkaebi', rate: 1.5, dmg: 18, range: 300, col: '255,190,60', ult: '방망이 지진', ultD: '땅을 세 번 내리쳐 적을 기절시킨다' },
   haetae:      { n: '해태', role: '수호', el: 'fire', grade: 2, d: '불길을 내뿜어 앞의 적을 태운다', spr: 'haetae', rate: 0.1, dmg: 30, range: 200, col: '255,120,40', ult: '해치의 불바다', ultD: '앞쪽 땅을 불바다로 만든다' },
+  jangyeongsil: { n: '장영실', role: '발명가', el: 'metal', grade: 4, d: '작은 화포 장치를 세워 한동안 저절로 쏘게 한다', spr: 'jangyeongsil', rate: 1.2, dmg: 18, range: 360, col: '120,180,255', ult: '자격루의 종', ultD: '자격루 종이 울려 아군 공격 속도가 크게 오른다', gadget: 1 },
   samjoko:     { n: '삼족오', role: '원거리', el: 'qi', grade: 2, d: '태양 광선으로 여러 적을 꿰뚫는다', spr: 'samjoko', rate: 2.0, dmg: 26, range: 380, col: '255,220,90', ult: '태양 강림', ultD: '하늘에서 태양 광선이 쏟아진다' }
 };
 /* 원소 다섯: 불, 번개, 얼음, 기, 쇠 */
