@@ -17,6 +17,8 @@ const TH = {
   palace:     { base: '#a39785', hi: '196,186,166', lo: '120,110,96', dirt: '150,136,116', edge: '30,10,40', tree: 'pine', amb: 'miasma', props: ['pillar', 'stonelamp', 'marker', 'banner'], light: '255,170,90', tiles: 1 }
 };
 const JZW = window.JZW = { TH };
+/* TOON_PROPS(11-26): 만화체 소품 그림. 못 불러오면 기존 코드 그림을 쓴다 */
+const PIMG = {}; JZW.PIMG = PIMG; ['house_a', 'house_b', 'tilewall', 'fence', 'cart', 'jars', 'willow', 'pine', 'bamboo', 'rock_a', 'rock_b', 'boat', 'lantern', 'dock', 'grass_a', 'grass_b', 'floor_tile', 'haystack', 'jangseung'].forEach(k => { const im = new Image(); im.onload = () => { PIMG[k] = im; }; im.src = 'sprites/props/' + k + '.png?v=1'; });
 
 JZW.build = function (theme, LAY) {
   const LANES = (LAY && LAY.lanes) || LANE_X;
@@ -113,6 +115,12 @@ JZW.build = function (theme, LAY) {
     reeds: (x, y) => { for (let i = 0; i < 12; i++) { const xx = x + rr(-20, 20), h = rr(26, 50); g.strokeStyle = R() < 0.5 ? '#8a9a50' : '#6a7a40'; g.lineWidth = 2; g.beginPath(); g.moveTo(xx, y); g.quadraticCurveTo(xx + 4, y - h * 0.6, xx + rr(-6, 6), y - h); g.stroke(); ell(xx, y - h, 2, 6, '#8a6a40'); } },
     dock: (x, y) => { shadow(x + 6, y + 8, 50, 10); for (let i = 0; i < 6; i++) rrect(x - 48 + i * 16, y - 20, 15, 34, 2, i % 2 ? '#8a6a48' : '#7a5c3e'); g.fillStyle = '#4a3424'; g.fillRect(x - 50, y + 12, 6, 14); g.fillRect(x + 44, y + 12, 6, 14); }
   };
+  /* TOON_PROPS: 그림이 있으면 만화체 그림으로 그린다 */
+  { const pic = (keys, h, fb, lt) => (x, y, s) => { const k = Array.isArray(keys) ? keys[(R() * keys.length) | 0] : keys, im = PIMG[k]; if (!im) return fb(x, y, s); const hh = h * (typeof s === 'number' ? s : 1) * rr(0.9, 1.1), w = im.width * hh / im.height;
+      shadow(x + 3, y - 1, w * 0.42, Math.max(4, w * 0.11), 0.26); g.save(); if (R() < 0.5) { g.translate(x, 0); g.scale(-1, 1); g.translate(-x, 0); } g.drawImage(im, x - w / 2, y - hh, w, hh); g.restore(); if (T.snowy && k !== 'floor_tile') snowCap(x, y - hh * 0.9, w * 0.3); if (lt) lights.push({ x, y: y - hh * 0.62, r: 60, c: '255,200,120', k: 0.9 }); };
+    const O = Object.assign({}, P);
+    Object.assign(P, { pine: pic('pine', 92, O.pine), willow: pic('willow', 100, O.willow), bamboo: pic('bamboo', 88, O.bamboo), house: pic(['house_a', 'house_b'], 84, O.house), haystack: pic('haystack', 44, O.haystack), cart: pic('cart', 46, O.cart), jars: pic('jars', 50, O.jars), fence: pic(['fence', 'tilewall'], 36, O.fence), rock: pic(['rock_a', 'rock_b'], 36, O.rock), rubble: pic('rock_b', 28, O.rubble), boat: pic('boat', 44, O.boat), dock: pic('dock', 42, O.dock), lantern: pic('lantern', 54, O.lantern, 1), stonelamp: pic('lantern', 54, O.stonelamp, 1), lamppost: pic('lantern', 62, O.lamppost, 1), sotdae: pic('jangseung', 58, O.sotdae), marker: pic('jangseung', 46, O.marker) });
+    P.jangseung = pic('jangseung', 52, O.marker); P.grass = pic(['grass_a', 'grass_b'], 24, () => {}); P.floor = pic('floor_tile', 22, () => {}); }
 
   /* 가장자리 소품 배치: 나무 띠 + 테마 소품 */
   const items = [];
@@ -128,6 +136,10 @@ JZW.build = function (theme, LAY) {
   items.push([SH.y + 178, () => P.jars(SH.x - 30, SH.y + 148)]); items.push([SH.y + 128, () => P.fence(SH.x - 110, SH.y + 130)]); items.push([SH.y + 130, () => P.fence(SH.x + 110, SH.y + 130)]);
   /* 성벽 앞 가로등(후더덕의 가로등 빛처럼) */
   /* 판 안 가로등은 빼고 가장자리에만 */ items.push([700, () => P.lamppost(-40, 700)]); items.push([420, () => P.lamppost(W + 20, 420)]);
+  /* TOON_PROPS: 가장자리 소품 무더기(촘촘히) + 판 안 바닥 돌판·풀(드문드문, 길·가운데 비움) */
+  { const EXTRA = ['rock', 'jangseung', 'jars', 'haystack', 'fence', 'house', 'cart'].filter(n => P[n]); for (let y = -MT + 60; y < H + MB - 40; y += rr(70, 120)) for (const side of [0, 1]) { const n = 1 + ((R() * 3) | 0); for (let i = 0; i < n; i++) { const xx = side ? rr(W + 70, W + 230) : rr(-230, -70), yy = y + rr(-20, 30), nm = R() < 0.5 && T.props.length ? T.props[(R() * T.props.length) | 0] : EXTRA[(R() * EXTRA.length) | 0]; if (P[nm] && !(T.water && Math.abs(side ? xx - W - 150 : xx + 150) < 40)) items.push([yy, () => P[nm](xx, yy)]); } }
+    const nearL = (x, y) => LANES.some((L, i) => { for (let t = 0; t <= 1; t += 0.04) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 50 && Math.abs(p.x - x) < 70) return true; } return false; });
+    for (let i = 0, got = 0; i < 80 && got < 16; i++) { const x = rr(40, W - 40), y = rr(80, H - 80); if (Math.abs(x - CX) < 200 && y > WALL_Y - 420) continue; if (nearL(x, y)) continue; got++; const k = R() < 0.45 ? 'floor' : 'grass'; if (k === 'grass' && (T.snowy || T.burning || T.ghost)) continue; items.push([y - 400, () => P[k](x, y)]); } }
   items.sort((a, b) => a[0] - b[0]).forEach(it => it[1]());
 
   /* 양옆을 어둡게, 위쪽(적이 오는 곳)도 조금 어둡게 */
