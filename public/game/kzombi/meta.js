@@ -566,7 +566,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=4);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
       '<div class="prob" data-act="prob" data-v="cp">확률 안내</div><div class="bb"><div class="btn p" data-act="gacha" data-v="cp1"><span>1번</span><small>' + ic('jade') + '100</small></div><div class="btn y" data-act="gacha" data-v="cp10"><span>10번</span><small>' + ic('jade') + '900</small></div></div></div>' +
-      legShopHtml() + '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
+      lshHtml() + legShopHtml() + '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
         '<div class="good box">' + (tag ? '<div class="tag stroke-s">' + tag + '</div>' : '') + '<div class="gi">' + ic(i) + '</div><div class="gn stroke-s">' + n + '</div><div style="font-size:18px;color:#ffe9a8">' + what + '</div><div class="btn ' + c + '" data-act="buy" data-v="' + id + '">' + price + '</div></div>').join('') + '</div></div>';
   }
 
@@ -601,7 +601,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     g.querySelectorAll('.gc').forEach((c, i) => setTimeout(() => c.classList.add('open'), 250 + i * 160));
   }
   function probModal(k) {
-    if (k === 'eq') { const capQ = maxG(progCh()); let tq = 0; for (let i = 0; i <= capQ; i++) tq += EQP[i]; modal('<h3 class="stroke">장비 뽑기 확률</h3><p style="text-align:center">지금 진행: ' + progCh() + '장 · 장비 단계 T' + curTier() + '</p><table>' + GR.map((g, i) => '<tr><td style="color:' + g.c + '">' + g.n + '</td><td>' + (i <= capQ ? (Math.round(EQP[i] / tq * 10000) / 100) + '%' : '0% (' + GATE[i] + '장 이후)') + '</td></tr>').join('') + '</table><p style="font-size:16px">가끔 나오는 등급(뽑기 기준): 전설 10~29장 0.5%, 30~59장 1%, 60장부터 정식. 우두머리 상자: 영웅 15~29장 8%, 전설 10~29장 2%·30~59장 4%, 유니크 90~119장 1.5%. 숙적 상자: 전설 5%, 유니크 2%, 신화 160~199장 1%. 천장 50회: 30장 전엔 열린 최고 등급(10% 확률로 전설), 30장부터 전설.</p><p>등급마다 열리는 장이 있어요(악몽 2막은 31장부터 이어서 셉니다). 50번 안에 그때 뽑을 수 있는 가장 높은 등급(최대 전설)을 1개 줘요. 10번 뽑기는 희귀가 열린 뒤 희귀 이상 1개를 꼭 줘요. 칸(무기, 갓, 도포, 토시, 신, 노리개)은 똑같은 확률이에요.</p>'); }
+    if (k === 'eq') { const capQ = maxG(progCh()); let tq = 0; for (let i = 0; i <= capQ; i++) tq += EQP[i]; modal('<h3 class="stroke">장비 뽑기 확률</h3><p style="text-align:center">지금 진행: ' + progCh() + '장 · 장비 단계 T' + curTier() + '</p><table>' + GR.map((g, i) => '<tr><td style="color:' + g.c + '">' + g.n + '</td><td>' + (i <= capQ ? (Math.round(EQP[i] / tq * 10000) / 100) + '%' : '0% (' + GATE[i] + '장 이후)') + '</td></tr>').join('') + '</table><p style="font-size:16px">가끔 나오는 등급(뽑기 기준): 전설 10~29장 0.5%, 30~59장 1%, 60장부터 정식. 우두머리 상자: 영웅 15~29장 8%, 전설 10~29장 2%·30~59장 4%, 유니크 90~119장 1.5%. 숙적 상자: 전설 5%, 유니크 2%, 신화 160~199장 1%. 천장 50회: 30장 전엔 열린 최고 등급(10% 확률로 전설), 30장부터 전설.</p><p>등급마다 열리는 장이 있어요(악몽 2막은 31장부터 이어서 셉니다). 50번 안에 그때 뽑을 수 있는 가장 높은 등급(최대 전설)을 1개 줘요. 10번 뽑기는 희귀가 열린 뒤 희귀 이상 1개를 꼭 줘요. 칸(무기, 갓, 도포, 토시, 신, 노리개)은 똑같은 확률이에요.</p>' + lshNote()); }
     else modal('<h3 class="stroke">영웅 뽑기 확률</h3><table><tr><td style="color:#ffd36b">전설 영웅 조각 2개 (이순신, 강감찬, 삼족오)</td><td>3%</td></tr><tr><td style="color:#e39bff">영웅 등급 조각 3개 (을지문덕, 원효대사, 구미호)</td><td>12%</td></tr><tr><td style="color:#6cc6ff">희귀 조각 5개 (홍길동, 해태)</td><td>20%</td></tr><tr><td>일반 조각 5개 (도깨비)</td><td>15%</td></tr><tr><td style="color:#6cc6ff">신력석 5개</td><td>25%</td></tr><tr><td>엽전 800</td><td>25%</td></tr></table><p>같은 등급 안의 영웅은 똑같은 확률이에요.</p>');
   }
 
@@ -718,6 +718,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (wave > (BSb[n] || 0)) BSb[n] = wave;
     const unlocked = NMr ? (win && n === S.nm.chap && S.nm.chap < C.length) : (win && n === S.chap && S.chap < C.length);
     if (unlocked) { if (NMr) S.nm.chap++; else { S.chap++; S.sel = S.chap; } }
+    { const lg = unlocked ? 1 : 0; if (lg) { S.lsh = (S.lsh || 0) + lg; setTimeout(() => { try { toast(TT('새 장 첫 클리어: 전설 조각 +1', 'New chapter cleared: Legend shard +1')); } catch (e) {} }, 2200); } try { msCheck(); } catch (e) {} setTimeout(() => { try { rkPost(true); } catch (e) {} }, 2500); }
     const nmFirst = NMr && win && !S.nm.first[n] ? 100 + 10 * n : 0; if (nmFirst) S.nm.first[n] = 1;
     if (!NMr && win && n === C.length && !S.seenEnd1) { S.seenEnd1 = 1; setTimeout(() => { try { storyCuts(END_CUTS, i => 'end' + (i + 1), null); } catch (e) {} }, 1500); }
     const act2 = !NMr && !wasOpen && nmOpen(), nmTitle = NMr && win && n === 30 && !S.title; if (nmTitle) S.title = '악몽을 넘은 자';
@@ -800,7 +801,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const R = [['coin', 1000], ['jade', 50], ['stone', 10], ['coin', 3000], ['jade', 100], ['stone', 30], ['jade', 300]];
     modal('<h3 class="stroke">7일 출석</h3><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">' + R.map(([i, v], k) => {
       const got = k < (S.att % 7) || (!can && k === (S.att - 1) % 7);
-      return '<div class="box" style="height:150px;text-align:center;padding-top:6px;' + (k === day - 1 && can ? 'border-color:#ffd36b;box-shadow:0 0 18px #ffd36b' : '') + (got ? ';opacity:.45' : '') + '"><div class="stroke-s" style="font-size:18px">' + (k + 1) + '일</div>' + ic(i).replace('class="ic ', 'style="width:60px;height:60px" class="ic ') + '<div class="stroke-s" style="font-size:20px">' + fmt(v) + '</div>' + (got ? '<div style="color:#7df06a;font-size:18px">받음</div>' : '') + '</div>';
+      return '<div class="box" style="height:150px;text-align:center;padding-top:6px;' + (k === day - 1 && can ? 'border-color:#ffd36b;box-shadow:0 0 18px #ffd36b' : '') + (got ? ';opacity:.45' : '') + '"><div class="stroke-s" style="font-size:18px">' + (k + 1) + '일</div>' + ic(i).replace('class="ic ', 'style="width:60px;height:60px" class="ic ') + '<div class="stroke-s" style="font-size:20px">' + fmt(v) + '</div>' + (k === 6 ? '<div class="stroke-s" style="font-size:14px;color:#ffb04a">+' + TT('전설 조각 20', 'Shards 20') + '</div>' : '') + (got ? '<div style="color:#7df06a;font-size:18px">받음</div>' : '') + '</div>';
     }).join('') + '</div><div class="row"><div class="btn y ' + (can ? '' : 'dis') + '" data-act="attGet">' + (can ? day + '일째 받기' : '내일 또 와요') + '</div></div>');
     attModal.R = R;
   }
@@ -1060,9 +1061,10 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (!S.wk || S.wk.key !== weekKey()) S.wk = { key: weekKey(), score: 0 };
     S.friends = S.friends || []; S.guild = S.guild || null; if (!S.myCode) S.myCode = Math.random().toString(36).slice(2, 8).toUpperCase();
     for (const it of S.inv) S.codex.seenI[it.slot + it.g] = 1;
+    try { msCheck(); } catch (e) {}
   }
-  const RIC = { jade: 'jade', coin: 'coin', stone: 'stone', torch: 'torch' };
-  function give(k, v) { if (k === 'jade') S.jade += v; else if (k === 'coin') S.gold += v; else if (k === 'stone') S.stone += v; else if (k === 'torch') S.torch += v; }
+  const RIC = { jade: 'jade', coin: 'coin', stone: 'stone', torch: 'torch', lsh: 'star' };
+  function give(k, v) { if (k === 'jade') S.jade += v; else if (k === 'coin') S.gold += v; else if (k === 'stone') S.stone += v; else if (k === 'torch') S.torch += v; else if (k === 'lsh') S.lsh = (S.lsh || 0) + v; }
   const rwBox = (k, v, g, sm) => '<div class="rw" style="border-color:' + GR[g || 2].c + ';background:rgba(0,0,0,.4);' + (sm ? 'width:84px;height:84px' : '') + '">' + ic(RIC[k]) + '<b class="stroke-s">' + fmt(v) + '</b></div>';
   /* 전투가 끝날 때 */
   function xOnEnd(r) {
@@ -1220,7 +1222,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     modal(evTabs('fest') + '<h3 class="stroke">처용 맞이 축제</h3><p style="text-align:center">이번 달 안에 7일을 들르면 날마다 선물을 받아요. 하루에 한 칸씩!<br><b style="color:#ffe27a">남은 기간 ' + left + '일</b></p><div class="xevs">' + cells + '</div>' + (S.ev.got >= 7 ? '<p style="text-align:center;color:#7df06a">이번 축제 선물을 모두 받았어요</p>' : ''));
   }
   /* 랭킹: 같은 HANKUKIN 계정·Firestore의 주간 순위표. 가짜 순위는 만들지 않는다 */
-  async function rankModal() {
+  async function rankKillModal() {
     xinit();
     modal('<h3 class="stroke">주간 랭킹</h3><p style="text-align:center">이번 주(' + S.wk.key + ') 물리친 좀비 수 + 승리 300점 · 내 점수 <b style="color:#ffe27a">' + fmt(S.wk.score) + '</b></p><div class="xscroll" id="rkbox"><p style="text-align:center">불러오는 중...</p></div>', 'xwide');
     const box = () => $('#rkbox', root); let A = window.HKAccount; for (let i = 0; i < 20 && !(A && A.topScores); i++) { await new Promise(r => setTimeout(r, 250)); A = window.HKAccount; }
@@ -1232,6 +1234,115 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (!box()) return; const me = A.user && A.user.uid;
     box().innerHTML = (arr.length ? arr.map((e, i) => '<div class="xrk' + (e.uid === me || e.id === me ? ' me' : '') + '"><b class="stroke-s">' + (i + 1) + '</b><span class="stroke-s">' + String(e.name || '처용').replace(/[<>&]/g, '') + '</span><em class="stroke-s">' + fmt(e.score || 0) + '</em></div>').join('') : '<p style="text-align:center">아직 이번 주 기록이 없어요. 첫 번째가 되어 보세요!</p>') +
       (A.user ? '' : '<div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 로그인하고 내 점수 올리기</div>');
+  }
+  /* ---------------- 랭킹 4종(전투력·진행 × 일일·주간) + 순위 보상 + 공개 프로필 + 전설 조각 (사용자 11-27) ----------------
+     보드: kzrk-pw-d-{날} · kzrk-pw-w-{주} : score=전투력(stats 계산값, 한 번에 3배 넘게 뛰면 3배까지만)
+           kzrk-pg-d-{날} · kzrk-pg-w-{주} : score=진행 장*1e4 + 별 합(실제 클리어 기록에서만)
+           kzpf : 공개 프로필 요약. name=부호(의상·영웅2·장비 등급6·진행 장·칭호·레벨), score=전투력. 이메일·개인정보 없음.
+     읽기는 누구나(비로그인 포함), 쓰기는 로그인한 본인 문서만(기존 leaderboards 규칙 그대로). */
+  const TT = (ko, en) => window.IS_EN ? en : ko;
+  const LSH_NEED = 100, LSH_SV = [0, 0, 0, 1, 3, 5, 8];
+  const RK_D = [[1, 1, 300, 10], [2, 3, 200, 6], [4, 10, 100, 3], [11, 50, 50, 0], [51, 9999, 10, 0]];
+  const RK_W = [[1, 1, 1500, 40], [2, 3, 1000, 25], [4, 10, 500, 12], [11, 50, 200, 5], [51, 100, 100, 0]];
+  const rkReward = (tbl, rk) => { const r = tbl.find(x => rk >= x[0] && rk <= x[1]); return r ? { jade: r[2], lsh: r[3] } : null; };
+  const dKeyOf = d => d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  const wKeyOf = d => { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y = t.getUTCFullYear(); return y + '-W' + Math.ceil(((t - Date.UTC(y, 0, 1)) / 864e5 + 1) / 7); };
+  const RKB = { pwD: () => 'kzrk-pw-d-' + today(), pwW: () => 'kzrk-pw-w-' + weekKey(), pgD: () => 'kzrk-pg-d-' + today(), pgW: () => 'kzrk-pg-w-' + weekKey() };
+  const RKN = { pwD: ['전투력 · 오늘', 'Power · Today'], pwW: ['전투력 · 주간', 'Power · Week'], pgD: ['진행 · 오늘', 'Progress · Today'], pgW: ['진행 · 주간', 'Progress · Week'] };
+  const rkName = () => { const u = accUser(); return nm20((u && u.displayName) || S.name || '처용'); };   /* 표시 이름만(이메일은 쓰지 않음) */
+  const starSum = () => { let s = 0; for (const k in (S.stars || {})) s += S.stars[k] | 0; for (const k in ((S.nm && S.nm.stars) || {})) s += S.nm.stars[k] | 0; return Math.min(9999, s); };
+  const pgScore = () => progCh() * 1e4 + starSum();
+  const chText = c => c > 30 ? TT('악몽 ' + (c - 30) + '장', 'NM Ch ' + (c - 30)) : TT(c + '장', 'Ch ' + c);
+  const pgText = sc => chText(Math.floor((sc || 0) / 1e4)) + ' · ★' + ((sc || 0) % 1e4);
+  const rkTitle = () => S.rkTitle && S.rkTitle.until > Date.now() ? S.rkTitle.s : '';
+  const b36 = n => Math.max(0, n | 0).toString(36);
+  const pfCode = () => { const sk = Math.max(0, SKINS.findIndex(s => s.id === (S.skin || 'base'))); const hs = (S.team || []).filter(id => S.comps[id] && S.comps[id].own).slice(0, 2).map(id => b36(COMPS.findIndex(c => c.id === id)).slice(-1)); while (hs.length < 2) hs.push('-'); const gs = SLOTS.map(s => { const it = S.equip && byUid(S.equip[s.id]); return it ? Math.min(9, it.g | 0) : '-'; }).join(''); return (b36(sk).slice(-1) + hs.join('') + '.' + gs + '.' + b36(progCh()).padStart(2, '0') + (rkTitle() ? (S.rkTitle.k === 'pg' ? '2' : '1') : '0') + b36(S.lv).padStart(2, '0')).slice(0, 20); };
+  const pfParse = s => { const m = /^(\w)(\w|-)(\w|-)\.([\d-]{6})\.(\w\w)(\d)(\w\w)$/.exec(String(s || '')); if (!m) return null; const hi = x => x === '-' ? null : (COMPS[parseInt(x, 36)] || null); return { sk: SKINS[parseInt(m[1], 36)] || null, h: [hi(m[2]), hi(m[3])].filter(Boolean), g: m[4].split('').map(x => x === '-' ? -1 : +x), ch: parseInt(m[5], 36), tf: +m[6], lv: parseInt(m[7], 36) }; };
+  async function listTop(board, n) {
+    try { const { fs: F, db } = await fbDb(); const qs = await F.getDocs(F.query(F.collection(db, 'leaderboards', board, 'entries'), F.orderBy('score', 'desc'), F.limit(n || 50))); const out = []; qs.forEach(d => out.push(Object.assign({ id: d.id }, d.data()))); return out; }
+    catch (e) { if (String(e && e.message) === 'noapp') throw e; return (await listBoard(board, 300)).sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, n || 50); }
+  }
+  let rkBusy = 0, rkTab = 'pwD', rkLast = [];
+  async function rkPost(force) {
+    const u = accUser(); if (!u || rkBusy) return; if (!force && Date.now() - (S.rkAt || 0) < 120000) return; rkBusy = 1;
+    try {
+      const pw0 = Math.round(stats().power), pw = S.rkPw > 0 ? Math.min(pw0, Math.round(S.rkPw * 3)) : pw0; S.rkPw = pw; S.rkAt = Date.now();   /* 갑자기 크게 뛴 값은 한 번에 3배까지만 */
+      const nm = rkName(), pg = pgScore();
+      await Promise.all([putEntry(RKB.pwD(), nm, pw), putEntry(RKB.pwW(), nm, pw), putEntry(RKB.pgD(), nm, pg), putEntry(RKB.pgW(), nm, pg), putEntry('kzpf', pfCode(), pw)]); save();
+    } catch (e) { console.warn('rkPost', e); }
+    rkBusy = 0;
+  }
+  /* 지난 기간 순위 보상: 다음 접속 때 한 번 확인하고 지급(받은 기록 S.rkGot 으로 중복 방지) */
+  async function rkSettle() {
+    if (!accUser() || rkSettle.done) return; rkSettle.done = 1; S.rkGot = S.rkGot || {};
+    const y = new Date(Date.now() - 864e5), w = new Date(Date.now() - 7 * 864e5), me = accUser().uid, out = [];
+    const jobs = [['kzrk-pw-d-' + dKeyOf(y), RK_D, TT('어제 전투력', 'Yesterday · Power'), 0], ['kzrk-pg-d-' + dKeyOf(y), RK_D, TT('어제 진행', 'Yesterday · Progress'), 0], ['kzrk-pw-w-' + wKeyOf(w), RK_W, TT('지난주 전투력', 'Last week · Power'), 'pw'], ['kzrk-pg-w-' + wKeyOf(w), RK_W, TT('지난주 진행', 'Last week · Progress'), 'pg']];
+    for (const [bd, tbl, label, wk] of jobs) {
+      if (S.rkGot[bd]) continue;
+      try {
+        const L = await listTop(bd, 100); let rk = L.findIndex(e => e.id === me) + 1;
+        if (!rk) { const mine = await getEntry(bd, me); if (!mine) { S.rkGot[bd] = 1; continue; } rk = 9999; }
+        const r = rkReward(tbl, rk); S.rkGot[bd] = 1; if (!r) continue;
+        S.jade += r.jade; S.lsh = (S.lsh || 0) + r.lsh;
+        if (wk && rk === 1) S.rkTitle = { s: wk === 'pw' ? TT('주간 전투력 1위', 'Weekly Power #1') : TT('주간 진행 1위', 'Weekly Progress #1'), k: wk, until: Date.now() + 7 * 864e5 };
+        out.push([label, rk, r]);
+      } catch (e) { console.warn('rkSettle', bd, e); }
+    }
+    const ks = Object.keys(S.rkGot); if (ks.length > 40) for (const k of ks.slice(0, ks.length - 40)) delete S.rkGot[k];
+    save(); if (!out.length) return; try { refresh(); } catch (e) {}
+    modal('<h3 class="stroke">' + TT('랭킹 보상', 'Ranking rewards') + '</h3>' + out.map(([l, rk, r]) => '<div class="rk-got"><b>' + l + '</b><span>' + (rk >= 9999 ? TT('참가', 'Joined') : rk + TT('위', ' place')) + '</span><em>' + TT('옥 ', 'Jade ') + fmt(r.jade) + (r.lsh ? ' · ' + TT('전설 조각 ', 'Legend shards ') + r.lsh : '') + '</em></div>').join('') + (rkTitle() ? '<p class="rk-ttl">' + TT('칭호 획득', 'Title earned') + ' 〈' + rkTitle() + '〉 ' + TT('7일', '7 days') + '</p>' : '') + '<div class="row"><div class="btn y" data-act="close">' + TT('받기', 'Collect') + '</div></div>');
+  }
+  async function rankModal(tb) {
+    xinit(); if (tb && RKN[tb]) rkTab = tb;
+    const isPg = rkTab.startsWith('pg'), daily = rkTab.endsWith('D');
+    const tabs = '<div class="rk-tabs">' + Object.keys(RKN).map(k => '<div class="rk-tab' + (k === rkTab ? ' on' : '') + '" data-act="rkTab" data-v="' + k + '">' + TT(RKN[k][0], RKN[k][1]) + '</div>').join('') + '</div>';
+    modal('<h3 class="stroke">' + TT('랭킹', 'Ranking') + '</h3>' + tabs +
+      '<div class="rk-sub"><span>' + (daily ? TT('오늘 기록한 사람끼리 · 자정 마감', 'Players active today · ends at midnight') : TT('이번 주 ' + weekKey() + ' · 월요일 마감', 'Week ' + weekKey() + ' · ends Monday')) + '</span><div class="rk-chip" data-act="rkRw">' + TT('보상표', 'Rewards') + '</div><div class="rk-chip" data-act="rkKill">' + TT('처치 순위', 'Kills') + '</div></div>' +
+      '<div class="rk-list" id="rkbox"><p class="rk-msg">' + TT('불러오는 중...', 'Loading...') + '</p></div><div id="rkme"></div>', 'xwide');
+    const box = () => $('#rkbox', root);
+    for (let i = 0; i < 16 && !window.HKAccount; i++) await new Promise(r => setTimeout(r, 250));
+    const me = accUser() && accUser().uid; if (me) await rkPost(false);
+    let L = []; try { L = await listTop(RKB[rkTab](), 50); } catch (e) { if (box()) box().innerHTML = '<p class="rk-msg">' + TT('순위를 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.', 'Could not load the ranking. Please try again.') + '</p>'; return; }
+    if (!box()) return; rkLast = L;
+    const val = sc => isPg ? pgText(sc) : fmt(sc || 0);
+    box().innerHTML = L.length ? L.map((e, i) => '<div class="rk-row' + (e.id === me ? ' me' : '') + (i < 3 ? ' t' + (i + 1) : '') + '" data-act="rkWho" data-v="' + esc(e.id) + '"><b>' + (i + 1) + '</b><i class="rk-av">' + esc((e.name || '?')[0]) + '</i><span>' + esc(e.name || '처용') + '</span><em>' + val(e.score) + '</em></div>').join('') : '<p class="rk-msg">' + TT('아직 기록이 없어요. 첫 번째가 되어 보세요!', 'No records yet. Be the first!') + '</p>';
+    const my = me ? L.findIndex(e => e.id === me) + 1 : 0, mb = $('#rkme', root); if (!mb) return;
+    mb.innerHTML = me ? '<div class="rk-row me fix"><b>' + (my || '50+') + '</b><i class="rk-av">' + esc(rkName()[0]) + '</i><span>' + TT('나', 'Me') + (rkTitle() ? ' <small>〈' + rkTitle() + '〉</small>' : '') + '</span><em>' + val(isPg ? pgScore() : Math.round(stats().power)) + '</em></div>'
+      : '<div class="xgoogle" data-act="gLogin"><i class="g"></i>' + TT('로그인하면 랭킹에 참여하고 보상을 받아요', 'Sign in to join and earn rewards') + '</div>';
+  }
+  async function rkWho(uid) {
+    if (!uid) return; const e = rkLast.find(x => x.id === uid) || {};
+    modal('<h3 class="stroke">' + TT('프로필', 'Profile') + '</h3><div id="pfbox"><p class="rk-msg">' + TT('불러오는 중...', 'Loading...') + '</p></div><div class="row"><div class="btn b" data-act="rkTab" data-v="' + rkTab + '">' + TT('랭킹으로', 'Back') + '</div></div>');
+    let pf = null, pp = null; try { [pf, pp] = await Promise.all([getEntry('kzpf', uid).catch(() => null), getEntry('kzp', uid).catch(() => null)]); } catch (er) {}
+    const b = $('#pfbox', root); if (!b) return; const P = pf && pfParse(pf.name);
+    if (!P) { b.innerHTML = '<p class="rk-msg">' + TT('아직 공개 정보가 없어요.', 'No public profile yet.') + '</p>'; return; }
+    const lv = pp ? lvOf(pp.score) : P.lv, pw = pf.score || 0, ttl = P.tf === 1 ? TT('주간 전투력 1위', 'Weekly Power #1') : P.tf === 2 ? TT('주간 진행 1위', 'Weekly Progress #1') : '';
+    const av = P.sk && P.sk.id !== 'base' ? '<div class="pf-av" style="background-image:url(img/skins/' + P.sk.id + '.png)"></div>' : '<div class="pf-av txt">' + esc((e.name || '?')[0]) + '</div>';
+    b.innerHTML = '<div class="pf-card"><div class="pf-top">' + av + '<div class="pf-id"><b>' + esc(e.name || TT('처용', 'Cheoyong')) + '</b>' + (ttl ? '<em>〈' + ttl + '〉</em>' : '') + '<small>Lv ' + lv + ' · ' + TT('전투력', 'Power') + ' <i>' + fmt(pw) + '</i></small><small>' + TT('최고 진행', 'Best') + ' <i>' + chText(P.ch) + '</i></small></div></div>' +
+      '<div class="pf-sec"><span>' + TT('대표 영웅', 'Heroes') + '</span><div class="pf-heroes">' + (P.h.length ? P.h.map(c => '<div class="pf-h" style="border-color:' + GR[c.g].c + '"><i style="background-image:url(' + c.img + ')"></i><small>' + esc(c.n || c.id) + '</small></div>').join('') : '<p class="rk-msg">-</p>') + '</div></div>' +
+      '<div class="pf-sec"><span>' + TT('착용 장비', 'Gear') + '</span><div class="pf-gear">' + SLOTS.map((s, i) => { const g = P.g[i]; return g < 0 ? '<div class="pf-g empty"></div>' : '<div class="pf-g" style="border-color:' + GR[g].c + ';box-shadow:inset 0 0 14px ' + GR[g].c + '55"><img src="' + itemSrc({ slot: s.id, g }) + '" onerror="this.style.display=\'none\'"><small style="color:' + GR[g].c + '">' + GR[g].n + '</small></div>'; }).join('') + '</div></div></div>';
+  }
+  function rkRwModal() {
+    const row = (t, r) => '<tr><td>' + (t[0] === t[1] ? t[0] + TT('위', '') : t[1] >= 9999 ? TT(t[0] + '위~ (참가)', t[0] + '+ (joined)') : t[0] + '~' + t[1] + TT('위', '')) + '</td><td>' + TT('옥 ', 'Jade ') + fmt(t[2]) + (t[3] ? ' + ' + TT('전설 조각 ', 'shards ') + t[3] : '') + (r && t[0] === 1 ? ' + ' + TT('칭호(7일)', 'title (7d)') : '') + '</td></tr>';
+    modal('<h3 class="stroke">' + TT('랭킹 보상표', 'Ranking rewards') + '</h3><p class="rk-h">' + TT('일일 (전투력·진행 각각)', 'Daily (Power and Progress each)') + '</p><table class="rk-tb">' + RK_D.map(t => row(t)).join('') + '</table><p class="rk-h">' + TT('주간 (전투력·진행 각각)', 'Weekly (Power and Progress each)') + '</p><table class="rk-tb">' + RK_W.map(t => row(t, 1)).join('') + '</table><p class="rk-msg">' + TT('기간이 끝난 뒤 다음 접속 때 자동으로 받아요 (로그인 필요). 주간 1위는 이름 옆에 칭호가 7일 동안 붙어요.', 'Rewards arrive automatically on your next visit after the period ends (sign-in needed). Weekly #1 gets a 7-day title.') + '</p><div class="row"><div class="btn b" data-act="rkTab" data-v="' + rkTab + '">' + TT('랭킹으로', 'Back') + '</div></div>');
+  }
+  /* 전설 조각: 무과금도 꾸준히 하면 1막 안에 전설 하나 (약 15일 계산: 하루 임무 2 + 출석 7일째 20 + 새 장 첫 클리어 1 + 10·20장 이정표 20) */
+  function msCheck() {
+    S.msGot = S.msGot || {}; const got = [];
+    for (const m of [10, 20]) if ((S.chap || 1) > m && !S.msGot[m]) { S.msGot[m] = 1; S.lsh = (S.lsh || 0) + 20; got.push(TT(m + '장 첫 클리어: 전설 조각 +20', 'Ch ' + m + ' cleared: Legend shards +20')); }
+    if (!S.msGot[30] && ((S.stars || {})[30] | 0) >= 2) { S.msGot[30] = 1; S.lbox = (S.lbox || 0) + 1; got.push(TT('1막 완주: 전설 장비 선택 상자 +1', 'Act 1 complete: Legendary gear chest +1')); }
+    if (got.length) setTimeout(() => { try { toast(got.join(' · ')); } catch (e) {} }, 1200);
+  }
+  function qShard() { if (QUESTS.every(q => (S.quests.got || {})[q.id]) && !S.quests.lsh) { S.quests.lsh = 1; S.lsh = (S.lsh || 0) + 2; setTimeout(() => toast(TT('오늘의 임무 모두 완료! 전설 조각 +2', 'All daily quests done! Legend shards +2')), 500); } }
+  function lshNote() { return '<p style="font-size:16px;color:#ffb04a">' + TT('확률 없이 전설을 얻는 길: 전설 조각 100개 = 전설 장비 선택 상자(부위 선택, 지금 진행 장의 장비 단계, 품질 85~100%). 조각은 오늘의 임무 모두 완료 2 · 7일 출석 7일째 20 · 새 장 첫 클리어 1 · 10장·20장 첫 클리어 20 · 영웅 이상 장비 분해(영웅 1, 전설 3, 유니크 5, 신화 8) · 랭킹 보상에서 얻어요. 1막(30장) 완주 때 전설 상자 1개 확정.', 'Guaranteed path: 100 Legend shards = Legendary gear chest (pick slot, current tier, quality 85-100%). Shards: all daily quests 2, attendance day 7: 20, new chapter first clear 1, Ch 10/20 first clear 20, salvaging Hero+ gear (1/3/5/8), ranking rewards. Clearing Act 1 (Ch 30) gives 1 chest.') + '</p>'; }
+  function lshHtml() {
+    const n = S.lsh || 0, bx = S.lbox || 0;
+    return '<div class="sect stroke">' + TT('전설 조각', 'Legend shards') + ' <small>' + TT('100개 = 전설 장비 선택 상자', '100 = Legendary gear chest') + '</small></div><div class="lsh"><div class="lsh-ic"></div><div class="lsh-bar"><i style="width:' + Math.min(100, n) + '%"></i><b>' + n + ' / ' + LSH_NEED + '</b></div>' +
+      (bx ? '<div class="lsh-btn open" data-act="lboxOpen">' + TT('상자 열기', 'Open') + ' ×' + bx + '</div>' : '<div class="lsh-btn' + (n >= LSH_NEED ? '' : ' dis') + '" data-act="lshEx">' + TT('교환', 'Exchange') + '</div>') + '<div class="lsh-q" data-act="lshHow">?</div></div>';
+  }
+  function lboxModal() {
+    if (!(S.lbox > 0)) return;
+    modal('<h3 class="stroke">' + TT('전설 장비 선택 상자', 'Legendary gear chest') + '</h3><p class="rk-msg">' + TT('원하는 부위를 골라요 · 장비 단계 T' + curTier() + ' · 품질 85~100%', 'Pick a slot · Tier T' + curTier() + ' · quality 85-100%') + '</p><div class="lbox-grid">' + SLOTS.map(s => '<div class="lbox-c" data-act="lboxPick" data-v="' + s.id + '"><img src="' + itemSrc({ slot: s.id, g: 4 }) + '" onerror="this.style.display=\'none\'"><b>' + TT(s.n, s.id) + '</b></div>').join('') + '</div>');
   }
   /* ---------------- 친구 · 문파 (HANKUKIN 계정 Firestore) ----------------
      새 컬렉션 없이 이미 열려 있는 두 곳만 쓴다.
@@ -1510,7 +1621,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     return '<div class="xacc box"><b class="stroke-s">계정</b><p>로그인하지 않아도 이 기기에 저장돼요. 로그인하면 다른 기기에서도 이어서 할 수 있어요. (Anibrix·ASCEND와 같은 계정)</p>' +
       '<div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 가입·로그인</div><div class="row"><div class="btn b" data-act="eLogin" style="min-width:260px">이메일로 로그인</div></div></div>';
   }
-  (function watchAcc() { let n = 0; const t = setInterval(() => { const A = window.HKAccount; if (A && A.onChange) { clearInterval(t); A.onChange(() => { try { if (accUser()) setTimeout(() => socialTick(true), 500); } catch (e) {} try { if ($('#s-lobby') && $('#s-lobby').classList.contains('on') && !$('#gacha', root)) { const m = $('#mdl', root), set = m && m.querySelector('.xacc'); renderLobby(); if (set) settingsModal(); } } catch (e) {} }); } else if (++n > 80) clearInterval(t); }, 250); })();
+  (function watchAcc() { let n = 0; const t = setInterval(() => { const A = window.HKAccount; if (A && A.onChange) { clearInterval(t); A.onChange(() => { try { if (accUser()) setTimeout(() => { try { rkSettle(); rkPost(true); } catch (e) {} }, 1500); } catch (e) {} try { if (accUser()) setTimeout(() => socialTick(true), 500); } catch (e) {} try { if ($('#s-lobby') && $('#s-lobby').classList.contains('on') && !$('#gacha', root)) { const m = $('#mdl', root), set = m && m.querySelector('.xacc'); renderLobby(); if (set) settingsModal(); } } catch (e) {} }); } else if (++n > 80) clearInterval(t); }, 250); })();
 
   (function preItems() { setTimeout(() => { const L = []; for (const s of SLOTS) for (let g = 0; g < 6; g++) L.push(s.id === 'weapon' ? 'weapon_g' + g : s.id + '_g' + g); for (const w of ['nogi', 'jochong', 'seungja']) L.push('w_' + w); for (const k in SG) L.push(SG[k].img); window.__itemImgs = L.map(n => { const i = new Image(); i.src = 'img/items/' + n + '.webp'; return i; }); }, 1500); })();
   /* ---------------- 누르기 처리 ---------------- */
@@ -1518,7 +1629,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const t = e.target.closest('[data-act]'); if (!t) return;
     const a = t.dataset.act, v = t.dataset.v;
     switch (a) {
-      case 'enter': { const go = () => { music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); }; if (!S.seenOp) { S.seenOp = 1; save(); storyOpening(go); } else go(); break; }
+      case 'enter': { const go = () => { music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); try { rkSettle(); rkPost(false); } catch (e) {} }, 900); }; if (!S.seenOp) { S.seenOp = 1; save(); storyOpening(go); } else go(); break; }
       case 'opening': closeModal(); storyOpening(null); break;
       case 'dlg': closeModal(); chDlg(+v, null, true); break;
       case 'ending': closeModal(); storyCuts(END_CUTS, i => 'end' + (i + 1), null); break;
@@ -1541,6 +1652,14 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'event': evModal(); break;
       case 'evGet': { xinit(); if (S.ev.got >= 7 || S.ev.last === today()) break; const [k, n] = EVR[S.ev.got]; give(k, n); S.ev.got++; S.ev.last = today(); save(); toast('축제 선물을 받았어요'); evModal(); break; }
       case 'rank': rankModal(); break;
+      case 'rkTab': rankModal(v); break;
+      case 'rkKill': rankKillModal(); break;
+      case 'rkWho': rkWho(v); break;
+      case 'rkRw': rkRwModal(); break;
+      case 'lshHow': modal('<h3 class="stroke">' + TT('전설 조각', 'Legend shards') + '</h3>' + lshNote()); break;
+      case 'lshEx': { if ((S.lsh || 0) < LSH_NEED) { toast(TT('전설 조각이 모자라요', 'Not enough shards')); break; } S.lsh -= LSH_NEED; S.lbox = (S.lbox || 0) + 1; save(); lboxModal(); break; }
+      case 'lboxOpen': lboxModal(); break;
+      case 'lboxPick': { if (!(S.lbox > 0) || !SLOTS.some(s => s.id === v)) break; S.lbox--; ITEM_SRC = '전설 조각 상자'; ITEM_CH = progCh(); const it = mkItem(v, 4); ITEM_CH = 0; ITEM_SRC = ''; it.q = Math.round(85 + Math.random() * 15); S.inv.push(it); RARE_HIT = 4; rareShow(it); save(); closeModal(); refresh(); break; }
       case 'rkLogin': try { window.HKAccount && window.HKAccount.openLogin && window.HKAccount.openLogin(); } catch (e) {} break;
       case 'friend': friendModal(); break;
       case 'frAdd': case 'frOk': case 'frNo': case 'frGift': case 'frTake': case 'frBeg': frAct(a, v); break;
@@ -1565,13 +1684,13 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'patrolGet': { const p = patrol(); S.gold += p.gold; S.stone += p.stone; S.jade += p.jade; const up = addExp(p.exp); S.patrolT = now(); closeModal(); toast('엽전 ' + fmt(p.gold) + ' 받았어요' + (up ? ' · 레벨 올라감!' : '')); refresh(); break; }
       case 'patrolFast': { if (S.torch < 5) { toast('횃불이 모자라요'); break; } S.torch -= 5; const c = Math.max(1, S.chap); S.gold += 480 * c; S.stone += 3; addExp(80 * c); closeModal(); toast('빠른 순찰: 엽전 ' + fmt(480 * c)); refresh(); break; }
       case 'att': attModal(); break;
-      case 'attGet': { const R = attModal.R, k = S.att % 7, [i, val] = R[k]; if (i === 'coin') S.gold += val; else if (i === 'jade') S.jade += val; else S.stone += val; S.att++; S.attDay = today(); closeModal(); toast(k + 1 + '일째 출석 보상을 받았어요'); refresh(); break; }
+      case 'attGet': { const R = attModal.R, k = S.att % 7, [i, val] = R[k]; if (i === 'coin') S.gold += val; else if (i === 'jade') S.jade += val; else S.stone += val; S.att++; S.attDay = today(); if (k === 6) { S.lsh = (S.lsh || 0) + 20; setTimeout(() => toast(TT('전설 조각 +20', 'Legend shards +20')), 600); } closeModal(); toast(k + 1 + '일째 출석 보상을 받았어요'); refresh(); break; }
       case 'quest': questModal(); break;
       case 'achAll': { xinit(); const L = achReady(); for (const a of L) { S.ach[a.id] = 1; give(a.r[0], a.r[1]); } save(); toast('업적 보상 ' + L.length + '개를 받았어요'); try { refresh(); } catch (e2) {} achModal(); break; }
       case 'passAll': { xinit(); const L = passReady(); for (const k of L) { const i = +k.slice(1); if (k[0] === 'f') { const [a, b] = passFree(i); give(a, b); S.pass.f[i] = 1; } else { const [a, b] = passPaid(i); give(a, b); S.pass.p[i] = 1; } } save(); toast('패스 선물 ' + L.length + '개를 받았어요'); try { refresh(); } catch (e2) {} passModal(); break; }
       case 'cdAll': { xinit(); const L = cdReady(); let j = 0; for (const [t, x] of L) { S.codex[t][x.k] = 1; j += x.r; } S.jade += j; save(); toast('도감 보상 옥 ' + fmt(j)); try { refresh(); } catch (e2) {} codexModal(); break; }
-      case 'qAll': { const L = qReady(); S.quests.got = S.quests.got || {}; let j = 0; for (const q of L) { S.quests.got[q.id] = 1; j += q.r; } S.jade += j; save(); toast('임무 보상 옥 ' + fmt(j)); try { refresh(); } catch (e2) {} questModal(); break; }
-      case 'qGet': { const q = QUESTS.find(x => x.id === v); S.quests.got = S.quests.got || {}; S.quests.got[v] = 1; S.jade += q.r; save(); questModal(); refresh(); break; }
+      case 'qAll': { const L = qReady(); S.quests.got = S.quests.got || {}; let j = 0; for (const q of L) { S.quests.got[q.id] = 1; j += q.r; } S.jade += j; qShard(); save(); toast('임무 보상 옥 ' + fmt(j)); try { refresh(); } catch (e2) {} questModal(); break; }
+      case 'qGet': { const q = QUESTS.find(x => x.id === v); S.quests.got = S.quests.got || {}; S.quests.got[v] = 1; S.jade += q.r; qShard(); save(); questModal(); refresh(); break; }
       case 'mailbox': mailModal(); break;
       case 'mailGet': S.mail = true; S.jade += 500; S.gold += 5000; S.stone += 30; closeModal(); toast('첫 선물을 받았어요'); refresh(); break;
       case 'settings': settingsModal(); break;
@@ -1599,7 +1718,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'eqBig': eqBig = !eqBig; renderLobby(); break;
       case 'bulkSalv': bulkSalvModal(); break;
       case 'bsTog': eqx(); S.bsG[+v] = S.bsG[+v] ? 0 : 1; save(); bulkSalvModal(); break;
-      case 'bulkGo': { eqx(); const L = bsList(); let gold = 0, ore = 0; for (const it of L) { const sv = salvVal(it); gold += sv.gold; ore += sv.ore; } S.inv = S.inv.filter(i => !L.includes(i)); S.gold += gold; S.ore += ore; save(); closeModal(); refresh(); toast(L.length + '개 분해 · 엽전 ' + fmt(gold) + ' · 정련석 ' + fmt(ore)); break; }
+      case 'bulkGo': { eqx(); const L = bsList(); let gold = 0, ore = 0, ls = 0; for (const it of L) { const sv = salvVal(it); gold += sv.gold; ore += sv.ore; ls += LSH_SV[it.g] || 0; } S.inv = S.inv.filter(i => !L.includes(i)); S.gold += gold; S.ore += ore; if (ls) S.lsh = (S.lsh || 0) + ls; save(); closeModal(); refresh(); toast(L.length + '개 분해 · 엽전 ' + fmt(gold) + ' · 정련석 ' + fmt(ore) + (ls ? ' · ' + TT('전설 조각 +', 'Legend shards +') + ls : '')); break; }
       case 'itemUp': { const it = byUid(+v); if (it) { upItem(it, 1); itemModal(+v); renderLobby(); } break; }
       case 'autoEq': for (const s of SLOTS) { let best = byUid(S.equip[s.id]), bp = best ? stats().power : -1; for (const i of S.inv.filter(i => i.slot === s.id)) { const p = powerWith(i).power; if (p > bp) { bp = p; best = i; } } if (best) S.equip[s.id] = best.uid; } refresh(); toast('가장 좋은 장비를 입었어요'); break;
       case 'merge': { let made = 0; ITEM_SRC = '승급(합성)';
@@ -1611,7 +1730,7 @@ if (window.IS_EN) document.title = 'K Zombi';
           else { let tgt; while ((tgt = S.inv.filter(i => i.slot === s.id && i.g === g && (g < 6 || (i.s || 0) < STAR_MAX(g))).sort((a, b) => (b.s || 0) - (a.s || 0) || b.lv - a.lv)[0])) { const fod = S.inv.filter(i => i !== tgt && i.slot === s.id && i.g === g && free(i) && !i.sg && (i.s || 0) === 0).slice(0, 2); if (fod.length < 2) break; S.inv = S.inv.filter(i => !fod.includes(i)); if ((tgt.s || 0) < STAR_MAX(g)) tgt.s = (tgt.s || 0) + 1; else { tgt.g = g + 1; tgt.s = 0; } made++; if (g === 6 && tgt.s >= STAR_MAX(6)) break; } }
         }
         ITEM_SRC = ''; refresh(); toast(made ? '승급 ' + made + '번 성공!' : '승급할 장비가 없어요'); break; }
-      case 'salvage': { eqx(); const it = byUid(+v); if (!it || isEq(it) || it.lk) break; const sv = salvVal(it); S.ore += sv.ore; S.gold += sv.gold; S.inv = S.inv.filter(i => i !== it); save(); closeModal(); refresh(); toast('분해: 엽전 ' + fmt(sv.gold) + ' · 정련석 ' + sv.ore); break; }
+      case 'salvage': { eqx(); const it = byUid(+v); if (!it || isEq(it) || it.lk) break; const sv = salvVal(it), ls = LSH_SV[it.g] || 0; S.ore += sv.ore; S.gold += sv.gold; if (ls) S.lsh = (S.lsh || 0) + ls; S.inv = S.inv.filter(i => i !== it); save(); closeModal(); refresh(); toast('분해: 엽전 ' + fmt(sv.gold) + ' · 정련석 ' + sv.ore + (ls ? ' · ' + TT('전설 조각 +', 'Legend shards +') + ls : '')); break; }
       case 'comp': selComp = v; infoFold = false; renderLobby(); break;
       case 'infoFold': infoFold = v === '1'; renderLobby(); break;
       case 'team': { const i = S.team.indexOf(v); if (i >= 0) S.team.splice(i, 1); else { if (S.team.length >= 2) S.team.shift(); S.team.push(v); } refresh(); break; }
