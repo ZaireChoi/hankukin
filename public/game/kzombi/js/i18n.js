@@ -27,6 +27,9 @@ if (L !== 'en') return;
 document.documentElement.lang = 'en';
 
 const DICT = {
+'공성 좀비': 'Siege Zombie', '자폭 좀비': 'Bomber Zombie', '방패 좀비': 'Shield Zombie', '둥지 좀비': 'Nest Zombie', '역병 술사': 'Plague Shaman', '박쥐 떼': 'Bat Swarm', '역병 염라': 'Plague King of Hell', '독룡 이무기': 'Venom Imugi', '바위 두꺼비 거인': 'Boulder Toad Giant', '도깨비불 정령': 'Dokkaebi Wisp', '폐허 약탈 좀비': 'Ruin Looter Zombie', '염라의 사슬!': 'Chains of Yeomra!', '독룡의 독숨!': 'Venom breath!', '두꺼비 거인이 뛰어오른다!': 'The toad giant leaps!',
+'월드 보스': 'World Boss', '월드보스': 'World Boss', '문파 보스': 'Guild Boss', '돌장승 거신': 'Stone Totem Colossus', '화마': 'Fire Demon', '역병 대장군': 'Plague General', '탈것': 'Mounts', '타기': 'Ride', '내리기': 'Dismount', '탈것에 올랐어요': 'Mounted!', '제주 조랑말': 'Jeju Pony', '아기 백호': 'Baby White Tiger', '아기 해태': 'Baby Haetae', '선학': 'Sacred Crane', '조건 미달성': 'Locked', '도전 (횃불 없음)': 'Challenge (no torch)', '내일 다시': 'Tomorrow', '도전': 'Challenge', '이동 속도 +10%': 'Move speed +10%', '이동 속도 +15%': 'Move speed +15%', '타면 전투에서 처용이 더 빨리 움직여요 (공격·체력은 그대로)': 'Riding makes Cheoyong move faster in battle (attack and HP unchanged)',
+'새 건물이 열렸어요!': 'New buildings unlocked!', '유리': 'Bonus', '불': 'Fire', '번개': 'Lightning', '얼음': 'Ice', '쇠': 'Metal',
 '장영실': 'Jang Yeong-sil', '불가사리': 'Bulgasari', '장산범': 'Jangsanbeom', '자격루의 종': 'Water-Clock Bell', '자격루의 종! 공격 속도 상승': 'Water-clock bell! Attack speed up', '발명 · 화포': 'Inventor · Cannon', '장치 설치': 'Gadgets', '발명가': 'Inventor', '장영실 + 화차': 'Jang Yeong-sil + Hwacha', '화포 장치가 더 오래 버티고 위력 +60%': 'Cannon gadgets last longer, +60% power', '불가사리가 쇠를 먹는다!': 'Bulgasari devours the iron!', '장산범의 울음소리… 병사들이 홀렸다!': "Jangsanbeom's cry… soldiers are entranced!", '선비': 'Scholar', '유생 도포와 유건, 책을 든 선비': 'A scholar in a Confucian robe and cap, holding a book', '포도청 포졸': 'Police Constable', '검은 전립과 붉은 철릭, 육모방망이': 'Black felt hat, red coat and a hexagonal club', '작은 화포 장치를 세워 한동안 저절로 쏘게 한다': 'Sets up small cannon gadgets that fire on their own', '자격루 종이 울려 아군 공격 속도가 크게 오른다': 'The water-clock bell rings and greatly speeds up allied attacks',
 '모두 받기': 'Claim all',
 '악몽의 조선': 'Nightmare Joseon', '2막 · 악몽의 조선': 'Act 2 · Nightmare Joseon', '2막 열림': 'Act 2 unlocked', '평범': 'Normal', '악몽': 'Nightmare', '악몽 도전': 'Challenge Nightmare', '악몽 지도로': 'To the Nightmare map', '악몽을 넘은 자': 'Nightmare Conqueror', '칭호 획득!': 'Title earned!', '프로필에 칭호가 새겨졌어요.': 'The title has been added to your profile.', '역병 걸린': 'Plagued', '적이 훨씬 세고 많아요. 우두머리는 일찍 분노하고, 역병 걸린 좀비는 죽으며 독 웅덩이를 남겨요.': 'Enemies are far stronger and more numerous. Bosses enrage early, and plagued zombies leave poison pools when they die.', '역신을 물리쳤지만 조선의 밤은 끝나지 않았다. 더 강한 좀비와 역병이 몰려온다.': 'The plague god has fallen, but the night over Joseon is not over. Stronger zombies and plague are coming.', '지도에서': 'On the map, tap', '를 눌러 2막에 도전하세요. 신화 장비와 칭호가 기다려요.': 'to take on Act 2. Mythic gear and a title await.',
@@ -264,6 +267,19 @@ const RULES = [
   [/(\d+)년 (\d+)월 시즌 · 전투를 하면 패스 점수가 쌓여요/g, (m, y, mo) => y + '-' + mo + ' season · Battles earn pass points'],
   [/(\d+)년 (\d+)월 시즌/g, (m, y, mo) => y + '-' + mo + ' season'],
   [/^(\d+)번째 밤$/, (m, n) => 'Night ' + n],
+[/^약점 · (.+) \+(\d+)%$/, (m, a, n) => 'Weakness · ' + (DICT[a] || a) + ' +' + n + '%'],
+[/^(\d+)장 유리$/, (m, n) => 'Ch.' + n + ' bonus'],
+[/^🔒(\d+)장$/, (m, n) => '🔒Ch.' + n],
+[/^🔒 (\d+)장에서 열려요$/, (m, n) => '🔒 Unlocks at Ch.' + n],
+[/^(.+)은\(는\) (\d+)장에서 열려요$/, (m, a, n) => (DICT[a] || a) + ' unlocks at Ch.' + n],
+[/^이 장의 좀비 약점 · (.+) 속성 피해 \+(\d+)%$/, (m, a, n) => 'Zombies here are weak to ' + (DICT[a] || a) + ' (+' + n + '% damage)'],
+[/^유리한 내 영웅: (.+)$/, (m, a) => 'Your strong heroes: ' + a.split(', ').map(x => DICT[x] || x).join(', ')],
+[/^(.+) 속성 영웅·기술을 데려가면 유리해요$/, (m, a) => 'Bring ' + (DICT[a] || a) + ' heroes and skills for a bonus'],
+[/^새 건물 열림: (.+)$/, (m, a) => 'New buildings: ' + a.split(', ').map(x => DICT[x] || x).join(', ')],
+[/^이 장 약점 속성 · 피해 \+(\d+)%$/, (m, n) => 'Chapter weakness · +' + n + '% damage'],
+[/ · 약점 (.+) \+(\d+)%/g, (m, a, n) => ' · Weak to ' + (DICT[a] || a) + ' +' + n + '%'],
+[/^(.+) · 유리$/, (m, a) => (DICT[a] || a) + ' · Bonus'],
+
 [/^모두 받기 \((\d+)\)$/, (m, n) => 'Claim all (' + n + ')'],
 [/^악몽 (\d+)번째 밤$/, (m, n) => 'Nightmare Night ' + n],
 [/^악몽 (\d+) · (.+)$/, (m, n, a) => 'Nightmare ' + n + ' · ' + (DICT[a] || a)],

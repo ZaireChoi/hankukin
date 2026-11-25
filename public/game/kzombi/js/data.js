@@ -31,6 +31,9 @@ D.EN = {
   zgrand:  { n: '좀비 대장군', hp: 900, sp: 52, r: 26, dmg: 30, cd: 1.3, xp: 25, h: 100, armor: 3, slam: 1 },
   zqueen2: { n: '좀비 왕비', hp: 800, sp: 44, r: 18, dmg: 16, cd: 1.6, xp: 18, h: 82, range: 250, caster: 1, summoner: 1 },
   yeoksin: { n: '역신', hp: 4200, sp: 60, r: 24, dmg: 32, cd: 1.0, xp: 0, h: 124, armor: 2, blink: 1 },
+  wb_stone: { n: '돌장승 거신', hp: 6000, sp: 30, r: 34, dmg: 40, cd: 1.6, xp: 0, h: 150, armor: 6, slam: 1, wb: 1 },
+  wb_fire: { n: '화마', hp: 5600, sp: 36, r: 32, dmg: 44, cd: 1.4, xp: 0, h: 150, armor: 3, slam: 1, caster: 1, wb: 1 },
+  wb_plague: { n: '역병 대장군', hp: 5800, sp: 40, r: 32, dmg: 42, cd: 1.3, xp: 0, h: 150, armor: 4, charger: 1, slam: 1, wb: 1 },
   bulgasari: { n: '불가사리', hp: 5200, sp: 46, r: 30, dmg: 34, cd: 1.4, xp: 0, h: 120, armor: 4, slam: 1, eater: 1 },
   jangsanbeom: { n: '장산범', hp: 3800, sp: 92, r: 24, dmg: 28, cd: 1.0, xp: 0, h: 104, charger: 1, mimic: 1 },
   mudang:  { n: '검은 무녀', hp: 3000, sp: 42, r: 22, dmg: 20, cd: 1.8, xp: 0, h: 116, range: 300, caster: 1, summoner: 1, warder: 1 },
@@ -51,8 +54,22 @@ Object.assign(D.EN, {
   war_ox:      { n: '철갑 황소', spr: 'zox', tint: '200,200,210', sc: 1.25, hp: 1100, sp: 40, r: 24, dmg: 34, cd: 1.4, xp: 12, h: 88, tank: 1, siege: 6, armor: 5 },
   giant_bear:  { n: '거대 반달곰', spr: 'zbear', tint: '255,200,60', sc: 1.3, hp: 1600, sp: 50, r: 27, dmg: 38, cd: 1.5, xp: 18, h: 104, slam: 1, vtier: 1 }
 });
+/* 새 역할형 좀비·우두머리·탐험 몹 (r4) */
+Object.assign(D.EN, {
+  zsiege:  { n: '공성 좀비', hp: 160, sp: 36, r: 17, dmg: 14, cd: 1.5, xp: 4, h: 72, siege: 3 },
+  zbomb:   { n: '자폭 좀비', hp: 70, sp: 92, r: 13, dmg: 8, cd: 1.0, xp: 3, h: 62, bomber: 1 },
+  zshield: { n: '방패 좀비', hp: 150, sp: 50, r: 15, dmg: 10, cd: 1.1, xp: 3, h: 64, shield: 1 },
+  znest:   { n: '둥지 좀비', hp: 220, sp: 40, r: 16, dmg: 8, cd: 1.3, xp: 5, h: 66, nest: 1 },
+  zplague: { n: '역병 술사', hp: 130, sp: 46, r: 14, dmg: 12, cd: 2.2, xp: 4, h: 66, range: 260, caster: 1, plague: 1 },
+  zbat:    { n: '박쥐 떼', hp: 10, sp: 150, r: 9, dmg: 3, cd: 0.7, xp: 1, h: 40, fly: 1, swarm: 4, flap: 1 },
+  byeomra:   { n: '역병 염라', hp: 2800, sp: 40, r: 26, dmg: 30, cd: 1.4, xp: 0, h: 110, summoner: 1, chain: 1 },
+  bdokryong: { n: '독룡 이무기', hp: 3200, sp: 56, r: 28, dmg: 30, cd: 1.3, xp: 0, h: 104, breath: 1 },
+  bdukkeobi: { n: '바위 두꺼비 거인', hp: 1800, sp: 36, r: 32, dmg: 36, cd: 1.5, xp: 0, h: 100, armor: 3, slam: 1, hop: 1 },
+  xwisp:   { n: '도깨비불 정령', hp: 40, sp: 110, r: 11, dmg: 6, cd: 0.9, xp: 2, h: 50, fly: 1, tag: 'explore' },
+  xlooter: { n: '폐허 약탈 좀비', hp: 60, sp: 140, r: 12, dmg: 7, cd: 0.8, xp: 2, h: 60, tag: 'explore' }
+});
 /* 단계: 1 약함 ~ 4 강함, 5 상위 종. 단계가 높을수록 체력 배율이 크고 무리 짝이 적다 */
-D.TIER = { peasant: 1, zrat: 1, zdog: 1, zcrow: 2, archer: 2, spear: 2, yangban: 2, zsword: 3, rider: 3, munsin: 3, zwaegun: 3, zboar: 3, zmonk: 3, harcher: 3, zsamurai: 4, mujang: 4, zox: 4, zbear: 4, ztiger: 4,
+D.TIER = { zbat: 2, zbomb: 2, zshield: 3, zsiege: 3, zplague: 3, znest: 3, peasant: 1, zrat: 1, zdog: 1, zcrow: 2, archer: 2, spear: 2, yangban: 2, zsword: 3, rider: 3, munsin: 3, zwaegun: 3, zboar: 3, zmonk: 3, harcher: 3, zsamurai: 4, mujang: 4, zox: 4, zbear: 4, ztiger: 4,
   iron_spear: 5, red_sword: 5, black_archer: 5, blood_dog: 5, skull_monk: 5, plague_rider: 5, ghost_yangban: 5, shadow_samurai: 5, war_ox: 5, giant_bear: 5 };
 D.TIERHP = [1, 1, 1.3, 2.0, 2.0, 1.0];   /* 기본 체력 차이에 곱한다: 평균이 대략 1 / 2.2 / 4.5 / 9 / 15 */
 D.VAR_OF = { spear: 'iron_spear', zsword: 'red_sword', archer: 'black_archer', zdog: 'blood_dog', zmonk: 'skull_monk', rider: 'plague_rider', yangban: 'ghost_yangban', zsamurai: 'shadow_samurai', zox: 'war_ox', zbear: 'giant_bear' };
@@ -110,6 +127,13 @@ D.OBJ = {
   for (const C of D.CHAPTERS) if (P[C.n]) C.pool = P[C.n].filter(k => D.EN[k]);
   /* 장마다 처음 나오는 적 */
   const seen = new Set(); for (const C of D.CHAPTERS) { C.fresh = C.pool.filter(k => !seen.has(k)); C.pool.forEach(k => seen.add(k)); }
+  /* 역할형 좀비를 4~18장에 단계적으로 섞는다 */
+  const R4P = { zbat: [5, 9, 12, 20], zbomb: [6, 10, 14, 21], zshield: [7, 11, 15, 24], zsiege: [8, 12, 16, 26], zplague: [9, 13, 17, 27], znest: [11, 14, 18, 29] };
+  for (const k in R4P) for (const n of R4P[k]) { const C = D.CHAPTERS[n - 1]; if (C && D.EN[k] && !C.pool.includes(k)) C.pool.push(k); }
+  { const seen2 = new Set(); for (const C of D.CHAPTERS) { C.fresh = C.pool.filter(k => !seen2.has(k)); C.pool.forEach(k => seen2.add(k)); } }
+  /* 우두머리: 같은 우두머리가 두 번 넘게 나오지 않게 (30장 역신은 최종 결전이라 예외) */
+  const BOSS = [0, 'mujang', 'zbear', 'ztiger', 'zgrand', 'zsamurai', 'bdukkeobi', 'mudang', 'zqueen2', 'byeomra', 'king', 'zgrand', 'bdokryong', 'mudang', 'zbear', 'yeoksin', 'bulgasari', 'ztiger', 'byeomra', 'jangsanbeom', 'yeoksin', 'zqueen2', 'bulgasari', 'bdukkeobi', 'bdokryong', 'jangsanbeom', 'zox', 'king', 'mujang', 'zox', 'yeoksin'];
+  for (const C of D.CHAPTERS) if (BOSS[C.n] && D.EN[BOSS[C.n]]) C.boss = BOSS[C.n];
   D.revealed = ch => { const s = new Set(); for (const C of D.CHAPTERS) { if (C.n > ch) break; C.pool.forEach(k => s.add(k)); } return s; };
 })();
 /* 판마다 다른 배치: 좀비 길(2~3갈래)과 건물 자리. 같은 챕터는 늘 같은 배치 */
@@ -159,6 +183,13 @@ D.TUR = {
   barracks:{ name: '병영', d: '조선 병사가 나와 성문 앞을 지킨다 (강화할수록 병종과 인원 증가)', kind: 'barracks', cost: 90, range: 0, rate: 7, hp: 170, spr: 'barracks', top: 100 },
   well:    { name: '우물', d: '주변 처용과 시설의 체력을 되살린다', kind: 'heal', cost: 60, range: 170, rate: 1.0, heal: 6, hp: 100, spr: 'well', top: 90 }
 };
+
+/* 장별 원소 약점(후더덕식 챕터 원소 버프): 이 장의 좀비는 이 속성 피해를 더 받는다 */
+D.CHEL_LIST = ['fire', 'metal', 'fire', 'thunder', 'qi', 'ice', 'thunder', 'fire', 'qi', 'metal'];
+D.chEl = function (ch, nm) { const c = Math.max(1, ch | 0), el = D.CHEL_LIST[(c - 1 + (nm ? 3 : 0)) % D.CHEL_LIST.length]; const k = nm ? 0.5 : c <= 10 ? 0.3 : c <= 20 ? 0.4 : 0.5; return { el, k }; };
+/* 건물 단계별 해금: 이 장부터 지을 수 있다 (악몽은 전부 열림) */
+D.TUR_UNLOCK = { arrow: 1, mine: 1, barracks: 1, general: 2, well: 3, fire: 4, lady: 5, cannon: 6, talisman: 8, hwacha: 10 };
+D.tUnlocked = (k, ch, nm) => !!nm || (ch | 0) >= (D.TUR_UNLOCK[k] || 1);
 /* 병영 병사: unlock 병영 단계, melee/range, dps, hp, sp */
 D.SOLDIER = {
   s_sword:   { n: '검사', unlock: 1, reach: 26, dps: 14, hp: 90, sp: 120, col: '70,120,200' },
