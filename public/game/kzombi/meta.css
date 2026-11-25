@@ -381,3 +381,23 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .compinfo{top:auto!important;bottom:140px!important;min-height:330px}
 .comps{height:600px!important}.comps.tall{height:930px!important}
 .infotab{bottom:148px!important}
+
+/* 친구·문파 */
+.xmycode{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;margin:6px 0 10px}.xmycode span{font-size:20px}.xmycode b{font-size:38px;letter-spacing:6px}
+.xfadd{gap:10px!important;align-items:center}.xfadd .xcpn{flex:1;min-width:0;height:60px;font-size:24px}.xfadd .btn{flex:0 0 130px;height:60px}
+.xfrl{max-height:520px;overflow-y:auto;padding:2px}
+.xfr{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:6px 0}
+.xav{flex:0 0 58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;background:linear-gradient(145deg,#3a4a8a,#1e2650);border:3px solid #ffd36b}
+.xfi{flex:1;min-width:0}.xfi b{display:block;font-size:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xfi small{display:block;font-size:15px;color:#cdd6ff;font-weight:600;margin-top:2px}
+.xfb{display:flex;gap:6px;flex:0 0 auto}.btn.sm{height:50px!important;min-width:92px;font-size:18px!important;padding:0 10px;flex:0 0 auto!important}
+.xgtabs{display:flex;gap:8px;justify-content:center;margin:4px 0 10px}.xgtabs .btn{flex:1!important}
+.xemb{flex:0 0 58px;height:58px;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:32px;font-weight:900;color:#fff3e0;background:linear-gradient(145deg,#d8322a,#8e1410);border-radius:12px;box-shadow:inset 0 0 0 3px rgba(255,220,180,.55);font-family:serif}
+.xemb.sm{width:30px;height:30px;font-size:18px;border-radius:7px;vertical-align:middle}.xemb.big{width:90px;height:90px;flex:0 0 90px;font-size:52px}
+.xembs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}.xembs .xemb{cursor:pointer;opacity:.55}.xembs .xemb.on{opacity:1;outline:3px solid #ffd36b}
+.xghd{display:flex;gap:16px;align-items:center;padding:12px 16px}.xghd small{display:block;font-size:18px;color:#cdd6ff}
+.xgatt{display:flex;gap:12px;align-items:center;padding:12px 16px;margin:10px 0}.xgatt>div:first-child{flex:1}.xgatt small{display:block;font-size:15px;color:#cdd6ff;font-weight:600}.xgatt .btn{flex:0 0 150px;height:60px}
+.xboss{font-size:14px;padding:1px 8px;border-radius:8px;background:#ffd36b;color:#3a1a00;text-shadow:none}
+
+.compinfo{top:auto!important;bottom:12px!important;min-height:0!important;max-height:410px}
+.comps{height:470px!important}.comps.tall{height:880px!important}
+.infotab{bottom:16px!important}
