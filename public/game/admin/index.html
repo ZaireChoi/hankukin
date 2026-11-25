@@ -35,6 +35,7 @@ nav.tabs button.on{color:#fff;border-bottom-color:var(--acc)}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 th{color:var(--sub);font-weight:600;white-space:nowrap}
+td:first-child{white-space:nowrap}
 td.n,th.n{text-align:right}
 .tblwrap{overflow-x:auto}
 label{display:block;color:var(--sub);font-size:13px;margin:10px 0 4px}
@@ -200,6 +201,8 @@ const fmt = ms => { if (!ms) return '-'; const d = new Date(ms); const p = n => 
 const tsMs = v => v ? (typeof v === 'number' ? v : (v.toMillis ? v.toMillis() : 0)) : 0;
 const CAT = { notice: '공지', update: '업데이트', event: '이벤트', maint: '점검', post: '일반 글' };
 const GAMES = { all: '전체', anibrix: 'Anibrix', kzombi: '처용, 조선좀비', ascend: 'ASCEND', laststand: '라스트 스탠드' };
+// 개발 중 만든 시험 계정(example.com)은 회원 수에서 뺀다
+function isTest(email) { return /@example\.com$/i.test(email || ''); }
 function show(id) { for (const v of ['loginView', 'denyView', 'loadingView', 'adminView']) $(v).classList.toggle('hide', v !== id); }
 
 // ── 로그인 ──
@@ -242,7 +245,8 @@ async function loadStats() {
   // 회원 수, 공지 수
   try {
     const us = await getDocs(collection(db, 'users'));
-    $('kUsers').textContent = us.size;
+    let real = 0; us.forEach(d => { if (!isTest(d.data().email)) real++; });
+    $('kUsers').textContent = real;
   } catch (e) { const k = $('kUsers'); if (k) k.textContent = '권한 필요'; }
 }
 function renderStats() {
@@ -340,7 +344,7 @@ async function loadUsers() {
     let saves = {};
     try { const sq = await getDocs(collectionGroup(db, 'saves')); sq.forEach(d => { const uid = d.ref.parent.parent.id; (saves[uid] = saves[uid] || []).push(GN[d.id] || d.id); }); } catch (e) {}
     $('uTbl').innerHTML = list.length ? '<tr><th>#</th><th>이메일</th><th>마지막 접속</th><th>저장된 게임</th><th>회원 번호</th></tr>' + list.map((u, i) =>
-      `<tr><td>${i + 1}</td><td>${esc(u.email || '(이메일 없음)')}</td><td>${fmt(u.lastSeenMs || tsMs(u.lastSeen))}</td><td>${esc((saves[u.id] || []).join(', ') || '-')}</td><td class="sub">${esc(u.id)}</td></tr>`).join('')
+      `<tr${isTest(u.email) ? ' style="opacity:.5"' : ''}><td>${i + 1}</td><td>${esc(u.email || '(이메일 없음)')}${isTest(u.email) ? ' <span class="tag">시험 계정</span>' : ''}</td><td>${fmt(u.lastSeenMs || tsMs(u.lastSeen))}</td><td>${esc((saves[u.id] || []).join(', ') || '-')}</td><td class="sub">${esc(u.id)}</td></tr>`).join('')
       : '<tr><td class="sub">아직 회원이 없어요.</td></tr>';
   } catch (e) { $('uTbl').innerHTML = '<tr><td>회원 목록을 읽지 못했어요: ' + esc(e.code || e.message) + '</td></tr>'; }
 }
