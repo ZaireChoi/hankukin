@@ -138,7 +138,7 @@ const DICT = {
 '사당 보수': 'Shrine Repair', '사당 내구도를 100 되살린다': 'Restore 100 Shrine HP', '장승 가호': 'Totem Blessing', '세운 시설의 위력과 속도 +25%': 'Buildings power and speed +25%',
 /* 장비 */
 '무기': 'Weapon', '모자': 'Hat', '옷': 'Robe', '토시': 'Bracers', '신': 'Shoes', '노리개': 'Charm',
-'일반': 'Common', '우수': 'Uncommon', '희귀': 'Rare', '영웅': 'Hero', '전설': 'Legendary', '신화': 'Mythic', '고급': 'Fine',
+'일반': 'Common', '우수': 'Uncommon', '희귀': 'Rare', '영웅': 'Hero', '전설': 'Legendary', '신화': 'Mythic', '아래 등급 효과도 함께 적용': 'Lower-grade effects also apply', '고급': 'Fine',
 '쇠뿔로 만든 활. 금빛 화살이 적을 뚫는다': 'A bow of ox horn. Golden arrows pierce enemies', '화살 관통 +1': 'Arrow pierce +1', '다섯 발마다 불화살이 터진다': 'Every fifth shot is an exploding fire arrow',
 '화살이 세 갈래로 나간다': 'Arrows split three ways', '연달아 쏘는 쇠뇌': 'A rapid-fire crossbow', '쏘는 속도 +15%': 'Attack speed +15%', '맞은 적이 느려진다': 'Hit enemies are slowed',
 '쇠뇌살이 두 번 튕긴다': 'Bolts bounce twice', '느리지만 세고 멀리 가는 총': 'A slow but strong long-range gun', '치명타 확률 +10%': 'Crit chance +10%', '처치한 적이 폭발한다': 'Slain enemies explode',
