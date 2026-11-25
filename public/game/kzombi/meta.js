@@ -794,20 +794,22 @@ if (window.IS_EN) document.title = 'K Zombi';
     xinit();
     modal('<h3 class="stroke">친구</h3><div id="frbox"><p style="text-align:center">불러오는 중...</p></div>', 'xwide');
     const st = await socialReady(), box = () => $('#frbox', root); if (!box()) return;
-    if (st === 'offline') { box().innerHTML = offBox; return; } if (st === 'login') { box().innerHTML = loginBox('친구 코드로 친구를 맺고 날마다 횃불을 주고받을 수 있어요.'); return; } if (st === 'err') { box().innerHTML = errBox(); return; }
+    if (st === 'offline') { box().innerHTML = offBox; return; } if (st === 'login') { box().innerHTML = loginBox('친구 코드로 친구를 맺고 날마다 횃불을 주고받을 수 있어요.') + inviteBox(); return; } if (st === 'err') { box().innerHTML = errBox(); return; }
     const me = accUser().uid, d = dayKey(); if (S.fr.gotDay !== d) { S.fr.gotDay = d; S.fr.gotN = 0; S.fr.got = {}; }
+    try { await inviteeSettle(); await inviterSettle(); } catch (e) { console.warn('[invite]', e); } if (!box()) return;
     let inbox = []; try { inbox = await listBoard('kzf-' + me, 100); } catch (e) { socialErr = String(e.code || e); box().innerHTML = errBox(); return; }
     /* 상대가 내 보드에 남긴 줄: 신청(1) 또는 수락(2) */
     for (const r of inbox) if (r.score === 2 && S.fr.sent[r.id]) { S.fr.list[r.id] = 1; delete S.fr.sent[r.id]; }
     const reqs = inbox.filter(r => r.score === 1 && !S.fr.list[r.id] && !S.fr.rej[r.id]);
     const ids = Object.keys(S.fr.list).slice(0, 30); save();
-    const prof = {}, gifts = {}; await Promise.all(ids.map(async id => { try { prof[id] = await getEntry('kzp', id); } catch (e) {} try { gifts[id] = await getEntry('kzg-' + me + '-' + d, id); } catch (e) {} }));
+    const prof = {}, gifts = {}, begs = {}; await Promise.all(ids.map(async id => { try { prof[id] = await getEntry('kzp', id); } catch (e) {} try { gifts[id] = await getEntry('kzg-' + me + '-' + d, id); } catch (e) {} try { begs[id] = await getEntry('kzb-' + me + '-' + d, id); } catch (e) {} }));
+    const begSent = S.fr.begDay === d ? S.fr.begTo || {} : {};
     if (!box()) return;
     const giftSent = S.fr.giftDay === d ? S.fr.giftTo || {} : {};
     const rows = ids.map(id => { const p = prof[id] || {}, g = gifts[id], got = S.fr.got[id];
-      return '<div class="xfr box"><div class="xav stroke">' + esc((p.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(p.name || '알 수 없음') + '</b><small>레벨 ' + lvOf(p.score) + ' · 전투력 ' + fmt(pwOf(p.score)) + ' · ' + ago(p.at) + '</small></div>' +
-        '<div class="xfb">' + (g && !got ? '<div class="btn y sm" data-act="frTake" data-v="' + id + '">🔥 받기</div>' : '') + (giftSent[id] ? '<div class="btn b sm dis">보냄</div>' : '<div class="btn g sm" data-act="frGift" data-v="' + id + '">🔥 보내기</div>') + '</div></div>'; }).join('');
-    box().innerHTML = '<div class="box xmycode"><span>내 친구 코드</span><b class="stroke" style="color:#ffe27a">' + S.myCode + '</b></div>' +
+      return '<div class="xfr box"><div class="xav stroke">' + esc((p.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(p.name || '알 수 없음') + (begs[id] && !giftSent[id] ? ' <span class="xbeg">🙏 횃불 조름</span>' : '') + '</b><small>레벨 ' + lvOf(p.score) + ' · 전투력 ' + fmt(pwOf(p.score)) + ' · ' + ago(p.at) + '</small></div>' +
+        '<div class="xfb">' + (begSent[id] ? '' : '<div class="btn p sm" data-act="frBeg" data-v="' + id + '">🙏</div>') + (g && !got ? '<div class="btn y sm" data-act="frTake" data-v="' + id + '">🔥 받기</div>' : '') + (giftSent[id] ? '<div class="btn b sm dis">보냄</div>' : '<div class="btn g sm" data-act="frGift" data-v="' + id + '">🔥 보내기</div>') + '</div></div>'; }).join('');
+    box().innerHTML = '<div class="box xmycode"><span>내 친구 코드</span><b class="stroke" style="color:#ffe27a">' + S.myCode + '</b></div>' + inviteBox() +
       '<div class="row xfadd"><input id="frIn" class="xcpn" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="친구 코드 6자리"><div class="btn p" data-act="frAdd">신청</div></div>' +
       (reqs.length ? '<div class="sect stroke-s">받은 신청 ' + reqs.length + '</div>' + reqs.map(r => '<div class="xfr box"><div class="xav stroke">' + esc((r.name || '?')[0]) + '</div><div class="xfi"><b class="stroke-s">' + esc(r.name) + '</b><small>' + ago(r.at) + '</small></div><div class="xfb"><div class="btn g sm" data-act="frOk" data-v="' + r.id + '">수락</div><div class="btn r sm" data-act="frNo" data-v="' + r.id + '">거절</div></div></div>').join('') : '') +
       '<div class="sect stroke-s">친구 ' + ids.length + '/30 · 오늘 받은 횃불 ' + S.fr.gotN + '/10</div><div class="xscroll xfrl">' + (rows || '<p style="text-align:center">아직 친구가 없어요. 친구 코드를 주고받아 보세요!</p>') + '</div>';
@@ -827,7 +829,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       } else if (a === 'frOk') { if (Object.keys(S.fr.list).length >= 30) { toast('친구는 30명까지예요'); return; } await putEntry('kzf-' + v, accName(), 2); S.fr.list[v] = 1; toast('친구가 되었어요!'); }
       else if (a === 'frNo') { S.fr.rej[v] = 1; toast('신청을 거절했어요'); }
       else if (a === 'frGift') { const d = dayKey(); await putEntry('kzg-' + v + '-' + d, accName(), 1); if (S.fr.giftDay !== d) { S.fr.giftDay = d; S.fr.giftTo = {}; } S.fr.giftTo[v] = 1; toast('횃불을 선물했어요'); }
-      else if (a === 'frTake') { if (S.fr.gotN >= 10) { toast('오늘은 10개까지 받을 수 있어요'); return; } S.fr.got[v] = 1; S.fr.gotN++; S.torch += 1; toast('횃불 +1'); }
+      else if (a === 'frTake') { if (S.fr.gotN >= 10) { toast('오늘은 10개까지 받을 수 있어요'); return; } S.fr.got[v] = 1; S.fr.gotN++; addTorch(1); toast('횃불 +1'); }
+      else if (a === 'frBeg') { const d = dayKey(); await putEntry('kzb-' + v + '-' + d, accName(), 1); if (S.fr.begDay !== d) { S.fr.begDay = d; S.fr.begTo = {}; } S.fr.begTo[v] = 1; toast('횃불을 졸랐어요'); }
       save(); friendModal(); refresh();
     } catch (e) { console.warn(e); toast('실패했어요: ' + String(e && e.code || e).replace('firestore/', '')); }
   }
@@ -917,6 +920,61 @@ if (window.IS_EN) document.title = 'K Zombi';
       }
     } catch (e) { console.warn(e); toast('실패했어요: ' + String(e && e.code || e).replace('firestore/', '')); }
   }
+  /* ---- 친구 초대 (애니팡 하트처럼) ----
+     초대 링크: /game/kzombi/?ref={내 친구 코드}
+     초대받은 사람: 처음 들어오면 코드를 기억 → 로그인하면 kzi-{초대자코드} 보드에 자기 줄을 쓰고 환영 선물(횃불 10, 옥 100) + 초대자와 자동 친구
+     초대한 사람: kzi-{내코드} 를 읽어 새 사람마다 횃불 5, 옥 50 + 3·5·10명 달성 보상
+     선물·초대로 받은 횃불은 최대치(30)를 넘어 99까지 쌓인다 */
+  const INV_MS = [[3, 300], [5, 500], [10, 1000]];
+  const TORCH_CAP = 99;
+  const addTorch = n => { S.torch = Math.min(TORCH_CAP, (S.torch || 0) + n); };
+  (function catchRef() { try { const r = /[?&]ref=([A-Za-z0-9]{4,8})\b/.exec(location.search); if (r && localStorage.getItem('kz_ref_done') !== '1') localStorage.setItem('kz_ref', r[1].toUpperCase()); } catch (e) {} })();
+  const refCode = () => { try { return localStorage.getItem('kz_ref_done') === '1' ? null : localStorage.getItem('kz_ref'); } catch (e) { return null; } };
+  const inviteUrl = () => 'https://www.hankuk-in.com/game/kzombi/?ref=' + S.myCode;
+  async function shareInvite() {
+    xinit(); const url = inviteUrl() + (window.IS_EN ? '&lang=en' : ''), text = window.IS_EN ? 'Help Cheoyong hold off the Joseon zombies! Join with this link for 10 torches and 100 Jade. Friend code: ' + S.myCode : '처용과 함께 조선 좀비를 막아 줘! 이 링크로 들어오면 횃불 10개와 옥 100개를 선물로 받아요. 친구 코드: ' + S.myCode;
+    try { if (navigator.share) { await navigator.share({ title: 'K-ZOMBIE 처용, 조선좀비', text, url }); toast('초대 링크를 보냈어요'); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text + '\n' + url); toast('초대 링크를 복사했어요. 카카오톡에 붙여넣어 보내 주세요'); return; } catch (e) {}
+    modal('<h3 class="stroke">친구 초대</h3><p style="text-align:center">아래 링크를 길게 눌러 복사한 뒤 카카오톡에 붙여넣어 보내 주세요</p><div class="row"><input class="xcpn" readonly value="' + esc(url) + '" onclick="this.select()"></div>');
+  }
+  function inviteBox() {
+    xinit(); S.inv = S.inv || { got: {}, ms: {} }; const n = Object.keys(S.inv.got).length, nx = INV_MS.find(([k]) => n < k);
+    return '<div class="box xinv"><div><b class="stroke-s">친구 초대 ' + n + '명</b><small>초대한 친구가 들어오면 나는 횃불 5·옥 50, 친구는 횃불 10·옥 100!' + (nx ? ' · ' + nx[0] + '명 달성 시 옥 ' + nx[1] : '') + (accUser() ? '' : '<br>보상은 구글 로그인 뒤에 정산돼요') + '</small></div><div class="btn y" data-act="frInvite">초대하기</div></div>';
+  }
+  let socialT = 0;
+  async function socialTick(force) {
+    if (!accUser() || (!force && Date.now() - socialT < 60000)) return; socialT = Date.now();
+    try { if (await socialReady() !== 'ok') return; await inviteeSettle(); await inviterSettle(); } catch (e) { console.warn('[invite]', e); }
+  }
+  async function inviteeSettle() {
+    const code = refCode(), me = accUser() && accUser().uid; if (!code || !me) return;
+    if (code === S.myCode) { localStorage.setItem('kz_ref_done', '1'); return; }
+    const hit = (await listBoard('kzc-' + code, 3)).sort((x, y) => (x.at || 0) - (y.at || 0))[0]; if (!hit) return;   /* 초대자가 아직 로그인 전: 나중에 다시 */
+    const inviter = hit.id; if (inviter === me) { localStorage.setItem('kz_ref_done', '1'); return; }
+    const was = await getEntry('kzi-' + code, me);   /* 같은 계정이 다른 기기에서 이미 받았으면 선물은 없음 */
+    await putEntry('kzi-' + code, accName(), 1);
+    await putEntry('kzf-' + inviter, accName(), 2); S.fr.list[inviter] = 1; delete S.fr.sent[inviter];
+    localStorage.setItem('kz_ref_done', '1'); localStorage.removeItem('kz_ref');
+    if (!was && !S.invWelcome) { S.invWelcome = 1; addTorch(10); S.jade += 100; save(); modal('<h3 class="stroke">환영 선물</h3><p style="text-align:center">친구 초대로 들어왔어요! <b style="color:#ffe27a">' + esc(hit.name) + '</b>님과 친구가 되었어요.</p><div class="xrwd">' + ic('torch') + '<b class="stroke-s">10</b>' + ic('jade') + '<b class="stroke-s">100</b></div>'); refresh(); }
+    else save();
+  }
+  async function inviterSettle() {
+    S.inv = S.inv || { got: {}, ms: {} }; const me = accUser() && accUser().uid; if (!me || S.codeOk !== me) return;
+    const rows = await listBoard('kzi-' + S.myCode, 200), fresh = rows.filter(r => r.id !== me && !S.inv.got[r.id]);
+    if (!fresh.length) return;
+    for (const r of fresh) { S.inv.got[r.id] = 1; S.fr.list[r.id] = 1; addTorch(5); S.jade += 50; }
+    const n = Object.keys(S.inv.got).length; let bonus = 0; for (const [k, j] of INV_MS) if (n >= k && !S.inv.ms[k]) { S.inv.ms[k] = 1; S.jade += j; bonus += j; }
+    save(); refresh();
+    toast((fresh.length === 1 ? esc(fresh[0].name) + '님이' : esc(fresh[0].name) + '님 외 ' + (fresh.length - 1) + '명이') + ' 초대로 들어왔어요! 횃불 +' + 5 * fresh.length + ', 옥 +' + (50 * fresh.length + bonus));
+  }
+  function refWelcome() {
+    const code = refCode(); if (!code || accUser() || sessionStorage.getItem('kz_refw')) return; sessionStorage.setItem('kz_refw', '1');
+    modal('<h3 class="stroke">친구 초대로 왔어요!</h3><p style="text-align:center">구글 로그인하면 환영 선물 <b style="color:#ffe27a">횃불 10개 · 옥 100개</b>를 받고, 초대한 친구와 자동으로 친구가 돼요.</p>' + (accOnline() ? '<div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 가입·로그인</div>' : '<p style="text-align:center">hankuk-in.com 에서 열어 주세요</p>') + '<div class="row"><div class="btn b" data-act="close">나중에</div></div>');
+  }
+  function torchHelp() {
+    modal('<h3 class="stroke">횃불</h3><p>챕터에 들어갈 때 5개를 써요. 6분마다 1개씩 최대 30개까지 차요. 친구 선물과 초대로 받은 횃불은 30개를 넘어 99개까지 쌓여요.</p>' +
+      '<div class="row"><div class="btn y" data-act="frInvite">친구 초대하기</div><div class="btn g" data-act="friend">친구에게 받기</div></div><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개</div></div>');
+  }
   /* 온라인 계정(hankuk-in.com 에서만): 순위표용 */
   (function loadAccount() { try { if (!/hankuk-in\.com$/.test(location.hostname) || document.querySelector('script[src*="/game/account.js"]')) return; const s = document.createElement('script'); s.type = 'module'; s.src = '/game/account.js'; s.dataset.game = 'kzombi'; s.dataset.prefix = 'jz_save'; document.head.appendChild(s); } catch (e) {} })();
 
@@ -956,7 +1014,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     return '<div class="xacc box"><b class="stroke-s">계정</b><p>로그인하지 않아도 이 기기에 저장돼요. 로그인하면 다른 기기에서도 이어서 할 수 있어요. (Anibrix·ASCEND와 같은 계정)</p>' +
       '<div class="xgoogle" data-act="gLogin"><i class="g"></i>구글로 가입·로그인</div><div class="row"><div class="btn b" data-act="eLogin" style="min-width:260px">이메일로 로그인</div></div></div>';
   }
-  (function watchAcc() { let n = 0; const t = setInterval(() => { const A = window.HKAccount; if (A && A.onChange) { clearInterval(t); A.onChange(() => { try { if ($('#s-lobby') && $('#s-lobby').classList.contains('on') && !$('#gacha', root)) { const m = $('#mdl', root), set = m && m.querySelector('.xacc'); renderLobby(); if (set) settingsModal(); } } catch (e) {} }); } else if (++n > 80) clearInterval(t); }, 250); })();
+  (function watchAcc() { let n = 0; const t = setInterval(() => { const A = window.HKAccount; if (A && A.onChange) { clearInterval(t); A.onChange(() => { try { if (accUser()) setTimeout(() => socialTick(true), 500); } catch (e) {} try { if ($('#s-lobby') && $('#s-lobby').classList.contains('on') && !$('#gacha', root)) { const m = $('#mdl', root), set = m && m.querySelector('.xacc'); renderLobby(); if (set) settingsModal(); } } catch (e) {} }); } else if (++n > 80) clearInterval(t); }, 250); })();
 
   (function preItems() { setTimeout(() => { const L = []; for (const s of SLOTS) for (let g = 0; g < 6; g++) L.push(s.id === 'weapon' ? 'weapon_g' + g : s.id + '_g' + g); for (const w of ['nogi', 'jochong', 'seungja']) L.push('w_' + w); for (const k in SG) L.push(SG[k].img); window.__itemImgs = L.map(n => { const i = new Image(); i.src = 'img/items/' + n + '.webp'; return i; }); }, 1500); })();
   /* ---------------- 누르기 처리 ---------------- */
@@ -964,10 +1022,11 @@ if (window.IS_EN) document.title = 'K Zombi';
     const t = e.target.closest('[data-act]'); if (!t) return;
     const a = t.dataset.act, v = t.dataset.v;
     switch (a) {
-      case 'enter': music('bgm_lobby'); tab = 'home'; renderLobby(); break;
+      case 'enter': music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); break;
       case 'tab': tab = v; closeModal(); renderLobby(); break;
       case 'goShop': tab = 'shop'; renderLobby(); break;
-      case 'buyTorch': modal('<h3 class="stroke">횃불</h3><p>챕터에 들어갈 때 5개를 써요. 6분마다 1개씩 차오르고 최대 30개예요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개</div></div>'); break;
+      case 'buyTorch': torchHelp(); break;
+      case 'buyTorchOld': modal('<h3 class="stroke">횃불</h3><p>챕터에 들어갈 때 5개를 써요. 6분마다 1개씩 차오르고 최대 30개예요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개</div></div>'); break;
       case 'close': closeModal(); try { refresh(); } catch (e2) {} break;   /* 보상을 받고 닫으면 빨간 점·재화를 바로 다시 계산 */
       case 'pass': passModal(); break;
       case 'passGet': { xinit(); const row = v[0], i = +v.slice(1), lv = Math.floor(S.pass.xp / PASS_XP); if (lv <= i) break; if (row === 'f' && !S.pass.f[i]) { const [k, n] = passFree(i); give(k, n); S.pass.f[i] = 1; toast('패스 선물을 받았어요'); } else if (row === 'p' && S.pass.paid && !S.pass.p[i]) { const [k, n] = passPaid(i); give(k, n); S.pass.p[i] = 1; toast('황금 패스 선물을 받았어요'); } save(); try { refresh(); } catch (e2) {} passModal(); break; }
@@ -982,7 +1041,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'rank': rankModal(); break;
       case 'rkLogin': try { window.HKAccount && window.HKAccount.openLogin && window.HKAccount.openLogin(); } catch (e) {} break;
       case 'friend': friendModal(); break;
-      case 'frAdd': case 'frOk': case 'frNo': case 'frGift': case 'frTake': frAct(a, v); break;
+      case 'frAdd': case 'frOk': case 'frNo': case 'frGift': case 'frTake': case 'frBeg': frAct(a, v); break;
+      case 'frInvite': shareInvite(); break;
       case 'gTab': case 'gFind': case 'gEmb': case 'gMake': case 'gJoin': case 'gAtt': case 'gAttGet': case 'gKick': case 'gLeave': gAct(a, v); break;
       case 'gLogin': googleLogin(); break;
       case 'eLogin': try { window.HKAccount.openLogin(); } catch (e) {} break;
