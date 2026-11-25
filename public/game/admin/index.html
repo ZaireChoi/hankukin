@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HANKUKIN PLAY 관리자</title>
+<link rel="icon" href="/game/anibrix/icons/icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0f1d;--card:#121a30;--card2:#18223d;--line:rgba(120,150,220,.25);--text:#e9eefc;--sub:#9fb0d4;--acc:#6cc4ff;--ok:#4fd18b;--bad:#ff6b7d;--warn:#ffb84d}
+html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:15px}
+a{color:var(--acc)}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.logo{font-weight:900;letter-spacing:2px;font-size:18px}
+.logo small{font-weight:600;letter-spacing:0;color:var(--warn);margin-left:8px;font-size:13px}
+.who{color:var(--sub);font-size:13px;display:flex;gap:8px;align-items:center}
+button,.btn{background:#2a3a66;color:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 14px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover{filter:brightness(1.2)}
+button.pri{background:#2f6fe0;border-color:#5b8ff0}
+button.danger{background:#7a2433;border-color:#b84557}
+button.ghost{background:transparent}
+button.sm{padding:4px 9px;font-size:13px;border-radius:8px}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:16px}
+nav.tabs button{background:transparent;border:none;border-bottom:3px solid transparent;border-radius:0;color:var(--sub);padding:10px 14px}
+nav.tabs button.on{color:#fff;border-bottom-color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{font-size:16px;margin-bottom:10px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi b{display:block;font-size:26px;margin-top:4px}
+.kpi small{color:var(--sub)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--sub);font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:right}
+.tblwrap{overflow-x:auto}
+label{display:block;color:var(--sub);font-size:13px;margin:10px 0 4px}
+input[type=text],input[type=email],input[type=password],select,textarea{width:100%;background:#0d1426;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:inherit}
+textarea{min-height:160px;resize:vertical;line-height:1.55}
+.chk{display:flex;gap:16px;flex-wrap:wrap;margin-top:10px}
+.chk label{display:flex;gap:6px;align-items:center;margin:0;color:var(--text);font-size:14px}
+.tag{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;background:rgba(255,255,255,.08);border:1px solid var(--line);margin-right:4px}
+.tag.pub{color:var(--ok);border-color:rgba(79,209,139,.5)}
+.tag.draft{color:var(--warn);border-color:rgba(255,184,77,.5)}
+.tag.pin{color:#ff9ad5}
+.msg{margin-top:10px;font-size:14px;min-height:20px}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.hide{display:none!important}
+.center{max-width:420px;margin:60px auto;text-align:center}
+.center p{color:var(--sub);margin:10px 0 18px;line-height:1.6}
+.sub{color:var(--sub);font-size:13px;line-height:1.6}
+.preview{background:#0d1426;border:1px dashed var(--line);border-radius:10px;padding:12px;line-height:1.7;white-space:normal;margin-top:8px}
+.links a{display:block;padding:8px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.bar{height:8px;background:#2f6fe0;border-radius:4px;min-width:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">HANKUKIN PLAY <small>관리자</small></div>
+  <div class="who" id="who"></div>
+</header>
+
+<!-- 로그인 화면 -->
+<div id="loginView" class="center hide">
+  <h2>관리자 로그인</h2>
+  <p>관리자 구글 계정으로 로그인해야 이 페이지를 쓸 수 있어요.<br>다른 계정은 들어와도 아무것도 바꿀 수 없어요.</p>
+  <button class="pri" id="btnGoogle">구글 계정으로 로그인</button>
+  <div class="msg bad" id="loginMsg"></div>
+</div>
+<div id="denyView" class="center hide">
+  <h2>관리자 계정이 아니에요</h2>
+  <p id="denyTxt"></p>
+  <button id="btnOut2">로그아웃</button>
+</div>
+<div id="loadingView" class="center"><p>불러오는 중…</p></div>
+
+<!-- 관리 화면 -->
+<div id="adminView" class="hide">
+<nav class="tabs" id="tabs">
+  <button data-tab="dash" class="on">현황</button>
+  <button data-tab="notice">공지 · 게시글</button>
+  <button data-tab="users">회원</button>
+  <button data-tab="board">순위표</button>
+  <button data-tab="links">바로가기</button>
+</nav>
+
+<!-- 현황 -->
+<section data-pane="dash">
+  <div class="kpis" id="kpis"></div>
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3>날짜별 방문 (한국 시간 기준)</h3>
+      <div class="row"><select id="days" style="width:auto"><option value="7">최근 7일</option><option value="14" selected>최근 14일</option><option value="30">최근 30일</option><option value="90">최근 90일</option></select><button class="sm" id="btnReloadStats">새로고침</button></div></div>
+    <p class="sub">"방문"은 화면을 연 횟수, "사람"은 그날 처음 온 기기 수예요. 내부 시험(주소에 ?internal=1)은 빠져 있어요. "기타 게임"은 처용 조선좀비, 라스트 스탠드 등 Anibrix와 ASCEND 본편이 아닌 게임 합계예요.</p>
+    <div class="tblwrap"><table id="statTbl"></table></div>
+  </div>
+  <div class="card">
+    <h3>어디서 들어왔나 (선택한 기간 합계)</h3>
+    <div class="tblwrap"><table id="srcTbl"></table></div>
+  </div>
+</section>
+
+<!-- 공지 -->
+<section data-pane="notice" class="hide">
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3 id="formTitle">새 글 쓰기</h3><button class="sm ghost" id="btnNew">새 글로 비우기</button></div>
+    <div class="row" style="gap:12px">
+      <div style="flex:1;min-width:150px"><label>분류</label>
+        <select id="nCat"><option value="notice">공지</option><option value="update">업데이트</option><option value="event">이벤트</option><option value="maint">점검</option><option value="post">일반 글</option></select></div>
+      <div style="flex:1;min-width:150px"><label>대상 게임</label>
+        <select id="nGame"><option value="all">전체</option><option value="anibrix">Anibrix</option><option value="kzombi">처용, 조선좀비</option><option value="ascend">ASCEND</option><option value="laststand">라스트 스탠드</option></select></div>
+    </div>
+    <label>제목</label><input type="text" id="nTitle" maxlength="200" placeholder="예) 11월 28일 새벽 점검 안내">
+    <label>내용 <span class="sub">(줄바꿈 그대로 보여요. 주소(https://…)는 자동으로 링크가 돼요)</span></label>
+    <textarea id="nBody" maxlength="20000"></textarea>
+    <details style="margin-top:10px"><summary class="sub" style="cursor:pointer">영어 제목 · 내용 (선택. 비워 두면 외국어 화면에도 한국어로 보여요)</summary>
+      <label>영어 제목</label><input type="text" id="nTitleEn" maxlength="200">
+      <label>영어 내용</label><textarea id="nBodyEn" maxlength="20000" style="min-height:100px"></textarea>
+    </details>
+    <div class="chk">
+      <label><input type="checkbox" id="nPub" checked> 바로 공개 (끄면 임시 저장)</label>
+      <label><input type="checkbox" id="nPin"> 맨 위 고정</label>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="pri" id="btnSave">저장</button>
+      <button id="btnPrev">미리 보기</button>
+      <button class="danger hide" id="btnDel">이 글 지우기</button>
+    </div>
+    <div class="msg" id="nMsg"></div>
+    <div class="preview hide" id="prevBox"></div>
+  </div>
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3>올린 글 목록</h3><a href="/game/notice/" target="_blank">공개 화면 보기 ↗</a></div>
+    <div class="tblwrap"><table id="nList"></table></div>
+  </div>
+</section>
+
+<!-- 회원 -->
+<section data-pane="users" class="hide">
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3>가입 회원</h3><button class="sm" id="btnReloadUsers">새로고침</button></div>
+    <p class="sub">게임 기록 저장을 위해 로그인한 적이 있는 회원만 보여요. 가입만 하고 한 번도 접속하지 않은 계정과 비밀번호 재설정, 계정 삭제는 Firebase 화면(바로가기 탭)에서 해요.</p>
+    <div class="tblwrap"><table id="uTbl"></table></div>
+  </div>
+</section>
+
+<!-- 순위표 -->
+<section data-pane="board" class="hide">
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3>순위표 기록</h3><button class="sm" id="btnReloadBoard">새로고침</button></div>
+    <p class="sub">게임별 주간 순위표에 올라온 점수예요. 이상한 점수나 나쁜 이름은 지울 수 있어요. 지운 기록은 되살릴 수 없어요.</p>
+    <div id="bWrap"></div>
+  </div>
+</section>
+
+<!-- 바로가기 -->
+<section data-pane="links" class="hide">
+  <div class="card links">
+    <h3>게임</h3>
+    <a href="/game/" target="_blank">포털 (HANKUKIN PLAY) ↗</a>
+    <a href="/game/anibrix/?internal=1" target="_blank">Anibrix ↗</a>
+    <a href="/game/kzombi/?lang=ko&internal=1" target="_blank">처용, 조선좀비 ↗</a>
+    <a href="/game/ascend/?internal=1" target="_blank">ASCEND ↗</a>
+    <a href="/game/laststand/?internal=1" target="_blank">라스트 스탠드 ↗</a>
+    <p class="sub" style="margin-top:8px">위 링크는 주소에 internal=1이 붙어 있어서, 이 브라우저에서 하는 시험 플레이는 방문 통계에서 빠져요.</p>
+  </div>
+  <div class="card links">
+    <h3>관리 도구</h3>
+    <a href="https://console.firebase.google.com/project/hankukin-play/authentication/users" target="_blank">Firebase 회원 관리 (계정 삭제, 비밀번호 재설정) ↗</a>
+    <a href="https://console.firebase.google.com/project/hankukin-play/firestore" target="_blank">Firebase 저장소 (게임 기록 원본) ↗</a>
+    <a href="https://dash.cloudflare.com/" target="_blank">Cloudflare (사이트 전체 방문 통계) ↗</a>
+    <a href="https://github.com/ZaireChoi/hankukin" target="_blank">GitHub 저장소 (사이트 파일) ↗</a>
+    <a href="https://www.google.com/adsense/" target="_blank">애드센스 (광고 수익) ↗</a>
+  </div>
+</section>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, collection, collectionGroup, getDocs, doc, addDoc, setDoc, deleteDoc, query, where, documentId } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const FIREBASE_CONFIG = { apiKey: "AIzaSyAqOGFP1fm-Aa18s1GAFGkUtLu-kvEo2cE", authDomain: "hankukin-play.firebaseapp.com", projectId: "hankukin-play", storageBucket: "hankukin-play.firebasestorage.app", messagingSenderId: "388085274912", appId: "1:388085274912:web:1c91b85b7f5deb6c459f45" };
+// 관리자 계정 (실제 권한은 Firestore 규칙의 isAdmin()이 막는다. 여기는 화면 표시용)
+const ADMINS = ['suyol1974@gmail.com'];
+
+const app = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+const db = getFirestore(app);
+try { localStorage.setItem('hk_internal', '1'); } catch (e) {} // 관리자 브라우저는 방문 통계에서 뺀다
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const linkify = s => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g, '<br>');
+const fmt = ms => { if (!ms) return '-'; const d = new Date(ms); const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+const tsMs = v => v ? (typeof v === 'number' ? v : (v.toMillis ? v.toMillis() : 0)) : 0;
+const CAT = { notice: '공지', update: '업데이트', event: '이벤트', maint: '점검', post: '일반 글' };
+const GAMES = { all: '전체', anibrix: 'Anibrix', kzombi: '처용, 조선좀비', ascend: 'ASCEND', laststand: '라스트 스탠드' };
+function show(id) { for (const v of ['loginView', 'denyView', 'loadingView', 'adminView']) $(v).classList.toggle('hide', v !== id); }
+
+// ── 로그인 ──
+$('btnGoogle').onclick = async () => {
+  $('loginMsg').textContent = '';
+  try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+  catch (e) { $('loginMsg').textContent = '로그인 실패: ' + (e.code || e.message); }
+};
+$('btnOut2').onclick = () => signOut(auth);
+onAuthStateChanged(auth, user => {
+  if (!user) { $('who').innerHTML = ''; show('loginView'); return; }
+  $('who').innerHTML = esc(user.email) + ' <button class="sm ghost" id="btnOut">로그아웃</button>';
+  $('btnOut').onclick = () => signOut(auth);
+  if (!ADMINS.includes((user.email || '').toLowerCase())) { $('denyTxt').textContent = user.email + ' 계정은 관리 권한이 없어요.'; show('denyView'); return; }
+  show('adminView');
+  loadStats(); loadNotices();
+});
+
+// ── 탭 ──
+const loaded = {};
+$('tabs').onclick = e => {
+  const b = e.target.closest('button[data-tab]'); if (!b) return;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('section[data-pane]').forEach(p => p.classList.toggle('hide', p.dataset.pane !== b.dataset.tab));
+  if (b.dataset.tab === 'users' && !loaded.users) loadUsers();
+  if (b.dataset.tab === 'board' && !loaded.board) loadBoards();
+};
+
+// ── 현황 ──
+const SEC = [['portal', '포털'], ['anibrix', 'Anibrix'], ['ascend', 'ASCEND'], ['other', '기타 게임']];
+const SRC = { direct: '직접/즐겨찾기', search: '검색', dc: '디시', dc_dev: '디시(개발)', ruliweb: '루리웹', reddit: '레딧', youtube: '유튜브', itch: 'itch.io', crazygames: 'CrazyGames', kakao: '카카오', facebook: '페이스북', x: 'X', threads: '스레드', app: '앱', onestore: '원스토어', other: '기타' };
+function kstDay(off = 0) { return new Date(Date.now() + 9 * 3600e3 - off * 86400e3).toISOString().slice(0, 10); }
+let statCache = null;
+async function loadStats() {
+  try {
+    const qs = await getDocs(collection(db, 'stats'));
+    statCache = {}; qs.forEach(d => { if (/^20\d\d-\d\d-\d\d$/.test(d.id) && d.id <= kstDay()) statCache[d.id] = d.data(); });
+    renderStats();
+  } catch (e) { $('statTbl').innerHTML = '<tr><td>통계를 읽지 못했어요: ' + esc(e.code || e.message) + '</td></tr>'; }
+  // 회원 수, 공지 수
+  try {
+    const us = await getDocs(collection(db, 'users'));
+    $('kUsers').textContent = us.size;
+  } catch (e) { const k = $('kUsers'); if (k) k.textContent = '권한 필요'; }
+}
+function renderStats() {
+  const n = +$('days').value; const days = []; for (let i = n - 1; i >= 0; i--) days.push(kstDay(i));
+  const v = (d, k) => (statCache[d] && statCache[d][k]) || 0;
+  const today = kstDay(), yest = kstDay(1);
+  const sumU = d => SEC.reduce((a, [g]) => a + v(d, g + '_users'), 0);
+  let tot = 0; days.forEach(d => tot += sumU(d));
+  $('kpis').innerHTML =
+    `<div class="kpi"><small>가입 회원</small><b id="kUsers">…</b></div>` +
+    `<div class="kpi"><small>오늘 방문한 기기 (전체 합)</small><b>${sumU(today)}</b></div>` +
+    `<div class="kpi"><small>어제 방문한 기기</small><b>${sumU(yest)}</b></div>` +
+    `<div class="kpi"><small>최근 ${n}일 기기 합</small><b>${tot}</b></div>`;
+  let max = 1; days.forEach(d => max = Math.max(max, sumU(d)));
+  let h = '<tr><th>날짜</th>' + SEC.map(([, nm]) => `<th class="n">${nm} 사람</th><th class="n">${nm} 방문</th>`).join('') + '<th class="n">Anibrix 시작/완주</th><th style="min-width:90px">사람 합계</th></tr>';
+  for (const d of days.slice().reverse()) {
+    h += `<tr><td>${d.slice(5)}</td>` + SEC.map(([g]) => `<td class="n">${v(d, g + '_users')}</td><td class="n" style="color:var(--sub)">${v(d, g + '_visit')}</td>`).join('') +
+      `<td class="n">${v(d, 'anibrix_start')}/${v(d, 'anibrix_finish')}</td><td><div class="row" style="gap:6px"><div class="bar" style="width:${Math.round(sumU(d) / max * 70)}px"></div>${sumU(d)}</div></td></tr>`;
+  }
+  $('statTbl').innerHTML = h;
+  const src = {}; for (const d of days) for (const [g] of SEC) for (const s in SRC) src[s] = (src[s] || 0) + v(d, g + '_src_' + s);
+  const rows = Object.entries(src).filter(([, c]) => c > 0).sort((a, b) => b[1] - a[1]);
+  $('srcTbl').innerHTML = rows.length ? '<tr><th>들어온 곳</th><th class="n">사람</th></tr>' + rows.map(([s, c]) => `<tr><td>${SRC[s]}</td><td class="n">${c}</td></tr>`).join('') : '<tr><td class="sub">기록 없음</td></tr>';
+}
+$('days').onchange = () => statCache && renderStats();
+$('btnReloadStats').onclick = loadStats;
+
+// ── 공지 · 게시글 ──
+let notices = [], editing = null;
+async function loadNotices() {
+  try {
+    const qs = await getDocs(collection(db, 'notices'));
+    notices = []; qs.forEach(d => notices.push({ id: d.id, ...d.data() }));
+    notices.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || (b.createdAt || 0) - (a.createdAt || 0));
+    renderNoticeList();
+  } catch (e) { $('nList').innerHTML = '<tr><td>글 목록을 읽지 못했어요: ' + esc(e.code || e.message) + '</td></tr>'; }
+}
+function renderNoticeList() {
+  if (!notices.length) { $('nList').innerHTML = '<tr><td class="sub">아직 올린 글이 없어요.</td></tr>'; return; }
+  $('nList').innerHTML = '<tr><th>상태</th><th>제목</th><th>분류 · 게임</th><th>올린 날</th><th></th></tr>' + notices.map(n =>
+    `<tr><td>${n.published ? '<span class="tag pub">공개</span>' : '<span class="tag draft">임시</span>'}${n.pinned ? '<span class="tag pin">고정</span>' : ''}</td>` +
+    `<td>${esc(n.title)}</td><td>${CAT[n.cat] || n.cat} · ${GAMES[n.game] || n.game}</td><td>${fmt(n.createdAt)}</td>` +
+    `<td style="white-space:nowrap"><button class="sm" data-edit="${n.id}">고치기</button> <button class="sm ghost" data-toggle="${n.id}">${n.published ? '숨기기' : '공개'}</button></td></tr>`).join('');
+}
+$('nList').onclick = async e => {
+  const ed = e.target.dataset.edit, tg = e.target.dataset.toggle;
+  if (ed) { const n = notices.find(x => x.id === ed); fillForm(n); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  if (tg) {
+    const n = notices.find(x => x.id === tg);
+    try { await setDoc(doc(db, 'notices', n.id), { ...strip(n), published: !n.published, updatedAt: Date.now() }); await loadNotices(); }
+    catch (err) { alert('바꾸지 못했어요: ' + (err.code || err.message)); }
+  }
+};
+const strip = n => { const o = { ...n }; delete o.id; return o; };
+function fillForm(n) {
+  editing = n ? n.id : null;
+  $('formTitle').textContent = n ? '글 고치기' : '새 글 쓰기';
+  $('nCat').value = n?.cat || 'notice'; $('nGame').value = n?.game || 'all';
+  $('nTitle').value = n?.title || ''; $('nBody').value = n?.body || '';
+  $('nTitleEn').value = n?.titleEn || ''; $('nBodyEn').value = n?.bodyEn || '';
+  $('nPub').checked = n ? !!n.published : true; $('nPin').checked = !!n?.pinned;
+  $('btnDel').classList.toggle('hide', !n); $('nMsg').textContent = ''; $('prevBox').classList.add('hide');
+}
+$('btnNew').onclick = () => fillForm(null);
+$('btnPrev').onclick = () => { const b = $('prevBox'); b.innerHTML = '<b style="font-size:17px">' + esc($('nTitle').value) + '</b><br><br>' + linkify($('nBody').value); b.classList.remove('hide'); };
+$('btnSave').onclick = async () => {
+  const title = $('nTitle').value.trim(), body = $('nBody').value.trim();
+  const m = $('nMsg'); m.className = 'msg';
+  if (!title) { m.className = 'msg bad'; m.textContent = '제목을 적어 주세요.'; return; }
+  const now = Date.now();
+  const data = { title, body, titleEn: $('nTitleEn').value.trim(), bodyEn: $('nBodyEn').value.trim(), cat: $('nCat').value, game: $('nGame').value, published: $('nPub').checked, pinned: $('nPin').checked, updatedAt: now, author: auth.currentUser.email };
+  $('btnSave').disabled = true;
+  try {
+    if (editing) { const old = notices.find(x => x.id === editing); await setDoc(doc(db, 'notices', editing), { ...data, createdAt: old?.createdAt || now }); }
+    else { const r = await addDoc(collection(db, 'notices'), { ...data, createdAt: now }); editing = r.id; }
+    m.className = 'msg ok'; m.textContent = data.published ? '저장했어요. 포털과 공지 화면에 바로 보여요.' : '임시 저장했어요. 공개하기 전에는 다른 사람에게 안 보여요.';
+    await loadNotices(); $('btnDel').classList.remove('hide'); $('formTitle').textContent = '글 고치기';
+  } catch (e) { m.className = 'msg bad'; m.textContent = '저장 실패: ' + (e.code || e.message); }
+  $('btnSave').disabled = false;
+};
+$('btnDel').onclick = async () => {
+  if (!editing || !confirm('이 글을 지울까요? 되살릴 수 없어요.')) return;
+  try { await deleteDoc(doc(db, 'notices', editing)); fillForm(null); await loadNotices(); $('nMsg').className = 'msg ok'; $('nMsg').textContent = '지웠어요.'; }
+  catch (e) { $('nMsg').className = 'msg bad'; $('nMsg').textContent = '삭제 실패: ' + (e.code || e.message); }
+};
+
+// ── 회원 ──
+const GN = { anibrix: 'Anibrix', ascend: 'ASCEND', kzombi: '조선좀비', laststand: '라스트 스탠드' };
+async function loadUsers() {
+  loaded.users = true; $('uTbl').innerHTML = '<tr><td class="sub">불러오는 중…</td></tr>';
+  try {
+    const qs = await getDocs(collection(db, 'users'));
+    const list = []; qs.forEach(d => list.push({ id: d.id, ...d.data() }));
+    list.sort((a, b) => (b.lastSeenMs || 0) - (a.lastSeenMs || 0));
+    let saves = {};
+    try { const sq = await getDocs(collectionGroup(db, 'saves')); sq.forEach(d => { const uid = d.ref.parent.parent.id; (saves[uid] = saves[uid] || []).push(GN[d.id] || d.id); }); } catch (e) {}
+    $('uTbl').innerHTML = list.length ? '<tr><th>#</th><th>이메일</th><th>마지막 접속</th><th>저장된 게임</th><th>회원 번호</th></tr>' + list.map((u, i) =>
+      `<tr><td>${i + 1}</td><td>${esc(u.email || '(이메일 없음)')}</td><td>${fmt(u.lastSeenMs || tsMs(u.lastSeen))}</td><td>${esc((saves[u.id] || []).join(', ') || '-')}</td><td class="sub">${esc(u.id)}</td></tr>`).join('')
+      : '<tr><td class="sub">아직 회원이 없어요.</td></tr>';
+  } catch (e) { $('uTbl').innerHTML = '<tr><td>회원 목록을 읽지 못했어요: ' + esc(e.code || e.message) + '</td></tr>'; }
+}
+$('btnReloadUsers').onclick = loadUsers;
+
+// ── 순위표 ──
+async function loadBoards() {
+  loaded.board = true; $('bWrap').innerHTML = '<p class="sub">불러오는 중…</p>';
+  try {
+    const qs = await getDocs(collectionGroup(db, 'entries'));
+    const boards = {};
+    qs.forEach(d => { const p = d.ref.parent.parent; if (!p || d.ref.parent.parent.parent.id !== 'leaderboards') return; (boards[p.id] = boards[p.id] || []).push({ uid: d.id, path: d.ref.path, ...d.data() }); });
+    const ids = Object.keys(boards).sort();
+    if (!ids.length) { $('bWrap').innerHTML = '<p class="sub">순위표 기록이 없어요.</p>'; return; }
+    $('bWrap').innerHTML = ids.map(b => {
+      const rows = boards[b].sort((x, y) => (y.score || 0) - (x.score || 0));
+      return `<h3 style="margin:16px 0 6px">${esc(b)} <span class="sub">(${rows.length}명)</span></h3><div class="tblwrap"><table><tr><th>순위</th><th>이름</th><th class="n">점수</th><th>올린 때</th><th></th></tr>` +
+        rows.map((r, i) => `<tr><td>${i + 1}</td><td>${esc(r.name)}</td><td class="n">${(r.score || 0).toLocaleString()}</td><td>${fmt(r.at)}</td><td><button class="sm danger" data-del="${esc(r.path)}">지우기</button></td></tr>`).join('') + '</table></div>';
+    }).join('');
+  } catch (e) { $('bWrap').innerHTML = '<p>순위표를 읽지 못했어요: ' + esc(e.code || e.message) + '</p>'; }
+}
+$('bWrap').onclick = async e => {
+  const p = e.target.dataset.del; if (!p) return;
+  if (!confirm('이 기록을 지울까요?')) return;
+  try { await deleteDoc(doc(db, p)); loadBoards(); } catch (err) { alert('지우지 못했어요: ' + (err.code || err.message)); }
+};
+$('btnReloadBoard').onclick = loadBoards;
+</script>
+</body>
+</html>
