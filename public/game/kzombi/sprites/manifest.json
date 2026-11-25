@@ -894,32 +894,33 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 210,
-  "anchorX": 0.499,
-  "anchorY": 0.936,
-  "ch": 0.768
+  "height": 190,
+  "anchorX": 0.5,
+  "anchorY": 0.95,
+  "ch": 0.676,
+  "v": 71017
  },
  "base": {
   "src": "base.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 230,
+  "height": 205,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.73,
-  "v": 13455
+  "ch": 0.676,
+  "v": 97645
  },
  "wall": {
   "src": "wall.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 80,
+  "height": 72,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.615,
-  "v": 13509
+  "ch": 0.527,
+  "v": 71017
  },
  "gate": {
   "src": "gate.png",
@@ -937,11 +938,11 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 140,
+  "height": 130,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 13541
+  "ch": 0.898,
+  "v": 71017
  },
  "tower_cannon": {
   "src": "tower_cannon.png",
@@ -980,11 +981,11 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 115,
+  "height": 110,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 13575
+  "ch": 0.898,
+  "v": 71017
  },
  "tower_talisman": {
   "src": "tower_talisman.png",
@@ -1002,22 +1003,22 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 75,
+  "height": 78,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.832,
-  "v": 13778
+  "ch": 0.82,
+  "v": 71017
  },
  "barracks": {
   "src": "barracks.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 130,
+  "height": 115,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.761,
-  "v": 13815
+  "ch": 0.898,
+  "v": 71017
  },
  "well": {
   "src": "well.png",
@@ -1027,8 +1028,8 @@
   "height": 100,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 13865
+  "ch": 0.898,
+  "v": 71017
  },
  "build_pad": {
   "src": "build_pad.png",
