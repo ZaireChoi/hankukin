@@ -34,6 +34,9 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #kills{font-size:14px;font-weight:700;text-shadow:0 1px 3px #000;text-align:right}
 #hpwrap{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(340px,56vw)}
 #hpbar{height:14px;border-radius:7px;background:#0009;border:1px solid #fff3;overflow:hidden}
+#barfill{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,#7fe6ff,#e8fdff);box-shadow:0 0 8px #7fe6ff;opacity:.9;transition:width .12s}
+#hpbar{position:relative}
+#bFly i{background:#7fe6ff55}
 #hpfill{height:100%;width:100%;background:linear-gradient(90deg,#ff5a4a,#ffb04a);transition:width .12s}
 #hptxt{font-size:11px;text-align:center;margin-top:3px;opacity:.85;text-shadow:0 1px 2px #000}
 #slots{display:flex;gap:4px;justify-content:center;margin-bottom:6px;flex-wrap:wrap}
@@ -114,10 +117,11 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
   <div id="top"><div id="lv">Lv 1</div><div id="time">5:00</div><div id="kills">격파 0</div></div>
   <div id="boss" class="hide"><div id="bossname">제타 여왕</div><div id="bossbar"><div id="bossfill"></div></div></div>
   <div id="banner"></div>
-  <div id="hpwrap"><div id="slots"></div><div id="hpbar"><div id="hpfill"></div></div><div id="hptxt"></div></div>
+  <div id="hpwrap"><div id="slots"></div><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt"></div></div>
   <button id="bPause" aria-label="일시정지">Ⅱ</button>
   <div id="btns">
     <button class="rb" id="bDash"><i></i><span>대시</span></button>
+    <button class="rb" id="bFly"><i></i><span>비행</span></button>
     <button class="rb" id="bUlt"><i></i><span>필살</span></button>
   </div>
   <div id="stick" class="hide"><b></b></div>
@@ -131,7 +135,7 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
   <div id="threat"><button id="thDn">−</button><span>위험도 <b id="thV">1</b></span><button id="thUp">＋</button></div>
   <button class="go" id="start" disabled>출격</button>
   <div id="rec"></div>
-  <div id="help">이동 WASD · 방향키 / 화면 드래그　대시 Space　필살기 Q　공격은 자동</div>
+  <div id="help">이동 WASD · 방향키 / 화면 드래그　대시 Space　비행 F　필살기 Q　공격·보호막은 자동</div>
   <div id="load">불러오는 중</div>
 </div>
 
@@ -141,6 +145,11 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
 <div id="over" class="ov hide"><h2 id="ovT"></h2><div id="newrec" class="hide">신기록</div><div id="stats"></div>
   <button class="go" id="retry">다시 출격</button><button class="ghost" id="toTitle">기체 바꾸기</button></div>
 
-<script type="module" src="game.js"></script>
+<script>window.__MSLE_BB=23.75/90;window.__phone=matchMedia("(pointer:coarse)").matches;window.step=function(){};window.mdlAnimate=function(){};window.__tfHoldOK=true;</script>
+<script src="lib/explosionfx.js?v=3"></script>
+<script src="lib/ascend_missile.js?v=3"></script>
+<script src="lib/transform.js?v=3"></script>
+<script src="lib/ascend_tf3.js?v=3"></script>
+<script type="module" src="game.js?v=3"></script>
 </body>
 </html>
