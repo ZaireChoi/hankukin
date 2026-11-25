@@ -550,7 +550,8 @@ function openBuildCard() {
     b.innerHTML = '<div class="ic" style="background:#fff3d0 url(' + ic + ') center/contain no-repeat;border-radius:18px"></div><div class="tx"><div class="n">' + n + ' <em>공짜</em></div><div class="d">' + d + '</div></div>';
     b.addEventListener('click', () => {
       ovLevel.classList.remove('on');
-      if (o.k === 'build') { const pad = pick(empty); G.gold += TUR[o.type].cost; build(pad, o.type); }
+      if (G.log) G.log.cards.push([o.k === 'build' ? o.type : o.k === 'up' ? 'up_' + o.t.type : o.k, G.night + 1]);
+      if (o.k === 'build') { const pad = pick(empty); G.gold += TUR[o.type].cost; G._fb = 1; build(pad, o.type); G._fb = 0; if (G.log) G.log.spent -= TUR[o.type].cost; }
       else if (o.k === 'up') upTurret(o.t, true);
       else if (o.k === 'hq') upHQ(true);
       else buildWalls(true);
@@ -564,7 +565,7 @@ function openBuildCard() {
 function upTurret(t, free) {
   const d = TUR[t.type], up = Math.round(d.cost * (0.8 + t.lv * 0.6));
   if (t.lv >= D.HQ[G.hq].max) return false;
-  if (!free) { if (G.gold < up) return false; G.gold -= up; }
+  if (!free) { if (G.gold < up) return false; G.gold -= up; if (G.log) { G.log.spent += up; G.log.ups++; } }
   t.lv++; t.max = d.hp * (1 + 0.4 * (t.lv - 1)); t.hp = t.max;
   FX.ring(t.x, t.y, 70, '255,226,140', 0.5, 6); FX.spark(t.x, t.y - 30, '255,230,150', 20, 300); sfx('build'); G.padKey = '';
   return true;
@@ -572,7 +573,7 @@ function upTurret(t, free) {
 function upHQ(free) {
   if (G.hq >= 5) return false;
   const H2 = D.HQ[G.hq + 1];
-  if (!free) { if (G.gold < H2.cost) return false; G.gold -= H2.cost; }
+  if (!free) { if (G.gold < H2.cost) return false; G.gold -= H2.cost; if (G.log) { G.log.spent += H2.cost; G.log.ups++; } }
   G.hq++; G.shrine.max += H2.hp - D.HQ[G.hq - 1].hp; G.shrine.hp = G.shrine.max;
   FX.explode(G.shrine.x, G.shrine.y - 40, 90, null); FX.ring(G.shrine.x, G.shrine.y, 220, '255,230,160', 0.7, 10);
   G.banner = { s: '본부 ' + G.hq + '레벨!', t: 1.8, kind: 'win' };
@@ -649,7 +650,7 @@ function buildUI() {
     const d = TUR[t.type], up = Math.round(d.cost * (0.8 + t.lv * 0.6)), cap = D.HQ[G.hq].max;
     info.innerHTML = '<div class="bthumb" style="background-image:url(sprites/' + d.spr + '.png)"></div><b>' + t.lv + '레벨 ' + d.name + '</b><p>' + lvInfo(t.type, t.lv) + '</p>' + (t.lv < 5 ? '<p class="nx">다음 ' + (t.lv + 1) + '레벨: ' + lvInfo(t.type, t.lv + 1) + (t.lv >= cap ? ' (사당 레벨 필요)' : '') + '</p>' : '<p class="nx">최고 레벨</p>') + pairTxt(t.type);
     if (t.lv < 5) acts.appendChild(btn('강화', up, G.gold >= up && t.lv < cap, () => upTurret(t, false), 'big'));
-    acts.appendChild(btn('거두기', '+' + Math.round(d.cost * 0.7), true, () => { G.gold += Math.round(d.cost * 0.7); G.turrets = G.turrets.filter(o => o !== t); FX.smoke(t.x, t.y, 6); G.padKey = ''; }, 'sell'));
+    acts.appendChild(btn('거두기', '+' + Math.round(d.cost * 0.7), true, () => { G.gold += Math.round(d.cost * 0.7); if (G.log) { G.log.refund += Math.round(d.cost * 0.7); G.log.sold++; } G.turrets = G.turrets.filter(o => o !== t); FX.smoke(t.x, t.y, 6); G.padKey = ''; }, 'sell'));
   }
   bpTitle.appendChild(info); bpTitle.appendChild(acts);
   bPanel.classList.add('on');
@@ -657,7 +658,7 @@ function buildUI() {
 function build(pad, k) {
   if (D.tUnlocked && !D.tUnlocked(k, G.ch, G.nm)) { G.bubble = { s: TUR[k].name + '은(는) ' + D.TUR_UNLOCK[k] + '장에서 열려요', t: 2 }; return false; }
   const d = TUR[k]; if (G.gold < d.cost || G.turrets.some(t => t.pad === pad)) return;
-  G.gold -= d.cost;
+  G.gold -= d.cost; if (G.log) { G.log.spent += d.cost; G.log.builds.push([k, G.night + 1, G._fb ? 1 : 0]); }
   const t = { type: k, lv: 1, pad, x: PADS[pad][0], y: PADS[pad][1], r: 16, hp: d.hp, max: d.hp, cd: rnd(0, 0.4), hitT: 0, pulse: 0, fire: 0, rise: 0.45 };
   G.turrets.push(t); G.tBuilt = (G.tBuilt || 0) + 1;
   FX.smoke(t.x, t.y + 10, 10, '200,190,170', 20, 40); FX.ring(t.x, t.y + 10, 60, '255,240,200', 0.4, 5); FX.debris(t.x, t.y, 8, '#8a7a60', 200); sfx('build');
@@ -667,6 +668,7 @@ $('btnBattle').addEventListener('click', () => startNight());
 function startNight() {
   if (!G || G.phase !== 'day') return;
   $('btnBattle').classList.remove('on'); bPanel.classList.remove('on');
+  if (G.log) G.log.nights.push(logSnap('dusk'));
   G.phase = 'night'; G.time = 0; G.spawnAcc = 0; G.eliteIdx = 0; G.bossOut = false;
   if (fxN('shield')) G.shield = G.player.max * 0.25;
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
@@ -744,7 +746,8 @@ function openLevel() {
   cards.innerHTML = '';
   /* 위쪽 슬롯 막대: 공격 5칸 / 보조 4칸 */
   { const sbEl = $('slotBar'); if (sbEl) { const ids = Object.keys(G.sk || {}), A = ids.filter(k => (SKILLS.find(s => s.id === k) || {}).kind === 'atk'), Bf = ids.filter(k => (SKILLS.find(s => s.id === k) || {}).kind !== 'atk'); const slot = (k) => k ? '<div class="s"><img src="img/skills/' + (G.evo && G.evo[k] ? 'ev_' : '') + k + '.webp" onerror="this.style.display=\'none\'"><b>' + G.sk[k] + '</b></div>' : '<div class="s"></div>'; let h = '<div class="grp a"><div class="ico h">⚔</div>'; for (let i = 0; i < Math.max(5, A.length); i++) h += slot(A[i]); h += '</div><div class="grp b">'; for (let i = 0; i < Math.max(4, Bf.length); i++) h += slot(Bf[i]); h += '<div class="ico h">🛡</div></div>'; sbEl.innerHTML = h; } }
-  for (const s of levelChoices()) {
+  const lcAll = levelChoices(); if (G.log && G.log.offers.length < 60) G.log.offers.push(lcAll.map(s => s.id));
+  for (const s of lcAll) {
     const lv = s.evo ? 0 : skLv(s.id), b = document.createElement('button');
     b.className = 'card ' + (s.kind === 'evo' ? 'atk awk evo' : s.kind === 'atk' ? 'atk' : 'buff') + (lv || s.evo ? '' : ' new');
     let stars = '';
@@ -764,7 +767,7 @@ function openLevel() {
   ovLevel.classList.add('on');
 }
 function pickSkill(id) {
-  const p = G.player;
+  const p = G.player; if (G.log) G.log.skills.push([id, G.night + 1]);
   if (id.indexOf('ev_') === 0) { const sid = id.slice(3); if (!G.evo) G.evo = {}; G.evo[sid] = true; G.banner = { s: D.EVO[sid].n + ' 진화!', t: 2.2, kind: 'win' }; G.freezeT = 0.35; G.flash = { c: '255,215,110', t: 0.6 }; G.title = { s: D.EVO[sid].n + '!', sub: String(D.AWAKE[sid] || '').replace('진화: ', ''), t: 2.4, big: 1 }; vib([60, 40, 140]); FX.shake = 0.4; FX.explode(p.x, p.y - 40, 120, 'purple'); FX.ring(p.x, p.y, 220, '255,220,120', 0.7, 14); sfx('ult'); ovLevel.classList.remove('on'); G.phase = 'night'; G.pendingLv--; if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 250); return; }
   G.sk[id] = skLv(id) + 1;
   if (id === 'rapid') p.rate *= 0.8;
@@ -916,6 +919,7 @@ function update(dtr) {
     collectAll(dt);
     if (G.dawnT <= 0) {
       let inc = 0; for (const t of G.turrets) if (TUR[t.type].income) inc += TUR[t.type].income * t.lv * (pairOn('p_dok') ? 2 : 1);
+      if (G.log) G.log.nights.push(logSnap('dawn', { inc: 95 + G.night * 28 + inc }));
       G.gold += 95 + G.night * 28 + inc; for (const t of G.turrets) t.hp = t.max; /* 새벽마다 시설 수리 */
       G.night++;
       if (G.obj && G.obj.beacon && G.obj.beacon.hp > 0) { G.obj.beacon.hp = Math.min(G.obj.beacon.max, G.obj.beacon.hp + G.obj.beacon.max * 0.5); G.obj.bwarn = 0; }
@@ -1746,7 +1750,7 @@ function allyBlock(x) { if (!G.wallLv) return null; for (const w of G.walls) if 
 function allyCross(o, ty) { /* 성벽 건너편으로 가야 하면 먼저 성문(또는 무너진 곳) 쪽으로 옆걸음 */ if (!G.wallLv) return null; if ((o.y > WALL_Y + 8 && ty < WALL_Y - 8) || (o.y < WALL_Y - 8 && ty > WALL_Y + 8)) { const gx = gapX(o.x), side = o.y < WALL_Y ? -1 : 1; for (const w of G.walls) if (w.gate && Math.abs(w.x - o.x) < 90) w.openT = 1; if (Math.abs(gx - o.x) > 30 && Math.abs(o.y - WALL_Y) > 20) return { x: gx, y: WALL_Y + side * 34 }; return { x: gx + clamp(o.x - gx, -16, 16), y: WALL_Y - side * 46 }; } return null; }
 function wallAt(x) { if (!G.wallLv) return null; for (const w of G.walls) if (w.hp > 0 && Math.abs(x - w.x) < (w.gate ? 68 : 44)) return w; return null; }
 function buildWalls(free) {
-  const cost = 80 + G.wallLv * 70; if (G.wallLv >= 5) return false; if (!free) { if (G.gold < cost) return false; G.gold -= cost; }
+  const cost = 80 + G.wallLv * 70; if (G.wallLv >= 5) return false; if (!free) { if (G.gold < cost) return false; G.gold -= cost; if (G.log) { G.log.spent += cost; G.log.ups++; } }
   G.wallLv++; const k = 1 + 0.45 * (G.wallLv - 1);
   for (const w of G.walls) { const base = (w.gate ? 420 : 280) * (1 + 0.35 * (G.ch - 1)); w.max = base * k; w.hp = w.max; w.built = true; FX.smoke(w.x, WALL_Y, 3, '200,190,170', 16, 30); FX.debris(w.x, WALL_Y, 4, '#8a7a60', 160); }
   FX.ring(CX, WALL_Y, 560, '255,230,160', 0.6, 8); sfx('build'); G.banner = { s: G.wallLv + '레벨 성벽 완성!', t: 1.5, kind: 'win' }; G.padKey = ''; return true;
@@ -1786,6 +1790,7 @@ function arenaTick() {
 }
 function endGame(win) {
   if (G.phase === 'win' || G.phase === 'lose') return;
+  if (G.log) G.log.end = logSnap('end');
   G.phase = win ? 'win' : 'lose'; G.endT = 2.2; joy.on = false;
   sting(win ? 'sting_victory' : 'sting_defeat'); setBgm('');
   ovLevel.classList.remove('on'); bPanel.classList.remove('on'); $('btnBattle').classList.remove('on');
@@ -1798,6 +1803,7 @@ function finish() {
     dmg: { skill: Math.round(G.dmg.skill), hero: Math.round(G.dmg.hero), building: Math.round(G.dmg.building), player: Math.round(G.dmg.player) },
     mode: G.mode, stars: G.missions ? G.missions.filter(m => m.ok()).length : null, bossDmg: Math.round(G.bossDmg), kills: G.kills, gold: G.gold, time: Math.round((performance.now() - G.startT) / 1000),
     objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm, pairs: Object.keys(G.pairs || {}) };
+  try { res.log = logFinish(res); } catch (e) { console.warn(e); }
   if (typeof JZB.onEnd === 'function' && JZB.onEnd !== defaultEnd) JZB.onEnd(res); else defaultEnd(res);
 }
 function defaultEnd(res) {
@@ -2496,14 +2502,39 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 
+/* ---------- 판 기록: 이용자가 어디서 막히는지 보려고 판마다 남긴다 (이 기기에 최근 100판, 키 kz_runlog) ---------- */
+const RUNLOG_KEY = 'kz_runlog';
+function logInit() {
+  if (!G) return;
+  const c = G.cfg || {}, r2 = v => Math.round((v || 0) * 100) / 100;
+  G.log = { v: 1, at: Date.now(), ch: G.ch, mode: G.mode, nm: !!G.nm, tierK: r2(G.tierK || 1),
+    heroes: (c.companions || []).slice(), weapon: G.weapon, heroLv: c.heroLv | 0, atk: r2(c.atk || 1), hp: r2(c.hp || 1), items: (c.items || []).length, hq0: G.hq, skin: c.skin || '',
+    gold0: Math.round(G.gold), spent: 0, refund: 0, sold: 0, ups: 0, builds: [], cards: [], skills: [], offers: [], nights: [], end: null };
+}
+function logSnap(kind, extra) {
+  const tw = G.turrets || [];
+  return Object.assign({ k: kind, n: G.night + 1, s: Math.round((performance.now() - G.startT) / 1000), gold: Math.round(G.gold), tw: tw.length, twLv: tw.reduce((a, t) => a + t.lv, 0), wall: G.wallLv, hq: G.hq,
+    sh: Math.round(100 * Math.max(0, G.shrine.hp) / G.shrine.max), hp: Math.round(100 * Math.max(0, G.player.hp) / G.player.max), lv: G.player.lv, kills: G.kills }, extra || {});
+}
+function runLogAll() { try { const a = JSON.parse(localStorage.getItem(RUNLOG_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+function logFinish(res) {
+  const L = G && G.log; if (!L) return null;
+  const out = Object.assign({}, L, { win: !!res.win, wave: res.wave, waves: res.waves, time: res.time, kills: res.kills, goldEnd: Math.round(G.gold), earned: Math.round(G.gold - L.gold0 + L.spent - L.refund),
+    dmg: res.dmg, obj: res.objective ? { type: res.objective.type, ok: !!res.objective.ok } : null, stars: res.stars, why: res.win ? 'win' : (G.loseWhy || (G.shrine.hp <= 0 ? 'shrine' : 'player')) });
+  G.log = null; /* 같은 판을 두 번 남기지 않는다 */
+  try { const a = runLogAll(); a.push(out); while (a.length > 100) a.shift(); localStorage.setItem(RUNLOG_KEY, JSON.stringify(a)); } catch (e) { console.warn(e); }
+  return out;
+}
+
 /* ---------- 바깥과 잇는 창구 ---------- */
 const JZB = window.JZB = {
   buildWalls,
-  start: cfg => { newGame(cfg); try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
+  start: cfg => { newGame(cfg); try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
   /* 시험용 */
+  runLog: runLogAll,
   get G() { return G; }, startNight, pickSkill, build, useUlt, useCult, spawnBig, openLevel, levelChoices
 };
 const defaultEndRef = defaultEnd;
