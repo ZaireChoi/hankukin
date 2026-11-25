@@ -612,6 +612,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (r && r.mode === 'arena') { try { arEnd(r); } catch (e) { console.warn(e); meta.classList.remove('off'); } return; }
     try { if (lastWB && r && r.mode === 'boss') { wbRecord(lastWB, Math.round(r.bossDmg || 0)); } } catch (e) { console.warn(e); } lastWB = null;
     try { xOnEnd(r || {}); } catch (e) { console.warn(e); }
+    try { runSync(r); } catch (e) { console.warn(e); }
     try { if (arguments[0] && arguments[0].mode && arguments[0].mode !== 'adventure') { const r0 = arguments[0]; S.modeBest = S.modeBest || {}; const key = r0.mode + r0.chapter, val = r0.mode === 'endless' ? r0.wave + '밤' : r0.mode === 'boss' ? fmt(r0.bossDmg || 0) : r0.mode === 'challenge' ? '★' + (r0.stars || 0) : (r0.win ? '완료' : '실패'); S.modeBest[key] = val; } } catch (e) {}
     r = r || {};
     meta.classList.remove('off');
@@ -761,10 +762,94 @@ if (window.IS_EN) document.title = 'K Zombi';
   function settingsModal() {
     modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
       '<div class="row"><div class="btn ' + (localStorage.getItem('kz_vib') === '0' ? 'b' : 'g') + '" data-act="toggleVib">' + (localStorage.getItem('kz_vib') === '0' ? '진동 끔' : '진동 켬') + '</div></div>' +
-      '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div></div>' +
+      '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div><div class="btn b" data-act="runlog">판 기록</div></div>' +
       '<p style="text-align:center;margin-top:20px">저장은 이 기기에 자동으로 돼요.</p><div class="row"><div class="btn r" data-act="reset">처음부터 다시</div></div>');
   }
 
+
+  /* ---------------- 판 기록 (재미 점검용) ----------------
+     battle.js가 판마다 이 기기에 남긴 기록(kz_runlog)을 장별로 묶어 보여 준다.
+     로그인한 사람은 장마다 요약 한 줄을 서버에도 남긴다. 새 컬렉션 없이 leaderboards 보드만 쓴다.
+       kzrun-c{장} (악몽은 kzrun-n{장}) : 내 줄 하나
+         score = 도전 수*1e6 + 승리 수*1e4 + 마지막 판 도달 밤*100 + 그 장의 밤 수 (도전·승리는 99까지)
+         name  = 영웅 번호/무기/판 등급/마지막 판 분 (예: h0.5/bow/1.2/7m) */
+  const T = (ko, en) => window.IS_EN ? en : ko;
+  function runSync(r) {
+    if (!r || !r.chapter || (r.mode && r.mode !== 'adventure')) return;
+    const key = (r.nightmare ? 'n' : 'c') + r.chapter;
+    S.runAgg = S.runAgg || {}; const a = S.runAgg[key] = S.runAgg[key] || { t: 0, w: 0 };
+    a.t = Math.min(99, a.t + 1); if (r.win) a.w = Math.min(99, a.w + 1); save();
+    if (!accUser()) return;
+    const L = r.log || {}, hs = (L.heroes || []).map(h => COMPS.findIndex(c => c.id === h)).filter(i => i >= 0).join('.');
+    const nm = 'h' + (hs || '-') + '/' + String(L.weapon || '-').slice(0, 4) + '/' + (L.tierK || 1) + '/' + Math.round((r.time || 0) / 60) + 'm';
+    putEntry('kzrun-' + key, nm, a.t * 1e6 + a.w * 1e4 + Math.min(99, r.wave | 0) * 100 + Math.min(99, r.waves | 0)).catch(e => console.warn('runSync', e));
+  }
+  const rlRuns = () => { const J = window.JZB; try { return (J && J.runLog ? J.runLog() : []).filter(x => x && (x.mode || 'adventure') === 'adventure'); } catch (e) { return []; } };
+  const rlSk = id => { const D = window.JZD; if (id.indexOf('ev_') === 0) return ((D && D.EVO && D.EVO[id.slice(3)]) || {}).n || id; const s = D && D.SKILLS ? D.SKILLS.find(x => x.id === id) : null; if (s) return s.n; if (id.indexOf('h_') === 0 && COMP[id.slice(2)]) return COMP[id.slice(2)].n + T(' 카드', ' card'); return id; };
+  const rlTur = k => { const D = window.JZD; return (D && D.TUR && D.TUR[k] && D.TUR[k].name) || ({ hq: T('본부', 'HQ'), wall: T('성벽', 'Wall') })[k] || k; };
+  const rlHero = ids => (ids || []).map(id => (COMP[id] || {}).n || id).join('+') || T('없음', 'None');
+  const rlWhy = w => w === 'win' ? T('승리', 'Win') : w === 'shrine' ? T('사당 무너짐', 'Shrine fell') : w === 'player' ? T('처용 쓰러짐', 'Cheoyong fell') : String(w || '-');
+  const rlPct = (a, b) => b ? Math.round(a / b * 100) + '%' : '-';
+  const rlTd = 'style="padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.12);text-align:center"';
+  const rlTable = (head, rows) => '<table style="width:100%;border-collapse:collapse;font-size:17px;margin:6px 0"><tr>' + head.map(h => '<th ' + rlTd + '>' + h + '</th>').join('') + '</tr>' + rows.map(r => '<tr>' + r.map(c => '<td ' + rlTd + '>' + c + '</td>').join('') + '</tr>').join('') + '</table>';
+  function runLogModal(view) {
+    const tabs = '<div class="row"><div class="btn ' + (view === 'all' ? 'b' : 'g') + '" data-act="runlog">' + T('내 기록', 'My runs') + '</div><div class="btn ' + (view === 'all' ? 'g' : 'b') + '" data-act="runlogAll">' + T('모든 이용자', 'All players') + '</div><div class="btn p" data-act="runlogDl">' + T('내려받기', 'Download') + '</div></div>';
+    if (view === 'all') { modal('<h3 class="stroke">' + T('판 기록', 'Run log') + '</h3>' + tabs + '<div class="xscroll" id="rlAll"><p style="text-align:center">' + T('불러오는 중...', 'Loading...') + '</p></div>', 'xwide'); runLogAllLoad(); return; }
+    const R = rlRuns();
+    if (!R.length) { modal('<h3 class="stroke">' + T('판 기록', 'Run log') + '</h3>' + tabs + '<p style="text-align:center">' + T('아직 기록이 없어요. 모험을 한 판 하면 여기에 쌓여요.', 'No runs yet. Play an adventure and it shows up here.') + '</p>', 'xwide'); return; }
+    /* 장별 묶음 */
+    const by = {}; for (const r of R) { const k = (r.nm ? T('악몽 ', 'NM ') : '') + r.ch; (by[k] = by[k] || []).push(r); }
+    const avg = (a, f) => a.length ? a.reduce((s, x) => s + (f(x) || 0), 0) / a.length : 0;
+    const chRows = Object.keys(by).sort((a, b) => (parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, ''))) || a.length - b.length).map(k => { const a = by[k], w = a.filter(x => x.win).length, lose = a.filter(x => !x.win), why = {}; lose.forEach(x => { const y = rlWhy(x.why); why[y] = (why[y] || 0) + 1; }); const top = Object.keys(why).sort((p, q) => why[q] - why[p])[0];
+      return [T(k + '장', 'Ch ' + k), a.length, w, rlPct(w, a.length), avg(a, x => x.wave).toFixed(1) + '/' + (a[0].waves || '-'), Math.round(avg(a, x => x.time) / 60) + T('분', 'm'), fmt(Math.round(avg(a, x => x.earned))), fmt(Math.round(avg(a, x => x.spent))), top || '-']; });
+    /* 난이도 기준 점검 */
+    const crit = (f) => { const a = R.filter(f), w = a.filter(x => x.win).length; return a.length ? w + '/' + a.length + ' (' + rlPct(w, a.length) + ')' : T('기록 없음', 'No data'); };
+    const dokOnly = x => !x.nm && x.ch <= 2 && (x.heroes || []).length === 1 && x.heroes[0] === 'dokkaebi';
+    const withHong = x => !x.nm && x.ch <= 10 && (x.heroes || []).indexOf('honggildong') >= 0;
+    /* 엽전 부족: 밤이 시작될 때 가진 엽전과 세운 건물 수 */
+    const dusk = {}; for (const r of R) for (const s of (r.nights || [])) if (s.k === 'dusk') { const d = dusk[s.n] = dusk[s.n] || { n: 0, gold: 0, tw: 0, sh: 0 }; d.n++; d.gold += s.gold; d.tw += s.tw; }
+    const duskRows = Object.keys(dusk).map(Number).sort((a, b) => a - b).slice(0, 10).map(n => { const d = dusk[n]; return [n + T('번째 밤', ''), d.n, fmt(Math.round(d.gold / d.n)), (d.tw / d.n).toFixed(1)]; });
+    /* 기술 카드: 나온 횟수 대비 고른 횟수 */
+    const off = {}, pk = {}; for (const r of R) { for (const o of (r.offers || [])) for (const id of o) off[id] = (off[id] || 0) + 1; for (const s of (r.skills || [])) pk[s[0]] = (pk[s[0]] || 0) + 1; }
+    const skIds = Object.keys(off).filter(id => off[id] >= 3).sort((a, b) => (pk[b] || 0) / off[b] - (pk[a] || 0) / off[a]);
+    const skRow = id => [rlSk(id), off[id], pk[id] || 0, rlPct(pk[id] || 0, off[id])];
+    const low = skIds.filter(id => (pk[id] || 0) / off[id] < 0.15);
+    /* 건물 */
+    const bt = {}; for (const r of R) { for (const b of (r.builds || [])) bt[b[0]] = (bt[b[0]] || 0) + 1; }
+    const btRows = Object.keys(bt).sort((a, b) => bt[b] - bt[a]).map(k => [rlTur(k), bt[k]]);
+    const recent = R.slice(-12).reverse().map(r => { const d = new Date(r.at || 0); return [(d.getMonth() + 1) + '/' + d.getDate() + ' ' + d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'), (r.nm ? T('악몽 ', 'NM ') : '') + r.ch + T('장', ''), r.win ? '<b style="color:#8f8">' + T('승리', 'Win') + '</b>' : '<b style="color:#f88">' + rlWhy(r.why) + '</b>', r.wave + '/' + r.waves, rlHero(r.heroes), Math.round((r.time || 0) / 60) + T('분', 'm'), fmt(r.earned || 0) + '/' + fmt(r.spent || 0)]; });
+    modal('<h3 class="stroke">' + T('판 기록', 'Run log') + '</h3>' + tabs + '<div class="xscroll">' +
+      '<p style="text-align:center;font-size:17px">' + T('이 기기에서 한 모험 ', 'Adventures on this device: ') + R.length + T('판 (최근 100판까지 보관)', ' (last 100 kept)') + '</p>' +
+      '<h4 class="stroke-s">' + T('난이도 기준 점검', 'Difficulty targets') + '</h4>' + rlTable([T('기준', 'Target'), T('이긴 판/한 판', 'Won/Played')], [[T('1~2장, 도깨비만', 'Ch.1-2, Dokkaebi only'), crit(dokOnly)], [T('10장까지, 홍길동 포함', 'Up to ch.10, with Hong Gildong'), crit(withHong)], [T('모든 모험', 'All adventures'), crit(() => true)]]) +
+      '<h4 class="stroke-s">' + T('장별 결과', 'By chapter') + '</h4>' + rlTable([T('장', 'Ch'), T('판', 'Runs'), T('승', 'Won'), T('승률', 'Win %'), T('평균 밤', 'Avg night'), T('평균 시간', 'Avg time'), T('번 엽전', 'Coins in'), T('쓴 엽전', 'Coins spent'), T('주된 패배', 'Main loss')], chRows) +
+      '<h4 class="stroke-s">' + T('밤이 시작될 때 엽전과 건물', 'Coins and buildings at dusk') + '</h4>' + rlTable([T('밤', 'Night'), T('판', 'Runs'), T('가진 엽전', 'Coins'), T('건물 수', 'Buildings')], duskRows) +
+      '<h4 class="stroke-s">' + T('기술 카드 고른 비율 (3번 이상 나온 것)', 'Skill pick rate (offered 3+ times)') + '</h4>' + rlTable([T('기술', 'Skill'), T('나옴', 'Offered'), T('고름', 'Picked'), T('비율', 'Rate')], skIds.slice(0, 14).map(skRow)) +
+      (low.length ? '<p style="font-size:17px;color:#ffb0a0">' + T('거의 안 고르는 기술: ', 'Rarely picked: ') + low.map(rlSk).join(', ') + '</p>' : '') +
+      '<h4 class="stroke-s">' + T('많이 지은 건물', 'Most built') + '</h4>' + rlTable([T('건물', 'Building'), T('지은 수', 'Built')], btRows.slice(0, 10)) +
+      '<h4 class="stroke-s">' + T('최근 판', 'Recent runs') + '</h4>' + rlTable([T('때', 'When'), T('장', 'Ch'), T('결과', 'Result'), T('밤', 'Night'), T('영웅', 'Heroes'), T('시간', 'Time'), T('엽전 번/씀', 'Coins in/out')], recent) +
+      '</div>', 'xwide');
+  }
+  async function runLogAllLoad() {
+    const box = () => $('#rlAll', root) || document.getElementById('rlAll');
+    try {
+      const n = chapters().length, out = [];
+      let bad = 0, lastErr = null; const res = await Promise.all(Array.from({ length: n }, (_, i) => listBoard('kzrun-c' + (i + 1), 300).catch(e => { bad++; lastErr = e; return []; })));
+      if (bad === n) throw lastErr || new Error('server');
+      let players = new Set();
+      res.forEach((L, i) => { if (!L.length) return; let t = 0, w = 0, reach = 0; const hc = {}; L.forEach(e => { players.add(e.id); const s = e.score || 0; t += Math.floor(s / 1e6); w += Math.floor(s / 1e4) % 100; const nn = s % 100, wv = Math.floor(s / 100) % 100; reach += nn ? wv / nn : 0; const h = String(e.name || '').split('/')[0]; hc[h] = (hc[h] || 0) + 1; });
+        const topH = Object.keys(hc).sort((a, b) => hc[b] - hc[a])[0] || ''; const hn = topH.replace(/^h/, '').split('.').map(x => (COMPS[+x] || {}).n).filter(Boolean).join('+') || '-';
+        out.push([T((i + 1) + '장', 'Ch ' + (i + 1)), L.length, t, w, rlPct(w, t), Math.round(reach / L.length * 100) + '%', hn]); });
+      const b = box(); if (!b) return;
+      b.innerHTML = out.length ? '<p style="text-align:center;font-size:17px">' + T('로그인한 이용자 ', 'Signed-in players: ') + players.size + T('명의 장별 누적 (한 사람당 장마다 한 줄)', ' (one row per player per chapter)') + '</p>' + rlTable([T('장', 'Ch'), T('사람', 'Players'), T('도전', 'Tries'), T('승리', 'Win'), T('승률', 'Win %'), T('마지막 판 진행', 'Last-run progress'), T('많이 쓴 영웅', 'Top heroes')], out) + '<p style="font-size:16px;opacity:.8">' + T('마지막 판 진행: 각자 마지막으로 한 판에서 몇 번째 밤까지 갔는지의 평균이에요.', 'Last-run progress: average share of nights reached in each player\'s latest run.') + '</p>' : '<p style="text-align:center">' + T('아직 서버에 모인 기록이 없어요. 로그인한 이용자가 모험을 하면 쌓여요.', 'No server data yet.') + '</p>';
+    } catch (e) { const b = box(); if (b) b.innerHTML = '<p style="text-align:center">' + T('서버에 연결하지 못했어요 (', 'Could not reach the server (') + esc(String(e && e.code || e)) + ')</p>'; }
+  }
+  function runLogDownload() {
+    const R = (window.JZB && window.JZB.runLog ? window.JZB.runLog() : []);
+    if (!R.length) { toast(T('아직 기록이 없어요', 'No runs yet')); return; }
+    try { const d = new Date(), nm = 'kzombi_runlog_' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.json';
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify({ game: 'K-ZOMBIE', at: Date.now(), runs: R }, null, 1)], { type: 'application/json' })); a.download = nm; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); toast(T('기록 파일을 내려받았어요', 'Run log downloaded')); }
+    catch (e) { toast(T('내려받지 못했어요', 'Download failed')); }
+  }
 
   /* ---------------- 바깥 콘텐츠: 시즌 패스, 업적, 도감, 기간 이벤트, 랭킹, 친구, 문파 ---------------- */
   const monthKey = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1); };
@@ -1287,6 +1372,9 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'mailGet': S.mail = true; S.jade += 500; S.gold += 5000; S.stone += 30; closeModal(); toast('첫 선물을 받았어요'); refresh(); break;
       case 'settings': settingsModal(); break;
       case 'coupon': couponModal(); break;
+      case 'runlog': runLogModal('me'); break;
+      case 'runlogAll': runLogModal('all'); break;
+      case 'runlogDl': runLogDownload(); break;
       case 'starter': starterModal(); break;
       case 'cpnUse': useCoupon(); break;
       case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
