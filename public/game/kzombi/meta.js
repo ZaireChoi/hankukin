@@ -742,23 +742,32 @@ if (window.IS_EN) document.title = 'K Zombi';
      지금은 '시험 결제'(토스 문서의 공개 시험 키) — 실제 돈은 나가지 않는다. 실결제는 PAY_CK 를 live_ck 로, 서버 환경변수 TOSS_SECRET_KEY 를 live_sk 로 바꾸면 된다.
      승인은 /api/kzpay/confirm (Cloudflare Pages Functions) 에서 하고, 받은 영수증(kz_pay_rcpt)의 주문번호마다 한 번만 지급한다. */
   const PAY_CK = 'test_ck_D5GePWvyJnrK0W0k6q8gLzN97Eoq', PAY_TEST = /^test_/.test(PAY_CK);
+  /* 웹 결제 켜기: 사장님 토스 키(시험/실결제)를 받으면 true. 문서 공개 시험 키는 토스가 거부해 지금은 '결제 준비 중'으로 둔다. */
+  const PAY_WEB_ON = false;
+  const PLAY_PRICE = {}; /* 앱: 구글 플레이에서 읽은 실제 가격 표시 문자열 */
   const PAY_ITEMS = { jade300: [500, '옥 주머니 (옥 300)'], jade1k: [990, '옥 상자 (옥 1,000)'], starter: [990, '신규 스타트팩'], pass: [990, '황금 패스'] };
   const PAY_PLAY = { jade300: 'kz_jade_s', jade1k: 'kz_jade_m', starter: 'kz_starter', pass: 'kz_pass' };
   const isApp = () => { try { return /(^|[?&])src=app/.test(location.search) || sessionStorage.getItem('hk_src') === 'app' || document.referrer.indexOf('android-app://') === 0; } catch (e) { return false; } };
-  const payNote = () => isApp() ? '앱 결제 준비 중' : (PAY_TEST ? '시험 결제' : '');
+  const payNote = () => isApp() ? '구글 플레이' : (!PAY_WEB_ON ? '결제 준비 중' : (PAY_TEST ? '시험 결제' : ''));
+  const payPriceTxt = item => (isApp() && PLAY_PRICE[item]) || (PAY_ITEMS[item] ? PAY_ITEMS[item][0] + '원' : '');
+  /* 앱이면 시작할 때 구글 플레이 가격을 미리 읽어 둔다 */
+  setTimeout(async () => { if (!isApp() || !('getDigitalGoodsService' in window)) return; try { const svc = await window.getDigitalGoodsService('https://play.google.com/billing'); const det = await svc.getDetails(Object.values(PAY_PLAY)); for (const d of det || []) { const it = Object.keys(PAY_PLAY).find(k => PAY_PLAY[k] === d.itemId); if (it && d.price) PLAY_PRICE[it] = new Intl.NumberFormat('ko-KR', { style: 'currency', currency: d.price.currency }).format(Number(d.price.value)); } } catch (e) { console.warn('play price', e); } }, 1500);
   function payModal(item) {
     const P = PAY_ITEMS[item]; if (!P) return;
     if (item === 'starter' && S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; }
     if (item === 'pass' && S.pass && S.pass.paid) { toast('이미 황금 패스를 열었어요'); return; }
-    modal('<h3 class="stroke">' + P[1] + '</h3><p style="text-align:center;font-size:30px;margin:6px 0;color:#ffd36b"><b>' + P[0] + '원</b></p>' +
-      (PAY_TEST && !isApp() ? '<p style="text-align:center;color:#8fe0ff;font-size:16px">지금은 시험 결제예요. 실제 돈은 나가지 않아요.</p>' : '') +
+    const webOff = !isApp() && !PAY_WEB_ON;
+    modal('<h3 class="stroke">' + P[1] + '</h3><p style="text-align:center;font-size:30px;margin:6px 0;color:#ffd36b"><b>' + payPriceTxt(item) + '</b></p>' +
+      (webOff ? '<p style="text-align:center;color:#ffcf8a;font-size:16px">웹 결제는 준비 중이에요. 앱(구글 플레이)에서 살 수 있어요.</p>' : '') +
+      (PAY_TEST && PAY_WEB_ON && !isApp() ? '<p style="text-align:center;color:#8fe0ff;font-size:16px">지금은 시험 결제예요. 실제 돈은 나가지 않아요.</p>' : '') +
       '<p style="font-size:15px;line-height:1.55;color:#d8cdef;margin:8px 4px">결제 즉시 지급되는 디지털 상품이에요. 결제 후 7일 이내, 쓰지 않은 상품은 환불(청약 철회)할 수 있어요. 지급된 상품을 쓰면 환불이 제한될 수 있어요.</p>' +
-      '<div class="row"><div class="btn y" data-act="payGo" data-v="' + item + '" style="min-width:260px">' + (isApp() ? '구글 플레이로 결제' : '결제하기') + '</div></div>' +
+      (webOff ? '<div class="row"><div class="btn g dis" style="min-width:260px">결제 준비 중</div></div>' : '<div class="row"><div class="btn y" data-act="payGo" data-v="' + item + '" style="min-width:260px">' + (isApp() ? '구글 플레이로 결제' : '결제하기') + '</div></div>') +
       '<p style="text-align:center;margin-top:8px"><a href="pay/terms.html" target="_blank" style="color:#f0c35a;font-size:15px">유료 상품 이용 안내 · 환불 정책</a></p>');
   }
   async function payGo(item) {
     const P = PAY_ITEMS[item]; if (!P) return;
     if (isApp()) return payPlay(item);
+    if (!PAY_WEB_ON) { toast('웹 결제는 준비 중이에요'); return; }
     try {
       if (!window.TossPayments) await new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://js.tosspayments.com/v2/standard'; s.onload = ok; s.onerror = no; document.head.appendChild(s); });
       S.payCid = S.payCid || ('kzc_' + Math.random().toString(36).slice(2, 12) + Date.now().toString(36)); save();
@@ -768,18 +777,44 @@ if (window.IS_EN) document.title = 'K Zombi';
       await pay.requestPayment({ method: 'CARD', amount: { currency: 'KRW', value: P[0] }, orderId, orderName: '조선좀비 ' + P[1], successUrl: base + 'pay/success.html', failUrl: base + 'pay/fail.html', card: { useEscrow: false, flowMode: 'DEFAULT', useCardPoint: false, useAppCardOnly: false } });
     } catch (e) { if (e && e.code === 'USER_CANCEL') toast('결제를 취소했어요'); else { console.warn(e); toast('결제창을 열지 못했어요'); } }
   }
-  /* 앱(TWA): Digital Goods API + Payment Request. Play Console 인앱 상품 등록 전이라 지금은 안내만 */
+  /* 앱(TWA): Digital Goods API + Payment Request → 서버(/api/kzpay/play-verify)가 구글에 확인·소모 → 서명 영수증 → payClaim 지급 */
+  let payBusy = false;
   async function payPlay(item) {
+    if (payBusy) return; payBusy = true;
+    let res = null;
     try {
-      if (!('getDigitalGoodsService' in window)) { toast('앱 결제는 준비 중이에요'); return; }
-      const svc = await window.getDigitalGoodsService('https://play.google.com/billing'); const sku = PAY_PLAY[item];
-      const det = await svc.getDetails([sku]); if (!det || !det.length) { toast('앱 결제는 준비 중이에요'); return; }
+      if (!('getDigitalGoodsService' in window) || !window.PaymentRequest) { toast('이 기기에서는 앱 결제를 쓸 수 없어요'); return; }
+      const sku = PAY_PLAY[item]; if (!sku) return;
       const req = new PaymentRequest([{ supportedMethods: 'https://play.google.com/billing', data: { sku } }], { total: { label: 'Total', amount: { currency: 'KRW', value: '0' } } });
-      const res = await req.show(); const token = res.details && res.details.purchaseToken;
-      /* TODO(실결제): 서버(/api/kzpay/play)에서 Google Play Developer API 로 token 확인 후 지급. 지금은 서버 확인 전이라 지급하지 않는다. */
-      await res.complete('fail'); toast('앱 결제 확인 기능을 준비 중이에요'); void token;
-    } catch (e) { console.warn(e); toast('앱 결제는 준비 중이에요'); }
+      try { res = await req.show(); } catch (e) { toast(e && e.name === 'AbortError' ? '결제를 취소했어요' : '결제창을 열지 못했어요'); return; }
+      const token = res.details && res.details.purchaseToken;
+      if (!token) { await res.complete('fail'); toast('결제 정보를 받지 못했어요'); return; }
+      try { const pend = JSON.parse(localStorage.getItem('kz_play_pend') || '[]'); pend.push({ sku, token, t: Date.now() }); localStorage.setItem('kz_play_pend', JSON.stringify(pend.slice(-10))); } catch (e) {}
+      const out = await playVerify(sku, token);
+      await res.complete(out === 'ok' ? 'success' : 'fail').catch(() => {});
+      if (out === 'not_configured') toast('앱 결제 확인을 준비 중이에요. 결제는 나중에 자동으로 지급돼요');
+      else if (out === 'pending') toast('결제가 아직 처리 중이에요. 완료되면 지급돼요');
+      else if (out !== 'ok') toast('결제 확인에 실패했어요. 다시 접속하면 자동으로 다시 확인해요');
+    } catch (e) { console.warn(e); if (res) res.complete('fail').catch(() => {}); toast('앱 결제 중 문제가 생겼어요'); }
+    finally { payBusy = false; }
   }
+  /* 서버 확인 → 영수증 저장 → 지급. 성공하면 보류 목록에서 지운다 */
+  async function playVerify(sku, token) {
+    let r, j = {};
+    try { r = await fetch('/api/kzpay/play-verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: sku, purchaseToken: token, packageName: 'com.hankukin.kzombi' }) }); j = await r.json().catch(() => ({})); } catch (e) { return 'network'; }
+    if (r.status === 503 || j.code === 'not_configured') return 'not_configured';
+    if (!j.ok || !j.receipt) return j.code === 'PENDING' ? 'pending' : 'fail';
+    try { const a = JSON.parse(localStorage.getItem('kz_pay_rcpt') || '[]'); a.push(j.receipt); localStorage.setItem('kz_pay_rcpt', JSON.stringify(a.slice(-50))); } catch (e) {}
+    try { const pend = JSON.parse(localStorage.getItem('kz_play_pend') || '[]').filter(p => p.token !== token); localStorage.setItem('kz_play_pend', JSON.stringify(pend)); } catch (e) {}
+    payClaim(); return 'ok';
+  }
+  /* 앱을 다시 열면: 확인 못 한 구매(보류)와 구글에 남은 미소모 구매를 다시 확인 */
+  setTimeout(async () => {
+    if (!isApp()) return;
+    let pend = []; try { pend = JSON.parse(localStorage.getItem('kz_play_pend') || '[]'); } catch (e) {}
+    try { if ('getDigitalGoodsService' in window) { const svc = await window.getDigitalGoodsService('https://play.google.com/billing'); const ex = await svc.listPurchases(); for (const p of ex || []) if (p.purchaseToken && !pend.some(x => x.token === p.purchaseToken)) pend.push({ sku: p.itemId, token: p.purchaseToken }); } } catch (e) { console.warn('listPurchases', e); }
+    for (const p of pend) { try { await playVerify(p.sku, p.token); } catch (e) {} }
+  }, 3000);
   /* 영수증 처리: 결제 성공 페이지가 남긴 영수증을 주문번호마다 한 번만 지급 */
   function payClaim() {
     let a = []; try { a = JSON.parse(localStorage.getItem('kz_pay_rcpt') || '[]'); } catch (e) {}
