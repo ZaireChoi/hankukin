@@ -83,15 +83,34 @@ if (window.IS_EN) document.title = 'K Zombi';
   };
   const GR = [
     { n: '일반', c: '#a7adb8' }, { n: '고급', c: '#7df06a' }, { n: '희귀', c: '#6cc6ff' },
-    { n: '영웅', c: '#e39bff' }, { n: '전설', c: '#ffd36b' }, { n: '신화', c: '#ff8e8e' }];
-  const GMUL = [1, 1.6, 2.6, 4.2, 7, 12];
+    { n: '영웅', c: '#e39bff' }, { n: '전설', c: '#ffd36b' }, { n: '유니크', c: '#4cff9a' }, { n: '신화', c: '#ff3a3a' }];
+  /* 장비 개편(11-27): 등급은 7개로 끝. 긴 성장은 티어(T1~T10, 30장마다)·품질·강화·별로. 등급마다 나오는 장(1막 1~30, 악몽 2막 31~60 …) */
+  const GATE = [1, 5, 15, 30, 60, 120, 200];
+  const progCh = () => Math.max(1, (S.chap || 1) - 1, S.nm && S.nm.chap > 1 ? 30 + S.nm.chap - 1 : 0);
+  const maxG = c => { let g = 0; for (let i = 0; i < GATE.length; i++) if (GATE[i] <= c) g = i; return g; };
+  const curTier = c => Math.min(10, 1 + Math.floor(((c || progCh()) - 1) / 30));
+  /* '가끔' 단계(사용자 11-27: 전설은 가끔 나와야): [등급, 시작장, 정식장, {box:우두머리 상자, gacha:뽑기, nem:숙적}] */
+  const RARE = [[3, 15, 30, { box: 0.08 }], [4, 10, 30, { box: 0.02, nem: 0.05, gacha: 0.005 }], [4, 30, 60, { box: 0.04, nem: 0.05, gacha: 0.01 }], [5, 90, 120, { box: 0.015, nem: 0.02 }], [6, 160, 200, { nem: 0.01 }]];
+  let RARE_HIT = null;
+  function rareUp(g, c, kind) { for (const [rg, a, b, p] of RARE) if (c >= a && c < b && rg > g && Math.random() < (p[kind] || 0)) { g = rg; RARE_HIT = rg; } return g; }
+  function rareShow(it) { if (!it || !RARE_HIT || it.g < 3) return; RARE_HIT = null; it.rare = 1; setTimeout(() => { try { toast('✨ ' + GR[it.g].n + ' 획득! · ' + itemName(it)); const b = document.createElement('div'); b.className = 'rarebeam g' + it.g; b.innerHTML = '<b>' + GR[it.g].n + ' 획득!</b><span>' + itemName(it) + '</span>'; document.body.appendChild(b); setTimeout(() => b.remove(), 2600); } catch (e) {} }, 300); }
+  /* 부가 옵션 13종·고유 효과 15종: 전투에는 기존 fx 키로 넘긴다(afxSum) */
+  const AFX = { atkP: ['공격력', 2, 6, '%'], hpP: ['체력', 3, 8, '%'], crit: ['치명 확률', 1, 4, '%'], critD: ['치명 피해', 5, 15, '%'], aspd: ['공격 속도', 2, 6, '%'], mspd: ['이동 속도', 2, 5, '%'], cdr: ['기술 대기 감소', 2, 6, '%'], towerP: ['시설 피해', 3, 9, '%'], heroP: ['영웅 피해', 3, 9, '%'], gold: ['엽전 획득', 4, 12, '%'], ls: ['피흡', 0.5, 2, '%'], eliteP: ['정예·우두머리 피해', 3, 9, '%'], dmgCut: ['받는 피해 감소', 1, 4, '%'] };
+  const AFX_FX = { crit: ['crit10', 10], critD: ['critDmg30', 30], aspd: ['haste10', 10], mspd: ['speed10', 10], cdr: ['skillCd10', 10], towerP: ['build20', 20], heroP: ['compDmg30', 30], gold: ['coin30', 30], ls: ['ls', 1], eliteP: ['eliteDmg25', 25], dmgCut: ['dmgCut10', 10] };
+  const UQ = { cheoyong: ['처용의 분노', '처치한 적이 폭발한다', { killBlast: 1 }], haechi: ['해치의 불씨', '쏘는 속도 +15%, 치명 피해 +30%', { haste15: 1, critDmg30: 1 }], jeoseung: ['저승사자의 낫', '체력 10% 아래 일반 적은 바로 쓰러진다', { execute: 1 }], cheolgap: ['철갑 반사', '가까이서 때린 적에게 피해를 돌려준다', { thorns: 1 }], okhwang: ['옥황의 축복', '5초마다 체력 3% 회복', { regen: 1 }], sabang: ['사방신의 가호', '체력 30% 아래 2초 무적', { lastStand: 1 }], sinmyeong: ['신명', '큰 기술 대기 -20%', { ultCd20: 1 }], janggun: ['장군의 기백', '시설 위력 +20%', { build20: 1 }], heuphyeol: ['흡혈 부적', '피흡 +3%', { ls: 3 }], baram: ['바람신', '이동 +10%, 10% 회피', { speed10: 1, dodge10: 1 }], geumdukkeobi: ['금두꺼비', '엽전 +60%', { coin30: 2 }], gwisin: ['귀신잡이', '정예·우두머리 피해 +50%', { eliteDmg25: 2 }], ssanggeom: ['쌍검무', '쏘는 속도 +25%', { haste10: 2.5 }], cheondung: ['천둥 부적', '치명 확률 +15%', { crit5: 3 }], dokkaebi: ['도깨비 방망이', '동료 피해 +40%', { compDmg30: 1.35 }] };
+  function rollAffix(it) { const g = it.g || 0, n = [0, 1, 1 + (Math.random() < 0.5 ? 1 : 0), 2, 3, 3 + (Math.random() < 0.5 ? 1 : 0), 4][g], gm = [1, 1, 1.2, 1.4, 1.7, 2, 2.4][g], ks = Object.keys(AFX).sort(() => Math.random() - 0.5).slice(0, n); it.af = ks.map(k => { const A = AFX[k], v = (A[1] + Math.random() * (A[2] - A[1])) * gm; return [k, Math.round(v * 10) / 10]; }); const uk = Object.keys(UQ).sort(() => Math.random() - 0.5); it.uq = g >= 6 ? uk.slice(0, 2) : g === 5 ? uk.slice(0, 1) : g === 4 && Math.random() < 0.3 ? uk.slice(0, 1) : []; }
+  function afxSum(eqList) { const fx = {}, add = (k, v) => { fx[k] = (fx[k] || 0) + v; }; for (const it of eqList || Object.values(S.equip).map(byUid).filter(Boolean)) { for (const [k, v] of (it.af || [])) if (AFX_FX[k]) add(AFX_FX[k][0], v / AFX_FX[k][1]); for (const u of (it.uq || [])) if (UQ[u]) for (const k in UQ[u][2]) add(k, UQ[u][2][k]); } return fx; }
+  const afPct = (k) => { let s = 0; for (const it of Object.values(S.equip).map(byUid).filter(Boolean)) for (const [kk, v] of (it.af || [])) if (kk === k) s += v; return s; };
+  function powerWith(it) { const old = S.equip[it.slot]; S.equip[it.slot] = it.uid; const st = stats(); S.equip[it.slot] = old; return st; }
+  const afHtml = it => (it.af && it.af.length ? '<p style="font-size:18px;color:#9fe0ff">' + it.af.map(([k, v]) => AFX[k][0] + ' +' + v + AFX[k][3]).join(' · ') + '</p>' : '') + (it.uq && it.uq.length ? it.uq.map(u => '<p style="font-size:18px;color:' + (it.g >= 6 ? '#ff7a5a' : it.g === 5 ? '#4cff9a' : '#ffd36b') + '">★ ' + UQ[u][0] + ' · ' + UQ[u][1] + '</p>').join('') : '') + '<p style="font-size:16px;opacity:.75">품질 ' + (it.q || 100) + '% · T' + (it.t || 1) + '</p>';
+  const GMUL = [1, 1.6, 2.6, 4.2, 7, 9.5, 12];
   const SLOTS = [
-    { id: 'weapon', n: '무기', ic: 'bow', st: 'atk', base: 20, names: ['나무 활', '각궁', '흑각궁', '용각궁', '천궁', '신궁'] },
-    { id: 'hat', n: '갓', ic: 'hat', st: 'hp', base: 70, names: ['삿갓', '흑립', '옥로립', '주립', '금관립', '신령 갓'] },
-    { id: 'robe', n: '도포', ic: 'robe', st: 'hp', base: 100, names: ['무명 도포', '비단 도포', '청 도포', '자색 도포', '금실 도포', '신선 도포'] },
-    { id: 'arm', n: '토시', ic: 'arm', st: 'atk', base: 12, names: ['가죽 토시', '쇠 토시', '은 토시', '자개 토시', '금 토시', '용 토시'] },
-    { id: 'shoes', n: '신', ic: 'shoes', st: 'hp', base: 55, names: ['짚신', '미투리', '가죽신', '태사혜', '운혜', '구름신'] },
-    { id: 'norigae', n: '노리개', ic: 'norigae', st: 'atk', base: 15, names: ['매듭 노리개', '호박 노리개', '산호 노리개', '비취 노리개', '금 노리개', '삼작 신물'] }];
+    { id: 'weapon', n: '무기', ic: 'bow', st: 'atk', base: 20, names: ['나무 활', '각궁', '흑각궁', '용각궁', '천궁', '청룡궁', '신궁'] },
+    { id: 'hat', n: '갓', ic: 'hat', st: 'hp', base: 70, names: ['삿갓', '흑립', '옥로립', '주립', '금관립', '비취 금관립', '신령 갓'] },
+    { id: 'robe', n: '도포', ic: 'robe', st: 'hp', base: 100, names: ['무명 도포', '비단 도포', '청 도포', '자색 도포', '금실 도포', '봉황 도포', '신선 도포'] },
+    { id: 'arm', n: '토시', ic: 'arm', st: 'atk', base: 12, names: ['가죽 토시', '쇠 토시', '은 토시', '자개 토시', '금 토시', '비취 토시', '용 토시'] },
+    { id: 'shoes', n: '신', ic: 'shoes', st: 'hp', base: 55, names: ['짚신', '미투리', '가죽신', '태사혜', '운혜', '청운혜', '구름신'] },
+    { id: 'norigae', n: '노리개', ic: 'norigae', st: 'atk', base: 15, names: ['매듭 노리개', '호박 노리개', '산호 노리개', '비취 노리개', '금 노리개', '옥룡 노리개', '삼작 신물'] }];
   const SLOT = Object.fromEntries(SLOTS.map(s => [s.id, s]));
   /* 영웅: g 는 등급 번호 (0 일반, 2 희귀, 3 영웅, 4 전설) */
   const COMPS = [
@@ -137,6 +156,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function load() {
     try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch (e) { S = fresh(); }
     fixComps();
+    if ((S.gearV || 0) < 2) { for (const i of (S.inv || [])) { if (i.g === 5) i.g = 6; if (i.t == null) i.t = 1; } S.gearV = 2; }   /* 장비 개편: 옛 신화(5)→새 신화(6), 가진 장비는 그대로(T1) */
     if (!S.plans) S.plans = { weapon: 3, hat: 3, robe: 3, arm: 3, shoes: 3, norigae: 3 };
     if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} };
     for (const it of S.inv) if (it.s == null) it.s = 0;
@@ -149,21 +169,24 @@ if (window.IS_EN) document.title = 'K Zombi';
   const WKIND = ['bow', 'nogi', 'jochong', 'seungja'], WN = { bow: '각궁', nogi: '수노기', jochong: '조총', seungja: '승자총통' };
   const SETS = { cheoyong: { n: '처용 세트', c: '#ff8a6a', b: ['공격력 +8%', '처용 진노 대기 -20%', '처용무로 시작'] }, mugwan: { n: '무관 세트', c: '#8ac8ff', b: ['체력 +10%', '받는 피해 -10%', '병영 병사 +2'] }, seonbi: { n: '선비 세트', c: '#b9f08a', b: ['경험치 +10%', '카드 다시 뽑기 +1', '공격 기술 하나로 시작'] } };
   const SG = { manpa: { slot: 'weapon', w: 'manpa', n: '만파식적', img: 's_manpa', d: '피리 소리가 부채꼴 음파로 퍼져 적을 밀어내고 뚫어요.' }, chilji: { slot: 'weapon', w: 'chilji', n: '칠지도', img: 's_chilji', d: '일곱 갈래 검기를 한꺼번에 날려요.' }, cheonbu: { slot: 'norigae', n: '천부인', img: 's_cheonbu', d: '모든 능력치가 크게 오르는 하늘의 신물이에요.' } };
-  const STAR_MAX = g => g === 4 ? 2 : g === 5 ? 3 : 0;
+  const STAR_MAX = g => g === 4 ? 2 : g === 5 ? 3 : g === 6 ? 5 : 0;
   const LV_CAP = it => [10, 20, 30, 40, 50, 60][it.g] + 10 * (it.s || 0) + (it.sg ? 20 : 0);
-  function mkItem(slot, g, w, sg) { const it = { uid: S.uid++, slot, g, lv: 1, s: 0, src: ITEM_SRC || '', nw: 1 }; setTimeout(() => { try { if (!/뽑기|처치|처음|승급/.test(it.src || '') && S.inv.includes(it)) gotItem(it); } catch (e) {} }, 80); if (sg && SG[sg]) { it.sg = sg; it.slot = SG[sg].slot; if (SG[sg].w) it.w = SG[sg].w; it.g = Math.max(4, g); } else if (slot === 'weapon') it.w = w || rnd(WKIND); if (it.g >= 2) it.set = rnd(Object.keys(SETS)); return it; }
-  const itemSrc = it => 'img/items/' + (it.sg ? SG[it.sg].img : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? 'w_' + it.w : 'weapon_g' + it.g) : it.slot === 'arm' ? 'arm_g' + it.g : it.slot + '_g' + it.g) + '.webp';
+  function mkItem(slot, g, w, sg) { const it = { uid: S.uid++, slot, g, lv: 1, s: 0, src: ITEM_SRC || '', nw: 1, t: curTier(ITEM_CH || 0), q: Math.round(85 + Math.random() * 30 * (1 - [0, 0, 0.05, 0.1, 0.17, 0.27, 0.37][g || 0])) + Math.round(30 * [0, 0, 0.05, 0.1, 0.17, 0.27, 0.37][g || 0]) }; setTimeout(() => { try { if (!/뽑기|처치|처음|승급/.test(it.src || '') && S.inv.includes(it)) gotItem(it); } catch (e) {} }, 80); if (sg && SG[sg]) { it.sg = sg; it.slot = SG[sg].slot; if (SG[sg].w) it.w = SG[sg].w; it.g = Math.max(4, g); } else if (slot === 'weapon') it.w = w || rnd(WKIND); if (it.g >= 2) it.set = rnd(Object.keys(SETS)); try { rollAffix(it); } catch (e) {} return it; }
+  const IMGG = g => g >= 6 ? 5 : g === 5 ? 4 : g;   /* 유니크는 전설 그림+초록 테두리, 신화는 옛 신화 그림 */
+  const itemSrc = it => 'img/items/' + (it.sg ? SG[it.sg].img : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? 'w_' + it.w : 'weapon_g' + IMGG(it.g)) : it.slot === 'arm' ? 'arm_g' + IMGG(it.g) : it.slot + '_g' + IMGG(it.g)) + '.webp';
   const itemImg = it => '<img class="iimg" src="' + itemSrc(it) + '" style="width:78%;height:78%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))" onerror="this.style.display=\'none\'">' + ((it.s || 0) > 0 ? '<div class="st stroke-s" style="position:absolute;right:4px;top:2px;font-size:18px;color:#ffe27a">+' + it.s + '</div>' : '') + (it.sg ? '<div class="stroke-s" style="position:absolute;left:4px;top:2px;font-size:16px;color:#ff6a6a">독보</div>' : '');
   function setsOf() { const c = {}; for (const sl in S.equip) { const it = byUid(S.equip[sl]); if (it && it.set) c[it.set] = (c[it.set] || 0) + 1; } return c; }
   const itemIc = it => it.slot === 'weapon' && (it.w === 'jochong' || it.w === 'seungja') ? 'skGun' : SLOT[it.slot].ic;
-  const itemVal = it => Math.round(SLOT[it.slot].base * GMUL[it.g] * (1 + 0.15 * (it.lv - 1)) * (1 + 0.15 * (it.s || 0)) * (it.sg ? 1.6 : 1));
-  const itemName = it => it.sg ? SG[it.sg].n : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? GR[it.g].n + ' ' + WN[it.w] : SLOT.weapon.names[it.g]) : SLOT[it.slot].names[it.g];
+  const itemVal = it => Math.round(SLOT[it.slot].base * GMUL[it.g] * (1 + 0.15 * (it.lv - 1)) * (1 + 0.15 * (it.s || 0)) * (it.sg ? 1.6 : 1) * (1 + 0.35 * ((it.t || 1) - 1)) * ((it.q || 100) / 100));
+  const itemName = it => 'T' + (it.t || 1) + ' ' + itemName0(it);
+  const itemName0 = it => it.sg ? SG[it.sg].n : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? GR[it.g].n + ' ' + WN[it.w] : SLOT.weapon.names[it.g]) : SLOT[it.slot].names[it.g];
   const byUid = u => S.inv.find(i => i.uid === u);
   const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
 
   function stats() {
     let atk = 100 + 8 * (S.lv - 1), hp = 1000 + 60 * (S.lv - 1);
     for (const sl in S.equip) { const it = byUid(S.equip[sl]); if (!it) continue; if (SLOT[sl].st === 'atk') atk += itemVal(it); else hp += itemVal(it); }
+    { let ap = 0, hpq = 0; for (const sl in S.equip) { const it = byUid(S.equip[sl]); if (it && it.af) for (const [k, v] of it.af) { if (k === 'atkP') ap += v; if (k === 'hpP') hpq += v; } } atk = Math.round(atk * (1 + ap / 100)); hp = Math.round(hp * (1 + hpq / 100)); }
     let cp = 0;
     for (const id of S.team) { const c = S.comps[id]; if (!c || !c.own) continue; const b = (1 + COMP[id].g * 0.5 + c.lv * 0.3) * (1 + (c.star - 1) * 0.25); if (COMP[id].bonus === 'atk') atk += Math.round(6 * b); else hp += Math.round(60 * b); cp += c.lv * 60 * (COMP[id].g + 1) * c.star; }
     const sk = Object.values(S.skills).reduce((a, b) => a + b, 0);
@@ -398,14 +421,14 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<p class="stroke-s" style="text-align:center;font-size:22px">' + L.length + '개 → ' + ic('coin').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + fmt(gold) + ' · 정련석 ' + fmt(ore) + '</p>' +
       '<div class="row"><div class="btn r ' + (L.length ? '' : 'dis') + '" data-act="bulkGo">분해하기</div></div>');
   }
-  function canMerge() { const cnt = {}; for (const it of S.inv) { if (it.g >= 5) continue; const k = it.slot + (it.w || '') + it.g; cnt[k] = (cnt[k] || 0) + 1; } return Object.values(cnt).some(v => v >= 3); }
+  function canMerge() { const cnt = {}; for (const it of S.inv) { if (it.g >= 6 || it.g + 1 > maxG(progCh())) continue; const k = it.slot + (it.w || '') + it.g; cnt[k] = (cnt[k] || 0) + 1; } return Object.values(cnt).some(v => v >= 3); }
   function pgEquip() {
     const st = stats();
     const slot = s => { const it = byUid(S.equip[s.id]); return it ? '<div class="slot g' + it.g + '" data-act="item" data-v="' + it.uid + '">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div><div class="nm stroke-s">' + itemName(it) + '</div></div>' : '<div class="slot emp">' + ic(s.ic) + '<div class="nm stroke-s">' + s.n + '</div></div>'; };
     eqx(); const SORTF = { g: (a, b) => b.g - a.g || b.lv - a.lv, lv: (a, b) => b.lv - a.lv || b.g - a.g, new: (a, b) => b.uid - a.uid };
     const inv = S.inv.filter(it => eqF === 'all' || it.slot === eqF).sort(SORTF[eqSortK] || SORTF.g).map(it => {
       const eq = S.equip[it.slot] === it.uid;
-      return '<div class="it g' + it.g + '" data-act="item" data-v="' + it.uid + '">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div>' + (eq ? '<div class="eqd stroke-s">착용</div>' : '') + (it.nw ? '<div class="nwd stroke-s">NEW</div>' : '') + (it.lk ? '<div class="lkd">🔒</div>' : '') + '</div>';
+      const up = eq ? 0 : (() => { try { return Math.sign(Math.round(powerWith(it).power - stats().power)); } catch (e) { return 0; } })(); return '<div class="it g' + it.g + '" data-act="item" data-v="' + it.uid + '">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div>' + (eq ? '<div class="eqd stroke-s">착용</div>' : up > 0 ? '<div class="upar" style="position:absolute;left:3px;bottom:2px;color:#7df06a;font-weight:900;font-size:20px;text-shadow:0 0 3px #000">▲</div>' : up < 0 ? '<div class="upar" style="position:absolute;left:3px;bottom:2px;color:#ff6a5a;font-weight:900;font-size:16px;text-shadow:0 0 3px #000">▼</div>' : '') + (it.nw ? '<div class="nwd stroke-s">NEW</div>' : '') + (it.lk ? '<div class="lkd">🔒</div>' : '') + '</div>';
     }).join('');
     return '<div class="hdr stroke">장비<span class="sub">강화: 엽전+정련석 · 승급: 같은 장비 3개(전설·신화는 2개) · 정련석 ' + fmt(S.ore || 0) + '</span></div>' + (() => { const c = setsOf(); const t = Object.keys(c).filter(k => c[k] >= 2).map(k => '<span style="color:' + SETS[k].c + '">' + SETS[k].n + ' ' + c[k] + '부위</span>').join(' · '); return t ? '<div class="stroke-s" style="position:absolute;left:0;right:0;top:300px;text-align:center;font-size:18px;z-index:3;pointer-events:none">' + t + '</div>' : ''; })() +
       '<div class="eqwrap"><div class="eqhero"' + skinFull() + '></div><div class="btn p eqskin" data-act="skins">의상</div><div class="btn y eqmount" data-act="mounts">탈것' + (S.mount ? ' ✔' : '') + '</div><div class="slots l">' + SLOTS.slice(0, 3).map(slot).join('') + '</div><div class="slots r">' + SLOTS.slice(3).map(slot).join('') + '</div></div>' +
@@ -524,6 +547,10 @@ if (window.IS_EN) document.title = 'K Zombi';
         (wear ? '<div class="btn b dis">착용 중</div>' : own ? '<div class="btn g" data-act="skinWear" data-v="' + s.id + '">착용</div>' : '<div class="btn y" data-act="skinBuy" data-v="' + s.id + '">' + ic('jade') + fmt(s.price) + '</div>') + '</div>'; }).join('') + '</div>';
   }
   function skinModal() { modal('<h3 class="stroke">의상</h3><p style="text-align:center">모습만 바뀌고 능력치는 같아요</p>' + skinRow(), 'wide'); }
+  /* 주간 전설 무기(사용자 11-27: 유료로 전설 무기 일부 구매). 옥 확정 구매, 주 1개, 장 문 예외 */
+  const LWK = () => Math.floor((Date.now() / 864e5 + 3) / 7), LEG_PRICE = 4000;
+  const legWeek = () => { const w = LWK(), ks = WKIND; return [ks[w % 4], ks[(w + 1) % 4]]; };
+  function legShopHtml() { const done = S.legWk === LWK(); return '<div class="sect stroke">이번 주 전설 무기 <small>확정 구매 · 주 1개</small></div><div class="goods">' + legWeek().map(w => { const it = { slot: 'weapon', w, g: 4, lv: 1, t: curTier(), q: 98 }; return '<div class="good box"><div class="tag stroke-s">전설</div><div class="gi slot g4" style="width:64px;height:64px;margin:auto">' + itemImg(it) + '</div><div class="gn stroke-s">' + itemName(it) + '</div><div style="font-size:16px;color:#ffe9a8">고유 효과 1개 확정 · 품질 90~105%</div><div class="btn ' + (done ? 'b dis' : 'y') + '" data-act="buyLeg" data-v="' + w + '">' + (done ? '이번 주 구매함' : '<small>' + ic('jade') + fmt(LEG_PRICE) + '</small>') + '</div></div>'; }).join('') + '</div>'; }
   function pgShop() {
     const free = S.freeGold !== today();
     const goods = [
@@ -539,22 +566,23 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=4);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
       '<div class="prob" data-act="prob" data-v="cp">확률 안내</div><div class="bb"><div class="btn p" data-act="gacha" data-v="cp1"><span>1번</span><small>' + ic('jade') + '100</small></div><div class="btn y" data-act="gacha" data-v="cp10"><span>10번</span><small>' + ic('jade') + '900</small></div></div></div>' +
-      '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
+      legShopHtml() + '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
         '<div class="good box">' + (tag ? '<div class="tag stroke-s">' + tag + '</div>' : '') + '<div class="gi">' + ic(i) + '</div><div class="gn stroke-s">' + n + '</div><div style="font-size:18px;color:#ffe9a8">' + what + '</div><div class="btn ' + c + '" data-act="buy" data-v="' + id + '">' + price + '</div></div>').join('') + '</div></div>';
   }
 
   /* ---------------- 뽑기 ---------------- */
-  const EQP = [45, 30, 17, 6.5, 1.4, 0.1];
+  const EQP = [45, 30, 17, 6.5, 1.3, 0.15, 0.05];
   const CPP = [['g4', 3], ['g3', 12], ['g2', 20], ['g0', 15], ['stone', 25], ['gold', 25]];
-  function rollGrade(min) { let r = Math.random() * 100, g = 0; for (; g < 6; g++) { if (r < EQP[g]) break; r -= EQP[g]; } return Math.max(min || 0, Math.min(5, g)); }
+  function rollGrade(min, cap) { cap = Math.min(6, cap == null ? maxG(progCh()) : cap); min = Math.min(min || 0, cap); let tot = 0; for (let g = 0; g <= cap; g++) tot += EQP[g]; let r = Math.random() * tot, g = 0; for (; g < cap; g++) { if (r < EQP[g]) break; r -= EQP[g]; } return Math.max(min, Math.min(cap, g)); }
+  let ITEM_CH = 0;
   function doGacha(kind) {
     const cost = { eq1: 60, eq10: 540, cp1: 100, cp10: 900 }[kind], n = kind.endsWith('10') ? 10 : 1;
     if (S.jade < cost) { toast('옥이 부족해요'); return; }
     S.jade -= cost; S.quests.gacha = (S.quests.gacha || 0) + 1; xinit(); S.st.gacha += 1;
     const res = [];
     if (kind.startsWith('eq')) {
-      ITEM_SRC = '장비 뽑기'; for (let i = 0; i < n; i++) { let g0 = rollGrade(0); S.pity = (S.pity || 0) + 1; if (S.pity >= 50 && g0 < 4) g0 = 4; if (g0 >= 4) S.pity = 0; const sg = g0 >= 4 && Math.random() < 0.12 ? rnd(Object.keys(SG)) : null; const it = mkItem(rnd(SLOTS).id, g0, null, sg); res.push({ g: it.g, img2: itemSrc(it), t: itemName(it) }); S.inv.push(it); }
-      if (n === 10 && !res.some(r => r.g >= 2)) { const it = S.inv[S.inv.length - 1]; it.g = 2; res[9].g = 2; res[9].t = itemName(it); }
+      ITEM_SRC = '장비 뽑기'; for (let i = 0; i < n; i++) { const topG = progCh() >= 30 ? 4 : Math.min(4, maxG(progCh())); let g0 = rareUp(rollGrade(0), progCh(), 'gacha'); S.pity = (S.pity || 0) + 1; if (S.pity >= 50 && g0 < topG) { g0 = topG; if (progCh() >= 10 && Math.random() < 0.1) { g0 = Math.max(g0, 4); RARE_HIT = 4; } } if (g0 >= topG) S.pity = 0; const sg = g0 >= 4 && Math.random() < 0.12 ? rnd(Object.keys(SG)) : null; const it = mkItem(rnd(SLOTS).id, g0, null, sg); rareShow(it); res.push({ g: it.g, img2: itemSrc(it), t: itemName(it) }); S.inv.push(it); }
+      if (n === 10 && maxG(progCh()) >= 2 && !res.some(r => r.g >= 2)) { const it = S.inv[S.inv.length - 1]; it.g = 2; res[9].g = 2; res[9].t = itemName(it); }
     } else {
       for (let i = 0; i < n; i++) {
         let r = Math.random() * 100, pick = 'gold'; for (const [k, p] of CPP) { if (r < p) { pick = k; break; } r -= p; }
@@ -573,7 +601,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     g.querySelectorAll('.gc').forEach((c, i) => setTimeout(() => c.classList.add('open'), 250 + i * 160));
   }
   function probModal(k) {
-    if (k === 'eq') modal('<h3 class="stroke">장비 뽑기 확률</h3><table>' + GR.map((g, i) => '<tr><td style="color:' + g.c + '">' + g.n + '</td><td>' + EQP[i] + '%</td></tr>').join('') + '</table><p>10번 뽑기는 희귀 이상 1개를 꼭 줘요. 칸(무기, 갓, 도포, 토시, 신, 노리개)은 똑같은 확률이에요.</p>');
+    if (k === 'eq') { const capQ = maxG(progCh()); let tq = 0; for (let i = 0; i <= capQ; i++) tq += EQP[i]; modal('<h3 class="stroke">장비 뽑기 확률</h3><p style="text-align:center">지금 진행: ' + progCh() + '장 · 장비 단계 T' + curTier() + '</p><table>' + GR.map((g, i) => '<tr><td style="color:' + g.c + '">' + g.n + '</td><td>' + (i <= capQ ? (Math.round(EQP[i] / tq * 10000) / 100) + '%' : '0% (' + GATE[i] + '장 이후)') + '</td></tr>').join('') + '</table><p style="font-size:16px">가끔 나오는 등급(뽑기 기준): 전설 10~29장 0.5%, 30~59장 1%, 60장부터 정식. 우두머리 상자: 영웅 15~29장 8%, 전설 10~29장 2%·30~59장 4%, 유니크 90~119장 1.5%. 숙적 상자: 전설 5%, 유니크 2%, 신화 160~199장 1%. 천장 50회: 30장 전엔 열린 최고 등급(10% 확률로 전설), 30장부터 전설.</p><p>등급마다 열리는 장이 있어요(악몽 2막은 31장부터 이어서 셉니다). 50번 안에 그때 뽑을 수 있는 가장 높은 등급(최대 전설)을 1개 줘요. 10번 뽑기는 희귀가 열린 뒤 희귀 이상 1개를 꼭 줘요. 칸(무기, 갓, 도포, 토시, 신, 노리개)은 똑같은 확률이에요.</p>'); }
     else modal('<h3 class="stroke">영웅 뽑기 확률</h3><table><tr><td style="color:#ffd36b">전설 영웅 조각 2개 (이순신, 강감찬, 삼족오)</td><td>3%</td></tr><tr><td style="color:#e39bff">영웅 등급 조각 3개 (을지문덕, 원효대사, 구미호)</td><td>12%</td></tr><tr><td style="color:#6cc6ff">희귀 조각 5개 (홍길동, 해태)</td><td>20%</td></tr><tr><td>일반 조각 5개 (도깨비)</td><td>15%</td></tr><tr><td style="color:#6cc6ff">신력석 5개</td><td>25%</td></tr><tr><td>엽전 800</td><td>25%</td></tr></table><p>같은 등급 안의 영웅은 똑같은 확률이에요.</p>');
   }
 
@@ -657,7 +685,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (!WBX && !ARX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
+    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -696,7 +724,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)) * (NMr ? 2 : 1), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
     const exp = Math.round((win ? 90 : 40) * n * tk);
     const stone = win ? 4 + n * 2 : Math.floor(n * wave / waves * 2);
-    ITEM_SRC = (NMr ? '악몽 ' : '') + n + '장 우두머리 처치'; const drop = win ? mkItem(rnd(SLOTS).id, NMr ? (Math.random() < 0.15 + 0.01 * n ? 5 : Math.max(4, rollGrade(4))) : Math.min(5, rollGrade(Math.min(3, Math.floor((n - 1) / 3))))) : null; ITEM_SRC = '';
+    ITEM_SRC = (NMr ? '악몽 ' : '') + n + '장 우두머리 처치'; ITEM_CH = NMr ? 30 + n : n; const capD = maxG(ITEM_CH), drop = win ? mkItem(rnd(SLOTS).id, rareUp(Math.min(capD, rollGrade(Math.max(0, capD - 2), capD) + (Math.random() < 0.3 ? 1 : 0)), ITEM_CH, 'box')) : null; ITEM_CH = 0; rareShow(drop);   /* 우두머리 상자: 그 장 문(GATE)을 넘지 않음, 확률만 조금 높음 */ ITEM_SRC = '';
     const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
     const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade + nmFirst, dbl: false };
     S.gold += gold; S.stone += stone; S.jade += rw.jade; if (drop) S.inv.push(drop);
@@ -731,18 +759,18 @@ if (window.IS_EN) document.title = 'K Zombi';
   const JZI_MAP = { hat: 'h_jeonrip', robe: 'r_dujeong', arm: 'g_gauntlet', shoes: 's_mituri', norigae: 'a_tiger' };
   const jziId = it => it.slot === 'weapon' ? 'w_' + (it.w || 'bow') : JZI_MAP[it.slot];
   /* 등급별 특수 효과 목록: [필요 등급, 설명, 열림 여부] */
-  function itemFx(it) { const J = window.JZI && JZI.ITEMS[jziId(it)]; if (!J) return []; return [3, 4, 5].map(g => [g, J.fx[g][1], it.g >= g]); }
+  function itemFx(it) { const J = window.JZI && JZI.ITEMS[jziId(it)]; if (!J) return []; const gq = it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g; return [3, 4, 5].map(g => [g, J.fx[g][1], gq >= g]); }
   function fxHtml(it) { const GN = ['일반', '우수', '희귀', '영웅', '전설', '신화']; return itemFx(it).map(f => '<p style="font-size:18px;margin:2px 0;color:' + (f[2] ? '#ffe27a' : 'rgba(255,255,255,.45)') + '">' + (f[2] ? '★ ' : '잠김 ') + GN[f[0]] + ': ' + f[1] + '</p>').join(''); }
   function itemModal(uid) {
     eqx(); const it = byUid(uid); if (!it) return; if (it.nw) { it.nw = 0; save(); try { renderLobby(); } catch (e) {} }
     const s = SLOT[it.slot], cur = byUid(S.equip[it.slot]), eq = cur && cur.uid === it.uid, c = upCost(it), cap = LV_CAP(it);
     const stN = s.st === 'atk' ? '공격력' : '체력', v0 = itemVal(it), v1 = it.lv < cap ? itemVal(Object.assign({}, it, { lv: it.lv + 1 })) : v0;
-    const cmp = cur && !eq ? (() => { const d = v0 - itemVal(cur); return '<p style="font-size:19px">지금 착용: ' + itemName(cur) + ' Lv' + cur.lv + ' → <b style="color:' + (d >= 0 ? '#7df06a' : '#ff7a6a') + '">' + stN + ' ' + (d >= 0 ? '▲ +' : '▼ ') + d + '</b></p>'; })() : (!cur ? '<p style="font-size:19px;color:#7df06a">이 칸은 비어 있어요</p>' : '');
+    const cmp = !eq ? (() => { const a = stats(), b = powerWith(it), dp = Math.round(b.power - a.power), da = a.atk ? Math.round((b.atk / a.atk - 1) * 1000) / 10 : 0, dh = a.hp ? Math.round((b.hp / a.hp - 1) * 1000) / 10 : 0, col = x => x >= 0 ? '#7df06a' : '#ff7a6a', sg = x => (x >= 0 ? '▲ +' : '▼ ') + x; return '<div class="xcmp" style="margin:6px 0;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.28)"><p style="font-size:21px">전투력 ' + fmt(Math.round(a.power)) + ' → <b style="color:' + col(dp) + '">' + fmt(Math.round(b.power)) + ' (' + (dp >= 0 ? '+' : '') + fmt(dp) + ')</b></p><p style="font-size:18px">공격력 <b style="color:' + col(da) + '">' + sg(da) + '%</b> · 체력 <b style="color:' + col(dh) + '">' + sg(dh) + '%</b></p>' + (cur ? '<p style="font-size:16px;opacity:.85">지금 착용: ' + itemName(cur) + ' Lv' + cur.lv + '</p>' + afHtml(cur).replace(/font-size:18px/g, 'font-size:15px;opacity:.8') : '<p style="font-size:17px;color:#7df06a">이 칸은 비어 있어요</p>') + '</div>'; })() : '';
     const canUp = it.lv < cap && S.gold >= c.gold && (S.ore || 0) >= c.ore;
     modal('<h3 class="stroke" style="color:' + GR[it.g].c + '">' + itemName(it) + (it.lk ? ' 🔒' : '') + '</h3>' +
       '<div style="display:flex;gap:20px;align-items:center"><div class="slot g' + it.g + '" style="flex:none">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div></div>' +
       '<div><p>' + GR[it.g].n + ' ' + s.n + ' · 레벨 ' + it.lv + '/' + cap + (eq ? ' · <b style="color:#7df06a">착용 중</b>' : '') + '</p><p style="color:#ffe27a">' + stN + ' +' + v0 + '</p>' + cmp +
-      '<p style="font-size:17px;opacity:.85">입수: ' + (it.src || (it.nw === undefined ? '이전 기록 없음' : '보상')) + '</p>' +
+      afHtml(it) + '<p style="font-size:17px;opacity:.85">입수: ' + (it.src || (it.nw === undefined ? '이전 기록 없음' : '보상')) + '</p>' +
       (it.w && window.JZD && JZD.WEAPON && JZD.WEAPON[it.w] ? '<p style="font-size:18px">' + JZD.WEAPON[it.w].d + '</p>' : '') + fxHtml(it) + (it.set ? '<p style="font-size:18px;color:' + SETS[it.set].c + '">' + SETS[it.set].n + ' (착용 ' + (setsOf()[it.set] || 0) + '/6) · 2부위 ' + SETS[it.set].b[0] + ' · 4부위 ' + SETS[it.set].b[1] + ' · 6부위 ' + SETS[it.set].b[2] + '</p>' : '') + (it.sg ? '<p style="font-size:18px;color:#ff8a8a">' + SG[it.sg].d + '</p>' : '') + '</div></div>' +
       '<div class="xupbox stroke-s">' + (it.lv < cap ? '강화 Lv' + it.lv + ' → ' + (it.lv + 1) + ' · ' + stN + ' +' + v0 + ' → <b style="color:#7df06a">+' + v1 + '</b><br><small>비용 엽전 ' + fmt(c.gold) + ' · 정련석 ' + c.ore + ' (보유 ' + fmt(S.ore || 0) + ')</small>' : '최대 레벨이에요. 같은 장비로 승급하면 더 올라가요') + '</div>' +
       '<div class="row">' + (eq ? '<div class="btn b" data-act="unequip" data-v="' + uid + '">해제</div><div class="btn p" data-act="swap" data-v="' + it.slot + '">교체</div>' : '<div class="btn y xbig" data-act="equip" data-v="' + uid + '">' + (cur ? '착용 (교체)' : '착용') + '</div>') + '</div>' +
@@ -1085,7 +1113,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function codexModal() {
     xinit(); if (!MAN) { fetch('sprites/manifest.json').then(r => r.json()).then(j => { MAN = j; if ($('#mdl', root) && $('.xcodex', root)) codexModal(); }).catch(() => { MAN = {}; }); }
     const list = codexItems(), have = list.filter(x => x.own).length, box = S.codex[cdTab];
-    const cells = list.map(x => { const got = box[x.k]; return '<div class="xcell' + (x.own ? '' : ' off') + '" style="border-color:' + GR[Math.min(5, x.g)].c + '"' + (x.own && !got ? ' data-act="cdGet" data-v="' + x.k + '"' : '') + '>' + x.img + '<div class="nm stroke-s">' + (x.own ? x.n : '???') + '</div>' + (x.own && !got ? '<i class="dot"></i><div class="xrw stroke-s">옥 ' + x.r + '</div>' : got ? '<i class="xchk sm">✔</i>' : '') + '</div>'; }).join('');
+    const cells = list.map(x => { const got = box[x.k]; return '<div class="xcell' + (x.own ? '' : ' off') + '" style="border-color:' + GR[Math.min(6, x.g)].c + '"' + (x.own && !got ? ' data-act="cdGet" data-v="' + x.k + '"' : '') + '>' + x.img + '<div class="nm stroke-s">' + (x.own ? x.n : '???') + '</div>' + (x.own && !got ? '<i class="dot"></i><div class="xrw stroke-s">옥 ' + x.r + '</div>' : got ? '<i class="xchk sm">✔</i>' : '') + '</div>'; }).join('');
     modal('<h3 class="stroke">도감</h3>' + allBtn('cdAll', cdReady().length) + '<div class="xtabs">' + [['hero', '영웅'], ['zom', '좀비'], ['item', '장비']].map(([k, n]) => '<div class="btn ' + (k === cdTab ? 'y' : 'b') + '" data-act="cdTab" data-v="' + k + '">' + n + '</div>').join('') + '<div class="btn g" data-act="storyBook">이야기</div></div>' +
       '<p style="text-align:center;margin:6px 0">모은 것 ' + have + '/' + list.length + ' · 새로 모은 칸을 누르면 옥을 받아요</p><div class="xscroll xcodex">' + cells + '</div>', 'xwide');
   }
@@ -1562,13 +1590,14 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'bsTog': eqx(); S.bsG[+v] = S.bsG[+v] ? 0 : 1; save(); bulkSalvModal(); break;
       case 'bulkGo': { eqx(); const L = bsList(); let gold = 0, ore = 0; for (const it of L) { const sv = salvVal(it); gold += sv.gold; ore += sv.ore; } S.inv = S.inv.filter(i => !L.includes(i)); S.gold += gold; S.ore += ore; save(); closeModal(); refresh(); toast(L.length + '개 분해 · 엽전 ' + fmt(gold) + ' · 정련석 ' + fmt(ore)); break; }
       case 'itemUp': { const it = byUid(+v); if (it) { upItem(it, 1); itemModal(+v); renderLobby(); } break; }
-      case 'autoEq': for (const s of SLOTS) { const best = S.inv.filter(i => i.slot === s.id).sort((a, b) => itemVal(b) - itemVal(a))[0]; if (best) S.equip[s.id] = best.uid; } refresh(); toast('가장 좋은 장비를 입었어요'); break;
+      case 'autoEq': for (const s of SLOTS) { let best = byUid(S.equip[s.id]), bp = best ? stats().power : -1; for (const i of S.inv.filter(i => i.slot === s.id)) { const p = powerWith(i).power; if (p > bp) { bp = p; best = i; } } if (best) S.equip[s.id] = best.uid; } refresh(); toast('가장 좋은 장비를 입었어요'); break;
       case 'merge': { let made = 0; ITEM_SRC = '승급(합성)';
         const free = it => !Object.values(S.equip).includes(it.uid);
-        for (const s of SLOTS) for (let g = 0; g < 6; g++) {
+        for (const s of SLOTS) for (let g = 0; g < 7; g++) {
+          if (g + 1 > maxG(progCh()) && g < 6) continue;   /* 승급도 그 장 문을 넘지 않음 */
           if (g < 4) { const keys = {}; for (const it of S.inv) if (it.slot === s.id && it.g === g && !it.sg && free(it)) { const k = (it.w || '') + (it.set || ''); (keys[k] = keys[k] || []).push(it); }
             for (const k in keys) { const pool = keys[k]; while (pool.length >= 3) { const use = pool.splice(0, 3); S.inv = S.inv.filter(i => !use.includes(i)); const n = mkItem(s.id, g + 1, use[0].w); n.set = use[0].set || n.set; n.lv = Math.max(...use.map(u => u.lv)); S.inv.push(n); made++; } } }
-          else { let tgt; while ((tgt = S.inv.filter(i => i.slot === s.id && i.g === g && (g < 5 || (i.s || 0) < STAR_MAX(g))).sort((a, b) => (b.s || 0) - (a.s || 0) || b.lv - a.lv)[0])) { const fod = S.inv.filter(i => i !== tgt && i.slot === s.id && i.g === g && free(i) && !i.sg && (i.s || 0) === 0).slice(0, 2); if (fod.length < 2) break; S.inv = S.inv.filter(i => !fod.includes(i)); if ((tgt.s || 0) < STAR_MAX(g)) tgt.s = (tgt.s || 0) + 1; else { tgt.g = g + 1; tgt.s = 0; } made++; if (g === 5 && tgt.s >= STAR_MAX(5)) break; } }
+          else { let tgt; while ((tgt = S.inv.filter(i => i.slot === s.id && i.g === g && (g < 6 || (i.s || 0) < STAR_MAX(g))).sort((a, b) => (b.s || 0) - (a.s || 0) || b.lv - a.lv)[0])) { const fod = S.inv.filter(i => i !== tgt && i.slot === s.id && i.g === g && free(i) && !i.sg && (i.s || 0) === 0).slice(0, 2); if (fod.length < 2) break; S.inv = S.inv.filter(i => !fod.includes(i)); if ((tgt.s || 0) < STAR_MAX(g)) tgt.s = (tgt.s || 0) + 1; else { tgt.g = g + 1; tgt.s = 0; } made++; if (g === 6 && tgt.s >= STAR_MAX(6)) break; } }
         }
         ITEM_SRC = ''; refresh(); toast(made ? '승급 ' + made + '번 성공!' : '승급할 장비가 없어요'); break; }
       case 'salvage': { eqx(); const it = byUid(+v); if (!it || isEq(it) || it.lk) break; const sv = salvVal(it); S.ore += sv.ore; S.gold += sv.gold; S.inv = S.inv.filter(i => i !== it); save(); closeModal(); refresh(); toast('분해: 엽전 ' + fmt(sv.gold) + ' · 정련석 ' + sv.ore); break; }
@@ -1595,6 +1624,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'gbGet': { const s = wbDay(), i = +v; s.gGot = s.gGot || {}; if (s.gGot[i]) break; const [, kk, vv] = GB_STAGE[i]; give(kk, vv); s.gGot[i] = 1; save(); toast('문파 보스 단계 보상!'); refresh(); guildModal(); break; }
       case 'skinBuy': { const s = SKINS.find(x => x.id === v); if (!s || skinOwn(v)) break; if (S.jade < s.price) { toast('옥이 모자라요'); break; } S.jade -= s.price; S.skins = S.skins || {}; S.skins[v] = 1; S.skin = v; save(); toast(s.n + ' 의상을 얻었어요!'); if ($('#mdl', root)) skinModal(); refresh(); break; }
       case 'skinWear': if (skinOwn(v)) { S.skin = v; save(); toast('의상을 바꿨어요'); if ($('#mdl', root)) skinModal(); refresh(); } break;
+      case 'buyLeg': { if (S.legWk === LWK()) { toast('이번 주 전설 무기는 이미 샀어요'); break; } if (!legWeek().includes(v)) break; if (S.jade < LEG_PRICE) { toast('옥이 모자라요'); break; } S.jade -= LEG_PRICE; S.legWk = LWK(); ITEM_SRC = '전설 무기 상점(확정)'; ITEM_CH = progCh(); const it = mkItem('weapon', 4, v); ITEM_CH = 0; ITEM_SRC = ''; it.q = Math.round(90 + Math.random() * 15); if (!it.uq || !it.uq.length) it.uq = [rnd(Object.keys(UQ))]; S.inv.push(it); RARE_HIT = 4; rareShow(it); save(); refresh(); break; }
       case 'buy': {
         if (v === 'freeGold') { if (S.freeGold === today()) break; S.freeGold = today(); S.gold += 500; toast('엽전 500'); }
         else if (v === 'gold3k') { if (S.jade < 50) { toast('옥이 부족해요'); break; } S.jade -= 50; S.gold += 5000; toast('엽전 5,000'); }

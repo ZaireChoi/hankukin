@@ -128,8 +128,10 @@ svg.ic{display:inline-block;vertical-align:middle}
 .g2{border-color:#6cc6ff;background:linear-gradient(180deg,#3a8ff0,#1d4fb0)}
 .g3{border-color:#e39bff;background:linear-gradient(180deg,#a650f0,#6122b0)}
 .g4{border-color:#ffd36b;background:linear-gradient(180deg,#ffa531,#d4600a)}
-.g5{border-color:#ff8e8e;background:linear-gradient(180deg,#f0443a,#a01212)}
-.g4,.g5{animation:shine 2s infinite}
+.g5{border-color:#4cff9a;background:linear-gradient(180deg,#22c46a,#0b6b3a);box-shadow:0 0 10px #4cff9a88}
+.g6{border-color:#ff3a3a;background:linear-gradient(180deg,#ff3a2a,#7a0606);box-shadow:0 0 14px #ff5a2a,0 0 4px #ffd36b inset}
+.g4,.g5,.g6{animation:shine 2s infinite}
+.g6{animation:shine 2s infinite,mythfire 1.2s infinite alternate}@keyframes mythfire{from{box-shadow:0 0 8px #ff3a2a,0 0 2px #ffd36b inset}to{box-shadow:0 0 20px #ff7a2a,0 0 6px #ffd36b inset}}
 @keyframes shine{0%,100%{box-shadow:0 5px 0 #121633,0 0 10px rgba(255,210,90,.4)}50%{box-shadow:0 5px 0 #121633,0 0 26px rgba(255,210,90,.95)}}
 .eqstats{position:absolute;left:40px;right:40px;top:640px;height:70px;display:flex;justify-content:center;gap:18px}
 .eqbtns{position:absolute;left:0;right:0;top:720px;display:flex;justify-content:center;gap:18px}
@@ -506,3 +508,5 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .skin .si .wbspr{transform:scale(1.9);transform-origin:50% 62%}
 #ovEnd .dmg{position:static!important;left:auto;right:auto;top:auto;padding:0}
 #s-result .rinfo{left:36px;right:36px;gap:10px}#s-result .rinfo .stat{flex:0 1 auto;padding:6px 16px;font-size:20px;white-space:nowrap}#s-result .rew{top:856px}
+
+.rarebeam{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:9999;padding:18px 34px;border-radius:18px;text-align:center;color:#fff;font-weight:900;pointer-events:none;animation:rbIn 2.6s ease forwards;box-shadow:0 0 60px 20px rgba(255,210,90,.55)}.rarebeam b{display:block;font-size:40px;text-shadow:0 0 12px #000}.rarebeam span{font-size:22px}.rarebeam.g5{box-shadow:0 0 60px 20px rgba(76,255,154,.6)}.rarebeam.g6{box-shadow:0 0 70px 26px rgba(255,70,40,.7)}@keyframes rbIn{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}12%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
