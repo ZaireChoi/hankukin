@@ -25,7 +25,7 @@ function spawnNem(c) {
   if (c.peek) { e.peek = 1; e.nemInv = 1; e.peekHold = 1; G.queue.push({ t: 4.8, fn: () => nemRetreat(e) }); }
   return e;
 }
-function nemRetreat(e) { if (!e || e.leaving) return; e.nemInv = 1; e.leaving = 2.4; G.slowmo = 0.9; G.flash = { c: '30,0,25', t: 1.6 }; FX.shake = 0.6; sfx('ult'); nemSay(e.peek ? 'peek' : (G.ch >= 22 ? 'r22' : 'r14'), 3.6); FX.ring(e.x, e.y, 260, '120,40,160', 0.8, 12); }
+function nemRetreat(e) { if (!e || e.leaving) return; e.nemInv = 1; e.leaving = 2.4; G.slowmo = 0.9; G.flash = { c: '30,0,25', t: 1.6 }; FX.shake = 0.6; sfx('nemOut'); nemSay(e.peek ? 'peek' : (G.ch >= 22 ? 'r22' : 'r14'), 3.6); FX.ring(e.x, e.y, 260, '120,40,160', 0.8, 12); }
 function finalTick(dt) { const e = G.bossRef; if (!e || e.dead || e.nem || G.ch !== D.CHAPTERS.length) return;
   if (!e.p2 && e.hp <= e.max * 0.5) { e.p2 = 1; e.nemInv = 1; G.queue.push({ t: 2.2, fn: () => { e.nemInv = 0; } }); e.sc *= 1.2; e.hh *= 1.2; e.r *= 1.2; e.hp = Math.min(e.max, e.hp + e.max * 0.1); e.dmgK = (e.dmgK || 1) * 1.3; e.sp *= 1.2;
     G.slowmo = 1.0; G.flash = { c: '90,0,70', t: 1.8 }; FX.shake = 1; FX.ring(e.x, e.y, 420, '200,60,255', 1.2, 16); FX.smoke(e.x, e.y - 60, 20, '50,10,60', 36, 90); sfx('warn'); vib([200, 100, 200]);
@@ -148,38 +148,73 @@ function drawSprite(key, x, y, o) {
   ctx.restore(); return true;
 }
 
-/* ---------- 효과음: 파일 없이 짧게 합성 ---------- */
-let AC = null, sfxOn = true; const sfxLast = {};
+/* ---------- 효과음: 파일 없이 합성 (손맛 개편 11-27: 무게감 타격·치명타·쓰러짐 3종·북·징·숙적 웃음, 겹침 제한) ---------- */
+let AC = null, sfxOn = true, SFXG = null, sfxVoices = 0; const sfxLast = {}, NOISEB = {};
+const SFXV = () => { try { const v = parseFloat(localStorage.getItem('kz_sfxv')); return isNaN(v) ? 1 : v; } catch (e) { return 1; } };
+function acInit() { if (AC) return AC; AC = new (window.AudioContext || window.webkitAudioContext)(); const cp = AC.createDynamicsCompressor(); cp.threshold.value = -14; cp.knee.value = 10; cp.ratio.value = 6; cp.attack.value = 0.003; cp.release.value = 0.15; cp.connect(AC.destination); SFXG = AC.createGain(); SFXG.gain.value = SFXV(); SFXG.connect(cp); return AC; }
+['pointerdown', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { try { acInit(); if (AC.state === 'suspended' && !document.hidden) AC.resume(); } catch (e) {} }, { capture: true, passive: true }));
+document.addEventListener('visibilitychange', () => { try { if (!AC) return; if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) {} });
+window.KZSFX = { play: (k, v) => sfx(k, v), vol: v => { try { localStorage.setItem('kz_sfxv', v); if (SFXG) SFXG.gain.value = +v; } catch (e) {} } };
+const SFX_GAP = { die: 0.07, thud: 0.06, hit: 0.05, crit: 0.09, shoot: 0.045, gun: 0.06, boom: 0.09, zap: 0.06, coin: 0.05, elite: 0.6, boss: 1.5, nemIn: 2, nemOut: 2, legend: 1 };
 function sfx(kind, vol) {
   if (!sfxOn) return;
   try {
-    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
-    const now = AC.currentTime; if (sfxLast[kind] && now - sfxLast[kind] < 0.045) return; sfxLast[kind] = now;
-    const g = AC.createGain(); g.connect(AC.destination); const v = (vol || 1) * 0.16;
-    const noise = (dur, f, q) => { const b = AC.createBuffer(1, AC.sampleRate * dur, AC.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length); const s = AC.createBufferSource(); s.buffer = b; const fl = AC.createBiquadFilter(); fl.type = 'bandpass'; fl.frequency.value = f; fl.Q.value = q || 1; s.connect(fl); fl.connect(g); s.start(now); };
-    const tone = (f1, f2, dur, type) => { const o = AC.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f1, now); o.frequency.exponentialRampToValueAtTime(f2, now + dur); o.connect(g); o.start(now); o.stop(now + dur); };
-    if (kind === 'shoot') { g.gain.setValueAtTime(v * 0.5, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.08); noise(0.08, 2400, 2); }
-    else if (kind === 'gun') { g.gain.setValueAtTime(v * 1.2, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.2); noise(0.2, 900, 0.8); }
-    else if (kind === 'boom') { g.gain.setValueAtTime(v * 1.6, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.5); noise(0.5, 180, 0.7); tone(120, 40, 0.4); }
-    else if (kind === 'zap') { g.gain.setValueAtTime(v * 0.9, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.25); noise(0.25, 3200, 0.5); tone(900, 200, 0.2, 'sawtooth'); }
-    else if (kind === 'hit') { g.gain.setValueAtTime(v * 0.35, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.06); noise(0.06, 1400, 1.5); }
-    else if (kind === 'coin') { g.gain.setValueAtTime(v * 0.4, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.15); tone(1400, 2100, 0.12, 'triangle'); }
-    else if (kind === 'gem') { g.gain.setValueAtTime(v * 0.25, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.1); tone(1800, 2400, 0.08, 'sine'); }
-    else if (kind === 'level') { g.gain.setValueAtTime(v * 0.8, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.6); tone(520, 1040, 0.25, 'triangle'); tone(780, 1560, 0.5, 'sine'); }
-    else if (kind === 'warn') { g.gain.setValueAtTime(v * 0.9, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.6); tone(220, 180, 0.6, 'square'); }
-    else if (kind === 'ult') { g.gain.setValueAtTime(v * 1.4, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.9); tone(200, 900, 0.5, 'sawtooth'); noise(0.9, 600, 0.6); }
-    else if (kind === 'build') { g.gain.setValueAtTime(v * 0.8, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.3); noise(0.3, 500, 1); tone(300, 600, 0.2, 'triangle'); }
+    acInit(); if (AC.state !== 'running') return;
+    const now = AC.currentTime, gap = SFX_GAP[kind] || 0.045;
+    if (sfxLast[kind] && now - sfxLast[kind] < gap) return; sfxLast[kind] = now;
+    const big = /boss|nem|elite|legend|ult|level|warn/.test(kind);
+    if (sfxVoices > 14 && !big) return;   /* 동시에 너무 많으면 작은 소리는 건너뜀 */
+    const duck = big ? 1 : 1 / (1 + Math.max(0, sfxVoices - 4) * 0.12);
+    const out = AC.createGain(); out.connect(SFXG); const v = Math.max(0.001, (vol || 1) * 0.24 * duck);
+    let end = 0.1;
+    const env = (g, pk, t0, a, d) => { g.gain.setValueAtTime(0.0001, now + t0); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, pk), now + t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, now + t0 + a + d); end = Math.max(end, t0 + a + d); };
+    const nbuf = dur => { const k = Math.max(1, Math.ceil(dur * 10)); if (NOISEB[k]) return NOISEB[k]; const b = AC.createBuffer(1, Math.round(AC.sampleRate * k / 10), AC.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return (NOISEB[k] = b); };
+    const noise = (t0, dur, type, f, q, pk, a, f2) => { const s = AC.createBufferSource(); s.buffer = nbuf(dur + 0.05); const fl = AC.createBiquadFilter(); fl.type = type; fl.frequency.setValueAtTime(f, now + t0); if (f2) fl.frequency.exponentialRampToValueAtTime(f2, now + t0 + dur); fl.Q.value = q || 1; const g = AC.createGain(); s.connect(fl); fl.connect(g); g.connect(out); env(g, pk, t0, a || 0.003, dur); s.start(now + t0); s.stop(now + t0 + dur + 0.06); };
+    const tone = (t0, f1, f2, dur, type, pk, a) => { const o = AC.createOscillator(); o.type = type || 'sine'; o.frequency.setValueAtTime(f1, now + t0); o.frequency.exponentialRampToValueAtTime(Math.max(20, f2), now + t0 + dur); const g = AC.createGain(); o.connect(g); g.connect(out); env(g, pk, t0, a || 0.004, dur); o.start(now + t0); o.stop(now + t0 + dur + 0.06); };
+    const drum = (t0, f, dur, pk) => { tone(t0, f * 2.3, f, dur, 'sine', pk, 0.002); noise(t0, Math.min(0.09, dur), 'lowpass', 900, 0.7, pk * 0.45); };
+    const gong = (t0, f, dur, pk) => { [1, 1.48, 2.02, 2.74, 3.3].forEach((m, i) => tone(t0, f * m * 1.004, f * m * 0.996, dur * (1 - i * 0.15), 'sine', pk / (1 + i * 0.9), 0.012)); noise(t0, 0.3, 'bandpass', f * 4, 1, pk * 0.22); };
+    const bell = (t0, f, dur, pk) => { [1, 2, 2.76, 5.4].forEach((m, i) => tone(t0, f * m, f * m, dur / (1 + i * 0.6), 'sine', pk / (1 + i * 1.2), 0.002)); };
+    const laugh = (t0, f, n, pk) => { for (let i = 0; i < n; i++) { tone(t0 + i * 0.15, f - i * 6, f * 0.8 - i * 6, 0.11, 'triangle', pk, 0.01); noise(t0 + i * 0.15, 0.1, 'bandpass', 700, 2, pk * 0.35, 0.01); } };
+    switch (kind) {
+      case 'shoot': tone(0, 950, 320, 0.07, 'triangle', v * 0.45); noise(0, 0.06, 'highpass', 3200, 0.7, v * 0.3); break;
+      case 'gun': noise(0, 0.03, 'highpass', 2200, 0.5, v * 1.1); noise(0, 0.22, 'lowpass', 1400, 0.7, v * 0.8, 0.003, 260); tone(0, 190, 60, 0.12, 'sine', v * 0.55); break;
+      case 'boom': tone(0, 115, 34, 0.45, 'sine', v * 1.5); noise(0, 0.55, 'lowpass', 1500, 0.6, v * 1.0, 0.004, 110); noise(0, 0.05, 'highpass', 2500, 0.6, v * 0.45); break;
+      case 'zap': noise(0, 0.2, 'bandpass', 3200, 0.6, v * 0.6); tone(0, 1300, 280, 0.16, 'sawtooth', v * 0.22); break;
+      case 'hit': noise(0, 0.05, 'bandpass', 1400, 1.4, v * 0.4); tone(0, 210, 90, 0.05, 'sine', v * 0.3); break;
+      case 'thud': tone(0, 160, 52, 0.11, 'sine', v * 0.95); noise(0, 0.07, 'lowpass', 1700, 0.8, v * 0.7, 0.002, 380); noise(0, 0.02, 'bandpass', 3000, 1, v * 0.28); break;
+      case 'crit': tone(0, 170, 48, 0.14, 'sine', v * 1.1); noise(0, 0.08, 'lowpass', 2000, 0.8, v * 0.8, 0.002, 400); tone(0.01, 2650, 2450, 0.2, 'triangle', v * 0.42); tone(0.01, 3950, 3700, 0.14, 'sine', v * 0.25); noise(0, 0.08, 'highpass', 5200, 0.7, v * 0.3); break;
+      case 'die': { const r = Math.random(); if (r < 0.34) { noise(0, 0.16, 'bandpass', 750, 1.2, v * 0.55, 0.004, 240); tone(0, 230, 70, 0.14, 'sine', v * 0.45); } else if (r < 0.67) { tone(0, 190, 95, 0.2, 'triangle', v * 0.32, 0.01); noise(0, 0.12, 'lowpass', 1100, 0.7, v * 0.4); } else { noise(0, 0.22, 'lowpass', 950, 0.6, v * 0.55, 0.003, 200); tone(0, 95, 45, 0.12, 'sine', v * 0.5); } break; }
+      case 'coin': tone(0, 1400, 2100, 0.12, 'triangle', v * 0.4); tone(0.06, 2100, 2100, 0.1, 'sine', v * 0.2); break;
+      case 'gem': tone(0, 1800, 2400, 0.08, 'sine', v * 0.28); break;
+      case 'level': [523, 587, 659, 784, 880].forEach((f, i) => bell(i * 0.06, f, 0.45, v * 0.38)); break;   /* 오음 음계 */
+      case 'card': [659, 784, 1046].forEach((f, i) => bell(i * 0.05, f, 0.3, v * 0.32)); break;
+      case 'warn': tone(0, 230, 200, 0.16, 'triangle', v * 0.6); tone(0.22, 230, 200, 0.16, 'triangle', v * 0.6); drum(0, 80, 0.25, v * 0.6); break;
+      case 'build': noise(0, 0.05, 'lowpass', 900, 0.8, v * 0.7); noise(0.11, 0.05, 'lowpass', 900, 0.8, v * 0.7); tone(0.2, 520, 780, 0.16, 'triangle', v * 0.4); break;
+      case 'ult': { const r = Math.random(); noise(0, 0.5, 'bandpass', 300, 0.8, v * 0.7, 0.12, 2600); if (r < 0.34) gong(0.3, 175, 1.3, v * 0.8); else if (r < 0.67) { drum(0.28, 60, 0.4, v * 1.3); noise(0.3, 0.6, 'lowpass', 2200, 0.5, v * 0.8, 0.005, 150); } else [392, 523, 659, 784].forEach((f, i) => bell(0.28 + i * 0.03, f, 0.8, v * 0.35)); break; }
+      case 'elite': drum(0, 72, 0.38, v * 1.7); drum(0.2, 62, 0.42, v * 1.5); break;
+      case 'boss': drum(0, 55, 0.5, v * 2); drum(0.24, 55, 0.5, v * 1.8); drum(0.48, 50, 0.6, v * 2.1); gong(0.55, 130, 2.4, v * 1.0); break;
+      case 'nemIn': gong(0, 68, 2.6, v * 0.9); noise(0, 1.9, 'bandpass', 380, 0.6, v * 0.45, 0.6, 950); laugh(0.5, 150, 5, v * 0.7); break;
+      case 'nemOut': noise(0, 1.6, 'bandpass', 900, 0.6, v * 0.45, 0.3, 300); [0, 0.55, 1.1].forEach((t, i) => laugh(t, 160 - i * 10, 4, v * 0.7 / (1 + i * 1.1))); break;
+      case 'legend': bell(0, 1046, 1.6, v * 0.6); bell(0.12, 1568, 1.4, v * 0.5); bell(0.24, 2093, 1.2, v * 0.4); noise(0, 1.2, 'highpass', 6000, 0.5, v * 0.18, 0.3); break;
+      default: return;
+    }
+    sfxVoices++; setTimeout(() => { sfxVoices = Math.max(0, sfxVoices - 1); }, (end + 0.1) * 1000);
   } catch (e) {}
 }
-/* 배경음 */
+/* 배경음: 낮↔밤↔우두머리 서서히 바꾸기, 장 구간마다 빠르기 조금 다르게, 음량 설정 */
 const BGM = {}; let bgmCur = '', bgmOn = true;
-['bgm_lobby', 'bgm_battle', 'bgm_boss', 'sting_victory', 'sting_defeat'].forEach(k => { try { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; a.loop = k.indexOf('bgm') === 0; a.volume = a.loop ? 0.45 : 0.7; BGM[k] = a; } catch (e) {} });
+const BGMV = () => { try { const v = parseFloat(localStorage.getItem('kz_bgmv')); return isNaN(v) ? 1 : v; } catch (e) { return 1; } };
+['bgm_lobby', 'bgm_battle', 'bgm_boss', 'sting_victory', 'sting_defeat'].forEach(k => { try { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; a.loop = k.indexOf('bgm') === 0; a.volume = (a.loop ? 0.45 : 0.7) * BGMV(); BGM[k] = a; } catch (e) {} });
+window.KZBGMV = v => { try { localStorage.setItem('kz_bgmv', v); for (const n in BGM) BGM[n].volume = (BGM[n].loop ? 0.45 : 0.7) * v; } catch (e) {} };
+function bgmFade(a, to, ms, done) { clearInterval(a._fd); const st = a.volume, t0 = performance.now(); a._fd = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / ms); try { a.volume = Math.max(0, Math.min(1, st + (to - st) * k)); } catch (e) {} if (k >= 1) { clearInterval(a._fd); if (done) done(); } }, 50); }
 function setBgm(k) {
   if (!bgmOn) k = '';
   if (k === bgmCur) return; bgmCur = k;
-  for (const n in BGM) if (BGM[n].loop) { if (n === k) { try { BGM[n].currentTime = 0; const p = BGM[n].play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} } else BGM[n].pause(); }
+  const start = () => { if (bgmCur !== k || !k || !BGM[k]) return; const a = BGM[k]; try { const rk = G && G.ch > 20 ? 1.07 : G && G.ch > 10 ? 1.035 : 1; a.playbackRate = k === 'bgm_battle' ? rk : 1; a.preservesPitch = !(G && G.ch > 20); a.currentTime = 0; a.volume = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); bgmFade(a, 0.45 * BGMV(), 1100); } catch (e) {} };
+  const old = Object.keys(BGM).map(n => BGM[n]).filter(a => a.loop && !a.paused && a !== BGM[k]);
+  if (old.length) { let left = old.length; old.forEach(a => bgmFade(a, 0, 650, () => { a.pause(); if (--left === 0) start(); })); } else start();
 }
-function sting(k) { const a = BGM[k]; if (!a || !bgmOn) return; try { a.currentTime = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+function sting(k) { const a = BGM[k]; if (!a || !bgmOn) return; try { a.currentTime = 0; a.volume = 0.7 * BGMV(); const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
 
 /* ---------- 상태 ---------- */
 let G = null, WORLD = null;
@@ -382,6 +417,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (e.elite || e.boss) dmg *= 1 + 0.25 * fxN('eliteDmg25');
   if (e.ward > 0) { dmg *= 0.3; if (Math.random() < 0.3) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 2, '170,90,230', 0.2, 3); }
   e.hp -= dmg; e.hitT = 0.09; e.squash = 1;
+  if (!src || src === 'player') { if (crit && G.t - (G.hsT || -9) > 0.25) { G.hsT = G.t; sfx('crit'); G.freezeT = Math.max(G.freezeT || 0, 0.04); } else sfx('thud', 0.8); }   /* 처용 타격 손맛 */
   G.dmg[src || 'player'] += dmg;
   if (src === 'player' && G.fx && G.fx.ls > 0 && G.player && G.player.hp > 0) G.player.hp = Math.min(G.player.max, G.player.hp + dmg * G.fx.ls / 100);   /* 피흡 */
   if (e.boss) G.bossDmg += dmg;
@@ -447,7 +483,7 @@ function killEnemy(e) {
   e.dead = true;
   if (e.mut === 'plague' && G.pzs) { G.pzs.push({ x: e.x, y: e.y, r: 62, t: 5, life: 5, tick: 0 }); FX.smoke(e.x, e.y, 5, '110,200,60', 16, 40); }
   G.kills++;
-  const d = EN[e.type], big = e.elite || e.boss;
+  const d = EN[e.type], big = e.elite || e.boss; sfx('die', big ? 1.1 : 0.7);
   if (!G.low && (big || Math.random() < 0.35)) { const n = big ? 6 : 1; for (let i = 0; i < n; i++) FX.p({ kind: 'glow', x: e.x + rnd(-8, 8), y: e.y - e.hh * 0.6, vx: rnd(-12, 12), vy: -rnd(70, 120), life: rnd(0.7, 1.1), s: big ? 18 : 11, s2: 2, c: big ? '255,210,120' : '150,240,200' }); }
   const xpM = (1 + 0.15 * fxN('xp15')) * (G.mode === 'xp' ? 3 : 1);
   G.orbs.push({ x: e.x, y: e.y, v: (d.xp || 1) * (big ? 4 : 1) * xpM, t: 0, vx: rnd(-60, 60), vy: rnd(-80, -20), z: 0, vz: 160 });
@@ -2562,7 +2598,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   if (G && !paused && G.phase !== 'level' && G.phase !== 'guard') update(dt);
   else if (G && G.phase === 'guard') { FX.update(dt); }
-  if (G && stage.style.display !== 'none') { setBgm(G.phase === 'win' || G.phase === 'lose' ? '' : (G.phase === 'day' || G.phase === 'guard') ? 'bgm_lobby' : (G.bossRef && !G.bossRef.dead ? 'bgm_boss' : 'bgm_battle')); draw(); }
+  if (G && stage.style.display !== 'none') { if (G.banner && G.banner !== G._lbn) { G._lbn = G.banner; const bs = String(G.banner.s || ''); if (/숙적|NEMESIS/.test(bs)) sfx('nemIn'); else if (/우두머리|결전|보스|Boss|BOSS/.test(bs)) sfx('boss'); else if (G.banner.kind === 'elite') sfx('elite'); } setBgm(G.phase === 'win' || G.phase === 'lose' ? '' : (G.phase === 'day' || G.phase === 'guard') ? 'bgm_lobby' : (G.bossRef && !G.bossRef.dead ? 'bgm_boss' : 'bgm_battle')); draw(); }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
