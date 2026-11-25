@@ -35,7 +35,7 @@ function finalTick(dt) { const e = G.bossRef; if (!e || e.dead || e.nem || G.ch 
 function nemTick(dt) { const e = G.nem; if (!e) return;
   if (e.leaving) { e.leaving -= dt; e.y -= 40 * dt; if (Math.random() < dt * 20) FX.smoke(e.x + rnd(-60, 60), e.y - rnd(20, 200), 2, '40,20,50', 24, 60);
     if (e.leaving <= 0) { FX.smoke(e.x, e.y - 80, 18, '40,20,50', 34, 90); G.enemies = G.enemies.filter(o => o !== e); G.nem = null; G.nemDone = 1; if (G.bossRef === e) G.bossRef = null;
-      if (!e.peek) { G.gold += 300; G.banner = { s: window.IS_EN ? 'The nemesis fled! +300 coins' : '숙적이 물러났다! 보상 엽전 +300', t: 2.6, kind: 'win' }; G.queue.push({ t: 2.8, fn: () => heroSay(0) }); } }
+      if (!e.peek) { G.nemBox = (G.nemBox || 0) + 1; G.gold += 300; G.banner = { s: window.IS_EN ? 'The nemesis fled! +300 coins' : '숙적이 물러났다! 보상 엽전 +300', t: 2.6, kind: 'win' }; G.queue.push({ t: 2.8, fn: () => heroSay(0) }); } }
     return; }
   if (!e.peek && e.hp <= e.max * G.nemAt) { nemRetreat(e); return; }
   if (e.peek) return;
@@ -1446,7 +1446,7 @@ function comps(dt) {
         c.atkK = 'atk'; if (c.cd <= 0) { c.cd = 0.75; c.fire = 0.45; G.queue.push({ t: 0.22, fn: () => { for (const o of G.enemies) { const dd = Math.hypot(o.x - c.x, o.y - c.y); if (dd < 96 + o.r && Math.abs(((Math.atan2(o.y - c.y, o.x - c.x) - a + Math.PI * 3) % TAU) - Math.PI) < 0.9) hurtEnemy(o, dm * 1.6, 'hero', { kb: 26, kx: c.x, ky: c.y }); } FX.slash ? FX.slash(c.x + Math.cos(a) * 46, c.y - 24 + Math.sin(a) * 30, a, '255,240,200') : FX.hit(c.x + Math.cos(a) * 50, c.y - 26, '255,240,200', true); FX.shake = Math.max(FX.shake || 0, 0.08); } }); }
       } else {
         c.atkK = 'atk2'; c.fire = Math.max(c.fire, 0.15);
-        const mx = c.x + Math.cos(a) * 40, my = c.y - 30 + Math.sin(a) * 14; /* 네 발로 엎드려 뿜는 입 위치(11-27) */
+        const mx = c.x + Math.cos(a) * 34, my = c.y - 40 + Math.sin(a) * 18;
         for (let i = 0; i < 2; i++) { const aa = a + rnd(-0.22, 0.22), v = rnd(280, 380); FX.p({ kind: 'glow', x: mx, y: my, vx: Math.cos(aa) * v, vy: Math.sin(aa) * v, life: C.range / v * 0.9, s: rnd(8, 14), s2: rnd(22, 32), c: Math.random() < 0.35 ? '255,230,130' : '255,100,30', hard: 1, drag: 0.6 }); }
         if (c.cd <= 0) { c.cd = 0.2; for (const o of G.enemies) { const dd = Math.hypot(o.x - c.x, o.y - c.y); if (dd < C.range + o.r && Math.abs(((Math.atan2(o.y - c.y, o.x - c.x) - a + Math.PI * 3) % TAU) - Math.PI) < 0.4) hurtEnemy(o, dm * 0.2, 'hero', { acc: 1 }); } }
       }
@@ -1853,7 +1853,7 @@ function finish() {
   const res = { win: G.phase === 'win', chapter: G.ch, wave: Math.min(G.night + 1, G.nights.length), waves: G.nights.length,
     dmg: { skill: Math.round(G.dmg.skill), hero: Math.round(G.dmg.hero), building: Math.round(G.dmg.building), player: Math.round(G.dmg.player) },
     mode: G.mode, stars: G.missions ? G.missions.filter(m => m.ok()).length : null, bossDmg: Math.round(G.bossDmg), kills: G.kills, gold: G.gold, time: Math.round((performance.now() - G.startT) / 1000),
-    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm, pairs: Object.keys(G.pairs || {}) };
+    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm, pairs: Object.keys(G.pairs || {}), nemBox: G.nemBox || 0 };
   try { res.log = logFinish(res); } catch (e) { console.warn(e); }
   if (typeof JZB.onEnd === 'function' && JZB.onEnd !== defaultEnd) JZB.onEnd(res); else defaultEnd(res);
 }
