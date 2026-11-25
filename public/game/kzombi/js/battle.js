@@ -1862,7 +1862,7 @@ function circle(x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }
 function rrPath(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
 function shadowE(x, y, rx, a) { ctx.fillStyle = 'rgba(10,8,6,' + (a || 0.32) + ')'; ctx.beginPath(); ctx.ellipse(x, y, rx, rx * 0.38, 0, 0, TAU); ctx.fill(); }
 function hpBar(x, y, w, h, v, col, back) {
-  { const zs = ctx.getTransform().a / K; if (zs < 0.99) { const f = Math.min(3.2, 1.4 / zs); x += w / 2 - w * f / 2; w *= f; y -= h * (f - 1); h *= f; } }
+  { const zs = ctx.getTransform().a / K; if (zs < 0.99) { const f = Math.min(3.2, 1.4 / zs), fw = Math.min(1.7, f); x += w / 2 - w * fw / 2; w *= fw; y -= h * (f - 1); h *= f; } }   /* 멀리 볼 때 두께는 키우되 폭은 덜 넓게(사용자 11-27) */
   rrPath(x - 2, y - 2, w + 4, h + 4, (h + 4) / 2); ctx.fillStyle = 'rgba(10,8,12,.8)'; ctx.fill();
   if (v > 0) { rrPath(x, y, Math.max(h, w * clamp(v, 0, 1)), h, h / 2); ctx.fillStyle = col; ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.3)'; ctx.fillRect(x + 2, y + 1, Math.max(0, w * clamp(v, 0, 1) - 4), h * 0.35); }
 }
@@ -2041,7 +2041,7 @@ function drawTurret(t, day) {
   if (!ok) { rrPath(x - 14, y - 40, 28, 56, 6); ctx.fillStyle = '#7a5a34'; ctx.fill(); }
   if (t.fire > 0 && (d.kind === 'shot' || d.kind === 'beam' || d.kind === 'chain')) { ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - d.top * 0.78, 26, d.kind === 'chain' ? '200,140,255' : '255,160,80', t.fire / 0.12, 1); ctx.globalCompositeOperation = 'source-over'; }
   for (let i = 0; i < t.lv; i++) { const sx = x - (t.lv - 1) * 8 + i * 16; ctx.font = '900 18px sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#3a2408'; ctx.strokeText('★', sx, y + 40); ctx.fillStyle = '#ffd34a'; ctx.fillText('★', sx, y + 40); }
-  if (!day && t.hp < t.max) hpBar(x - 22, y - d.top - 6, 44, 6, t.hp / t.max, '#7ee060');
+  { const TH = ((SPR[d.spr] && SPR[d.spr].height) || d.top) * (1 + 0.07 * Math.min(4, (t.lv || 1) - 1)); if (!day && t.hp < t.max) hpBar(x - 22, y + 14 - TH - 8, 44, 6, t.hp / t.max, '#7ee060'); }
   { const PP = pairOfTur(t.type); if (PP) { const bx = x + 24, by = y - d.top - 18 + Math.sin(G.t * 3 + x) * 2; ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, bx, by, 26, '255,215,110', 0.5); ctx.restore(); circle(bx, by, 15); ctx.fillStyle = '#2a1a08'; ctx.fill(); if (!drawPort(PP.hero, bx, by, 13, '#ffd34a')) { ctx.fillStyle = '#ffd34a'; circle(bx, by, 11); ctx.fill(); } txt('짝', bx + 14, by + 12, 13, '#ffd34a', 'center', '#2a1408', 3); } }
   if (t.seal > 0) { ctx.fillStyle = '#ffe680'; ctx.fillRect(x - 8, y - 46, 16, 26); ctx.strokeStyle = '#a3202a'; ctx.lineWidth = 2; ctx.strokeRect(x - 8, y - 46, 16, 26); }
 }
@@ -2080,8 +2080,9 @@ function drawPlayer(p) {
   const ok = drawSprite(G.pkey || 'player', p.x + rec, p.y + 4 - rideY, { anim: pan, at: pat, dir: dir8(pdir), t: G.t, flip: p.flip, mode: p.hitT > 0 ? 'white' : null, sy: 1 + Math.sin(G.t * (p.moving ? 16 : 3)) * 0.015 });
   if (!ok) { circle(p.x, p.y - 30, 22); ctx.fillStyle = '#f0e8d8'; ctx.fill(); ctx.fillStyle = '#17171a'; ctx.fillRect(p.x - 26, p.y - 56, 52, 5); ctx.fillRect(p.x - 12, p.y - 70, 24, 15); }
   if (p.muzzle > 0) { ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, p.x + Math.cos(p.face) * 30, p.y - 46 + Math.sin(p.face) * 30, 22, '255,220,140', 1, 1); ctx.globalCompositeOperation = 'source-over'; }
-  hpBar(p.x - 34, p.y - 108, 68, 8, p.hp / p.max, '#5ee05a');
-  ctx.font = '900 16px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#0c1416'; ctx.strokeText('처용', p.x, p.y - 120); ctx.fillStyle = '#fff'; ctx.fillText('처용', p.x, p.y - 120);
+  const PH = (HOV[G.pkey || 'player'] || HOV.player || 118) * 0.93; /* 체력바를 머리 위로(사용자 11-27: 얼굴에 붙던 문제) */
+  hpBar(p.x - 26, p.y - PH - 12, 52, 7, p.hp / p.max, '#5ee05a');
+  ctx.font = '900 16px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#0c1416'; ctx.strokeText('처용', p.x, p.y - PH - 30); ctx.fillStyle = '#fff'; ctx.fillText('처용', p.x, p.y - PH - 30);
 }
 function drawComp(c) {
   if (!c.active) return;
