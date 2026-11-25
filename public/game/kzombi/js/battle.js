@@ -202,7 +202,7 @@ function newGame(cfg) {
   WORLD = WD.build(C.theme, LAY);
   FX.reset();
   const wp = WEAPON[cfg.weapon] || WEAPON.bow;
-  const fx = IS.fx || {};
+  const fx = IS.fx || {}; if (cfg.afx) for (const k in cfg.afx) fx[k] = (fx[k] || 0) + cfg.afx[k];   /* 장비 부가 옵션·고유 효과(meta afxSum) */
   const SB = cfg.sets || {};
   if ((SB.mugwan || 0) >= 4) fx.dmgCut10 = (fx.dmgCut10 || 0) + 1; if ((SB.seonbi || 0) >= 2) fx.xp15 = (fx.xp15 || 0) + 1; if ((SB.seonbi || 0) >= 4) fx.reroll1 = (fx.reroll1 || 0) + 1; if ((SB.cheoyong || 0) >= 4) fx.ultCd20 = (fx.ultCd20 || 0) + 1;
   const hpMax = Math.round(120 * hp0 * ((SB.mugwan || 0) >= 2 ? 1.1 : 1) * (1 + 0.06 * (cfg.heroLv - 1)));
@@ -383,6 +383,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (e.ward > 0) { dmg *= 0.3; if (Math.random() < 0.3) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 2, '170,90,230', 0.2, 3); }
   e.hp -= dmg; e.hitT = 0.09; e.squash = 1;
   G.dmg[src || 'player'] += dmg;
+  if (src === 'player' && G.fx && G.fx.ls > 0 && G.player && G.player.hp > 0) G.player.hp = Math.min(G.player.max, G.player.hp + dmg * G.fx.ls / 100);   /* 피흡 */
   if (e.boss) G.bossDmg += dmg;
   if (fxN('execute') && !e.elite && !e.boss && e.hp > 0 && e.hp < e.max * 0.1) { e.hp = 0; FX.num(e.x, e.y - e.hh, '처형', false, '#ffd04a'); }
   if (src === 'player' && e.hp <= 0) e.byPlayer = true;
