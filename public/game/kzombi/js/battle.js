@@ -1071,7 +1071,8 @@ function updAllies(dt) {
 function drawAlly(a) {
   if (a.style === 'soldier') {
     const S = D.SOLDIER[a.type]; shadowE(a.x, a.y + 2, 14, 0.3);
-    const ok = drawSprite(a.spr, a.x, a.y, { anim: a.hitT > 0 ? 'hit' : a.atk > 0 ? 'atk' : a.mv ? 'walk' : 'idle', at: a.atk > 0 ? 1 - a.atk / 0.3 : null, dir: dir8(a.fdir), t: G.t + a.rx, h: 60, mode: a.hitT > 0 ? 'white' : null });
+    const spS = SPR[a.spr], still = spS && spS.still, gal = still && (a.mv || a.atk > 0) ? Math.abs(Math.sin(G.t * 11 + a.rx)) * 5 : (still ? Math.sin(G.t * 2 + a.rx) * 1 : 0); /* 기마병: 정지 그림이라 코드로 달리는 흔들림 */
+    const ok = drawSprite(a.spr, a.x, a.y - gal, { anim: a.hitT > 0 ? 'hit' : a.atk > 0 ? 'atk' : a.mv ? 'walk' : 'idle', at: a.atk > 0 ? 1 - a.atk / 0.3 : null, dir: dir8(a.fdir), t: G.t + a.rx, h: (spS && spS.height) || 60, mode: a.hitT > 0 ? 'white' : null });
     if (!ok) { const bob = a.mv ? Math.abs(Math.sin(G.t * 12 + a.rx)) * 3 : 0; rrPath(a.x - 11, a.y - 34 - bob, 22, 30, 8); ctx.fillStyle = 'rgb(' + S.col + ')'; ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 2.5; ctx.stroke(); circle(a.x, a.y - 44 - bob, 11); ctx.fillStyle = '#f2d2b0'; ctx.fill(); ctx.stroke(); ctx.fillStyle = '#17171a'; ctx.fillRect(a.x - 14, a.y - 56 - bob, 28, 4); ctx.fillRect(a.x - 7, a.y - 64 - bob, 14, 9); if (a.elite) { ctx.fillStyle = '#ffd34a'; ctx.fillRect(a.x - 11, a.y - 22 - bob, 22, 4); } txt(S.n[0], a.x, a.y - 20 - bob, 13, '#fff', 'center', '#1a1410', 3); }
     if (a.hp < a.max) hpBar(a.x - 14, a.y - 74, 28, 4, a.hp / a.max, '#6fdc6a');
     return;
