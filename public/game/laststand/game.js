@@ -378,8 +378,8 @@ function buildPools() {
   imEB = instanced(new THREE.SphereGeometry(2.4, 12, 8), flatMat(), 280);
   imGem = instanced(new THREE.OctahedronGeometry(1.25), flatMat(), 420);
   // 검기: 날아가는 초승달(가운데가 앞으로 볼록)
-  imWave = instanced(new THREE.RingGeometry(5.4, 7.2, 22, 1, -Math.PI / 2 - 1.15, 2.3).rotateX(-Math.PI / 2).translate(0, 0, -6.3),
-    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .9, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }), 120);
+  imWave = instanced(new THREE.RingGeometry(4.4, 7.2, 26, 1, -Math.PI / 2 - 1.15, 2.3).rotateX(-Math.PI / 2).translate(0, 0, -6.3),
+    new THREE.MeshBasicMaterial({ map: arcTex(4.4 / 7.2, -Math.PI / 2 - 1.15, 2.3), color: 0xffffff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }), 120);
   // 미사일: ASCEND 마이크로 미사일 모델(머리 +Z, 길이 1) + 푸른 분사 불꽃
   imMsl = instanced(MODELS.msl.geo, new THREE.MeshLambertMaterial({ map: MODELS.msl.map, emissive: 0x223044, emissiveIntensity: 1 }), 80);
   imFlame = instanced(new THREE.ConeGeometry(.42, 1, 8).rotateX(-Math.PI / 2).translate(0, 0, -.5), addMat(0xffffff), 80);
@@ -387,7 +387,7 @@ function buildPools() {
   imMsl.material.color.setScalar(1.6);
   // 베기 잔상(반달 빛)
   for (let i = 0; i < 4; i++) {
-    const m = new THREE.Mesh(new THREE.RingGeometry(.8, 1, 40, 1, -Math.PI / 2 - 1.2, 2.4).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xbff6ff, transparent: true, opacity: 0, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
+    const m = new THREE.Mesh(new THREE.RingGeometry(.5, 1, 40, 2, -Math.PI / 2 - 1.2, 2.4).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: CRES_TEX ||= arcTex(.5, -Math.PI / 2 - 1.2, 2.4), color: 0xbff6ff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }));
     m.visible = false; m.renderOrder = 6; scene.add(m); cres.push({ m, t: 1, T: .17 });
   }
   // 전장 밖 바위·수정
@@ -408,7 +408,7 @@ function buildPools() {
 }
 
 // 베기 반달 빛: 칼이 지나간 자리에 잠깐 남는다
-const cres = []; let cresI = 0;
+const cres = []; let cresI = 0, CRES_TEX = null;
 function crescent(x, z, yaw, r, tilt, color) {
   const c = cres[cresI++ % cres.length]; if (!c) return;
   c.t = 0; c.r = r; c.m.visible = true; c.m.position.set(x, 9, z);
@@ -460,10 +460,10 @@ function updDecals(dt) {
 
 // 퍼지는 고리(충격파·폭발)
 const rings = [];
-const RING_GEO = new THREE.RingGeometry(.86, 1, 56).rotateX(-Math.PI / 2);
+const RING_GEO = new THREE.PlaneGeometry(2, 2).rotateX(-Math.PI / 2);
 function ring(x, z, r0, r1, dur, color) {
   let o = rings.find((q) => !q.on);
-  if (!o) { o = { m: new THREE.Mesh(RING_GEO, addMat(color)) }; o.m.renderOrder = 4; scene.add(o.m); rings.push(o); }
+  if (!o) { const mt = addMat(color); mt.map = TEX.ring || null; o = { m: new THREE.Mesh(RING_GEO, mt) }; o.m.renderOrder = 4; scene.add(o.m); rings.push(o); }
   o.m.material.color.set(color); o.on = true; o.t = 0; o.dur = dur; o.r0 = r0; o.r1 = r1; o.m.visible = true; o.m.position.set(x, 1.2, z);
 }
 function updRings(dt) {
@@ -513,6 +513,72 @@ function updParticles(dt) {
   }
   const g = points.geometry; g.attributes.position.needsUpdate = g.attributes.col.needsUpdate = g.attributes.size.needsUpdate = true;
   points.material.uniforms.sc.value = H * pixelRatio * 1.1;
+}
+
+// ───────── 다듬은 효과: 코드로 그린 빛 무늬(탄 꼬리·섬광·충격파·그을음·베기 빛·번지는 빛) ─────────
+const sstep = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+function paintTex(n, f) {
+  const c = document.createElement('canvas'); c.width = c.height = n; const g = c.getContext('2d'), im = g.createImageData(n, n), d = im.data;
+  for (let py = 0; py < n; py++) for (let px = 0; px < n; px++) {
+    const x = (px + .5) / n * 2 - 1, y = 1 - (py + .5) / n * 2, k = (py * n + px) * 4; d[k] = d[k + 1] = d[k + 2] = 255; d[k + 3] = clamp(f(x, y), 0, 1) * 255;
+  }
+  g.putImageData(im, 0, 0); return new THREE.CanvasTexture(c);
+}
+// 반달 빛: 바깥 가장자리가 가장 밝고, 양 끝은 가늘게 사라진다(링 도형의 평면 UV에 맞춤)
+function arcTex(rIn, th0, len) {
+  return paintTex(256, (x, y) => {
+    const r = Math.hypot(x, y); let a = Math.atan2(y, x) - th0; while (a < 0) a += TAU; while (a >= TAU) a -= TAU; const t = a / len; if (t > 1) return 0;
+    const s = (r - rIn) / (1 - rIn); if (s < 0 || s > 1) return 0;
+    return sstep(0, .75, s) * (1 - sstep(.88, 1, s)) * Math.pow(Math.sin(Math.PI * t), .55) * (.45 + .55 * s);
+  });
+}
+const TEX = {}, VX = { fl: [], fi: 0, mk: [], mi: 0, lt: [] }, WHITE = new THREE.Color(1, 1, 1), tmpC2 = new THREE.Color(), HSL = {};
+let imGlow = null, imSoft = null;
+function buildVFX() {
+  TEX.streak = paintTex(64, (x, y) => { const t = (1 - y) / 2; return Math.min(1, 1.25 * Math.exp(-x * x * 5.5)) * Math.pow(sstep(0, 1, t), 1.05) * (1 - sstep(.93, 1, t)); });
+  TEX.soft = paintTex(64, (x, y) => { const r = Math.hypot(x, y); return Math.exp(-r * r * 4.5) * (1 - sstep(.8, 1, r)); });
+  TEX.flare = paintTex(128, (x, y) => { const r = Math.hypot(x, y), ax = Math.abs(x), ay = Math.abs(y);
+    return (Math.exp(-r * r * 18) + .75 * (Math.exp(-ax * 34) * Math.exp(-ay * 3.2) + Math.exp(-ay * 34) * Math.exp(-ax * 3.2)) + .3 * Math.exp(-r * r * 4)) * (1 - sstep(.8, 1, r)); });
+  TEX.ring = paintTex(256, (x, y) => { const r = Math.hypot(x, y); return (Math.pow(sstep(.6, .95, r), 3) * .9 + .12 * sstep(.3, .9, r)) * (1 - sstep(.95, 1, r)); });
+  TEX.scorch = paintTex(128, (x, y) => { const r = Math.hypot(x, y), n = .78 + .13 * Math.sin(x * 9.1 + y * 3.3) + .09 * Math.sin(y * 13.7 - x * 6.9); return (1 - sstep(.2 * n, .95 * n, r)) * .95; });
+  TEX.splat = paintTex(128, (x, y) => { const r = Math.hypot(x, y), a = Math.atan2(y, x), rr = r / (.6 + .16 * Math.sin(a * 5 + 1.3) + .1 * Math.sin(a * 9 + .4) + .06 * Math.sin(a * 17));
+    return (1 - sstep(.5, 1, rr)) * (.82 + .18 * Math.sin(x * 4.1 + 1) * Math.sin(y * 3.7)) * (.7 + .3 * (1 - r)); });
+  const add = (map) => new THREE.MeshBasicMaterial({ map, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+  // 탄환 꼬리(바닥에 눈운 길쭉한 빛) · 부드러운 둥근 빛(적 탄·포탄·보석 밑)
+  imGlow = instanced(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2).translate(0, 0, -.42), new THREE.MeshBasicMaterial({ map: TEX.streak, transparent: true, opacity: .9, depthWrite: false, toneMapped: false }), 260); imGlow.renderOrder = 6;
+  imSoft = instanced(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), add(TEX.soft), 720); imSoft.renderOrder = 5;
+  // 총구·피격 섬광(네 갈래 빛)
+  for (let i = 0; i < 48; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: TEX.flare, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); s.visible = false; s.renderOrder = 8; scene.add(s); VX.fl.push({ s, t: 1, T: .1, sz: 1 }); }
+  // 땅에 남는 그을음·체액 자국
+  const mg = new THREE.PlaneGeometry(2, 2).rotateX(-Math.PI / 2);
+  for (let i = 0; i < 56; i++) { const m = new THREE.Mesh(mg, new THREE.MeshBasicMaterial({ map: TEX.scorch, transparent: true, depthWrite: false, color: 0x1a0f0a, opacity: 0 })); m.visible = false; m.renderOrder = 1; scene.add(m); VX.mk.push({ m, t: 1, T: 1, op: .5 }); }
+  // 폭발이 땅과 기체를 비추는 순간 빛(항상 같은 개수를 두어 셰이더를 다시 만들지 않게)
+  for (let i = 0; i < (MOBILE ? 1 : 3); i++) { const L = new THREE.PointLight(0xffffff, 0, 170, 1.15); L.position.set(0, -500, 0); scene.add(L); VX.lt.push({ L, t: 1, T: 1, I: 0 }); }
+}
+function flare(x, y, z, col, sz, T = .09) {
+  const f = VX.fl[VX.fi++ % VX.fl.length]; if (!f) return;
+  f.t = 0; f.T = T; f.sz = sz; f.s.position.set(x, y, z); f.s.material.color.set(col); f.s.material.rotation = rand(0, TAU); f.s.material.opacity = 1; f.s.scale.setScalar(sz * .6); f.s.visible = true;
+}
+function mark(x, z, r, col, kind = 'scorch', T = 6, op = .5, dark = 1) {
+  const o = VX.mk[VX.mi++ % VX.mk.length]; if (!o) return; const m = o.m;
+  o.t = 0; o.T = T; o.op = op; m.material.map = TEX[kind]; m.material.color.set(col); if (dark !== 1) m.material.color.multiplyScalar(dark);
+  m.position.set(x, .18 + (VX.mi % 12) * .006, z); m.rotation.y = rand(0, TAU); m.scale.setScalar(r); m.visible = true;
+}
+function lightFlash(x, y, z, col, I, T = .3) {
+  if (!VX.lt.length) return; const o = VX.lt.reduce((a, b) => (b.L.intensity < a.L.intensity ? b : a));
+  if (o.L.intensity > I) return; o.t = 0; o.T = T; o.I = I; o.L.color.set(col); o.L.position.set(x, y, z); o.L.intensity = I;
+}
+function updVFX(dt) {
+  for (const f of VX.fl) { if (!f.s.visible) continue; f.t += dt; const k = f.t / f.T; if (k >= 1) { f.s.visible = false; continue; } f.s.scale.setScalar(f.sz * (.6 + .7 * k)); f.s.material.opacity = 1 - k * k; }
+  for (const o of VX.mk) { if (!o.m.visible) continue; o.t += dt; const k = o.t / o.T; if (k >= 1) { o.m.visible = false; continue; } o.m.material.opacity = o.op * (k < .03 ? k / .03 : 1 - sstep(.55, 1, k)); }
+  for (const o of VX.lt) { if (o.L.intensity <= 0) continue; o.t += dt; const k = o.t / o.T; o.L.intensity = k >= 1 ? 0 : o.I * (1 - k) * (1 - k); }
+}
+function clearVFX() { for (const o of VX.mk) o.m.visible = false; for (const f of VX.fl) f.s.visible = false; for (const o of VX.lt) o.L.intensity = 0; }
+// 필살기·여왕 격파 때 화면이 한 번 번쩍인다
+function screenFlash(col = '#ffffff', a = .55, T = .5) {
+  const el = $('#sflash'); if (!el) return; el.style.transition = 'none';
+  el.style.background = `radial-gradient(circle at 50% 52%, ${col} 0%, ${col}88 30%, ${col}00 78%)`; el.style.opacity = a; void el.offsetWidth;
+  el.style.transition = `opacity ${T}s ease-out`; el.style.opacity = 0;
 }
 
 // 피해 숫자(2D)
@@ -585,6 +651,8 @@ function xfBoom(x, z, tier, size, faction) {
   if (!XF) return; const now = performance.now(); xfRecent = xfRecent.filter((t) => now - t < 1000);
   if (tier === 'grunt' && xfRecent.length >= (MOBILE ? 4 : 8)) return; xfRecent.push(now);
   XF.kill({ x, y: 0, z }, { tier, faction: faction || 'zeta', size, groundY: 0 }); XF.active = 1;
+  lightFlash(x, 20, z, faction === 'emp' ? 0xffa050 : faction === 'alp' ? 0xfff0b0 : 0xff6a3a, tier === 'boss' ? 150 : tier === 'elite' ? 90 : 30, tier === 'grunt' ? .35 : .6);
+  mark(x, z, size * (tier === 'grunt' ? 1.4 : 1.9), 0x0e0805, 'scorch', tier === 'grunt' ? 7 : 12, .66);
 }
 function updXF(dt) {
   if (!XF) return; if (!XF.active && !XF.queue.length) { if (XFm[0] && XFm[0].visible) XFm.forEach((m) => (m.visible = false)); return; }
@@ -657,7 +725,7 @@ function resetRun() {
   E = []; shots = []; ebs = []; gems = []; picks = []; msl = []; nums.length = 0; if (XF) XF.clear();
   AN.over = null; AN.overT = 0; mslClear();
   Object.assign(G, { t: 0, kills: 0, shake: 0, slow: 0, bossOn: false, boss: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0, st: { big: 0, flights: 0, ults: 0, skills: 0 } });
-  LATER.length = 0; shells = [];
+  LATER.length = 0; shells = []; clearVFX();
   Object.assign(P, {
     x: 0, z: 0, yaw: 0, hp: 100, maxHp: 100, inv: 0, lvl: 1, xp: 0, need: 6, spdMul: 1, cdMul: 1, crit: .05, magnet: 30, regen: 0,
     dashT: 0, dashCd: 0, dashMax: 2.6, dx: 0, dz: 1, ult: 0, flash: 0, bladeA: 0, sw: null, swN: 0, podT: 0, podK: 0, recoil: 0, ultT: 0, lunge: 0, pod: null, mz: null,
@@ -737,7 +805,8 @@ function dealDmg(e, base, kx, kz, kb = 1) {
   if (e.hp <= 0) kill(e);
 }
 function explode(x, z, r, dmg, color) {
-  ring(x, z, r * .2, r, .35, color); burst(x, 5, z, 26, color, 70, .55, 9); burst(x, 5, z, 10, 0xffffff, 40, .3, 12);
+  ring(x, z, r * .2, r * 1.1, .4, color); burst(x, 5, z, 26, color, 70, .55, 9); burst(x, 5, z, 10, 0xffffff, 40, .3, 12);
+  flare(x, 7, z, color, r * 1.05, .14); lightFlash(x, 16, z, color, 14 + r * 1.3, .3); mark(x, z, r * .85, 0x0e0805, 'scorch', 7, .62);
   for (const e of E) { if (e.dead) continue; const dx = e.x - x, dz = e.z - z, d = Math.hypot(dx, dz); if (d < r + e.T.r) dealDmg(e, dmg, dx / (d || 1), dz / (d || 1), 1.4); }
   sfx.boom(); G.shake = Math.max(G.shake, 2.2);
 }
@@ -754,7 +823,7 @@ function updPlayer(dt) {
   if (inp.dash && P.dashCd <= 0) {
     P.dashT = .2; P.dashCd = P.dashMax; P.inv = Math.max(P.inv, .34);
     if (inp.x || inp.z) { const d = Math.hypot(inp.x, inp.z); P.dx = inp.x / d; P.dz = inp.z / d; }
-    sfx.dash(); ring(P.x, P.z, 4, 20, .3, 0x9ff3ff);
+    sfx.dash(); ring(P.x, P.z, 4, 20, .3, 0x9ff3ff); flare(P.x, 9, P.z, 0x9ff3ff, 16, .12); mark(P.x, P.z, 7, 0x1a120c, 'scorch', 2.5, .35);
   }
   inp.dash = false;
   if (P.fly) flyMove(dt);
@@ -858,19 +927,27 @@ function areaHit(x, z, r, dmg, kb = 1.4, stun = 0) {
 const BEAMS = []; let beamI = 0;
 function buildBeams() {
   const geo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, true).rotateX(Math.PI / 2).translate(0, 0, .5);
-  for (let i = 0; i < 24; i++) { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); m.visible = false; m.renderOrder = 6; scene.add(m); BEAMS.push({ m, t: 0, T: .1, w: 1 }); }
+  for (let i = 0; i < 24; i++) {
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    // 가운데 하얀 심(두 격 광선: 바깥 색 빛 + 안쪽 하얀 심)
+    const core = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+    core.scale.set(.32, .32, 1); m.add(core); m.visible = false; m.renderOrder = 6; core.renderOrder = 7; scene.add(m); BEAMS.push({ m, core, t: 0, T: .1, w: 1 });
+  }
 }
 function beamFx(x0, y0, z0, x1, y1, z1, w, col, T = .14, keep) {
   const B = keep || BEAMS[beamI++ % BEAMS.length]; if (!B) return null; const m = B.m;
   m.position.set(x0, y0, z0); m.lookAt(x1, y1, z1); const L = Math.hypot(x1 - x0, y1 - y0, z1 - z0); m.scale.set(w, w, L); m.material.color.set(col);
-  B.t = 0; B.T = T; B.w = w; m.visible = true; return B;
+  B.t = 0; B.T = T; B.w = w; m.visible = true;
+  if (!keep) { flare(x0, y0, z0, col, w * 7, .1); flare(x1, y1, z1, col, w * 9, .14); if (w >= 2) lightFlash(x1, Math.max(8, y1 + 6), z1, col, 40 * w, .25); }
+  return B;
 }
-function updBeams(dt) { for (const B of BEAMS) { if (!B.m.visible) continue; B.t += dt; const k = B.t / B.T; if (k >= 1) { B.m.visible = false; continue; } B.m.material.opacity = (1 - k) * .95; const s = B.w * (1 - k * .6); B.m.scale.x = B.m.scale.y = s; } }
+function updBeams(dt) { for (const B of BEAMS) { if (!B.m.visible) continue; B.t += dt; const k = B.t / B.T; if (k >= 1) { B.m.visible = false; continue; } B.m.material.opacity = (1 - k) * .6; B.core.material.opacity = 1 - k * k; const s = B.w * (1 - k * .6) * (1 + Math.sin(B.t * 90) * .06); B.m.scale.x = B.m.scale.y = s; } }
 // 곡사포탄: 어깨 포에서 포물선으로 날아가 떨어진 자리에서 터진다
 let shells = [];
 function mortar(x1, z1, dmg, r, T = .75) {
   const s0 = P.how || { x: P.x, y: 20 + P.alt, z: P.z }; const rr = Math.hypot(x1, z1); if (rr > ARENA_R - 6) { x1 *= (ARENA_R - 6) / rr; z1 *= (ARENA_R - 6) / rr; }
   shells.push({ x0: s0.x, y0: s0.y, z0: s0.z, x1, z1, t: 0, T, dmg, r }); decal(x1, z1, r, T, 0xffa040); P.howRc = 1; tone(140, 70, .18, 'square', .06); burst(s0.x, s0.y, s0.z, 6, 0xffc070, 40, .3, 10, .8);
+  flare(s0.x, s0.y, s0.z, 0xffc070, 13, .1); burst(s0.x, s0.y, s0.z, 4, 0x8a7a70, 18, .7, 10, .6);
 }
 function updShells(dt) {
   for (const s of shells) { s.t += dt; if (s.t >= s.T) { s.dead = true; explode(s.x1, s.z1, s.r, s.dmg, 0xffa04a); xfBoom(s.x1, s.z1, 'grunt', s.r * .55, 'emp'); } }
@@ -887,7 +964,7 @@ function updBits(dt) {
 }
 function bitsFire(n, dmg, range = 150) {
   const live = BITS.filter((b) => b.g.visible); if (!live.length) return 0; const tg = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < range * range).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n);
-  tg.forEach((e, i) => { const B = live[i % live.length]; beamFx(B.x, B.y, B.z, e.x, e.T.h * .5, e.z, .5, 0x6fdcff, .12); dealDmg(e, dmg, 0, 0, .4); burst(e.x, e.T.h * .5, e.z, 3, 0x9fe8ff, 40, .18, 7); });
+  tg.forEach((e, i) => { const B = live[i % live.length]; beamFx(B.x, B.y, B.z, e.x, e.T.h * .5, e.z, .6, 0x6fdcff, .14); dealDmg(e, dmg, 0, 0, .4); burst(e.x, e.T.h * .5, e.z, 3, 0x9fe8ff, 40, .18, 7); });
   if (tg.length) tone(1800, 900, .06, 'square', .025); return tg.length;
 }
 const cloakMul = () => { if (P.cloakHits > 0) { P.cloakHits--; return 3; } return 1; };
@@ -896,7 +973,8 @@ function gunShot(tgt, n, spread, dmg, pierce, opt = {}) {
   const mz = (opt.palm ? P.palm : P.mz) || { x: P.x, y: 12 + P.alt, z: P.z }, a0 = Math.atan2(tgt.x - mz.x, tgt.z - mz.z);
   const dist = Math.max(8, Math.hypot(tgt.x - mz.x, tgt.z - mz.z)), vy = (tgt.T.h * .5 - mz.y) / (dist / 300), k = cloakMul();
   for (let i = 0; i < n; i++) fire(mz.x, mz.z, a0 + (n > 1 ? (i - (n - 1) / 2) * spread : 0) + (opt.jit ? rand(-opt.jit, opt.jit) : 0), dmg * k, pierce, opt.kind || 'r', null, mz.y, vy, opt.life, opt.col);
-  P.recoil = 1; sfx.shoot(); burst(mz.x, mz.y, mz.z, 3, opt.col || (ARMS[ARM] && ARMS[ARM].col) || 0x9ff3ff, 26, .1, 11, .2);
+  const fc = opt.col || (ARMS[ARM] && ARMS[ARM].col) || 0x9ff3ff;
+  P.recoil = 1; sfx.shoot(); burst(mz.x, mz.y, mz.z, 3, fc, 26, .1, 11, .2); flare(mz.x, mz.y, mz.z, fc, n > 3 ? 10 : 7, .07);
 }
 function railShot(tgt, dmg, n) {
   const mz = P.mz || { x: P.x, y: 12, z: P.z }, a = Math.atan2(tgt.x - mz.x, tgt.z - mz.z), k = cloakMul(), L = 240;
@@ -905,6 +983,7 @@ function railShot(tgt, dmg, n) {
     lineHit(mz.x + ox, mz.z + oz, a, L, 3.5, dmg * k, 1.6); beamFx(mz.x + ox, mz.y, mz.z + oz, mz.x + ox + Math.sin(a) * L, 6, mz.z + oz + Math.cos(a) * L, 1.1, 0x9ff6ff, .22);
   }
   P.recoil = 1; G.shake = Math.max(G.shake, 1.5); tone(2400, 300, .25, 'sawtooth', .06); noise(.2, .12, 5000); burst(mz.x, mz.y, mz.z, 10, 0xdff8ff, 60, .2, 10, .2);
+  flare(mz.x, mz.y, mz.z, 0xbff8ff, 18, .12); lightFlash(mz.x, mz.y + 4, mz.z, 0x9ff6ff, 60, .18); ring(mz.x, mz.z, 2, 14, .25, 0x9ff6ff);
 }
 function palmPos() { return P.palm || { x: P.x, y: 14 + P.alt, z: P.z }; }
 function homingShot(n, dmg) {
@@ -941,6 +1020,7 @@ function primTick(tgt, dt) {
     if (!on) { if (P.beamB) { P.beamB.m.visible = false; P.beamB = null; } return; }
     const p = palmPos(), a = Math.atan2(tgt.x - p.x, tgt.z - p.z), L = 150;
     P.beamB = beamFx(p.x, p.y, p.z, p.x + Math.sin(a) * L, tgt.T.h * .5, p.z + Math.cos(a) * L, 1.3 + Math.sin(G.t * 40) * .25, 0xffe28a, .09, P.beamB);
+    if (Math.random() < .5) flare(p.x, p.y, p.z, 0xffe28a, rand(7, 11), .06); if (Math.random() < .35) flare(tgt.x, tgt.T.h * .5, tgt.z, 0xfff0b0, rand(8, 13), .07);
     if ((P.beamTk -= dt) <= 0) { P.beamTk = .1 * P.cdMul; lineHit(p.x, p.z, a, L, 3, st('rifle', 'dmg') * .34 * (1 + .25 * (st('rifle', 'n') - 1)), .25); if (Math.random() < .5) tone(900 + Math.random() * 200, 700, .05, 'sawtooth', .012); }
   }
 }
@@ -980,6 +1060,8 @@ function doAuto(k, tg) {
 function castUlt() {
   const k = MECH(save.mech).ult.k, fy = P.yaw, fx = Math.sin(fy), fz = Math.cos(fy), big = (e) => e.T.r > 10;
   P.ult = 0; P.inv = Math.max(P.inv, 1.2); P.sw = null; G.st.ults++; sfx.ult(); G.shake = Math.max(G.shake, 4);
+  const UC = { bladefall: '#bff6ff', tenzan: '#dff8ff', laserstorm: '#9ff3ff', phoenix: '#ff8a3a', satsnipe: '#9ff6ff', carpet: '#ffa040', aegis: '#ffd27a', titanfall: '#ffb04a', mstorm: '#ff9a4a', execute: '#b48cff', allrange: '#6fdcff', nova: '#ffe28a', descent: '#fff3b0' }[k] || '#ffffff';
+  screenFlash(UC, .28, .5); lightFlash(P.x, 22, P.z, UC, 55, .5); ring(P.x, P.z, 4, 46, .45, +('0x' + UC.slice(1))); flare(P.x, 14 + P.alt, P.z, +('0x' + UC.slice(1)), 26, .2);
   const D = (e, small, large) => (big(e) ? large : small);
   switch (k) {
     case 'bladefall': { oneShot('fin', .7); const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 160 * 160);
@@ -1336,7 +1418,8 @@ function updShots(dt) {
     for (const e of E) {
       if (e.dead) continue; const dx = e.x - s.x, dz = e.z - s.z, rr = e.T.r + (s.kind === 'w' ? 5 : 2);
       if (dx * dx + dz * dz > rr * rr || (s.hit && s.hit.includes(e))) continue;
-      dealDmg(e, s.dmg, s.vx / 300, s.vz / 300, s.kind === 'w' ? .9 : .5); burst(s.x, s.kind === 'w' ? 7 : s.y, s.z, 3, s.kind === 'w' ? 0xdff8ff : 0x7fe6ff, 36, .2, 7);
+      dealDmg(e, s.dmg, s.vx / 300, s.vz / 300, s.kind === 'w' ? .9 : .5); burst(s.x, s.kind === 'w' ? 7 : s.y, s.z, 4, s.col || (s.kind === 'w' ? 0xdff8ff : 0x7fe6ff), 55, .22, 6, .9);
+      flare(s.x, s.kind === 'w' ? 7 : s.y, s.z, s.col || (s.kind === 'w' ? 0xdff8ff : s.kind === 'f' ? 0xfff0a0 : 0x7fe6ff), s.kind === 'w' ? 12 : 7, .08);
       if (s.pierce-- > 0) (s.hit ||= []).push(e); else { s.life = 0; break; }
     }
   }
@@ -1478,6 +1561,8 @@ function kill(e) {
   if (e.dead) return; e.dead = true; cancelDecal(e.dec); e.dec = null;
   const T = e.T; G.kills++;
   burst(e.x, T.h * .5, e.z, T.r > 10 ? 70 : 12, T.col, T.r > 10 ? 130 : 60, T.r > 10 ? .9 : .45, T.r > 10 ? 14 : 9);
+  mark(e.x, e.z, T.r * (T.r > 10 ? 1.9 : 1.35), e.t === 'plasma' ? 0x2a4a18 : 0x4a1430, 'splat', T.r > 10 ? 9 : 4, .42); flare(e.x, T.h * .5, e.z, T.col, T.r > 10 ? 40 : 11, .1);
+  if (T.r > 10) screenFlash(e.t === 'queen' ? '#fff2c0' : '#ffb070', e.t === 'queen' ? .8 : .35, e.t === 'queen' ? .9 : .4);
   if (T.r > 10) {
     ring(e.x, e.z, 6, 70, .6, T.col); sfx.boom(); G.shake = 6; G.slow = .35; P.ult = Math.min(100, P.ult + 25 * (P.ultGain || 1)); G.st.big++;
     xfBoom(e.x, e.z, e.t === 'queen' ? 'boss' : 'elite', T.h * .9, 'zeta');
@@ -1659,11 +1744,15 @@ function drawInstances(time) {
       dummy.position.set(s.x, s.y, s.z); dummy.rotation.set(0, s.ang, 0); dummy.scale.set(1 + k * .5, 1, 1 + k * .2); dummy.updateMatrix();
       imWave.setMatrixAt(wv, dummy.matrix); imWave.setColorAt(wv++, tmpC.setRGB(.78, .96, 1)); continue;
     }
-    if (i >= 260) break; dummy.position.set(s.x, s.y, s.z); dummy.rotation.set(-Math.atan2(s.vy, 300), s.ang, 0, 'YXZ'); dummy.scale.setScalar(1); dummy.updateMatrix();
-    imShot.setMatrixAt(i, dummy.matrix); imShot.setColorAt(i++, s.col ? tmpC.set(s.col) : s.kind === 'f' ? tmpC.setRGB(1, .95, .6) : tmpC.setRGB(.1, .75, 1));
+    if (i >= 260) break; dummy.position.set(s.x, s.y, s.z); dummy.rotation.set(-Math.atan2(s.vy, 300), s.ang, 0, 'YXZ'); dummy.scale.set(.55, .55, 1.15); dummy.updateMatrix();
+    const sc = s.col ? tmpC.set(s.col) : s.kind === 'f' ? tmpC.setRGB(1, .95, .6) : tmpC.setRGB(.25, .8, 1);
+    sc.getHSL(HSL); imGlow.setColorAt(i, tmpC2.setHSL(HSL.h, 1, .5)); sc.lerp(WHITE, .35).multiplyScalar(1.45);
+    imShot.setMatrixAt(i, dummy.matrix); imShot.setColorAt(i, sc);
+    // 바깥 빛 꼬리: 앞은 밝고 뒤로 갈수록 엷어진다
+    dummy.scale.set(s.kind === 'f' ? 5.5 : 4.6, 1, s.kind === 'f' ? 18 : 26); dummy.updateMatrix(); imGlow.setMatrixAt(i++, dummy.matrix);
   }
   dummy.rotation.order = 'XYZ';
-  imShot.count = i; imShot.instanceMatrix.needsUpdate = true; imShot.instanceColor.needsUpdate = true;
+  imShot.count = imGlow.count = i; imShot.instanceMatrix.needsUpdate = imGlow.instanceMatrix.needsUpdate = true; imShot.instanceColor.needsUpdate = imGlow.instanceColor.needsUpdate = true;
   imWave.count = wv; imWave.instanceMatrix.needsUpdate = true; imWave.instanceColor.needsUpdate = true;
 
   // 미사일 몸과 분사 불꽃
@@ -1679,15 +1768,22 @@ function drawInstances(time) {
   dummy.rotation.set(0, 0, 0);
   imMsl.count = imFlame.count = i; imMsl.instanceMatrix.needsUpdate = imFlame.instanceMatrix.needsUpdate = true; imMsl.instanceColor.needsUpdate = imFlame.instanceColor.needsUpdate = true;
 
-  i = 0;
-  for (const b of ebs) { if (i >= 280) break; dummy.position.set(b.x, 8, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(1 + Math.sin(time * 12 + b.x) * .12); dummy.updateMatrix(); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.setRGB(.95, .1, .6)); }
-  for (const s of shells) { if (i >= 280) break; const [x, y, z] = shellPos(s); dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(.9); dummy.updateMatrix(); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.setRGB(1.4, .7, .2)); if (Math.random() < .5) burst(x, y, z, 1, 0x8a7a70, 4, .4, 6, .1); }
+  i = 0; let so = 0;
+  const soft = (x, y, z, s, r, g, b) => { if (so >= 720) return; dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0); dummy.scale.set(s, 1, s); dummy.updateMatrix(); imSoft.setMatrixAt(so, dummy.matrix); imSoft.setColorAt(so++, tmpC.setRGB(r, g, b)); };
+  for (const b of ebs) { if (i >= 280) break; const pl = 1 + Math.sin(time * 12 + b.x) * .12; dummy.position.set(b.x, 8, b.z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(pl); dummy.updateMatrix(); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.setRGB(1.2, .25, .8));
+    soft(b.x, 8, b.z, 13 * pl, .9, .1, .55); soft(b.x, .6, b.z, 9, .5, .05, .3); }
+  for (const s of shells) { if (i >= 280) break; const [x, y, z] = shellPos(s); dummy.position.set(x, y, z); dummy.rotation.set(0, 0, 0); dummy.scale.setScalar(.9); dummy.updateMatrix(); imEB.setMatrixAt(i, dummy.matrix); imEB.setColorAt(i++, tmpC.setRGB(1.6, .9, .3));
+    soft(x, y, z, 11, 1, .5, .12); if (Math.random() < .6) burst(x, y, z, 1, 0x8a7a70, 4, .5, 7, .1); if (Math.random() < .5) burst(x, y, z, 1, 0xffa040, 6, .2, 5, .1); }
   imEB.count = i; imEB.instanceMatrix.needsUpdate = true; imEB.instanceColor.needsUpdate = true;
 
   i = 0;
   for (const g of gems) { if (i >= 400) break; dummy.position.set(g.x, 3 + Math.sin(g.t * 4) * .8, g.z); dummy.rotation.set(0, g.t * 3, 0); dummy.scale.setScalar(g.v >= 3 ? 1.5 : 1); dummy.updateMatrix(); imGem.setMatrixAt(i, dummy.matrix); imGem.setColorAt(i++, g.v >= 3 ? tmpC.setRGB(1, .55, 0) : tmpC.setRGB(0, .5, 1)); }
   for (const p of picks) { if (i >= 420) break; dummy.position.set(p.x, 6 + Math.sin(p.t * 3) * 1.5, p.z); dummy.rotation.set(0, p.t * 2, 0); dummy.scale.setScalar(p.kind === 'chest' ? 4.2 : 2.6); dummy.updateMatrix(); imGem.setMatrixAt(i, dummy.matrix); imGem.setColorAt(i++, p.kind === 'chest' ? tmpC.setRGB(1, .6, 0) : tmpC.setRGB(.05, .85, .3)); }
   imGem.count = i; imGem.instanceMatrix.needsUpdate = true; imGem.instanceColor.needsUpdate = true;
+  // 보석·전리품 밑의 은은한 빛 웅덩이
+  for (const g of gems) { if (so >= 700) break; const big = g.v >= 3; soft(g.x, .5, g.z, big ? 9 : 6, big ? .5 : 0, big ? .28 : .22, big ? 0 : .5); }
+  for (const p of picks) soft(p.x, .5, p.z, p.kind === 'chest' ? 22 : 15, p.kind === 'chest' ? .7 : .05, p.kind === 'chest' ? .4 : .6, p.kind === 'chest' ? 0 : .2);
+  imSoft.count = so; imSoft.instanceMatrix.needsUpdate = true; imSoft.instanceColor.needsUpdate = true;
 
 }
 
@@ -1813,7 +1909,7 @@ function step(dt, raw) {
     else if (G.pend > 0 && G.state === 'play') openLevelUp();
     drawHud(dt);
   }
-  if (G.state !== 'pause' && G.state !== 'levelup') { updRings(dt); updParticles(dt); updCres(dt); updXF(dt); updBeams(dt); updBits(dt); if (G.state === 'play') updShells(dt); if (mixer) mixer.update(dt); placeArms(dt); placeJet(dt); updDrones(dt); placeBarrier(dt); }
+  if (G.state !== 'pause' && G.state !== 'levelup') { updRings(dt); updParticles(dt); updCres(dt); updXF(dt); updBeams(dt); updBits(dt); updVFX(dt); if (G.state === 'play') updShells(dt); if (mixer) mixer.update(dt); placeArms(dt); placeJet(dt); updDrones(dt); placeBarrier(dt); }
 }
 let last = performance.now(), ema = 16, slowT = 0;
 const camPos = new THREE.Vector3(0, 104, 73);
@@ -1964,7 +2060,7 @@ $('#mute').addEventListener('click', (e) => { muted = !muted; e.target.textConte
   for (const k in ET) jobs.push(loadModel(k, ET[k].file, ET[k].h, 0));
   let done = 0; jobs.forEach((j) => j.then(() => ($('#load').textContent = `불러오는 중 ${Math.round(++done / jobs.length * 100)}%`)));
   try {
-    await Promise.all(jobs); initXF(); buildPools(); buildParticles(); buildDrones(); buildBarrier(); buildBeams(); buildBits(); mslInit(); tfInit();
+    await Promise.all(jobs); initXF(); buildVFX(); buildPools(); buildParticles(); buildDrones(); buildBarrier(); buildBeams(); buildBits(); mslInit(); tfInit();
     imPod = WPN.mpod.clone(true); imPod.scale.setScalar(6.4); imPod.visible = false; scene.add(imPod);
     resetRun(); await setMech(save.mech);
     $('#load').classList.add('hide'); booted = true; drawTitle();
@@ -1972,4 +2068,4 @@ $('#mute').addEventListener('click', (e) => { muted = !muted; e.target.textConte
   requestAnimationFrame(frame);
 })();
 
-if (location.search.includes('dev')) window.__g = { G, P, ET, UP, inp, keys, stick, get ebs() { return ebs; }, get cards() { return cardKeys; }, sim(sec, auto, bot) { for (let t = 0; t < sec && G.state !== 'over'; t += 1 / 30) { if (G.state === 'levelup') { if (auto) pickCard(typeof auto === 'function' ? auto() : 0); else break; } bot && bot(); step(1 / 30, 1 / 30); } }, get E() { return E; }, spawn, kill, endRun, addXp, pickCard, startRun, camPos, AN, oneShot, setMech, ARMS, get acts() { return acts; }, get mixer() { return mixer; }, get armed() { return armed; }, get msl() { return msl; }, launchSalvo, scene, cam, renderer, get composer() { return composer; }, TF_E, startFly, endFly, FLY, save, MECHS, castUlt, doAuto, drawTitle, drawHangar, drawDaily, persist, get PRIM() { return PRIM; }, get ARM() { return ARM; }, get shells() { return shells; } };
+if (location.search.includes('dev')) window.__g = { G, P, ET, UP, inp, keys, stick, get ebs() { return ebs; }, get cards() { return cardKeys; }, sim(sec, auto, bot) { for (let t = 0; t < sec && G.state !== 'over'; t += 1 / 30) { if (G.state === 'levelup') { if (auto) pickCard(typeof auto === 'function' ? auto() : 0); else break; } bot && bot(); step(1 / 30, 1 / 30); } }, get E() { return E; }, spawn, kill, endRun, addXp, pickCard, startRun, camPos, AN, oneShot, setMech, ARMS, get acts() { return acts; }, get mixer() { return mixer; }, get armed() { return armed; }, get msl() { return msl; }, launchSalvo, scene, cam, renderer, get composer() { return composer; }, TF_E, startFly, endFly, FLY, save, MECHS, castUlt, doAuto, drawTitle, drawHangar, drawDaily, persist, get PRIM() { return PRIM; }, get ARM() { return ARM; }, get shells() { return shells; }, flare, mark, lightFlash, explode, ring, beamFx, screenFlash, xfBoom, crescent, castUlt2: castUlt, fire, mortar };
