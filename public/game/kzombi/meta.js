@@ -93,7 +93,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   const RARE = [[3, 15, 30, { box: 0.08 }], [4, 10, 30, { box: 0.02, nem: 0.05, gacha: 0.005 }], [4, 30, 60, { box: 0.04, nem: 0.05, gacha: 0.01 }], [5, 90, 120, { box: 0.015, nem: 0.02 }], [6, 160, 200, { nem: 0.01 }]];
   let RARE_HIT = null;
   function rareUp(g, c, kind) { for (const [rg, a, b, p] of RARE) if (c >= a && c < b && rg > g && Math.random() < (p[kind] || 0)) { g = rg; RARE_HIT = rg; } return g; }
-  function rareShow(it) { if (!it || !RARE_HIT || it.g < 3) return; RARE_HIT = null; it.rare = 1; setTimeout(() => { try { toast('✨ ' + GR[it.g].n + ' 획득! · ' + itemName(it)); const b = document.createElement('div'); b.className = 'rarebeam g' + it.g; b.innerHTML = '<b>' + GR[it.g].n + ' 획득!</b><span>' + itemName(it) + '</span>'; document.body.appendChild(b); setTimeout(() => b.remove(), 2600); } catch (e) {} }, 300); }
+  function rareShow(it) { if (!it || !RARE_HIT || it.g < 3) return; RARE_HIT = null; it.rare = 1; setTimeout(() => { try { if (window.KZSFX && it.g >= 4) KZSFX.play('legend'); toast('✨ ' + GR[it.g].n + ' 획득! · ' + itemName(it)); const b = document.createElement('div'); b.className = 'rarebeam g' + it.g; b.innerHTML = '<b>' + GR[it.g].n + ' 획득!</b><span>' + itemName(it) + '</span>'; document.body.appendChild(b); setTimeout(() => b.remove(), 2600); } catch (e) {} }, 300); }
   /* 부가 옵션 13종·고유 효과 15종: 전투에는 기존 fx 키로 넘긴다(afxSum) */
   const AFX = { atkP: ['공격력', 2, 6, '%'], hpP: ['체력', 3, 8, '%'], crit: ['치명 확률', 1, 4, '%'], critD: ['치명 피해', 5, 15, '%'], aspd: ['공격 속도', 2, 6, '%'], mspd: ['이동 속도', 2, 5, '%'], cdr: ['기술 대기 감소', 2, 6, '%'], towerP: ['시설 피해', 3, 9, '%'], heroP: ['영웅 피해', 3, 9, '%'], gold: ['엽전 획득', 4, 12, '%'], ls: ['피흡', 0.5, 2, '%'], eliteP: ['정예·우두머리 피해', 3, 9, '%'], dmgCut: ['받는 피해 감소', 1, 4, '%'] };
   const AFX_FX = { crit: ['crit10', 10], critD: ['critDmg30', 30], aspd: ['haste10', 10], mspd: ['speed10', 10], cdr: ['skillCd10', 10], towerP: ['build20', 20], heroP: ['compDmg30', 30], gold: ['coin30', 30], ls: ['ls', 1], eliteP: ['eliteDmg25', 25], dmgCut: ['dmgCut10', 10] };
@@ -254,11 +254,13 @@ if (window.IS_EN) document.title = 'K Zombi';
     curBgm = f;
     if (!f || !S.music) return;
     try {
-      if (!BGM[f]) { const a = new Audio(); a.src = 'audio/' + f + (f === 'bgm_arirang' ? '.wav' : '.mp3'); a.loop = true; a.volume = 0.5; BGM[f] = a; }
+      if (!BGM[f]) { const a = new Audio(); a.src = 'audio/' + f + (f === 'bgm_arirang' ? '.wav' : '.mp3'); a.loop = true; a.volume = 0.5 * (function () { const v = parseFloat(localStorage.getItem('kz_bgmv')); return isNaN(v) ? 1 : v; })(); BGM[f] = a; }
       const p = BGM[f].play(); if (p && p.catch) p.catch(() => {});
     } catch (e) {}
   }
   function stopMusic() { for (const k in BGM) BGM[k].pause(); curBgm = null; }
+  window.KZVOLM = v => { try { localStorage.setItem('kz_bgmv', v); for (const k in BGM) BGM[k].volume = 0.5 * v; if (window.KZBGMV) window.KZBGMV(v); } catch (e) {} };
+  window.KZVOLS = v => { try { localStorage.setItem('kz_sfxv', v); if (window.KZSFX) { KZSFX.vol(v); KZSFX.play('coin'); } } catch (e) {} };
 
   /* ---------------- 화면 틀 ---------------- */
   let root, meta, tab = 'home';
@@ -960,6 +962,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   }
   function settingsModal() {
     modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
+      (function () { const gv = k => { const v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? 1 : v; }; const row = (lb, k, fn) => '<div class="row" style="align-items:center;gap:10px;padding:0 6px"><span style="min-width:96px;font-size:15px">' + (window.IS_EN ? (k === 'kz_bgmv' ? 'Music volume' : 'Sound volume') : lb) + '</span><input type="range" min="0" max="1" step="0.05" value="' + gv(k) + '" style="flex:1;accent-color:#ffd36b" oninput="' + fn + '(this.value)"></div>'; return row('음악 음량', 'kz_bgmv', 'KZVOLM') + row('효과음 음량', 'kz_sfxv', 'KZVOLS'); })() +   /* 음악·효과음 음량 따로(11-27) */
       '<div class="row"><div class="btn ' + (localStorage.getItem('kz_vib') === '0' ? 'b' : 'g') + '" data-act="toggleVib">' + (localStorage.getItem('kz_vib') === '0' ? '진동 끔' : '진동 켬') + '</div></div>' +
       '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div><div class="btn b" data-act="runlog">판 기록</div></div>' + '<div class="row"><div class="btn g" data-act="opening">' + (window.IS_EN ? 'Replay opening' : '오프닝 다시 보기') + '</div></div>' +
       '<p style="text-align:center;margin-top:20px">저장은 이 기기에 자동으로 돼요.</p><div class="row"><div class="btn r" data-act="reset">처음부터 다시</div></div>');
