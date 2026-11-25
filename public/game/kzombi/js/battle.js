@@ -259,7 +259,8 @@ function objInit() {
   G.obj = { type, n: O.n, d: O.d, saved: 0, lost: 0, total: 0, bt: 0, enr: false, bossKilledFast: false };
   if (type === 'annihilate') { let s = 0; for (const N of G.nights) s += N.dur * (N.rate[0] + N.rate[1]) / 2 * 1.35; G.obj.target = Math.round(s * 0.7 / 10) * 10; }
   if (type === 'escort') { G.obj.total = G.nights.length * 2; G.obj.need = Math.ceil(G.obj.total * 0.5); G.obj.refs = []; }
-  if (type === 'beacon') { const yy = WALL_Y - 300; let bx = 140, bd = -1; for (const x of [90, 160, 240, 360, 480, 560, 630].map(v => CX + (v - 360) * 1.7)) { const dl = Math.min(...LANE_X.map((L, i) => { let m = 1e9; for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - yy) < 40) m = Math.min(m, Math.abs(p.x - x)); } return m; }), ...PADS.map(pp => Math.hypot(pp[0] - x, pp[1] - yy) * 0.8)); if (dl > bd) { bd = dl; bx = x; } }
+  if (type === 'beacon') { /* 봉화대: 탑 자리·길·석상과 140 이상 떨어진 곳(성벽 앞) */ let bx = CX - 300, yy = WALL_Y - 300, bd = -1; const laneD = (x, y) => Math.min(...LANE_X.map((L, i) => { let m = 1e9; for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 40) m = Math.min(m, Math.abs(p.x - x)); } return m; }));
+    for (const y of [WALL_Y - 240, WALL_Y - 330, WALL_Y - 430, WALL_Y - 530]) for (let x = 140; x <= WW - 140; x += 40) { const lp = laneD(x, y); if (lp < 90) continue; const pd = Math.min(1e9, ...PADS.map(pp => Math.hypot(pp[0] - x, pp[1] - y))), gd = Math.min(...Object.values(GUARD).map(g => Math.hypot(g.x - x, g.y - y))); if (pd < 190 || gd < 150) continue; const sc = Math.min(lp * 1.2, pd, gd) - Math.abs(y - (WALL_Y - 330)) * 0.15; if (sc > bd) { bd = sc; bx = x; yy = y; } }
     const hp = Math.round(G.shrine.max * 2.2); G.obj.beacon = { kind: 'beacon', x: bx, y: yy, r: 26, hp, max: hp, hitT: 0 }; }
 }
 function objOk() {
@@ -306,14 +307,14 @@ function drawObjThing(o) {
     if (o.hp < o.max * 0.5 && Math.random() < 0.2) FX.p({ kind: 'smoke', x: x + rnd(-20, 20), y: y - 40, vx: rnd(-8, 8), vy: -rnd(20, 40), life: 1.6, s: 6, s2: 20, c: '70,60,55', rot: 0, vr: 0.4 });
     if (Math.random() < 0.3) FX.p({ kind: 'smoke', x: x + rnd(-6, 6), y: y - h + 10, vx: rnd(-6, 6), vy: -rnd(30, 50), life: 2, s: 6, s2: 22, c: '110,100,95', rot: 0, vr: 0.4 });
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - h + 22, 40 + Math.sin(G.t * 11) * 6, '255,140,40', 0.6); ctx.restore();
-    txt('봉화대', o.x, o.y + 34, 17, '#ffd36b', 'center', '#2a1408', 4); hpBar(o.x - 34, o.y - h - 6, 68, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
+    txt('봉화대', o.x, o.y + 30, 9, '#ffd36b', 'center', '#2a1408', 3); hpBar(o.x - 34, o.y - h - 6, 68, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
   if (o.kind === 'beacon') { const x = o.x, y = o.y, w = o.hitT > 0; shadowE(x, y + 14, 40);
     /* 돌을 쌓은 봉수대: 아래 넓고 위 좁은 돌무더기 + 큰 횃불 */
     for (let r = 0; r < 4; r++) { const ww = 70 - r * 12, yy = y + 6 - r * 16; for (let i = 0; i < 4 - r * 0.5; i++) { const sx = x - ww / 2 + (i + 0.5) * ww / Math.max(1, 4 - r * 0.5); rrPath(sx - 10, yy - 12, 20, 15, 5); ctx.fillStyle = w ? '#fff' : (i + r) % 2 ? '#9a8f80' : '#7e7466'; ctx.fill(); ctx.strokeStyle = '#3a3026'; ctx.lineWidth = 2; ctx.stroke(); } }
     rrPath(x - 22, y - 62, 44, 10, 4); ctx.fillStyle = '#4a3020'; ctx.fill();
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - 80, 52 + Math.sin(G.t * 11) * 7, '255,140,40', 0.85); FX.glow(ctx, x, y - 76, 22, '255,230,140', 0.9, 1); ctx.restore();
     if (Math.random() < 0.3) FX.p({ kind: 'smoke', x: x + rnd(-6, 6), y: y - 100, vx: rnd(-6, 6), vy: -rnd(30, 50), life: 2, s: 6, s2: 22, c: '90,80,75', rot: 0, vr: 0.4 });
-    txt('봉화대', o.x, o.y + 46, 17, '#ffd36b', 'center', '#2a1408', 4); hpBar(o.x - 30, o.y - 96, 60, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
+    txt('봉화대', o.x, o.y + 40, 9, '#ffd36b', 'center', '#2a1408', 3); hpBar(o.x - 30, o.y - 96, 60, 7, o.hp / o.max, o.hp < o.max * 0.3 ? '#ff4a3a' : '#ffb03a'); return; }
   if (o.kind === 'ref') { if (o.v == null) o.v = (Math.random() * 3) | 0; const RI = OBJIMG[['refugee_a', 'refugee_b', 'refugee_c'][o.v]];
     if (RI) { const bob = Math.abs(Math.sin((o.mvT || 0) * 9)) * 3, h = [104, 100, 86][o.v], w2 = RI.width * h / RI.height, x = o.x, y = o.y - bob; shadowE(o.x, o.y + 2, 13, 0.3);
       const tl = Math.sin((o.mvT || 0) * 9) * 0.05; ctx.save(); ctx.translate(x, y + 2); ctx.rotate(tl); if (o.flip) ctx.scale(-1, 1); ctx.drawImage(RI, -w2 / 2, -h, w2, h); if (o.hitT > 0) { ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.5; ctx.drawImage(RI, -w2 / 2, -h, w2, h); } ctx.restore();
@@ -329,7 +330,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
-  if (src === 'skill') dmg *= 0.22;
+  if (src === 'skill') dmg *= 0.22 / (1 + 0.03 * (G.ch - 1));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   if (EN[e.type] && EN[e.type].shield && src !== 'skill' && e.y < G.player.y - 20) { dmg *= 0.45; if (Math.random() < 0.15) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 1.6, '200,170,110', 0.15, 3); }
@@ -1650,7 +1651,7 @@ function enemies(dt) {
     /* 새 행동 (r4) */
     if (d.bomber) { if (e.fuse == null && dd < 64 + e.r) { e.fuse = 0.8; vib(15); } if (e.fuse != null) { e.fuse -= dt; e.hitT = Math.sin(G.t * 40) > 0 ? 0.06 : 0; if (e.fuse <= 0) { bombBlast(e, dmg, false); e.hp = 0; killEnemy(e); } continue; } }
     if (d.nest) { e.nT = (e.nT == null ? 4 : e.nT) - dt; if (e.nT <= 0) { e.nT = 6.5; e.atkT = 0.5; for (let i = 0; i < 2; i++) spawnEnemy('peasant', e.x + rnd(-40, 40), e.y + rnd(-20, 20), { small: true }); FX.smoke(e.x, e.y - 30, 4, '150,220,90', 14, 30); } }
-    if (d.chain && e.boss) { e.chT = (e.chT == null ? 5 : e.chT) - dt; if (e.chT <= 0 && dist(e, p) < 420) { e.chT = 7; e.atkT = 0.5; G.beams.push({ x1: e.x, y1: e.y - e.hh * 0.6, x2: p.x, y2: p.y - 40, c: '170,120,255', w: 6, t: 0.4, life: 0.4 }); const a = Math.atan2(e.y - p.y, e.x - p.x); p.x = clamp(p.x + Math.cos(a) * 90, 40, WW - 40); p.y += Math.sin(a) * 90; hurtT(p, dmg * 0.8); G.banner = { s: '염라의 사슬!', t: 1.1, kind: 'boss' }; vib([40, 30, 40]); } }
+    if (d.chain && e.boss) { e.chT = (e.chT == null ? 5 : e.chT) - dt; if (e.chT <= 0 && dist(e, p) < 420) { e.chT = 7; e.atkT = 0.5; G.beams.push({ x1: e.x, y1: e.y - e.hh * 0.6, x2: p.x, y2: p.y - 40, c: '170,120,255', w: 6, t: 0.4, life: 0.4 }); const a = Math.atan2(e.y - p.y, e.x - p.x); p.x = clamp(p.x + Math.cos(a) * 90, 40, WW - 40); p.y += Math.sin(a) * 90; hurtT(p, dmg * 0.5); G.banner = { s: '염라의 사슬!', t: 1.1, kind: 'boss' }; vib([40, 30, 40]); } }
     if (d.breath && e.boss) { e.brT = (e.brT == null ? 5 : e.brT) - dt; if (e.brT <= 0 && dist(e, p) < 380) { e.brT = 6.5; e.atkT = 0.6; for (let i = 0; i < 4; i++) { const k = (i + 1) / 4, bx = e.x + (p.x - e.x) * k, by = e.y + (p.y - e.y) * k; G.tele.push({ x: bx, y: by, r: 54, t: 0.7, life: 0.7, c: '120,230,60' }); G.queue.push({ t: 0.7, fn: () => { if (G.pzs) G.pzs.push({ x: bx, y: by, r: 60, t: 4, life: 4, tick: 0 }); FX.smoke(bx, by, 4, '110,200,60', 16, 40); } }); } G.banner = { s: '독룡의 독숨!', t: 1.1, kind: 'boss' }; } }
     if (d.hop && e.boss) { e.hopCd = (e.hopCd == null ? 5 : e.hopCd) - dt;
       if (e.hopT > 0) { e.hopT -= dt; e.jumpT = Math.min(0.6, Math.max(0, e.hopT) * 0.66); const k = 1 - Math.max(0, e.hopT) / 0.9; e.x = e.hx0 + (e.hx1 - e.hx0) * k; e.y = e.hy0 + (e.hy1 - e.hy0) * k;
@@ -1957,7 +1958,7 @@ function drawCorpse(c) {
 }
 function drawTurret(t, day) {
   const d = TUR[t.type], x = t.x, y = t.y, rise = t.rise > 0 ? 1 - t.rise / 0.45 : 1;
-  if (day && d.range) { ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.62); ctx.strokeStyle = 'rgba(255,230,160,.35)'; ctx.setLineDash([10, 8]); ctx.lineWidth = 3; circle(0, 0, d.range); ctx.stroke(); ctx.restore(); }
+  if (day && d.range && (t.pad === G.nearPad || Math.hypot(G.player.x - x, G.player.y - y) < 170)) { ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.62); ctx.strokeStyle = 'rgba(255,230,160,.35)'; ctx.setLineDash([10, 8]); ctx.lineWidth = 3; circle(0, 0, d.range); ctx.stroke(); ctx.restore(); }
   if (d.kind === 'aura' && !day) { ctx.save(); ctx.translate(x, y); ctx.scale(1, 0.62); const gr = ctx.createRadialGradient(0, 0, d.range * 0.3, 0, 0, d.range); gr.addColorStop(0, 'rgba(110,190,255,0)'); gr.addColorStop(1, 'rgba(110,190,255,' + (0.18 + 0.06 * Math.sin(t.pulse * 3)) + ')'); ctx.fillStyle = gr; circle(0, 0, d.range); ctx.fill(); ctx.strokeStyle = 'rgba(160,220,255,.45)'; ctx.lineWidth = 3; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(0, 0, d.range * (0.5 + 0.17 * i), t.pulse * (1 + i * 0.3), t.pulse * (1 + i * 0.3) + 1.6); ctx.stroke(); } ctx.restore(); }
   shadowE(x, y + 16, 26);
   drawSprite('build_pad', x, y + 22, {});
@@ -2125,7 +2126,8 @@ function drawWall(w, day) {
   if (!w.built) { if (day) { ctx.save(); ctx.setLineDash([12, 10]); ctx.strokeStyle = 'rgba(255,240,200,.35)'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(w.x - (w.gate ? 64 : 42), WALL_Y - 6); ctx.lineTo(w.x + (w.gate ? 64 : 42), WALL_Y - 6); ctx.stroke(); ctx.restore(); } return; }
   if (w.hp <= 0) { for (let i = 0; i < 5; i++) { const xx = w.x + (i - 2) * 16, yy = WALL_Y + ((i * 7) % 5) - 4; shadowE(xx, yy + 6, 10, 0.25); rrPath(xx - 9, yy - 8, 18, 12, 4); ctx.fillStyle = i % 2 ? '#7e7462' : '#6a6050'; ctx.fill(); } return; }
   const k = w.hp / w.max;
-  const ok = drawSprite(w.gate ? 'gate' : 'wall', w.x, WALL_Y + (w.gate ? 18 : 14), { mode: w.hitT > 0 ? 'white' : null });
+  const P0 = G.player, behind = P0 && Math.abs(P0.x - w.x) < (w.gate ? 95 : 55) && P0.y < WALL_Y + 12 && P0.y > WALL_Y - (w.gate ? 190 : 110);   /* 처용이 성문·성벽 뒤에 서면 반투명 */
+  const ok = drawSprite(w.gate ? 'gate' : 'wall', w.x, WALL_Y + (w.gate ? 18 : 14), { mode: w.hitT > 0 ? 'white' : null, alpha: behind ? 0.45 : 1 });
   if (w.gate) { /* 아군이 가까이 오면 문이 열린다 */ let near = false; const chk = o => o && Math.abs(o.x - w.x) < 70 && Math.abs(o.y - WALL_Y) < 60; if (chk(G.player)) near = true; for (const c of G.comps) if (chk(c)) near = true; for (const a of (G.allies || [])) if (chk(a)) near = true; w.op = clamp((w.op || 0) + (near || w.openT > 0 ? 1 : -1) * 0.08, 0, 1); if (w.openT > 0) w.openT -= 0.02;
     if (w.op > 0.02) { const k2 = w.op, dw = 52, dh = 64, bx = w.x, by = WALL_Y + 6; ctx.save(); ctx.fillStyle = 'rgba(28,18,12,' + (0.92 * k2) + ')'; ctx.beginPath(); ctx.moveTo(bx - dw / 2 * k2, by); ctx.lineTo(bx - dw / 2 * k2, by - dh + 14); ctx.quadraticCurveTo(bx, by - dh - 6, bx + dw / 2 * k2, by - dh + 14); ctx.lineTo(bx + dw / 2 * k2, by); ctx.closePath(); ctx.fill(); const lg = ctx.createLinearGradient(0, by - dh, 0, by); lg.addColorStop(0, 'rgba(255,220,150,0)'); lg.addColorStop(1, 'rgba(255,220,150,' + 0.35 * k2 + ')'); ctx.fillStyle = lg; ctx.fill(); ctx.restore(); } }
   if (!ok) { rrPath(w.x - (w.gate ? 66 : 42), WALL_Y - 34, w.gate ? 132 : 84, 40, 6); ctx.fillStyle = w.gate ? '#8a3a2a' : '#8a7a62'; ctx.fill(); ctx.strokeStyle = '#3a2a1a'; ctx.lineWidth = 3; ctx.stroke(); }
@@ -2235,7 +2237,7 @@ function draw() {
   if (G.ship) drawShip(G.ship);
   /* 사당 체력 */
   const sh = G.shrine; hpBar(sh.x - 60, sh.y - 206, 120, 9, sh.hp / sh.max, sh.hp / sh.max < 0.3 ? '#ff4a3a' : '#ffc23a');
-  ctx.font = '900 18px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#140c06'; txt('사당 ' + Math.max(0, Math.ceil(sh.hp)), sh.x, sh.y - 222, 11, '#ffe8b0', 'center', '#140c06', 3);
+  ctx.font = '900 18px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#140c06'; txt('사당 ' + Math.max(0, Math.ceil(sh.hp)), sh.x, sh.y - 220, 9, '#ffe8b0', 'center', '#140c06', 3);
 
   /* 처용무 부채 */
   const dl = skLv('dance'); if (dl && isNight()) for (let i = 0; i < 1 + dl; i++) { const a = G.t * 3.4 + i / (1 + dl) * TAU; drawFan(p.x + Math.cos(a) * 100, p.y - 30 + Math.sin(a) * 62, a + Math.PI / 2); }

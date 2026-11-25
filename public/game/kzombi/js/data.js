@@ -300,7 +300,7 @@ D.SKILLS = [
   const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
   for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
   /* 장별 체력 보정 (시뮬로 맞춤) */
-  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.68,"3":1.2,"4":1.35,"5":1.9,"6":1.15,"7":0.6,"8":0.6,"9":0.42,"10":0.55,"11":0.52,"12":0.5,"13":0.45,"14":0.48,"15":0.6,"16":0.46,"17":0.45,"18":0.4,"19":0.42,"20":0.41,"21":0.42,"22":0.4,"23":0.4,"24":0.38,"25":0.38,"26":0.4,"27":0.38,"28":0.38,"29":0.37,"30":0.36});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.617,"3":1.435,"4":1.576,"5":2.942,"6":1.66,"7":0.681,"8":0.581,"9":0.367,"10":0.503,"11":0.472,"12":0.45,"13":0.402,"14":0.426,"15":0.529,"16":0.403,"17":0.418,"18":0.502,"19":0.43,"20":0.427,"21":0.425,"22":0.38,"23":0.336,"24":0.318,"25":0.316,"26":0.331,"27":0.247,"28":0.312,"29":0.327,"30":0.391});   /* 시뮬(11-25 진행 계정) 맞춤 */
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
   const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };
@@ -331,6 +331,8 @@ D.SKILLS = [
   if (D.TUR && D.TUR.mine) { D.TUR.mine.income = 35; D.TUR.mine.d = '밤을 넘길 때마다 엽전 +35'; }
   /* 디펜스 강화(11-25 2차): 시설 체력 4배, 본부 단계별 시설 최고 레벨 완화(1단계 3 · 2단계 4 · 3단계부터 5) */
   if (D.TUR) for (const k in D.TUR) { const t = D.TUR[k]; if (!t.__hp2) { t.hp = Math.round(t.hp * 4); t.__hp2 = 1; } }
+  /* 처용을 쓰러뜨리던 우두머리·정예 피해 완화(11-25 시뮬: 9장 염라·대장군, 12장 독룡) */
+  for (const [k, v] of [['byeomra', 20], ['bdokryong', 20], ['zgrand', 22]]) { const e = D.EN && D.EN[k]; if (e && !e.__dm2) { e.dmg = Math.min(e.dmg, v); e.__dm2 = 1; } }
   if (D.HQ) { const MX = [0, 3, 4, 5, 5, 5]; for (let i = 1; i < D.HQ.length; i++) if (D.HQ[i]) D.HQ[i].max = Math.max(D.HQ[i].max, MX[i] || 5); }
 })();
 
@@ -339,3 +341,6 @@ D.SKILLS = [
 
 /* SIZE_RATIO(11-25): 좀비 키 ≈ 처용의 0.9 (무기 든 큰 좀비는 기존 배율 그대로 곱해짐), 시설 꼭대기(top)는 그림 키에 맞춰 */
 (function () { const D = window.JZD; if (!D) return; for (const k in D.EN) { const e = D.EN[k]; if (e.h && !e.__hk) { e.h = Math.round(e.h * 1.75); e.__hk = 1; } } const TK = { arrow: 1.35, fire: 1.59, talisman: 1.52, general: 1.9, lady: 1.9, barracks: 1.48, mine: 1.79, well: 1.4, cannon: 1.72, hwacha: 1.72 }; for (const k in TK) { const t = D.TUR && D.TUR[k]; if (t && t.top && !t.__tk) { t.top = Math.round(t.top * TK[k]); t.__tk = 1; } } })();
+
+/* SIZE_CAP(11-25): 무기 든 큰 좀비는 처용의 약 1.35배, 말 탄 좀비 약 1.4배로 표시 크기만 줄임(체력 배율 유지) */
+(function () { const D = window.JZD; if (!D) return; const RID = { rider: 1, harcher: 1, plague_rider: 1 }; for (const k in D.EN) { const e = D.EN[k]; if (!e.big || !e.h || e.__cap) continue; const tgt = 118 * (RID[k] ? 1.4 : 1.35), cur = e.h * (e.sc || 1); if (cur > tgt) e.sc = +(tgt / e.h).toFixed(3); e.__cap = 1; } })();
