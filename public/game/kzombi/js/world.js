@@ -2,7 +2,7 @@
 (function () {
 'use strict';
 const D = window.JZD, FX = window.JZFX;
-const W = D.W, H = D.H, WALL_Y = D.WALL_Y, SH = D.SHRINE, LANE_X = D.LANE_X;
+const W = D.WW || D.W, H = D.H, CX = D.CX || 360, WALL_Y = D.WALL_Y, SH = D.SHRINE, LANE_X = D.LANE_X;
 const TAU = Math.PI * 2;
 const TH = {
   village:    { base: '#86b553', hi: '178,214,104', lo: '98,152,66', dirt: '228,198,134', edge: '24,60,30', tree: 'pine', amb: 'firefly', props: ['house', 'haystack', 'cart', 'jars', 'fence', 'sotdae', 'rubble', 'sheaf'], light: '255,180,80' },
@@ -20,9 +20,9 @@ const JZW = window.JZW = { TH };
 
 JZW.build = function (theme, LAY) {
   const LANES = (LAY && LAY.lanes) || LANE_X;
-  const T = TH[theme] || TH.village, GS = 2;
-  const cv = document.createElement('canvas'); cv.width = W * GS; cv.height = H * GS;
-  const g = cv.getContext('2d'); g.setTransform(GS, 0, 0, GS, 0, 0);
+  const T = TH[theme] || TH.village, GS = 1;
+  /* WIDE_MAP: 둘레 여백(멀리서 내려다보는 넓은 맵) */ const MX = 340, MT = 660, MB = 320; const cv = document.createElement('canvas'); cv.width = (W + 2 * MX) * GS; cv.height = (H + MT + MB) * GS;
+  const g = cv.getContext('2d'); g.setTransform(GS, 0, 0, GS, MX * GS, MT * GS);
   let seed = 20261124 + theme.length * 77;
   const R = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
   const rr = (a, b) => a + R() * (b - a);
@@ -33,18 +33,18 @@ JZW.build = function (theme, LAY) {
   const lights = [], fires = [];
 
   /* 바탕 */
-  g.fillStyle = T.base; g.fillRect(0, 0, W, H);
-  for (let i = 0; i < 180; i++) blob(rr(0, W), rr(0, H), rr(70, 190), R() < 0.5 ? T.hi : T.lo, rr(0.2, 0.45));
+  g.fillStyle = T.base; g.fillRect(-MX, -MT, W + 2 * MX, H + MT + MB);
+  for (let i = 0; i < 340; i++) blob(rr(-MX, W + MX), rr(-MT, H + MB), rr(70, 190), R() < 0.5 ? T.hi : T.lo, rr(0.2, 0.45));
   /* 물길 */
   if (T.water) {
     const wc = T.water === 2 ? ['120,20,40', '200,60,80'] : ['40,90,110', '120,190,200'];
     for (const side of [0, 1]) {
-      const x0 = side ? W - 70 : 0;
-      const gr = g.createLinearGradient(side ? W : 0, 0, side ? W - 90 : 90, 0);
+      const x0 = side ? W + 20 : -90;   /* 강은 판 바깥 가장자리 */
+      const gr = g.createLinearGradient(side ? W + 120 : -120, 0, side ? W + 6 : -6, 0);
       gr.addColorStop(0, 'rgba(' + wc[0] + ',1)'); gr.addColorStop(0.75, 'rgba(' + wc[0] + ',.85)'); gr.addColorStop(1, 'rgba(' + wc[0] + ',0)');
-      g.fillStyle = gr; g.fillRect(side ? W - 90 : 0, 0, 90, H);
+      g.fillStyle = gr; g.fillRect(side ? W : -120, -MT, 120, H + MT + MB);
       g.strokeStyle = 'rgba(' + wc[1] + ',.35)'; g.lineWidth = 2;
-      for (let y = 20; y < H; y += rr(30, 60)) { const x = x0 + rr(8, 50); g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 10, y - 4, x + 22, y); g.stroke(); }
+      for (let y = -MT + 20; y < H + MB; y += rr(30, 60)) { const x = x0 + rr(8, 50); g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 10, y - 4, x + 22, y); g.stroke(); }
     }
   }
   /* 돌바닥 무늬 */
@@ -53,14 +53,16 @@ JZW.build = function (theme, LAY) {
     const s = T.tiles ? 64 : 46;
     for (let y = 0; y < H; y += s) for (let x = (y / s % 2) * s / 2 - s; x < W; x += s) { if (R() < (T.tiles ? 0.9 : 0.35)) { g.strokeRect(x + 2, y + 2, s - 4, s - 4); if (R() < 0.3) { g.fillStyle = 'rgba(255,255,255,.06)'; g.fillRect(x + 4, y + 4, s - 8, s - 8); } } }
   }
+  /* 옅은 돌판 격자(판 전체, 아주 연하게) */ if (!T.tiles && !T.paving) { g.strokeStyle = 'rgba(40,30,20,.06)'; g.lineWidth = 2; const s2 = 76; for (let y = 0; y < H; y += s2) for (let x = 0; x < W; x += s2) if (R() < 0.55) g.strokeRect(x + 3, y + 3, s2 - 6, s2 - 6); }
   /* 밟혀서 드러난 길 세 갈래, 본진 둘레 */
   const dirt = (x, y, r) => blob(x + rr(-16, 16), y + rr(-16, 16), r * rr(0.8, 1.3), T.dirt, rr(0.4, 0.75));
-  for (let l = 0; l < LANES.length; l++) for (let t = 0; t <= 1; t += 0.011) { const k = t * t * (3 - 2 * t), x = LANES[l] + (360 - LANES[l]) * k * k, y = -40 + t * (WALL_Y + 40); dirt(x + Math.sin(t * 9 + l * 2) * 16, y, 44); }
-  for (let i = 0; i < 80; i++) { const a = rr(0, TAU), d = Math.sqrt(R()); dirt(360 + Math.cos(a) * d * 260, SH.y + Math.sin(a) * d * 175, 72); }
-  for (let x = 96; x <= 624; x += 20) dirt(x, WALL_Y - 30, 30);
+  for (let l = 0; l < LANES.length; l++) for (let t = 0; t <= 1; t += 0.011) { const k = t * t * (3 - 2 * t), x = LANES[l] + (CX - LANES[l]) * k * k, y = -40 + t * (WALL_Y + 40); dirt(x + Math.sin(t * 9 + l * 2) * 16, y, 44); }
+  for (let l = 0; l < LANES.length; l++) for (let y = -MT; y < -30; y += 13) dirt(LANES[l] + Math.sin(y * 0.02 + l) * 10, y, 46);   /* 길 입구(판 위 여백) */
+  for (let i = 0; i < 80; i++) { const a = rr(0, TAU), d = Math.sqrt(R()); dirt(SH.x + Math.cos(a) * d * 400, SH.y + Math.sin(a) * d * 240, 72); }
+  for (let x = 96; x <= W - 96; x += 20) dirt(x, WALL_Y - 30, 30);
   /* 수레바퀴 자국 */
   g.strokeStyle = 'rgba(60,44,30,.16)'; g.lineWidth = 3;
-  for (let l = 0; l < LANES.length; l++) for (const o of [-12, 12]) { g.beginPath(); for (let t = 0; t <= 1; t += 0.02) { const k = t * t * (3 - 2 * t), x = LANES[l] + (360 - LANES[l]) * k * k + o + Math.sin(t * 9 + l * 2) * 16, y = -40 + t * (WALL_Y + 40); t ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
+  for (let l = 0; l < LANES.length; l++) for (const o of [-12, 12]) { g.beginPath(); for (let t = 0; t <= 1; t += 0.02) { const k = t * t * (3 - 2 * t), x = LANES[l] + (CX - LANES[l]) * k * k + o + Math.sin(t * 9 + l * 2) * 16, y = -40 + t * (WALL_Y + 40); t ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
 
   /* 좀비가 오는 길: 붉은 화살표 */
   for (let l = 0; l < LANES.length; l++) for (let t = 0.04; t < 0.97; t += 0.035) {
@@ -70,9 +72,9 @@ JZW.build = function (theme, LAY) {
   }
   /* 풀포기, 잔돌, 잎 */
   const grassC = T.snowy ? ['rgba(255,255,255,.8)', 'rgba(170,190,210,.8)'] : T.burning ? ['rgba(60,40,30,.7)', 'rgba(120,80,50,.6)'] : ['rgba(66,128,52,.85)', 'rgba(204,232,124,.75)'];
-  for (let i = 0; i < 160; i++) { const x = rr(10, W - 10), y = rr(10, H - 10); g.strokeStyle = R() < 0.5 ? grassC[0] : grassC[1]; g.lineWidth = 2; g.lineCap = 'round'; for (let k = -1; k <= 1; k++) { g.beginPath(); g.moveTo(x + k * 3, y); g.lineTo(x + k * 6, y - rr(6, 11)); g.stroke(); } }
-  for (let i = 0; i < 90; i++) { const x = rr(10, W - 10), y = rr(10, H - 10), r = rr(3, 8); shadow(x + 1, y + r * 0.5, r * 1.2, r * 0.5, 0.25); ell(x, y, r, r * 0.7, R() < 0.5 ? '#8d8672' : '#7a7566'); ell(x - r * 0.25, y - r * 0.2, r * 0.45, r * 0.3, 'rgba(255,255,255,.18)'); }
-  if (!T.snowy && !T.tiles) for (let i = 0; i < 70; i++) { const x = rr(10, W - 10), y = rr(10, H - 10); const c = T.burning ? ['#2a201a', '#4a3020'] : ['#e8d070', '#f0a0b0', '#ffffff']; ell(x, y, 2.4, 2.4, c[(R() * c.length) | 0]); }
+  for (let i = 0; i < 90; i++) { const x = rr(10, W - 10), y = rr(10, H - 10); g.strokeStyle = R() < 0.5 ? grassC[0] : grassC[1]; g.lineWidth = 2; g.lineCap = 'round'; for (let k = -1; k <= 1; k++) { g.beginPath(); g.moveTo(x + k * 3, y); g.lineTo(x + k * 6, y - rr(6, 11)); g.stroke(); } }
+  for (let i = 0; i < 40; i++) { const x = rr(10, W - 10), y = rr(10, H - 10), r = rr(3, 8); shadow(x + 1, y + r * 0.5, r * 1.2, r * 0.5, 0.25); ell(x, y, r, r * 0.7, R() < 0.5 ? '#8d8672' : '#7a7566'); ell(x - r * 0.25, y - r * 0.2, r * 0.45, r * 0.3, 'rgba(255,255,255,.18)'); }
+  if (!T.snowy && !T.tiles) for (let i = 0; i < 30; i++) { const x = rr(10, W - 10), y = rr(10, H - 10); const c = T.burning ? ['#2a201a', '#4a3020'] : ['#e8d070', '#f0a0b0', '#ffffff']; ell(x, y, 2.4, 2.4, c[(R() * c.length) | 0]); }
 
   /* ---------- 소품 그리기 ---------- */
   const snowCap = (x, y, w) => { if (!T.snowy) return; ell(x, y, w, w * 0.32, 'rgba(250,252,255,.95)'); };
@@ -115,32 +117,35 @@ JZW.build = function (theme, LAY) {
   /* 가장자리 소품 배치: 나무 띠 + 테마 소품 */
   const items = [];
   const tree = P[T.tree];
-  for (let y = 40; y < H; y += rr(46, 74)) { const s = rr(0.9, 1.4); const x1 = T.water ? rr(92, 120) : rr(4, 44); items.push([y, () => tree(x1, y, s)]); const y2 = y + rr(-20, 20), x2 = T.water ? rr(W - 120, W - 92) : rr(W - 44, W - 4); items.push([y2, () => tree(x2, y2, rr(0.9, 1.4))]); }
+  for (let y = 40; y < H; y += rr(46, 74)) { const s = rr(0.9, 1.4); const x1 = T.water ? rr(-170, -135) : rr(-70, -20); items.push([y, () => tree(x1, y, s)]); const y2 = y + rr(-20, 20), x2 = T.water ? rr(W + 135, W + 170) : rr(W + 20, W + 70); items.push([y2, () => tree(x2, y2, rr(0.9, 1.4))]); }
   const spots = [[60, 300], [664, 520], [64, 470], [656, 250], [60, 760], [664, 860], [90, 560], [640, 700], [96, 150], [640, 400], [72, 660], [250, 64], [470, 90], [652, 190], [62, 940], [96, 1180], [630, 1200], [80, 1400], [640, 1430], [660, 1000]];
-  spots.forEach((q, i) => { const name = T.props[i % T.props.length]; const fn = P[name]; if (fn) items.push([q[1], () => fn(q[0] + (T.water ? (q[0] < 360 ? 50 : -50) : 0), q[1])]); });
+  /* 넓은 판: 장식은 모두 판 바깥 가장자리로(가운데는 빈 공터) */ spots.forEach(q => { q[1] = Math.round(q[1] * H / 1500); q[0] = q[0] < 360 ? -150 + (q[0] % 60) : W + 90 + (q[0] % 60); if (q[1] < 140) q[1] = -160; });
+  
+  /* 여백 숲·장식 (길 입구는 비움) */ for (let y = -MT + 30; y < H + MB; y += rr(60, 95)) for (const side of [0, 1]) { const x = side ? rr(W + 110, W + MX - 30) : rr(-MX + 30, -110), s = rr(0.9, 1.5); items.push([y, () => tree(x, y, s)]); if (R() < 0.35) { const xx = side ? rr(W + 90, W + MX - 40) : rr(-MX + 40, -90), yy = y + rr(10, 40), nm = T.props[(R() * T.props.length) | 0]; if (P[nm]) items.push([yy, () => P[nm](xx, yy)]); } }
+  for (let y = -MT + 30; y < -90; y += rr(70, 110)) for (let x = rr(-MX, -MX + 80); x < W + MX; x += rr(90, 150)) { if (LANES.some(L => Math.abs(L - x) < 130) || Math.abs(x - CX) < 90) continue; const s = rr(0.9, 1.4), yy = y; items.push([yy, () => tree(x, yy, s)]); }
+  spots.forEach((q, i) => { const name = T.props[i % T.props.length]; const fn = P[name]; if (fn) items.push([q[1], () => fn(q[0] + (T.water ? (q[0] < CX ? -60 : 60) : 0), q[1])]); });
   /* 본진 뒤쪽 */
-  items.push([1440, () => P.jars(330, 1410)]); items.push([1390, () => P.fence(260, 1392)]); items.push([1392, () => P.fence(460, 1392)]);
+  items.push([SH.y + 178, () => P.jars(SH.x - 30, SH.y + 148)]); items.push([SH.y + 128, () => P.fence(SH.x - 110, SH.y + 130)]); items.push([SH.y + 130, () => P.fence(SH.x + 110, SH.y + 130)]);
   /* 성벽 앞 가로등(후더덕의 가로등 빛처럼) */
-  items.push([WALL_Y - 150, () => P.lamppost(120, WALL_Y - 150)]); items.push([WALL_Y - 150, () => P.lamppost(586, WALL_Y - 150)]);
-  items.push([560, () => P.lamppost(90, 560)]); items.push([360, () => P.lamppost(612, 360)]);
+  /* 판 안 가로등은 빼고 가장자리에만 */ items.push([700, () => P.lamppost(-40, 700)]); items.push([420, () => P.lamppost(W + 20, 420)]);
   items.sort((a, b) => a[0] - b[0]).forEach(it => it[1]());
 
   /* 양옆을 어둡게, 위쪽(적이 오는 곳)도 조금 어둡게 */
-  let gr = g.createLinearGradient(0, 0, 120, 0); gr.addColorStop(0, 'rgba(' + T.edge + ',.45)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(0, 0, 120, H);
-  gr = g.createLinearGradient(W, 0, W - 120, 0); gr.addColorStop(0, 'rgba(' + T.edge + ',.45)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(W - 120, 0, 120, H);
-  gr = g.createLinearGradient(0, 0, 0, 260); gr.addColorStop(0, 'rgba(' + T.edge + ',.5)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(0, 0, W, 260);
+  let gr = g.createLinearGradient(-MX, 0, -MX + 240, 0); gr.addColorStop(0, 'rgba(' + T.edge + ',.5)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(-MX, -MT, 240, H + MT + MB);
+  gr = g.createLinearGradient(W + MX, 0, W + MX - 240, 0); gr.addColorStop(0, 'rgba(' + T.edge + ',.5)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(W + MX - 240, -MT, 240, H + MT + MB);
+  gr = g.createLinearGradient(0, -MT, 0, -MT + 320); gr.addColorStop(0, 'rgba(' + T.edge + ',.55)'); gr.addColorStop(1, 'rgba(' + T.edge + ',0)'); g.fillStyle = gr; g.fillRect(-MX, -MT, W + 2 * MX, 320);
 
   /* 본진 둘레의 큰 흰 원 (지킬 구역 표시) */
   g.save(); g.translate(SH.x, SH.y - 40); g.scale(1, 0.62);
-  g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 4; g.beginPath(); g.arc(0, 0, 330, 0, TAU); g.stroke();
-  g.setLineDash([18, 14]); g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 250, 0, TAU); g.stroke(); g.setLineDash([]);
+  g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 4; g.beginPath(); g.arc(0, 0, 470, 0, TAU); g.stroke();
+  g.setLineDash([18, 14]); g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 360, 0, TAU); g.stroke(); g.setLineDash([]);
   g.restore();
   /* 성벽 앞 가로선 */
-  g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(60, WALL_Y + 30, 600, 3);
+  g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(60, WALL_Y + 30, W - 120, 3);
 
   /* 본진 앞 등불 */
-  [[296, WALL_Y - 58], [424, WALL_Y - 58], [270, 1352], [450, 1352]].forEach(q => lights.push({ x: q[0], y: q[1], r: 70, c: T.light, k: 0.9 }));
-  return { cv, GS, lights, fires, T };
+  [[CX - 64, WALL_Y - 58], [CX + 64, WALL_Y - 58], [SH.x - 90, SH.y + 90], [SH.x + 90, SH.y + 90]].forEach(q => lights.push({ x: q[0], y: q[1], r: 70, c: T.light, k: 0.9 }));
+  return { cv, GS, lights, fires, T, MX, MT, MB };
 };
 
 /* 떠다니는 입자: 화면 범위(x0..x1, y0..y1) 안에 테마별로 띄운다 */

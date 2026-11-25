@@ -2,11 +2,12 @@
 (function () {
 'use strict';
 const D = window.JZD = {};
-D.W = 720; D.VH = 1280; D.H = 1500;
-D.SHRINE = { x: 360, y: 1262, r: 54 };
-D.WALL_Y = 1070; D.GATE = [292, 428];
-D.LANE_X = [150, 360, 570];
-D.PADS = [[96, 975], [198, 975], [522, 975], [624, 975], [205, 800], [515, 800], [130, 630], [590, 630], [140, 1165], [580, 1165]];
+D.W = 720; D.VH = 1280; D.H = 1760;   /* W·VH: 화면(논리 픽셀), WW·H: 판(월드) 크기 */
+/* WIDE_MAP2(11-25): 판 폭 720→1300, 본진은 넓은 공터 */ D.WW = 1300; D.CX = 650;
+D.SHRINE = { x: 650, y: 1440, r: 54 };
+D.WALL_Y = 1200; D.GATE = [582, 718];
+D.LANE_X = [283, 650, 1018];
+D.PADS = [];   /* 실제 자리는 D.layoutOf(ch) */
 
 /* 적. h: 그림 키(px), r: 몸 반지름 */
 D.EN = {
@@ -138,24 +139,24 @@ D.OBJ = {
   D.revealed = ch => { const s = new Set(); for (const C of D.CHAPTERS) { if (C.n > ch) break; C.pool.forEach(k => s.add(k)); } return s; };
 })();
 /* 판마다 다른 배치: 좀비 길(2~3갈래)과 건물 자리. 같은 챕터는 늘 같은 배치 */
-D.lanePt = (L, t, i) => { const k = t * t * (3 - 2 * t); return { x: L + (360 - L) * k * k + Math.sin(t * 9 + i * 2) * 16, y: -40 + t * (D.WALL_Y + 40) }; };
+D.lanePt = (L, t, i) => { const k = t * t * (3 - 2 * t); return { x: L + (D.CX - L) * k * k + Math.sin(t * 9 + i * 2) * 16, y: -40 + t * (D.WALL_Y + 40) }; };
 D.layoutOf = function (ch) {
   let s = (ch * 9973 + 17) >>> 0; const R = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; const rr = (a, b) => a + R() * (b - a);
   const T = [[150, 360, 570], [200, 520], [120, 420, 600], [250, 590], [140, 470], [180, 360, 540], [110, 330, 610]];
-  const lanes = ch === 1 ? [150, 360, 570] : T[(ch * 3) % T.length].map(x => Math.round(x + rr(-35, 35)));
+  const lanes = (ch === 1 ? [150, 360, 570] : T[(ch * 3) % T.length].map(x => Math.round(x + rr(-35, 35)))).map(x => Math.round(D.CX + (x - 360) * 1.75));
   const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 30 && Math.abs(p.x - x) < 78) return true; } return false; });
   const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 80);
   const pads = [];
-  /* TIDY_PADS(11-25): 성벽 앞 두 줄 + 길 양옆 대칭 묶음. 같은 줄은 같은 높이, 좌우 거울 배치 우선, 길·수호물·서로 겹침 금지 */
-  const free = (x, y) => !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 100);
-  const COLS = [96, 178, 260, 342, 424, 506, 588];
-  const row = (y, n) => { let got = 0; const cand = []; for (const x of COLS) if (x <= 360) cand.push(x); cand.sort((a, b) => Math.abs(a - 200) - Math.abs(b - 200));
-    for (const x of cand) { if (got >= n) break; const xm = 720 - x; if (xm !== x && free(x, y) && free(xm, y)) { pads.push([x, y]); pads.push([xm, y]); got += 2; } }
-    for (const x of COLS) { if (got >= n) break; if (free(x, y)) { pads.push([x, y]); got++; } }
-    for (let t = 0; got < n && t < 40; t++) { const x = Math.round(80 + R() * 560); if (free(x, y)) { pads.push([x, y]); got++; } } };
-  const off = Math.round(rr(-12, 12));
-  row(985 + off, 4); row(855 + off, 2); row(760 + off, 2); row(640 + off, 2);
-  for (const bx of [140, 580]) pads.push([bx, 1165]);
+  /* WIDE_PADS(11-25): 넓은 판 — 성문 앞 반원 고리 두 겹 + 길 양옆 + 성벽 안 양옆. 좌우 거울 우선, 길·수호물·서로 겹침 금지 */
+  const CX = D.CX, WY = D.WALL_Y, jit = rr(-18, 18);
+  const free = (x, y) => x > 80 && x < D.WW - 80 && !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 118);
+  const put = (x, y) => { if (free(x, y)) { pads.push([Math.round(x), Math.round(y)]); return true; } return false; };
+  const pair = (x, y) => { const xm = 2 * CX - x; if (free(x, y) && free(xm, y)) { put(x, y); put(xm, y); } else { put(x, y); put(xm, y); } };
+  for (const a of [0.16, 0.5, 0.86, 1.2]) pair(CX - Math.cos(a) * (340 + jit), WY - 60 - Math.sin(a) * 250);
+  for (const a of [0.1, 0.42, 0.76, 1.1]) pair(CX - Math.cos(a) * (560 + jit), WY - 90 - Math.sin(a) * 430);
+  lanes.forEach((L, i) => { const p = D.lanePt(L, 0.5, i); put(p.x - 130, p.y); put(p.x + 130, p.y); });
+  pair(CX - 330, WY + 110); pair(CX - 470, WY + 270);
+  while (pads.length > 20) pads.pop();
   return { lanes, pads };
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
@@ -209,7 +210,7 @@ D.SOLDIER = {
 };
 /* 본부(사당) 레벨: 시설 최대 레벨, 동료 칸, 밤마다 엽전 */
 D.HQ = [null, { max: 2, comps: 1, gold: 0, hp: 0 }, { max: 3, comps: 2, gold: 15, hp: 120, cost: 120 }, { max: 4, comps: 2, gold: 30, hp: 260, cost: 220 }, { max: 5, comps: 2, gold: 50, hp: 420, cost: 360 }, { max: 5, comps: 2, gold: 80, hp: 600, cost: 520 }];
-D.WALLS = [{ x: 78 }, { x: 164 }, { x: 250 }, { x: 360, gate: 1 }, { x: 470 }, { x: 556 }, { x: 642 }];
+D.WALLS = []; for (let k = -7; k <= 7; k++) D.WALLS.push(k ? { x: D.CX + k * 86 + (k > 0 ? 24 : -24) } : { x: D.CX, gate: 1 });   /* 넓은 판: 15칸 */
 
 D.WEAPON = {
   bow:     { n: '각궁', d: '금빛 화살이 적 하나를 뚫고 나간다', rate: 0.40, dmg: 11, range: 340, sp: 900, shots: 1, pierce: 1, spread: 0.14, fx: 'arrow' },
@@ -221,10 +222,10 @@ D.WEAPON = {
 };
 
 D.GUARD = {
-  turtle:  { n: '현무', side: '사당 왼편', d: '사당 피해 30% 감소. 영혼이 나와 물결 방패로 적을 밀어내고 느리게 한다', x: 196, y: 1300, range: 240, c: '90,200,170' },
-  phoenix: { n: '주작', side: '사당 오른편', d: '영혼이 날아올라 내리꽂으며 불길 자국을 남긴다', x: 524, y: 1300, range: 440, rate: 2.2, dmg: 32, c: '255,110,50' },
-  tiger:   { n: '백호', side: '성문 앞 왼편', d: '영혼이 적 무리로 뛰어들어 세 번 할퀴고 포효로 밀쳐 낸다', x: 262, y: 895, range: 180, rate: 0.75, dmg: 26, c: '235,240,255' },
-  dragon:  { n: '청룡', side: '성문 앞 오른편', d: '영혼이 하늘을 휘감으며 번개를 다섯 번 내리친다', x: 458, y: 895, range: 310, rate: 1.4, dmg: 22, c: '90,190,255' }
+  turtle:  { n: '현무', side: '사당 왼편', d: '사당 피해 30% 감소. 영혼이 나와 물결 방패로 적을 밀어내고 느리게 한다', x: 190, y: 1610, range: 330, c: '90,200,170' },
+  phoenix: { n: '주작', side: '사당 오른편', d: '영혼이 날아올라 내리꽂으며 불길 자국을 남긴다', x: 1110, y: 1610, range: 540, rate: 2.2, dmg: 32, c: '255,110,50' },
+  tiger:   { n: '백호', side: '성문 앞 왼편', d: '영혼이 적 무리로 뛰어들어 세 번 할퀴고 포효로 밀쳐 낸다', x: 210, y: 1150, range: 320, rate: 0.75, dmg: 26, c: '235,240,255' },
+  dragon:  { n: '청룡', side: '성문 앞 오른편', d: '영혼이 하늘을 휘감으며 번개를 다섯 번 내리친다', x: 1090, y: 1150, range: 440, rate: 1.4, dmg: 22, c: '90,190,255' }
 };
 
 /* 동료: 처용을 따라다니며 싸운다 */
@@ -328,6 +329,9 @@ D.SKILLS = [
     D.SKILLS.push({ id: 'h_' + id, hero: id, n: h[0], kind: 'buff', max: 3, c: '#ffc85a', img: COMP[id].spr, d: (desc => () => desc)(h[1]) });
   }
   if (D.TUR && D.TUR.mine) { D.TUR.mine.income = 35; D.TUR.mine.d = '밤을 넘길 때마다 엽전 +35'; }
+  /* 디펜스 강화(11-25 2차): 시설 체력 2.5배, 본부 단계별 시설 최고 레벨 완화(1단계 3 · 2단계 4 · 3단계부터 5) */
+  if (D.TUR) for (const k in D.TUR) { const t = D.TUR[k]; if (!t.__hp2) { t.hp = Math.round(t.hp * 2.5); t.__hp2 = 1; } }
+  if (D.HQ) { const MX = [0, 3, 4, 5, 5, 5]; for (let i = 1; i < D.HQ.length; i++) if (D.HQ[i]) D.HQ[i].max = Math.max(D.HQ[i].max, MX[i] || 5); }
 })();
 
 /* WIDE_MAP2: 넓은 판에 맞춰 탑 사거리 15% 늘림 */

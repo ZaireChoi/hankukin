@@ -107,10 +107,14 @@ FX.skyBolt = function (x, y, c, w) {
 /* 피해 숫자 */
 FX.fmt = v => typeof v === 'string' ? v : v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : v >= 1e4 ? (v / 1e3).toFixed(1) + 'K' : String(Math.round(v));
 FX.num = function (x, y, v, crit, col) {
+  /* 같은 적 근처 0.2초 안 숫자는 하나로 합친다 */
+  if (typeof v === 'number') for (let i = nums.length - 1; i >= 0 && i >= nums.length - 24; i--) { const n = nums[i]; if (typeof n.v === 'number' && !!n.crit === !!crit && n.col === col && n.life - n.t < 0.2 && Math.abs(n.ox - x) < 34 && Math.abs(n.oy - y) < 50) { n.v += v; n.t = Math.max(n.t, n.life - 0.1); return; } }
   if (nums.length > 60) nums.shift();
-  nums.push({ x: x + rnd(-10, 10), y, v, crit, col, t: 0.8, life: 0.8, vy: -rnd(70, 110) });
+  nums.push({ x: x + rnd(-8, 8), y, ox: x, oy: y, v, crit, col, t: 0.8, life: 0.8, vy: -rnd(70, 100) });
 };
 
+/* 크고 깔끔한 초승달 베기 한 번 (영웅·처용 근접 공통) */
+FX.slash = function (x, y, ang, c, R, life) { add({ kind: 'slash', x, y, ang: ang || 0, c: c || '255,80,60', R: R || 70, t: life || 0.24, life: life || 0.24, s: 0, s2: 0 }); };
 FX.reset = function () { parts = []; decals = []; nums = []; bolts = []; rings = []; FX.shake = 0; };
 FX.count = () => parts.length;
 
@@ -162,6 +166,11 @@ FX.draw = function (ctx) {
       ctx.globalAlpha = Math.min(1, k * 1.6) * 0.8; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.drawImage(smokeImg(p.c), -s, -s, s * 2, s * 2); ctx.restore();
     } else if (p.kind === 'debris') {
       ctx.globalAlpha = Math.min(1, p.t * 3); ctx.save(); ctx.translate(p.x, p.y - p.z); ctx.rotate(p.rot); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.7); ctx.restore();
+    } else if (p.kind === 'slash') {
+      const k = 1 - p.t / p.life, R = p.R * (0.75 + 0.35 * Math.min(1, k * 2.2)), sw = 2.3, a0 = p.ang - sw / 2, a1 = a0 + sw * Math.min(1, k * 3.2), th = R * 0.34 * (1 - k * 0.55);
+      ctx.globalAlpha = Math.min(1, (1 - k) * 2.2); ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, 0.7);
+      ctx.beginPath(); ctx.arc(0, 0, R, a0, a1); ctx.arc(Math.cos((a0 + a1) / 2) * -th, Math.sin((a0 + a1) / 2) * -th, R * 0.92, a1, a0, true); ctx.closePath();
+      ctx.fillStyle = 'rgba(' + p.c + ',0.92)'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.stroke(); ctx.restore();
     } else if (p.kind === 'leaf') {
       ctx.globalAlpha = Math.min(1, p.t * 2, 1); ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.c; ctx.beginPath(); ctx.ellipse(0, 0, p.s, p.s * 0.45, 0, 0, TAU); ctx.fill(); ctx.restore();
     }
@@ -202,14 +211,13 @@ FX.draw = function (ctx) {
 FX.drawNums = function (ctx, toS) {
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
   for (const n of nums) {
-    const age = n.life - n.t, pop = age < 0.08 ? 1.7 - age / 0.08 * 0.7 : 1, s = toS(n.x, n.y);
-    const size = (n.crit ? 52 : 30) * pop;
+    const age = n.life - n.t, pop = age < 0.08 ? 1.35 - age / 0.08 * 0.35 : 1, s = toS(n.x, n.y);
+    const size = (n.crit ? 42 : 28) * pop;
     ctx.globalAlpha = Math.min(1, n.t / 0.25);
     ctx.font = '900 ' + size.toFixed(1) + 'px "Pretendard","Malgun Gothic",sans-serif';
     const txt = FX.fmt(n.v) + (n.crit ? '!' : '');
-    ctx.lineWidth = n.crit ? 8 : 7; ctx.strokeStyle = n.crit ? '#3a0606' : '#141018'; ctx.strokeText(txt, s[0], s[1]);
-    if (n.crit && !n.col) { const gg = ctx.createLinearGradient(0, s[1] - size, 0, s[1]); gg.addColorStop(0, '#fff4a0'); gg.addColorStop(1, '#ff5a2a'); ctx.fillStyle = gg; } else ctx.fillStyle = n.col || '#ffffff'; ctx.fillText(txt, s[0], s[1]);
-    if (n.crit) { ctx.fillStyle = 'rgba(255,230,120,.55)'; ctx.fillText(txt, s[0], s[1] - 2); }
+    ctx.lineWidth = n.crit ? 7 : 6; ctx.strokeStyle = '#1a1014'; ctx.strokeText(txt, s[0], s[1]);
+    ctx.fillStyle = n.col || (n.crit ? '#ffd84a' : '#ffffff'); ctx.fillText(txt, s[0], s[1]);
   }
   ctx.globalAlpha = 1;
 };
