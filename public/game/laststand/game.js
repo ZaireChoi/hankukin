@@ -560,6 +560,7 @@ function dressMech(g, mech) {
   if (g.userData.armed) return g.userData.armed;
   const bones = {}; g.scene.traverse((o) => { if (o.isBone) { bones[o.name] = o; o.userData.q0 = o.quaternion.clone(); o.userData.p0 = o.position.clone(); } });
   const out = { bones, main: null, off: null };
+  { P.group.updateMatrixWorld(true); const lf = bones.LeftFoot, rf = bones.RightFoot; if (lf && rf) out.footRest = Math.min(lf.getWorldPosition(new THREE.Vector3()).y, rf.getWorldPosition(new THREE.Vector3()).y) - P.group.getWorldPosition(new THREE.Vector3()).y; }
   for (const [slot, key] of [['main', mech.arm], ['off', mech.off]]) {
     if (!key || !WPN[key] || ARMS[key].world) continue; const b = bones[ARMS[key].bone]; if (!b) continue;
     // 뼈의 실제 세계 배율을 재서 상쇄(본편 모델마다 내부 배율이 다르다)
@@ -1775,7 +1776,7 @@ function drawSlots() {
 }
 function drawBuild() {
   const m = MECH(save.mech);
-  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg?v=12" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
+  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg?v=13" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
     + Object.keys(UP).filter((k) => P.w[k] > 0).map((k) => { const u = UP[k], an = k === 'rifle' && ARM_NAME[PRIM], lv = P.w[k];
       return `<div>${ico(k === 'rifle' ? PRIM : k)}<span><b>${an ? an.nm : u.nm} Lv ${lv}/${u.max}</b><small>${an && lv === 1 ? an.ds0 : u.ds[Math.min(lv - 1, u.ds.length - 1)]}</small></span></div>`; }).join('');
 }
@@ -2122,7 +2123,7 @@ async function startRun() {
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
   { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico(m.ult.k); $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico(m.auto.k); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
-    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=12)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
+    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=13)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
   $('#btns').style.display = ''; drawSlots(); G.state = 'play'; last = performance.now();
@@ -2292,9 +2293,12 @@ function pointArm(arm, hand, dir, k) {
 }
 const _sa = new THREE.Vector3(), _sb = new THREE.Vector3(), _ss = new THREE.Vector3(), _sf = new THREE.Vector3(), _sd = new THREE.Vector3();
 // 대기창에서 손에 든 무기 방향: [앞쪽 기울기, 바깥쪽 기울기] (아래 1 기준). 칼끝·총구가 앞쪽 아래를 향하게
-const STAND_HOLD = { spear: [.06, .1, 1], katana: [1, .18], saber: [.9, .18], pistol: [.65, .12], rifle: [.9, .28], rail: [.9, .28], gatling: [.75, .32], cannon: [.75, .3] }, _sbox = new THREE.Box3();
+const STAND_HOLD = { spear: [.06, .1, 1], great: [.85, .22], katana: [1, .18], saber: [.9, .18], pistol: [.65, .12], rifle: [.9, .28], rail: [.9, .28], gatling: [.75, .32], cannon: [.75, .3] }, _sbox = new THREE.Box3();
 const STAND_REST = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head', 'LeftShoulder', 'RightShoulder', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase', 'LeftHand', 'RightHand'];
+// 기체별 대기 자세: attn = 차렷(발 모으고 팔 몸에 붙임)
+const STAND_STYLE = { mech3: { attn: 1, hold: [.12, .14] } };
 function lobbyStand() {
+  const SS = STAND_STYLE[CURM && CURM.id] || {};
   const B = armed && armed.bones; if (!B || !B.Hips || !B.LeftUpLeg || !B.RightUpLeg || !B.LeftArm || !B.RightArm) return;
   // 몸통·머리·다리는 기본 자세로 되돌려 비틀림을 없앤다
   for (const n in B) { const b = B[n]; if (b && b.userData.q0) b.quaternion.copy(b.userData.q0); }
@@ -2302,9 +2306,14 @@ function lobbyStand() {
   P.group.updateMatrixWorld(true);
   _sf.set(Math.sin(P.yaw), 0, Math.cos(P.yaw));                                                                                                       // 앞 방향
   // 엉덩이·가슴이 정확히 정면을 보게: 좌우 선을 앞 방향과 직각으로 돌린다
-  const squareUp = (bone, la, ra) => { if (!bone || !la || !ra) return; la.getWorldPosition(_sa); ra.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb); _sd.y = 0; if (_sd.lengthSq() < 1e-6) return; _sd.normalize();
+  const squareUp = (bone, la, ra) => { if (!bone || !la || !ra) return; la.getWorldPosition(_sa); ra.getWorldPosition(_sb); _sd.copy(_sa).sub(_sb); if (_sd.lengthSq() < 1e-6) return; _sd.normalize();
     const want = _sb.set(_sf.z, 0, -_sf.x); if (want.dot(_sd) < 0) want.negate(); rotW(bone, new THREE.Quaternion().setFromUnitVectors(_sd, want)); };
-  squareUp(B.Hips, B.LeftUpLeg, B.RightUpLeg); squareUp((B.LeftShoulder && B.LeftShoulder.parent) || B.Spine2 || B.Spine, B.LeftArm, B.RightArm);
+  squareUp(B.Hips, B.LeftUpLeg, B.RightUpLeg);
+  // 허리: 가장 아래 허리뼈를 돌려 어깨 중심이 엉덩이 바로 위에 오게(옆으로 휜 모델도 곧게)
+  { let sp = B.LeftShoulder && B.LeftShoulder.parent; while (sp && sp.parent && sp.parent !== B.Hips) sp = sp.parent;
+    if (sp && sp.parent === B.Hips && B.LeftArm && B.RightArm) { sp.getWorldPosition(_sa); B.LeftArm.getWorldPosition(_sb); B.RightArm.getWorldPosition(_sd); _sb.add(_sd).multiplyScalar(.5).sub(_sa);
+      if (_sb.lengthSq() > 1e-6) { _sb.normalize(); rotW(sp, new THREE.Quaternion().setFromUnitVectors(_sb, _sd.set(0, 1, 0))); } } }
+  squareUp((B.LeftShoulder && B.LeftShoulder.parent) || B.Spine2 || B.Spine, B.LeftArm, B.RightArm);
   B.LeftUpLeg.getWorldPosition(_sa); B.RightUpLeg.getWorldPosition(_sb); _ss.copy(_sa).sub(_sb); _ss.y = 0; const hipW = _ss.length(); _ss.normalize();   // 왼쪽 방향
   B.LeftArm.getWorldPosition(_sa); B.RightArm.getWorldPosition(_sb); const shW = Math.hypot(_sa.x - _sb.x, _sa.z - _sb.z);
   for (const s of [1, -1]) {
@@ -2312,7 +2321,7 @@ function lobbyStand() {
     // 다리: 곧게 펴고 발 간격을 어깨너비에 맞춘다
     const up = B[L + 'UpLeg'], kn = B[L + 'Leg'], ft = B[L + 'Foot'];
     if (up && kn && ft) {
-      up.getWorldPosition(_sa); ft.getWorldPosition(_sb); const len = _sa.distanceTo(_sb) || 1, out = clamp((shW - hipW) / 2 / len, 0, .3);
+      up.getWorldPosition(_sa); ft.getWorldPosition(_sb); const len = _sa.distanceTo(_sb) || 1, out = SS.attn ? 0 : clamp((shW - hipW) / 2 / len, 0, .3);
       _sd.copy(_ss).multiplyScalar(s * out); _sd.y = -1; _sd.normalize(); pointArm(up, kn, _sd, 1); pointArm(kn, ft, _sd, 1);
       // 발끝은 정면으로 나란히
       if (ft.userData.q0) { ft.quaternion.copy(ft.userData.q0); ft.updateMatrixWorld(true); }
@@ -2321,12 +2330,17 @@ function lobbyStand() {
     // 팔: 몸 옆으로 내리고 팔꿈치는 살짝 굽힌다
     const ua = B[L + 'Arm'], fa = B[L + 'ForeArm'], hd = B[L + 'Hand'];
     if (ua && fa && hd) {
-      _sd.copy(_ss).multiplyScalar(s * .26).addScaledVector(_sf, .02); _sd.y = -1; _sd.normalize(); pointArm(ua, fa, _sd, 1);
-      _sd.copy(_ss).multiplyScalar(s * .14).addScaledVector(_sf, .2); _sd.y = -1; _sd.normalize(); pointArm(fa, hd, _sd, 1);
+      _sd.copy(_ss).multiplyScalar(s * (SS.attn ? .13 : .26)).addScaledVector(_sf, .02); _sd.y = -1; _sd.normalize(); pointArm(ua, fa, _sd, 1);
+      _sd.copy(_ss).multiplyScalar(s * (SS.attn ? .05 : .14)).addScaledVector(_sf, SS.attn ? .03 : .2); _sd.y = -1; _sd.normalize(); pointArm(fa, hd, _sd, 1);
     }
   }
-  // 칼을 든 손: 칼끝이 앞쪽 아래를 향하게 자연스럽게 든다
-  const mw = armed.main, hk = STAND_HOLD[ARM]; if (mw && hk && B.RightHand) { mw.updateMatrixWorld(true); mw.getWorldPosition(_sb);
+  // 두 발을 기본 자세 때 높이(바닥)에 맞춘다
+  const scn = TF_E.mdl.obj; if (scn && B.LeftFoot && B.RightFoot) {
+    if (armed.footY == null) armed.footY = null;
+    const fy = Math.min(B.LeftFoot.getWorldPosition(_sa).y, B.RightFoot.getWorldPosition(_sb).y), base = P.group.getWorldPosition(_sd).y + (armed.footRest ?? 0);
+    const ps = B.Hips.parent ? B.Hips.parent.getWorldScale(_sd).y : 1; if (Math.abs(base - fy) > 1e-3 && ps) { B.Hips.position.y += (base - fy) / ps; P.group.updateMatrixWorld(true); }
+  }  // 칼을 든 손: 칼끝이 앞쪽 아래를 향하게 자연스럽게 든다
+  const mw = armed.main, hk = SS.hold || STAND_HOLD[ARM]; if (mw && hk && B.RightHand) { mw.updateMatrixWorld(true); mw.getWorldPosition(_sb);
     const tl = mw.userData.muzzle || mw.userData.tip; if (tl) mw.userData.body.localToWorld(_sa.copy(tl)); else { _sbox.setFromObject(mw); _sbox.getCenter(_sa); }
     _sd.copy(_sa).sub(_sb);
     if (_sd.lengthSq() > 1e-4) { _sd.normalize(); _sb.copy(_sf).multiplyScalar(hk[0]).addScaledVector(_ss, -hk[1]); _sb.y = hk[2] ? 1 : -1; _sb.normalize(); rotW(B.RightHand, new THREE.Quaternion().setFromUnitVectors(_sd, _sb)); } }
@@ -2664,7 +2678,7 @@ function doPull(n) {
   persist(); sfx.lvl();
   const best = out.reduce((a, o) => Math.max(a, RAR_ORDER.indexOf(o.tier)), -1); { const top = out.filter((o) => o.m).sort((a, b) => RAR_ORDER.indexOf(b.tier) - RAR_ORDER.indexOf(a.tier))[0]; if (top && RAR_ORDER.indexOf(top.tier) >= 3) gachaTop = top.m.id; } if (best >= 3) { screenFlash(best === 4 ? '#ff5a7a' : '#ffb84a', .5, .9); tone(400, 1600, .6, 'triangle', .1); }
   $('#gres').innerHTML = out.map((o, i) => { const R0 = RAR[o.tier] || { nm: '코어', col: '#5fe3ff' };
-    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg?v=12" alt="">` : `<div class="ic">${ico('core')}</div>`}`
+    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg?v=13" alt="">` : `<div class="ic">${ico('core')}</div>`}`
       + `${o.isNew ? '<span class="new">NEW</span>' : ''}<b>${o.m ? o.m.nm : '코어 ' + o.v}</b><small>${o.m ? R0.nm + (o.up ? ' · ★' + o.up : o.back ? ' · ✦' + o.back : '') : '재화'}</small></div>`; }).join('');
   drawGacha(); drawTitle();
 }
@@ -2675,7 +2689,7 @@ function drawGacha() {
   const names = (t) => MECHS.filter((m) => m.rar === t).map((m) => m.nm).join(', ');
   $('#rates').innerHTML = GACHA.rates.map(([k, w]) => `<tr><td style="color:${(RAR[k] || {}).col || '#5fe3ff'}">${RAR[k] ? RAR[k].nm : '코어 꾸러미'}</td><td style="opacity:.7">${RAR[k] ? names(k) : '코어 80 · 120 · 200'}</td><td>${w}%</td></tr>`).join('')
     + `<tr><td colspan="3" style="opacity:.6;text-align:left">같은 등급 안에서는 같은 확률 · 10회 뽑기는 영웅 이상 1개 확정 · ${GACHA.pity}회 안에 신화 1개 확정 · 별 5개 이후 중복은 결정으로 돌려받음</td></tr>`;
-  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=12" alt="">`).join('');
+  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=13" alt="">`).join('');
   ADS.offer('gem', $('#adGem'), `광고 보고 ${ico('gem')} 30`, () => { save.gem += 30; save.daily.ads = (save.daily.ads || 0) + 1; persist(); drawGacha(); drawTitle(); }, () => (save.daily.ads || 0) < 5);
 }
 function flashMsg(t) { banner(t, 1400); const b = $('#banner'); b.style.zIndex = 9; }
@@ -2762,7 +2776,7 @@ function drawTitle() {
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg?v=12" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg?v=13" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -2798,7 +2812,7 @@ function drawChapters() {
   // 막 정보 + 장 목록
   const A = ACTS[mapAct], rm = MECH(A.rw), done = !!save.stars[mapAct * 4 + 4], cl = MECH(save.mech).cls;
   $('#actHead').style.setProperty('--ac', A.col);
-  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg?v=12" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
+  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg?v=13" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
   $('#chList').innerHTML = [0, 1, 2, 3].map((k) => { const i = mapAct * 4 + k, c = CHAPTERS[i], lock = i + 1 > save.chMax;
     return `<button class="cc ${lock ? 'lock' : ''} ${i + 1 === save.ch ? 'on' : ''}" data-i="${i + 1}" style="--c1:${c.c[0]};--c2:${c.c[1]}" ${lock ? 'disabled' : ''}><small>${stLabel(i)}</small><b>${c.nm}</b><p>${c.ds}</p>${recHtml(c, cl)}<span class="s">${chStarsTxt(i)}</span><span class="rw">${save.stars[i + 1] ? '클리어' : `첫 클리어 ${ico('gem')} ${CH_CLEAR_GEM(i)}`}</span></button>`; }).join('');
   $('#chList').querySelectorAll('.cc').forEach((b) => b.addEventListener('click', () => { save.ch = +b.dataset.i; persist(); $('#chapters').classList.add('hide'); drawTitle(); }));
