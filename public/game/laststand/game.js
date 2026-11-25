@@ -1447,7 +1447,7 @@ function drawHud(dt) {
   $('#hptxt').textContent = `${Math.ceil(P.hp)} / ${P.maxHp}` + (P.bar > 0 ? `  ·  보호막 ${Math.ceil(P.bar)}` : '');
   $('#barfill').style.width = clamp(P.bar / P.maxHp * 100, 0, 100) + '%';
   $('#bFly').firstElementChild.style.height = (P.fly ? clamp(1 - P.flyT / FLY.dur, 0, 1) : clamp(P.flyCd / FLY.cd, 0, 1)) * 100 + '%';
-  $('#bFly').lastElementChild.textContent = P.fly ? '착지' : '비행';
+  { const ic = P.fly ? '🛬' : '✈️', sp = $('#bFly').lastElementChild; if (sp.textContent !== ic) sp.textContent = ic; $('#bFly').title = P.fly ? '착지 (F)' : '비행 (F)'; }
   $('#bDash').firstElementChild.style.height = clamp(P.dashCd / P.dashMax, 0, 1) * 100 + '%';
   $('#bUlt').firstElementChild.style.height = P.ult + '%'; $('#bUlt').classList.toggle('ready', P.ult >= 100);
   if (G.boss) $('#bossfill').style.width = clamp(G.boss.hp / G.boss.max * 100, 0, 100) + '%';

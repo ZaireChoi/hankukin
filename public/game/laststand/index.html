@@ -54,7 +54,8 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 /* 버튼 */
 #btns{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(26px,env(safe-area-inset-bottom));display:flex;gap:14px;align-items:flex-end;pointer-events:auto}
 .rb{position:relative;width:74px;height:74px;border-radius:50%;border:2px solid #fff5;background:#000a;color:#fff;font:700 13px inherit;overflow:hidden;padding:0}
-.rb span{position:relative;z-index:2}
+.rb span{position:relative;z-index:2;font-size:30px;line-height:1;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;filter:drop-shadow(0 1px 2px #000)}
+#bUlt span{font-size:38px}
 .rb i{position:absolute;left:0;right:0;bottom:0;height:0;background:#3fd0ff55;z-index:1}
 #bUlt{width:88px;height:88px;border-color:#ffcf5a99}
 #bUlt i{background:#ffcf5a66}
@@ -120,9 +121,9 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
   <div id="hpwrap"><div id="slots"></div><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt"></div></div>
   <button id="bPause" aria-label="일시정지">Ⅱ</button>
   <div id="btns">
-    <button class="rb" id="bDash"><i></i><span>대시</span></button>
-    <button class="rb" id="bFly"><i></i><span>비행</span></button>
-    <button class="rb" id="bUlt"><i></i><span>필살</span></button>
+    <button class="rb" id="bDash" aria-label="대시 (Space)" title="대시 (Space)"><i></i><span>💨</span></button>
+    <button class="rb" id="bFly" aria-label="비행 (F)" title="비행 / 착지 (F)"><i></i><span>✈️</span></button>
+    <button class="rb" id="bUlt" aria-label="필살기 (Q)" title="필살기 (Q)"><i></i><span>💥</span></button>
   </div>
   <div id="stick" class="hide"><b></b></div>
 </div>
@@ -150,6 +151,6 @@ h1 small{display:block;font-size:.36em;letter-spacing:10px;color:#ffb04a;margin-
 <script src="lib/ascend_missile.js?v=3"></script>
 <script src="lib/transform.js?v=3"></script>
 <script src="lib/ascend_tf3.js?v=3"></script>
-<script type="module" src="game.js?v=3"></script>
+<script type="module" src="game.js?v=4"></script>
 </body>
 </html>
