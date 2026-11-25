@@ -300,7 +300,7 @@ D.SKILLS = [
   const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
   for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
   /* 장별 체력 보정 (시뮬로 맞춤) */
-  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.617,"3":1.35,"4":1.576,"5":2.942,"6":1.66,"7":0.681,"8":0.581,"9":0.28,"10":0.503,"11":0.44,"12":0.41,"13":0.38,"14":0.4,"15":0.47,"16":0.38,"17":0.418,"18":0.472,"19":0.388,"20":0.385,"21":0.383,"22":0.343,"23":0.289,"24":0.262,"25":0.271,"26":0.299,"27":0.223,"28":0.281,"29":0.295,"30":0.368});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.617,"3":1.35,"4":1.576,"5":2.942,"6":1.66,"7":0.681,"8":0.581,"9":0.28,"10":0.503,"11":0.44,"12":0.41,"13":0.38,"14":0.4,"15":0.533,"16":0.428,"17":0.476,"18":0.599,"19":0.46,"20":0.467,"21":0.429,"22":0.406,"23":0.32,"24":0.269,"25":0.282,"26":0.342,"27":0.279,"28":0.328,"29":0.348,"30":0.439});   /* 시뮬(11-25 진행 계정) 맞춤 */
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
   const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };

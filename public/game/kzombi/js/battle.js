@@ -330,7 +330,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
-  if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.04 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
+  if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.05 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   if (EN[e.type] && EN[e.type].shield && src !== 'skill' && e.y < G.player.y - 20) { dmg *= 0.45; if (Math.random() < 0.15) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 1.6, '200,170,110', 0.15, 3); }
@@ -1263,7 +1263,7 @@ function turrets(dt) {
     const d = TUR[t.type];
     if (t.seal > 0) { t.seal -= dt; continue; }
     if (d.kind === 'mine') { if (Math.random() < dt * 0.6) FX.p({ kind: 'glow', x: t.x + rnd(-14, 14), y: t.y - rnd(10, 40), vy: -30, life: 0.8, s: 6, s2: 1, c: '255,220,90' }); continue; }
-    const bl = bl0 * 3.4 * tScale() * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
+    const bl = bl0 * 3.4 * tScale() * (1 + 0.04 * Math.max(0, G.ch - 14)) * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
     if (d.kind === 'barracks') {
       t.cd -= dt; const lv = t.lv, cap = 2 + Math.floor(lv * 1.5) + (G.setBarracks || 0), mine = (G.allies || []).filter(a => a.style === 'soldier' && a.home === t).length;
       if (t.cd <= 0 && mine < cap && isNight()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
