@@ -15,17 +15,23 @@ const NEM_CH = { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.
 const NEM_SAY = {"meet":["크크크… 처용이 깨어났다고? 재미있구나.","Heh heh… Cheoyong has awoken? How amusing."],"again":["또 만났구나, 처용. 이번엔 지난번과 다를 것이다.","We meet again, Cheoyong. This time will be different."],"peek":["오늘은 인사만 하마. 곧 다시 보자, 처용.","Just a greeting today. We will meet soon, Cheoyong."],"r14":["…제법이구나, 처용. 다음엔 살려두지 않겠다!","…Not bad, Cheoyong. Next time I will not spare you!"],"r22":["큭… 또인가. 궁궐에서 기다리마. 그곳이 네 무덤이다!","Tch… again? I wait in the palace. It will be your grave!"]};
 function nemSay(k, t) { const s = NEM_SAY[k]; if (!s) return; G.title = { s: window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
 function spawnNem(c) {
-  const x = LANE_X[(LANE_X.length / 2) | 0] || LANE_X[0], y = camTop() + 170;
+  const x = G.player.x + rnd(-60, 60), y = Math.max(camTop() + 380, G.player.y - 430);
   const e = spawnEnemy('yeoksin', x, y, { boss: true }); const d = EN.yeoksin, sc = 300 / (d.h || 124);
   e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; e.nemName = c.peek || G.ch < 22 ? '???' : (window.IS_EN ? 'Yeoksin' : '역신');
   e.hp = e.max = Math.max(G.lastBossMax || 0, e.max) * (c.k || 1); G.nem = e; G.nemAt = c.at || 0; G.bossRef = e;
   G.flash = { c: '70,0,60', t: 1.3 }; FX.shake = 0.9; FX.ring(e.x, e.y, 320, '170,60,220', 1.0, 14); FX.smoke(e.x, e.y - 40, 16, '50,20,60', 30, 80); sfx('warn'); vib([160, 80, 160]);
   G.banner = { s: (window.IS_EN ? 'NEMESIS! ' : '숙적 난입! ') + e.nemName, t: 2.8, kind: 'boss', sub: window.IS_EN ? 'The shadow behind the plague appears.' : '역병의 배후, 그림자가 모습을 드러냈다.' };
-  G.queue.push({ t: 1.6, fn: () => nemSay(G.ch >= 22 ? 'again' : 'meet', 3) });
+  G.queue.push({ t: 1.6, fn: () => { if (!e.leaving) nemSay(G.ch >= 22 ? 'again' : 'meet', 3); } });
   if (c.peek) { e.peek = 1; e.nemInv = 1; e.peekHold = 1; G.queue.push({ t: 4.8, fn: () => nemRetreat(e) }); }
   return e;
 }
 function nemRetreat(e) { if (!e || e.leaving) return; e.nemInv = 1; e.leaving = 2.4; G.slowmo = 0.9; G.flash = { c: '30,0,25', t: 1.6 }; FX.shake = 0.6; sfx('ult'); nemSay(e.peek ? 'peek' : (G.ch >= 22 ? 'r22' : 'r14'), 3.6); FX.ring(e.x, e.y, 260, '120,40,160', 0.8, 12); }
+function finalTick(dt) { const e = G.bossRef; if (!e || e.dead || e.nem || G.ch !== D.CHAPTERS.length) return;
+  if (!e.p2 && e.hp <= e.max * 0.5) { e.p2 = 1; e.nemInv = 1; G.queue.push({ t: 2.2, fn: () => { e.nemInv = 0; } }); e.sc *= 1.2; e.hh *= 1.2; e.r *= 1.2; e.hp = Math.min(e.max, e.hp + e.max * 0.1); e.dmgK = (e.dmgK || 1) * 1.3; e.sp *= 1.2;
+    G.slowmo = 1.0; G.flash = { c: '90,0,70', t: 1.8 }; FX.shake = 1; FX.ring(e.x, e.y, 420, '200,60,255', 1.2, 16); FX.smoke(e.x, e.y - 60, 20, '50,10,60', 36, 90); sfx('warn'); vib([200, 100, 200]);
+    G.title = { s: window.IS_EN ? 'Yeoksin · True Form' : '역신 · 진노의 모습', sub: window.IS_EN ? 'Enough games, Cheoyong! Drown in the plague rain!' : '장난은 끝이다, 처용! 역병의 비에 잠겨라!', t: 3.2, big: 1 }; e.rainT = 3; }
+  if (e.p2) { e.rainT -= dt; if (e.rainT <= 0) { e.rainT = 6; const p = G.player, sh = G.shrine; for (let i = 0; i < 6; i++) { const tx = (i < 4 ? p.x : sh.x) + rnd(-220, 220), ty = (i < 4 ? p.y : sh.y - 60) + rnd(-160, 120); G.tele.push({ x: tx, y: ty, r: 85, t: 1.1, life: 1.1, c: '150,0,160' }); G.queue.push({ t: 1.1, fn: () => { if (G.pzs) G.pzs.push({ x: tx, y: ty, r: 85, t: 4, life: 4, tick: 0 }); FX.ring(tx, ty, 85, '170,60,220', 0.4, 8); if (Math.hypot(p.x - tx, p.y - ty) < 85) p.hp -= p.max * 0.08; if (Math.hypot(sh.x - tx, sh.y - ty) < 120) sh.hp -= sh.max * 0.03; } }); } } }
+}
 function nemTick(dt) { const e = G.nem; if (!e) return;
   if (e.leaving) { e.leaving -= dt; e.y -= 40 * dt; if (Math.random() < dt * 20) FX.smoke(e.x + rnd(-60, 60), e.y - rnd(20, 200), 2, '40,20,50', 24, 60);
     if (e.leaving <= 0) { FX.smoke(e.x, e.y - 80, 18, '40,20,50', 34, 90); G.enemies = G.enemies.filter(o => o !== e); G.nem = null; G.nemDone = 1; if (G.bossRef === e) G.bossRef = null;
@@ -1006,7 +1012,7 @@ function update(dtr) {
   if (G.mode === 'arena') { arenaTick(); if (G.arFoe && G.arFoe.dead) { G.title = null; G.banner = { s: '결투 승리!', t: 2, kind: 'win' }; return endGame(true); } if (G.time >= N.dur) { G.loseWhy = '시간 안에 이기지 못했다'; return endGame(false); } }
   const NEMC = (G.mode || 'adventure') === 'adventure' && !G.nm && !(G.cfg && G.cfg.wbBoss) && G.night === G.nights.length - 1 ? NEM_CH[G.ch] : null;
   if (NEMC && !G.nemDone && !G.nem && G.time >= N.dur && !bossAlive && (!N.boss || G.bossOut)) spawnNem(NEMC);
-  nemTick(dt);
+  nemTick(dt); finalTick(dt);
   if (G.time >= N.dur && !(N.boss && (!G.bossOut || bossAlive)) && !(NEMC && !G.nemDone)) {
     for (const e of G.enemies) { FX.p({ kind: 'glow', x: e.x, y: e.y - 20, life: 0.5, s: 40, s2: 4, c: '255,230,160' }); FX.ember(e.x, e.y - 10, '255,230,160', 4, 120); }
     G.kills += G.enemies.length; G.enemies = []; clearCombat();
