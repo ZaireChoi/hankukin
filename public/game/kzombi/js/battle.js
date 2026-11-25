@@ -330,7 +330,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
-  if (src === 'skill') dmg *= 0.22 / (1 + 0.03 * (G.ch - 1));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
+  if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.04 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   if (EN[e.type] && EN[e.type].shield && src !== 'skill' && e.y < G.player.y - 20) { dmg *= 0.45; if (Math.random() < 0.15) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 1.6, '200,170,110', 0.15, 3); }
@@ -365,7 +365,7 @@ function hurtT(tg, dmg) {
   }
   if (tg === G.shrine) { if (G.guards.some(g => g.id === 'turtle' && !(g.seal > 0))) dmg *= 0.7; if (G.shShield > 0) { const a = Math.min(G.shShield, dmg); G.shShield -= a; dmg -= a; if (dmg <= 0) { FX.ring(tg.x, tg.y - 40, 90, '255,215,110', 0.2, 4); return; } } G.alertT = 1.2; if (G.bubbleCd <= 0) { G.bubble = { s: '사당이 공격받고 있어!', t: 2.6 }; G.bubbleCd = 9; } }
   if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4);
-  if (tg.pad != null && TUR[tg.type]) dmg /= tScale() * (1 + 0.04 * G.ch);
+  if (tg.pad != null && TUR[tg.type]) dmg /= tScale() * (1 + 0.04 * G.ch + 0.03 * Math.max(0, G.ch - 14));
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
   if (tg === G.player) { FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
