@@ -33,6 +33,7 @@ const HOV = { player: 118, yisunsin: 136, eulji: 136, gangamchan: 136, kimchungs
 const PORT = {};
 for (const id in COMP) { const im = new Image(); im.onload = () => { PORT[id] = im; }; im.src = 'img/ui/hero_' + id + '.webp?v=' + (id === 'haetae' ? 3 : id === 'jeonwoochi' ? 5 : 4); }
 function drawPort(id, x, y, r, ring) { const im = PORT[id]; if (!im) return false; ctx.save(); circle(x, y, r); ctx.clip(); const s = Math.max(r * 2 / im.width, r * 2 / im.height) * 1.15; ctx.drawImage(im, x - im.width * s / 2, y - r - im.height * s * 0.04, im.width * s, im.height * s); ctx.restore(); circle(x, y, r); ctx.strokeStyle = ring || '#ffe08a'; ctx.lineWidth = 3; ctx.stroke(); return true; }
+/* 캐릭터 크게(사용자 11-26: 후더덕 대비 처용·영웅이 작아 보임) */ { const CHAR_K = 1.2; for (const k of Object.keys(HOV)) HOV[k] = Math.round(HOV[k] * CHAR_K); HOV.player = Math.round(118 * 1.3); for (const k of ['player_amhaeng', 'player_jeoseung', 'player_gonryong', 'player_janggun', 'player_seonbi', 'player_podo']) HOV[k] = HOV.player; }
 for (const k in EN) HOV[k] = EN[k].h;
 /* SIZE_RATIO(11-25): 후더덕 비율(처용 키 118 = 1) — 탑 약 1.5, 사당 약 2.1, 금광·우물 약 1.2, 성벽 약 0.8 */
 Object.assign(HOV, { tower_arrow: 175, tower_fire: 175, tower_talisman: 175, tower_catapult: 150, tur_general: 175, tur_lady: 175, barracks: 170, mine: 140, well: 140, tower_cannon: 100, tower_cannon_barrel: 45, tower_hwacha: 107, tower_hwacha_rack: 58, base: 312, shrine: 312, wall: 95, gate: 185, guard_turtle: 115, guard_phoenix: 120, guard_tiger: 118, guard_dragon: 120 });
@@ -2185,7 +2186,7 @@ function draw() {
   if (!G) { ctx.fillStyle = '#0d1210'; ctx.fillRect(0, 0, W, VH); return; }
   const day = G.phase === 'day' || G.phase === 'guard';
   const still = G.phase === 'win' || G.phase === 'lose';
-  /* WIDE_MAP: 멀리서 내려다보기 (두 손가락으로 0.55~1.0) */ const ZT = (day ? 0.47 : 0.49) * (G.zoomK || 1);   /* 처용 키 ≈ 화면 폭 7.7~8% */
+  /* WIDE_MAP: 멀리서 내려다보기 (두 손가락으로 0.55~1.0) */ const ZT = (day ? 0.53 : 0.55) * (G.zoomK || 1);   /* 처용 키 ≈ 화면 폭 7.7~8% */
   if (!still) zoom += (ZT - zoom) * 0.05;
   const vw = W / zoom, vh = VH / zoom, p = G.player;
   if (!still) { const tx = p.x - vw / 2, ty = p.y - vh * (day ? 0.55 : 0.64); camX += (tx - camX) * 0.1; camY += (ty - camY) * 0.1; }
