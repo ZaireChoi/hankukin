@@ -938,7 +938,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     modal('<h3 class="stroke">친구 초대</h3><p style="text-align:center">아래 링크를 길게 눌러 복사한 뒤 카카오톡에 붙여넣어 보내 주세요</p><div class="row"><input class="xcpn" readonly value="' + esc(url) + '" onclick="this.select()"></div>');
   }
   function inviteBox() {
-    xinit(); S.inv = S.inv || { got: {}, ms: {} }; const n = Object.keys(S.inv.got).length, nx = INV_MS.find(([k]) => n < k);
+    xinit(); S.invt = S.invt || {}; S.invt.got = S.invt.got || {}; S.invt.ms = S.invt.ms || {}; const n = Object.keys(S.invt.got).length, nx = INV_MS.find(([k]) => n < k);
     return '<div class="box xinv"><div><b class="stroke-s">친구 초대 ' + n + '명</b><small>초대한 친구가 들어오면 나는 횃불 5·옥 50, 친구는 횃불 10·옥 100!' + (nx ? ' · ' + nx[0] + '명 달성 시 옥 ' + nx[1] : '') + (accUser() ? '' : '<br>보상은 구글 로그인 뒤에 정산돼요') + '</small></div><div class="btn y" data-act="frInvite">초대하기</div></div>';
   }
   let socialT = 0;
@@ -959,11 +959,11 @@ if (window.IS_EN) document.title = 'K Zombi';
     else save();
   }
   async function inviterSettle() {
-    S.inv = S.inv || { got: {}, ms: {} }; const me = accUser() && accUser().uid; if (!me || S.codeOk !== me) return;
-    const rows = await listBoard('kzi-' + S.myCode, 200), fresh = rows.filter(r => r.id !== me && !S.inv.got[r.id]);
+    S.invt = S.invt || {}; S.invt.got = S.invt.got || {}; S.invt.ms = S.invt.ms || {}; const me = accUser() && accUser().uid; if (!me || S.codeOk !== me) return;
+    const rows = await listBoard('kzi-' + S.myCode, 200), fresh = rows.filter(r => r.id !== me && !S.invt.got[r.id]);
     if (!fresh.length) return;
-    for (const r of fresh) { S.inv.got[r.id] = 1; S.fr.list[r.id] = 1; addTorch(5); S.jade += 50; }
-    const n = Object.keys(S.inv.got).length; let bonus = 0; for (const [k, j] of INV_MS) if (n >= k && !S.inv.ms[k]) { S.inv.ms[k] = 1; S.jade += j; bonus += j; }
+    for (const r of fresh) { S.invt.got[r.id] = 1; S.fr.list[r.id] = 1; addTorch(5); S.jade += 50; }
+    const n = Object.keys(S.invt.got).length; let bonus = 0; for (const [k, j] of INV_MS) if (n >= k && !S.invt.ms[k]) { S.invt.ms[k] = 1; S.jade += j; bonus += j; }
     save(); refresh();
     toast((fresh.length === 1 ? esc(fresh[0].name) + '님이' : esc(fresh[0].name) + '님 외 ' + (fresh.length - 1) + '명이') + ' 초대로 들어왔어요! 횃불 +' + 5 * fresh.length + ', 옥 +' + (50 * fresh.length + bonus));
   }
