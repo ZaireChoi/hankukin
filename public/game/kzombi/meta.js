@@ -137,6 +137,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || 'null') || {}); } catch (e) { S = fresh(); }
     fixComps();
     if (!S.plans) S.plans = { weapon: 3, hat: 3, robe: 3, arm: 3, shoes: 3, norigae: 3 };
+    if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} };
     for (const it of S.inv) if (it.s == null) it.s = 0;
     if (!S.inv.length && !Object.keys(S.equip).length) { // 첫 장비
       ['weapon', 'hat', 'robe'].forEach(sl => { const it = mkItem(sl, 0, 'bow'); S.inv.push(it); S.equip[sl] = it.uid; });
@@ -462,27 +463,40 @@ if (window.IS_EN) document.title = 'K Zombi';
 
   /* ---------------- 지도 ---------------- */
   const NX = [360, 210, 490, 250, 480, 220, 470, 260, 470, 360];
+  /* ---------------- 2막: 악몽의 조선 (노멀 30장을 깨면 열림) ---------------- */
+  const nmOpen = () => (S.stars[30] || 0) >= 2;
+  const isNM = () => nmOpen() && S.mapNM === true;
   function renderMap() {
+    if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} };
+    const NMm = isNM(), PCH = NMm ? S.nm.chap : S.chap, PST = NMm ? S.nm.stars : S.stars;
     const C = chapters(), HB = 2100;
     const pos = C.map((c, i) => [NX[i % 10], HB - 170 - i * 195]);
     let d = 'M' + pos[0][0] + ' ' + (pos[0][1] + 60);
     for (let i = 1; i < pos.length; i++) { const [x0, y0] = pos[i - 1], [x1, y1] = pos[i]; d += ' C' + x0 + ' ' + (y0 - 90) + ' ' + x1 + ' ' + (y1 + 150) + ' ' + x1 + ' ' + (y1 + 60); }
     const nodes = C.map((c, i) => {
-      const lock = c.n > S.chap, done = (S.stars[c.n] || 0) >= 1 && c.n < S.chap || (S.stars[c.n] || 0) >= 3, cur = c.n === S.chap;
-      const st = [1, 2, 3].map(k => ic((S.stars[c.n] || 0) >= k ? 'star' : 'star0')).join('');
-      const chest = (S.stars[c.n] || 0) >= 3 && !S.chest[c.n] ? '<svg class="ch" viewBox="0 0 64 64" data-act="chest" data-v="' + c.n + '" style="animation:bob 1.4s infinite">' + I.chest + '</svg>' : '';
+      const lock = c.n > PCH, done = (PST[c.n] || 0) >= 1 && c.n < PCH || (PST[c.n] || 0) >= 3, cur = c.n === PCH;
+      const st = [1, 2, 3].map(k => ic((PST[c.n] || 0) >= k ? 'star' : 'star0')).join('');
+      const chest = !NMm && (S.stars[c.n] || 0) >= 3 && !S.chest[c.n] ? '<svg class="ch" viewBox="0 0 64 64" data-act="chest" data-v="' + c.n + '" style="animation:bob 1.4s infinite">' + I.chest + '</svg>' : '';
       return '<div class="node ' + (lock ? 'lock' : done ? 'done' : '') + (cur ? ' cur' : '') + '" style="left:' + pos[i][0] + 'px;top:' + pos[i][1] + 'px" data-act="node" data-v="' + c.n + '">' +
         '<div class="ball stroke">' + (lock ? ic('lock').replace('class="ic ', 'style="width:60px;height:60px" class="ic ') : c.n) + chest + '</div>' +
         '<div class="lab stroke-s">' + c.name + '</div><div class="st">' + st + '</div></div>';
     }).join('');
     $('#s-map').innerHTML = '<div class="mapscroll" id="mapscroll"><div class="mapbody"><svg class="mpath" width="720" height="' + HB + '"><path d="' + d + '" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="22" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffe9a8" stroke-width="10" stroke-dasharray="2 22" stroke-linecap="round"/></svg>' + nodes + '</div></div>' +
-      '<div class="mapbar"><div class="btn b back" data-act="lobby">' + ic('back').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + '</div><div class="t stroke">모험 지도</div>' +
+      '<div class="mapbar"><div class="btn b back" data-act="lobby">' + ic('back').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + '</div><div class="t stroke">' + (NMm ? '2막 · 악몽의 조선' : '모험 지도') + '</div>' +
+      (nmOpen() ? '<div class="nmsw"><div class="' + (NMm ? '' : 'on') + '" data-act="mapNM" data-v="0">평범</div><div class="' + (NMm ? 'on nm' : '') + '" data-act="mapNM" data-v="1">악몽</div></div>' : '') +
       '<div style="margin-left:auto" class="rpill stroke-s">' + ic('torch') + S.torch + '/' + TORCH_MAX + '</div></div>';
+    $('#s-map').classList.toggle('nmmap', NMm);
     show('s-map');
-    const sc = $('#mapscroll'); const y = pos[Math.min(S.chap, C.length) - 1][1]; sc.scrollTop = Math.max(0, y - 640);
+    const sc = $('#mapscroll'); const y = pos[Math.min(PCH, C.length) - 1][1]; sc.scrollTop = Math.max(0, y - 640);
   }
   function chapModal(n) {
     const c = chapters()[n - 1], rec = Math.round(900 * Math.pow(n, 1.6)), st = stats();
+    if (isNM()) { const nr = Math.round(900 * Math.pow(n + 29, 1.6) * 1.6); modal('<h3 class="stroke" style="color:#ff7a6a">악몽 ' + n + ' · ' + c.name + '</h3>' +
+      '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ff5a4a;margin-bottom:14px;filter:hue-rotate(-30deg) saturate(1.6) brightness(.75)"></div>' +
+      '<p>적이 훨씬 세고 많아요. 우두머리는 일찍 분노하고, 역병 걸린 좀비는 죽으며 독 웅덩이를 남겨요.</p>' +
+      '<p>보상: 엽전·경험치 2배, 신화 장비 확률, 첫 클리어 옥 ' + (100 + 10 * n) + '</p>' +
+      '<p>권장 전투력 <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
+      '<div class="row"><div class="btn r" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>악몽 도전</span><small style="font-size:18px">횃불 5</small></div></div>'); return; }
     modal('<h3 class="stroke">챕터 ' + n + ' · ' + c.name + '</h3>' +
       '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ffd36b;margin-bottom:14px"></div>' +
       '<p>밤 ' + c.waves + '번을 버티면 이겨요. 마지막 밤에는 우두머리가 나와요.</p>' +
@@ -502,7 +516,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf() }; S.nextMode = null;
+    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM() }; S.nextMode = null;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -524,18 +538,21 @@ if (window.IS_EN) document.title = 'K Zombi';
     meta.classList.remove('off');
     try { window.JZB && window.JZB.hide && window.JZB.hide(); } catch (e) {}
     const n = r.chapter || lastCh, C = chapters(), c = C[n - 1] || C[0], waves = r.waves || c.waves, wave = Math.min(r.wave || 0, waves);
-    const win = !!r.win;
+    const win = !!r.win, NMr = !!r.nightmare; if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} };
+    const STb = NMr ? S.nm.stars : S.stars, BSb = NMr ? S.nm.best : S.best, wasOpen = nmOpen();
     const stars = win ? (wave >= waves ? 3 : 2) : wave >= waves * 0.66 ? 2 : wave >= waves * 0.33 ? 1 : 0;
-    if (stars > (S.stars[n] || 0)) S.stars[n] = stars;
-    if (wave > (S.best[n] || 0)) S.best[n] = wave;
-    const unlocked = win && n === S.chap && S.chap < C.length;
-    if (unlocked) { S.chap++; S.sel = S.chap; }
-    const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
+    if (stars > (STb[n] || 0)) STb[n] = stars;
+    if (wave > (BSb[n] || 0)) BSb[n] = wave;
+    const unlocked = NMr ? (win && n === S.nm.chap && S.nm.chap < C.length) : (win && n === S.chap && S.chap < C.length);
+    if (unlocked) { if (NMr) S.nm.chap++; else { S.chap++; S.sel = S.chap; } }
+    const nmFirst = NMr && win && !S.nm.first[n] ? 100 + 10 * n : 0; if (nmFirst) S.nm.first[n] = 1;
+    const act2 = !NMr && !wasOpen && nmOpen(), nmTitle = NMr && win && n === 30 && !S.title; if (nmTitle) S.title = '악몽을 넘은 자';
+    const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)) * (NMr ? 2 : 1), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
     const exp = Math.round((win ? 90 : 40) * n * tk);
     const stone = win ? 4 + n * 2 : Math.floor(n * wave / waves * 2);
-    const drop = win ? mkItem(rnd(SLOTS).id, Math.min(5, rollGrade(Math.min(3, Math.floor((n - 1) / 3))))) : null;
+    const drop = win ? mkItem(rnd(SLOTS).id, NMr ? (Math.random() < 0.15 + 0.01 * n ? 5 : Math.max(4, rollGrade(4))) : Math.min(5, rollGrade(Math.min(3, Math.floor((n - 1) / 3))))) : null;
     const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
-    const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade, dbl: false };
+    const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade + nmFirst, dbl: false };
     S.gold += gold; S.stone += stone; S.jade += rw.jade; if (drop) S.inv.push(drop);
     const lvUp = addExp(exp); save();
     lastRw = rw;
@@ -543,7 +560,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const rows = [['skill', '신력', 'tPower', '#9a4ef0', 'linear-gradient(90deg,#b070ff,#6a20c0)'], ['hero', '영웅', 'tComp', '#2b9520', 'linear-gradient(90deg,#9df27a,#2b9520)'], ['building', '건물', 'skGun', '#1d62c9', 'linear-gradient(90deg,#7fd0ff,#1d62c9)'], ['player', '처용', 'bow', '#c0301b', 'linear-gradient(90deg,#ffb02a,#e0401b)']];
     const el = $('#s-result'); el.className = 'm-scr ' + (win ? '' : 'lose');
     el.innerHTML = '<div class="rays"></div><div class="rtitle"><span>' + (win ? '승리' : '패배') + '</span></div>' +
-      '<div class="rsub stroke-s">챕터 ' + n + ' · ' + c.name + (unlocked ? ' · 다음 챕터 열림!' : '') + '</div>' +
+      '<div class="rsub stroke-s">' + (NMr ? '<span style="color:#ff7a6a">악몽</span> ' : '챕터 ') + n + ' · ' + c.name + (unlocked ? ' · 다음 챕터 열림!' : '') + (nmFirst ? ' · 첫 클리어 옥 +' + nmFirst : '') + '</div>' +
       (ob ? '<div class="robj stroke-s ' + (ob.ok ? 'ok' : 'no') + '">목표 · ' + String(ob.name || '').replace(/[<>&]/g, '') + ' — ' + (ob.ok ? '달성! 옥 +' + obJade : '실패') + '</div>' : '') +
       '<div class="rinfo"><div class="stat stroke-s">밤 ' + wave + '/' + waves + '</div><div class="stat stroke-s">물리친 좀비 ' + fmt(r.kills || 0) + '</div><div class="stat stroke-s">' + Math.floor((r.time || 0) / 60) + '분 ' + ((r.time || 0) % 60) + '초</div></div>' +
       '<div class="dmg box"><h4 class="stroke-s">피해 비율</h4>' + rows.map(([k, nm, i, bg, grad]) => { const p = Math.round((d[k] || 0) / tot * 100); return '<div class="drow"><div class="ic2" style="background:' + bg + '">' + ic(i) + '</div><div class="nm stroke-s">' + nm + '</div><div class="bar"><i data-w="' + p + '" style="background:' + grad + '"></i></div><div class="pc stroke-s">' + p + '%</div></div>'; }).join('') +
@@ -551,6 +568,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="rew box"><h4 class="stroke-s">보상' + (lvUp ? ' · <span style="color:#7df06a">레벨 올라감! ' + S.lv + '</span>' : '') + '</h4><div class="rewl" id="rewl">' + rewHtml(rw) + '</div></div>' +
       '<div class="rbtns"><div class="btn p" data-act="adx2" id="adx2"><span>광고 보고 2배</span><small>시제품: 광고 없이 바로</small></div><div class="btn y" data-act="rok"><span>확인</span></div></div>';
     show('s-result'); music('bgm_lobby');
+    if (act2) setTimeout(() => modal('<div class="act2"><div class="a2t stroke">2막 열림</div><h3 class="stroke" style="color:#ff6a5a">악몽의 조선</h3><p>역신을 물리쳤지만 조선의 밤은 끝나지 않았다. 더 강한 좀비와 역병이 몰려온다.</p><p>지도에서 <b>악몽</b>을 눌러 2막에 도전하세요. 신화 장비와 칭호가 기다려요.</p><div class="row"><div class="btn r" data-act="map">악몽 지도로</div></div></div>'), 900);
+    if (nmTitle) setTimeout(() => modal('<h3 class="stroke" style="color:#ffd36b">칭호 획득!</h3><p style="text-align:center;font-size:30px;color:#ff7a6a">악몽을 넘은 자</p><p style="text-align:center">프로필에 칭호가 새겨졌어요.</p>'), 900);
     setTimeout(() => el.querySelectorAll('.drow .bar i').forEach(i => { i.style.width = i.dataset.w + '%'; }), 120);
   }
   let lastRw = null;
@@ -1054,7 +1073,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'chap': S.sel = Math.max(1, Math.min(S.chap, S.sel + (+v))); refresh(); break;
       case 'map': renderMap(); break;
       case 'lobby': renderLobby(); break;
-      case 'node': { const n = +v; if (n > S.chap) { toast('앞 챕터를 먼저 깨야 해요'); break; } S.sel = n; save(); chapModal(n); break; }
+      case 'mapNM': S.mapNM = v === '1'; save(); renderMap(); break;
+      case 'node': { const n = +v; if (n > (isNM() ? S.nm.chap : S.chap)) { toast('앞 챕터를 먼저 깨야 해요'); break; } S.sel = n; save(); chapModal(n); break; }
       case 'chest': e.stopPropagation(); S.chest[v] = 1; S.jade += 50; S.stone += 5; save(); toast('보상 상자: 옥 50, 신력석 5'); renderMap(); break;
       case 'start': startBattle(S.sel); break;
       case 'go': startBattle(+v); break;
@@ -1073,7 +1093,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
       case 'toggleMusic': S.music = !S.music; save(); if (S.music) music('bgm_lobby'); else stopMusic(); settingsModal(); break;
       case 'reset': if (confirm('저장을 모두 지우고 처음부터 할까요?')) { localStorage.removeItem(KEY); load(); closeModal(); tab = 'home'; renderLobby(); } break;
-      case 'profile': { const st = stats(); modal('<h3 class="stroke">처용</h3><p>레벨 ' + S.lv + ' (경험 ' + S.exp + '/' + needExp(S.lv) + ')</p><p>공격력 ' + fmt(st.atk) + ' · 체력 ' + fmt(st.hp) + ' · 전투력 ' + fmt(st.power) + '</p><p>깬 챕터 ' + (S.chap - 1) + ' · 도전 ' + S.plays + '번</p>' +
+      case 'profile': { const st = stats(); modal('<h3 class="stroke">처용</h3>' + (S.title ? '<p style="text-align:center;color:#ff7a6a;font-size:24px">〈' + S.title + '〉</p>' : '') + '<p>레벨 ' + S.lv + ' (경험 ' + S.exp + '/' + needExp(S.lv) + ')</p><p>공격력 ' + fmt(st.atk) + ' · 체력 ' + fmt(st.hp) + ' · 전투력 ' + fmt(st.power) + '</p><p>깬 챕터 ' + (S.chap - 1) + ' · 도전 ' + S.plays + '번</p>' +
         '<div class="row"><div class="btn b" data-act="settings">설정</div><div class="btn p" data-act="coupon">쿠폰 입력</div></div>'); break; }
       case 'item': itemModal(+v); break;
       case 'equip': { const it = byUid(+v); S.equip[it.slot] = it.uid; closeModal(); refresh(); toast(itemName(it) + ' 착용'); break; }

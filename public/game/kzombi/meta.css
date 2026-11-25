@@ -421,3 +421,14 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .xinv{display:flex;gap:12px;align-items:center;padding:12px 16px;margin:0 0 10px;border-color:#ffd36b}.xinv>div:first-child{flex:1}.xinv b{font-size:22px;color:#ffe27a}.xinv small{display:block;font-size:15px;color:#cdd6ff;font-weight:600;margin-top:2px}.xinv .btn{flex:0 0 150px;height:60px}
 .xbeg{font-size:14px;padding:1px 8px;border-radius:8px;background:#ff8a5c;color:#2a0d00;text-shadow:none}
 .xrwd{display:flex;gap:10px;align-items:center;justify-content:center;font-size:34px;margin:12px 0}.xrwd svg{width:56px;height:56px}
+
+/* 2막 악몽 */
+.nmsw{display:flex;margin-left:12px;border:3px solid #ffd36b;border-radius:16px;overflow:hidden}
+.nmsw div{padding:6px 16px;font-size:20px;background:rgba(10,14,30,.7);color:#cfd6f0}
+.nmsw div.on{background:#ffd36b;color:#2a1a00}.nmsw div.on.nm{background:linear-gradient(#ff5a4a,#a01818);color:#fff}
+#s-map.nmmap .mapbody{filter:hue-rotate(-28deg) saturate(1.5) brightness(.72)}
+#s-map.nmmap .node .ball{border-color:#ff5a4a!important}
+.act2{text-align:center}.act2 .a2t{font-size:64px;color:#ffd36b;letter-spacing:6px;animation:logoIn .9s cubic-bezier(.2,1.6,.4,1) both}
+.nmsw div{white-space:nowrap;font-size:18px;padding:6px 12px}
+#s-map.nmmap .mapbar .t{font-size:26px;white-space:nowrap}
+#s-map.nmmap .mapbody{filter:sepia(.35) hue-rotate(-40deg) saturate(1.8) brightness(.7)}
