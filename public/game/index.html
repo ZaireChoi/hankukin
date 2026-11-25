@@ -71,6 +71,37 @@ a.thumb{display:block}
 .how small{color:var(--sub);line-height:1.5;font-size:13.5px}
 footer{margin-top:46px;color:#7f8fb3;font-size:13px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;border-top:1px solid var(--line);padding-top:18px}
 footer a{color:#a9bbe6}
+
+/* 게임 3칸(11-27): 한 게임 칸을 줄이고 버전 단추를 나란히 */
+.g3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:18px}
+.g3 .thumb{aspect-ratio:1200/500}
+.g3 .body{padding:13px 15px 15px;gap:8px}
+.g3 .body h2{font-size:22px}
+.g3 .body p{font-size:14px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vbtns{margin-top:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.vbtns .play{margin-top:0;font-size:14.5px;padding:11px 8px;border-radius:12px;white-space:nowrap}
+.g3 .world{font-size:13.5px;padding:9px}
+.play.rb{background:linear-gradient(90deg,#00a2ff,#335fff)!important;color:#fff!important}
+.play.en{background:linear-gradient(90deg,#5b6b8f,#3d4a6b)!important;color:#fff!important}
+.play.ls2{background:linear-gradient(90deg,#ff9a3a,#c2338c)!important}
+.play.off{opacity:.55;pointer-events:none}
+.hero{padding:40px 0 18px}
+@media (max-width:560px){.g3 .game{flex-direction:row}.g3 .thumb{width:36%;aspect-ratio:auto;min-height:150px;flex:none}.g3 .thumb:after{background:linear-gradient(90deg,rgba(7,11,22,0) 60%,rgba(7,11,22,.6))}.g3 .badge{font-size:10.5px;top:8px;left:8px;padding:3px 7px}.g3 .body{padding:10px 12px 12px}.g3 .body h2{font-size:18px}.g3 .body p{font-size:12.5px}.g3 .body{min-width:0;flex:1}.vbtns{grid-template-columns:1fr 1fr;gap:6px}.vbtns .play{font-size:12px;padding:9px 3px;white-space:normal;line-height:1.2}.g3 .world{font-size:12px;padding:8px}.hero{padding:26px 0 10px}}
+
+/* 세련 정리(11-27) */
+.wrap{max-width:1080px}
+header{padding:4px 0 2px}
+.hero{padding:34px 0 8px}
+.hero h1{font-size:clamp(28px,4.6vw,48px)}
+.hero p{margin-top:10px}
+.pills{margin-top:12px}
+.g3 .game{border-radius:18px;background:linear-gradient(180deg,rgba(24,32,60,.82),rgba(12,18,36,.86));box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.g3 .game.ani{border-color:rgba(255,140,170,.35)}.g3 .game.kz{border-color:rgba(255,170,90,.4)}.g3 .game.asc{border-color:rgba(140,160,255,.4)}
+.g3 .thumb{transition:transform .35s}.g3 .game:hover .thumb{transform:scale(1.03)}
+.g3 .body h2{display:flex;align-items:center;gap:8px}
+.sec-t{display:flex;align-items:baseline;justify-content:space-between;margin-top:26px;color:#cfdaf5}
+.sec-t b{font-size:18px;letter-spacing:.5px}.sec-t small{color:var(--sub);font-size:13px}
+.how{margin-top:30px}.how div{padding:13px}
 </style>
 </head>
 <body>
@@ -85,41 +116,23 @@ footer a{color:#a9bbe6}
   <p data-t="lead">브라우저에서 바로 즐기는 무료 게임. 친구에게 링크 하나만 보내면 함께 할 수 있어요.</p>
   <div class="pills"><span class="pill" data-t="p1">무료</span><span class="pill" data-t="p2">설치 없음</span><span class="pill" data-t="p3">PC · 모바일</span><span class="pill" data-t="p4">한국어 · English</span></div>
  </section>
- <section class="grid">
-  <a class="game ani" href="/game/anibrix/">
-   <div class="thumb" style="background-image:url(/game/anibrix/og-image.png)"><span class="badge" data-t="hotBadge">추천 · 휴대폰 OK</span></div>
-   <div class="body"><h2>Anibrix</h2><p data-t="aniDesc">귀여운 동물 블록을 지워 친구와 대결! 12스테이지마다 새로운 동물과 보스가 등장해요.</p>
-    <div class="tags"><span data-t="aniT1">퍼즐 대전</span><span data-t="aniT2">친구 초대</span><span data-t="aniT3">보스 스테이지</span><span data-t="aniT4">4개 언어</span></div>
-    <span class="play" data-t="playBtn">지금 플레이 ▶</span></div>
-  </a>
-  <a class="game ls" href="/game/laststand/">
-   <div class="thumb" style="background-image:url(/game/laststand/img/og.jpg)"><span class="badge" data-t="lsBadge">NEW · 신작</span></div>
-   <div class="body"><h2>ASCEND <small data-t="lsSub">라스트 스탠드</small></h2><p data-t="lsDesc">기동전사 한 대로 쏟아지는 제타 무리를 5분 동안 버텨라! 공격은 자동, 레벨이 오를 때마다 강화 3개 중 하나를 골라 키우고, 마지막엔 제타 여왕과 결전을 벌여요.</p>
-    <div class="tags"><span data-t="lsT1">서바이벌</span><span data-t="lsT2">5분 한 판</span><span data-t="lsT3">강화 선택</span><span data-t="lsT4">휴대폰 OK</span></div>
-    <span class="play" data-t="lsPlay">지금 버티러 가기 ▶</span></div>
-  </a>  <a class="game kz" href="/game/kzombi/?lang=ko">
-   <div class="thumb" style="background-image:url(/game/kzombi/img/ui/title.jpg)"><span class="badge" data-t="kzBadge">NEW · 시험판</span></div>
-   <div class="body"><h2 data-t="kzName">처용, 조선좀비</h2><p data-t="kzDesc">조선 땅에 좀비가 쏟아진다! 낮에는 망루·병영·성벽을 세우고, 밤에는 처용과 이순신·을지문덕 같은 영웅, 깨어난 사방신과 함께 사당을 지켜요.</p>
-    <div class="tags"><span data-t="kzT1">디펜스 서바이벌</span><span data-t="kzT2">영웅 수집</span><span data-t="kzT3">건설·병사</span><span data-t="kzT4">휴대폰 OK</span></div>
-    <span class="play" data-t="kzPlay">지금 지키러 가기 ▶</span></div>
-  </a>
-  <a class="game kz" href="/game/kzombi/?lang=en">
-   <div class="thumb" style="background-image:url(/game/kzombi/img/ui/title.jpg)"><span class="badge">NEW · English</span></div>
-   <div class="body"><h2>K-ZOMBIE <small>English</small></h2><p data-t="kzEnDesc">Zombies flood Joseon-era Korea! Build towers, barracks and walls by day, then defend the shrine at night with Cheoyong, legendary heroes and the four guardian spirits.</p>
-    <div class="tags"><span>Defense survival</span><span>Hero collection</span><span>Mobile OK</span><span>English</span></div>
-    <span class="play">Play in English ▶</span></div>
-  </a>
-  <a class="game rbx" href="https://www.roblox.com/games/131171001545708/Anibrix-Animal-Block-Battle" target="_blank" rel="noopener">
-   <div class="thumb" style="background-image:url(/game/anibrix/og-image.png)"><span class="badge" data-t="rbxBadge">NEW · Roblox</span></div>
-   <div class="body"><h2>Anibrix <small>on Roblox</small></h2><p data-t="rbxDesc">로블록스에서도 Anibrix! 보스전과 같은 서버 플레이어와 1대1 대전을 즐겨 보세요.</p>
-    <div class="tags"><span data-t="rbxT1">로블록스</span><span data-t="rbxT2">1대1 대전</span><span data-t="rbxT3">보스전</span><span data-t="rbxT4">현재 16세 이상</span></div>
-    <span class="play" data-t="rbxPlay">로블록스에서 플레이 ▶</span></div>
-  </a>
+ <div class="sec-t"><b data-t="secT">게임</b><small data-t="secS">웹에서 바로, 또는 로블록스에서</small></div>
+ <section class="grid g3">
+  <div class="game ani">
+   <a class="thumb" href="/game/anibrix/" style="background-image:url(/game/anibrix/og-image.png)"><span class="badge" data-t="hotBadge">추천 · 휴대폰 OK</span></a>
+   <div class="body"><h2>Anibrix</h2><p data-t="aniDesc2">귀여운 동물 블록을 지워 친구와 대결! 보스 스테이지와 1대1 대전.</p>
+    <div class="vbtns"><a class="play" href="/game/anibrix/" data-t="vWeb">웹에서 플레이 ▶</a><a class="play rb" href="https://www.roblox.com/games/131171001545708/Anibrix-Animal-Block-Battle" target="_blank" rel="noopener" data-t="vRbx">로블록스 ▶</a></div></div>
+  </div>
+  <div class="game kz">
+   <a class="thumb" href="/game/kzombi/?lang=ko" style="background-image:url(/game/kzombi/img/ui/title.jpg)"><span class="badge" data-t="kzBadge">NEW · 시험판</span></a>
+   <div class="body"><h2 data-t="kzName">처용, 조선좀비</h2><p data-t="kzDesc2">역병 좀비가 조선을 덮쳤다! 낮엔 탑을 짓고, 밤엔 깨어난 수호자들과 사당을 지켜요.</p>
+    <div class="vbtns"><a class="play" href="/game/kzombi/?lang=ko" data-t="vWebKo">웹 · 한국어 ▶</a><a class="play en" href="/game/kzombi/?lang=en">Web · English ▶</a><a class="play rb off" id="kzRbx" data-t="vRbxSoon">로블록스 · 곧 공개</a></div></div>
+  </div>
   <div class="game asc">
-   <a class="thumb" href="/game/ascend/" style="background-image:url(/game/ascend/og.jpg)"><span class="badge" data-t="newBadge">NEW v2.5 · 은하 원정 RPG</span></a>
-   <div class="body"><h2><a href="/game/ascend/">ASCEND</a></h2><p data-t="ascDesc">기동전사를 타고 은하를 누비는 3D 핵앤슬래시 RPG. 이야기 8장과 엔딩 3종, 사냥터 7곳, 이름과 사연이 있는 고유 장비, 6등급으로 커지는 드론 6기, 기동전사 합체까지. 100명 AI 전장과 친구 방 대전도 그대로 즐길 수 있어요.</p>
-    <div class="tags"><span data-t="ascT1">이야기 RPG</span><span data-t="ascT2">핵앤슬래시 사냥</span><span data-t="ascT3">고유 장비·드론</span><span data-t="ascT4">100명 전장</span></div>
-    <div class="btns"><a class="play" href="/game/ascend/" data-t="ascPlay">지금 출격 ▶</a><a class="world" href="/game/ascend/world" data-t="ascWorld">세계관 · 기동전사 도감 📖</a></div></div>
+   <a class="thumb" href="/game/ascend/" style="background-image:url(/game/ascend/og.jpg)"><span class="badge" data-t="ascBadge2">NEW · 게임 2종</span></a>
+   <div class="body"><h2>ASCEND</h2><p data-t="ascDesc2">기동전사로 은하를 누비는 3D 핵앤슬래시 RPG, 그리고 13종 기동전사로 5분을 버티는 서바이벌.</p>
+    <div class="vbtns"><a class="play" href="/game/ascend/" data-t="vAsc1">은하 원정 RPG ▶</a><a class="play ls2" href="/game/laststand/" data-t="vAsc2">라스트 스탠드 ▶</a></div>
+    <a class="world" href="/game/ascend/world" data-t="ascWorld">세계관 · 기동전사 도감 📖</a></div>
   </div>
  </section>
  <section class="how">
@@ -153,6 +166,8 @@ const S={
   w1t:'1. 选择游戏',w1d:'点一下卡片即可开始，无需注册，只要起个昵称。',w2t:'2. 和朋友一起',w2d:'创建房间并分享6位房间码，朋友就能加入同一战场。',w3t:'3. 保存进度',w3d:'用邮箱注册后，经验、金币、技能和军衔会保存到账号，换设备也能继续。',rights:'版权所有',guide:'韩国旅行指南 →'}};
 const NAMES={ko:'한국어',en:'English',ja:'日本語',zh:'中文'};
 let L=null;try{L=localStorage.getItem('hk_play_lang');}catch(e){}if(!S[L]){const n=(navigator.language||'en').toLowerCase();L=n.startsWith('ko')?'ko':n.startsWith('ja')?'ja':n.startsWith('zh')?'zh':'en';}
+Object.assign(S.ko,{secT:'게임',secS:'웹에서 바로, 또는 로블록스에서',aniDesc2:'귀여운 동물 블록을 지워 친구와 대결! 보스 스테이지와 1대1 대전.',vWeb:'웹에서 플레이 ▶',vRbx:'로블록스 ▶',kzDesc2:'역병 좀비가 조선을 덮쳤다! 낮엔 탑을 짓고, 밤엔 깨어난 수호자들과 사당을 지켜요.',vWebKo:'웹 · 한국어 ▶',vRbxSoon:'로블록스 · 곧 공개',vRbxKz:'로블록스 ▶',ascBadge2:'NEW · 게임 2종',ascDesc2:'기동전사로 은하를 누비는 3D 핵앤슬래시 RPG, 그리고 13종 기동전사로 5분을 버티는 서바이벌.',vAsc1:'은하 원정 RPG ▶',vAsc2:'라스트 스탠드 ▶'});
+Object.assign(S.en,{secT:'Games',secS:'Play on the web, or on Roblox',aniDesc2:'Clear cute animal blocks and battle friends! Boss stages and 1v1 matches.',vWeb:'Play on web ▶',vRbx:'Roblox ▶',kzDesc2:'Plague zombies overrun Joseon! Build towers by day, defend the shrine at night with awakened guardians.',vWebKo:'Web · 한국어 ▶',vRbxSoon:'Roblox · coming soon',vRbxKz:'Roblox ▶',ascBadge2:'NEW · 2 games',ascDesc2:'A 3D mobile-suit hack-and-slash RPG across the galaxy, plus a 5-minute survival with 13 suits.',vAsc1:'Galaxy RPG ▶',vAsc2:'Last Stand ▶'});
 function apply(){document.documentElement.lang=L;document.querySelectorAll('[data-t]').forEach(e=>{const v=S[L][e.dataset.t]??S.en[e.dataset.t];if(v!=null)e.innerHTML=v;});
  const box=document.getElementById('langs');box.innerHTML='';for(const k in NAMES){const b=document.createElement('button');b.textContent=NAMES[k];if(k===L)b.className='on';b.onclick=()=>{L=k;try{localStorage.setItem('hk_play_lang',k);}catch(e){}apply();};box.appendChild(b);}}
 apply();
