@@ -1930,7 +1930,7 @@ function drawTurret(t, day) {
   let ok;
   if (headKey) { const hs = SPR[headKey], aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0); const back = rc * rc * 10;
     ok = drawSprite(headKey, x - Math.cos(aim) * back, y + 18 - Math.sin(aim) * back * 0.6, { dir: dirN(aim, hs.dirs || 16), mode: t.hitT > 0 ? 'white' : null, sy: rise * (1 - rc * 0.06), sx: 1 + (1 - rise) * 0.3 + rc * 0.04, alpha: t.seal > 0 ? 0.6 : 1 }); }
-  else ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
+  else ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sc: 1 + 0.07 * Math.min(4, (t.lv || 1) - 1) /* 강화할수록 커짐 */, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
   /* 생동감: 깃발, 불꽃, 물빛, 금가루, 등불 */
   if (!t.rise || t.rise <= 0) {
     if (t.type === 'fire' && Math.random() < 0.5) FX.ember(x + rnd(-10, 10), y - d.top * 0.92, Math.random() < 0.5 ? '255,150,40' : '255,220,110', 1, 70);

@@ -145,11 +145,16 @@ D.layoutOf = function (ch) {
   const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 30 && Math.abs(p.x - x) < 78) return true; } return false; });
   const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 80);
   const pads = [];
-  for (const row of [{ y: 975, n: 4 }, { y: 800, n: 3 }, { y: 640, n: 3 }]) {
-    const yy = row.y + Math.round(rr(-25, 25)); let tries = 0, got = 0;
-    while (got < row.n && tries++ < 60) { const x = Math.round(rr(80, 640)), y = yy + Math.round(rr(-20, 20)); if (nearLane(x, y) || guardNear(x, y) || pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 105)) continue; pads.push([x, y]); got++; }
-  }
-  for (const bx of [140 + rr(-20, 20), 580 + rr(-20, 20)]) pads.push([Math.round(bx), 1165 + Math.round(rr(-15, 15))]);
+  /* TIDY_PADS(11-25): 성벽 앞 두 줄 + 길 양옆 대칭 묶음. 같은 줄은 같은 높이, 좌우 거울 배치 우선, 길·수호물·서로 겹침 금지 */
+  const free = (x, y) => !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 100);
+  const COLS = [96, 178, 260, 342, 424, 506, 588];
+  const row = (y, n) => { let got = 0; const cand = []; for (const x of COLS) if (x <= 360) cand.push(x); cand.sort((a, b) => Math.abs(a - 200) - Math.abs(b - 200));
+    for (const x of cand) { if (got >= n) break; const xm = 720 - x; if (xm !== x && free(x, y) && free(xm, y)) { pads.push([x, y]); pads.push([xm, y]); got += 2; } }
+    for (const x of COLS) { if (got >= n) break; if (free(x, y)) { pads.push([x, y]); got++; } }
+    for (let t = 0; got < n && t < 40; t++) { const x = Math.round(80 + R() * 560); if (free(x, y)) { pads.push([x, y]); got++; } } };
+  const off = Math.round(rr(-12, 12));
+  row(985 + off, 4); row(855 + off, 2); row(760 + off, 2); row(640 + off, 2);
+  for (const bx of [140, 580]) pads.push([bx, 1165]);
   return { lanes, pads };
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
