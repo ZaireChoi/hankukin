@@ -772,66 +772,66 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 95,
+  "height": 92,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14640
+  "ch": 0.898,
+  "v": 40897
  },
  "tur_lady": {
   "src": "tur_lady.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 95,
+  "height": 92,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14732
+  "ch": 0.898,
+  "v": 40897
  },
  "guard_turtle": {
   "src": "guard_turtle.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 86,
+  "height": 84,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14777
+  "ch": 0.898,
+  "v": 40897
  },
  "guard_phoenix": {
   "src": "guard_phoenix.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 100,
+  "height": 90,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14817
+  "ch": 0.869,
+  "v": 40897
  },
  "guard_tiger": {
   "src": "guard_tiger.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 92,
+  "height": 90,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14855
+  "ch": 0.898,
+  "v": 40897
  },
  "guard_dragon": {
   "src": "guard_dragon.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 104,
+  "height": 92,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 14884
+  "ch": 0.898,
+  "v": 40897
  },
  "haetae": {
   "src": "haetae_walk.webp",
@@ -932,8 +932,8 @@
   "height": 140,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.774,
-  "v": 13482
+  "ch": 0.891,
+  "v": 40897
  },
  "tower_arrow": {
   "src": "tower_arrow.png",
@@ -951,22 +951,22 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 70,
+  "height": 58,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.689,
-  "v": 13662
+  "ch": 0.605,
+  "v": 40897
  },
  "tower_hwacha": {
   "src": "tower_hwacha.png",
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 85,
+  "height": 62,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.835,
-  "v": 13704
+  "ch": 0.613,
+  "v": 40897
  },
  "tower_catapult": {
   "src": "tower_catapult.png",
@@ -994,11 +994,11 @@
   "cell": 512,
   "frames": 1,
   "fps": 10,
-  "height": 120,
+  "height": 115,
   "anchorX": 0.5,
   "anchorY": 0.95,
-  "ch": 0.9,
-  "v": 13744
+  "ch": 0.898,
+  "v": 40897
  },
  "mine": {
   "src": "mine.png",
@@ -3304,5 +3304,27 @@
    }
   },
   "toon": 1
+ },
+ "tower_cannon_barrel": {
+  "src": "tower_cannon_barrel.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 26,
+  "anchorX": 0.42,
+  "anchorY": 0.5,
+  "ch": 0.391,
+  "v": 40897
+ },
+ "tower_hwacha_rack": {
+  "src": "tower_hwacha_rack.png",
+  "cell": 512,
+  "frames": 1,
+  "fps": 10,
+  "height": 34,
+  "anchorX": 0.42,
+  "anchorY": 0.5,
+  "ch": 0.604,
+  "v": 40897
  }
 }
