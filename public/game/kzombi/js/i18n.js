@@ -27,6 +27,7 @@ if (L !== 'en') return;
 document.documentElement.lang = 'en';
 
 const DICT = {
+'일괄 승급': 'Bulk upgrade', '일괄 분해': 'Bulk salvage', '해제': 'Unequip', '교체': 'Swap', '착용 (교체)': 'Equip (swap)', '×10': 'x10', '최대': 'Max', '🔒 잠금': '🔒 Lock', '잠금 풀기': 'Unlock', '분해하기': 'Salvage', '전체': 'All', '등급순': 'By grade', '레벨순': 'By level', '새것순': 'Newest', '▲ 크게': '▲ Expand', '▼ 접기': '▼ Collapse', '착용 중': 'Equipped', '이 칸은 비어 있어요': 'This slot is empty', '이전 기록 없음': 'No record', '처음 장비': 'Starter gear', '장비 뽑기': 'Gear summon', '승급(합성)': 'Upgrade (merge)', '바꿀 장비를 눌러 착용해요': 'Tap an item to equip it', '최대 레벨이에요. 승급으로 등급을 올려요': 'Max level. Upgrade to raise the grade', '엽전이나 정련석이 모자라요': 'Not enough coins or refine stones', '승급할 장비가 없어요': 'Nothing to upgrade', '장비를 얻었다!': 'Gear obtained!', '최대 레벨이에요. 같은 장비로 승급하면 더 올라가요': 'Max level. Upgrade with matching gear to go higher',
 '공성 좀비': 'Siege Zombie', '자폭 좀비': 'Bomber Zombie', '방패 좀비': 'Shield Zombie', '둥지 좀비': 'Nest Zombie', '역병 술사': 'Plague Shaman', '박쥐 떼': 'Bat Swarm', '역병 염라': 'Plague King of Hell', '독룡 이무기': 'Venom Imugi', '바위 두꺼비 거인': 'Boulder Toad Giant', '도깨비불 정령': 'Dokkaebi Wisp', '폐허 약탈 좀비': 'Ruin Looter Zombie', '염라의 사슬!': 'Chains of Yeomra!', '독룡의 독숨!': 'Venom breath!', '두꺼비 거인이 뛰어오른다!': 'The toad giant leaps!',
 '월드 보스': 'World Boss', '월드보스': 'World Boss', '문파 보스': 'Guild Boss', '돌장승 거신': 'Stone Totem Colossus', '화마': 'Fire Demon', '역병 대장군': 'Plague General', '탈것': 'Mounts', '타기': 'Ride', '내리기': 'Dismount', '탈것에 올랐어요': 'Mounted!', '제주 조랑말': 'Jeju Pony', '아기 백호': 'Baby White Tiger', '아기 해태': 'Baby Haetae', '선학': 'Sacred Crane', '조건 미달성': 'Locked', '도전 (횃불 없음)': 'Challenge (no torch)', '내일 다시': 'Tomorrow', '도전': 'Challenge', '이동 속도 +10%': 'Move speed +10%', '이동 속도 +15%': 'Move speed +15%', '타면 전투에서 처용이 더 빨리 움직여요 (공격·체력은 그대로)': 'Riding makes Cheoyong move faster in battle (attack and HP unchanged)',
 '새 건물이 열렸어요!': 'New buildings unlocked!', '유리': 'Bonus', '불': 'Fire', '번개': 'Lightning', '얼음': 'Ice', '쇠': 'Metal',
@@ -267,6 +268,14 @@ const RULES = [
   [/(\d+)년 (\d+)월 시즌 · 전투를 하면 패스 점수가 쌓여요/g, (m, y, mo) => y + '-' + mo + ' season · Battles earn pass points'],
   [/(\d+)년 (\d+)월 시즌/g, (m, y, mo) => y + '-' + mo + ' season'],
   [/^(\d+)번째 밤$/, (m, n) => 'Night ' + n],
+[/^약점 (.+) \+(\d+)%$/, (m, a, n) => 'Weak to ' + (DICT[a] || a) + ' +' + n + '%'],
+[/^입수: (악몽 )?(\d+)장 우두머리 처치$/, (m, a, n) => 'Source: ' + (a ? 'Nightmare ' : '') + 'Ch.' + n + ' boss'],
+[/^(악몽 )?(\d+)장 우두머리 처치$/, (m, a, n) => (a ? 'Nightmare ' : '') + 'Ch.' + n + ' boss'],
+[/^입수: (.+)$/, (m, a) => 'Source: ' + (DICT[a] || a)],
+[/^강화 \+(\d+) · 레벨 (\d+)$/, (m, a, b) => 'Enhanced +' + a + ' · Lv.' + b],
+[/^승급 (\d+)번 성공!$/, (m, a) => 'Upgraded ' + a + ' times!'],
+[/^분해 \(\+(\d+) 정련석\)$/, (m, a) => 'Salvage (+' + a + ' stones)'],
+[/^(\d+)개 분해 · 엽전 ([\d,.KM]+) · 정련석 ([\d,.KM]+)$/, (m, a, b, c) => 'Salvaged ' + a + ' · ' + b + ' coins · ' + c + ' stones'],
 [/^약점 · (.+) \+(\d+)%$/, (m, a, n) => 'Weakness · ' + (DICT[a] || a) + ' +' + n + '%'],
 [/^(\d+)장 유리$/, (m, n) => 'Ch.' + n + ' bonus'],
 [/^🔒(\d+)장$/, (m, n) => '🔒Ch.' + n],

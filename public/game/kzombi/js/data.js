@@ -280,3 +280,21 @@ D.SKILLS = [
 { id: 'bond',     n: '영웅 결속',  kind: 'buff', max: 3, c: '#ffc85a', d: () => '함께한 영웅의 위력 +40%, 큰 기술이 빨리 찬다', need: g => g.comps.some(c => c.active) }
 ];
 })();
+
+/* ARMED_BIG: 무기 든 좀비는 화면 크기 약 2배·체력 2배, 말 탄 좀비는 덩치 1.7배·체력 2.2배 (사용자 요청 11-25) */
+(function () {
+  const D = window.JZD; if (!D) return;
+  const ARMED = { archer: [1.9, 1.5], spear: [1.9, 1.5], zsword: [1.9, 1.5], zwaegun: [1.9, 1.5], zsamurai: [1.9, 1.5],
+    iron_spear: [1.6, 1.3], red_sword: [1.6, 1.3], black_archer: [1.6, 1.3], shadow_samurai: [1.6, 1.3] };
+  const RIDER = { rider: [1.7, 1.6], harcher: [1.7, 1.6], plague_rider: [1.45, 1.4] };
+  const apply = (T) => { for (const k in T) { const e = D.EN && D.EN[k]; if (!e || e.__big) continue; e.sc = Math.min(2.4, (e.sc || 1) * T[k][0]); e.hp = Math.round(e.hp * T[k][1]); e.__big = 1; e.big = 1; } };
+  apply(ARMED); apply(RIDER);
+  /* BASE_FIX: 상위 종이 장의 '기본 적'(무리 맨 앞)이면 첫 밤부터 몰려와 사당이 무너진다 → 원래 종을 기본으로 앞에 둔다 */
+  const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
+  for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
+  /* 장별 체력 보정 (시뮬로 맞춤) */
+  D.CHHP = Object.assign(D.CHHP || {}, {"7":0.62,"8":0.8,"9":0.66,"10":0.8,"11":0.78,"12":0.74,"13":0.52,"14":0.6,"15":0.6,"16":0.6,"17":0.6,"18":0.58,"19":0.6,"20":0.6,"21":0.6,"22":0.58,"23":0.58,"24":0.56,"25":0.55,"26":0.55,"27":0.54,"28":0.54,"29":0.53,"30":0.53});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
+  const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
+  const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; }); return o; };
+})();
