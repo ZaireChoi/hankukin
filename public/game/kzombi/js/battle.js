@@ -34,6 +34,8 @@ const PORT = {};
 for (const id in COMP) { const im = new Image(); im.onload = () => { PORT[id] = im; }; im.src = 'img/ui/hero_' + id + '.webp?v=' + (id === 'haetae' ? 3 : 2); }
 function drawPort(id, x, y, r, ring) { const im = PORT[id]; if (!im) return false; ctx.save(); circle(x, y, r); ctx.clip(); const s = Math.max(r * 2 / im.width, r * 2 / im.height) * 1.15; ctx.drawImage(im, x - im.width * s / 2, y - r - im.height * s * 0.04, im.width * s, im.height * s); ctx.restore(); circle(x, y, r); ctx.strokeStyle = ring || '#ffe08a'; ctx.lineWidth = 3; ctx.stroke(); return true; }
 for (const k in EN) HOV[k] = EN[k].h;
+/* SIZE_RATIO(11-25): 후더덕 비율(처용 키 118 = 1) — 탑 약 1.5, 사당 약 2.1, 금광·우물 약 1.2, 성벽 약 0.8 */
+Object.assign(HOV, { tower_arrow: 175, tower_fire: 175, tower_talisman: 175, tower_catapult: 150, tur_general: 175, tur_lady: 175, barracks: 170, mine: 140, well: 140, tower_cannon: 100, tower_cannon_barrel: 45, tower_hwacha: 107, tower_hwacha_rack: 58, base: 312, shrine: 312, wall: 95, gate: 185, guard_turtle: 115, guard_phoenix: 120, guard_tiger: 118, guard_dragon: 120 });
 function tint(img, col, a) {
   const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
   const g = c.getContext('2d'); g.drawImage(img, 0, 0); g.globalCompositeOperation = 'source-atop'; g.globalAlpha = a; g.fillStyle = col; g.fillRect(0, 0, c.width, c.height);
@@ -210,7 +212,7 @@ const PNERF = 0.8;
 const atkMul = () => PNERF * G.atk0 * (1 + 0.08 * (G.cfg.heroLv - 1)) * (1 + 0.25 * skLv('power'));
 /* 시설은 적 체력에 맞춰 장별로 강해지고(위력·내구) 기술 피해는 0.72배 — 탑이 주력이 되게 */
 const tScale = () => { const N = G.nights && G.nights[Math.min(G.night, G.nights.length - 1)]; return Math.max(1, Math.pow((N && N.hp) || 1, 0.7)); };
-const heroK = id => (1 / PNERF) * (1 + 0.35 * skLv('h_' + id));
+const heroK = id => (0.8 / PNERF) * (1 + 0.35 * skLv('h_' + id));
 /* 원소 배율: 공명 +25%, 동료 연계 +20% */
 const chElK = el => (G.chEl && el && el === G.chEl.el ? 1 + G.chEl.k : 1);   /* 이 장의 원소 약점 */
 const TUR_EL = { fire: 'fire', hwacha: 'fire', general: 'fire', talisman: 'thunder', cannon: 'metal', arrow: 'metal', lady: 'ice', well: null, mine: null, barracks: 'metal' };
@@ -327,7 +329,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   o = o || {};
-  if (src === 'skill') dmg *= 0.38;
+  if (src === 'skill') dmg *= 0.22;
   dmg *= objBuildK(src, e);
   if (e.armor) dmg = Math.max(1, dmg - e.armor);
   if (EN[e.type] && EN[e.type].shield && src !== 'skill' && e.y < G.player.y - 20) { dmg *= 0.45; if (Math.random() < 0.15) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 1.6, '200,170,110', 0.15, 3); }
@@ -362,7 +364,7 @@ function hurtT(tg, dmg) {
   }
   if (tg === G.shrine) { if (G.guards.some(g => g.id === 'turtle' && !(g.seal > 0))) dmg *= 0.7; if (G.shShield > 0) { const a = Math.min(G.shShield, dmg); G.shShield -= a; dmg -= a; if (dmg <= 0) { FX.ring(tg.x, tg.y - 40, 90, '255,215,110', 0.2, 4); return; } } G.alertT = 1.2; if (G.bubbleCd <= 0) { G.bubble = { s: '사당이 공격받고 있어!', t: 2.6 }; G.bubbleCd = 9; } }
   if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4);
-  if (tg.pad != null && TUR[tg.type]) dmg /= tScale();
+  if (tg.pad != null && TUR[tg.type]) dmg /= tScale() * (1 + 0.04 * G.ch);
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
   if (tg === G.player) { FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
@@ -605,7 +607,7 @@ let selBuild = 'arrow';
 /* 장승 한 쌍: 천하대장군과 지하여장군이 함께 서면 서로 힘을 더한다 */
 function jangPair() { if (!G || !G.turrets) return false; let a = 0, b = 0; for (const o of G.turrets) { if (o.type === 'general') a = 1; else if (o.type === 'lady') b = 1; } return a && b; }
 function lvInfo(k, lv) {
-  const d = TUR[k], m = 2.2 * (1 + 0.4 * (lv - 1));
+  const d = TUR[k], m = 3.4 * (1 + 0.4 * (lv - 1));
   if (k === 'arrow') { const c = crewOf({ lv }); return (c[0] === 's_gun' ? '조총수' : c[0] === 's_crossbow' ? '연노병' : '궁수') + ' ' + c[1] + '명이 쏜다'; }
   if (k === 'barracks') return '병사 최대 ' + (2 + Math.floor(lv * 1.5)) + '명 · ' + Object.keys(D.SOLDIER).filter(s => D.SOLDIER[s].unlock <= lv).map(s => D.SOLDIER[s].n).join(', ');
   if (k === 'mine') return '밤마다 엽전 +' + d.income * lv;
@@ -1256,7 +1258,7 @@ function turrets(dt) {
     const d = TUR[t.type];
     if (t.seal > 0) { t.seal -= dt; continue; }
     if (d.kind === 'mine') { if (Math.random() < dt * 0.6) FX.p({ kind: 'glow', x: t.x + rnd(-14, 14), y: t.y - rnd(10, 40), vy: -30, life: 0.8, s: 6, s2: 1, c: '255,220,90' }); continue; }
-    const bl = bl0 * 2.2 * tScale() * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
+    const bl = bl0 * 3.4 * tScale() * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
     if (d.kind === 'barracks') {
       t.cd -= dt; const lv = t.lv, cap = 2 + Math.floor(lv * 1.5) + (G.setBarracks || 0), mine = (G.allies || []).filter(a => a.style === 'soldier' && a.home === t).length;
       if (t.cd <= 0 && mine < cap && isNight()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
@@ -1617,7 +1619,7 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
+    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.4 : 1) * (e.boss ? 1.3 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
     if (e.boss && !e.p2 && e.hp < e.max * (G.nm ? 0.85 : 0.5)) {
@@ -1965,7 +1967,7 @@ function drawTurret(t, day) {
   if (barKey && !SPR[barKey]) need(barKey);
   if (barKey && SPR[barKey] && SPR[d.spr]) { const aim = t.aim == null ? -Math.PI / 2 : t.aim, rc = (t.recoil || 0), back = rc * rc * 10, lvS = 1 + 0.07 * Math.min(4, (t.lv || 1) - 1);
     ok = drawSprite(d.spr, x, y + 18, { mode: t.hitT > 0 ? 'white' : null, sc: lvS, sy: rise, sx: 1 + (1 - rise) * 0.3, alpha: t.seal > 0 ? 0.6 : 1 });
-    const py = y + 18 - SPR[d.spr].height * lvS * rise * 0.92; ctx.save(); ctx.translate(x - Math.cos(aim) * back, py - Math.sin(aim) * back * 0.6); ctx.rotate(Math.atan2(Math.sin(aim) * 0.75, Math.cos(aim))); if (Math.cos(aim) < 0) ctx.scale(1, -1);
+    const py = y + 18 - (HOV[d.spr] || SPR[d.spr].height) * lvS * rise * 0.92; ctx.save(); ctx.translate(x - Math.cos(aim) * back, py - Math.sin(aim) * back * 0.6); ctx.rotate(Math.atan2(Math.sin(aim) * 0.75, Math.cos(aim))); if (Math.cos(aim) < 0) ctx.scale(1, -1);
     drawSprite(barKey, 0, 0, { mode: t.hitT > 0 ? 'white' : null, sc: lvS * rise, alpha: t.seal > 0 ? 0.6 : 1 }); ctx.restore(); }
   const headKey = !ok && d.head && SPR[d.head] ? d.head : null;
   if (ok) {}
@@ -2174,7 +2176,7 @@ function draw() {
   if (!G) { ctx.fillStyle = '#0d1210'; ctx.fillRect(0, 0, W, VH); return; }
   const day = G.phase === 'day' || G.phase === 'guard';
   const still = G.phase === 'win' || G.phase === 'lose';
-  /* WIDE_MAP: 멀리서 내려다보기 (두 손가락으로 0.55~1.0) */ const ZT = (day ? 0.55 : 0.57) * (G.zoomK || 1);
+  /* WIDE_MAP: 멀리서 내려다보기 (두 손가락으로 0.55~1.0) */ const ZT = (day ? 0.47 : 0.49) * (G.zoomK || 1);   /* 처용 키 ≈ 화면 폭 7.7~8% */
   if (!still) zoom += (ZT - zoom) * 0.05;
   const vw = W / zoom, vh = VH / zoom, p = G.player;
   if (!still) { const tx = p.x - vw / 2, ty = p.y - vh * (day ? 0.55 : 0.64); camX += (tx - camX) * 0.1; camY += (ty - camY) * 0.1; }
@@ -2232,8 +2234,8 @@ function draw() {
   for (const w of G.waves) drawWave(w);
   if (G.ship) drawShip(G.ship);
   /* 사당 체력 */
-  const sh = G.shrine; hpBar(sh.x - 70, sh.y - 108, 140, 12, sh.hp / sh.max, sh.hp / sh.max < 0.3 ? '#ff4a3a' : '#ffc23a');
-  ctx.font = '900 18px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#140c06'; ctx.strokeText('사당 ' + Math.max(0, Math.ceil(sh.hp)), sh.x, sh.y - 120); ctx.fillStyle = '#ffe8b0'; ctx.fillText('사당 ' + Math.max(0, Math.ceil(sh.hp)), sh.x, sh.y - 120);
+  const sh = G.shrine; hpBar(sh.x - 60, sh.y - 206, 120, 9, sh.hp / sh.max, sh.hp / sh.max < 0.3 ? '#ff4a3a' : '#ffc23a');
+  ctx.font = '900 18px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#140c06'; txt('사당 ' + Math.max(0, Math.ceil(sh.hp)), sh.x, sh.y - 222, 11, '#ffe8b0', 'center', '#140c06', 3);
 
   /* 처용무 부채 */
   const dl = skLv('dance'); if (dl && isNight()) for (let i = 0; i < 1 + dl; i++) { const a = G.t * 3.4 + i / (1 + dl) * TAU; drawFan(p.x + Math.cos(a) * 100, p.y - 30 + Math.sin(a) * 62, a + Math.PI / 2); }

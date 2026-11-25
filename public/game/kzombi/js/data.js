@@ -4,7 +4,7 @@
 const D = window.JZD = {};
 D.W = 720; D.VH = 1280; D.H = 1760;   /* W·VH: 화면(논리 픽셀), WW·H: 판(월드) 크기 */
 /* WIDE_MAP2(11-25): 판 폭 720→1300, 본진은 넓은 공터 */ D.WW = 1300; D.CX = 650;
-D.SHRINE = { x: 650, y: 1440, r: 54 };
+D.SHRINE = { x: 650, y: 1500, r: 54 };
 D.WALL_Y = 1200; D.GATE = [582, 718];
 D.LANE_X = [283, 650, 1018];
 D.PADS = [];   /* 실제 자리는 D.layoutOf(ch) */
@@ -144,17 +144,17 @@ D.layoutOf = function (ch) {
   let s = (ch * 9973 + 17) >>> 0; const R = () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; const rr = (a, b) => a + R() * (b - a);
   const T = [[150, 360, 570], [200, 520], [120, 420, 600], [250, 590], [140, 470], [180, 360, 540], [110, 330, 610]];
   const lanes = (ch === 1 ? [150, 360, 570] : T[(ch * 3) % T.length].map(x => Math.round(x + rr(-35, 35)))).map(x => Math.round(D.CX + (x - 360) * 1.75));
-  const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 30 && Math.abs(p.x - x) < 78) return true; } return false; });
-  const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 80);
+  const nearLane = (x, y) => lanes.some((L, i) => { for (let t = 0; t <= 1; t += 0.02) { const p = D.lanePt(L, t, i); if (Math.abs(p.y - y) < 40 && Math.abs(p.x - x) < 98) return true; } return false; });
+  const guardNear = (x, y) => Object.values(D.GUARD).some(g => Math.hypot(g.x - x, g.y - y) < 125);
   const pads = [];
   /* WIDE_PADS(11-25): 넓은 판 — 성문 앞 반원 고리 두 겹 + 길 양옆 + 성벽 안 양옆. 좌우 거울 우선, 길·수호물·서로 겹침 금지 */
   const CX = D.CX, WY = D.WALL_Y, jit = rr(-18, 18);
-  const free = (x, y) => x > 80 && x < D.WW - 80 && !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 118);
+  const free = (x, y) => x > 80 && x < D.WW - 80 && !nearLane(x, y) && !guardNear(x, y) && !pads.some(p => Math.hypot(p[0] - x, p[1] - y) < 150);
   const put = (x, y) => { if (free(x, y)) { pads.push([Math.round(x), Math.round(y)]); return true; } return false; };
   const pair = (x, y) => { const xm = 2 * CX - x; if (free(x, y) && free(xm, y)) { put(x, y); put(xm, y); } else { put(x, y); put(xm, y); } };
-  for (const a of [0.16, 0.5, 0.86, 1.2]) pair(CX - Math.cos(a) * (340 + jit), WY - 60 - Math.sin(a) * 250);
-  for (const a of [0.1, 0.42, 0.76, 1.1]) pair(CX - Math.cos(a) * (560 + jit), WY - 90 - Math.sin(a) * 430);
-  lanes.forEach((L, i) => { const p = D.lanePt(L, 0.5, i); put(p.x - 130, p.y); put(p.x + 130, p.y); });
+  for (const a of [0.16, 0.5, 0.86, 1.2]) pair(CX - Math.cos(a) * (380 + jit), WY - 70 - Math.sin(a) * 280);
+  for (const a of [0.1, 0.42, 0.76, 1.1]) pair(CX - Math.cos(a) * (590 + jit), WY - 110 - Math.sin(a) * 470);
+  lanes.forEach((L, i) => { const p = D.lanePt(L, 0.5, i); put(p.x - 165, p.y); put(p.x + 165, p.y); });
   pair(CX - 330, WY + 110); pair(CX - 470, WY + 270);
   while (pads.length > 20) pads.pop();
   return { lanes, pads };
@@ -222,8 +222,8 @@ D.WEAPON = {
 };
 
 D.GUARD = {
-  turtle:  { n: '현무', side: '사당 왼편', d: '사당 피해 30% 감소. 영혼이 나와 물결 방패로 적을 밀어내고 느리게 한다', x: 190, y: 1610, range: 330, c: '90,200,170' },
-  phoenix: { n: '주작', side: '사당 오른편', d: '영혼이 날아올라 내리꽂으며 불길 자국을 남긴다', x: 1110, y: 1610, range: 540, rate: 2.2, dmg: 32, c: '255,110,50' },
+  turtle:  { n: '현무', side: '사당 왼편', d: '사당 피해 30% 감소. 영혼이 나와 물결 방패로 적을 밀어내고 느리게 한다', x: 190, y: 1640, range: 330, c: '90,200,170' },
+  phoenix: { n: '주작', side: '사당 오른편', d: '영혼이 날아올라 내리꽂으며 불길 자국을 남긴다', x: 1110, y: 1640, range: 540, rate: 2.2, dmg: 32, c: '255,110,50' },
   tiger:   { n: '백호', side: '성문 앞 왼편', d: '영혼이 적 무리로 뛰어들어 세 번 할퀴고 포효로 밀쳐 낸다', x: 210, y: 1150, range: 320, rate: 0.75, dmg: 26, c: '235,240,255' },
   dragon:  { n: '청룡', side: '성문 앞 오른편', d: '영혼이 하늘을 휘감으며 번개를 다섯 번 내리친다', x: 1090, y: 1150, range: 440, rate: 1.4, dmg: 22, c: '90,190,255' }
 };
@@ -300,7 +300,7 @@ D.SKILLS = [
   const REV = {}; for (const k in (D.VAR_OF || {})) REV[D.VAR_OF[k]] = k;
   for (const C of D.CHAPTERS || []) { if (C.pool && REV[C.pool[0]]) C.pool.unshift(REV[C.pool[0]]); }
   /* 장별 체력 보정 (시뮬로 맞춤) */
-  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.82,"3":1.32,"4":1.35,"5":1.55,"6":1,"7":0.64,"8":0.88,"9":0.63,"10":0.85,"11":0.72,"12":0.68,"13":0.5,"14":0.6,"15":0.6,"16":0.57,"17":0.6,"18":0.5,"19":0.6,"20":0.52,"21":0.6,"22":0.5,"23":0.58,"24":0.56,"25":0.55,"26":0.62,"27":0.58,"28":0.61,"29":0.57,"30":0.56});   /* 시뮬(11-25 진행 계정) 맞춤 */
+  D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.68,"3":1.2,"4":1.35,"5":1.9,"6":1.15,"7":0.6,"8":0.6,"9":0.42,"10":0.55,"11":0.52,"12":0.5,"13":0.45,"14":0.48,"15":0.6,"16":0.46,"17":0.45,"18":0.4,"19":0.42,"20":0.41,"21":0.42,"22":0.4,"23":0.4,"24":0.38,"25":0.38,"26":0.4,"27":0.38,"28":0.38,"29":0.37,"30":0.36});   /* 시뮬(11-25 진행 계정) 맞춤 */
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
   const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };
@@ -329,10 +329,13 @@ D.SKILLS = [
     D.SKILLS.push({ id: 'h_' + id, hero: id, n: h[0], kind: 'buff', max: 3, c: '#ffc85a', img: COMP[id].spr, d: (desc => () => desc)(h[1]) });
   }
   if (D.TUR && D.TUR.mine) { D.TUR.mine.income = 35; D.TUR.mine.d = '밤을 넘길 때마다 엽전 +35'; }
-  /* 디펜스 강화(11-25 2차): 시설 체력 2.5배, 본부 단계별 시설 최고 레벨 완화(1단계 3 · 2단계 4 · 3단계부터 5) */
-  if (D.TUR) for (const k in D.TUR) { const t = D.TUR[k]; if (!t.__hp2) { t.hp = Math.round(t.hp * 2.5); t.__hp2 = 1; } }
+  /* 디펜스 강화(11-25 2차): 시설 체력 4배, 본부 단계별 시설 최고 레벨 완화(1단계 3 · 2단계 4 · 3단계부터 5) */
+  if (D.TUR) for (const k in D.TUR) { const t = D.TUR[k]; if (!t.__hp2) { t.hp = Math.round(t.hp * 4); t.__hp2 = 1; } }
   if (D.HQ) { const MX = [0, 3, 4, 5, 5, 5]; for (let i = 1; i < D.HQ.length; i++) if (D.HQ[i]) D.HQ[i].max = Math.max(D.HQ[i].max, MX[i] || 5); }
 })();
 
-/* WIDE_MAP2: 넓은 판에 맞춰 탑 사거리 15% 늘림 */
-(function () { const D = window.JZD; if (!D || !D.TUR) return; for (const k in D.TUR) { const t = D.TUR[k]; if (t.range && !t.__wr) { t.range = Math.round(t.range * 1.15); t.__wr = 1; } } })();
+/* WIDE_MAP2: 넓은 판에 맞춰 탑 사거리 30% 늘림 */
+(function () { const D = window.JZD; if (!D || !D.TUR) return; for (const k in D.TUR) { const t = D.TUR[k]; if (t.range && !t.__wr) { t.range = Math.round(t.range * 1.3); t.__wr = 1; } } })();
+
+/* SIZE_RATIO(11-25): 좀비 키 ≈ 처용의 0.9 (무기 든 큰 좀비는 기존 배율 그대로 곱해짐), 시설 꼭대기(top)는 그림 키에 맞춰 */
+(function () { const D = window.JZD; if (!D) return; for (const k in D.EN) { const e = D.EN[k]; if (e.h && !e.__hk) { e.h = Math.round(e.h * 1.75); e.__hk = 1; } } const TK = { arrow: 1.35, fire: 1.59, talisman: 1.52, general: 1.9, lady: 1.9, barracks: 1.48, mine: 1.79, well: 1.4, cannon: 1.72, hwacha: 1.72 }; for (const k in TK) { const t = D.TUR && D.TUR[k]; if (t && t.top && !t.__tk) { t.top = Math.round(t.top * TK[k]); t.__tk = 1; } } })();
