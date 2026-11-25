@@ -150,7 +150,7 @@ function newGame(cfg) {
   if (IS.weapon) cfg.weapon = IS.weapon;
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
   /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
-  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * (ch - 1);
+  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.nightmare ? ch + 29 : ch) - 1);
   const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(2.4, Math.max(1, 1 + 0.6 * (POW / EXPV - 1.25))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
@@ -164,12 +164,15 @@ function newGame(cfg) {
   const hpMax = Math.round(120 * hp0 * ((SB.mugwan || 0) >= 2 ? 1.1 : 1) * (1 + 0.06 * (cfg.heroLv - 1)));
   const mode = cfg.mode || 'adventure';
   let nights = D.nightsOf(ch);
+  /* 2막 악몽: 같은 지도·목표, 적이 훨씬 세고 많다 (장마다 곡선) */
+  const NMK = cfg.nightmare && mode === 'adventure' ? D.nmK(ch) : null;
+  if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
   if (mode === 'gold' || mode === 'xp') nights = nights.slice(0, 3).map((n, i) => Object.assign({}, n, { name: (i + 1) + '번째 밤', kind: i === 2 ? 'elite' : 'normal', boss: null, elites: i === 2 ? [0.5] : [], dur: 45 }));
   if (mode === 'boss') nights = [Object.assign({}, nights[nights.length - 1], { name: '우두머리 토벌', dur: 90, elites: [0.01], rate: [0.8, 1.6] })];
   if (mode === 'adventure' && C.objective === 'survive') nights = nights.map((n, i) => Object.assign({}, n, { rate: [n.rate[0] * (ch <= 6 ? 1.12 : 1.25), n.rate[1] * (ch <= 6 ? 1.12 : 1.25)], boss: null, elites: n.boss ? [0.3, 0.7] : n.elites, kind: n.boss ? 'elite' : n.kind }));
-  const shMax = Math.round((400 + ch * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
+  const shMax = Math.round((400 + (NMK ? ch + 29 : ch) * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
   G = {
-    cfg, ch, C, nights, pkey: PKEY, tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
+    cfg, ch, C, nights, pkey: PKEY, nm: NMK, pzs: [], tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
     gold: 120 + 12 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
@@ -350,6 +353,7 @@ function hurtT(tg, dmg) {
 }
 function killEnemy(e) {
   if (e.dead) return; e.dead = true;
+  if (e.mut === 'plague' && G.pzs) { G.pzs.push({ x: e.x, y: e.y, r: 62, t: 5, life: 5, tick: 0 }); FX.smoke(e.x, e.y, 5, '110,200,60', 16, 40); }
   G.kills++;
   const d = EN[e.type], big = e.elite || e.boss;
   if (!G.low && (big || Math.random() < 0.35)) { const n = big ? 6 : 1; for (let i = 0; i < n; i++) FX.p({ kind: 'glow', x: e.x + rnd(-8, 8), y: e.y - e.hh * 0.6, vx: rnd(-12, 12), vy: -rnd(70, 120), life: rnd(0.7, 1.1), s: big ? 18 : 11, s2: 2, c: big ? '255,210,120' : '150,240,200' }); }
@@ -416,9 +420,10 @@ function upgradeType(type) {
   return pool.length ? pick(pool) : type;
 }
 /* 변이체: 철갑(단단함), 광폭(빠르고 셈), 거대(크고 체력 많음) */
-const MUT = { armor: { n: '철갑', c: '170,190,210' }, rage: { n: '광폭', c: '255,70,40' }, giant: { n: '거대', c: '190,120,255' } };
+const MUT = { plague: { n: '역병 걸린', c: '130,230,60' }, armor: { n: '철갑', c: '170,190,210' }, rage: { n: '광폭', c: '255,70,40' }, giant: { n: '거대', c: '190,120,255' } };
 function mutate(e) {
   if (e.boss || e.elite || e.small || EN[e.type].fly) return;
+  if (G.nm && Math.random() < 0.16) { e.mut = 'plague'; e.hp *= 1.3; e.max = e.hp; return; }
   const th = threat(); if (Math.random() > Math.min(0.3, Math.max(0, th - 3) * 0.025)) return;
   const m = th > 8 && Math.random() < 0.35 ? 'giant' : Math.random() < 0.5 ? 'armor' : 'rage'; e.mut = m;
   if (m === 'armor') { e.armor = (e.armor || 0) + 4 + G.ch * 0.4; e.hp *= 1.6; }
@@ -605,7 +610,7 @@ function startNight() {
   if (fxN('shield')) G.shield = G.player.max * 0.25;
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
   const N = curN();
-  G.title = { s: N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')), t: G.night === 0 ? 3 : 2.2 };
+  G.title = { s: (G.nm ? '악몽 ' : '') + N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')), t: G.night === 0 ? 3 : 2.2 };
   sfx('warn', 0.6);
 }
 
@@ -1435,6 +1440,7 @@ function updZones(dt) {
     if (v.tick <= 0) { v.tick = 0.3; for (const e of G.enemies) if (Math.hypot(e.x - v.x, e.y - v.y) < v.r) hurtEnemy(e, v.dps * 0.3, 'skill', { acc: 1 }); }
   }
   G.vortexes = G.vortexes.filter(v => v.t > 0);
+  if (G.pzs && G.pzs.length) { const pl = G.player; for (const z of G.pzs) { z.t -= dt; z.tick -= dt; if (z.tick <= 0 && Math.hypot(pl.x - z.x, (pl.y - z.y) / 0.62) < z.r) { z.tick = 0.5; hurtT(pl, 6 + G.ch * 0.6); } } G.pzs = G.pzs.filter(z => z.t > 0); }
   for (const t of G.tele) { t.t -= dt; if (t.boom && t.t <= 0) { FX.explode(t.x, t.y - 10, t.r); sfx('boom', 0.5); const pl = G.player; if (Math.hypot(pl.x - t.x, (pl.y - t.y) / 0.62) < t.r) hurtT(pl, t.boom); t.boom = 0; } } G.tele = G.tele.filter(t => t.t > 0);
   /* 살수대첩 물결 */
   for (const w of G.waves) {
@@ -1504,10 +1510,10 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1);
+    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.8 : 1) * (e.boss ? 1.6 : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
-    if (e.boss && !e.p2 && e.hp < e.max * 0.5) {
+    if (e.boss && !e.p2 && e.hp < e.max * (G.nm ? 0.85 : 0.5)) {
       e.p2 = true; e.sp *= 1.3; e.dmgK = (e.dmgK || 1) * 1.25; e.t1 = Math.min(e.t1 || 0, 1); e.t2 = Math.min(e.t2 || 0, 1.5);
       G.banner = { s: EN[e.type].n + ' 분노!', t: 2.2, kind: 'boss' }; G.crisisT = 2.5; sfx('warn'); vib([80, 50, 80, 50, 200]); FX.shake = 0.6;
       FX.ring(e.x, e.y, 260, '255,70,40', 0.6, 14); FX.explode(e.x, e.y - 40, 110);
@@ -1654,7 +1660,7 @@ function finish() {
   const res = { win: G.phase === 'win', chapter: G.ch, wave: Math.min(G.night + 1, G.nights.length), waves: G.nights.length,
     dmg: { skill: Math.round(G.dmg.skill), hero: Math.round(G.dmg.hero), building: Math.round(G.dmg.building), player: Math.round(G.dmg.player) },
     mode: G.mode, stars: G.missions ? G.missions.filter(m => m.ok()).length : null, bossDmg: Math.round(G.bossDmg), kills: G.kills, gold: G.gold, time: Math.round((performance.now() - G.startT) / 1000),
-    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, pairs: Object.keys(G.pairs || {}) };
+    objective: G.obj ? { type: G.obj.type, name: G.obj.n, ok: objOk(), text: objText() } : null, tierK: Math.round((G.tierK || 1) * 100) / 100, nightmare: !!G.nm, pairs: Object.keys(G.pairs || {}) };
   if (typeof JZB.onEnd === 'function' && JZB.onEnd !== defaultEnd) JZB.onEnd(res); else defaultEnd(res);
 }
 function defaultEnd(res) {
@@ -2001,7 +2007,7 @@ function drawShip(s) {
 function shade(d) {
   if (d <= 0.01) return;
   ctx.globalCompositeOperation = 'multiply';
-  ctx.fillStyle = 'rgb(' + Math.round(255 - d * 150) + ',' + Math.round(255 - d * 160) + ',' + Math.round(255 - d * 110) + ')';
+  ctx.fillStyle = G && G.nm ? 'rgb(' + Math.round(255 - d * 70) + ',' + Math.round(255 - d * 200) + ',' + Math.round(255 - d * 185) + ')' : 'rgb(' + Math.round(255 - d * 150) + ',' + Math.round(255 - d * 160) + ',' + Math.round(255 - d * 110) + ')';
   ctx.fillRect(0, 0, W, VH); ctx.globalCompositeOperation = 'source-over';
 }
 const PROPS = [['wall', 78], ['wall', 164], ['wall', 250], ['wall', 470], ['wall', 556], ['wall', 642]];
@@ -2029,6 +2035,7 @@ function draw() {
   /* 바닥 */
   FX.drawDecals(ctx);
   for (const z of G.zones) drawZone(z);
+  if (G.pzs) for (const z of G.pzs) { const k = Math.min(1, z.t / 0.6, (z.life - z.t) * 4 + 0.2); ctx.save(); ctx.translate(z.x, z.y); ctx.scale(1, 0.62); const gr = ctx.createRadialGradient(0, 0, 4, 0, 0, z.r); gr.addColorStop(0, 'rgba(150,240,70,' + 0.55 * k + ')'); gr.addColorStop(0.7, 'rgba(70,160,30,' + 0.4 * k + ')'); gr.addColorStop(1, 'rgba(40,90,20,0)'); ctx.fillStyle = gr; circle(0, 0, z.r); ctx.fill(); ctx.restore(); if (Math.random() < 0.15) FX.p({ kind: 'glow', x: z.x + rnd(-z.r * 0.7, z.r * 0.7), y: z.y + rnd(-14, 14), vy: -18, life: 0.7, s: 6, s2: 1, c: '170,255,90' }); }
   for (const t of G.tele) drawTele(t);
   for (let i = 0; i < PADS.length; i++) {
     if (G.turrets.some(t => t.pad === i)) continue;
@@ -2243,7 +2250,8 @@ function drawHUD(day) {
     const T = G.title, age = (T.big ? 2.4 : 2.2) - T.t, sc = age < 0.2 ? 1.6 - age / 0.2 * 0.6 : 1, a = Math.min(1, T.t * 2.5);
     ctx.globalAlpha = a; ctx.save(); ctx.translate(W / 2, 560); ctx.scale(sc, sc);
     const tb = ctx.createLinearGradient(-W / 2, 0, W / 2, 0); tb.addColorStop(0, 'rgba(0,0,0,0)'); tb.addColorStop(0.5, 'rgba(0,0,0,.55)'); tb.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = tb; ctx.fillRect(-W / 2, -70, W, 140);
-    txt(T.s, 0, -10, T.big ? 84 : 66, T.big ? (G.phase === 'win' ? '#ffe070' : '#ff8a7a') : '#ffffff', 'center', '#1a0e06', 10);
+    { let fsz = T.big ? 84 : 66; ctx.font = '900 ' + fsz + 'px ' + FONT; const mw = ctx.measureText(T.s).width; if (mw > W - 60) fsz = Math.floor(fsz * (W - 60) / mw);
+      txt(T.s, 0, -10, fsz, T.big ? (G.phase === 'win' ? '#ffe070' : '#ff8a7a') : (G.nm && /악몽/.test(T.s) ? '#ff8a7a' : '#ffffff'), 'center', '#1a0e06', 10); }
     if (T.sub) txt(T.sub, 0, 48, 26, '#ffe3a0', 'center');
     ctx.restore(); ctx.globalAlpha = 1;
   }

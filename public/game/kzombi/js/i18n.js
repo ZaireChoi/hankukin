@@ -27,6 +27,7 @@ if (L !== 'en') return;
 document.documentElement.lang = 'en';
 
 const DICT = {
+'악몽의 조선': 'Nightmare Joseon', '2막 · 악몽의 조선': 'Act 2 · Nightmare Joseon', '2막 열림': 'Act 2 unlocked', '평범': 'Normal', '악몽': 'Nightmare', '악몽 도전': 'Challenge Nightmare', '악몽 지도로': 'To the Nightmare map', '악몽을 넘은 자': 'Nightmare Conqueror', '칭호 획득!': 'Title earned!', '프로필에 칭호가 새겨졌어요.': 'The title has been added to your profile.', '역병 걸린': 'Plagued', '적이 훨씬 세고 많아요. 우두머리는 일찍 분노하고, 역병 걸린 좀비는 죽으며 독 웅덩이를 남겨요.': 'Enemies are far stronger and more numerous. Bosses enrage early, and plagued zombies leave poison pools when they die.', '역신을 물리쳤지만 조선의 밤은 끝나지 않았다. 더 강한 좀비와 역병이 몰려온다.': 'The plague god has fallen, but the night over Joseon is not over. Stronger zombies and plague are coming.', '지도에서': 'On the map, tap', '를 눌러 2막에 도전하세요. 신화 장비와 칭호가 기다려요.': 'to take on Act 2. Mythic gear and a title await.',
 '추천:': 'Recommended:', '건설 위주': 'build-focused', '공격 위주': 'attack-focused', '영웅·병사 위주': 'hero/soldier-focused', '신력(기술) 위주': 'skill-focused', '(피해 +25%)': '(+25% damage)', '판 등급': 'Stage tier', '최후의 결전!': 'Final battle!', '역신 강림': 'The Plague God descends', '조선의 마지막 밤': 'The last night of Joseon', '자유': 'any',
 '사당이 위험하다!': 'The shrine is in danger!', '짝 완성!': 'Pair complete!', '진화 짝 ·': 'Evolution pair ·', '기습!': 'Ambush!', '기절': 'Stun', '구출!': 'Rescued!', '피난민': 'Refugees', '봉화대': 'Beacon tower', '영웅 결속': 'Hero Bond', '진동 켬': 'Vibration on', '진동 끔': 'Vibration off', '달성!': 'Complete!', '실패': 'Failed', '목표 ·': 'Goal ·', '사당 지키기': 'Defend the shrine', '시간 버티기': 'Survive', '피난민 호위': 'Escort refugees', '우두머리 속전': 'Boss rush', '봉화대 지키기': 'Defend the beacon', '섬멸': 'Annihilate',
 '의상': 'Outfits', '모습만 바뀌어요': 'cosmetic only', '모습만 바뀌고 능력치는 같아요': 'Changes your look only; stats stay the same', '기본 처용': 'Classic Cheoyong', '흰 도포에 갓을 쓴 처용': 'Cheoyong in a white robe and gat', '암행어사': 'Secret Royal Inspector', '낡은 도포에 마패를 찬 비밀 어사': 'A secret inspector in a worn robe with a royal horse tally', '저승사자': 'Grim Reaper', '검은 도포와 흑립, 이름 적힌 두루마리': 'Black robe, black gat and a scroll of names', '장수복': 'General Armor', '붉은 두정갑과 투구를 갖춘 조선 장수': 'A Joseon general in red studded armor and helmet', '곤룡포': 'Royal Dragon Robe', '금빛 용무늬 붉은 곤룡포와 익선관': 'Red royal robe with golden dragons and a winged royal hat', '착용 중': 'Wearing', '착용': 'Wear', '의상을 바꿨어요': 'Outfit changed', '옥이 모자라요': 'Not enough jade',
@@ -261,6 +262,9 @@ const RULES = [
   [/(\d+)년 (\d+)월 시즌 · 전투를 하면 패스 점수가 쌓여요/g, (m, y, mo) => y + '-' + mo + ' season · Battles earn pass points'],
   [/(\d+)년 (\d+)월 시즌/g, (m, y, mo) => y + '-' + mo + ' season'],
   [/^(\d+)번째 밤$/, (m, n) => 'Night ' + n],
+[/^악몽 (\d+)번째 밤$/, (m, n) => 'Nightmare Night ' + n],
+[/^악몽 (\d+) · (.+)$/, (m, n, a) => 'Nightmare ' + n + ' · ' + (DICT[a] || a)],
+[/첫 클리어 옥 \+?(\d+)/g, (m, n) => 'first clear jade +' + n],
 [/^(.+) 분노!$/, (m, a) => (DICT[a] || a) + ' is enraged!'],
   [/(\d+)\/(\d+)번째 밤/g, (m, a, b) => 'Night ' + a + '/' + b],
   [/(\d+)번째 밤/g, (m, n) => 'Night ' + n],

@@ -88,6 +88,8 @@ D.layoutOf = function (ch) {
   return { lanes, pads };
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
+/* 2막 악몽 배율: 노멀 30장 클리어 계정 기준. 1장에서 시작해 30장까지 오른다 */
+D.nmK = ch => ({ hp: 10 + 0.9 * (ch - 1), rate: 1.3 + 0.008 * (ch - 1), dmg: 2.2 + 0.05 * (ch - 1) });
 D.nightsOf = function (ch) {
   const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.34 * (ch - 1) + 0.004 * (ch - 1) * (ch - 1); /* 시뮬 조정(11-25): 장별 체력 증가를 완만하게 */
   for (let i = 0; i < C.nights; i++) {
