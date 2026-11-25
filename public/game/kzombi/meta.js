@@ -170,7 +170,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   const SETS = { cheoyong: { n: '처용 세트', c: '#ff8a6a', b: ['공격력 +8%', '처용 진노 대기 -20%', '처용무로 시작'] }, mugwan: { n: '무관 세트', c: '#8ac8ff', b: ['체력 +10%', '받는 피해 -10%', '병영 병사 +2'] }, seonbi: { n: '선비 세트', c: '#b9f08a', b: ['경험치 +10%', '카드 다시 뽑기 +1', '공격 기술 하나로 시작'] } };
   const SG = { manpa: { slot: 'weapon', w: 'manpa', n: '만파식적', img: 's_manpa', d: '피리 소리가 부채꼴 음파로 퍼져 적을 밀어내고 뚫어요.' }, chilji: { slot: 'weapon', w: 'chilji', n: '칠지도', img: 's_chilji', d: '일곱 갈래 검기를 한꺼번에 날려요.' }, cheonbu: { slot: 'norigae', n: '천부인', img: 's_cheonbu', d: '모든 능력치가 크게 오르는 하늘의 신물이에요.' } };
   const STAR_MAX = g => g === 4 ? 2 : g === 5 ? 3 : g === 6 ? 5 : 0;
-  const LV_CAP = it => [10, 20, 30, 40, 50, 60][it.g] + 10 * (it.s || 0) + (it.sg ? 20 : 0);
+  const LV_CAP = it => [10, 20, 30, 40, 50, 55, 60][it.g] + 10 * (it.s || 0) + (it.sg ? 20 : 0);
   function mkItem(slot, g, w, sg) { const it = { uid: S.uid++, slot, g, lv: 1, s: 0, src: ITEM_SRC || '', nw: 1, t: curTier(ITEM_CH || 0), q: Math.round(85 + Math.random() * 30 * (1 - [0, 0, 0.05, 0.1, 0.17, 0.27, 0.37][g || 0])) + Math.round(30 * [0, 0, 0.05, 0.1, 0.17, 0.27, 0.37][g || 0]) }; setTimeout(() => { try { if (!/뽑기|처치|처음|승급/.test(it.src || '') && S.inv.includes(it)) gotItem(it); } catch (e) {} }, 80); if (sg && SG[sg]) { it.sg = sg; it.slot = SG[sg].slot; if (SG[sg].w) it.w = SG[sg].w; it.g = Math.max(4, g); } else if (slot === 'weapon') it.w = w || rnd(WKIND); if (it.g >= 2) it.set = rnd(Object.keys(SETS)); try { rollAffix(it); } catch (e) {} return it; }
   const IMGG = g => g >= 6 ? 5 : g === 5 ? 4 : g;   /* 유니크는 전설 그림+초록 테두리, 신화는 옛 신화 그림 */
   const itemSrc = it => 'img/items/' + (it.sg ? SG[it.sg].img : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? 'w_' + it.w : 'weapon_g' + IMGG(it.g)) : it.slot === 'arm' ? 'arm_g' + IMGG(it.g) : it.slot + '_g' + IMGG(it.g)) + '.webp';
@@ -728,6 +728,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
     const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade + nmFirst, dbl: false };
     S.gold += gold; S.stone += stone; S.jade += rw.jade; if (drop) S.inv.push(drop);
+    if (win && ((r.nemBox | 0) > 0 || (n === 30 && !NMr))) { ITEM_SRC = '숙적 보상 상자'; ITEM_CH = NMr ? 30 + n : n; const capN = maxG(ITEM_CH); for (let k = 0; k < Math.max(1, r.nemBox | 0); k++) { const nb = mkItem(rnd(SLOTS).id, rareUp(rollGrade(Math.max(0, capN - 1), capN), ITEM_CH, 'nem')); S.inv.push(nb); rareShow(nb); rw.nemDrop = nb; } ITEM_CH = 0; ITEM_SRC = ''; }   /* 숙적(14·22장 퇴장, 30장 처치) 장비 상자: 가끔 확률 nem */
     const lvUp = addExp(exp); save();
     lastRw = rw;
     const d = r.dmg || {}, tot = Math.max(1, (d.skill || 0) + (d.hero || 0) + (d.building || 0) + (d.player || 0));
@@ -761,21 +762,29 @@ if (window.IS_EN) document.title = 'K Zombi';
   /* 등급별 특수 효과 목록: [필요 등급, 설명, 열림 여부] */
   function itemFx(it) { const J = window.JZI && JZI.ITEMS[jziId(it)]; if (!J) return []; const gq = it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g; return [3, 4, 5].map(g => [g, J.fx[g][1], gq >= g]); }
   function fxHtml(it) { const GN = ['일반', '우수', '희귀', '영웅', '전설', '신화']; return itemFx(it).map(f => '<p style="font-size:18px;margin:2px 0;color:' + (f[2] ? '#ffe27a' : 'rgba(255,255,255,.45)') + '">' + (f[2] ? '★ ' : '잠김 ') + GN[f[0]] + ': ' + f[1] + '</p>').join(''); }
+  let IUP = false;
   function itemModal(uid) {
     eqx(); const it = byUid(uid); if (!it) return; if (it.nw) { it.nw = 0; save(); try { renderLobby(); } catch (e) {} }
     const s = SLOT[it.slot], cur = byUid(S.equip[it.slot]), eq = cur && cur.uid === it.uid, c = upCost(it), cap = LV_CAP(it);
-    const stN = s.st === 'atk' ? '공격력' : '체력', v0 = itemVal(it), v1 = it.lv < cap ? itemVal(Object.assign({}, it, { lv: it.lv + 1 })) : v0;
-    const cmp = !eq ? (() => { const a = stats(), b = powerWith(it), dp = Math.round(b.power - a.power), da = a.atk ? Math.round((b.atk / a.atk - 1) * 1000) / 10 : 0, dh = a.hp ? Math.round((b.hp / a.hp - 1) * 1000) / 10 : 0, col = x => x >= 0 ? '#7df06a' : '#ff7a6a', sg = x => (x >= 0 ? '▲ +' : '▼ ') + x; return '<div class="xcmp" style="margin:6px 0;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.28)"><p style="font-size:21px">전투력 ' + fmt(Math.round(a.power)) + ' → <b style="color:' + col(dp) + '">' + fmt(Math.round(b.power)) + ' (' + (dp >= 0 ? '+' : '') + fmt(dp) + ')</b></p><p style="font-size:18px">공격력 <b style="color:' + col(da) + '">' + sg(da) + '%</b> · 체력 <b style="color:' + col(dh) + '">' + sg(dh) + '%</b></p>' + (cur ? '<p style="font-size:16px;opacity:.85">지금 착용: ' + itemName(cur) + ' Lv' + cur.lv + '</p>' + afHtml(cur).replace(/font-size:18px/g, 'font-size:15px;opacity:.8') : '<p style="font-size:17px;color:#7df06a">이 칸은 비어 있어요</p>') + '</div>'; })() : '';
+    const stN = s.st === 'atk' ? '공격력' : '체력', v0 = itemVal(it), v1 = it.lv < cap ? itemVal(Object.assign({}, it, { lv: it.lv + 1 })) : v0, q = it.q || 100;
     const canUp = it.lv < cap && S.gold >= c.gold && (S.ore || 0) >= c.ore;
-    modal('<h3 class="stroke" style="color:' + GR[it.g].c + '">' + itemName(it) + (it.lk ? ' 🔒' : '') + '</h3>' +
-      '<div style="display:flex;gap:20px;align-items:center"><div class="slot g' + it.g + '" style="flex:none">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div></div>' +
-      '<div><p>' + GR[it.g].n + ' ' + s.n + ' · 레벨 ' + it.lv + '/' + cap + (eq ? ' · <b style="color:#7df06a">착용 중</b>' : '') + '</p><p style="color:#ffe27a">' + stN + ' +' + v0 + '</p>' + cmp +
-      afHtml(it) + '<p style="font-size:17px;opacity:.85">입수: ' + (it.src || (it.nw === undefined ? '이전 기록 없음' : '보상')) + '</p>' +
-      (it.w && window.JZD && JZD.WEAPON && JZD.WEAPON[it.w] ? '<p style="font-size:18px">' + JZD.WEAPON[it.w].d + '</p>' : '') + fxHtml(it) + (it.set ? '<p style="font-size:18px;color:' + SETS[it.set].c + '">' + SETS[it.set].n + ' (착용 ' + (setsOf()[it.set] || 0) + '/6) · 2부위 ' + SETS[it.set].b[0] + ' · 4부위 ' + SETS[it.set].b[1] + ' · 6부위 ' + SETS[it.set].b[2] + '</p>' : '') + (it.sg ? '<p style="font-size:18px;color:#ff8a8a">' + SG[it.sg].d + '</p>' : '') + '</div></div>' +
-      '<div class="xupbox stroke-s">' + (it.lv < cap ? '강화 Lv' + it.lv + ' → ' + (it.lv + 1) + ' · ' + stN + ' +' + v0 + ' → <b style="color:#7df06a">+' + v1 + '</b><br><small>비용 엽전 ' + fmt(c.gold) + ' · 정련석 ' + c.ore + ' (보유 ' + fmt(S.ore || 0) + ')</small>' : '최대 레벨이에요. 같은 장비로 승급하면 더 올라가요') + '</div>' +
-      '<div class="row">' + (eq ? '<div class="btn b" data-act="unequip" data-v="' + uid + '">해제</div><div class="btn p" data-act="swap" data-v="' + it.slot + '">교체</div>' : '<div class="btn y xbig" data-act="equip" data-v="' + uid + '">' + (cur ? '착용 (교체)' : '착용') + '</div>') + '</div>' +
-      '<div class="row xup3"><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp" data-v="' + uid + '">강화</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUp10" data-v="' + uid + '">×10</div><div class="btn g ' + (canUp ? '' : 'dis') + '" data-act="itemUpMax" data-v="' + uid + '">최대</div></div>' +
-      '<div class="row"><div class="btn b" data-act="lock" data-v="' + uid + '">' + (it.lk ? '잠금 풀기' : '🔒 잠금') + '</div>' + (eq || it.lk ? '' : '<div class="btn r" data-act="salvage" data-v="' + uid + '">분해 (+' + salvVal(it).ore + ' 정련석)</div>') + '</div>');
+    const sgn = x => (x >= 0 ? '+' : '') + x;
+    const cmp = eq ? '' : (() => { const a = stats(), b = powerWith(it), dp = Math.round(b.power - a.power), da = a.atk ? Math.round((b.atk / a.atk - 1) * 1000) / 10 : 0, dh = a.hp ? Math.round((b.hp / a.hp - 1) * 1000) / 10 : 0;
+      return '<div class="gd-cmp"><div class="gd-cp"><span>전투력</span><b>' + fmt(Math.round(a.power)) + '</b><i>→</i><b class="' + (dp >= 0 ? 'up' : 'dn') + '">' + fmt(Math.round(b.power)) + '</b><em class="' + (dp >= 0 ? 'up' : 'dn') + '">' + (dp >= 0 ? '▲ ' : '▼ ') + fmt(Math.abs(dp)) + '</em></div>' +
+        '<div class="gd-cs"><span>공격력 <b class="' + (da >= 0 ? 'up' : 'dn') + '">' + sgn(da) + '%</b></span><span>체력 <b class="' + (dh >= 0 ? 'up' : 'dn') + '">' + sgn(dh) + '%</b></span><span class="gd-cur">' + (cur ? '지금 착용 · ' + itemName(cur) + ' Lv' + cur.lv : '빈 칸') + '</span></div></div>'; })();
+    const af = (it.af || []).map(([k, v]) => '<div class="gd-af"><span>' + AFX[k][0] + '</span><b>+' + v + AFX[k][3] + '</b></div>').join('');
+    const uq = (it.uq || []).map(u => UQ[u] ? '<div class="gd-uq"><b>★ ' + UQ[u][0] + '</b><span>' + UQ[u][1] + '</span></div>' : '').join('');
+    const GNX = { 3: '영웅', 4: '전설', 5: '신화' }, fx = itemFx(it).map(f => '<div class="gd-fx ' + (f[2] ? 'on' : 'off') + '"><i>' + (f[2] ? '◆' : '🔒') + '</i><em>' + GNX[f[0]] + '</em><span>' + f[1] + '</span></div>').join('');
+    const extra = (it.w && window.JZD && JZD.WEAPON && JZD.WEAPON[it.w] ? '<div class="gd-note">' + JZD.WEAPON[it.w].d + '</div>' : '') + (it.set ? '<div class="gd-note" style="color:' + SETS[it.set].c + '">' + SETS[it.set].n + ' ' + (setsOf()[it.set] || 0) + '/6 · 2부위 ' + SETS[it.set].b[0] + ' · 4부위 ' + SETS[it.set].b[1] + ' · 6부위 ' + SETS[it.set].b[2] + '</div>' : '') + (it.sg ? '<div class="gd-note" style="color:#ff9a8a">' + SG[it.sg].d + '</div>' : '');
+    const up = IUP ? '<div class="gd-upp">' + (it.lv < cap ? '<div class="gd-upl">Lv ' + it.lv + ' → ' + (it.lv + 1) + ' · ' + stN + ' ' + fmt(v0) + ' → <b>' + fmt(v1) + '</b> <em>(+' + fmt(v1 - v0) + ')</em></div><div class="gd-cost">엽전 ' + fmt(c.gold) + ' · 정련석 ' + c.ore + ' <small>(보유 ' + fmt(S.ore || 0) + ')</small></div><div class="gd-chips"><div class="gd-chip ' + (canUp ? '' : 'dis') + '" data-act="itemUp" data-v="' + uid + '">강화</div><div class="gd-chip ' + (canUp ? '' : 'dis') + '" data-act="itemUp10" data-v="' + uid + '">×10</div><div class="gd-chip ' + (canUp ? '' : 'dis') + '" data-act="itemUpMax" data-v="' + uid + '">최대</div></div>' : '<div class="gd-upl">최대 레벨이에요. 같은 장비로 승급하면 더 올라가요</div>') + '</div>' : '';
+    const subB = eq ? '<div class="gd-btn sub" data-act="unequip" data-v="' + uid + '">해제</div>' : it.lk ? '<div class="gd-btn sub dis">잠김</div>' : '<div class="gd-btn sub" data-act="salvage" data-v="' + uid + '">분해 <small>+' + salvVal(it).ore + '</small></div>';
+    const mainB = eq ? '<div class="gd-btn main" data-act="swap" data-v="' + it.slot + '">교체</div>' : '<div class="gd-btn main" data-act="equip" data-v="' + uid + '">' + (cur ? '착용 (교체)' : '착용') + '</div>';
+    modal('<div class="gd gq' + it.g + '" style="--gc:' + GR[it.g].c + '">' +
+      '<div class="gd-hd"><span class="gd-badge">' + GR[it.g].n + '</span><span class="gd-t">' + itemName(it) + '</span><span class="gd-lk' + (it.lk ? ' on' : '') + '" data-act="lock" data-v="' + uid + '">' + (it.lk ? '🔒' : '🔓') + '</span></div>' +
+      '<div class="gd-top"><div class="gd-pic slot g' + it.g + '">' + itemImg(it) + (it.lv > 1 ? '<div class="gd-plus">+' + (it.lv - 1) + '</div>' : '') + '</div><div class="gd-main"><div class="gd-stat"><span>' + stN + '</span><b>' + fmt(v0) + '</b></div><div class="gd-q"><i style="width:' + Math.max(6, Math.min(100, (q - 85) / 30 * 100)) + '%"></i><span>품질 ' + q + '%</span></div><div class="gd-meta">' + s.n + ' · Lv ' + it.lv + '/' + cap + ' · T' + (it.t || 1) + (eq ? ' · <b>착용 중</b>' : '') + '</div></div></div>' +
+      cmp + (af ? '<div class="gd-sec">' + af + '</div>' : '') + (uq ? '<div class="gd-sec">' + uq + '</div>' : '') + '<div class="gd-sec">' + fx + extra + '</div>' + up +
+      '<div class="gd-src">입수 · ' + (it.src || (it.nw === undefined ? '이전 기록 없음' : '보상')) + '</div>' +
+      '<div class="gd-foot">' + subB + '<div class="gd-btn up' + (IUP ? ' on' : '') + '" data-act="itemUpTog" data-v="' + uid + '">강화</div>' + mainB + '</div></div>');
   }
   function patrolModal() {
     const p = patrol();
@@ -1576,7 +1585,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'reset': if (confirm('저장을 모두 지우고 처음부터 할까요?')) { localStorage.removeItem(KEY); load(); closeModal(); tab = 'home'; renderLobby(); } break;
       case 'profile': { const st = stats(); modal('<h3 class="stroke">처용</h3>' + (S.title ? '<p style="text-align:center;color:#ff7a6a;font-size:24px">〈' + S.title + '〉</p>' : '') + '<p>레벨 ' + S.lv + ' (경험 ' + S.exp + '/' + needExp(S.lv) + ')</p><p>공격력 ' + fmt(st.atk) + ' · 체력 ' + fmt(st.hp) + ' · 전투력 ' + fmt(st.power) + '</p><p>깬 챕터 ' + (S.chap - 1) + ' · 도전 ' + S.plays + '번</p>' +
         '<div class="row"><div class="btn b" data-act="settings">설정</div><div class="btn p" data-act="coupon">쿠폰 입력</div></div>'); break; }
-      case 'item': itemModal(+v); break;
+      case 'item': IUP = false; itemModal(+v); break;
+      case 'itemUpTog': IUP = !IUP; itemModal(+v); break;
       case 'equip': { const it = byUid(+v); S.equip[it.slot] = it.uid; it.nw = 0; closeModal(); refresh(); toast(itemName(it) + ' 착용'); break; }
       case 'unequip': { const it = byUid(+v); if (it && S.equip[it.slot] === it.uid) { delete S.equip[it.slot]; closeModal(); refresh(); toast(itemName(it) + ' 해제'); } break; }
       case 'swap': closeModal(); eqF = v; eqBig = true; renderLobby(); toast('바꿀 장비를 눌러 착용해요'); break;
