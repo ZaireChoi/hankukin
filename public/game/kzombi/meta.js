@@ -95,6 +95,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   const SLOT = Object.fromEntries(SLOTS.map(s => [s.id, s]));
   /* 영웅: g 는 등급 번호 (0 일반, 2 희귀, 3 영웅, 4 전설) */
   const COMPS = [
+    { id: 'jangyeongsil', n: '장영실', g: 4, el: 'skGun', eln: '발명 · 화포', img: 'img/ui/hero_jangyeongsil.webp?v=1', role: '장치 설치', ult: '자격루의 종', desc: '조선 최고의 발명가예요. 작은 화포 장치를 세워 한동안 저절로 쏘게 해요. 큰 기술 자격루의 종은 아군 공격 속도를 크게 올려요. 화차와 짝이면 장치가 더 세고 오래가요.', bonus: 'atk' },
     { id: 'kimchungseon', n: '김충선', g: 4, el: 'sword', eln: '암살 · 왜검', img: 'img/ui/hero_kimchungseon.webp?v=2', role: '암살', ult: '귀순의 칼', desc: '임진왜란 때 조선에 귀화한 사무라이 사야가예요. 적진의 원거리·마법 좀비만 노려 뒤로 순간이동해 베어요. 큰 기술 귀순의 칼은 화면 안 원거리·마법 적을 차례로 벱니다.', bonus: 'atk' },
     { id: 'daejanggeum', n: '대장금', g: 4, el: 'tPower', eln: '치유 · 약선', img: 'img/ui/hero_daejanggeum.webp?v=2', role: '회복', ult: '어의의 탕약', desc: '조선 최초의 어의녀예요. 약재 주머니를 던지며 처용과 동료를 치유해요. 큰 기술 어의의 탕약은 사당과 시설을 크게 회복하고 받는 피해를 줄여요.', bonus: 'hp' },
     { id: 'jeonwoochi', n: '전우치', g: 4, el: 'skThunder', eln: '도술 · 검기', img: 'img/ui/hero_jeonwoochi.webp?v=2', role: '도술 검객', ult: '화중병', desc: '도술을 부리는 검객이에요. 칼을 휘둘러 적을 꿰뚫는 검기를 날려요. 큰 기술 화중병은 그림 속 먹물 병사 여섯을 불러내요.', bonus: 'atk' },
@@ -398,7 +399,9 @@ if (window.IS_EN) document.title = 'K Zombi';
     { id: 'amhaeng', n: '암행어사', d: '낡은 도포에 마패를 찬 비밀 어사', price: 1200, g: 3 },
     { id: 'jeoseung', n: '저승사자', d: '검은 도포와 흑립, 이름 적힌 두루마리', price: 1800, g: 4 },
     { id: 'janggun', n: '장수복', d: '붉은 두정갑과 투구를 갖춘 조선 장수', price: 2400, g: 4 },
-    { id: 'gonryong', n: '곤룡포', d: '금빛 용무늬 붉은 곤룡포와 익선관', price: 3000, g: 5 }];
+    { id: 'gonryong', n: '곤룡포', d: '금빛 용무늬 붉은 곤룡포와 익선관', price: 3000, g: 5 },
+    { id: 'seonbi', n: '선비', d: '유생 도포와 유건, 책을 든 선비', price: 1500, g: 3 },
+    { id: 'podo', n: '포도청 포졸', d: '검은 전립과 붉은 철릭, 육모방망이', price: 2000, g: 3 }];
   const skinOwn = id => id === 'base' || !!(S.skins && S.skins[id]);
   const skinCard = id => id === 'base' ? 'img/ui/hero_face.webp' : 'img/skins/' + id + '.png';
   const skinFull = () => (!S.skin || S.skin === 'base') ? '' : ' style="background-image:url(img/skins/' + S.skin + '_full.png)"';
