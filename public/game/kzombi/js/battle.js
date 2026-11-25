@@ -574,9 +574,9 @@ function openBuildCard() {
   const opts = [], cap = D.HQ[G.hq].max;
   const empty = PADS.map((q, i) => i).filter(i => !G.turrets.some(t => t.pad === i));
   const ups = G.turrets.filter(t => t.lv < cap && TUR[t.type].kind !== 'mine');
-  const types = Object.keys(TUR).filter(k => !D.tUnlocked || D.tUnlocked(k, G.ch, G.nm));
+  const types = Object.keys(TUR).filter(k => (!D.tUnlocked || D.tUnlocked(k, G.ch, G.nm)) && !buildBlock(k));
   const pool = [];
-  for (let i = 0; i < 3 && empty.length; i++) pool.push({ k: 'build', type: pick(types) });
+  for (let i = 0; i < 3 && empty.length && types.length; i++) pool.push({ k: 'build', type: pick(types) });
   for (let i = 0; i < 2 && ups.length; i++) pool.push({ k: 'up', t: pick(ups) });
   if (G.hq < 5) pool.push({ k: 'hq' });
   if (G.wallLv < 5) pool.push({ k: 'wall' });
@@ -590,7 +590,7 @@ function openBuildCard() {
     let ic = '', n = '', d = '';
     if (o.k === 'build') { const T = TUR[o.type]; ic = 'sprites/' + T.spr + '.png'; n = '1레벨 ' + T.name; d = T.d; }
     else if (o.k === 'up') { const T = TUR[o.t.type]; ic = 'sprites/' + T.spr + '.png'; n = (o.t.lv + 1) + '레벨 ' + T.name; d = '이미 세운 ' + T.name + '을 강화한다 (위력 +40%)'; }
-    else if (o.k === 'hq') { ic = 'sprites/base.png'; n = '본부 ' + (G.hq + 1) + '레벨'; d = '사당 내구도와 밤 보상이 오르고 시설을 더 높이 올릴 수 있다' + (G.hq === 1 && G.comps.length > 1 ? ' · 둘째 동료 합류' : ''); }
+    else if (o.k === 'hq') { ic = 'sprites/base.png'; n = '본부 ' + (G.hq + 1) + '레벨'; d = '사당 내구도와 밤 보상이 오르고 시설을 더 높이 올릴 수 있다' + (G.hq === 1 && G.comps.length > 1 ? ' · 둘째 동료 합류' : '') + ' · 건설 칸 +' + (slotMax(G.hq + 1) - slotMax()); }
     else { ic = 'sprites/wall.png'; n = (G.wallLv + 1) + '레벨 성벽'; d = G.wallLv ? '성벽과 성문을 강화한다' : '성벽과 성문을 세워 지상 좀비를 막는다'; }
     b.innerHTML = '<div class="ic" style="background:#fff3d0 url(' + ic + ') center/contain no-repeat;border-radius:18px"></div><div class="tx"><div class="n">' + n + ' <em>공짜</em></div><div class="d">' + d + '</div></div>';
     b.addEventListener('click', () => {
@@ -683,14 +683,15 @@ function buildUI() {
     if (G.wallLv < 5) acts.appendChild(btn(G.wallLv ? '강화' : '건설', cost, G.gold >= cost, () => buildWalls(false), 'big'));
   } else if (nearHQ) {
     const H2 = D.HQ[G.hq + 1];
-    info.innerHTML = '<b>' + G.hq + '레벨 사당(본부)</b><p>시설 최대 ' + D.HQ[G.hq].max + '레벨 · 동료 ' + D.HQ[G.hq].comps + '명</p>' + (H2 ? '<p class="nx">다음: 시설 ' + H2.max + '레벨까지' + (H2.comps > D.HQ[G.hq].comps ? ', 동료 +1' : '') + ', 밤마다 엽전 +' + H2.gold + '</p>' : '<p class="nx">최고 레벨</p>');
+    info.innerHTML = '<b>' + G.hq + '레벨 사당(본부)</b><p>시설 최대 ' + D.HQ[G.hq].max + '레벨 · 동료 ' + D.HQ[G.hq].comps + '명</p>' + (H2 ? '<p class="nx">다음: 시설 ' + H2.max + '레벨까지' + (H2.comps > D.HQ[G.hq].comps ? ', 동료 +1' : '') + ', 밤마다 엽전 +' + H2.gold + '</p>' + '<p class="nx">' + '건설 칸 ' + slotMax() + ' → ' + slotMax(G.hq + 1) + '</p>' + (hqOpens() ? '<p class="nx">' + '상한 증가: ' + hqOpens() + '</p>' : '') : '<p class="nx">최고 레벨</p>');
     if (H2) acts.appendChild(btn('강화', H2.cost, G.gold >= H2.cost, () => upHQ(false)));
   } else if (!t) {
-    for (const k in TUR) { const d = TUR[k], b = document.createElement('button'), lockCh = D.tUnlocked && !D.tUnlocked(k, G.ch, G.nm) ? D.TUR_UNLOCK[k] : 0; b.className = 'bic' + (k === selBuild ? ' sel' : '') + (G.gold < d.cost || lockCh ? ' no' : '') + (lockCh ? ' lock' : ''); b.innerHTML = '<i style="background-image:url(sprites/' + d.spr + '.png)"></i><span>' + d.name + '</span>' + (lockCh ? '<em class="blk">🔒' + lockCh + '장</em>' : (G.chEl && TUR_EL[k] === G.chEl.el ? '<em class="bel" style="background:' + D.EL[G.chEl.el].c + '">유리</em>' : '')); b.addEventListener('click', ev => { ev.stopPropagation(); selBuild = k; G.padKey = ''; }); bpRow.appendChild(b); }
+    for (const k in TUR) { const d = TUR[k], b = document.createElement('button'), lockCh = D.tUnlocked && !D.tUnlocked(k, G.ch, G.nm) ? D.TUR_UNLOCK[k] : 0; b.className = 'bic' + (k === selBuild ? ' sel' : '') + (G.gold < d.cost || lockCh || buildBlock(k) ? ' no' : '') + (lockCh ? ' lock' : ''); b.innerHTML = '<i style="background-image:url(sprites/' + d.spr + '.png)"></i><span>' + d.name + '</span>' + (lockCh ? '' : '<em style="position:absolute;left:-4px;top:-6px;font-style:normal;font-size:12px;font-weight:900;color:#fff;background:' + (tCount(k) >= tCap(k) ? '#8a2a1a' : 'rgba(30,20,10,.85)') + ';border-radius:8px;padding:1px 6px">' + tCount(k) + '/' + tCap(k) + '</em>') + (lockCh ? '<em class="blk">🔒' + lockCh + '장</em>' : (G.chEl && TUR_EL[k] === G.chEl.el ? '<em class="bel" style="background:' + D.EL[G.chEl.el].c + '">유리</em>' : '')); b.addEventListener('click', ev => { ev.stopPropagation(); selBuild = k; G.padKey = ''; }); bpRow.appendChild(b); }
     const d = TUR[selBuild];
     const lockS = D.tUnlocked && !D.tUnlocked(selBuild, G.ch, G.nm) ? D.TUR_UNLOCK[selBuild] : 0;
-    info.innerHTML = '<b>1레벨 ' + d.name + '</b><p>' + d.d + '</p>' + (lockS ? '<p class="nx" style="color:#ffb0a0">🔒 ' + lockS + '장에서 열려요</p>' : '<p class="nx">' + lvInfo(selBuild, 1) + '</p>' + (G.chEl && TUR_EL[selBuild] === G.chEl.el ? '<p class="nx" style="color:' + D.EL[G.chEl.el].c + '">이 장 약점 속성 · 피해 +' + Math.round(G.chEl.k * 100) + '%</p>' : '')) + pairTxt(selBuild);
-    acts.appendChild(btn(!lockS && G.gold < d.cost ? '건설 <span style="font-size:.7em;color:#ffd27a">' + (G.gold >= d.cost * 0.7 ? '곧! ' : '') + (d.cost - G.gold) + ' 더</span>' : '건설', d.cost, !lockS && G.gold >= d.cost, () => build(pad, selBuild), 'big'));
+    const blkS = lockS ? '' : buildBlock(selBuild);
+    info.innerHTML = '<b>1레벨 ' + d.name + '</b><p>' + d.d + '</p>' + '<p class="nx" style="color:' + (G.turrets.length >= slotMax() ? '#ffb0a0' : '#ffe08a') + '">' + '건설 칸 ' + G.turrets.length + '/' + slotMax() + '</p>' + (blkS ? '<p class="nx" style="color:#ffb0a0">' + blockMsg(selBuild, blkS) + '</p>' : '') + (lockS ? '<p class="nx" style="color:#ffb0a0">🔒 ' + lockS + '장에서 열려요</p>' : '<p class="nx">' + lvInfo(selBuild, 1) + '</p>' + (G.chEl && TUR_EL[selBuild] === G.chEl.el ? '<p class="nx" style="color:' + D.EL[G.chEl.el].c + '">이 장 약점 속성 · 피해 +' + Math.round(G.chEl.k * 100) + '%</p>' : '')) + pairTxt(selBuild);
+    acts.appendChild(btn(!lockS && G.gold < d.cost ? '건설 <span style="font-size:.7em;color:#ffd27a">' + (G.gold >= d.cost * 0.7 ? '곧! ' : '') + (d.cost - G.gold) + ' 더</span>' : '건설', d.cost, !lockS && !blkS && G.gold >= d.cost, () => build(pad, selBuild), 'big'));
   } else {
     const d = TUR[t.type], up = Math.round(d.cost * (0.8 + t.lv * 0.6)), cap = D.HQ[G.hq].max;
     info.innerHTML = '<div class="bthumb" style="background-image:url(sprites/' + d.spr + '.png)"></div><b>' + t.lv + '레벨 ' + d.name + '</b><p>' + lvInfo(t.type, t.lv) + '</p>' + (t.lv < 5 ? '<p class="nx">다음 ' + (t.lv + 1) + '레벨: ' + lvInfo(t.type, t.lv + 1) + (t.lv >= cap ? ' (사당 레벨 필요)' : '') + '</p>' : '<p class="nx">최고 레벨</p>') + pairTxt(t.type);
@@ -700,8 +701,18 @@ function buildUI() {
   bpTitle.appendChild(info); bpTitle.appendChild(acts);
   bPanel.classList.add('on');
 }
+/* 건물 수 제한(사용자 11-27: 병영만 6개로 쉽게 깸) — 본부 레벨에 따라 건설 칸·종류별 상한이 늘어난다 */
+const SLOTS = [0, 5, 6, 7, 8, 10];
+function tCap(k, hq) { hq = hq || (G ? G.hq : 1); if (k === 'barracks') return hq >= 5 ? 3 : hq >= 3 ? 2 : 1; if (k === 'mine' || k === 'well') return hq >= 2 ? 2 : 1; if (k === 'general' || k === 'lady' || k === 'cannon' || k === 'hwacha') return hq >= 3 ? 2 : 1; return hq >= 5 ? 4 : hq >= 3 ? 3 : 2; }
+function tCount(k) { return G.turrets.filter(t => t.type === k).length; }
+function slotMax(hq) { return SLOTS[hq || G.hq] || 10; }
+function buildBlock(k) { if (G.turrets.length >= slotMax()) return 'slots'; if (tCount(k) >= tCap(k)) { for (let h = G.hq + 1; h <= 5; h++) if (tCap(k, h) > tCap(k)) return 'hq' + h; return 'max'; } return ''; }
+function blockMsg(k, b) { return b === 'slots' ? '건설 칸 가득 · 본부 레벨업' : b === 'max' ? TUR[k].name + ' 최대 ' + tCap(k) + '개' : '본부 ' + b.slice(2) + '레벨 필요'; }
+function hqOpens() { const h = G.hq + 1, o = []; if (h > 5) return ''; for (const k in TUR) if (tCap(k, h) > tCap(k)) o.push(TUR[k].name + ' ' + tCap(k, h)); return o.join(', '); }
+function soldierMax() { return 6 + 3 * G.hq; }
 function build(pad, k) {
   if (D.tUnlocked && !D.tUnlocked(k, G.ch, G.nm)) { G.bubble = { s: TUR[k].name + '은(는) ' + D.TUR_UNLOCK[k] + '장에서 열려요', t: 2 }; return false; }
+  { const blk = buildBlock(k); if (blk) { G.bubble = { s: blockMsg(k, blk), t: 2 }; G.padKey = ''; return false; } }
   const d = TUR[k]; if (G.gold < d.cost || G.turrets.some(t => t.pad === pad)) return;
   G.gold -= d.cost; if (G.log) { G.log.spent += d.cost; G.log.builds.push([k, G.night + 1, G._fb ? 1 : 0]); }
   const t = { type: k, lv: 1, pad, x: PADS[pad][0], y: PADS[pad][1], r: 16, hp: d.hp, max: d.hp, cd: rnd(0, 0.4), hitT: 0, pulse: 0, fire: 0, rise: 0.45 };
@@ -1317,7 +1328,7 @@ function turrets(dt) {
     const bl = bl0 * 3.4 * tScale() * (1 + 0.04 * Math.max(0, G.ch - 14)) * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
     if (d.kind === 'barracks') {
       t.cd -= dt; const lv = t.lv, cap = 2 + Math.floor(lv * 1.5) + (G.setBarracks || 0), mine = (G.allies || []).filter(a => a.style === 'soldier' && a.home === t).length;
-      if (t.cd <= 0 && mine < cap && isNight()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
+      if (t.cd <= 0 && mine < cap && isNight() && (G.allies || []).filter(a => a.style === 'soldier').length < soldierMax()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
       continue;
     }
     if (d.kind === 'heal') {
@@ -2588,6 +2599,7 @@ const JZB = window.JZB = {
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
   /* 시험용 */
+  caps: { tCap: (k, h) => tCap(k, h), slotMax: h => slotMax(h), block: k => buildBlock(k) },
   runLog: runLogAll,
   get G() { return G; }, startNight, pickSkill, build, useUlt, useCult, spawnBig, openLevel, levelChoices
 };

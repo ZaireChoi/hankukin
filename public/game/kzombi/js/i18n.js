@@ -62,7 +62,7 @@ const DICT = {
 '피해': 'Dmg', '초당 피해': 'DPS', '성벽 (없음)': 'Wall (none)', '지상 좀비가 성벽부터 부숴야 들어온다. 성문 포함': 'Ground zombies must break the wall to get in. Includes the gate.',
 '레벨: 성벽 체력': ': wall HP', '최고 레벨': 'Max level', '강화': 'Upgrade', '건설': 'Build', '레벨 사당(본부)': 'Shrine (HQ)', '시설 최대': 'Buildings up to Lv.',
 '레벨 · 동료': '· Heroes', '명': '', '다음: 시설': 'Next: buildings up to Lv.', '레벨까지': '', ', 동료 +1': ', +1 hero', ', 밤마다 엽전 +': ', coins per night +',
-'다음': 'Next', '레벨:': ':', '(사당 레벨 필요)': '(needs higher Shrine)', '사당 레벨 필요': 'needs higher Shrine', '거두기': 'Remove', '· 우두머리의 밤': '· Boss night',
+'다음': 'Next', '레벨:': ':', '(사당 레벨 필요)': '(needs higher Shrine)', '사당 레벨 필요': 'needs higher Shrine', ' · 건설 칸 +1': ' · build slots +1', ' · 건설 칸 +2': ' · build slots +2', '거두기': 'Remove', '· 우두머리의 밤': '· Boss night',
 '진화!': 'evolved!', '신력이 차올랐다!': 'Spirit is full!', '하나를 고르십시오': 'Choose one', '다시 뽑기': 'Reroll', '새 기술': 'New skill', '진화': 'Evolve',
 '각성:': 'Awaken:', '진화:': 'Evolve:', '연계 ·': 'Combo ·', '(위력 +20%, 동료 피해 +15%)': '(power +20%, hero dmg +15%)', '최대 ·': 'Max ·', '와 짝이면 진화': 'evolves with',
 '처용 진노': "Cheoyong's Wrath", '어의의 탕약!': "Royal Physician's Brew!", '노릴 원거리·마법 적이 없다': 'No ranged or magic enemies to target', '동이 튼다': 'Dawn breaks',
@@ -247,6 +247,13 @@ const DICT = {
 
 /* 숫자가 섞인 문장 규칙 (앞에서부터 적용) */
 const RULES = [
+  [/^(.+) · 건설 칸 \+(\d+)$/, (m, a, n) => (DICT[a] || a) + ' · build slots +' + n],
+  [/^건설 칸 가득 · 본부 레벨업$/, () => 'Build slots full · upgrade HQ'],
+  [/^건설 칸 (\d+)\/(\d+)$/, (m, a, b) => 'Build slots ' + a + '/' + b],
+  [/^건설 칸 (\d+) → (\d+)$/, (m, a, b) => 'Build slots ' + a + ' → ' + b],
+  [/^본부 (\d)레벨 필요$/, (m, a) => 'Needs HQ Lv' + a],
+  [/^(.+) 최대 (\d+)개$/, (m, a, n) => (DICT[a] || a) + ' max ' + n],
+  [/^상한 증가: (.+)$/, (m, a) => 'Limit up: ' + a.split(', ').map(s => { const q = s.split(' '); const n = q.pop(); const k = q.join(' '); return (DICT[k] || k) + ' ' + n; }).join(', ')],
   [/^T(\d+) (.+)$/g, (m, a, b) => 'T' + a + ' ' + (DICT[b] || b)],
   [/품질 (\d+)% · T(\d+)/g, (m, a, b) => 'Quality ' + a + '% · T' + b],
   [/전투력 ([\d,]+) → /g, (m, a) => 'Power ' + a + ' → '],
