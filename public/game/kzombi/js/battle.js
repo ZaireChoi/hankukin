@@ -401,7 +401,7 @@ function spawnEnemy(type, x, y, o) {
   const tr = TIER[type] || 2; if (!o.elite && !o.boss) hp *= (D.TIERHP && D.TIERHP[tr]) || 1; if (d.sc) sc = d.sc;
   if (o.elite) { hp *= 5; sc = 1.5 * (d.sc || 1); }
   if (o.small) { hp *= 0.25; sc = 0.6; }
-  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 1.6 : 2.2; hp *= 1.35; }
+  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 1.6 : Math.min(2.2, 220 / (d.h || 100)); hp *= 1.35; }   /* 우두머리 화면 키 최대 약 220 */
   const e = { type, x, y, r: d.r * sc, hp, max: hp, sp: d.sp * rnd(0.92, 1.08) * (o.boss ? 0.85 : 1), cd: rnd(0.3, 1), hitT: 0, wob: rnd(0, 6.28), turn: Math.random() < 0.5 ? 1 : -1,
     gx: rnd(-46, 46), elite: !!o.elite, boss: !!o.boss, small: !!o.small, armor: d.armor || 0, sc, charmT: 0, burnT: 0, jumpT: 0, var: 'shamble', st: 'move', stT: 0, twT: rnd(1, 5), twA: 0, screamed: false, d8: 0, pile: 0, atkT: 0, hh: (d.h || 60) * sc, slowT: 0, frzT: 0, stunT: 0, t1: rnd(3, 5), t2: 6, chg: 0, tele: 0, squash: 0, flip: false };
   if (!o.boss && !o.elite && !d.fly && !o.small) { e.var = pickVar(type); const V = ZVAR[e.var]; e.sp *= V.sp; if (V.hp) { e.hp *= V.hp; e.max = e.hp; } if (V.low) e.hh *= 0.45; }
