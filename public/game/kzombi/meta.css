@@ -402,3 +402,17 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .comps{height:470px!important}.comps.tall{height:880px!important}
 .infotab{bottom:16px!important}
 .comps{height:580px!important}
+
+/* 의상(스킨) */
+.skins{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:6px 0 16px}
+.skin{position:relative;padding:10px;border:3px solid #ffd36b;border-radius:18px;text-align:center}
+.skin.wear{box-shadow:0 0 0 3px #9ef0c0,0 0 18px rgba(120,255,180,.5)}
+.skin .si{height:180px;border-radius:12px;background:#3a2a1a center/cover no-repeat}
+.skin .gn{font-size:24px;margin-top:6px}.skin .sd{font-size:15px;font-weight:600;color:#ffe9c8;min-height:40px;margin:2px 0 8px;line-height:1.3}
+.skin .btn{height:54px;font-size:21px;gap:6px}.skin .btn .ic{width:26px;height:26px}
+.sect small{font-size:16px;opacity:.75;margin-left:8px}
+.eqskin{position:absolute;left:50%;transform:translateX(-50%);bottom:6px;height:52px;padding:0 26px;font-size:21px;z-index:3}
+.mbox.wide .skins{max-height:760px;overflow-y:auto}
+
+.robj{text-align:center;font-size:22px;margin:4px auto 2px;padding:6px 18px;border-radius:14px;width:fit-content;background:rgba(0,0,0,.45)}
+.robj.ok{color:#9ef0c0;border:2px solid #6ad8a0}.robj.no{color:#ffb0a0;border:2px solid #c85a4a}

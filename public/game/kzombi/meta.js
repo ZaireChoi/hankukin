@@ -325,7 +325,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="friend">' + ic('heart') + '<div class="lb stroke-s">친구</div></div>' +
       '<div class="sb" data-act="guild">' + ic('sword') + '<div class="lb stroke-s">문파</div></div>' +
       '</div>' +
-      '<div class="herostage"><div class="glow"></div><div class="hero" data-act="tab" data-v="equip"></div></div>' +
+      '<div class="herostage"><div class="glow"></div><div class="hero" data-act="tab" data-v="equip"' + skinFull() + '></div></div>' +
       '<div class="statline"><div class="stat stroke-s">' + ic('sword') + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + fmt(st.hp) + '</div></div>' +
       '<div class="teamrow">' + team + '</div>' +
       '<div class="patrol" data-act="patrol">' + ic(p.h >= 1 ? 'chestOpen' : 'chest', 'chest') + '<div class="lb stroke-s">순찰 보상</div><div class="bar"><i style="width:' + (p.ms / PATROL_MAX * 100) + '%"></i><span class="stroke-s">' + hm(p.ms) + '</span></div>' + (p.h >= 1 ? '<i class="dot"></i>' : '') + '</div>' +
@@ -342,7 +342,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       return '<div class="it g' + it.g + '" data-act="item" data-v="' + it.uid + '">' + itemImg(it) + '<div class="lv stroke-s">' + it.lv + '</div>' + (eq ? '<div class="eqd stroke-s">착용</div>' : '') + '</div>';
     }).join('');
     return '<div class="hdr stroke">장비<span class="sub">영웅까지 같은 장비 3개 · 전설·신화는 같은 칸 2개를 먹여 +1~+3 · 도면 ' + Object.values(S.plans || {}).reduce((a, b) => a + b, 0) + '</span></div>' + (() => { const c = setsOf(); const t = Object.keys(c).filter(k => c[k] >= 2).map(k => '<span style="color:' + SETS[k].c + '">' + SETS[k].n + ' ' + c[k] + '부위</span>').join(' · '); return t ? '<div class="stroke-s" style="position:absolute;left:0;right:0;top:300px;text-align:center;font-size:18px;z-index:3;pointer-events:none">' + t + '</div>' : ''; })() +
-      '<div class="eqwrap"><div class="eqhero"></div><div class="slots l">' + SLOTS.slice(0, 3).map(slot).join('') + '</div><div class="slots r">' + SLOTS.slice(3).map(slot).join('') + '</div></div>' +
+      '<div class="eqwrap"><div class="eqhero"' + skinFull() + '></div><div class="btn p eqskin" data-act="skins">의상</div><div class="slots l">' + SLOTS.slice(0, 3).map(slot).join('') + '</div><div class="slots r">' + SLOTS.slice(3).map(slot).join('') + '</div></div>' +
       '<div class="eqstats"><div class="stat stroke-s">' + ic('sword') + '공격 ' + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + '체력 ' + fmt(st.hp) + '</div></div>' +
       '<div class="eqbtns"><div class="btn b" data-act="autoEq">일괄 착용</div><div class="btn p ' + (canMerge() ? '' : 'dis') + '" data-act="merge">일괄 합성' + (canMerge() ? '<i class="dot" style="right:-8px;top:-8px"></i>' : '') + '</div></div>' +
       '<div class="inv box">' + (inv || '<div style="grid-column:1/-1;text-align:center;opacity:.7;font-size:22px;padding:30px">가진 장비가 없어요. 상점에서 뽑아 보세요.</div>') + '</div>';
@@ -391,6 +391,23 @@ if (window.IS_EN) document.title = 'K Zombi';
     const evo = Object.keys(EVO).map(id => '<div class="box" style="display:flex;gap:10px;align-items:center;padding:8px;margin:6px 0"><img src="img/skills/' + id + '.webp?v=2" style="width:54px;height:54px;border-radius:10px;background:#2a2f5a" onerror="this.style.visibility=\'hidden\'"><span class="stroke-s" style="font-size:20px">+</span><img src="img/skills/' + EVO[id].pair + '.webp" style="width:54px;height:54px;border-radius:10px"><span class="stroke-s" style="font-size:24px">→</span><img src="img/skills/ev_' + id + '.webp" style="width:48px;height:70px;border-radius:8px;object-fit:cover"><div style="font-size:18px;line-height:1.3"><b style="color:#ffe27a">' + EVO[id].n + '</b><br>' + SN(id) + ' 5단계 + ' + SN(EVO[id].pair) + '</div></div>').join('');
     return '<div class="hdr stroke">신력<span class="sub">신력석 ' + S.stone + '개 · 별을 올리면 전투 속 기술이 세져요</span></div><div class="skills" style="top:96px">' + list + '<div style="grid-column:1/-1"><div class="stroke" style="font-size:26px;margin:14px 0 6px">진화 짝 (전투 중)</div>' + evo + '</div></div>';
   }
+  /* ---------------- 의상(스킨): 모습만 바뀌고 능력치는 같다 ---------------- */
+  const SKINS = [
+    { id: 'base', n: '기본 처용', d: '흰 도포에 갓을 쓴 처용', price: 0, g: 1 },
+    { id: 'amhaeng', n: '암행어사', d: '낡은 도포에 마패를 찬 비밀 어사', price: 1200, g: 3 },
+    { id: 'jeoseung', n: '저승사자', d: '검은 도포와 흑립, 이름 적힌 두루마리', price: 1800, g: 4 },
+    { id: 'janggun', n: '장수복', d: '붉은 두정갑과 투구를 갖춘 조선 장수', price: 2400, g: 4 },
+    { id: 'gonryong', n: '곤룡포', d: '금빛 용무늬 붉은 곤룡포와 익선관', price: 3000, g: 5 }];
+  const skinOwn = id => id === 'base' || !!(S.skins && S.skins[id]);
+  const skinCard = id => id === 'base' ? 'img/ui/hero_face.webp' : 'img/skins/' + id + '.png';
+  const skinFull = () => (!S.skin || S.skin === 'base') ? '' : ' style="background-image:url(img/skins/' + S.skin + '_full.png)"';
+  function skinRow() {
+    return '<div class="skins">' + SKINS.map(s => { const own = skinOwn(s.id), wear = (S.skin || 'base') === s.id;
+      return '<div class="skin box' + (wear ? ' wear' : '') + '" style="border-color:' + GR[s.g].c + '"><div class="si" style="background-image:url(' + skinCard(s.id) + ')"></div>' +
+        '<div class="gn stroke-s">' + s.n + '</div><div class="sd">' + s.d + '</div>' +
+        (wear ? '<div class="btn b dis">착용 중</div>' : own ? '<div class="btn g" data-act="skinWear" data-v="' + s.id + '">착용</div>' : '<div class="btn y" data-act="skinBuy" data-v="' + s.id + '">' + ic('jade') + fmt(s.price) + '</div>') + '</div>'; }).join('') + '</div>';
+  }
+  function skinModal() { modal('<h3 class="stroke">의상</h3><p style="text-align:center">모습만 바뀌고 능력치는 같아요</p>' + skinRow(), 'wide'); }
   function pgShop() {
     const free = S.freeGold !== today();
     const goods = [
@@ -405,7 +422,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=2);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
       '<div class="prob" data-act="prob" data-v="cp">확률 안내</div><div class="bb"><div class="btn p" data-act="gacha" data-v="cp1"><span>1번</span><small>' + ic('jade') + '100</small></div><div class="btn y" data-act="gacha" data-v="cp10"><span>10번</span><small>' + ic('jade') + '900</small></div></div></div>' +
-      '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
+      '<div class="sect stroke">의상 <small>모습만 바뀌어요</small></div>' + skinRow() + '<div class="sect stroke">물건</div><div class="goods">' + goods.map(([id, n, i, what, price, c, tag]) =>
         '<div class="good box">' + (tag ? '<div class="tag stroke-s">' + tag + '</div>' : '') + '<div class="gi">' + ic(i) + '</div><div class="gn stroke-s">' + n + '</div><div style="font-size:18px;color:#ffe9a8">' + what + '</div><div class="btn ' + c + '" data-act="buy" data-v="' + id + '">' + price + '</div></div>').join('') + '</div></div>';
   }
 
@@ -485,7 +502,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf() }; S.nextMode = null;
+    const cfg = { skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: it.g, lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf() }; S.nextMode = null;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -517,7 +534,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     const exp = Math.round((win ? 90 : 40) * n);
     const stone = win ? 4 + n * 2 : Math.floor(n * wave / waves * 2);
     const drop = win ? mkItem(rnd(SLOTS).id, Math.min(5, rollGrade(Math.min(3, Math.floor((n - 1) / 3))))) : null;
-    const rw = { gold, exp, stone, drop, jade: win && unlocked ? 50 : 0, dbl: false };
+    const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
+    const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade, dbl: false };
     S.gold += gold; S.stone += stone; S.jade += rw.jade; if (drop) S.inv.push(drop);
     const lvUp = addExp(exp); save();
     lastRw = rw;
@@ -526,6 +544,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const el = $('#s-result'); el.className = 'm-scr ' + (win ? '' : 'lose');
     el.innerHTML = '<div class="rays"></div><div class="rtitle"><span>' + (win ? '승리' : '패배') + '</span></div>' +
       '<div class="rsub stroke-s">챕터 ' + n + ' · ' + c.name + (unlocked ? ' · 다음 챕터 열림!' : '') + '</div>' +
+      (ob ? '<div class="robj stroke-s ' + (ob.ok ? 'ok' : 'no') + '">목표 · ' + String(ob.name || '').replace(/[<>&]/g, '') + ' — ' + (ob.ok ? '달성! 옥 +' + obJade : '실패') + '</div>' : '') +
       '<div class="rinfo"><div class="stat stroke-s">밤 ' + wave + '/' + waves + '</div><div class="stat stroke-s">물리친 좀비 ' + fmt(r.kills || 0) + '</div><div class="stat stroke-s">' + Math.floor((r.time || 0) / 60) + '분 ' + ((r.time || 0) % 60) + '초</div></div>' +
       '<div class="dmg box"><h4 class="stroke-s">피해 비율</h4>' + rows.map(([k, nm, i, bg, grad]) => { const p = Math.round((d[k] || 0) / tot * 100); return '<div class="drow"><div class="ic2" style="background:' + bg + '">' + ic(i) + '</div><div class="nm stroke-s">' + nm + '</div><div class="bar"><i data-w="' + p + '" style="background:' + grad + '"></i></div><div class="pc stroke-s">' + p + '%</div></div>'; }).join('') +
       '<div style="text-align:center;font-size:18px;color:#cdd6ff;margin-top:6px">전체 피해 ' + fmt(tot) + '</div></div>' +
@@ -613,6 +632,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   }
   function settingsModal() {
     modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
+      '<div class="row"><div class="btn ' + (localStorage.getItem('kz_vib') === '0' ? 'b' : 'g') + '" data-act="toggleVib">' + (localStorage.getItem('kz_vib') === '0' ? '진동 끔' : '진동 켬') + '</div></div>' +
       '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div></div>' +
       '<p style="text-align:center;margin-top:20px">저장은 이 기기에 자동으로 돼요.</p><div class="row"><div class="btn r" data-act="reset">처음부터 다시</div></div>');
   }
@@ -990,6 +1010,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'settings': settingsModal(); break;
       case 'coupon': couponModal(); break;
       case 'cpnUse': useCoupon(); break;
+      case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
       case 'toggleMusic': S.music = !S.music; save(); if (S.music) music('bgm_lobby'); else stopMusic(); settingsModal(); break;
       case 'reset': if (confirm('저장을 모두 지우고 처음부터 할까요?')) { localStorage.removeItem(KEY); load(); closeModal(); tab = 'home'; renderLobby(); } break;
       case 'profile': { const st = stats(); modal('<h3 class="stroke">처용</h3><p>레벨 ' + S.lv + ' (경험 ' + S.exp + '/' + needExp(S.lv) + ')</p><p>공격력 ' + fmt(st.atk) + ' · 체력 ' + fmt(st.hp) + ' · 전투력 ' + fmt(st.power) + '</p><p>깬 챕터 ' + (S.chap - 1) + ' · 도전 ' + S.plays + '번</p>' +
@@ -1015,6 +1036,9 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'compStar': { const c = S.comps[v], sc = c.star * 10; if (c.sh < sc || c.star >= 5) break; c.sh -= sc; c.star++; refresh(); toast(COMP[v].n + ' 별 ' + c.star + '개!'); break; }
       case 'compUnlock': { const c = S.comps[v]; if (c.sh < 10) break; c.sh -= 10; c.own = true; refresh(); toast(COMP[v].n + '이(가) 함께해요!'); break; }
       case 'skUp': { const lv = S.skills[v], cost = lv * 15, gc = lv * 400; if (S.stone < cost || S.gold < gc || lv >= 5) break; S.stone -= cost; S.gold -= gc; S.skills[v] = lv + 1; refresh(); break; }
+      case 'skins': skinModal(); break;
+      case 'skinBuy': { const s = SKINS.find(x => x.id === v); if (!s || skinOwn(v)) break; if (S.jade < s.price) { toast('옥이 모자라요'); break; } S.jade -= s.price; S.skins = S.skins || {}; S.skins[v] = 1; S.skin = v; save(); toast(s.n + ' 의상을 얻었어요!'); if ($('#mdl', root)) skinModal(); refresh(); break; }
+      case 'skinWear': if (skinOwn(v)) { S.skin = v; save(); toast('의상을 바꿨어요'); if ($('#mdl', root)) skinModal(); refresh(); } break;
       case 'buy': {
         if (v === 'freeGold') { if (S.freeGold === today()) break; S.freeGold = today(); S.gold += 500; toast('엽전 500'); }
         else if (v === 'gold3k') { if (S.jade < 50) { toast('옥이 부족해요'); break; } S.jade -= 50; S.gold += 5000; toast('엽전 5,000'); }
