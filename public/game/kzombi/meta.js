@@ -279,7 +279,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function guardLine(id) { const g = GUARD[id]; return g ? (window.IS_EN ? g[1] : g[0]) : ''; }
   function storyBook() {
     const E = window.IS_EN, C = chapters(), open = S.chap || 1;
-    const chs = C.map((c, i) => '<div style="padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.12)"><b style="color:#ffd36b">' + (i + 1) + '. ' + c.name + '</b><br>' + (i < open ? chStory(i + 1) : '???') + '</div>').join('');
+    const chs = C.map((c, i) => '<div style="padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.12)"><b style="color:#ffd36b">' + (i + 1) + '. ' + c.name + '</b>' + (i < open && CH_DLG[i + 1] ? ' <span data-act="dlg" data-v="' + (i + 1) + '" style="cursor:pointer;color:#8fd4ff;font-size:13px">💬 ' + (window.IS_EN ? 'replay' : '대화 보기') + '</span>' : '') + '<br>' + (i < open ? chStory(i + 1) : '???') + '</div>').join('');
     const gs = COMPS.map(c => (S.comps[c.id] && S.comps[c.id].own) ? '<div style="padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.12)"><b style="color:#9ef0c0">' + c.n + '</b> · ' + guardLine(c.id) + '</div>' : '').join('');
     modal('<h3 class="stroke">' + (E ? 'Story' : '이야기') + '</h3><p style="text-align:center">' + (E ? 'A plague ship lands in 19th-century Joseon. The Plague God wakes, and Joseon\'s sleeping guardians rise to stop him.' : '19세기 조선, 역병을 실은 검은 배가 닿자 어둠의 세력 역신이 깨어났다. 잠들어 있던 수호자들이 다시 일어선다.') + '</p>' +
       '<div class="row"><div class="btn y" data-act="opening">' + (E ? 'Opening' : '오프닝') + '</div>' + (S.seenEnd1 ? '<div class="btn y" data-act="ending">' + (E ? 'Act 1 Ending' : '1막 엔딩') + '</div>' : '') + '</div>' +
@@ -629,7 +629,28 @@ if (window.IS_EN) document.title = 'K Zombi';
 
   /* ---------------- 전투 시작과 결과 ---------------- */
   let lastCh = 1;
+
+  /* 장 사이 대화 (사용자 11-27) — 처음 한 번, 도감 이야기에서 다시 보기 */
+  const CH_DLG = {"1":[["bs","처용님! 바다에서 온 검은 배에서 역병이 번지고 있어요!","Cheoyong! A plague spreads from the black ship!"],["cy","걱정 마시오. 이 마을은 내가 지키겠소.","Do not fear. I will guard this village."],["hero","함께 싸우겠소, 처용!","I will fight beside you, Cheoyong!"]],"3":[["cy","좀비들이 무리를 지어 움직인다… 누군가 부리고 있어.","They move in packs… someone commands them."],["hero","그냥 역병이 아니란 말이오?","So this is no ordinary plague?"]],"6":[["bs","밤마다 굿판이 벌어지더니 죽은 이들이 일어났어요!","Every night a rite was held, and the dead rose!"],["cy","어둠의 세력이 깨어났군. 서둘러야겠소.","The dark powers have awakened. We must hurry."]],"7":[["cy","오늘 밤은 공기가 다르다… 무언가 지켜보고 있어.","The air feels different tonight… something is watching."],["hero","등골이 서늘하오. 조심합시다.","A chill runs down my spine. Stay alert."]],"9":[["hero","처용, 그 그림자는 누구였소?","Cheoyong, who was that shadow?"],["cy","역신. 옛날 내 춤에 쫓겨난 역병의 귀신이오.","Yeoksin. The plague spirit my dance once drove out."],["cy","놈이 돌아왔다면… 이번엔 끝을 봐야 하오.","If he is back… this time it must end."]],"12":[["bs","궁궐 쪽 하늘이 보랏빛으로 물들었어요…","The sky over the palace has turned purple…"],["cy","놈이 힘을 모으고 있다.","He is gathering power."]],"14":[["ys","처용, 오늘 밤엔 직접 상대해 주마.","Cheoyong, tonight I face you myself."],["cy","바라던 바다. 이번엔 놓치지 않겠다!","Just what I wanted. You will not escape!"],["hero","수호자들이 모두 함께하겠소!","All the guardians stand with you!"]],"15":[["hero","놈이 물러났소. 하지만 끝이 아니오.","He retreated. But this is not over."],["cy","다음엔 반드시 끝을 내겠다.","Next time I will finish it."]],"18":[["bs","얼어붙은 성에서 북소리가 들려요… 무서워요.","Drums echo from the frozen fortress…"],["cy","두려워 마시오. 수호자들이 깨어나고 있소.","Fear not. The guardians are awakening."]],"21":[["cy","흑룡 대장… 역신의 오른팔이 나섰군.","The Black Dragon General… Yeoksin's right hand."],["hero","오른팔을 꺾으면 몸통도 흔들리겠지!","Break the arm and the body will shake!"]],"22":[["ys","또 만났구나. 이번엔 지난번과 다를 것이다.","We meet again. This time will be different."],["cy","나도 지난번의 처용이 아니다.","Nor am I the Cheoyong you met before."]],"24":[["hero","궁궐까지 얼마 남지 않았소!","The palace is close now!"],["cy","사당을 하나씩 지키며 나아가자.","We push on, shrine by shrine."]],"27":[["bs","임금님마저 역병에 쓰러지셨대요…","They say even the king has fallen ill…"],["cy","아직 늦지 않았다. 역신만 쓰러뜨리면 된다.","It is not too late. We only need to defeat Yeoksin."]],"30":[["ys","여기가 네 무덤이다, 처용!","This is your grave, Cheoyong!"],["cy","천 년 전처럼, 춤으로 너를 몰아내리라!","As long ago, my dance will drive you out!"],["hero","조선의 수호자들이여, 마지막 밤이다!","Guardians of Joseon, this is the final night!"]]};
+  function chDlg(n, done, force) { const L = CH_DLG[n]; S.dlg = S.dlg || {}; if (!L || (!force && S.dlg[n])) return false; S.dlg[n] = 1; save();
+    const hid = (S.team || []).find(id => S.comps[id] && S.comps[id].own) || 'dokkaebi', EN = !!window.IS_EN;
+    const SP = { cy: ['img/ui/hero_face.webp', EN ? 'Cheoyong' : '처용', '#ffcf6a'], ys: ['img/story/op3.webp', EN ? 'Yeoksin' : '역신', '#c98aff'], bs: ['img/story/op2.webp', EN ? 'Villager' : '백성', '#cfe8b0'], hero: ['img/ui/hero_' + hid + '.webp?v=4', (COMP[hid] && COMP[hid].n) || hid, '#8fd4ff'] };
+    let i = 0; const ov = document.createElement('div'); ov.id = 'kzdlg';
+    ov.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(4,6,12,.78);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;touch-action:manipulation';
+    const ch = chapters()[n - 1] || {};
+    const draw = () => { const l = L[i], s = SP[l[0]]; ov.innerHTML = '<div style="position:absolute;top:12%;left:0;right:0;text-align:center;color:#ffe3a3;font-weight:900;font-size:20px;text-shadow:0 2px 6px #000">' + (EN ? 'Chapter ' : '') + n + (EN ? '' : '장') + ' · ' + (ch.name || '') + '</div>' +
+      '<div style="position:absolute;top:10px;right:12px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.12);color:#fff;font-weight:800;font-size:14px" data-skip="1">' + (EN ? 'Skip ▶▶' : '건너뛰기 ▶▶') + '</div>' +
+      '<div style="width:min(94vw,480px);margin:0 0 7vh;display:flex;gap:12px;align-items:flex-end">' +
+      '<div style="flex:none;width:92px;height:92px;border-radius:50%;border:4px solid ' + s[2] + ';background:#222 url(' + s[0] + ') center 30%/cover;box-shadow:0 6px 18px rgba(0,0,0,.6)"></div>' +
+      '<div style="flex:1;background:linear-gradient(180deg,#2a2018,#18120d);border:3px solid ' + s[2] + ';border-radius:16px;padding:10px 14px 14px;color:#fff6e0;box-shadow:0 8px 24px rgba(0,0,0,.5)">' +
+      '<div style="font-weight:900;color:' + s[2] + ';font-size:16px;margin-bottom:4px">' + s[1] + '</div><div style="font-size:17px;line-height:1.45;font-weight:700">' + (EN ? l[2] : l[1]) + '</div>' +
+      '<div style="text-align:right;font-size:12px;opacity:.6;margin-top:4px">' + (i + 1) + '/' + L.length + ' ▼</div></div></div>'; };
+    const end = () => { ov.remove(); if (done) done(); };
+    ov.addEventListener('click', ev => { if (ev.target.closest('[data-skip]')) return end(); i++; if (i >= L.length) end(); else draw(); });
+    draw(); document.body.appendChild(ov); return true; }
+  window.KZ_chDlg = chDlg;
   function startBattle(n) {
+    if (!S.nextWB && S.nextMode !== 'arena' && S.nextMode !== 'boss' && chDlg(n, () => startBattle(n))) return;
     tickTorch(); const WBX = S.nextWB || null, ARX = S.nextMode === 'arena' ? S.nextAR || null : null;
     if (!WBX && !ARX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
     if (!WBX && !ARX && S.torch >= TORCH_MAX) S.torchT = now();
@@ -1461,6 +1482,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     switch (a) {
       case 'enter': { const go = () => { music('bgm_lobby'); tab = 'home'; renderLobby(); setTimeout(() => { refWelcome(); socialTick(true); }, 900); }; if (!S.seenOp) { S.seenOp = 1; save(); storyOpening(go); } else go(); break; }
       case 'opening': closeModal(); storyOpening(null); break;
+      case 'dlg': closeModal(); chDlg(+v, null, true); break;
       case 'ending': closeModal(); storyCuts(END_CUTS, i => 'end' + (i + 1), null); break;
       case 'storyBook': storyBook(); break;
       case 'tab': tab = v; closeModal(); renderLobby(); break;
