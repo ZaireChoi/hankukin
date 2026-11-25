@@ -110,7 +110,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     { id: 'wonhyo', n: '원효대사', g: 3, el: 'tPower', eln: '법사 · 염주', img: 'img/ui/hero_wonhyo.webp?v=2', role: '법사', ult: '정화 결계', desc: '염주에서 빛줄기를 쏘아요. 큰 기술 정화 결계는 둘레의 역병을 씻어 내고 아군을 지켜요.', bonus: 'hp' },
     { id: 'gumiho', n: '구미호', g: 3, el: 'skGhost', eln: '여우불', img: 'img/ui/hero_gumiho.webp?v=2', role: '유도탄', ult: '홀림', desc: '여우불이 적을 쫓아가 터져요. 큰 기술 홀림은 적들을 잠시 멍하게 만들어요.', bonus: 'atk' },
     { id: 'honggildong', n: '홍길동', g: 2, el: 'skFan', eln: '분신', img: 'img/ui/hero_honggildong.webp?v=2', role: '분신', ult: '둔갑 연속베기', desc: '분신을 만들어 함께 싸워요. 큰 기술 둔갑 연속베기는 순식간에 여러 적을 베어요.', bonus: 'atk' },
-    { id: 'haetae', n: '해태', g: 2, el: 'elFire', eln: '불', img: 'img/ui/hero_haetae.webp?v=2', role: '화염 방어', ult: '해치의 불바다', desc: '불길을 내뿜어 앞의 적을 태워요. 큰 기술은 해치의 불바다예요.', bonus: 'hp' },
+    { id: 'haetae', n: '해태', g: 2, el: 'elFire', eln: '불', img: 'img/ui/hero_haetae.webp?v=3', role: '화염 방어', ult: '해치의 불바다', desc: '불길을 내뿜어 앞의 적을 태워요. 큰 기술은 해치의 불바다예요.', bonus: 'hp' },
     { id: 'dokkaebi', n: '도깨비', g: 0, el: 'elWater', eln: '도깨비불', img: 'img/ui/hero_dokkaebi.webp?v=2', role: '돌격', ult: '방망이 지진', desc: '도깨비방망이를 던지면 적을 뚫고 되돌아와요. 큰 기술은 방망이 지진이에요.', bonus: 'atk' }];
   const COMP = Object.fromEntries(COMPS.map(c => [c.id, c]));
   const SKILLS = [
