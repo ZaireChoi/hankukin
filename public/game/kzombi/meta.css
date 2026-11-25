@@ -502,3 +502,7 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 /* 휴대폰 점검(11-26): 로비 왼쪽 7단추가 공격 막대와 겹침 → 작게·촘촘히 / 영웅 카드 '○장 유리' 딱지가 이름과 겹침 → 위로 */
 .sidebtns.l.n7,.sidebtns.r.n7{gap:18px!important}.sidebtns.l.n7 .sb,.sidebtns.r.n7 .sb{width:56px!important;height:56px!important;border-radius:15px}.sidebtns.l.n7 .sb svg,.sidebtns.r.n7 .sb svg{width:38px!important;height:38px!important}.sidebtns.l.n7 .sb .lb,.sidebtns.r.n7 .sb .lb{font-size:14px!important;bottom:-17px!important}
 .card .xadv{top:34px!important;bottom:auto!important;font-size:13px}
+#s-title{background-image:url(img/ui/title.jpg?v=2)!important}
+.skin .si .wbspr{transform:scale(1.9);transform-origin:50% 62%}
+#ovEnd .dmg{position:static!important;left:auto;right:auto;top:auto;padding:0}
+#s-result .rinfo{left:36px;right:36px;gap:10px}#s-result .rinfo .stat{flex:0 1 auto;padding:6px 16px;font-size:20px;white-space:nowrap}#s-result .rew{top:856px}
