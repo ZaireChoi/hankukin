@@ -589,6 +589,10 @@ function dressMech(g, mech) {
     P.group.updateMatrixWorld(true); const fr = handFrame(b, hs.x || .0125, bones); if (fr) { w.quaternion.copy(fr.q); w.userData.rot.position.set(-.22 * fr.len, .6 * fr.len, 0); (window.__hand ??= {})[mech.id] = fr.info; }
     b.add(w); out[slot] = w;
   }
+  { const lh = bones.LeftHand; if (lh) { P.group.updateMatrixWorld(true); const fr = handFrame(lh, 1, bones);
+    if (fr) { const F = new THREE.Vector3(...fr.info.F).normalize(), Bk = new THREE.Vector3(...fr.info.B).normalize(), qw = lh.getWorldQuaternion(new THREE.Quaternion());
+      const Bw = Bk.clone().applyQuaternion(qw), hp = lh.getWorldPosition(new THREE.Vector3()), body = bones.Hips ? bones.Hips.getWorldPosition(new THREE.Vector3()).sub(hp).setY(0).normalize() : new THREE.Vector3();
+      const sc = -Bw.y + .6 * Bw.dot(body); out.lpf = { F, N: sc > 0 ? Bk : Bk.clone().negate() }; } } }
   return (g.userData.armed = out);
 }
 
@@ -611,6 +615,37 @@ async function loadMoves() {
     fin: { clip: sub('judgment', 10, 36), hit: .65 }, slam: { clip: sub('slam', 30, 62), hit: .55 },
     hit: { clip: sub('hit', 0, 26), hit: 0 }, dodge: { clip: raw.dodge, hit: 0 },
   };
+}
+// 무술 동작은 표준 뼈대(인퀴지터 등) 기준이다. 뼈 축이 다른 기체(불사조)는 세계 좌표의 회전 차이로 다시 계산해 몸이 찌그러지지 않게 한다
+const MV_SRC = {"Hips":[null,-0.00784,-0.00337,-0.00337,0.99996],"Spine02":["Hips",0,0,0,1],"Spine01":["Spine02",0,0,0,1],"Spine":["Spine01",0.00003,-0.00446,-0.00453,0.99998],"neck":["Spine",0,0,0,1],"Head":["neck",0.09387,-0.03146,-0.03345,0.99452],"head_end":["Head",0,0,0,1],"headfront":["Head",0,-0.76422,-0.64244,0.05698],"LeftShoulder":["Spine",-0.54501,-0.44147,-0.44,0.56078],"LeftArm":["LeftShoulder",-0.49555,0.40252,-0.29155,0.71233],"LeftForeArm":["LeftArm",0.2297,0.14077,-0.04945,0.96176],"LeftHand":["LeftForeArm",-0.07814,-0.20054,-0.13276,0.9675],"RightShoulder":["Spine",-0.54703,0.43896,0.45478,0.54886],"RightArm":["RightShoulder",-0.4649,-0.41862,0.30857,0.71653],"RightForeArm":["RightArm",0.19168,-0.0862,0.0825,0.97418],"RightHand":["RightForeArm",-0.08634,0.20147,0.12917,0.96709],"LeftUpLeg":["Hips",0.98258,0.12588,0.12118,0.06326],"LeftLeg":["LeftUpLeg",0.15927,-0.02346,0.05753,0.98528],"LeftFoot":["LeftLeg",-0.34934,0.05696,-0.13279,0.92579],"LeftToeBase":["LeftFoot",0.17625,0.82993,-0.40725,0.33807],"RightUpLeg":["Hips",0.9838,-0.11446,-0.12296,0.06255],"RightLeg":["RightUpLeg",0.22479,0.02351,-0.0712,0.97152],"RightFoot":["RightLeg",-0.49333,-0.07196,0.18453,0.84699],"RightToeBase":["RightFoot",0.13832,-0.87295,0.33033,0.33122]};
+const _mvCache = {};
+function mvClips(id, bones) {
+  if (_mvCache[id]) return _mvCache[id];
+  const off = ['Hips', 'Spine', 'LeftUpLeg', 'RightUpLeg', 'LeftShoulder', 'RightShoulder', 'Head'].some((n) => { const s = MV_SRC[n], b = bones[n]; if (!s || !b || !b.userData.q0) return false; const q = b.userData.q0; return Math.abs(q.x * s[1] + q.y * s[2] + q.z * s[3] + q.w * s[4]) < .9; });
+  const out = {}; for (const k in MV) out[k] = off ? retargetClip(MV[k].clip, bones) : MV[k].clip;
+  return (_mvCache[id] = out);
+}
+function retargetClip(clip, bones) {
+  const Q = THREE.Quaternion, order = [], seen = new Set();
+  const add = (n) => { if (seen.has(n) || !MV_SRC[n] || !bones[n]) return; const p = MV_SRC[n][0]; if (p) add(p); seen.add(n); order.push(n); };
+  Object.keys(MV_SRC).forEach(add);
+  const tpar = (n) => (bones[n].parent && bones[n].parent.isBone ? bones[n].parent.name : null);
+  const sr = {}, sw0 = {}, inv0 = {}, tw0 = {};
+  for (const n of order) { const s = MV_SRC[n], p = s[0]; sr[n] = new Q(s[1], s[2], s[3], s[4]); sw0[n] = (p && sw0[p] ? sw0[p].clone() : new Q()).multiply(sr[n]); inv0[n] = sw0[n].clone().invert();
+    const tp = tpar(n); tw0[n] = (tp && tw0[tp] ? tw0[tp].clone() : new Q()).multiply(bones[n].userData.q0 || bones[n].quaternion); }
+  const tr = {}; for (const t of clip.tracks) tr[boneOf(t)] = { t, ip: t.createInterpolant() };
+  const ref = clip.tracks[0], times = ref.times, nF = times.length, outV = {};
+  for (const n in tr) if (bones[n] && seen.has(n) && !/^(neck|Head|head_end|headfront)$/.test(n)) outV[n] = new Float32Array(nF * 4);
+  const sw = {}, tw = {}, ql = new Q();
+  for (let f = 0; f < nF; f++) {
+    for (const n of order) {
+      const p = MV_SRC[n][0]; if (tr[n]) { const r = tr[n].ip.evaluate(times[f]); ql.set(r[0], r[1], r[2], r[3]).normalize(); } else ql.copy(sr[n]);
+      sw[n] = (p && sw[p] ? sw[p].clone() : new Q()).multiply(ql);
+      tw[n] = sw[n].clone().multiply(inv0[n]).multiply(tw0[n]);
+      if (outV[n]) { const tp = tpar(n); (tp && tw[tp] ? tw[tp].clone().invert() : new Q()).multiply(tw[n]).toArray(outV[n], f * 4); }
+    }
+  }
+  return new THREE.AnimationClip(clip.name + '_rt', clip.duration, Object.keys(outV).map((n) => new THREE.QuaternionKeyframeTrack(n + '.quaternion', times, outV[n])));
 }
 const LEGB = new Set(['Hips', 'LeftUpLeg', 'LeftLeg', 'LeftFoot', 'LeftToeBase', 'RightUpLeg', 'RightLeg', 'RightFoot', 'RightToeBase']);
 const boneOf = (t) => t.name.split('.')[0];
@@ -1035,10 +1070,10 @@ async function setMech(id) {
   for (const n of ['idle', 'walk', 'shoot', 'run', 'slash', 'hover']) acts[n] = mixer.clipAction(C[n]);
   acts.run_lg = mixer.clipAction(onlyBones(C.run, 'run_lg_' + id, (b) => LEGB.has(b)));
   // 무술 동작: 서 있을 때는 온몸, 뛰면서는 상체만(다리는 달리기)
-  if (MV) for (const k in MV) {
-    acts['o_' + k] = mixer.clipAction(MV[k].clip);
-    acts['u_' + k] = mixer.clipAction(onlyBones(MV[k].clip, 'u_' + k, (b) => !LEGB.has(b)));
-  }
+  if (MV) { const MC = mvClips(id, armed.bones); for (const k in MV) {
+    acts['o_' + k] = mixer.clipAction(MC[k]);
+    acts['u_' + k] = mixer.clipAction(onlyBones(MC[k], 'u_' + k + '_' + id, (b) => !LEGB.has(b)));
+  } }
   for (const n in acts) { const a = acts[n]; AN.w[n] = 0; a.setEffectiveWeight(0); if (!/^[ou]_/.test(n)) a.play(); else { a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; } }
   AN.w.idle = 1; acts.idle && acts.idle.setEffectiveWeight(1);
   mixer.update(0);
@@ -1304,7 +1339,7 @@ function primFire(tgt, dt) {
     case 'homing': P.cd.rifle = cd0 * 1.35; homingShot(n + 1, base * 1.15); break;
     case 'mortar': P.cd.rifle = cd0 * 1.75; for (let i = 0; i < n; i++) mortar(tgt.x + (i ? rand(-18, 18) : 0), tgt.z + (i ? rand(-18, 18) : 0), base * 2.4, 17 * (P.splash || 1), .7 + i * .08); break;
     case 'bits': P.cd.rifle = cd0 * 1.05; bitsFire(2 + n, base * 1.05); break;
-    case 'saber': if (d < 46) startSwing(tgt); else { P.cd.rifle = cd0; gunShot(tgt, n, .12, base, pr, { palm: 1, col: 0xffc060 }); P.palmT = .3; } break;
+    case 'saber': if (d < 46) startSwing(tgt); else { P.cd.rifle = cd0; gunShot(tgt, n, .12, base, pr, { palm: 1, col: 0xffc060 }); P.palmT = .5; } break;
     case 'feather': if (d < 44) startSwing(tgt); else { P.cd.rifle = cd0 * 1.1; const k = n + 2; gunShot(tgt, k, .16, base * .85, pr + 1, { kind: 'f', col: 0xfff3b0, palm: 1 }); P.palmT = .3; } break;
     case 'katana': startSwing(tgt); break;
   }
@@ -1340,7 +1375,7 @@ function doAuto(k, tg) {
     case 'iaido': { if (!tg) return false; const a = Math.atan2(tg.x - P.x, tg.z - P.z), L = 70, x0 = P.x, z0 = P.z; moveTo(P.x + Math.sin(a) * L, P.z + Math.cos(a) * L, .14); oneShot('cut1', .3); sfx.swing(true);
       later(.14, () => { lineHit(x0, z0, a, L + 8, 10, base * 5 * (P.meleeMul || 1), 1.8); beamFx(x0, 9, z0, x0 + Math.sin(a) * (L + 10), 9, z0 + Math.cos(a) * (L + 10), 1.6, 0xdff8ff, .25); crescent(P.x, P.z, a, 40, .4, 0xdff8ff); sfx.slash(); }); return true; }
     case 'overdrive': P.odT = 3.5; ring(P.x, P.z, 4, 26, .35, 0x9ff3ff); tone(400, 1600, .4, 'sawtooth', .05); num(P.x, 30, P.z, '과충전', '#9ff3ff', 16); return true;
-    case 'palm': { if (!tg) return false; gunShot(tg, 7, .12, base * 1.3, 2, { palm: 1, col: 0xffc060 }); P.palmT = .5; return true; }
+    case 'palm': { if (!tg) return false; gunShot(tg, 7, .12, base * 1.3, 2, { palm: 1, col: 0xffc060 }); P.palmT = .7; return true; }
     case 'backstep': { const a = tg ? Math.atan2(P.x - tg.x, P.z - tg.z) : fy + Math.PI, x0 = P.x, z0 = P.z; moveTo(P.x + Math.sin(a) * 55, P.z + Math.cos(a) * 55, .2); decal(x0, z0, 28, .55, 0x9ff6ff, () => { explode(x0, z0, 28, base * 4.5, 0x9ff6ff); }); sfx.dash(); return true; }
     case 'mortar3': { if (!tg) return false; for (let i = 0; i < 3; i++) later(i * .12, () => mortar(tg.x + rand(-20, 20), tg.z + rand(-20, 20), base * 4, 26 * (P.splash || 1), .8)); return true; }
     case 'bash': { if (!tg) return false; const a = Math.atan2(tg.x - P.x, tg.z - P.z); moveTo(P.x + Math.sin(a) * 45, P.z + Math.cos(a) * 45, .2); sfx.dash();
@@ -2723,18 +2758,30 @@ function lobbyStand() {
     _sd.copy(_sa).sub(_sb);
     if (_sd.lengthSq() > 1e-4) { _sd.normalize(); _sb.copy(_sf).multiplyScalar(hk[0]).addScaledVector(_ss, -hk[1]); _sb.y = hk[2] ? 1 : -1; _sb.normalize(); rotW(B.RightHand, new THREE.Quaternion().setFromUnitVectors(_sd, _sb)); } }
 }
+// 손바닥이 표적을 보게(손가락은 위로): 장풍 쏘는 손 모양
+const _pf1 = new THREE.Vector3(), _pf2 = new THREE.Vector3(), _pf3 = new THREE.Vector3(), _pf4 = new THREE.Vector3(), _pfq = new THREE.Quaternion(), _pm1 = new THREE.Matrix4(), _pm2 = new THREE.Matrix4();
+function palmFace(hand, dir, k) {
+  const f = armed && armed.lpf; if (!f || k < .02) return;
+  hand.getWorldQuaternion(_pfq); const Nw = _pf2.copy(f.N).applyQuaternion(_pfq).normalize(), Fw = _pf1.copy(f.F).applyQuaternion(_pfq); Fw.addScaledVector(Nw, -Fw.dot(Nw)).normalize();
+  const Ft = _pf3.set(0, 1, 0).addScaledVector(dir, -dir.y).normalize();
+  _pm1.makeBasis(Nw, Fw, _pf4.crossVectors(Nw, Fw).normalize()); const q1 = new THREE.Quaternion().setFromRotationMatrix(_pm1);
+  _pm2.makeBasis(dir, Ft, new THREE.Vector3().crossVectors(dir, Ft).normalize()); const q2 = new THREE.Quaternion().setFromRotationMatrix(_pm2);
+  rotW(hand, new THREE.Quaternion().slerp(q2.multiply(q1.invert()), k));
+}
 function placeArms(dt) {
   if (!armed) return;
   if (lobby.on && G.state === 'title') lobbyStand();
   P.group.updateMatrixWorld(true);
   const B = armed.bones, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw), mw = armed.main;
   // 왼손 레이저(손바닥 빔·알파 빔·빛 깃털): 쏘는 동안 왼팔을 적 쪽으로 뻗는다
-  P.lAimK = lerp(P.lAimK || 0, P.palmT > 0 && !P.fly ? 1 : 0, Math.min(1, dt * 10));
+  P.lAimK = lerp(P.lAimK || 0, P.palmT > 0 && !P.fly ? 1 : 0, Math.min(1, dt * 16));
   if (P.lAimK > .02 && B.LeftArm && B.LeftForeArm && B.LeftHand) {
-    const tg = nearest(P.x, P.z, 160), ax = tg ? tg.x - P.x : fx, az = tg ? tg.z - P.z : fz, al = Math.hypot(ax, az) || 1, dir = v3b.set(ax / al, -.08, az / al).normalize();
-    pointArm(B.LeftArm, B.LeftHand, dir, .9 * P.lAimK); pointArm(B.LeftForeArm, B.LeftHand, dir, .9 * P.lAimK);
+    const tg = nearest(P.x, P.z, 160); B.LeftShoulder && B.LeftShoulder.getWorldPosition(_va); const sx = B.LeftShoulder ? _va.x : P.x, sz = B.LeftShoulder ? _va.z : P.z;
+    const ax = tg ? tg.x - sx : fx, az = tg ? tg.z - sz : fz, al = Math.hypot(ax, az) || 1, dir = v3b.set(ax / al, -.04, az / al).normalize(), k = Math.min(1, P.lAimK * 1.05);
+    for (let it = 0; it < 2; it++) { pointArm(B.LeftArm, B.LeftHand, dir, k); pointArm(B.LeftForeArm, B.LeftHand, dir, k); }
+    palmFace(B.LeftHand, dir, k);
   }
-  if (B.LeftHand) { B.LeftHand.getWorldPosition(_va); const tg = nearest(P.x, P.z, 160), a = tg ? Math.atan2(tg.x - _va.x, tg.z - _va.z) : P.yaw; P.palm = { x: _va.x + Math.sin(a) * 1.5, y: _va.y, z: _va.z + Math.cos(a) * 1.5 }; }
+  if (B.LeftHand) { B.LeftHand.getWorldPosition(_va); const tg = nearest(P.x, P.z, 160), a = tg ? Math.atan2(tg.x - _va.x, tg.z - _va.z) : P.yaw, ex = P.lAimK > .5 ? 2.6 : 1.5; P.palm = { x: _va.x + Math.sin(a) * ex, y: _va.y, z: _va.z + Math.cos(a) * ex }; }
   // 아틸러리 어깨 곡사포: 왼쪽 어깨 위에 얹고 앞을 향한다(총구 -X)
   if (howW) {
     const on = ARM === 'hammer' && (G.state !== 'title' || lobby.on) && P.group.visible && !P.fly; howW.visible = on;
@@ -3188,7 +3235,7 @@ function wdropHtml(w) { const R0 = RAR[w.rar], X = ELEM[w.el];
   return `<div class="wdrop" style="--rc:${R0.col};--ec:${X.col}"><span class="wi">${ico2('wpn', X.col)}</span><span><em>무기 획득</em><b>${wName(w)}</b><small>${R0.nm} · ${X.nm} 계열${w.rel ? ' · 해방 보유' : ''}</small></span></div>`; }
 
 // ───────── 무기고: 기체 숙련(기종별 성장)과 무기 장착·강화·분해
-if (location.search.includes('dev')) Object.assign(window, { __el: { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, drawArsenal, wOf, get HZ() { return HZ; } } });
+if (location.search.includes('dev')) Object.assign(window, { __el: { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, drawArsenal, wOf, placeArms, get HZ() { return HZ; } } });
 function drawArsenal() {
   const m = MECH(save.mech), X = ELEM[m.el], lv = save.mlv[m.id] || 0, tier = Math.floor(lv / 5), cost = mlvCost(lv);
   $('#coreA').textContent = save.core;
