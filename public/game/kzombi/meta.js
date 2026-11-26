@@ -476,7 +476,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="rank">' + ic('power') + '<div class="lb stroke-s">랭킹</div></div>' +
       '<div class="sb wbsb" data-act="wb">' + ic('skull' in I ? 'skull' : 'sword') + '<div class="lb stroke-s">월드보스</div>' + (wbDay().n < 3 ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb arsb" data-act="ar">' + ic('sword') + '<div class="lb stroke-s">아레나</div>' + (arDay().n < AR_FREE ? '<i class="dot"></i>' : '') + '</div>' +
-      '</div><div class="sidebtns r' + (stShow() ? ' n7' : '') + '">' + (stShow() ? '<div class="sb stsb" data-act="starter">' + ic('gift') + '<div class="lb stroke-s">스타트팩</div><i class="dot"></i><i class="rcb stroke-s">' + stDays() + '일</i></div>' : '') +
+      '</div><div class="sidebtns r' + (stShow() ? ' n8' : ' n7') + '">' + (stShow() ? '<div class="sb stsb" data-act="starter">' + ic('gift') + '<div class="lb stroke-s">스타트팩</div><i class="dot"></i><i class="rcb stroke-s">' + stDays() + '일</i></div>' : '') +
+      '<div class="sb dgsb" data-act="dg">' + ic('chest') + '<div class="lb stroke-s">' + TT('탐험', 'Cavern') + '</div>' + ((dgSt().keys || 0) > 0 ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="mailbox">' + ic('mail') + '<div class="lb stroke-s">우편</div>' + (!S.mail ? '<i class="dot"></i>' : '') + '</div>' +
       '<div class="sb" data-act="settings">' + ic('gear') + '<div class="lb stroke-s">설정</div></div>' +
       '<div class="sb" data-act="ach">' + ic('chest') + '<div class="lb stroke-s">업적</div>' + (achDot() ? '<i class="dot"></i>' : '') + '</div>' +
@@ -819,14 +820,14 @@ foeElTxt(1, n) + skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? 
     draw(); document.body.appendChild(ov); return true; }
   window.KZ_chDlg = chDlg;
   function startBattle(n) {
-    if (!S.nextWB && S.nextMode !== 'arena' && S.nextMode !== 'boss' && (!S.nextMode && isA3() ? chDlg('a' + curAct() + '_' + n, () => startBattle(n)) : chDlg(n, () => startBattle(n)))) return;
-    tickTorch(); const WBX = S.nextWB || null, ARX = S.nextMode === 'arena' ? S.nextAR || null : null;
-    if (!WBX && !ARX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
-    if (!WBX && !ARX && S.torch >= TORCH_MAX) S.torchT = now();
-    if (!WBX && !ARX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
+    if (!S.nextWB && S.nextMode !== 'arena' && S.nextMode !== 'boss' && S.nextMode !== 'dungeon' && (!S.nextMode && isA3() ? chDlg('a' + curAct() + '_' + n, () => startBattle(n)) : chDlg(n, () => startBattle(n)))) return;
+    tickTorch(); const WBX = S.nextWB || null, ARX = S.nextMode === 'arena' ? S.nextAR || null : null, DGX = S.nextMode === 'dungeon' ? (S.nextDG || {}) : null;
+    if (!WBX && !ARX && !DGX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
+    if (!WBX && !ARX && !DGX && S.torch >= TORCH_MAX) S.torchT = now();
+    if (!WBX && !ARX && !DGX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), heroG: Object.fromEntries(S.team.map(id => [id, (COMP[id] || {}).g || 0])), heroSk: Object.fromEntries(S.team.map(id => [id, [(S.comps[id] || {}).skl || 1, (S.comps[id] || {}).ull || 1]])), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? curAct() : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
+    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), heroG: Object.fromEntries(S.team.map(id => [id, (COMP[id] || {}).g || 0])), heroSk: Object.fromEntries(S.team.map(id => [id, [(S.comps[id] || {}).skl || 1, (S.comps[id] || {}).ull || 1]])), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? curAct() : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; if (DGX) { cfg.dgKind = DGX.kind; cfg.dgHpK = DGX.hpK; cfg.dgHpF = DGX.hpF; cfg.atk *= DGX.atkK || 1; cfg.hp *= DGX.hpMul || 1; } S.nextDG = null; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
     stopMusic();
     try { if (!WBX && !ARX && (cfg.mode || 'adventure') === 'adventure') { const A = cfg.act | 0, cc = A >= 3 ? (actChapters(A)[n - 1] || {}) : (chapters()[n - 1] || {}), st = A >= 3 ? cc.story : chStory(n); cfg.storyLine = Array.isArray(st) ? TT(st[0], st[1]) : (st || ''); cfg.storyName = (A >= 3 ? (30 * (A - 1) + n) : cfg.nightmare ? TT('악몽 ', 'NM ') + n : n) + '. ' + (cc.name || ''); } } catch (e) {} /* 판 시작 이야기 띠(세계관) */
     const J = window.JZB;
@@ -844,6 +845,7 @@ foeElTxt(1, n) + skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? 
   }
   let lastWB = null;
   function onEnd(r) {
+    if (r && r.mode === 'dungeon') { try { dgEnd(r); } catch (e) { console.warn(e); meta.classList.remove('off'); } return; }
     if (r && r.mode === 'arena') { try { arEnd(r); } catch (e) { console.warn(e); meta.classList.remove('off'); } return; }
     try { if (lastWB && r && r.mode === 'boss') { wbRecord(lastWB, Math.round(r.bossDmg || 0)); } } catch (e) { console.warn(e); } lastWB = null;
     try { xOnEnd(r || {}); } catch (e) { console.warn(e); }
@@ -1113,6 +1115,93 @@ foeElTxt(1, n) + skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? 
       '<div><b style="color:#ffd36b">' + (EN ? 'Signature skill' : '고유 기술') + ' Lv' + sl + '</b> · ' + skTxt(sl) + (sl < 5 ? ' <span style="color:#9fe39f">→ ' + skTxt(sl + 1) + '</span>' : '') + '</div>' +
       '<div><b style="color:#ff9f7a">' + (EN ? 'Ultimate' : '궁극기') + ' · ' + sel.ult + ' Lv' + ul + '</b> · ' + ulTxt(ul) + (ul < 5 ? ' <span style="color:#9fe39f">→ ' + ulTxt(ul + 1) + '</span>' : '') + '</div></div>' +
       '<div class="row" style="gap:8px">' + btn('hsk', sl, EN ? 'Skill' : '고유 기술') + btn('hul', ul, EN ? 'Ultimate' : '궁극기') + '</div>';
+  }
+
+  /* ===== 역병 굴 탐험 (던전 반복 콘텐츠, 11-30) — 갈림길 방 고르기 · 유물 · 3층마다 굴 주인 · 하루 열쇠 2개 ===== */
+  const DG_KEYS = 2, DG_ELI = { fire: '🔥', water: '💧', thunder: '⚡', light: '☀', metal: '⚔', wind: '🌀', dark: '☾', nature: '🌿' };
+  const DG_ACT = [['역병의 조선', 'Plagued Joseon'], ['악몽의 조선', 'Nightmare Joseon'], ['바다 너머로', 'Beyond the Sea'], ['안개의 나라', 'Land of Fog'], ['모래와 비단의 길', 'Sand & Silk Road'], ['무너지는 하늘', 'Falling Heaven'], ['저승 원정', 'Underworld'], ['마계', 'Demon Realm'], ['뒤집힌 조선', 'Mirror Joseon'], ['태초의 춤', 'Primordial Dance']];
+  const DG_REL = [
+    ['r1', '불씨 부적', 'Ember Charm', 'fire', 0.08, 0], ['r2', '화로 숯', 'Brazier Coal', 'fire', 0.12, -0.04], ['r3', '해치 갈기', 'Haechi Mane', 'fire', 0.06, 0.06],
+    ['r4', '우물 물병', 'Well Flask', 'water', 0, 0.12], ['r5', '얼음 구슬', 'Frost Bead', 'water', 0.06, 0.04], ['r6', '용왕 비늘', 'Dragon Scale', 'water', 0.04, 0.1],
+    ['r7', '천둥 북채', 'Thunder Stick', 'thunder', 0.1, 0], ['r8', '번개 쇠못', 'Lightning Nail', 'thunder', 0.14, -0.06], ['r9', '뇌공 깃', 'Thunder Plume', 'thunder', 0.07, 0.03],
+    ['r10', '해 거울', 'Sun Mirror', 'light', 0.06, 0.06], ['r11', '연등', 'Lotus Lantern', 'light', 0.03, 0.1], ['r12', '삼족오 깃털', 'Samjoko Feather', 'light', 0.1, 0.02],
+    ['r13', '장수 칼집', "General's Sheath", 'metal', 0.1, 0.02], ['r14', '놋쇠 방패', 'Brass Shield', 'metal', 0, 0.14], ['r15', '화살촉 꾸러미', 'Arrowhead Pack', 'metal', 0.12, 0],
+    ['r16', '바람 부채', 'Wind Fan', 'wind', 0.08, 0.02], ['r17', '축지 짚신', 'Swift Sandals', 'wind', 0.05, 0.05], ['r18', '회오리 매듭', 'Whirl Knot', 'wind', 0.11, -0.03],
+    ['r19', '혼불 등', 'Soulfire Lamp', 'dark', 0.1, 0], ['r20', '저승 명패', 'Underworld Tag', 'dark', 0.13, -0.05], ['r21', '바리 방울', "Bari's Bell", 'dark', 0.04, 0.08],
+    ['r22', '약초 주머니', 'Herb Pouch', 'nature', 0, 0.12], ['r23', '덩굴 팔찌', 'Vine Bangle', 'nature', 0.06, 0.06], ['r24', '대장금 침통', "Janggeum's Needles", 'nature', 0.05, 0.08],
+    ['r25', '처용 탈 조각', 'Cheoyong Mask Shard', 'light', 0.09, 0.09], ['r26', '도깨비 방망이', 'Goblin Club', 'metal', 0.12, 0.03], ['r27', '여우 구슬', 'Fox Bead', 'fire', 0.08, 0.05],
+    ['r28', '이무기 여의주', 'Imugi Pearl', 'water', 0.1, 0.06], ['r29', '고문서 두루마리', 'Ancient Scroll', 'dark', 0.07, 0.07], ['r30', '사방신 인장', 'Four Gods Seal', 'nature', 0.1, 0.1]
+  ].map(a => ({ id: a[0], n: a[1], en: a[2], el: a[3], a: a[4], h: a[5] }));
+  const DG_RELM = Object.fromEntries(DG_REL.map(r => [r.id, r]));
+  const DG_EV = [
+    [['길 잃은 백성', '굴속에서 겁에 질린 백성을 만났다.'], ['A Lost Villager', 'A frightened villager hides in the cave.'], [['데려간다 (체력 −10%, 엽전 +300)', 'Escort (HP −10%, coins +300)', { hp: -0.1, gold: 300 }], ['길만 알려 준다 (체력 +10%)', 'Show the way (HP +10%)', { hp: 0.1 }]]],
+    [['역신의 낙서', '벽에 역병의 주문이 새겨져 있다.'], ["Plague God's Scrawl", 'A plague spell is carved on the wall.'], [['지운다 (유물 하나)', 'Erase it (gain a relic)', { relic: 1, hp: -0.15 }], ['지나친다', 'Pass by', {}]]],
+    [['무녀의 굿판', '버려진 굿판에 촛불이 아직 탄다.'], ["Shaman's Altar", 'Candles still burn on an abandoned altar.'], [['절한다 (체력 +25%)', 'Bow (HP +25%)', { hp: 0.25 }], ['제물을 챙긴다 (엽전 +500, 체력 −15%)', 'Take offerings (coins +500, HP −15%)', { gold: 500, hp: -0.15 }]]],
+    [['도깨비 노름판', '도깨비가 내기를 건다.'], ["Goblin's Wager", 'A goblin offers a bet.'], [['건다 (반반: 유물 / 체력 −20%)', 'Bet (50%: relic / HP −20%)', { gamble: 1 }], ['사양한다', 'Decline', {}]]],
+    [['고문서 상자', '이끼 낀 상자에 옛 기록이 있다.'], ['Old Chest', 'A mossy chest holds old records.'], [['연다 (신력석 +15)', 'Open (+15 god stones)', { stone: 15 }], ['그냥 둔다 (체력 +8%)', 'Leave it (HP +8%)', { hp: 0.08 }]]]
+  ];
+  function dgSt() { if (!S.dg) S.dg = { keys: DG_KEYS, day: today(), best: 0, wk: '', wkBest: 0, runs: 0, run: null }; const d = S.dg; if (d.day !== today()) { d.day = today(); d.keys = Math.max(d.keys || 0, DG_KEYS); } const wk = (() => { const t = new Date(); t.setHours(0, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 6) % 7)); return t.toISOString().slice(0, 10); })(); if (d.wk !== wk) { d.wk = wk; d.wkBest = 0; } return d; }
+  const dgAct = f => Math.min(10, 1 + Math.floor((f - 1) / 3));
+  const dgRelNm = r => TT(r.n, r.en);
+  function dgNodes(f) {
+    if (f % 3 === 0) return [{ k: 'boss' }];
+    const pool = ['fight', 'fight', 'elite', 'treasure', 'shrine', 'merchant', 'event', 'fight'], out = [];
+    while (out.length < 3) { const k = pool[(Math.random() * pool.length) | 0]; if (out.filter(x => x.k === k).length < (k === 'fight' ? 2 : 1)) out.push({ k }); }
+    if (!out.some(x => x.k === 'fight' || x.k === 'elite')) out[0] = { k: 'fight' };
+    return out;
+  }
+  const DG_NODE = { fight: ['⚔', '전투', 'Battle'], elite: ['💀', '정예', 'Elite'], boss: ['👹', '굴 주인', 'Cave Lord'], treasure: ['🎁', '보물', 'Treasure'], shrine: ['⛩', '사당', 'Shrine'], merchant: ['🏮', '상인', 'Merchant'], event: ['❓', '사건', 'Event'] };
+  function dgBonus(run) { let a = 0, h = 0; const els = S.team.map(id => (COMP[id] || {}).el); for (const id of run.rel) { const r = DG_REL_M(id); if (!r) continue; const k = els.includes(r.el) ? 1.5 : 1; a += r.a * k; h += r.h * k; } return { a, h }; }
+  function DG_REL_M(id) { return DG_RELM[id]; }
+  function dgRandRel(run, n) { const own = new Set(run.rel), c = DG_REL.filter(r => !own.has(r.id)); const out = []; while (out.length < n && c.length) out.push(c.splice((Math.random() * c.length) | 0, 1)[0]); return out; }
+  function dgNew() { const d = dgSt(); if (d.run) return dgModal(); if ((d.keys || 0) <= 0) { toast(TT('오늘 탐험 열쇠를 다 썼어요 (내일 2개)', 'No keys left today (2 tomorrow)')); return; } d.keys--; d.runs = (d.runs || 0) + 1; d.run = { f: 1, hpF: 1, rel: [], coin: 0, loot: { gold: 0, ore: 0, stone: 0, lsh: 0, hsh: 0 }, nodes: dgNodes(1) }; save(); dgModal(); }
+  function dgModal() {
+    const d = dgSt(), run = d.run;
+    const head = '<h3 class="stroke">' + TT('역병 굴 탐험', 'Plague Cavern') + '</h3>';
+    if (!run) {
+      modal(head + '<p style="text-align:center;line-height:1.5">' + TT('갈림길에서 방을 골라 깊이 내려가요. 유물을 모으고, 3층마다 굴 주인을 쓰러뜨리세요. 체력은 층을 넘어 이어져요.', 'Pick rooms at each fork and go deeper. Collect relics; defeat a Cave Lord every 3 floors. HP carries over.') + '</p>' +
+        '<div class="box" style="padding:10px;margin:8px 0;text-align:center">' + TT('최고 기록 ', 'Best ') + '<b style="color:#ffe27a">' + (d.best || 0) + TT('층', 'F') + '</b> · ' + TT('이번 주 ', 'This week ') + '<b>' + (d.wkBest || 0) + TT('층', 'F') + '</b> · ' + TT('열쇠 ', 'Keys ') + '<b>' + (d.keys || 0) + '/' + DG_KEYS + '</b></div>' +
+        '<p style="font-size:14px;opacity:.85;text-align:center">' + TT('층마다 보상: 엽전·정련석, 3층마다 신력석·영웅 조각, 6층마다 전설 조각', 'Per floor: coins & ore; every 3F god stones & hero shards; every 6F legend shards') + '</p>' +
+        '<div class="row"><div class="btn ' + ((d.keys || 0) > 0 ? 'y' : 'dis') + '" data-act="dgNew">' + TT('탐험 시작 (열쇠 1)', 'Enter (1 key)') + '</div></div>');
+      return;
+    }
+    const A = dgAct(run.f), b = dgBonus(run);
+    const rel = run.rel.length ? run.rel.map(id => { const r = DG_REL_M(id); return '<span title="' + dgRelNm(r) + '" style="display:inline-block;margin:2px;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.1);font-size:13px">' + DG_ELI[r.el] + ' ' + dgRelNm(r) + '</span>'; }).join('') : '<span style="opacity:.6">' + TT('아직 유물이 없어요', 'No relics yet') + '</span>';
+    const nodes = run.nodes.map((nd, i) => { const N = DG_NODE[nd.k]; return '<div class="btn ' + (nd.k === 'boss' ? 'r' : nd.k === 'elite' ? 'b' : 'g') + '" data-act="dgGo" data-v="' + i + '" style="flex:1;flex-direction:column;min-height:86px;font-size:18px"><span style="font-size:30px">' + N[0] + '</span>' + TT(N[1], N[2]) + '</div>'; }).join('');
+    modal(head + '<div style="text-align:center;font-size:17px">' + TT('제 ' + run.f + ' 층 · ', 'Floor ' + run.f + ' · ') + TT(DG_ACT[A - 1][0], DG_ACT[A - 1][1]) + (run.f % 3 === 0 ? ' · <b style="color:#ff8a7a">' + TT('굴 주인', 'Cave Lord') + '</b>' : '') + '</div>' +
+      '<div style="margin:8px 0"><div style="height:12px;border-radius:6px;background:rgba(0,0,0,.4);overflow:hidden"><i style="display:block;height:100%;width:' + Math.round(run.hpF * 100) + '%;background:linear-gradient(90deg,#5ee05a,#b8f27a)"></i></div><div style="font-size:13px;text-align:center;margin-top:2px">' + TT('체력 ', 'HP ') + Math.round(run.hpF * 100) + '% · ' + TT('공격 ', 'ATK ') + '+' + Math.round(b.a * 100) + '% · ' + TT('체력 ', 'HP ') + '+' + Math.round(b.h * 100) + '% · ' + TT('엽전 ', 'Coins ') + fmt(run.coin) + '</div></div>' +
+      '<div style="font-size:14px;margin:4px 0">' + TT('유물', 'Relics') + ' (' + run.rel.length + ')<br>' + rel + '</div>' +
+      '<div style="font-size:15px;margin:8px 0 4px">' + TT('갈림길 · 방 하나를 고르세요', 'Fork · choose a room') + '</div><div class="row" style="gap:8px">' + nodes + '</div>' +
+      '<div class="row"><div class="btn" data-act="dgQuit" style="background:#555">' + TT('탐험 끝내고 보상 받기', 'End run & claim') + '</div></div>');
+  }
+  function dgFloorLoot(run, f) { const L = run.loot; L.gold += 300 + 60 * f; L.ore += 2 + Math.floor(f / 2); if (f % 3 === 0) { L.stone += 5 + f; L.hsh += 1; } if (f % 6 === 0) L.lsh += 1; }
+  function dgNext(run) { dgFloorLoot(run, run.f); run.f++; run.nodes = dgNodes(run.f); const d = dgSt(); d.best = Math.max(d.best || 0, run.f - 1); d.wkBest = Math.max(d.wkBest || 0, run.f - 1); save(); }
+  function dgGo(i) {
+    const d = dgSt(), run = d.run; if (!run) return; const nd = run.nodes[i]; if (!nd) return;
+    if (nd.k === 'fight' || nd.k === 'elite' || nd.k === 'boss') {
+      const b = dgBonus(run), A = dgAct(run.f), chMax = Math.max(1, Math.min(S.chap || 1, chapters().length)), ch = Math.min(chMax, 1 + ((run.f * 3 + (A - 1) * 5) % Math.max(1, chMax)));
+      S.nextMode = 'dungeon'; S.nextDG = { kind: nd.k, ch, hpK: (1 + 0.11 * (run.f - 1)) * (nd.k === 'elite' ? 1.25 : 1), hpF: run.hpF, atkK: 1 + b.a, hpMul: 1 + b.h }; save(); closeModal(); startBattle(ch); return;
+    }
+    if (nd.k === 'treasure') { const c = dgRandRel(run, 3); modal('<h3 class="stroke">' + TT('🎁 보물 · 유물 하나', '🎁 Treasure · pick a relic') + '</h3>' + c.map(r => '<div class="btn g" data-act="dgRel" data-v="' + r.id + '" style="margin:6px 0;flex-direction:column">' + DG_ELI[r.el] + ' ' + dgRelNm(r) + '<small>' + TT('공격 ', 'ATK ') + '+' + Math.round(r.a * 100) + '% · ' + TT('체력 ', 'HP ') + (r.h >= 0 ? '+' : '') + Math.round(r.h * 100) + '%</small></div>').join('') + '<p style="font-size:13px;opacity:.8;text-align:center">' + TT('출전 영웅과 같은 계열이면 효과 1.5배', '×1.5 if a deployed hero shares the element') + '</p>'); return; }
+    if (nd.k === 'shrine') { modal('<h3 class="stroke">' + TT('⛩ 사당', '⛩ Shrine') + '</h3><div class="row"><div class="btn g" data-act="dgShrine" data-v="heal">' + TT('기도 (체력 +40%)', 'Pray (HP +40%)') + '</div></div><div class="row"><div class="btn b" data-act="dgShrine" data-v="bless">' + TT('축복 (무작위 유물)', 'Blessing (random relic)') + '</div></div>'); return; }
+    if (nd.k === 'merchant') { const c = dgRandRel(run, 3); dgGo.sale = c; modal('<h3 class="stroke">' + TT('🏮 떠돌이 상인', '🏮 Wandering Merchant') + '</h3><p style="text-align:center">' + TT('탐험 엽전 ', 'Run coins ') + fmt(run.coin) + '</p>' + c.map((r, k) => { const p = 400 + 100 * k; return '<div class="btn ' + (run.coin >= p ? 'y' : 'dis') + '" data-act="dgBuy" data-v="' + r.id + ':' + p + '" style="margin:6px 0">' + DG_ELI[r.el] + ' ' + dgRelNm(r) + ' · ' + fmt(p) + '</div>'; }).join('') + '<div class="row"><div class="btn" data-act="dgSkip" style="background:#555">' + TT('지나간다', 'Leave') + '</div></div>'); return; }
+    if (nd.k === 'event') { const E = DG_EV[(Math.random() * DG_EV.length) | 0]; dgGo.ev = E; modal('<h3 class="stroke">❓ ' + TT(E[0][0], E[1][0]) + '</h3><p style="text-align:center;line-height:1.5">' + TT(E[0][1], E[1][1]) + '</p>' + E[2].map((o, k) => '<div class="btn b" data-act="dgEv" data-v="' + k + '" style="margin:6px 0">' + TT(o[0], o[1]) + '</div>').join('')); return; }
+  }
+  function dgAfterRoom(msg) { const run = dgSt().run; if (!run) return; dgNext(run); if (msg) toast(msg); dgModal(); }
+  function dgGain(id) { const run = dgSt().run; if (run && id && !run.rel.includes(id)) run.rel.push(id); }
+  function dgEnd(r) {
+    meta.classList.remove('off'); try { window.JZB && window.JZB.hide && window.JZB.hide(); } catch (e) {}
+    const d = dgSt(), run = d.run; if (!run) { refresh(); return; }
+    run.coin += Math.round((r.gold || 0) * 0.6) + (r.win ? 150 : 0);
+    if (r.win) { run.hpF = Math.max(0.2, Math.min(1, (r.php != null ? r.php : run.hpF) + 0.15)); const boss = run.nodes.some(n => n.k === 'boss'); if (boss) { const c = dgRandRel(run, 1)[0]; if (c) dgGain(c.id); } dgNext(run); refresh(); toast(TT('층 돌파! 제 ' + (run.f - 1) + ' 층', 'Floor ' + (run.f - 1) + ' cleared!')); dgModal(); }
+    else { refresh(); dgFinish(true); }
+  }
+  function dgFinish(dead) {
+    const d = dgSt(), run = d.run; if (!run) return; const L = run.loot, f = run.f - 1;
+    S.gold += L.gold; eqx(); S.ore = (S.ore || 0) + L.ore; S.stone += L.stone; S.lsh = (S.lsh || 0) + L.lsh;
+    if (L.hsh) { const own = COMPS.filter(c => S.comps[c.id] && S.comps[c.id].own); for (let i = 0; i < L.hsh * 2 && own.length; i++) S.comps[own[(Math.random() * own.length) | 0].id].sh += 1; }
+    d.run = null; save(); refresh();
+    modal('<h3 class="stroke">' + (dead ? TT('탐험 실패', 'Run Over') : TT('탐험 종료', 'Run Ended')) + '</h3><div style="text-align:center;font-size:18px;line-height:1.7">' + TT('도달한 층 ', 'Floors cleared ') + '<b style="color:#ffe27a">' + f + '</b><br>' + TT('엽전 ', 'Coins ') + fmt(L.gold) + ' · ' + TT('정련석 ', 'Ore ') + L.ore + '<br>' + TT('신력석 ', 'God stones ') + L.stone + ' · ' + TT('영웅 조각 ', 'Hero shards ') + (L.hsh * 2) + ' · ' + TT('전설 조각 ', 'Legend shards ') + L.lsh + '</div><div class="row"><div class="btn y" data-act="dg">' + TT('확인', 'OK') + '</div></div>');
   }
   function couponModal() {
     modal('<h3 class="stroke">쿠폰 입력</h3><p style="text-align:center">행사 코드를 입력하세요</p>' +
@@ -1903,6 +1992,15 @@ foeElTxt(1, n) + skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? 
       case 'starter': starterModal(); break;
       case 'mbow': mbowModal(false); break;
       case 'cpnUse': useCoupon(); break;
+      case 'dg': dgModal(); break;
+      case 'dgNew': dgNew(); break;
+      case 'dgGo': dgGo(+v); break;
+      case 'dgQuit': closeModal(); dgFinish(false); break;
+      case 'dgRel': dgGain(v); closeModal(); dgAfterRoom(TT('유물 획득', 'Relic gained')); break;
+      case 'dgShrine': { const run = dgSt().run; if (run) { if (v === 'heal') run.hpF = Math.min(1, run.hpF + 0.4); else { const c = dgRandRel(run, 1)[0]; if (c) dgGain(c.id); } } closeModal(); dgAfterRoom(); break; }
+      case 'dgBuy': { const run = dgSt().run, [id, p] = String(v).split(':'); if (run && run.coin >= +p) { run.coin -= +p; dgGain(id); closeModal(); dgAfterRoom(TT('유물 구입', 'Relic bought')); } break; }
+      case 'dgSkip': closeModal(); dgAfterRoom(); break;
+      case 'dgEv': { const run = dgSt().run, E = dgGo.ev, o = E && E[2][+v] && E[2][+v][2]; if (run && o) { if (o.hp) run.hpF = Math.max(0.1, Math.min(1, run.hpF + o.hp)); if (o.gold) run.coin += o.gold; if (o.stone) run.loot.stone += o.stone; if (o.relic) { const c = dgRandRel(run, 1)[0]; if (c) dgGain(c.id); } if (o.gamble) { if (Math.random() < 0.5) { const c = dgRandRel(run, 1)[0]; if (c) dgGain(c.id); toast(TT('이겼다! 유물 획득', 'Won! Relic gained')); } else { run.hpF = Math.max(0.1, run.hpF - 0.2); toast(TT('졌다… 체력 −20%', 'Lost… HP −20%')); } } } closeModal(); dgAfterRoom(); break; }
       case 'skset': skSetModal(); break;
       case 'kiunUp': { S.kiunLv = S.kiunLv || {}; const lv = S.kiunLv[v] || 1, cost = 3000 * lv, st = 2 * lv; if (lv >= 5) break; if (S.gold < cost || S.stone < st) { toast(TT('엽전이나 신력석이 모자라요', 'Not enough coins or stones')); break; } S.gold -= cost; S.stone -= st; S.kiunLv[v] = lv + 1; save(); toast(TT('기운 숙련 Lv', 'Mastery Lv') + (lv + 1)); refresh(); break; }
       case 'skTog': { const L = skSet(), i = L.indexOf(v); if (i >= 0) L.splice(i, 1); else if (L.length < 8) L.push(v); else { toast(TT('8개까지 고를 수 있어요', 'Up to 8')); break; } try { localStorage.setItem('kz_skset', JSON.stringify(L)); } catch (e) {} skSetModal(); break; }
