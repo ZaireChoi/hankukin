@@ -46,7 +46,7 @@
   // ───────── 보상 ─────────
   const maxG = () => { const c = S().chMax || 1; let r = 0; GATE.forEach((v, i) => { if (c >= v) r = i; }); return r; };
   const capR = (r) => WR[Math.min(WR.indexOf(r), maxG())];
-  const MYI = { chal: 'u_chal', pass: 'u_pass', ach: 'u_ach', scout: 'u_scout', rank: 'u_rank' };
+  const MYI = { chal: 'u_chal', pass: 'u_pass', ach: 'u_ach', scout: 'u_scout', rank: 'u_rank', squad: 'u_squad' };
   const ic = (k) => { if (MYI[k]) return `<img class="ico ii" src="img/icon/${MYI[k]}.webp?v=1" alt="" draggable="false">`; try { return LS.ico(k); } catch (e) { return ''; } };
   function rwFix(rw) { const o = Object.assign({}, rw); if (o.wpn) o.wpn = capR(o.wpn); if (o.part) o.part = capR(o.part); return o; }
   function rwHtml(rw, cls = '') {
@@ -87,11 +87,7 @@
   }
   const EL_NM = { fire: '불', water: '물', wind: '바람', elec: '전기', ice: '얼음', light: '빛', dark: '어둠' };
   const dcOpen = () => (S().chMax || 1) >= 3;
-  const dcRw = (ch) => ({
-    join: { core: 150 + 15 * ch },
-    win: { gem: 40, ore: 3 },
-    perfect: { gem: 30, chip: 3 },
-  });
+  const dcRw = (ch) => { const k = weekend() ? 2 : 1; return { join: { core: (150 + 15 * ch) * k }, win: { gem: 40 * k, ore: 3 * k }, perfect: { gem: 30 * k, chip: 3 * k } }; };
   function dcStart() {
     const x = X(); if (!dcOpen()) return LS.toast('2장을 깨면 열립니다');
     if (x.dc.n >= DC_TRIES) return LS.toast('오늘 도전을 모두 했습니다. 내일 다시 오세요');
@@ -141,7 +137,7 @@
     if (lv % 5 === 0) return { gem: 120, part: 'SR' };
     return [{ core: 800 + lv * 40 }, { gem: 40 }, { ore: 8 + Math.floor(lv / 3) }, { chip: 5 + Math.floor(lv / 4) }][lv % 4];
   }
-  function addXp(v) { const x = X(); x.pass.xp = Math.min(PASS_LV * PASS_XP, x.pass.xp + v); }
+  function addXp(v) { const x = X(); x.pass.xp = Math.min(PASS_LV * PASS_XP, x.pass.xp + Math.round(v * (weekend() ? 1.5 : 1))); }
   const passLv = () => Math.floor(X().pass.xp / PASS_XP);
   const passDot = () => { const x = X(), lv = passLv(); for (let i = 0; i < lv; i++) if (!x.pass.got[i]) return true; return false; };
 
@@ -191,6 +187,7 @@
       if (x.raid.best) postScore('lsraid-' + x.raid.wk, x.raid.best * 1000 + Math.min(999, d.kills || 0));
     }
     addXp(xp); save();
+    try { const so = X().so; if (so && so.guild && user()) put('lsgw-' + w.wk, so.guild.id, w.kills || 0).catch(() => { }); } catch (e) { }
     postScore('lsprog', Math.max(0, (S().chMax || 1) - 1) * 1000 + starSum());
     const box = document.getElementById('lsxOver');
     if (box) {
@@ -229,11 +226,147 @@
     } catch (e) { }
   }
 
+  // ───────── 부대 · 친구 (조선좀비 문파·친구와 같은 방식, HANKUKIN 계정 Firestore) ─────────
+  // leaderboards/{보드}/entries/{내 uid} 에 내 줄만 쓰고 누구나 읽는다. 보드 이름(ls = Last Stand):
+  //  lsp 공개 정보(score=레벨*1e6+돌파장*1000+별) · lsc-{코드} 친구 코드 주인 · lsf-{상대uid} 친구 신청(1)/수락(2)
+  //  lsg-{상대uid}-{날} 보급 선물 · lsi-{초대자코드} 초대받아 들어온 사람
+  //  lsguilds 부대 목록(문장*1000+인원, 0=해산) · lsgm-{부대} 대원 · lsgk-{부대}-{uid} 강퇴 · lsga-{부대}-{날} 출석 · lsgw-{주} 주간 공헌(name=부대, score=격파)
+  const GCOST = 5000, G_MAX = 20, FR_MAX = 30, GIFT_MAX = 10, GIFT = { core: 300, gem: 5 };
+  const GEMB = ['fire', 'water', 'wind', 'elec', 'ice', 'light', 'dark'];
+  const GGOAL = [{ n: 20000, rw: { gem: 100, core: 3000 } }, { n: 60000, rw: { gem: 200, ore: 30, chip: 15 } }, { n: 150000, rw: { gem: 400, part: 'SSR' } }];
+  const FB = { db: null, fs: null };
+  async function fb() { if (FB.db) return FB; const appM = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'); const fsM = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js'); const app = appM.getApps()[0]; if (!app) throw new Error('noapp'); FB.fs = fsM; FB.db = fsM.getFirestore(app); return FB; }
+  const nm20 = (s) => String(s || '파일럿').replace(/[|<>&"]/g, '').slice(0, 20);
+  async function put(board, name, score) { const u = user(); if (!u) throw new Error('login'); const { fs: F, db } = await fb(); await F.setDoc(F.doc(db, 'leaderboards', board, 'entries', u.uid), { name: nm20(name), score: Math.max(0, Math.min(99999999, Math.floor(score) || 0)), at: Date.now() }); }
+  async function getE(board, uid) { if (!uid) return null; const { fs: F, db } = await fb(); const s = await F.getDoc(F.doc(db, 'leaderboards', board, 'entries', uid)); return s.exists() ? Object.assign({ id: uid }, s.data()) : null; }
+  async function list(board, n) { const { fs: F, db } = await fb(); const qs = await F.getDocs(F.query(F.collection(db, 'leaderboards', board, 'entries'), F.limit(n || 100))); const out = []; qs.forEach((d) => out.push(Object.assign({ id: d.id }, d.data()))); return out; }
+  const myVal = () => ((S().acc || {}).lv || 1) * 1e6 + Math.min(999, Math.max(0, (S().chMax || 1) - 1)) * 1000 + Math.min(999, starSum());
+  const lvOf = (v) => Math.floor((v || 0) / 1e6), chOf = (v) => Math.floor(((v || 0) % 1e6) / 1000), stOf = (v) => (v || 0) % 1000;
+  const ago = (t) => { if (!t) return '-'; const m = Math.floor((Date.now() - t) / 6e4); return m < 5 ? '접속 중' : m < 60 ? m + '분 전' : m < 1440 ? Math.floor(m / 60) + '시간 전' : Math.floor(m / 1440) + '일 전'; };
+  const newCode = () => Math.random().toString(36).slice(2, 8).toUpperCase().replace(/[^A-Z0-9]/g, 'X').padEnd(6, 'Q');
+  function SO() { const x = X(); const o = (x.so ||= {}); o.code ||= newCode(); o.fr ||= { list: {}, sent: {}, rej: {} }; const d = dayKey(); if (o.gotDay !== d) { o.gotDay = d; o.gotN = 0; o.got = {}; } if (o.giftDay !== d) { o.giftDay = d; o.giftTo = {}; } return o; }
+  let soErr = '';
+  async function soReady() {
+    if (!A()) return onSite() ? 'wait' : 'offline'; const u = user(); if (!u) return 'login';
+    const o = SO();
+    try {
+      await put('lsp', myName(), myVal());
+      if (o.codeOk && o.codeOk !== u.uid) { o.codeOk = null; o.code = newCode(); }
+      if (!o.codeOk) { for (let i = 0; i < 5; i++) { const ex = (await list('lsc-' + o.code, 3)).filter((r) => r.id !== u.uid); if (!ex.length) { await put('lsc-' + o.code, myName(), 1); o.codeOk = u.uid; break; } o.code = newCode(); } save(); }
+      await inviteSettle();
+      if (o.guild) { await put('lsgm-' + o.guild.id, myName(), myVal()); await put('lsgw-' + X().wm.wk, o.guild.id, X().wm.kills || 0); }
+      return 'ok';
+    } catch (e) { soErr = String((e && e.code) || e); console.warn('[lsx social]', e); return 'err'; }
+  }
+  async function codeOwner(code) { const L = (await list('lsc-' + code, 5)).sort((a, b) => (a.at || 0) - (b.at || 0)); return L[0] ? L[0].id : null; }
+  async function inviteSettle() {
+    const o = SO(), me = user().uid;
+    if (o.ref && !o.refDone && o.ref !== o.code) { const inv = await codeOwner(o.ref); if (inv && inv !== me) { await put('lsi-' + o.ref, myName(), 1); await put('lsf-' + inv, myName(), 2); o.fr.list[inv] = 1; give({ gem: 100, core: 2000 }); LS.mail('초대 환영 보급', '친구의 초대로 합류했습니다. 초대한 친구와 자동으로 친구가 되었습니다.', {}); LS.toast('초대 환영 보급 · 결정 100 · 코어 2,000'); } o.refDone = 1; save(); }
+    if (o.codeOk) { const L = (await list('lsi-' + o.code, 40)).filter((r) => r.id !== me); let add = 0; o.invSeen ||= {}; for (const r of L) { if (o.invSeen[r.id]) continue; o.invSeen[r.id] = 1; o.fr.list[r.id] = 1; if ((o.invN || 0) < 10) { o.invN = (o.invN || 0) + 1; add++; } } if (add) { give({ gem: 100 * add, core: 1000 * add }); LS.toast(`초대한 친구 ${add}명 합류 · 결정 ${100 * add}`); } save(); }
+  }
+  const loginCard = (why) => `<div class="lsx-card"><div class="k">로그인이 필요합니다</div><p>구글로 로그인하면 ${why} (조선좀비·ASCEND와 같은 계정)</p><div class="lsx-row"><button class="lsx-btn" data-a="gl">구글로 로그인</button><button class="lsx-btn dk" data-a="el">이메일로 로그인</button></div></div>`;
+  const stBox = (st, why) => (st === 'offline' ? `<div class="lsx-card"><p>hankuk-in.com 에서 열면 부대와 친구를 쓸 수 있습니다.</p></div>` : st === 'wait' ? `<div class="lsx-card"><p>계정 연결을 준비하고 있습니다. 잠시 뒤 다시 열어 주세요.</p></div>` : st === 'login' ? loginCard(why) : `<div class="lsx-card"><p>서버에 연결하지 못했습니다. 잠시 뒤 다시 열어 주세요. (${esc(soErr.replace('firestore/', ''))})</p></div>`);
+  const emb = (i) => `<span class="lsx-emb">${ic('el_' + GEMB[(i | 0) % GEMB.length])}</span>`;
+  const memRow = (m, extra, right) => `<div class="lsx-it"><span class="lsx-av">${esc((m.name || '?')[0])}</span><div class="tx"><b>${esc(m.name || '알 수 없음')}${extra || ''}</b><small>Lv ${lvOf(m.score)} · ${chOf(m.score)}장 돌파 · 별 ${stOf(m.score)} · ${ago(m.at)}</small></div>${right || ''}</div>`;
+
+  async function guildMembers(g) {
+    const rows = (await list('lsgm-' + g.id, 60)).filter((r) => r.score > 0), kicked = {};
+    await Promise.all(rows.map(async (r) => { if (r.id === g.owner) return; try { if (await getE('lsgk-' + g.id + '-' + r.id, g.owner)) kicked[r.id] = 1; } catch (e) { } }));
+    return rows.filter((r) => !kicked[r.id]);
+  }
+  async function vSquad(box, t) {
+    const st = await soReady(); if (!box.isConnected || tab !== t) return;
+    if (st !== 'ok') { box.innerHTML = stBox(st, t === 'friend' ? '친구 코드로 친구를 맺고 날마다 보급을 주고받을 수 있습니다.' : '부대를 세우거나 들어가 대원과 함께 출석 보상과 주간 공헌 목표, 부대 순위를 겨룰 수 있습니다.'); return bindActs(box); }
+    const o = SO(), me = user().uid, wk = X().wm.wk;
+    if (t === 'friend') return vFriend(box, o, me);
+    if (o.guild && t === 'mine') {
+      if (o.guild.owner !== me && await getE('lsgk-' + o.guild.id + '-' + me, o.guild.owner)) { o.guild = null; save(); LS.toast('부대에서 내보내졌습니다'); tab = 'find'; return render(); }
+      if (o.guild.owner !== me) { const gl = await getE('lsguilds', o.guild.owner); if (gl && gl.score === 0) { o.guild = null; save(); LS.toast('부대가 해산되었습니다'); tab = 'find'; return render(); } }
+    }
+    if (t === 'mine' && !o.guild) { tab = 'find'; return render(); }
+    if (t === 'mine') {
+      const g = o.guild, mem = await guildMembers(g), d = dayKey(), att = await list('lsga-' + g.id + '-' + d, 60), attIds = new Set(att.map((a) => a.id).filter((id) => mem.some((m) => m.id === id)));
+      const wkl = (await list('lsgw-' + wk, 500)).filter((r) => r.name === g.id && mem.some((m) => m.id === r.id)), wsum = wkl.reduce((s, r) => s + (r.score || 0), 0);
+      if (g.owner === me) { try { await put('lsguilds', g.id, (g.emb | 0) * 1000 + Math.min(G_MAX, mem.length)); } catch (e) { } }
+      if (!box.isConnected || tab !== t) return;
+      o.gGoal ||= {}; if (o.gGoal.wk !== wk) o.gGoal = { wk, got: {} };
+      const did = attIds.has(me), claimed = o.gAttGot === d, n = attIds.size;
+      const goals = GGOAL.map((q, i) => { const ok = wsum >= q.n, got = o.gGoal.got[i]; return `<div class="${ok ? 'ok' : ''}"><b>대원 격파 ${fmtN(q.n)}</b>${rwHtml(q.rw)}<button class="lsx-btn" data-a="gGoal" data-v="${i}|${wsum}" ${ok && !got ? '' : 'disabled'}>${got ? '받음' : ok ? '받기' : `${fmtN(q.n - wsum)} 남음`}</button></div>`; }).join('');
+      box.innerHTML = `<div class="lsx-card"><div class="lsx-row">${emb(g.emb)}<div><div class="k">내 부대${g.owner === me ? ' · 부대장' : ''}</div><h4>${esc(g.id)}</h4><p>대원 ${mem.length}/${G_MAX} · 이번 주 공헌 ${fmtN(wsum)}기 격파</p></div><span class="lsx-sp"></span><button class="lsx-btn dk" data-a="gLeave">${g.owner === me ? '부대 해산' : '탈퇴'}</button></div></div>
+        <div class="lsx-card"><div class="lsx-row"><div><div class="k">부대 출석 ${n}/${mem.length}</div><p>출석한 대원이 많을수록 모두의 보상이 커집니다 (코어 200 × 출석 인원, 5명 이상이면 결정 20 추가).</p></div><span class="lsx-sp"></span>${!did ? '<button class="go lsx-go" data-a="gAtt">출석</button>' : claimed ? '<button class="lsx-btn dk" disabled>받음</button>' : '<button class="go lsx-go" data-a="gAttGet">보상 받기</button>'}</div></div>
+        <div class="lsx-card"><div class="k">주간 공동 목표 · 대원 모두의 격파 합계 · 바뀌기까지 ${leftTxt(nextMonday())}</div><div class="lsx-chest" style="margin-top:8px">${goals}</div></div>
+        <div class="lsx-card"><div class="k">대원</div><div class="lsx-list" style="margin-top:8px">${mem.sort((a, b) => b.score - a.score).map((m) => { const w = wkl.find((r) => r.id === m.id); return memRow(m, `${m.id === g.owner ? ' <span class="lsx-pill on">부대장</span>' : ''}${attIds.has(m.id) ? ' <span class="lsx-pill">출석</span>' : ''}`, `<small style="color:var(--tx2)">이번 주 ${fmtN((w && w.score) || 0)}기</small>${g.owner === me && m.id !== me ? `<button class="lsx-btn dk" data-a="gKick" data-v="${m.id}">내보내기</button>` : ''}`); }).join('')}</div></div>`;
+      return bindActs(box);
+    }
+    const all = (await list('lsguilds', 200)).filter((g) => g.score > 0);
+    if (t === 'rank') {
+      const wl = await list('lsgw-' + wk, 500), sum = {}; for (const r of wl) if (all.some((g) => g.name === r.name)) sum[r.name] = (sum[r.name] || 0) + (r.score || 0);
+      const R = Object.entries(sum).sort((a, b) => b[1] - a[1]).slice(0, 30); if (!box.isConnected || tab !== t) return;
+      box.innerHTML = `<div class="lsx-card"><div class="k">부대 주간 순위 · ${wk} 주 · 대원 격파 합계</div><div class="lsx-list" style="margin-top:8px">${R.length ? R.map(([n, v], i) => { const g = all.find((x) => x.name === n); return `<div class="lsx-rk ${o.guild && o.guild.id === n ? 'me' : ''}"><b>${i + 1}</b>${emb(g ? Math.floor(g.score / 1000) : 0)}<span>${esc(n)}</span><em>${fmtN(v)}기</em></div>`; }).join('') : '<p>아직 이번 주 기록이 없습니다.</p>'}</div></div>`;
+      return bindActs(box);
+    }
+    const q = o.gq || '', L = all.filter((g) => !q || String(g.name).includes(q)).sort((a, b) => (b.score % 1000) - (a.score % 1000)).slice(0, 40);
+    if (!box.isConnected || tab !== t) return;
+    box.innerHTML = `<div class="lsx-card"><div class="lsx-row"><input class="lsx-in" id="lsxGq" maxlength="12" placeholder="부대 이름 검색" value="${esc(q)}"><button class="lsx-btn dk" data-a="gFind">검색</button></div>
+      <div class="lsx-list" style="margin-top:8px">${L.length ? L.map((g) => `<div class="lsx-it">${emb(Math.floor(g.score / 1000))}<div class="tx"><b>${esc(g.name)}</b><small>대원 ${g.score % 1000}/${G_MAX} · ${ago(g.at)}</small></div>${o.guild ? '' : `<button class="lsx-btn" data-a="gJoin" data-v="${esc(g.name)}|${g.id}" ${g.score % 1000 >= G_MAX ? 'disabled' : ''}>가입</button>`}</div>`).join('') : '<p>부대가 없습니다. 첫 부대를 세워 보세요.</p>'}</div></div>`
+      + (o.guild ? '' : `<div class="lsx-card"><div class="k">부대 세우기 · 코어 ${fmtN(GCOST)}</div><div class="lsx-row" style="margin:8px 0">${GEMB.map((e, i) => `<button class="lsx-embb ${(o.gemb | 0) === i ? 'on' : ''}" data-a="gEmb" data-v="${i}">${ic('el_' + e)}</button>`).join('')}</div><div class="lsx-row"><input class="lsx-in" id="lsxGn" maxlength="12" placeholder="부대 이름 2~12자"><button class="lsx-btn" data-a="gMake">세우기</button></div></div>`);
+    return bindActs(box);
+  }
+  async function vFriend(box, o, me) {
+    let inbox = []; try { inbox = await list('lsf-' + me, 100); } catch (e) { soErr = String(e.code || e); box.innerHTML = stBox('err'); return; }
+    for (const r of inbox) if (r.score === 2 && (o.fr.sent[r.id] || !o.fr.list[r.id])) { o.fr.list[r.id] = 1; delete o.fr.sent[r.id]; }
+    const reqs = inbox.filter((r) => r.score === 1 && !o.fr.list[r.id] && !o.fr.rej[r.id]), ids = Object.keys(o.fr.list).slice(0, FR_MAX), d = dayKey(); save();
+    const prof = {}, gifts = {}; await Promise.all(ids.map(async (id) => { try { prof[id] = await getE('lsp', id); } catch (e) { } try { gifts[id] = await getE('lsg-' + me + '-' + d, id); } catch (e) { } }));
+    if (!box.isConnected || tab !== 'friend') return;
+    const link = `${location.origin}/game/laststand/?ref=${o.code}`;
+    const rows = ids.map((id) => { const p = prof[id] || { name: '?' }, g = gifts[id], got = o.got[id], sent = o.giftTo[id];
+      return memRow(p, '', `${g && !got ? `<button class="lsx-btn" data-a="frTake" data-v="${id}">보급 받기</button>` : ''}<button class="lsx-btn ${sent ? 'dk' : ''}" data-a="frGift" data-v="${id}" ${sent ? 'disabled' : ''}>${sent ? '보냄' : '보급 보내기'}</button>`); }).join('');
+    box.innerHTML = `<div class="lsx-card"><div class="lsx-row"><div><div class="k">내 친구 코드</div><span class="lsx-big" style="letter-spacing:4px">${o.code}</span></div><span class="lsx-sp"></span><input class="lsx-in" id="lsxFc" maxlength="6" placeholder="친구 코드 6자리" style="max-width:170px;text-transform:uppercase"><button class="lsx-btn" data-a="frAdd">친구 신청</button></div>
+      <p>친구에게 하루 한 번 보급(코어 ${GIFT.core} · 결정 ${GIFT.gem})을 보낼 수 있고, 하루 ${GIFT_MAX}번까지 받을 수 있습니다.</p></div>
+      <div class="lsx-card"><div class="lsx-row"><div><div class="k">친구 초대</div><p>이 주소로 들어와 로그인한 친구는 결정 100 · 코어 2,000을 받고, 나도 한 명마다 결정 100 · 코어 1,000을 받습니다(10명까지). 초대한 친구와는 자동으로 친구가 됩니다. 지금까지 ${o.invN || 0}명.</p></div><span class="lsx-sp"></span><button class="lsx-btn" data-a="frLink" data-v="${esc(link)}">초대 주소 복사</button></div></div>
+      ${reqs.length ? `<div class="lsx-card"><div class="k">받은 신청 ${reqs.length}</div><div class="lsx-list" style="margin-top:8px">${reqs.map((r) => `<div class="lsx-it"><span class="lsx-av">${esc((r.name || '?')[0])}</span><div class="tx"><b>${esc(r.name)}</b><small>${ago(r.at)}</small></div><button class="lsx-btn" data-a="frOk" data-v="${r.id}">수락</button><button class="lsx-btn dk" data-a="frNo" data-v="${r.id}">거절</button></div>`).join('')}</div></div>` : ''}
+      <div class="lsx-card"><div class="k">친구 ${ids.length}/${FR_MAX} · 오늘 받은 보급 ${o.gotN}/${GIFT_MAX}</div><div class="lsx-list" style="margin-top:8px">${rows || '<p>아직 친구가 없습니다. 친구 코드나 초대 주소를 주고받아 보세요.</p>'}</div></div>`;
+    bindActs(box);
+  }
+  async function soAct(a, v) {
+    const o = SO(), u = user(); if (!u) return; const me = u.uid;
+    try {
+      if (a === 'frAdd') { const code = ((document.getElementById('lsxFc') || {}).value || '').trim().toUpperCase(); if (code.length < 4) return LS.toast('친구 코드를 넣어 주세요'); if (code === o.code) return LS.toast('내 코드입니다');
+        const id = await codeOwner(code); if (!id) return LS.toast('없는 친구 코드입니다'); if (id === me) return LS.toast('내 코드입니다'); if (o.fr.list[id]) return LS.toast('이미 친구입니다'); if (Object.keys(o.fr.list).length >= FR_MAX) return LS.toast(`친구는 ${FR_MAX}명까지입니다`);
+        const back = await getE('lsf-' + me, id); await put('lsf-' + id, myName(), back ? 2 : 1); if (back) { o.fr.list[id] = 1; LS.toast('친구가 되었습니다'); } else { o.fr.sent[id] = 1; LS.toast('친구 신청을 보냈습니다'); } }
+      else if (a === 'frOk') { if (Object.keys(o.fr.list).length >= FR_MAX) return LS.toast(`친구는 ${FR_MAX}명까지입니다`); await put('lsf-' + v, myName(), 2); o.fr.list[v] = 1; LS.toast('친구가 되었습니다'); }
+      else if (a === 'frNo') { o.fr.rej[v] = 1; LS.toast('신청을 거절했습니다'); }
+      else if (a === 'frGift') { await put('lsg-' + v + '-' + dayKey(), myName(), 1); o.giftTo[v] = 1; LS.toast('보급을 보냈습니다'); }
+      else if (a === 'frTake') { if (o.gotN >= GIFT_MAX) return LS.toast(`오늘은 ${GIFT_MAX}번까지 받을 수 있습니다`); o.got[v] = 1; o.gotN++; give(GIFT); LS.toast(`보급 받음 · 코어 ${GIFT.core} · 결정 ${GIFT.gem}`); }
+      else if (a === 'frLink') { try { await navigator.clipboard.writeText(v); LS.toast('초대 주소를 복사했습니다'); } catch (e) { prompt('초대 주소', v); } return; }
+      else if (a === 'gFind') { o.gq = ((document.getElementById('lsxGq') || {}).value || '').trim(); }
+      else if (a === 'gEmb') { o.gemb = +v; }
+      else if (a === 'gMake') { const id = String((document.getElementById('lsxGn') || {}).value || '').trim().replace(/\s+/g, ' ').replace(/[\/|<>&"#?.\[\]*~]/g, '').slice(0, 12); if (id.length < 2) return LS.toast('부대 이름은 2~12자입니다'); if ((S().core || 0) < GCOST) return LS.toast('코어가 모자랍니다');
+        const taken = (await list('lsguilds', 300)).some((g) => g.name === id && g.score > 0 && g.id !== me); if (taken) return LS.toast('이미 있는 부대 이름입니다');
+        const A0 = A(); if (A0 && A0.claimUnique) { const r = await A0.claimUnique('lsguild-' + id, { g: 'laststand', name: id }); if (r && !r.ok && r.reason === 'taken' && r.owner && r.owner.uid !== me) return LS.toast('이미 있는 부대 이름입니다'); }
+        S().core -= GCOST; o.guild = { id, owner: me, emb: o.gemb | 0 }; save(); await put('lsguilds', id, (o.gemb | 0) * 1000 + 1); await put('lsgm-' + id, myName(), myVal()); LS.toast(`부대 「${id}」를 세웠습니다`); tab = 'mine'; }
+      else if (a === 'gJoin') { const [id, owner] = String(v).split('|'); const mem = (await list('lsgm-' + id, 60)).filter((r) => r.score > 0); if (mem.length >= G_MAX) return LS.toast('대원이 가득 찼습니다'); if (await getE('lsgk-' + id + '-' + me, owner)) return LS.toast('이 부대에는 들어갈 수 없습니다');
+        const gl = await getE('lsguilds', owner); o.guild = { id, owner, emb: gl ? Math.floor(gl.score / 1000) : 0 }; save(); await put('lsgm-' + id, myName(), myVal()); LS.toast(`「${id}」에 들어왔습니다`); tab = 'mine'; }
+      else if (a === 'gAtt') { await put('lsga-' + o.guild.id + '-' + dayKey(), myName(), 1); LS.toast('부대 출석'); }
+      else if (a === 'gAttGet') { if (o.gAttGot === dayKey()) return; const att = await list('lsga-' + o.guild.id + '-' + dayKey(), 60), n = Math.max(1, Math.min(G_MAX, att.length)); const r = { core: 200 * n }; if (n >= 5) r.gem = 20; o.gAttGot = dayKey(); give(r, 10); LS.toast(`부대 출석 보상 · 코어 ${fmtN(r.core)}${r.gem ? ' · 결정 20' : ''}`); }
+      else if (a === 'gGoal') { const [i, ws] = String(v).split('|').map(Number), q = GGOAL[i]; o.gGoal ||= { wk: X().wm.wk, got: {} }; if (ws >= q.n && !o.gGoal.got[i]) { o.gGoal.got[i] = 1; give(q.rw, 30); LS.toast('주간 공동 목표 보상을 받았습니다'); } }
+      else if (a === 'gKick') { if (!confirm('이 대원을 내보낼까요?')) return; await put('lsgk-' + o.guild.id + '-' + v, 'kick', 1); LS.toast('내보냈습니다'); }
+      else if (a === 'gLeave') { const boss = o.guild.owner === me; if (!confirm(boss ? '부대를 해산할까요? 부대 이름은 다시 쓸 수 없습니다.' : '부대에서 나갈까요?')) return; await put('lsgm-' + o.guild.id, myName(), 0); if (boss) await put('lsguilds', o.guild.id, 0); o.guild = null; LS.toast(boss ? '부대를 해산했습니다' : '부대에서 나왔습니다'); tab = 'find'; }
+      save(); render();
+    } catch (e) { console.warn(e); LS.toast('실패했습니다: ' + String((e && e.code) || e).replace('firestore/', '')); }
+  }
+  function bindActs(box) { box.querySelectorAll('[data-a]').forEach((b) => (b.onclick = () => act(b.dataset.a, b.dataset.v))); }
+
+  // ───────── 주말 작전(이벤트): 토·일 일일 도전 보상 2배 · 패스 경험치 1.5배 ─────────
+  const weekend = () => { const g = new Date().getDay(); return g === 0 || g === 6; };
+  const nextWeekend = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); return d; };
+
   // ───────── 화면 ─────────
   const CSS = `
 #lsx-bar{position:absolute;top:8px;left:186px;display:flex;gap:4px;z-index:4}
 #lsx-bar .rl{width:56px;height:50px;font-size:10.5px;gap:3px}
 #lsx-bar .rl .ico{font-size:21px}
+#lsx-bar .lsx-tag{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);padding:1px 5px;font:900 9px var(--ff);font-style:normal;white-space:nowrap;background:linear-gradient(180deg,#ffe08a,#ff9a3a);color:#1a0f08}
 #lsx-bar .rl small{position:absolute;left:0;right:0;bottom:-13px;font:800 9px var(--ff);color:var(--ac);letter-spacing:0;white-space:nowrap}
 @media (min-width:1100px){#lsx-bar{left:50%;transform:translateX(-50%)}#lsx-bar .rl{width:64px;height:58px;font-size:11.5px}#lsx-bar .rl .ico{font-size:24px}}
 @media (max-width:640px){#lsx-bar{position:absolute;left:8px;right:8px;top:calc(max(8px,env(safe-area-inset-top)) + 102px);justify-content:center}#lsx-bar .rl{flex:1;width:auto;height:44px;flex-direction:column;font-size:10px;clip-path:none}}
@@ -283,6 +416,14 @@
 .lsx-rk b{width:34px;font:900 14px var(--ff);color:var(--ac)}.lsx-rk span{flex:1}.lsx-rk em{font-style:normal;font-weight:800}
 .lsx-rk.me{box-shadow:inset 0 0 0 1px var(--ac);background:#f2b54418}
 .lsx-big{font:900 28px var(--ff);color:#fff}
+.lsx-in{flex:1;min-width:120px;padding:9px 12px;border:0;background:#060910;color:#fff;box-shadow:inset 0 0 0 1px var(--ln2);font:700 14px var(--ff);user-select:text;-webkit-user-select:text}
+.lsx-in:focus{outline:none;box-shadow:inset 0 0 0 1px var(--ac)}
+.lsx-av{width:34px;height:34px;display:grid;place-items:center;flex:none;background:#1b2336;box-shadow:inset 0 0 0 1px var(--ln2);font:900 15px var(--ff);color:var(--ac)}
+.lsx-emb{width:40px;height:40px;display:grid;place-items:center;flex:none;background:#0a0e16;box-shadow:inset 0 0 0 1px #f2b54466}.lsx-emb .ico{font-size:28px}
+.lsx-rk .lsx-emb{width:28px;height:28px}.lsx-rk .lsx-emb .ico{font-size:20px}
+.lsx-embb{width:46px;height:46px;border:0;background:#0a0e16;box-shadow:inset 0 0 0 1px var(--ln2);display:grid;place-items:center}.lsx-embb .ico{font-size:30px}.lsx-embb.on{box-shadow:inset 0 0 0 2px var(--ac);background:#f2b5441a}
+.lsx-ev{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:linear-gradient(90deg,#ff9a3a33,#141b2aee 60%);box-shadow:inset 0 0 0 1px #ff9a3a66}
+.lsx-ev b{font:900 14px var(--ff);color:#ffd08a}.lsx-ev span{font-size:12.5px;color:#e6d9c4}.lsx-ev.off{background:linear-gradient(180deg,#141b2aee,#0b0f19ee);box-shadow:inset 0 0 0 1px var(--ln)}.lsx-ev.off b{color:var(--tx2)}
 #lsxOver{display:flex;flex-direction:column;align-items:center;gap:6px;margin:6px 0}
 #lsxOver:empty{display:none}
 .lsx-ovh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
@@ -298,17 +439,18 @@
     { k: 'pass', nm: '패스', ic: 'pass', dot: passDot },
     { k: 'ach', nm: '업적', ic: 'ach', dot: achDot },
     { k: 'idle', nm: '정찰', ic: 'scout', dot: idleDot },
+    { k: 'squad', nm: '부대', ic: 'squad', dot: () => false },
     { k: 'rank', nm: '랭킹', ic: 'rank', dot: () => false },
   ];
   function drawBar() {
     let bar = document.getElementById('lsx-bar');
     if (!bar) { const t = document.getElementById('title'); if (!t) return; bar = el('nav', { id: 'lsx-bar' }); t.appendChild(bar); }
-    bar.innerHTML = BTNS.map((b) => `<button class="rl" data-k="${b.k}">${ic(b.ic)}<span>${b.nm}</span>${b.dot() ? '<i class="dot"></i>' : ''}</button>`).join('');
+    bar.innerHTML = BTNS.map((b) => `<button class="rl" data-k="${b.k}">${ic(b.ic)}<span>${b.nm}</span>${b.dot() ? '<i class="dot"></i>' : ''}${b.k === 'chal' && weekend() ? '<em class="lsx-tag">주말 2배</em>' : ''}</button>`).join('');
     bar.querySelectorAll('button').forEach((b) => (b.onclick = () => openS(b.dataset.k)));
   }
 
-  const TITLES = { chal: ['chal', '도전'], pass: ['pass', '작전 패스'], ach: ['ach', '업적'], idle: ['scout', '정찰 보상'], rank: ['rank', '랭킹 · 계정'] };
-  const TABS = { chal: [['dc', '일일 도전'], ['raid', '주간 토벌'], ['wm', '주간 임무']], rank: [['raid', '주간 토벌'], ['dc', '오늘의 도전'], ['prog', '작전 진행']] };
+  const TITLES = { chal: ['chal', '도전'], pass: ['pass', '작전 패스'], ach: ['ach', '업적'], idle: ['scout', '정찰 보상'], rank: ['rank', '랭킹 · 계정'], squad: ['squad', '부대 · 친구'] };
+  const TABS = { squad: [['mine', '내 부대'], ['find', '부대 찾기'], ['rank', '부대 순위'], ['friend', '친구']], chal: [['dc', '일일 도전'], ['raid', '주간 토벌'], ['wm', '주간 임무']], rank: [['raid', '주간 토벌'], ['dc', '오늘의 도전'], ['prog', '작전 진행']] };
   function openS(k, t) {
     cur = k; tab = t || (TABS[k] ? TABS[k][0][0] : null);
     let s = document.getElementById('lsxS');
@@ -323,11 +465,15 @@
     document.getElementById('lsxTabs').innerHTML = T.map(([k, n]) => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${n}${cur === 'chal' && dots[k] && dots[k]() ? '<i class="dot"></i>' : ''}</button>`).join('');
     document.querySelectorAll('#lsxTabs button').forEach((b) => (b.onclick = () => { tab = b.dataset.t; render(); }));
     const B = document.getElementById('lsxB');
+    if (cur === 'squad') { B.innerHTML = '<div class="lsx-card"><p>불러오는 중…</p></div>'; vSquad(B, tab); return; }
     B.innerHTML = ({ chal: { dc: vDc, raid: vRaid, wm: vWm }[tab], pass: vPass, ach: vAch, idle: vIdle, rank: vRank })[cur]();
     B.querySelectorAll('[data-a]').forEach((b) => (b.onclick = () => act(b.dataset.a, b.dataset.v)));
     if (cur === 'rank') loadRank();
   }
+  const SOA = ['frAdd', 'frOk', 'frNo', 'frGift', 'frTake', 'frLink', 'gFind', 'gMake', 'gJoin', 'gAtt', 'gAttGet', 'gGoal', 'gKick', 'gLeave'];
   function act(a, v) {
+    if (SOA.includes(a)) return soAct(a, v);
+    if (a === 'gEmb') { SO().gemb = +v; document.querySelectorAll('.lsx-embb').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); return; }
     const x = X();
     if (a === 'dc') dcStart();
     else if (a === 'raid') raidStart(+v || 0);
@@ -352,7 +498,8 @@
     const T = dcToday(), C = LS.CHAPTERS[T.ch - 1], R = dcRw(T.ch), left = DC_TRIES - x.dc.n;
     const m = LS.MECHS.find((q) => q.id === S().mech), elB = m && m.el === T.el;
     const got = (k) => (x.dc.got[k] ? '<span class="lsx-pill on">받음</span>' : '');
-    return `<div class="lsx-card"><div class="k">오늘의 작전 · ${T.d}</div><h4>${esc(C.nm)}</h4><p>${C.part}부 ${C.ai + 1}막 ${C.n}장의 전장 · ${esc(C.type || '생존')} 임무 · 오늘의 규칙 두 가지가 붙습니다. 다음 작전까지 ${leftTxt(nextMidnight())}</p>
+    const we = weekend() ? `<div class="lsx-card lsx-ev"><b>주말 작전 진행 중</b><span>오늘 일일 도전 보상 2배 · 패스 경험치 1.5배</span></div>` : `<div class="lsx-card lsx-ev off"><b>주말 작전</b><span>토·일요일에는 일일 도전 보상 2배 · 패스 경험치 1.5배 · 시작까지 ${leftTxt(nextWeekend())}</span></div>`;
+    return we + `<div class="lsx-card"><div class="k">오늘의 작전 · ${T.d}</div><h4>${esc(C.nm)}</h4><p>${C.part}부 ${C.ai + 1}막 ${C.n}장의 전장 · ${esc(C.type || '생존')} 임무 · 오늘의 규칙 두 가지가 붙습니다. 다음 작전까지 ${leftTxt(nextMidnight())}</p>
       <div class="lsx-row" style="margin:8px 0">${T.mods.map((q) => `<span class="lsx-mod"><b>${q.nm}</b><small>${q.ds}</small></span>`).join('')}<span class="lsx-mod" style="border-left-color:var(--cy)"><b>오늘의 계열 · ${EL_NM[T.el]}</b><small>${EL_NM[T.el]} 계열 기체로 나가면 화력 +20%${elB ? ' · 지금 기체 적용' : ''}</small></span></div>
       <div class="lsx-row"><span class="lsx-pill">남은 도전 ${left}/${DC_TRIES}</span><span class="lsx-pill">오늘 최고 ${fmtN(x.dc.best)}점</span><span class="lsx-pill">연속 승리 ${x.dc.streak || 0}일 · 7일마다 추가 보상</span><span class="lsx-sp"></span><button class="go lsx-go" data-a="dc" ${left > 0 ? '' : 'disabled'}>${left > 0 ? '도전 출격' : '내일 다시'}</button></div></div>
       <div class="lsx-card"><div class="k">오늘 받을 수 있는 보상 (하루 한 번씩)</div><div class="lsx-list" style="margin-top:8px">
@@ -444,7 +591,7 @@
   function init() {
     if (LS) return; LS = window.LS; if (!LS) return;
     document.head.appendChild(el('style', { id: 'lsx-css' }, CSS));
-    X(); save(); drawBar(); loadAccount(); for (const k in MYI) { const i = new Image(); i.src = `img/icon/${MYI[k]}.webp?v=1`; }
+    X(); try { const rf = new URLSearchParams(location.search).get('ref'); if (rf && /^[A-Za-z0-9]{6}$/.test(rf)) { const o = SO(); if (!o.ref) o.ref = rf.toUpperCase(); } } catch (e) { } save(); drawBar(); loadAccount(); for (const k in MYI) { const i = new Image(); i.src = `img/icon/${MYI[k]}.webp?v=1`; }
     LS.on('runEnd', onRunEnd);
     LS.on('runStart', () => { const s = document.getElementById('lsxS'); if (s) s.classList.add('hide'); });
     LS.on('lobby', () => { drawBar(); const b = document.getElementById('lsxOver'); if (b) b.innerHTML = ''; const c = document.getElementById('lsxBackC'); if (c) c.remove(); });
