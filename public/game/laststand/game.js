@@ -329,12 +329,17 @@ const _hsl2rgb = (h, s, l) => { const C = (1 - Math.abs(2 * l - 1)) * s, H = (((
   const [R, G, B] = H < 1 ? [C, X, 0] : H < 2 ? [X, C, 0] : H < 3 ? [0, C, X] : H < 4 ? [0, X, C] : H < 5 ? [X, 0, C] : [C, 0, X]; return [(R + m) * 255, (G + m) * 255, (B + m) * 255]; };
 const _paintCache = new Map();
 function repaintTex(tex, P) {
-  if (_paintCache.has(tex)) return _paintCache.get(tex);
+  let PC = _paintCache.get(P); if (!PC) _paintCache.set(P, (PC = new Map())); if (PC.has(tex)) return PC.get(tex);
   const im = tex.image, c = document.createElement('canvas'); c.width = im.width; c.height = im.height; const x = c.getContext('2d'); x.drawImage(im, 0, 0);
   const W = c.width, D = x.getImageData(0, 0, W, c.height), d = D.data;
   for (let i = 0; i < d.length; i += 4) {
     const r = d[i] / 255, gg = d[i + 1] / 255, b = d[i + 2] / 255, mx = Math.max(r, gg, b), mn = Math.min(r, gg, b), l = (mx + mn) / 2, dl = mx - mn;
     const s = dl / (1 - Math.abs(2 * l - 1) || 1); let h = dl < 1e-6 ? 0 : mx === r ? ((gg - b) / dl) % 6 : mx === gg ? (b - r) / dl + 2 : (r - gg) / dl + 4; h *= 60; if (h < 0) h += 360;
+    if (P.sk) { const S = P.sk; let o2;
+      if (dl >= .12 && s > .42 && l > .52) { const hh = S.split ? (h < 90 || h >= 270 ? S.split[0] : S.split[1]) : S.acc[0]; o2 = _hsl2rgb(hh, Math.min(1, Math.max(s * .9, S.acc[1])), Math.min(1, l * S.acc[2])); }
+      else if (l >= S.cut) { let cc = S.lit; if (S.camo) { const px = (i / 4) % W, py = (i / 4 - px) / W, X = px / W, Y = py / c.height, v = Math.sin(X * S.camo.f * 6.3 + 2.1 * Math.sin(Y * S.camo.f * 4.7)) + Math.sin(Y * S.camo.f * 5.9 + 1.7 * Math.sin(X * 9)); if (v > .55) cc = S.camo.c; } o2 = _hsl2rgb(cc[0], cc[1], Math.min(1, l * cc[2])); }
+      else o2 = _hsl2rgb(S.drk[0], S.drk[1], l * S.drk[2]);
+      d[i] = o2[0]; d[i + 1] = o2[1]; d[i + 2] = o2[2]; continue; }
     let out = null, hit = false;
     if (P.swap && dl >= .12) for (const [h0, h1, to, sm, lm] of P.swap) if (h >= h0 && h <= h1) { out = P.swapDark && l < P.swapDark ? [d[i] * .18, d[i + 1] * .18, d[i + 2] * .22] : _hsl2rgb(to, Math.min(1, s * sm), Math.min(1, l * lm)); hit = true; break; }
     if (!out && P.two && dl >= .04 && h >= P.two.h[0] && h <= P.two.h[1]) { const q = l > P.two.t ? P.two.hi : P.two.lo; out = _hsl2rgb(q[0], q[1], Math.min(1, l * q[2])); }
@@ -347,7 +352,7 @@ function repaintTex(tex, P) {
     if (out) { d[i] = out[0]; d[i + 1] = out[1]; d[i + 2] = out[2]; }
   }
   x.putImageData(D, 0, 0);
-  const t = new THREE.CanvasTexture(c); t.flipY = tex.flipY; t.colorSpace = tex.colorSpace; t.wrapS = tex.wrapS; t.wrapT = tex.wrapT; _paintCache.set(tex, t); return t;
+  const t = new THREE.CanvasTexture(c); t.flipY = tex.flipY; t.colorSpace = tex.colorSpace; t.wrapS = tex.wrapS; t.wrapT = tex.wrapT; PC.set(tex, t); return t;
 }
 // ───────── 파일럿 스티커: 비행기 기수 그림처럼 파일럿이 직접 새긴 문양·글귀·태극기. 기체마다 자리와 내용이 다르다
 // 자리(키 대비 비율): 가슴 왼쪽·오른쪽, 어깨(바깥쪽) 왼쪽·오른쪽, 등, 허벅지
@@ -455,6 +460,59 @@ function heroicBody(g) {
   const headY = wp(B.Head).y, minY = new THREE.Box3().setFromObject(g.scene).min.y, bodyH = (headY - minY) * 1.1;
   if (bodyH > 1) g.scene.scale.multiplyScalar(UR_BODY / bodyH);
 }
+// ───────── 도색 스킨: 색 있는 부분(장식·발광선) → acc, 밝은 장갑 → lit, 어두운 부분 → drk. camo = 얼룩 무늬, split = 따뜻한 색/차가운 색을 두 색으로 ─────────
+const SKINS = [
+  { id: 'base', nm: '기본 도색', ds: '기체 본래의 색', cost: 0 },
+  { id: 'desert', nm: '사막 위장', ds: '모래빛 바탕에 갈색 얼룩 무늬', cur: 'core', cost: 3000, sw: ['#cbb48a', '#8a6a44', '#4a3a28'], sk: { acc: [28, .55, .85], lit: [40, .3, .95], drk: [30, .25, .6], cut: .33, camo: { c: [28, .35, .62], f: 3 } } },
+  { id: 'arctic', nm: '설원 위장', ds: '흰 바탕에 옅은 회청색 무늬', cur: 'core', cost: 3000, sw: ['#e8eef4', '#9fb4c8', '#5a6a7a'], sk: { acc: [200, .55, 1.05], lit: [210, .08, 1.22], drk: [212, .14, .85], cut: .3, camo: { c: [210, .18, .85], f: 3 } } },
+  { id: 'navy', nm: '해군 회색', ds: '군함 회색에 노란 경고선', cur: 'core', cost: 5000, sw: ['#8a96a6', '#f2c230', '#2e3642'], sk: { acc: [47, .9, 1.1], lit: [214, .12, .9], drk: [214, .16, .62], cut: .34 } },
+  { id: 'night', nm: '야간 작전', ds: '빛을 먹는 무광 검정에 붉은 선', cur: 'gem', cost: 300, sw: ['#2a2d33', '#e8323a', '#111215'], sk: { acc: [356, .9, .95], lit: [220, .06, .42], drk: [220, .06, .32], cut: .3 } },
+  { id: 'azure', nm: '청룡', ds: '짙은 청색 장갑에 하늘빛 선', cur: 'gem', cost: 500, sw: ['#2f5fd0', '#6fe3ff', '#16203a'], sk: { acc: [192, .95, 1.1], lit: [222, .62, .75], drk: [226, .35, .45], cut: .34 } },
+  { id: 'sakura', nm: '벚꽃', ds: '흰 바탕에 분홍 꽃빛', cur: 'gem', cost: 500, sw: ['#f4e9ee', '#ff7aa8', '#6a4a5a'], sk: { acc: [335, .8, 1.1], lit: [340, .22, 1.2], drk: [330, .2, .62], cut: .3 } },
+  { id: 'gold', nm: '황금 의장', ds: '상아색 장갑에 금빛 장식', cur: 'gem', cost: 600, sw: ['#f3ead2', '#e2b23a', '#5a4420'], sk: { acc: [44, .9, 1.15], lit: [45, .18, 1.22], drk: [38, .45, .6], cut: .32 } },
+  { id: 'crimson', nm: '진홍 에이스', ds: '에이스 파일럿의 붉은 기체, 금빛 선', cur: 'gem', cost: 600, sw: ['#c8202c', '#f2b544', '#1a1012'], sk: { acc: [44, .85, 1.05], lit: [356, .78, .82], drk: [350, .15, .35], cut: .34 } },
+  { id: 'neon', nm: '네온 사이버', ds: '검은 장갑에 청록·자홍 네온', cur: 'gem', cost: 800, sw: ['#15181f', '#22f0ff', '#ff3ad0'], sk: { acc: [185, 1, 1.25], split: [305, 185], lit: [230, .15, .32], drk: [250, .2, .22], cut: .3 } },
+  { id: 'taeguk', nm: '태극', ds: '흰 장갑에 태극의 빨강·파랑', cur: 'gem', cost: 800, sw: ['#f4f5f7', '#d6303c', '#2d5bd0'], sk: { acc: [355, .85, 1], split: [355, 218], lit: [0, 0, 1.25], drk: [220, .25, .45], cut: .3 } },
+];
+for (const S of SKINS) if (S.sk) S.P = { sk: S.sk };
+const SKIN = (k) => SKINS.find((s) => s.id === k) || SKINS[0];
+let skinPrev = null, paintMode = null, paintSel = 'base';
+const skinOwned = (k) => k === 'base' || (save.skins || []).includes(k);
+const skinOf = (id) => (save.skin && save.skin[id]) || 'base';
+function paintOf(id) { const k = skinPrev && skinPrev.id === id ? skinPrev.sk : skinOf(id); return k === 'base' ? PAINT[id] || null : SKIN(k).P; }
+// 이미 불러 둔 기체에 지금 도색을 다시 칠한다(대기 화면의 기체가 바로 바뀐다)
+function applySkin(id) { const g = mechCache[id]; if (!g) return; const P0 = paintOf(id), done = new Set();
+  g.scene.traverse((o) => { if (!o.isMesh) return; for (const m of Array.isArray(o.material) ? o.material : [o.material]) { if (!m || done.has(m) || !m.userData.map0) continue; done.add(m);
+    const t = P0 ? repaintTex(m.userData.map0, P0) : m.userData.map0; m.map = t; m.emissiveMap = t; m.needsUpdate = true; } }); }
+const swHtml = (S, m) => { const c = S.sw || [ELEM[m.el].col, '#c8ccd4', '#2a2f3a']; return `<span class="sw"><i style="background:${c[0]}"></i><i style="background:${c[1]}"></i><i style="background:${c[2]}"></i></span>`; };
+const skinPrice = (S) => (S.cost ? `${ico(S.cur)} ${S.cost.toLocaleString()}` : '무료');
+function buySkin(S) { if (skinOwned(S.id)) return true; if ((save[S.cur] || 0) < S.cost) { flashMsg(S.cur === 'gem' ? '결정이 부족합니다' : '코어가 부족합니다'); return false; }
+  save[S.cur] -= S.cost; (save.skins ||= []).push(S.id); persist(); sfx.lvl(); screenFlash(S.sw ? S.sw[1] : '#ffffff', .3, .5); return true; }
+function wearSkin(id, k) { (save.skin ||= {})[id] = k; if (skinPrev && skinPrev.id === id) skinPrev = null; persist(); applySkin(id); }
+function previewSkin(id, k) { skinPrev = k === skinOf(id) ? null : { id, sk: k }; applySkin(id); }
+function drawPaint(m, st) {
+  const cur = skinOf(m.id), S = SKIN(paintSel), own = skinOwned(S.id);
+  $('#mdet').innerHTML = `<div class="pmh"><button class="bs sm" id="pmBack">‹ 돌아가기</button><span><small>도색</small><b>${m.nm}</b></span></div>`
+    + `<div class="pmg">${SKINS.map((k) => `<button class="pmc ${k.id === paintSel ? 'on' : ''} ${k.id === cur ? 'cur' : ''}" data-k="${k.id}" title="${k.nm}">${swHtml(k, m)}<small>${k.nm}</small>${skinOwned(k.id) ? (k.id === cur ? '<em>착용</em>' : '') : '<i class="lk">🔒</i>'}</button>`).join('')}</div>`
+    + `<div class="pmd">${swHtml(S, m)}<span><b>${S.nm}</b><small>${S.ds}</small><small class="pr">${own ? '보유 · 모든 기체에 쓸 수 있음' : skinPrice(S) + ' · 한 번 사면 모든 기체에 사용'}</small></span></div>`
+    + `<div class="pmb2">${!st ? '<button class="bs" disabled>기체를 가지면 입힐 수 있습니다</button>' : S.id === cur ? '<button class="bs" disabled>지금 입은 도색</button>' : own ? '<button class="bp" id="pmWear">이 도색 입히기</button>' : `<button class="bp" id="pmBuy" ${(save[S.cur] || 0) < S.cost ? 'disabled' : ''}>구매하고 입히기 · ${skinPrice(S)}</button>`}</div>`
+    + `<p class="pmn">고르면 가운데 기체에 바로 칠해 봅니다. 돌아가면 입은 도색으로 돌아옵니다.</p>`;
+  const back = () => { paintMode = null; if (skinPrev) { skinPrev = null; applySkin(m.id); } drawMdet(m, st); };
+  $('#pmBack').onclick = back;
+  $('#mdet').querySelectorAll('.pmc').forEach((b) => (b.onclick = () => { paintSel = b.dataset.k; previewSkin(m.id, paintSel); drawPaint(m, st); }));
+  if ($('#pmWear')) $('#pmWear').onclick = () => { wearSkin(m.id, S.id); sfx.lvl(); drawPaint(m, st); };
+  if ($('#pmBuy')) $('#pmBuy').onclick = () => { if (buySkin(S)) { wearSkin(m.id, S.id); drawTitle(); drawPaint(m, st); } };
+}
+function drawShopSkin() {
+  const m = MECH(save.mech);
+  $('#shopSkin').innerHTML = `<p class="snote">도색은 한 번 사면 <b>모든 기체</b>에 쓸 수 있습니다 · 「입어 보기」를 누르면 대기 화면에서 지금 기체(<b>${m.nm}</b>)에 칠해 봅니다 · 능력치는 바뀌지 않습니다</p>`
+    + `<div class="sks2">${SKINS.filter((S) => S.cost).map((S) => { const own = skinOwned(S.id);
+      return `<div class="skn ${own ? 'own' : ''}"><div class="skp" style="--a:${S.sw[0]};--b:${S.sw[1]};--c:${S.sw[2]}"><i></i><i></i><i></i></div><b>${S.nm}</b><small>${S.ds}</small>`
+        + `<div class="skbt"><button class="bs" data-try="${S.id}">입어 보기</button>${own ? '<button class="bs" disabled>보유</button>' : `<button class="bp" data-buy="${S.id}" ${(save[S.cur] || 0) < S.cost ? 'disabled' : ''}>${skinPrice(S)}</button>`}</div></div>`; }).join('')}</div>`;
+  $('#shopSkin').querySelectorAll('[data-try]').forEach((b) => (b.onclick = () => { $('#gacha').classList.add('hide'); viewMech = save.mech; paintMode = save.mech; paintSel = b.dataset.try; previewSkin(save.mech, paintSel); drawTitle(); }));
+  $('#shopSkin').querySelectorAll('[data-buy]').forEach((b) => (b.onclick = () => { const S = SKIN(b.dataset.buy); if (buySkin(S)) { flashMsg(`「${S.nm}」 도색을 샀습니다 · 기체 정보창의 도색에서 입히세요`); drawShopHead(); drawShopSkin(); drawTitle(); } }));
+}
+
 const MODEL_FILE = { astra: 'm_guardian' };   // 다른 기체의 몸을 빌려 쓰는 기체
 async function loadMech(id) {
   if (mechCache[id]) return mechCache[id];
@@ -463,7 +521,7 @@ async function loadMech(id) {
   { g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene), h = bb.max.y - bb.min.y; if (h > 0 && Math.abs(h - 19) > .5) g.scene.scale.multiplyScalar(19 / h); }
   if (MECH(id).rar === 'UR') heroicBody(g);
   g.scene.traverse((o) => {
-    if (o.isMesh) { o.frustumCulled = false; const m = o.material; if (PAINT[id] && m.map) m.map = repaintTex(m.map, PAINT[id]); m.metalness = Math.min(m.metalness, .15); m.roughness = Math.max(m.roughness, .6); m.metalnessMap = null; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 1.05; m.color.setScalar(1.6); m.needsUpdate = true; }
+    if (o.isMesh) { o.frustumCulled = false; const m = o.material; if (m.map && !m.userData.map0) m.userData.map0 = m.map; { const P0 = paintOf(id); if (P0 && m.map) m.map = repaintTex(m.userData.map0, P0); } m.metalness = Math.min(m.metalness, .15); m.roughness = Math.max(m.roughness, .6); m.metalnessMap = null; m.emissive = new THREE.Color(0xffffff); m.emissiveMap = m.map; m.emissiveIntensity = 1.05; m.color.setScalar(1.6); m.needsUpdate = true; }
   });
   try { await applyMarks(g, id); } catch (e) { console.warn('marks', e); }
   // 달리기 동작에 섞인 전진 이동을 지워 제자리에서 뛰게 한다
@@ -2997,7 +3055,7 @@ const GHOSTS = [];
 function spawnGhost() {
   if (!P.wrap || GHOSTS.length > 8 || G.state !== 'play') return;
   const root = P.spin.children[0]; if (!root) return; root.updateMatrixWorld(true);
-  const col = (ELEM[P.el] || {}).hex || 0x7fe6ff, mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+  const col = new THREE.Color((ELEM[P.el] || {}).hex || 0x7fe6ff).offsetHSL(0, .12, -.08), mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .46, depthWrite: false, toneMapped: false });
   const grp = new THREE.Group(); grp.matrixAutoUpdate = false;
   const skins = []; root.traverse((o) => { if (o.isSkinnedMesh && o.visible) skins.push(o); });
   const done = new Map();
@@ -3014,7 +3072,7 @@ function spawnGhost() {
   scene.add(grp); GHOSTS.push({ grp, mat, t: 0, T: .34 });
 }
 function updGhosts(dt) {
-  for (let i = GHOSTS.length - 1; i >= 0; i--) { const o = GHOSTS[i]; o.t += dt; const k = o.t / o.T; o.mat.opacity = .5 * Math.max(0, 1 - k) ** 1.5;
+  for (let i = GHOSTS.length - 1; i >= 0; i--) { const o = GHOSTS[i]; o.t += dt; const k = o.t / o.T; o.mat.opacity = .46 * Math.max(0, 1 - k) ** 1.4;
     if (k >= 1) { scene.remove(o.grp); o.mat.dispose(); GHOSTS.splice(i, 1); } }
 }
 // ── 로봇다운 몸놀림: 달릴 때 상체·머리는 덜 흔들리고(단단한 몸통), 팔은 덜 휘두른다(무기를 앞에 들고)
@@ -3560,6 +3618,8 @@ const ULT_DS = { bladefall: '하늘에서 빛의 검 22자루가 떨어진다', 
   mstorm: '미사일 24발을 한꺼번에 쏜다', execute: '가장 강한 적 9기를 차례로 처형한다', allrange: '비트가 주변 적 36기를 동시에 공격한다', nova: '거대한 빛 폭발 두 번과 내구 30% 회복', descent: '빛기둥 9개가 내리꽂히고 내구 50% 회복' };
 let skSel = 'r';
 function drawMdet(m, st) {
+  if (paintMode && paintMode !== m.id) { paintMode = null; if (skinPrev) { const pid = skinPrev.id; skinPrev = null; applySkin(pid); } }
+  if (paintMode === m.id) return drawPaint(m, st);
   const R0 = rarOf(m), X = ELEM[m.el], an = ARM_NAME[m.prim], pm = st ? powMul(m) : R0.mul, w = wOf(m.id), lv = save.mlv[m.id] || 0;
   const rel = w && w.rel ? ` · 해방 「${REL[w.rel].nm}」` : '';
   const T = [
@@ -3573,6 +3633,7 @@ function drawMdet(m, st) {
   $('#mdet').style.setProperty('--rc', R0.col); $('#mdet').style.setProperty('--ec', X.col);
   $('#mdet').innerHTML = `<div class="mtop"><span class="rar">${R0.nm}</span><span class="chip">${ico(CLS[m.cls].k)}${m.cls}</span><span class="chip el">${ico('el_' + m.el)}${X.nm}</span>${st ? `<span class="stars">${'★'.repeat(st)}<s>${'★'.repeat(5 - st)}</s></span>` : '<span class="stars lk">미보유</span>'}</div>`
     + `<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
+    + `<button class="pntb" id="toPaint">${swHtml(SKIN(skinOf(m.id)), m)}<span><small>도색</small><b>${SKIN(skinOf(m.id)).nm}</b></span><em>바꾸기 ›</em></button>`
     + `<div class="st4">${bar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm))}${bar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm))}${bar('속도', m.spd, 1.3, Math.round(100 * m.spd))}${bar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))}</div>`
     + `<div class="sk4">${T.map((t) => `<button class="skb ${t.k === sel.k ? 'on' : ''}" data-k="${t.k}" style="--ec:${t.col}"><span class="skt">${ico2(t.ic, t.col)}</span><small>${t.lb}</small></button>`).join('')}</div>`
     + `<div class="skd" style="--ec:${sel.col}"><b>${sel.nm}</b><small>${sel.sub}</small><p>${sel.ds}</p></div>`
@@ -3581,6 +3642,7 @@ function drawMdet(m, st) {
     + (st ? '' : `<div class="buy"><button class="bp" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()}<small>코어로 구매</small></button><button class="bs" id="toGacha">${ico('shop')}<small>상점에서 모집</small></button></div>`);
   $('#mdet').querySelectorAll('.skb').forEach((b) => b.addEventListener('click', () => { skSel = b.dataset.k; drawMdet(m, st); }));
   if ($('#toArms')) $('#toArms').onclick = () => openArsenal('wpn');
+  $('#toPaint').onclick = () => { paintMode = m.id; paintSel = skinOf(m.id); drawMdet(m, st); };
   if (!st) { $('#unlock').onclick = () => { if (save.core < m.cost) return; save.core -= m.cost; save.own[m.id] = 1; save.mech = m.id; persist(); sfx.lvl(); screenFlash(R0.col, .35, .6); if (lobby.on) enterLobby(); drawTitle(); }; $('#toGacha').onclick = () => openGacha('mech'); }
 }
 function mechOrder() { return MECHS.slice().sort((a, b) => (!!starOf(b.id) - !!starOf(a.id)) || RAR_ORDER.indexOf(a.rar) - RAR_ORDER.indexOf(b.rar)); }
@@ -3626,9 +3688,9 @@ let shopTab = 'mech';
 function drawShopHead() {
   $('#gTitle').innerHTML = `${ico('shop')}상점`;
   $('#gCur').innerHTML = `<span class="cur">${curHtml('core')}</span><span class="cur gem">${curHtml('gem')}</span>${curMini('ore')}${curMini('chip')}`; bindCur($('#gCur'));
-  $('#gTabs').innerHTML = [['mech', '기체 모집'], ['wpn', '무기 보급'], ['goods', '재화'], ['gem', '결정 얻기']].map(([k, n]) => `<button data-t="${k}" class="${shopTab === k ? 'on' : ''}">${n}</button>`).join('');
+  $('#gTabs').innerHTML = [['mech', '기체 모집'], ['wpn', '무기 보급'], ['skin', '도색'], ['goods', '재화'], ['gem', '결정 얻기']].map(([k, n]) => `<button data-t="${k}" class="${shopTab === k ? 'on' : ''}">${n}</button>`).join('');
   $('#gTabs').querySelectorAll('button').forEach((b) => (b.onclick = () => { shopTab = b.dataset.t; drawGacha(); }));
-  for (const [k, id] of [['mech', 'shopMech'], ['wpn', 'shopWpn'], ['goods', 'shopGoods'], ['gem', 'shopGem']]) $('#' + id).classList.toggle('hide', shopTab !== k);
+  for (const [k, id] of [['mech', 'shopMech'], ['wpn', 'shopWpn'], ['skin', 'shopSkin'], ['goods', 'shopGoods'], ['gem', 'shopGem']]) $('#' + id).classList.toggle('hide', shopTab !== k);
 }
 // ═════════ v27 메타(조선좀비 방식): 계정·우편·무기 7등급·보급·재화 상점·스킬 강화 ═════════
 if (window.GICO) Object.assign(window.GICO, {
@@ -4144,7 +4206,7 @@ function doPull(n) {
   drawGacha(); drawTitle();
 }
 function drawGacha() {
-  if (shopTab === 'cpn') { $('#gacha').classList.add('hide'); openProf('cpn'); return; } drawShopHead(); if (shopTab === 'wpn') drawShopWpn(true); if (shopTab === 'goods') drawShopGoods(); if (shopTab === 'gem') drawShopGem();
+  if (shopTab === 'cpn') { $('#gacha').classList.add('hide'); openProf('cpn'); return; } drawShopHead(); if (shopTab === 'wpn') drawShopWpn(true); if (shopTab === 'goods') drawShopGoods(); if (shopTab === 'skin') drawShopSkin(); if (shopTab === 'gem') drawShopGem();
   $('#pull1').innerHTML = `<b>1회 모집</b><small>${ico('gem')} ${GACHA.one}</small>`; $('#pull10').innerHTML = `<b>10회 모집</b><small>${ico('gem')} ${GACHA.ten} · 영웅 이상 1개 확정</small>`;
   $('#pull1').disabled = save.gem < GACHA.one; $('#pull10').disabled = save.gem < GACHA.ten;
   const left = GACHA.pity - (save.pity.n || 0);
