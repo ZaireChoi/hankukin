@@ -62,7 +62,7 @@
   /* 난이도: 3막 공식을 전체 장 번호 g로 이어서(90장 ≈ 2.3배 → 300장 ≈ 11배) */
   D.actG = (N, n) => 30 * (N - 1) + n;
   /* 난이도(11-28): 3막 끝(a3 공식)에서 이어서 막마다 체력 ×1.3, 공격 ×1.18 (장비 단계 +35%/30장과 맞춤) — 10막 끝 체력 약 12배. 막별 보정 D.ACTK[N], 장별 D.ACTHP[전체장] */
-  D.ACTK = D.ACTK || { 4: 2.1, 5: 2.2, 6: 2.1, 7: 2, 8: 2.1, 9: 1.95, 10: 2 }   /* 몹 사다리(?v=20261128i) 뒤 시뮬: x2.0 = 10/16 승, x2.6 = 3/16 */;
+  D.ACTK = D.ACTK || { 4: 2.4, 5: 2.5, 6: 2.4, 7: 2.2, 8: 2.4, 9: 2.2, 10: 2 }   /* 몹 사다리+막 재시작(11-28) 뒤 시뮬: x2.0~2.2 = 19/24 승(쉬움) → x1.15 */;
   const mOf = (N, n) => D.actG(N, n) - 60;
   D.actK = (N, n) => { if (N === 3 && D.a3K) return D.a3K(n); const m = mOf(N, n); return { hp: 1, rate: Math.min(2.4, 1.72 + 0.004 * (m - 30)), dmg: 2.97 * Math.pow(1.12, (m - 30) / 30) * (1.08 - 0.007 * (n - 1)) }; };   /* 막 첫 장은 조금 세게, 막 끝 장은 조금 약하게(막 끝 결전·장비 단계 상승 고려) */
   D.ACTHP = D.ACTHP || {};
@@ -91,6 +91,8 @@
     const H = (id, en) => ['img/ui/hero_' + id + '.webp?v=4', en, '#8fd4ff']; const P = { '처용': ['img/ui/hero_face.webp', 'Cheoyong', '#ffcf6a'], '이순신': H('yisunsin', 'Admiral Yi'), '도깨비': H('dokkaebi', 'Dokkaebi'), '해태': H('haetae', 'Haetae'), '구미호': H('gumiho', 'Nine-Tailed Fox'), '바리공주': H('bari', 'Princess Bari'), '삼족오': H('samjoko', 'Samjogo'), '대장금': H('daejanggeum', 'Dae Jang-geum'), '원효': H('wonhyo', 'Wonhyo'), '홍길동': H('honggildong', 'Hong Gil-dong'), '장영실': ['img/story/op2.webp', 'Jang Yeong-sil', '#cfe8b0'], '엘라': ['img/story/op2.webp', 'Ella', '#b8f0c8'], '레온': ['img/story/op2.webp', 'Leon', '#c8d8ff'], '불사조': ['img/story/op2.webp', 'Phoenix', '#ffb070'], '아이랑': ['img/story/op2.webp', 'Airang', '#ffe0a0'], '견우': ['img/story/op2.webp', 'The Herdsman', '#a8d8ff'], '직녀': ['img/story/op2.webp', 'The Weaver', '#ffc8e8'], '강림 도령': ['img/story/op2.webp', 'Gangrim', '#d0c0ff'], '염라대왕': ['img/story/op2.webp', 'King Yeomra', '#ffd0a0'], '꼬물이': ['img/story/op2.webp', 'Kkomul', '#ffb8f0'], '아수라': ['img/story/op2.webp', 'Asura', '#ff9a9a'], '뇌공': ['img/story/op3.webp', 'Thunder Lord', '#bfe0ff'], '모르간': ['img/story/op3.webp', 'Morgan', '#9fd8b8'], '백성': ['img/story/op2.webp', 'Villager', '#cfe8b0'] }; P[nm[0]] = ['img/story/op3.webp', nm[1], ACT[N].col];
     return L.map(l => { const p = P[l[0]] || ['img/story/op2.webp', l[0], '#cfe8b0']; return ['x', l[1], l[2] || l[1], [p[0], EN ? p[1] : l[0], p[2]]]; }); };
 })();
+
+
 
 
 
