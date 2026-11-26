@@ -724,6 +724,11 @@ img.ico.ii.sq{object-fit:cover;border-radius:18%;box-shadow:0 0 0 1px #ffffff22}
 @media (max-width:1100px){.eqw{grid-template-columns:220px minmax(0,1fr)}.eqw>.wdet{grid-column:1 / -1}}
 @media (max-width:700px){.eqw{grid-template-columns:1fr}.doll{grid-template-columns:repeat(6,1fr)}.sl small{font-size:8.5px}.its{max-height:none}}
 
+/* 파일럿 무전 */
+#radio{position:fixed;left:12px;top:118px;display:flex;align-items:center;gap:10px;max-width:min(420px,70vw);padding:7px 14px 7px 7px;background:linear-gradient(90deg,#0b1424f2,#0b142400);border-left:3px solid #6fe3ff;color:#e8f6ff;font-family:var(--ff);pointer-events:none;opacity:0;transform:translateX(-14px);transition:opacity .18s,transform .18s;z-index:4}
+#radio.on{opacity:1;transform:none}#radio img{width:44px;height:44px;object-fit:cover;flex:0 0 auto;box-shadow:0 0 0 1px #6fe3ff88;filter:saturate(.9) contrast(1.05)}
+#radio small{display:block;font:800 10.5px var(--ff);letter-spacing:1px;color:#6fe3ff}#radio small::before{content:'◉ 무전 · ';color:#ff6a5a}#radio b{display:block;font:800 14.5px/1.35 var(--ff);text-shadow:0 1px 3px #000}
+@media (max-width:640px){#radio{top:96px}#radio img{width:36px;height:36px}#radio b{font-size:13px}}
 </style>
 </head>
 <body>
@@ -741,7 +746,7 @@ img.ico.ii.sq{object-fit:cover;border-radius:18%;box-shadow:0 0 0 1px #ffffff22}
   <div id="banner"></div>
 <div id="misArrow" class="hide"><i></i><b></b></div>
   <div id="hpwrap"><div id="pfp"></div><div id="hpcol"><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt" class="num"></div></div></div>
-  <button id="bPause" aria-label="일시정지"></button><button id="bSkMode" aria-label="스킬 자동/수동"></button>
+  <button id="bPause" aria-label="일시정지"></button><div id="radio" aria-live="polite"></div><button id="bSkMode" aria-label="스킬 자동/수동"></button>
   <div id="btns">
     <button class="rb sm el" id="bElem" aria-label="계열 기술 (R)" title="계열 기술 (R)"><span></span><i></i><b></b><kbd>R</kbd></button>
 <button class="rb sm el" id="bAuto" aria-label="스킬 (E)" title="스킬 (E)"><span></span><i></i><b></b><kbd>E</kbd></button>
@@ -803,6 +808,6 @@ img.ico.ii.sq{object-fit:cover;border-radius:18%;box-shadow:0 0 0 1px #ffffff22}
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
 <script src="lib/gicons.js?v=1"></script>
-<script type="module" src="game.js?v=29"></script>
+<script type="module" src="game.js?v=30"></script>
 </body>
 </html>
