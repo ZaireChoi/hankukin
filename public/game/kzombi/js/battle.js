@@ -974,7 +974,7 @@ function setTrait() {
   const k = D.traitOf ? D.traitOf(a, G.ch) : null; if (!k || !D.TRAITS[k]) return; const T = D.TRAITS[k]; G.trait = k; G.trT = T;
   if (T.noReroll) G.rerolls = 0;
   if (T.pSp) G.player.sp *= T.pSp;
-  setTimeout(() => { if (G && G.trait === k) G.banner = { s: (window.IS_EN ? 'Chapter trait · ' + T.en : '장 특성 · ' + T.n), sub: (window.IS_EN ? T.de : T.d), t: 3.2, kind: 'elite' }; }, 1200);
+  setTimeout(() => { if (G && G.trait === k) G.banner = { s: (window.IS_EN ? 'Chapter trait · ' + T.en : '장 특성 · ' + T.n), sub: (window.IS_EN ? T.de : T.d), t: 3.2, kind: 'elite' }; }, (G.cfg && G.cfg.storyLine ? 3600 : 1200));
 }
 const LG_CARDS = [
   { id: 'lg_allup', n: '천지개벽', icon: 'img/skills/power.webp', d: () => '가진 공격 기술이 모두 한 단계 오른다' },
@@ -3074,7 +3074,7 @@ const JZB = window.JZB = {
   testUlt: () => { if (G) { G.ult = 0; G.cutin = null; useUlt(); } return 1; },   /* 시험용 */
   testFreeze: on => { paused = !!on; return paused; }, /* 시험용: 터지는 순간 멈추고 찍기(사용자 흐름에서는 안 씀) */
   testLevelUp: o => { if (!G) return 0; o = o || {}; if (o.build) { const em = PADS.map((q, i) => i).filter(i => !G.turrets.some(t => t.pad === i)); if (em.length) { G.gold += 9999; G._fb = 1; build(em[0], o.build); G._fb = 0; } } if (o.sk) G.sk = Object.assign({}, o.sk); if (o.legend) G.lgForce = 1; if (o.nm) G.nm = true; openLevel(); return 1; },   /* 시험용(화면 확인), 사용자 흐름에서는 안 불림 */
-  start: cfg => { newGame(cfg); try { setTrait(); } catch (e) {} try { kiunInit(); } catch (e) {} try { loadSkSet(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
+  start: cfg => { newGame(cfg); try { if (cfg && cfg.storyLine) setTimeout(() => { if (G && G.phase !== 'win' && G.phase !== 'lose') G.banner = { s: cfg.storyName || '', sub: cfg.storyLine, t: 3.1, kind: 'win' }; }, 300); } catch (e) {} /* 판 시작 장 한 줄 이야기(세계관 11-29) */ try { setTrait(); } catch (e) {} try { kiunInit(); } catch (e) {} try { loadSkSet(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
