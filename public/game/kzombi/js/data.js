@@ -162,7 +162,7 @@ D.layoutOf = function (ch) {
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
 /* 2막 악몽 배율: 노멀 30장 클리어 계정 기준. 1장에서 시작해 30장까지 오른다 */
 /* 11-27 시뮬(돈 다 쓰는 계정): 옛 곡선은 1막 장별 증가 × 악몽 배율이 겹쳐 악몽 15장부터 못 깸 → 악몽 n장 마지막 밤 = 1막 30장 마지막 밤 × (1.3 + 0.03(n-1)) × D.NMHP[n] */
-D.nmK = ch => { const L = c => { const o = D.nightsOf(c); return o[o.length - 1].hp; }; return { hp: L(30) * (1.3 + 0.03 * (ch - 1)) / Math.max(0.01, L(ch)) * (D.NMHP && D.NMHP[ch] || 1), rate: 1.3 + 0.008 * (ch - 1), dmg: 1.2 + 0.03 * (ch - 1) }; };
+D.nmK = ch => { const L = c => { const o = D.nightsOf(c); return o[o.length - 1].hp; }; return { hp: L(30) / (D.CH1UP30 || 1) * (1.3 + 0.03 * (ch - 1)) / Math.max(0.01, L(ch)) * (D.NMHP && D.NMHP[ch] || 1), rate: 1.3 + 0.008 * (ch - 1), dmg: 1.2 + 0.03 * (ch - 1) }; };
 D.nightsOf = function (ch) {
   const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.34 * (ch - 1) + 0.004 * (ch - 1) * (ch - 1); /* 시뮬 조정(11-25): 장별 체력 증가를 완만하게 */
   for (let i = 0; i < C.nights; i++) {
@@ -303,6 +303,7 @@ D.SKILLS = [
   /* 장별 체력 보정 (시뮬로 맞춤) */
   D.CHHP = Object.assign(D.CHHP || {}, {"1":0.8,"2":0.617,"3":1.35,"4":1.576,"5":2.942,"6":1.66,"7":0.681,"8":0.581,"9":0.28,"10":0.503,"11":0.44,"12":0.41,"13":0.38,"14":0.4,"15":0.533,"16":0.428,"17":0.476,"18":0.55,"19":0.46,"20":0.467,"21":0.429,"22":0.406,"23":0.32,"24":0.269,"25":0.282,"26":0.342,"27":0.279,"28":0.328,"29":0.348,"30":0.439});   /* 시뮬(11-25 진행 계정) 맞춤 */
 /* 건물 수 제한 뒤 다시 맞춤(11-27 시뮬: 앞 장 너무 쉬움, 25~30장 어려움) */ { const M = c => c <= 3 ? 1 : c <= 5 ? 1.9 : c <= 9 ? 1.25 : c <= 12 ? 1.65 : c <= 14 ? 1.0 : c <= 17 ? 1.1 : c <= 21 ? 1 : c <= 26 ? 0.85 : 0.85; for (let c = 1; c <= 30; c++) if (D.CHHP[c]) D.CHHP[c] = +(D.CHHP[c] * M(c)).toFixed(3); }
+/* 1막 강화(11-27 사용자 여러 번 '쉽다', 부모 승인): 4~9장 ×1.1, 10~17장 ×1.2, 18~24장 ×1.0, 25~30장 ×1.08(시뮬: 20·30장 ×1.2 는 0/4, 20장 ×1.08 은 1/4). 악몽·3막은 옛 1막 30장 기준을 유지하려고 CH1UP30 으로 나눔 */ { const U = c => c <= 3 ? 1 : c <= 9 ? 1.1 : c <= 17 ? 1.2 : c <= 24 ? 1 : 1.08; for (let c = 1; c <= 30; c++) if (D.CHHP[c]) D.CHHP[c] = +(D.CHHP[c] * U(c)).toFixed(3); D.CH1UP30 = U(30); }
   /* UP_SOFT: 상위 종은 첫 밤에 나오지 않고 둘째 밤엔 절반만, 공격력은 0.6배 */
   const UP = new Set(Object.values(D.VAR_OF || {})); UP.forEach(k => { const e = D.EN[k]; if (e && !e.__soft) { e.dmg = Math.round(e.dmg * 0.6); e.__soft = 1; } });
   const nf = D.nightsOf; D.nightsOf = function (ch) { const o = nf(ch), k = D.CHHP[ch] || 1; o.forEach((n, i) => { if (k !== 1) n.hp *= k; if (i <= 1 && n.mix) for (const t in n.mix) if (UP.has(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.5; } if (i === 0 && UP.has(n.base)) n.base = 'peasant'; /* 첫 밤 큰 무기 좀비 완화(11-25 시뮬: 25장 첫 밤 사무라이가 사당 파괴) */ const EB = t => D.EN && D.EN[t] && D.EN[t].big; if (i <= 1 && n.mix) for (const t in n.mix) if (EB(t)) { if (i === 0) delete n.mix[t]; else n.mix[t] *= 0.6; } if (i === 0 && EB(n.base)) n.hp *= 0.72; }); return o; };

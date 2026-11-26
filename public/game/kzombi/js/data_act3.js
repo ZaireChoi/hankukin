@@ -42,7 +42,7 @@
   D.ACT3 = A.map((r, i) => ({ n: i + 1, gn: r[0], name: r[1], nameEn: r[2], theme: r[3], boss: r[4], story: r[5], storyEn: r[6], tint: T, nights: i < 10 ? 5 : 6, act: 3 }));
   /* 숙적 수귀 제독: 7 인사, 14·22 난입 후 퇴장, 30 결전(역신 nem 코드 재사용, 이름·색만 바꿈) */
   D.NEM_ACT = Object.assign(D.NEM_ACT || {}, {
-    3: { key: 'yeoksin', tint: 'seaBoss', name: '수귀 제독', nameEn: 'Admiral Drowned', ch: { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } },
+    3: { key: 'suguijedok', tint: '', name: '수귀 제독', nameEn: 'Admiral Drowned', ch: { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } },
       lines: { meet: ['산 자가 내 바다에 들어오다니. 크크크…', 'The living dare enter my sea. Heh heh…'], again: ['또 왔구나, 탈쟁이. 이번엔 바닥까지 끌고 가 주마.', 'Back again, masked one? This time I drag you to the bottom.'], peek: ['바다는 죽은 자의 것이다.', 'The sea belongs to the dead.'], r14: ['…물결이 너를 삼킬 날이 온다.', '…The tide will swallow you yet.'], r22: ['서쪽의 주인께서 기다리신다…', 'The master in the west awaits…'] } },
     2: { key: 'yeoksin', tint: 'dream', name: '몽마', nameEn: 'Lord of Nightmares', ch: { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } },
       lines: { meet: ['악몽에 온 걸 환영한다, 처용.', 'Welcome to the nightmare, Cheoyong.'], again: ['또 잠들었구나. 이번 꿈은 더 깊다.', 'Asleep again? This dream runs deeper.'], peek: ['꿈은 깨지 않는다.', 'Dreams never end.'], r14: ['꿈은 또 온다, 처용.', 'The dream will return, Cheoyong.'], r22: ['역신도 나도… 그분의 목소리를 들었을 뿐.', 'The Plague God and I… we only heard His voice.'] } }
@@ -63,7 +63,7 @@
   /* ---- 게임 연결용(11-27) ---- */
   const EN = !!window.IS_EN;
   D.TINTF = Object.assign(D.TINTF || {}, { sea: 'hue-rotate(75deg) saturate(1.15)', seaBoss: 'hue-rotate(185deg) saturate(1.35) brightness(1.05)', dream: 'hue-rotate(250deg) saturate(1.3) brightness(.92)' });
-  if (D.EN && D.EN.yeoksin && !D.EN.suguijedok) D.EN.suguijedok = Object.assign({}, D.EN.yeoksin, { n: EN ? 'Admiral Drowned' : '수귀 제독', spr: 'yeoksin', tf: D.TINTF.seaBoss, hp: Math.round(D.EN.yeoksin.hp * 1.1) });
+  if (D.EN && D.EN.yeoksin && !D.EN.suguijedok) D.EN.suguijedok = Object.assign({}, D.EN.yeoksin, { n: EN ? 'Admiral Drowned' : '수귀 제독', spr: 'boss_sugwi', h: 130, hp: Math.round(D.EN.yeoksin.hp * 1.1) });
   /* 1막 뒤쪽 장을 틀로: 무리·정예·밤 수·목표는 그대로, 이름·판·우두머리·색만 3막 것 */
   D.a3Tpl = n => Math.min(30, 16 + Math.floor((n - 1) / 2));   /* 틀: 1막 16~30장(무리가 다양한 뒤쪽 장) */
   D.ACT3C = D.ACT3.map((a, i) => { const t = D.CHAPTERS[D.a3Tpl(i + 1) - 1]; return Object.assign({}, t, { n: a.n, tpl: D.a3Tpl(i + 1), gn: a.gn, name: EN ? a.nameEn : a.name, nameKo: a.name, theme: a.theme, boss: D.EN[a.boss] ? a.boss : t.boss, tint: 'sea', act: 3, story: EN ? a.storyEn : a.story, fresh: [], objective: t.objective === 'survive' ? 'defend' : t.objective });   /* 3막은 매 장 우두머리가 나오게(버티기 목표 제외) */ });
@@ -79,8 +79,8 @@
   };
 
   /* 11-27 시뮬 보정(돈 다 쓰는 계정, 장마다 4판 — 표본 적음): 악몽 앞 장 쉬움·가운데 어려움, 3막 16~24장 어려움·끝 쉬움 */
-  D.NMHP = Object.assign(D.NMHP || {}); for (let c = 1; c <= 30; c++) D.NMHP[c] = D.NMHP[c] || (c <= 5 ? 1.6 : c <= 10 ? 1.2 : 0.9);
-  D.A3HP = Object.assign(D.A3HP || {}); for (let c = 1; c <= 30; c++) D.A3HP[c] = D.A3HP[c] || (c >= 16 && c <= 24 ? 0.75 : c >= 25 ? 1.1 : 1);
+  D.NMHP = Object.assign(D.NMHP || {}); for (let c = 1; c <= 30; c++) D.NMHP[c] = D.NMHP[c] || (c <= 5 ? 1.1 : c <= 10 ? 1.0 : 0.9);
+  D.A3HP = Object.assign(D.A3HP || {}); for (let c = 1; c <= 30; c++) D.A3HP[c] = D.A3HP[c] || (c >= 16 && c <= 24 ? 0.75 : c >= 25 ? 0.9 : 1);
   /* 장 사이 대화 → 화면 대화 형식으로 */
   D.ACT3_DLG_UI = n => { const L = D.ACT3_DLG[n]; if (!L) return null; const P = { '처용': ['img/ui/hero_face.webp', 'Cheoyong', '#ffcf6a'], '수귀 제독': ['img/story/op3.webp', 'Admiral Drowned', '#6ad0ff'], '이순신': ['img/ui/hero_yisunsin.webp?v=4', 'Admiral Yi', '#8fd4ff'], '도깨비': ['img/ui/hero_dokkaebi.webp?v=4', 'Dokkaebi', '#8fd4ff'], '김충선': ['img/ui/hero_kimchungseon.webp?v=4', 'Kim Chung-seon', '#8fd4ff'], '장영실': ['img/story/op2.webp', 'Jang Yeong-sil', '#cfe8b0'], '해룡': ['img/story/op2.webp', 'Sea Dragon', '#6ad0ff'], '이와키': ['img/story/op2.webp', 'Iwaki', '#cfe8b0'] };
     return L.map(l => { const p = P[l[0]] || ['img/story/op2.webp', l[0], '#cfe8b0']; return ['x', l[1], l[2], [p[0], EN ? p[1] : l[0], p[2]]]; }); };

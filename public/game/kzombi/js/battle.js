@@ -17,7 +17,8 @@ function nemA() { const D2 = window.JZD, a = G && G.cfg && G.cfg.act === 3 ? 3 :
 function nemSay(k, t) { const A = nemA(), s = A && A.lines && A.lines[k] ? A.lines[k] : NEM_SAY[k]; if (!s) return; G.title = { s: A ? (window.IS_EN ? A.nameEn : A.name) : window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
 function spawnNem(c) {
   const x = G.player.x + rnd(-60, 60), y = Math.max(camTop() + 380, G.player.y - 430);
-  const e = spawnEnemy('yeoksin', x, y, { boss: true }); const d = EN.yeoksin, sc = 300 / (d.h || 124);
+  const NA = nemA(), NK = NA && NA.key && EN[NA.key] ? NA.key : 'yeoksin';   /* 막마다 숙적 그림(3막 수귀 제독 boss_sugwi) */
+  const e = spawnEnemy(NK, x, y, { boss: true }); const d = EN[NK], sc = 300 / (d.h || 124);
   e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; { const A = nemA(); e.nemName = c.peek || G.ch < 22 ? '???' : A ? (window.IS_EN ? A.nameEn : A.name) : (window.IS_EN ? 'Yeoksin' : '역신'); if (A && window.JZD.TINTF) e.tf = window.JZD.TINTF[A.tint]; }
   e.hp = e.max = Math.max(G.lastBossMax || 0, e.max) * (c.k || 1); G.nem = e; G.nemAt = c.at || 0; G.bossRef = e; sfx('nem_in');
   G.flash = { c: '70,0,60', t: 1.3 }; FX.shake = 0.9; FX.ring(e.x, e.y, 320, '170,60,220', 1.0, 14); FX.smoke(e.x, e.y - 40, 16, '50,20,60', 30, 80); sfx('warn'); vib([160, 80, 160]);
@@ -2622,20 +2623,16 @@ let paused = false;
 function pause(on) { if (!G) return; paused = on; $('ovPause').classList.toggle('on', on); joy.on = false; const bl = $('btnLow'); if (bl) bl.textContent = G.low ? '원활 모드 켬' : '원활 모드 끔'; }
 $('btnResume').addEventListener('click', () => pause(false));
 $('btnQuit').addEventListener('click', () => { pause(false); if (G) { G.phase = 'lose'; G.endT = 0; G.title = null; } });
-{ const bl = $('btnLow'); if (bl) bl.addEventListener('click', ev => { if (!G) return; G.low = !G.low; FX.low = G.low; G.lowOff = !G.low; /* 사용자가 끄면 자동으로 다시 켜지 않음 */ ev.currentTarget.textContent = G.low ? '원활 모드 켬' : '원활 모드 끔'; }); }
+{ const bl = $('btnLow'); if (bl) bl.addEventListener('click', ev => { if (!G) return; G.low = !G.low; FX.low = G.low; ev.currentTarget.textContent = G.low ? '원활 모드 켬' : '원활 모드 끔'; }); }
 $('btnSfx').addEventListener('click', ev => { sfxOn = !sfxOn; bgmOn = sfxOn; ev.currentTarget.textContent = sfxOn ? '소리 켬' : '소리 끔'; if (!bgmOn) setBgm(''); });
 $('btnRetry').addEventListener('click', () => { $('ovEnd').classList.remove('on'); newGame(G ? G.cfg : {}); });
 
 /* ---------- 루프 ---------- */
-let last = performance.now(); const FT = { avg: 16, badT: 0 };
+let last = performance.now();
 function frame(now) {
-  /* 렉 대책(사용자 11-28): 느린 휴대폰에서 게임이 슬로모션처럼 느려지지 않게 한 프레임을 최대 3번(각 0.05초)으로 나눠 따라잡고, 3초 넘게 버벅이면 원활 모드 자동 */
-  const raw = Math.min(0.15, Math.max(0, (now - last) / 1000)); last = now;
-  FT.avg = FT.avg * 0.92 + raw * 1000 * 0.08;
-  if (G && !G.low && !G.lowOff && G.phase === 'night' && !paused) { if (FT.avg > 30) FT.badT += raw; else FT.badT = Math.max(0, FT.badT - raw * 0.5); if (FT.badT > 3) { G.low = true; FX.low = true; G.lowAuto = 1; FT.badT = 0; const bl = $('btnLow'); if (bl) bl.textContent = window.IS_EN ? 'Smooth mode on' : '원활 모드 켬'; } }
-  const steps = raw > 0.05 ? Math.min(3, Math.ceil(raw / 0.05)) : 1, dt = (steps === 1 ? Math.min(0.05, raw) : raw / steps);
-  for (let si = 0; si < steps; si++) { if (G && !paused && G.phase !== 'level' && G.phase !== 'guard') update(dt); else break; }
-  if (G && G.phase === 'guard') { FX.update(dt); }
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (G && !paused && G.phase !== 'level' && G.phase !== 'guard') update(dt);
+  else if (G && G.phase === 'guard') { FX.update(dt); }
   if (G && stage.style.display !== 'none') { if (G.banner && G.banner !== G._lbn) { G._lbn = G.banner; const bs = String(G.banner.s || ''); if (/숙적|NEMESIS/.test(bs)) sfx('nemIn'); else if (/우두머리|결전|보스|Boss|BOSS/.test(bs)) sfx('boss'); else if (G.banner.kind === 'elite') sfx('elite'); } setBgm(G.phase === 'win' || G.phase === 'lose' ? '' : (G.phase === 'day' || G.phase === 'guard') ? 'bgm_lobby' : (G.bossRef && !G.bossRef.dead ? 'bgm_boss' : 'bgm_battle')); draw(); }
   requestAnimationFrame(frame);
 }
