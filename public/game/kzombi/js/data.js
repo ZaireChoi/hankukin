@@ -252,9 +252,13 @@ D.COMP = {
 /* 원소 다섯: 불, 번개, 얼음, 기, 쇠 */
 D.EL = { fire: { n: '불', c: '#ff7a3a' }, thunder: { n: '번개', c: '#7fb8ff' }, ice: { n: '얼음', c: '#9ff0ff' }, qi: { n: '기', c: '#c08aff' }, metal: { n: '쇠', c: '#d8d8d8' } };
 /* 진화(탕탕특공대식): 공격 기술 5단계 + 짝 보조 기술 */
-D.EVO = { ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
+D.EVO = { gawi: { pair: 'swift', n: '천년 가위' }, nabi: { pair: 'crit', n: '호접몽' }, mulgi: { pair: 'pierce', n: '용오름' }, geobuk: { pair: 'power', n: '학익진 일제 포격' }, ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
 /* 각성(별 다섯) 효과 */
 D.AWAKE = {
+  gawi: '진화: 묶는 시간 두 배, 묶인 적이 받는 피해 +30%',
+  nabi: '진화: 나비가 터지면 작은 나비 둘로 갈라진다',
+  mulgi: '진화: 물기둥이 두 배로 넓다',
+  geobuk: '진화: 포탄이 다섯 발, 불바다를 남긴다',
   ghost: '진화: 귀신불이 맞으면 작게 터진다, 발수 +3',
   meteor: '진화: 불바다가 두 배로 넓고 오래 탄다',
   thunder: '진화: 벼락이 주변 적 셋에게 옮겨 붙는다',
@@ -285,7 +289,11 @@ D.SKILLS = [
   { id: 'heal',     n: '정화수',     kind: 'buff', max: 99, c: '#8affc0', d: () => '체력 40 회복, 최대 체력 +20' },
   { id: 'repair',   n: '사당 보수',  kind: 'buff', max: 99, c: '#8affc0', d: () => '사당 내구도를 100 되살린다', need: g => g.shrine.hp < g.shrine.max },
   { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +40%', need: g => g.turrets.length > 0 },
-{ id: 'bond',     n: '영웅 결속',  kind: 'buff', max: 3, c: '#ffc85a', d: () => '함께한 영웅의 위력 +40%, 큰 기술이 빨리 찬다', need: g => g.comps.some(c => c.active) }
+{ id: 'gawi',     n: '가위눌림',   kind: 'atk', el: 'qi', max: 5, act: 2, c: '#9a7aff', d: l => '가장 붐비는 곳에 가위눌림 장판, 적 ' + (0.6 + 0.15 * l).toFixed(2) + '초 묶음' },
+  { id: 'nabi',     n: '꿈 나비',    kind: 'atk', el: 'qi', max: 5, act: 2, c: '#ff9ae6', d: l => '꿈 나비 ' + (1 + l) + '마리가 날아가 터진다' },
+  { id: 'mulgi',    n: '물기둥',     kind: 'atk', el: 'ice', max: 5, act: 3, c: '#5ad0ff', d: l => '물기둥 ' + l + '개가 솟아 적을 띄운다' },
+  { id: 'geobuk',   n: '거북선 포격', kind: 'atk', el: 'fire', max: 5, act: 3, c: '#ffb070', d: l => '큰 포탄 ' + (1 + Math.floor(l / 2)) + '발, 넓게 터진다' },
+  { id: 'bond',     n: '영웅 결속',  kind: 'buff', max: 3, c: '#ffc85a', d: () => '함께한 영웅의 위력 +40%, 큰 기술이 빨리 찬다', need: g => g.comps.some(c => c.active) }
 ];
 })();
 

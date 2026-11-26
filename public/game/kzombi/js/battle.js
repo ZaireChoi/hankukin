@@ -874,9 +874,10 @@ function levelChoices() {
   const ev = evoReady(); if (ev.length) { const id = ev[0], S0 = SKILLS.find(s => s.id === id); return [{ id: 'ev_' + id, evo: id, n: D.EVO[id].n, kind: 'evo', max: 1, c: S0.c, d: () => D.AWAKE[id] || '진화!' }, ...levelChoicesBase().slice(0, 2)]; }
   return levelChoicesBase();
 }
+function actNowSk() { return G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; }   /* 막마다 새 기술(사용자 11-28: 기술이 매번 같아 지루함) */
 function levelChoicesBase() {
   const ownAtk = SKILLS.filter(s => s.kind === 'atk' && skLv(s.id) > 0).length;
-  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
+  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (!s.act || actNowSk() >= s.act) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
   const w = pool.map(s => (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : s.hero ? 1.6 : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
   const out = [];
   while (out.length < 3 && pool.length) { let tot = w.reduce((a, b) => a + b, 0), r = Math.random() * tot, i = 0; while (r > w[i]) { r -= w[i]; i++; } out.push(pool.splice(i, 1)[0]); w.splice(i, 1); }
@@ -1432,6 +1433,25 @@ function skills(dt) {
       const tg = nearestEnemy(p.x, p.y, 460); if (!tg) { G.skT[id] = 0.3; continue; }
       G.skT[id] = 3.4 - 0.2 * lv;
       for (let i = 0; i < 1 + Math.floor(lv / 2) + (lv >= 4 ? 1 : 0); i++) { const a = -Math.PI / 2 + (i - 0.5) * 0.8; const T = i ? (densest(p.x, p.y, 460) || tg) : tg; shot({ kind: 'talisman', x: p.x, y: p.y - 50, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, sp: 460, dmg: (24 + 10 * lv) * sm, R: 70 + 8 * lv, pierce: 0, life: 2.4, src: 'skill', target: T, home: 6, r: 14, rot: 0, twice: A }); }
+    } else if (id === 'gawi') {
+      const tg = densest(p.x, p.y, 480); if (!tg) { G.skT[id] = 0.3; continue; }
+      G.skT[id] = 5 - 0.3 * lv; const tx = tg.x, ty = tg.y, R = 90 + 8 * lv;
+      G.tele.push({ x: tx, y: ty, r: R, t: 0.45, life: 0.45, c: '150,110,255' });
+      G.queue.push({ t: 0.45, fn: () => { FX.ring(tx, ty, R, '170,130,255', 0.4, 6); for (const e of G.enemies) { if (e.dead || Math.hypot(e.x - tx, e.y - ty) > R) continue; hurtEnemy(e, (26 + 11 * lv) * sm, 'skill'); if (!e.boss) e.stunT = Math.max(e.stunT || 0, (0.6 + 0.15 * lv) * (A ? 2 : 1)); } sfx('zap', 0.6); } });
+    } else if (id === 'nabi') {
+      const tg = nearestEnemy(p.x, p.y, 460); if (!tg) { G.skT[id] = 0.3; continue; }
+      G.skT[id] = 3.2 - 0.15 * lv;
+      for (let i = 0; i < 1 + lv; i++) { const a = -Math.PI / 2 + (i - lv / 2) * 0.5; const T = i ? (densest(p.x, p.y, 460) || tg) : tg; shot({ kind: 'talisman', x: p.x, y: p.y - 50, vx: Math.cos(a) * 260, vy: Math.sin(a) * 260, sp: 420, dmg: (16 + 7 * lv) * sm, R: 55 + 5 * lv, pierce: 0, life: 2.2, src: 'skill', target: T, home: 6, r: 12, rot: 0 }); }
+      sfx('shoot', 0.6);
+    } else if (id === 'mulgi') {
+      const es = G.enemies.filter(e => !e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 460); if (!es.length) { G.skT[id] = 0.3; continue; }
+      G.skT[id] = 4.2 - 0.2 * lv; const R = (60 + 5 * lv) * (A ? 2 : 1);
+      for (let i = 0; i < lv; i++) { const T = pick(es), tx = T.x, ty = T.y; G.tele.push({ x: tx, y: ty, r: R, t: 0.5 + i * 0.12, life: 0.5 + i * 0.12, c: '90,200,255' }); G.queue.push({ t: 0.5 + i * 0.12, fn: () => { FX.ring(tx, ty, R, '120,220,255', 0.35, 7); FX.spark(tx, ty, '160,230,255', 8, 260); for (const e of G.enemies) { if (e.dead || Math.hypot(e.x - tx, e.y - ty) > R) continue; hurtEnemy(e, (32 + 12 * lv) * sm, 'skill', { kb: 24, kx: tx, ky: ty + 40 }); if (!e.boss) e.stunT = Math.max(e.stunT || 0, 0.35); } } }); }
+    } else if (id === 'geobuk') {
+      const tg = densest(p.x, p.y, 520); if (!tg) { G.skT[id] = 0.3; continue; }
+      G.skT[id] = 5 - 0.25 * lv; const n = A ? 5 : 1 + Math.floor(lv / 2);
+      for (let i = 0; i < n; i++) { const T = i ? (pick(G.enemies.filter(e => !e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 520)) || tg) : tg; shot({ kind: 'talisman', x: p.x, y: p.y - 50, vx: 0, vy: -320, sp: 520, dmg: (40 + 14 * lv) * sm, R: 95 + 8 * lv, pierce: 0, life: 2.4, src: 'skill', target: T, home: 5, r: 18, rot: 0, twice: A }); }
+      sfx('gun', 0.8);
     } else if (id === 'vortex') {
       const tg = densest(p.x, p.y, 460); if (!tg) { G.skT[id] = 0.3; continue; }
       G.skT[id] = 7 - 0.4 * lv;
