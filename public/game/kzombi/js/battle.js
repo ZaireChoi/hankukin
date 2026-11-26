@@ -888,13 +888,39 @@ function levelChoices() {
   const ev = evoReady(); if (ev.length) { const id = ev[0], S0 = SKILLS.find(s => s.id === id); return [{ id: 'ev_' + id, evo: id, n: D.EVO[id].n, kind: 'evo', max: 1, c: S0.c, d: () => D.AWAKE[id] || '진화!' }, ...levelChoicesBase().slice(0, 2)]; }
   return levelChoicesBase();
 }
+/* 처용 계열(사용자 11-29): 출전 영웅 주 계열 = 처용 계열, 카드·평소 공격·궁극기에 반영 */
+function kiunInit() { const E = {}, E2 = {}; for (const c of G.comps) { const C0 = COMP[c.id] || {}; if (C0.el) E[C0.el] = 1; if (C0.el2) E2[C0.el2] = 1; } G.kiunEls = Object.keys(E); G.kiunEls2 = Object.keys(E2).filter(e => !E[e]); if (!G.kiunEls.length) G.kiunEls = ['fire']; G.kiunN = {}; for (const e2 of G.kiunEls) G.kiunN[e2] = Math.max(1, SKILLS.filter(s => s.kind === 'atk' && !s.hero && s.el === e2 && (!s.act || actNowSk() >= s.act) && (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))).length); }
+function kiunMain() { const E = G.kiunEls || ['fire']; let best = E[0], bn = -1; for (const e of E) { let n = 0; for (const k in G.sk) { const S0 = SKILLS.find(o => o.id === k); if (S0 && S0.kind === 'atk' && S0.el === e) n += G.sk[k]; } if (n > bn) { bn = n; best = e; } } return best; }
+function kiunLv(el) { try { const M = window.JZMeta && JZMeta.save ? JZMeta.save() : null; return Math.min(5, Math.max(1, (M && M.kiunLv && M.kiunLv[el]) | 0 || 1)); } catch (e) { return 1; } }
+function kiunW(s) { if (s.kind !== 'atk' || !s.el) return 1; if ((G.kiunEls || []).indexOf(s.el) >= 0) { const N = G.kiunN || {}, ks = Object.keys(N), avg = ks.reduce((a, k) => a + N[k], 0) / (ks.length || 1); return 3 * Math.max(0.5, Math.min(2.5, avg / (N[s.el] || avg))); } if ((G.kiunEls2 || []).indexOf(s.el) >= 0) return 1.5; return 1; }
+function kiunShots(KU, KL, n, e, ox, oy, m) {
+  const p = G.player, ss = G.shots.slice(-n), dk = 1 + 0.06 * (KL - 1);
+  for (const s of ss) { s.dmg *= dk; if (KU === 'fire') s.burn = 1; else if (KU === 'ice' || KU === 'nature') s.slow = Math.max(s.slow || 0, KU === 'ice' ? 1.2 : 0.8); else if (KU === 'wind') s.kbx = Math.max(s.kbx || 0, 26); }
+  if (KU === 'metal' && ss.length) { const s0 = ss[0], a = Math.atan2(s0.vy, s0.vx) + 0.12, sp = Math.hypot(s0.vx, s0.vy); shot(Object.assign({}, s0, { hit: [], vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, dmg: s0.dmg * 0.6 })); }
+  if (KU === 'thunder' && G.shotN % 4 === 0) { const es = G.enemies.filter(o => !o.dead && Math.hypot(o.x - e.x, o.y - e.y) < 220).slice(0, 3); for (const o of es) { FX.skyBolt(o.x, o.y, '150,200,255', 0.9); hurtEnemy(o, p.dmg * m * 0.8 * dk, 'player', { el: 'thunder' }); } sfx('zap', 0.4); }
+  if (KU === 'dark' && G.shotN % 3 === 0) shot({ kind: 'talisman', x: ox, y: oy, vx: 0, vy: -260, sp: 420, dmg: p.dmg * m * 0.9 * dk, R: 40, pierce: 0, life: 2, src: 'player', target: e, home: 6, r: 10, rot: 0, el: 'dark' });
+  if (KU === 'nature' && Math.random() < 0.08 && !e.boss) e.stunT = Math.max(e.stunT || 0, 0.6);
+}
+function kiunUlt(KU, KL, m) {
+  const p = G.player, Rk = KL >= 3 ? 1.25 : 1, one = () => { const T = bigTarget(220);
+    if (KU === 'fire') { bigFx({ k: 'field', x: p.x, y: p.y, R: 340 * Rk, col: '255,120,50', life: 0.8, dmg: 240 * m }); for (const e of G.enemies) if (!e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 340 * Rk) { e.burnT = 3; e.burnD = 10 * m; } }
+    else if (KU === 'ice') bigFx({ k: 'field', x: p.x, y: p.y, R: 360 * Rk, col: '170,235,255', life: 0.8, dmg: 180 * m, stun: 2.2 });
+    else if (KU === 'thunder') { for (let i = 0; i < 3; i++) G.queue.push({ t: i * 0.15, el: 'thunder', fn: () => { const T2 = bigTarget(190); bigFx({ k: 'pillar', x: T2.x + rnd(-60, 60), y: T2.y + rnd(-40, 40), R: 190 * Rk, col: '150,200,255', life: 0.7, dmg: 220 * m, stun: 0.8 }); } }); }
+    else if (KU === 'qi') { bigFx({ k: 'pillar', x: T.x, y: T.y, R: 260 * Rk, col: '255,235,140', life: 0.8, dmg: 320 * m }); G.shrine.hp = Math.min(G.shrine.max, G.shrine.hp + G.shrine.max * 0.08); }
+    else if (KU === 'metal') { const a0 = Math.atan2(T.y - p.y, T.x - p.x); for (const da of [-0.6, 0, 0.6]) bigFx({ k: 'crescent', x: p.x, y: p.y - 30, dir: a0 + da, sp: 900, R: 120 * Rk, col: '230,230,240', life: 0.7, dmg: 260 * m }); }
+    else if (KU === 'wind') { G.vortexes.push({ x: T.x, y: T.y, vx: 0, vy: 0, t: 2.4, life: 2.4, r: 200 * Rk, dps: 90 * m, tick: 0, el: 'wind' }); G.queue.push({ t: 1.2, el: 'wind', fn: () => bigFx({ k: 'field', x: T.x, y: T.y, R: 230 * Rk, col: '170,255,210', life: 0.7, dmg: 220 * m, kb: 40 }) }); }
+    else if (KU === 'dark') { const vs = G.enemies.filter(e => !e.dead && onScreen(e)); for (let i = 0; i < 12; i++) { const a = -Math.PI / 2 + (i - 5.5) * 0.25; shot({ kind: 'talisman', x: p.x, y: p.y - 50, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, sp: 480, dmg: 70 * m, R: 60 * Rk, pierce: 0, life: 2.4, src: 'player', target: vs.length ? vs[i % vs.length] : null, home: 6, r: 14, rot: 0, el: 'dark' }); } }
+    else if (KU === 'nature') { bigFx({ k: 'field', x: p.x, y: p.y, R: 340 * Rk, col: '140,220,110', life: 0.8, dmg: 170 * m, stun: 1.0 }); p.hp = Math.min(p.max, p.hp + p.max * 0.25); G.shrine.hp = Math.min(G.shrine.max, G.shrine.hp + G.shrine.max * 0.1); }
+  };
+  one(); if (KL >= 5) G.queue.push({ t: 0.7, el: KU, fn: one });
+}
 function skSetOk(s) { if (s.kind !== 'atk' || s.hero || !G.skSet) return true; return G.skSet.indexOf(s.id) >= 0 || skLv(s.id) > 0; }   /* 출전 전 기술 묶음 */
 function loadSkSet() { G.skSet = null; let L = null; try { L = JSON.parse(localStorage.getItem('kz_skset') || 'null'); } catch (e) {} if (!Array.isArray(L) || !L.length) return; const av = SKILLS.filter(s => s.kind === 'atk' && !s.hero && L.indexOf(s.id) >= 0 && (!s.act || actNowSk() >= s.act) && (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))); if (av.length >= 3) G.skSet = av.map(s => s.id); }
 function actNowSk() { return G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; }   /* 막마다 새 기술(사용자 11-28: 기술이 매번 같아 지루함) */
 function levelChoicesBase() {
   const ownAtk = SKILLS.filter(s => s.kind === 'atk' && skLv(s.id) > 0).length;
-  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (!s.act || actNowSk() >= s.act) && skSetOk(s) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
-  const w = pool.map(s => (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : s.hero ? 1.6 : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
+  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (!s.act || actNowSk() >= s.act) && skSetOk(s) && (!s.kiun || (G.kiunEls || []).indexOf(s.kiun) >= 0) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
+  const w = pool.map(s => kiunW(s) * (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : s.hero ? 1.6 : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
   const out = [];
   while (out.length < 3 && pool.length) { let tot = w.reduce((a, b) => a + b, 0), r = Math.random() * tot, i = 0; while (r > w[i]) { r -= w[i]; i++; } out.push(pool.splice(i, 1)[0]); w.splice(i, 1); }
   return out;
@@ -1004,8 +1030,8 @@ function cutinOff() { try { return localStorage.getItem('kz_cutin_off') === '1';
 function useUlt() {
   if (!G || !isNight() || G.ult > 0 || G.cutin) return;
   G.ult = G.ultMax; sfx('ult', 1, 'player');
-  G.cutin = { t: 0.7, life: 0.7, who: 'player', name: '처용 진노', col: '255,90,60', fn: () => {
-    const m = atkMul() * starMul('ult');
+  G.cutin = { t: 0.7, life: 0.7, who: 'player', name: (D.KIUN && D.KIUN[kiunMain()] ? (window.IS_EN ? D.KIUN[kiunMain()].ulte : D.KIUN[kiunMain()].ult) : '처용 진노'), col: '255,90,60', fn: () => {
+    const m = atkMul() * starMul('ult'); try { const KU = kiunMain(); kiunUlt(KU, kiunLv(KU), m); } catch (er) {}
     const vis = G.enemies.filter(e => onScreen(e)).sort((a, b) => b.hp - a.hp).slice(0, 28);
     vis.forEach((e, i) => G.queue.push({ t: i * 0.035, fn: () => { if (e.dead) return; FX.skyBolt(e.x, e.y, '255,200,120', 1.4); hurtEnemy(e, 90 * m, 'player'); } }));
     for (let i = 0; i < 6; i++) G.queue.push({ t: 0.1 + i * 0.12, fn: () => { const x = G.player.x + rnd(-240, 240), y = G.player.y - rnd(120, 480); FX.explode(x, y, 90); sfx('boom'); for (const e of G.enemies) if (Math.hypot(e.x - x, e.y - y) < 100) hurtEnemy(e, 50 * m, 'player'); } });
@@ -1434,6 +1460,7 @@ function playerAttack(dt) {
   const a = Math.atan2(e.y - e.hh * 0.45 - oy, e.x - ox); p.face = a; p.flip = Math.cos(a) < 0; p.aimT = 0.4;
   const n = wp.shots + skLv('multi') + fxN('multi1') + 2 * fxN('pellet2') + 2 * fxN('tripleArrow'), m = atkMul();
   G.shotN++;
+  const KU = kiunMain(), KL = kiunLv(KU); G.curEl = KU;
   const fire5 = fxN('fireArrow') && G.shotN % 5 === 0;
   for (let i = 0; i < n; i++) {
     const aa = a + (i - (n - 1) / 2) * wp.spread + (wp.fx === 'pellet' ? rnd(-0.05, 0.05) : 0), sp = wp.sp * (wp.fx === 'pellet' ? rnd(0.85, 1.1) : 1);
@@ -1441,6 +1468,7 @@ function playerAttack(dt) {
       slow: fxN('chillBolt') ? 1.2 : 0, bounce: 2 * fxN('bounce2'), burn: fxN('firePellet') ? 1 : 0, kbx: fxN('bigKnock') ? 26 : 0 });
     if (fire5) { s.R = 60; s.fire = 1; s.dmg *= 2; }
   }
+  try { kiunShots(KU, KL, n, e, ox, oy, m); } catch (er) {} G.curEl = null;
   p.recoil = 1; p.muzzle = 0.07; p.atkA = 0.32;
   const mc = wp.fx === 'bolt' ? '140,230,255' : wp.fx === 'arrow' ? '255,230,150' : '255,200,90';
   FX.p({ kind: 'glow', x: ox + Math.cos(a) * 14, y: oy + Math.sin(a) * 14, life: 0.08, s: wp.fx === 'tracer' || wp.fx === 'pellet' ? 40 : 22, s2: 10, c: mc, hard: 1 });
@@ -2867,9 +2895,10 @@ function logFinish(res) {
 /* ---------- 바깥과 잇는 창구 ---------- */
 const JZB = window.JZB = {
   buildWalls,
+  testUlt: () => { if (G) { G.ult = 0; G.cutin = null; useUlt(); } return 1; },   /* 시험용 */
   testFreeze: on => { paused = !!on; return paused; }, /* 시험용: 터지는 순간 멈추고 찍기(사용자 흐름에서는 안 씀) */
   testLevelUp: o => { if (!G) return 0; o = o || {}; if (o.build) { const em = PADS.map((q, i) => i).filter(i => !G.turrets.some(t => t.pad === i)); if (em.length) { G.gold += 9999; G._fb = 1; build(em[0], o.build); G._fb = 0; } } if (o.sk) G.sk = Object.assign({}, o.sk); if (o.legend) G.lgForce = 1; if (o.nm) G.nm = true; openLevel(); return 1; },   /* 시험용(화면 확인), 사용자 흐름에서는 안 불림 */
-  start: cfg => { newGame(cfg); try { setTrait(); } catch (e) {} try { loadSkSet(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
+  start: cfg => { newGame(cfg); try { setTrait(); } catch (e) {} try { kiunInit(); } catch (e) {} try { loadSkSet(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
