@@ -114,6 +114,11 @@ const SMETA = {}, SLOAD = {};
 /* 동작 그림은 처음 쓰일 때 받는다 */
 function needAnim(sp, ak) { if (!sp.anims || !sp.anims[ak] || sp.A[ak] || sp.AL[ak]) return; sp.AL[ak] = 1; const a = sp.anims[ak], ai = new Image(); ai.onload = () => { sp.A[ak] = Object.assign({ img: ai }, a); }; ai.src = 'sprites/' + a.src + (sp.v ? '?v=' + sp.v : ''); }
 function need(k) { if (SPR[k] || SLOAD[k] || !SMETA[k]) return; SLOAD[k] = 1; addSprite(k, SMETA[k]); }
+/* 판 시작 전(낮) 이 판 적·영웅 그림을 미리 받고 풀어 두고, 색 바꾼 그림·피격 흰 그림을 조금씩 미리 만든다(점검 11-30: 첫 등장 멈칫 줄이기) */
+function warmStage(pass) { try { if (!G || !G.nights) return; const D2 = window.JZD, types = new Set(); for (const n of G.nights) [n.base, n.eliteType, n.boss, ...(n.allow || []), ...Object.keys(n.mix || {})].forEach(t => t && EN[t] && types.add(t)); const keys = new Set([...types].map(t => EK(t))); for (const id of (G.cfg && G.cfg.companions) || []) if (COMP[id] && COMP[id].spr) keys.add(COMP[id].spr); if (pass === 1) { for (const k of keys) need(k); setTimeout(() => { for (const k of keys) { const sp = SPR[k]; if (sp && sp.anims) for (const a of ['walk', 'atk', 'hit', 'die']) needAnim(sp, a); } }, 300); return; } const a = curAct(), V = D2 && D2.VARIANT ? D2.VARIANT[a] : null; const vtfs = V ? (V.chaos ? VAR_TF10.map(k => D2.VARIANT[k] && D2.VARIANT[k].tf) : [V.tf]) : []; const ctf = G.C && G.C.tint && D2.TINTF ? D2.TINTF[G.C.tint] : null; const jobs = []; for (const t of types) { const sp = SPR[EK(t)]; if (!sp) continue; const ims = [sp.img]; if (sp.A) for (const an of ['walk', 'atk', 'hit', 'die']) if (sp.A[an] && sp.A[an].img) ims.push(sp.A[an].img); const tfs = [...new Set([enTF(t), ...vtfs, (!vtfs.length && !enArt(t)) ? ctf : null].filter(Boolean))]; ims.forEach((im, j) => { jobs.push([im, 'dec']);  }); } for (const k of keys) { const sp = SPR[k]; if (sp && !types.has(k) && sp.img) jobs.push([sp.img, 'dec']); } let i = 0; const step = () => { if (!G || G.phase !== 'day') return; const t0 = performance.now(); while (i < jobs.length && performance.now() - t0 < 6) { const [im, w] = jobs[i++]; if (!im || !im.width) continue; try { if (w === 'dec') { if (im.decode && !im.__dec) { im.__dec = 1; im.decode().catch(() => {}); } } else if (w === 'white' || w === 'dark') { im.__t = im.__t || {}; if (!im.__t[w]) im.__t[w] = w === 'white' ? tint(im, '#fff', 0.85) : tint(im, '#000', 0.9); } else { im.__f = im.__f || {}; if (!im.__f[w]) { const cv = document.createElement('canvas'); cv.width = im.width; cv.height = im.height; const c2 = cv.getContext('2d'); c2.filter = w; c2.drawImage(im, 0, 0); im.__f[w] = cv; } } } catch (e) {} } if (i < jobs.length) setTimeout(step, 40); }; step(); } catch (e) {} }
+/* 칸 단위 색 바꾸기 캐시(점검 11-30): 큰 그림 전체를 바꾸지 않고 지금 그리는 한 칸만 */
+const CELLC = new Map(); let CELLN = 0;
+function cellFx(src, f, row, cell, mode, tf) { if (!src.__cid) src.__cid = ++CELLN; const k = src.__cid + '|' + f + '|' + row + '|' + (mode || '') + '|' + (tf || ''); let c = CELLC.get(k); if (c) { CELLC.delete(k); CELLC.set(k, c); return c; } try { c = document.createElement('canvas'); c.width = cell; c.height = cell; const g = c.getContext('2d'); if (tf) g.filter = tf; g.drawImage(src, f * cell, row * cell, cell, cell, 0, 0, cell, cell); g.filter = 'none'; if (mode) { const T = mode === 'stone' ? ['#7d7a74', 0.62] : mode === 'white' ? ['#fff', 0.85] : mode === 'ice' ? ['rgb(140,215,255)', 0.55] : ['#000', 0.9]; g.globalCompositeOperation = 'source-atop'; g.globalAlpha = T[1]; g.fillStyle = T[0]; g.fillRect(0, 0, cell, cell); } } catch (e) { return null; } CELLC.set(k, c); if (CELLC.size > 260) CELLC.delete(CELLC.keys().next().value); return c; }
 function preload(keys, anims) { for (const k of keys) { need(k); } setTimeout(() => { for (const k of keys) { const sp = SPR[k]; if (sp && sp.anims) for (const a of (anims || Object.keys(sp.anims))) needAnim(sp, a); } }, 400); }
 function addSprite(k, m) {
   const im = new Image();
@@ -146,6 +151,7 @@ function drawSprite(key, x, y, o) {
   if (o.sx) ctx.scale(o.sx, o.sy);
   if (o.alpha != null) ctx.globalAlpha = o.alpha;
   let img = src;
+  { const row0 = sp.dirs > 1 && o.dir != null ? ((o.dir + (sp.rowOff || 0)) % sp.dirs + sp.dirs) % sp.dirs : 0, sm = o.mode && o.mode.indexOf('sp_') !== 0; if ((o.tf || sm) && src.width) { const cc = cellFx(src, f, row0, sp.cell, sm ? o.mode : null, sm ? null : o.tf); if (cc) { ctx.drawImage(cc, 0, 0, sp.cell, sp.cell, -w * sp.anchorX, -w * sp.anchorY, w, w); ctx.restore(); return true; } } }
   if (o.tf && src.width) { src.__f = src.__f || {}; if (!src.__f[o.tf]) { try { const cv = document.createElement('canvas'); cv.width = src.width; cv.height = src.height; const c2 = cv.getContext('2d'); c2.filter = o.tf; c2.drawImage(src, 0, 0); src.__f[o.tf] = cv; } catch (e) { src.__f[o.tf] = src; } } img = src.__f[o.tf]; }   /* 색 바꾼 그림(3막 바다 좀비·숙적) 한 번만 만들어 둠 */
   if (o.mode) { const key2 = o.mode; src.__t = src.__t || {}; if (!src.__t[key2]) { try { src.__t[key2] = key2.indexOf('sp_') === 0 ? spiritTint(src, SPIRIT[key2.slice(3)].col, key2.slice(3)) : key2 === 'stone' ? tint(src, '#7d7a74', 0.62) : key2 === 'white' ? tint(src, '#fff', 0.85) : key2 === 'ice' ? tint(src, 'rgb(140,215,255)', 0.55) : tint(src, '#000', 0.9); } catch (e) { src.__t[key2] = src; } } img = src.__t[key2]; }
   const row = sp.dirs > 1 && o.dir != null ? ((o.dir + (sp.rowOff || 0)) % sp.dirs + sp.dirs) % sp.dirs : 0;
@@ -161,20 +167,16 @@ function acInit() { if (AC) return AC; AC = new (window.AudioContext || window.w
 document.addEventListener('visibilitychange', () => { try { if (!AC) return; if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) {} });
 window.KZSFX = { play: (k, v) => sfx(k, v), vol: v => { try { localStorage.setItem('kz_sfxv', v); if (SFXG) SFXG.gain.value = +v; } catch (e) {} } };
 const SFX_GAP = { die: 0.07, thud: 0.06, hit: 0.05, crit: 0.09, shoot: 0.045, gun: 0.06, boom: 0.09, zap: 0.06, coin: 0.05, elite: 0.6, boss: 1.5, nemIn: 2, nemOut: 2, legend: 1, hurt: 0.3, card: 0.2 };
-/* 실제 녹음 효과음(CC0, Kenney — 조선좀비게임\\소리_출처.md). 파일이 있으면 재생, 없으면 아래 합성 소리(사용자 11-30: 상업 수준 소리) */
-const SAMP = {}, SAMP_N = { hit: 3, thud: 2, crit: 2, die: 3, shoot: 2, boom: 3, gun: 2, zap: 2, coin: 2, gem: 1, build: 2, level: 1, card: 1, legend: 1, ult: 1, elite: 1, boss: 2, nemIn: 1, hurt: 1, warn: 1 }, SAMP_V = { hit: 1.6, thud: 1.8, crit: 1.7, die: 1.3, shoot: 1.2, boom: 1.9, gun: 1.5, zap: 1.2, coin: 1.1, gem: 1, build: 1.5, level: 1.6, card: 1.3, legend: 1.8, ult: 2, elite: 1.8, boss: 2.2, nemIn: 2.2, hurt: 1.4, warn: 1.2 }; let sampReq = 0;
-function sampLoad() { if (sampReq || !AC) return; sampReq = 1; for (const k in SAMP_N) for (let i = 0; i < SAMP_N[k]; i++) fetch('audio/sfx/' + k + '_' + i + '.ogg').then(r => r.ok ? r.arrayBuffer() : null).then(b => b && AC.decodeAudioData(b)).then(buf => { if (buf) (SAMP[k] = SAMP[k] || []).push(buf); }).catch(() => {}); }
 function sfx(kind, vol, who) {
   if (!sfxOn) return;
   try {
-    acInit(); sampLoad(); if (AC.state !== 'running') return;
+    acInit(); if (AC.state !== 'running') return;
     const now = AC.currentTime, gap = SFX_GAP[kind] || 0.045;
     if (sfxLast[kind] && now - sfxLast[kind] < gap) return; sfxLast[kind] = now;
     const big = /boss|nem|elite|legend|ult|level|warn/.test(kind);
     if (sfxVoices > 14 && !big) return;   /* 동시에 너무 많으면 작은 소리는 건너뜀 */
     const duck = big ? 1 : 1 / (1 + Math.max(0, sfxVoices - 4) * 0.12);
     const out = AC.createGain(); out.connect(SFXG); const v = Math.max(0.001, (vol || 1) * 0.24 * duck);
-    if (SAMP[kind] && SAMP[kind].length && !(kind === 'ult' && who && who !== 'player')) { const L = SAMP[kind], src = AC.createBufferSource(); src.buffer = L[(Math.random() * L.length) | 0]; src.playbackRate.value = 0.94 + Math.random() * 0.12; const g = AC.createGain(); g.gain.value = Math.min(1.2, v * (SAMP_V[kind] || 1.4)); src.connect(g); g.connect(out); sfxVoices++; src.onended = () => { sfxVoices = Math.max(0, sfxVoices - 1); try { out.disconnect(); } catch (e) {} }; src.start(now); return; }
     let end = 0.1;
     const env = (g, pk, t0, a, d) => { g.gain.setValueAtTime(0.0001, now + t0); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, pk), now + t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, now + t0 + a + d); end = Math.max(end, t0 + a + d); };
     const nbuf = dur => { const k = Math.max(1, Math.ceil(dur * 10)); if (NOISEB[k]) return NOISEB[k]; const b = AC.createBuffer(1, Math.round(AC.sampleRate * k / 10), AC.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return (NOISEB[k] = b); };
@@ -245,7 +247,7 @@ function newGame(cfg) {
   const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(4, Math.max(1, 1 + 0.75 * (POW / EXPV - 1.2))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
-  try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool.map(k => (EN[k] && EN[k].spr) || k), C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {}
+  try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool.map(k => (EN[k] && EN[k].spr) || k), C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {} setTimeout(() => warmStage(1), 200); for (const ms of [1000, 2200, 3400, 4600, 7000]) setTimeout(() => warmStage(2), ms);
   WD.actArt = C.act >= 4 && D.actArt ? Object.assign({}, D.actArt(C.act) || {}, { act: C.act, mirror: !!C.mirror }) : null; WORLD = WD.build(C.theme, LAY);   /* 4~10막 바닥·소품 그림 */
   FX.reset();
   const wp = WEAPON[cfg.weapon] || WEAPON.bow;

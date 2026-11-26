@@ -27,6 +27,7 @@ if (L !== 'en') return;
 document.documentElement.lang = 'en';
 
 const DICT = {
+  "불 바퀴가 처용 둘레를 태운다": "A fire wheel burns around Cheoyong", "서리 장판이 적을 얼려 멈춘다": "A frost field freezes enemies in place", "뇌성이 둘레 적을 치고 멈춘다": "A thunder pulse strikes and stuns nearby enemies", "정화의 빛기둥이 내려 저승 적을 녹인다": "A pillar of purifying light melts underworld foes", "칼춤 칼날이 사방으로 날아간다": "Sword-dance blades fly in all directions", "큰 검기가 일직선으로 벤다": "A great sword wave slashes in a straight line", "질풍이 둘레 적을 멀리 밀어낸다": "A gale pushes nearby enemies far away", "회오리가 적을 빨아들이며 벤다": "A whirlwind pulls in and slashes enemies", "저승 사슬이 적을 묶고 처용을 조금 회복한다": "Underworld chains bind enemies and heal Cheoyong a little", "덩굴이 솟아 적을 묶는다": "Vines burst up and bind enemies", "천화 부채": "Heavenfire Fan", "화륜천": "Blazing Wheel", "설한 부채": "Snowcold Fan", "만년 서리": "Eternal Frost", "천둥 북채": "Thunder Drumstick", "벽력 뇌성": "Thunderclap Roar", "벽사 광명": "Warding Radiance", "천광 정화": "Heavenly Purge", "검무 천지": "Sword Dance of Heaven and Earth", "천검": "Heaven Sword", "태풍": "Typhoon", "용권풍": "Dragon Twister", "백귀 야행": "Night Parade of Ghosts", "명부 사슬": "Ledger Chains", "천년 덩굴": "Thousand-Year Vines", "오방 꽃비": "Five-Color Petal Rain",
   "처용 기운 숙련": "Cheoyong element mastery", "화염 처용무": "Flame Dance", "빙설 처용무": "Frost Dance", "뇌성 처용무": "Thunder Dance", "벽사진경": "Exorcism Light", "검무 회오리": "Blade Whirl", "회오리 춤": "Whirlwind Dance", "백귀 행렬": "Ghost Parade", "오방 꽃": "Five-Color Bloom", "불부채 장판": "Fire Fan Field", "화륜": "Fire Wheel", "얼음 부채": "Ice Fan", "서리 장판": "Frost Field", "북채 번개": "Drumstick Lightning", "뇌성 파동": "Thunder Wave", "벽사 빛살": "Exorcism Rays", "정화 기둥": "Purifying Pillar", "칼춤": "Sword Dance", "검기": "Sword Wave", "질풍": "Gale", "회오리": "Whirlwind", "귀신 부리기": "Ghost Servant", "저승 사슬": "Underworld Chain", "덩굴 묶기": "Vine Bind", "꽃비": "Flower Rain", "진화: 위력과 범위가 크게 오른다": "Evolve: much stronger and wider",
   "약점!": "Weak!", "저항": "Resist", "이번 장 적 계열": "Enemy element",
   "물·얼음": "Water/Ice", "빛": "Light", "바람": "Wind", "저승": "Underworld", "자연": "Nature", "추천 계열": "Best elements", "상성 ↑ ": "Synergy ↑ ",
@@ -253,6 +254,32 @@ const DICT = {
 
 /* 숫자가 섞인 문장 규칙 (앞에서부터 적용) */
 const RULES = [
+  /* 점검 11-30: 남은 영어 */
+  [/^◆ 같은 계열 · 이 기술 위력 \+(\d+)%, (.+) 공격 \+8%$/, (m, a, h) => '◆ Same element · this skill +' + a + '%, ' + (DICT[h] || h) + ' attack +8%'],
+  [/^◆ (.+)와 함께일 때만 나오는 기술$/, (m, h) => '◆ Only appears with ' + (DICT[h] || h)],
+  [/^(.+)와 함께일 때만 나오는 기술$/, (m, h) => 'Only appears with ' + (DICT[h] || h)],
+  [/^꿈 나비 1마리가 날아가 터진다$/, () => '1 dream butterfly flies and bursts'],
+  [/^물기둥 1개가 솟아 적을 띄운다$/, () => '1 water spout bursts up'],
+  [/^큰 포탄 1발, 넓게 터진다$/, () => '1 big shell, wide blast'],
+  [/^약병 1개가 깨져 독 웅덩이를 남긴다$/, () => '1 flask shatters into a poison pool'],
+  [/^보랏빛 귀신불 (\d+)발이 적을 쫓아간다$/, (m, a) => a + ' purple ghost fires chase enemies'],
+  [/^불타는 운석 (\d+)개가 떨어져 불바다를 남긴다$/, (m, a) => a + (a === '1' ? ' meteor falls' : ' meteors fall') + ', leaving fire fields'],
+  [/^하늘에서 벼락 (\d+)줄기가 내리꽂힌다$/, (m, a) => a + (a === '1' ? ' lightning bolt strikes' : ' lightning bolts strike') + ' from the sky'],
+  [/^얼음송곳 (\d+)개를 부채꼴로 쏘아 얼린다$/, (m, a) => 'Fires ' + a + ' ice spikes in a fan to freeze'],
+  [/^부적 (\d+)장이 날아가 터진다$/, (m, a) => a + (a === '1' ? ' talisman flies out and explodes' : ' talismans fly out and explode')],
+  [/^붉은 광선이 이어지며 (\d+)명을 꿰뚫는다$/, (m, a) => 'A red beam pierces ' + a + (a === '1' ? ' enemy' : ' enemies')],
+  [/^불회오리가 적을 빨아들이며 태운다 \(위력 (\d+)%\)$/, (m, a) => 'A firestorm pulls in and burns enemies (power ' + a + '%)'],
+  [/^치명타 확률 \+(\d+)% \(치명타는 두 배 반\)$/, (m, a) => 'Crit chance +' + a + '% (crits deal 2.5x)'],
+  [/^세운 시설의 위력과 속도 \+(\d+)%$/, (m, a) => 'Buildings: power and speed +' + a + '%'],
+  [/^불부채가 (\d+)곳에 불 장판을 깐다$/, (m, a) => 'Fire fan lays ' + a + (a === '1' ? ' fire field' : ' fire fields')],
+  [/^얼음 부채살 (\d+)개, 맞은 적이 느려진다$/, (m, a) => a + ' ice fan shards, hit enemies slow down'],
+  [/^북채 번개가 (\d+)명에게 옮겨 간다$/, (m, a) => 'Drumstick lightning jumps to ' + a + ' enemies'],
+  [/^벽사 빛살 (\d+)줄기가 꿰뚫는다$/, (m, a) => a + ' warding light rays pierce through'],
+  [/^부리는 귀신 (\d+)이 적에게 달려든다$/, (m, a) => a + (a === '1' ? ' summoned ghost rushes' : ' summoned ghosts rush') + ' enemies'],
+  [/^꽃잎 (\d+)송이가 떨어져 터진다$/, (m, a) => a + (a === '1' ? ' petal bomb falls and bursts' : ' petal bombs fall and burst')],
+  [/^함께한 영웅의 위력 \+(\d+)%, 큰 기술이 빨리 찬다$/, (m, a) => 'Allied heroes power +' + a + '%, ultimates charge faster'],
+  [/^(원효대사|강감찬|전우치|사명대사|대장금|화랑 사다함|김충선|이무기|장영실)의 결의$/, (m, h) => (DICT[h] || h) + "'s Resolve"],
+  [/^(원효대사|강감찬|전우치|사명대사|대장금|화랑 사다함|김충선|이무기|장영실) 위력 \+(\d+)%$/, (m, h, a) => (DICT[h] || h) + ' power +' + a + '%'],
   [/^같은 계열 · 이 기술 위력 \+(\d+)%, (.+) 공격 \+8%$/, (m, a, h) => 'Same element · this skill +' + a + '%, ' + (DICT[h] || h) + ' attack +8%'],
   [/^상성 ↑ (.+)$/, (m, h) => 'Synergy ↑ ' + (DICT[h] || h)],
   [/^가장 붐비는 곳에 가위눌림 장판, 적 ([\d.]+)초 묶음$/, (m, a) => 'Paralysis field on the densest spot, binds ' + a + 's'],
