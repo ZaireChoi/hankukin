@@ -589,7 +589,7 @@ function spawnWave() {
   { const tt = TIER[type] || 2; if (Math.random() < (tt <= 2 ? 0.35 : tt === 3 ? 0.15 : 0)) spawnEnemy(upgradeType(N.base), x + rnd(-40, 40), y - rnd(20, 60)); }
 }
 function spawnBig(type, boss) {
-  const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = camTop() - 90;
+  const lane = (Math.random() * LANE_X.length) | 0, x = LANE_X[lane] + rnd(-30, 30), y = boss && G.cfg && G.cfg.wbBoss ? camTop() + 560 : camTop() - 90; /* 월드보스 얼굴이 체력 막대에 가리지 않게(사용자 11-28) */
   const e = spawnEnemy(type, x, y, boss ? { boss: true } : { elite: true });
   if (boss) { /* 등장: 큰 그림자가 먼저 드리우고 땅이 흔들린다 */ FX.shake = Math.max(FX.shake || 0, 0.9); G.tele.push({ x: e.x, y: Math.max(e.y, camTop() + 140), r: e.r * 4.5, t: 1.2, life: 1.2, c: '120,0,0' }); for (let i = 0; i < 3; i++) G.queue.push({ t: 0.35 * i, fn: () => { FX.shake = 0.5; FX.debris(e.x + rnd(-80, 80), e.y + rnd(-20, 40), 8, '#4a3a2a', 260); } });
     G.bossRef = e; G.lastBossMax = e.max; G.queue.push({ t: 3.1, fn: () => heroSay(1) }); G.bossCam = { x: e.x, y: Math.max(e.y, camTop() + 260), t: 1.7 }; G.bossDim = 1.6; sfx('boss_in'); /* 우두머리 등장 연출(사용자 11-27 계획 4) */ G.banner = { s: (G.ch === D.CHAPTERS.length ? '최후의 결전! ' : '우두머리 출현! ') + EN[type].n, t: 2.8, kind: 'boss', sub: bossLine(type) }; if (G.ch === D.CHAPTERS.length) { e.hp *= 1.2; e.max = e.hp; G.flash = { c: '150,20,40', t: 1.2 }; G.title = { s: G.C.finIn ? G.C.finIn[window.IS_EN ? 2 : 0] : '역신 강림', sub: G.C.finIn ? G.C.finIn[window.IS_EN ? 3 : 1] : '조선의 마지막 밤', t: 3, big: 1 }; FX.ring(e.x, e.y, 360, '255,60,80', 1.2, 14); } G.crisisT = 4; sfx('warn'); vib([120, 80, 120, 80, 240]); FX.shake = 0.5; }

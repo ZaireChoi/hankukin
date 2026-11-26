@@ -32,7 +32,7 @@ D.EN = {
   zgrand:  { n: '좀비 대장군', hp: 900, sp: 52, r: 26, dmg: 30, cd: 1.3, xp: 25, h: 100, armor: 3, slam: 1 },
   zqueen2: { n: '좀비 왕비', hp: 800, sp: 44, r: 18, dmg: 16, cd: 1.6, xp: 18, h: 82, range: 250, caster: 1, summoner: 1 },
   yeoksin: { n: '역신', hp: 4200, sp: 60, r: 24, dmg: 32, cd: 1.0, xp: 0, h: 124, armor: 2, blink: 1 },
-  wb_stone: { n: '돌장승 거신', hp: 6000, sp: 30, r: 34, dmg: 40, cd: 1.6, xp: 0, h: 150, armor: 6, slam: 1, wb: 1 },
+  wb_stone: { n: '돌장승 거신', hp: 6000, sp: 30, r: 34, dmg: 40, cd: 1.6, xp: 0, h: 150, bh: 540, armor: 6, slam: 1, wb: 1 },
   wb_fire: { n: '화마', hp: 5600, sp: 36, r: 32, dmg: 44, cd: 1.4, xp: 0, h: 150, armor: 3, slam: 1, caster: 1, wb: 1 },
   wb_plague: { n: '역병 대장군', hp: 5800, sp: 40, r: 32, dmg: 42, cd: 1.3, xp: 0, h: 150, armor: 4, charger: 1, slam: 1, wb: 1 },
   bulgasari: { n: '불가사리', hp: 5200, sp: 46, r: 30, dmg: 34, cd: 1.4, xp: 0, h: 120, armor: 4, slam: 1, eater: 1 },
