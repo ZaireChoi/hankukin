@@ -647,7 +647,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function chapModal(n) {
     const c = chapters()[n - 1], rec = Math.round(900 * Math.pow(n, 1.6)), st = stats();
     if (isA3()) { const a = a3chapters()[n - 1] || {}, nr = Math.round(900 * Math.pow(n + 59, 1.6) * 1.9); modal('<h3 class="stroke" style="color:#6ad0ff">' + TT('3막 ', 'Act 3 · ') + a.gn + TT('장 · ', ' · ') + a.name + '</h3>' + '<p style="text-align:center;color:#cfeeff;font-weight:700;margin:-4px 0 10px">' + (a.story || '') + '</p>' +
-      '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 3) + '%/cover;border:3px solid #5ac8ff;margin-bottom:14px;filter:hue-rotate(175deg) saturate(1.2) brightness(.85)"></div>' +
+      '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg_a3.jpg) center ' + (100 - (n - 1) * 3) + '%/cover;border:3px solid #5ac8ff;margin-bottom:14px"></div>' +
       elInfo(n, true) + '<p>' + TT('바다 너머 원정. 적이 악몽보다 세고, 바다 좀비는 물에 젖은 푸른빛이에요. 숙적 수귀 제독이 7·14·22장에 나타나요.', 'The voyage beyond the sea. Foes are stronger than Nightmare, and sea zombies glow a drowned blue. Admiral Drowned appears in stages 7, 14 and 22.') + '</p>' +
       '<p>' + TT('보상: 엽전·경험치 2.5배, 장비 단계 T3, 첫 클리어 옥 ', 'Rewards: coins & XP x2.5, gear tier T3, first clear jade ') + (150 + 10 * n) + '</p>' +
       '<p>' + TT('권장 전투력', 'Recommended power') + ' <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · ' + TT('내 전투력', 'My power') + ' ' + fmt(st.power) + '</p>' +
