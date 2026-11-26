@@ -86,7 +86,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     { n: '영웅', c: '#e39bff' }, { n: '전설', c: '#ffd36b' }, { n: '유니크', c: '#4cff9a' }, { n: '신화', c: '#ff3a3a' }];
   /* 장비 개편(11-27): 등급은 7개로 끝. 긴 성장은 티어(T1~T10, 30장마다)·품질·강화·별로. 등급마다 나오는 장(1막 1~30, 악몽 2막 31~60 …) */
   const GATE = [1, 5, 15, 30, 60, 120, 200];
-  const progCh = () => Math.max(1, (S.chap || 1) - 1, S.nm && S.nm.chap > 1 ? 30 + S.nm.chap - 1 : 0, S.nm && S.nm.stars && (S.nm.stars[30] || 0) >= 1 ? 60 : 0, S.a3 && S.a3.chap > 1 ? 60 + S.a3.chap - 1 : 0);   /* 3막 = 61~90장 */
+  const progCh = () => Math.max(1, (S.chap || 1) - 1, S.nm && S.nm.chap > 1 ? 30 + S.nm.chap - 1 : 0, S.nm && S.nm.stars && (S.nm.stars[30] || 0) >= 1 ? 60 : 0, S.a3 && S.a3.chap > 1 ? 60 + S.a3.chap - 1 : 0, S.ax ? Math.max(0, ...Object.keys(S.ax).map(k => S.ax[k] && S.ax[k].stars && (S.ax[k].stars[30] || 0) >= 1 ? 30 * k : S.ax[k] && S.ax[k].chap > 1 ? 30 * (k - 1) + S.ax[k].chap - 1 : 0)) : 0);   /* 3막 = 61~90장 */
   const maxG = c => { let g = 0; for (let i = 0; i < GATE.length; i++) if (GATE[i] <= c) g = i; return g; };
   const curTier = c => Math.min(10, 1 + Math.floor(((c || progCh()) - 1) / 30));
   /* '가끔' 단계(사용자 11-27: 전설은 가끔 나와야): [등급, 시작장, 정식장, {box:우두머리 상자, gacha:뽑기, nem:숙적}] */
@@ -614,14 +614,21 @@ if (window.IS_EN) document.title = 'K Zombi';
   /* ---------------- 2막: 악몽의 조선 (노멀 30장을 깨면 열림) ---------------- */
   const nmOpen = () => (S.stars[30] || 0) >= 2;
   const a3Open = () => nmOpen() && !!(S.nm && S.nm.stars && (S.nm.stars[30] || 0) >= 1);   /* 3막 '바다 너머로': 악몽 30장을 깨면 열림 */
-  const isA3 = () => a3Open() && S.mapA3 === true;
+  const isA3 = () => curAct() >= 3;   /* 3~10막 중 아무 막(막확장 11-27) */
   const isNM = () => nmOpen() && S.mapNM === true && !isA3();
+  const actSt = N => N === 3 ? (S.a3 = S.a3 || { chap: 1, stars: {}, best: {}, first: {} }) : ((S.ax = S.ax || {})[N] = S.ax[N] || { chap: 1, stars: {}, best: {}, first: {} });
+  const actOpen = N => N === 3 ? a3Open() : N >= 4 && N <= 10 && !!(window.JZD && window.JZD.actC) && actOpen(N - 1) && (actSt(N - 1).stars[30] || 0) >= 1;   /* 이전 막 30장 클리어 */
+  const curAct = () => { const a = (S.mapAct | 0) || (S.mapA3 === true ? 3 : 0); return a >= 3 && actOpen(a) ? a : 0; };
+  const actChapters = N => { const D = window.JZD, L = D && D.actC ? D.actC(N) : N === 3 && D ? D.ACT3C : null; return (L || []).map(c => ({ n: c.n, gn: c.gn, name: c.name, theme: c.theme, waves: c.nights || 6, story: c.story })); };
+  const actTT = N => { const D = window.JZD, t = D && D.actTitle ? D.actTitle(N) : ['3막 · 바다 너머로', 'Act 3 · Beyond the Sea']; return TT(t[0], t[1]); };
+  const actCol = N => window.JZD && window.JZD.actCol ? window.JZD.actCol(N) : '#6ad0ff';
+  const actDesc = (N, n) => { const D = window.JZD, NA = D.NEM_ACT && D.NEM_ACT[N] || {}, RU = D.actRule ? D.actRule(N, n) : null, RT = { solo: TT('재판정 규칙: 처용 홀로 싸워요(동료 없음).', 'Court rule: Cheoyong fights alone.'), longnight: TT('재판정 규칙: 밤이 1.5배 길어요.', 'Court rule: nights last 1.5x longer.'), nogold: TT('재판정 규칙: 엽전 없이 시작해요.', 'Court rule: start with no coins.') }; return TT('숙적 ' + NA.name + '이(가) 이 막 곳곳에 나타나고, 30장에서 결전해요.', NA.nameEn + ' haunts this act; the final duel is at stage 30.') + (RT[RU] ? ' <b style="color:#ffd36b">' + RT[RU] + '</b>' : ''); };
   const a3chapters = () => { const D = window.JZD; return (D && D.ACT3C || []).map(c => ({ n: c.n, gn: c.gn, name: c.name, theme: c.theme, waves: c.nights || 6, story: c.story })); };
   function renderMap() {
     if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} };
     if (!S.a3) S.a3 = { chap: 1, stars: {}, best: {}, first: {} };
-    const A3m = isA3(), NMm = isNM(), PCH = A3m ? S.a3.chap : NMm ? S.nm.chap : S.chap, PST = A3m ? S.a3.stars : NMm ? S.nm.stars : S.stars;
-    const C = A3m ? a3chapters() : chapters(), HB = 2100;
+    const AXN = curAct(), A3m = AXN >= 3, NMm = isNM(), PCH = A3m ? actSt(AXN).chap : NMm ? S.nm.chap : S.chap, PST = A3m ? actSt(AXN).stars : NMm ? S.nm.stars : S.stars;
+    const C = A3m ? actChapters(AXN) : chapters(), HB = 2100;
     const pos = C.map((c, i) => [NX[i % 10], HB - 170 - i * 195]);
     let d = 'M' + pos[0][0] + ' ' + (pos[0][1] + 60);
     for (let i = 1; i < pos.length; i++) { const [x0, y0] = pos[i - 1], [x1, y1] = pos[i]; d += ' C' + x0 + ' ' + (y0 - 90) + ' ' + x1 + ' ' + (y1 + 150) + ' ' + x1 + ' ' + (y1 + 60); }
@@ -634,10 +641,10 @@ if (window.IS_EN) document.title = 'K Zombi';
         '<div class="lab stroke-s">' + c.name + '</div><div class="st">' + st + '</div></div>';
     }).join('');
     $('#s-map').innerHTML = '<div class="mapscroll" id="mapscroll"><div class="mapbody"><svg class="mpath" width="720" height="' + HB + '"><path d="' + d + '" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="22" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffe9a8" stroke-width="10" stroke-dasharray="2 22" stroke-linecap="round"/></svg>' + nodes + '</div></div>' +
-      '<div class="mapbar"><div class="btn b back" data-act="lobby">' + ic('back').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + '</div><div class="t stroke">' + (A3m ? TT('3막 · 바다 너머로', 'Act 3 · Beyond the Sea') : NMm ? '2막 · 악몽의 조선' : '모험 지도') + '</div>' +
-      (nmOpen() ? '<div class="nmsw"><div class="' + (NMm || A3m ? '' : 'on') + '" data-act="mapNM" data-v="0">평범</div><div class="' + (NMm ? 'on nm' : '') + '" data-act="mapNM" data-v="1">악몽</div>' + (a3Open() ? '<div class="' + (A3m ? 'on a3' : '') + '" data-act="mapNM" data-v="3">' + TT('3막', 'Act 3') + '</div>' : '') + '</div>' : '') +
+      '<div class="mapbar"><div class="btn b back" data-act="lobby">' + ic('back').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + '</div><div class="t stroke">' + (A3m ? actTT(AXN) : NMm ? '2막 · 악몽의 조선' : '모험 지도') + '</div>' +
+      (nmOpen() ? '<div class="nmsw"><div class="' + (NMm || A3m ? '' : 'on') + '" data-act="mapNM" data-v="0">평범</div><div class="' + (NMm ? 'on nm' : '') + '" data-act="mapNM" data-v="1">악몽</div>' + (() => { const OA = [3, 4, 5, 6, 7, 8, 9, 10].filter(actOpen); if (!OA.length) return ''; const showN = AXN >= 3 ? AXN : OA[OA.length - 1]; return '<div class="' + (AXN >= 3 ? 'on a3' : '') + '" data-act="actPick" data-v="' + showN + '">' + TT(showN + '막', 'Act ' + showN) + (OA.length > 1 ? ' ▾' : '') + '</div>'; })() + '</div>' : '') +
       '<div style="margin-left:auto" class="rpill stroke-s">' + ic('torch') + S.torch + '/' + TORCH_MAX + '</div></div>';
-    $('#s-map').classList.toggle('nmmap', NMm); $('#s-map').classList.toggle('a3map', A3m);
+    $('#s-map').classList.toggle('nmmap', NMm); $('#s-map').classList.toggle('a3map', A3m); for (let N = 4; N <= 10; N++) $('#s-map').classList.toggle('actmap' + N, AXN === N);   /* 4~10막 지도 그림(css: data_acts.js) */
     show('s-map');
     const sc = $('#mapscroll'); const y = pos[Math.min(PCH, C.length) - 1][1]; sc.scrollTop = Math.max(0, y - 640);
   }
@@ -647,10 +654,10 @@ if (window.IS_EN) document.title = 'K Zombi';
     return '<div class="xel" style="border-color:' + E.c + '"><b style="color:' + E.c + '">이 장의 좀비 약점 · ' + E.n + ' 속성 피해 +' + Math.round(x.k * 100) + '%</b><div>' + (heroes.length ? '유리한 내 영웅: ' + heroes.join(', ') : E.n + ' 속성 영웅·기술을 데려가면 유리해요') + '</div>' + (nb.length ? '<div style="color:#9ef0c0">새 건물 열림: ' + nb.join(', ') + '</div>' : '') + '</div>'; }
   function chapModal(n) {
     const c = chapters()[n - 1], rec = Math.round(900 * Math.pow(n, 1.6)), st = stats();
-    if (isA3()) { const a = a3chapters()[n - 1] || {}, nr = Math.round(900 * Math.pow(n + 59, 1.6) * 1.9); modal('<h3 class="stroke" style="color:#6ad0ff">' + TT('3막 ', 'Act 3 · ') + a.gn + TT('장 · ', ' · ') + a.name + '</h3>' + '<p style="text-align:center;color:#cfeeff;font-weight:700;margin:-4px 0 10px">' + (a.story || '') + '</p>' +
-      '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg_a3.jpg) center ' + (100 - (n - 1) * 3) + '%/cover;border:3px solid #5ac8ff;margin-bottom:14px"></div>' +
-      elInfo(n, true) + '<p>' + TT('바다 너머 원정. 적이 악몽보다 세고, 바다 좀비는 물에 젖은 푸른빛이에요. 숙적 수귀 제독이 7·14·22장에 나타나요.', 'The voyage beyond the sea. Foes are stronger than Nightmare, and sea zombies glow a drowned blue. Admiral Drowned appears in stages 7, 14 and 22.') + '</p>' +
-      '<p>' + TT('보상: 엽전·경험치 2.5배, 장비 단계 T3, 첫 클리어 옥 ', 'Rewards: coins & XP x2.5, gear tier T3, first clear jade ') + (150 + 10 * n) + '</p>' +
+    if (isA3()) { const AXN = curAct(), a = actChapters(AXN)[n - 1] || {}, nr = Math.round(900 * Math.pow(n + 30 * (AXN - 1) - 1, 1.6) * 1.9); modal('<h3 class="stroke" style="color:' + actCol(AXN) + '">' + TT(AXN + '막 ', 'Act ' + AXN + ' · ') + a.gn + TT('장 · ', ' · ') + a.name + '</h3>' + '<p style="text-align:center;color:#cfeeff;font-weight:700;margin:-4px 0 10px">' + (a.story || '') + '</p>' +
+      '<div style="height:200px;border-radius:16px;background:url(' + (AXN >= 4 ? 'img/acts/act' + AXN + '/bg_map.webp' : 'img/ui/map_bg_a3.jpg') + ') center ' + (100 - (n - 1) * 3) + '%/cover;border:3px solid ' + actCol(AXN) + ';margin-bottom:14px"></div>' +
+      elInfo(n, true) + '<p>' + (AXN >= 4 ? actDesc(AXN, n) : TT('바다 너머 원정. 적이 악몽보다 세고, 바다 좀비는 물에 젖은 푸른빛이에요. 숙적 수귀 제독이 7·14·22장에 나타나요.', 'The voyage beyond the sea. Foes are stronger than Nightmare, and sea zombies glow a drowned blue. Admiral Drowned appears in stages 7, 14 and 22.')) + '</p>' +
+      '<p>' + TT('보상: 엽전·경험치 ' + (2.5 + 0.5 * (AXN - 3)) + '배, 장비 단계 T' + AXN + ', 첫 클리어 옥 ', 'Rewards: coins & XP x' + (2.5 + 0.5 * (AXN - 3)) + ', gear tier T' + AXN + ', first clear jade ') + (150 + 10 * (n + 30 * (AXN - 3))) + '</p>' +
       '<p>' + TT('권장 전투력', 'Recommended power') + ' <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · ' + TT('내 전투력', 'My power') + ' ' + fmt(st.power) + '</p>' +
       '<div class="row"><div class="btn b" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>' + TT('출항', 'Set sail') + '</span><small style="font-size:18px">' + TT('횃불 5', 'Torch 5') + '</small></div></div>'); return; }
     if (isNM()) { const nr = Math.round(900 * Math.pow(n + 29, 1.6) * 1.6); modal('<h3 class="stroke" style="color:#ff7a6a">악몽 ' + n + ' · ' + c.name + '</h3>' +
@@ -674,12 +681,12 @@ if (window.IS_EN) document.title = 'K Zombi';
 
   /* 장 사이 대화 (사용자 11-27) — 처음 한 번, 도감 이야기에서 다시 보기 */
   const CH_DLG = {"1":[["bs","처용님! 바다에서 온 검은 배에서 역병이 번지고 있어요!","Cheoyong! A plague spreads from the black ship!"],["cy","걱정 마시오. 이 마을은 내가 지키겠소.","Do not fear. I will guard this village."],["hero","함께 싸우겠소, 처용!","I will fight beside you, Cheoyong!"]],"3":[["cy","좀비들이 무리를 지어 움직인다… 누군가 부리고 있어.","They move in packs… someone commands them."],["hero","그냥 역병이 아니란 말이오?","So this is no ordinary plague?"]],"6":[["bs","밤마다 굿판이 벌어지더니 죽은 이들이 일어났어요!","Every night a rite was held, and the dead rose!"],["cy","어둠의 세력이 깨어났군. 서둘러야겠소.","The dark powers have awakened. We must hurry."]],"7":[["cy","오늘 밤은 공기가 다르다… 무언가 지켜보고 있어.","The air feels different tonight… something is watching."],["hero","등골이 서늘하오. 조심합시다.","A chill runs down my spine. Stay alert."]],"9":[["hero","처용, 그 그림자는 누구였소?","Cheoyong, who was that shadow?"],["cy","역신. 옛날 내 춤에 쫓겨난 역병의 귀신이오.","Yeoksin. The plague spirit my dance once drove out."],["cy","놈이 돌아왔다면… 이번엔 끝을 봐야 하오.","If he is back… this time it must end."]],"12":[["bs","궁궐 쪽 하늘이 보랏빛으로 물들었어요…","The sky over the palace has turned purple…"],["cy","놈이 힘을 모으고 있다.","He is gathering power."]],"14":[["ys","처용, 오늘 밤엔 직접 상대해 주마.","Cheoyong, tonight I face you myself."],["cy","바라던 바다. 이번엔 놓치지 않겠다!","Just what I wanted. You will not escape!"],["hero","수호자들이 모두 함께하겠소!","All the guardians stand with you!"]],"15":[["hero","놈이 물러났소. 하지만 끝이 아니오.","He retreated. But this is not over."],["cy","다음엔 반드시 끝을 내겠다.","Next time I will finish it."]],"18":[["bs","얼어붙은 성에서 북소리가 들려요… 무서워요.","Drums echo from the frozen fortress…"],["cy","두려워 마시오. 수호자들이 깨어나고 있소.","Fear not. The guardians are awakening."]],"21":[["cy","흑룡 대장… 역신의 오른팔이 나섰군.","The Black Dragon General… Yeoksin's right hand."],["hero","오른팔을 꺾으면 몸통도 흔들리겠지!","Break the arm and the body will shake!"]],"22":[["ys","또 만났구나. 이번엔 지난번과 다를 것이다.","We meet again. This time will be different."],["cy","나도 지난번의 처용이 아니다.","Nor am I the Cheoyong you met before."]],"24":[["hero","궁궐까지 얼마 남지 않았소!","The palace is close now!"],["cy","사당을 하나씩 지키며 나아가자.","We push on, shrine by shrine."]],"27":[["bs","임금님마저 역병에 쓰러지셨대요…","They say even the king has fallen ill…"],["cy","아직 늦지 않았다. 역신만 쓰러뜨리면 된다.","It is not too late. We only need to defeat Yeoksin."]],"30":[["ys","여기가 네 무덤이다, 처용!","This is your grave, Cheoyong!"],["cy","천 년 전처럼, 춤으로 너를 몰아내리라!","As long ago, my dance will drive you out!"],["hero","조선의 수호자들이여, 마지막 밤이다!","Guardians of Joseon, this is the final night!"]]};
-  function chDlg(n, done, force) { const A3k = String(n).indexOf('a3_') === 0, L = A3k ? (window.JZD && window.JZD.ACT3_DLG_UI ? window.JZD.ACT3_DLG_UI(+String(n).slice(3)) : null) : CH_DLG[n]; S.dlg = S.dlg || {}; if (!L || (!force && S.dlg[n])) return false; S.dlg[n] = 1; save();
+  function chDlg(n, done, force) { const AKm = String(n).match(/^a(\d+)_(\d+)$/), A3k = !!AKm, L = A3k ? (window.JZD && window.JZD.ACT_DLG_UI ? window.JZD.ACT_DLG_UI(+AKm[1], +AKm[2]) : AKm[1] === '3' && window.JZD && window.JZD.ACT3_DLG_UI ? window.JZD.ACT3_DLG_UI(+AKm[2]) : null) : CH_DLG[n]; S.dlg = S.dlg || {}; if (!L || (!force && S.dlg[n])) return false; S.dlg[n] = 1; save();
     const hid = (S.team || []).find(id => S.comps[id] && S.comps[id].own) || 'dokkaebi', EN = !!window.IS_EN;
     const SP = { cy: ['img/ui/hero_face.webp', EN ? 'Cheoyong' : '처용', '#ffcf6a'], ys: ['img/story/op3.webp', EN ? 'Yeoksin' : '역신', '#c98aff'], bs: ['img/story/op2.webp', EN ? 'Villager' : '백성', '#cfe8b0'], hero: ['img/ui/hero_' + hid + '.webp?v=4', (COMP[hid] && COMP[hid].n) || hid, '#8fd4ff'] };
     let i = 0; const ov = document.createElement('div'); ov.id = 'kzdlg';
     ov.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(4,6,12,.78);display:flex;flex-direction:column;justify-content:flex-end;align-items:center;touch-action:manipulation';
-    const ch = (A3k ? a3chapters()[+String(n).slice(3) - 1] : chapters()[n - 1]) || {};
+    const ch = (A3k ? actChapters(+AKm[1])[+AKm[2] - 1] : chapters()[n - 1]) || {};
     const draw = () => { const l = L[i], s = l[3] || SP[l[0]]; ov.innerHTML = '<div style="position:absolute;top:12%;left:0;right:0;text-align:center;color:#ffe3a3;font-weight:900;font-size:20px;text-shadow:0 2px 6px #000">' + (EN ? 'Chapter ' : '') + (ch.gn || n) + (EN ? '' : '장') + ' · ' + (ch.name || '') + '</div>' +
       '<div style="position:absolute;top:10px;right:12px;padding:8px 14px;border-radius:99px;background:rgba(255,255,255,.12);color:#fff;font-weight:800;font-size:14px" data-skip="1">' + (EN ? 'Skip ▶▶' : '건너뛰기 ▶▶') + '</div>' +
       '<div style="width:min(94vw,480px);margin:0 0 7vh;display:flex;gap:12px;align-items:flex-end">' +
@@ -692,14 +699,14 @@ if (window.IS_EN) document.title = 'K Zombi';
     draw(); document.body.appendChild(ov); return true; }
   window.KZ_chDlg = chDlg;
   function startBattle(n) {
-    if (!S.nextWB && S.nextMode !== 'arena' && S.nextMode !== 'boss' && (!S.nextMode && isA3() ? chDlg('a3_' + n, () => startBattle(n)) : chDlg(n, () => startBattle(n)))) return;
+    if (!S.nextWB && S.nextMode !== 'arena' && S.nextMode !== 'boss' && (!S.nextMode && isA3() ? chDlg('a' + curAct() + '_' + n, () => startBattle(n)) : chDlg(n, () => startBattle(n)))) return;
     tickTorch(); const WBX = S.nextWB || null, ARX = S.nextMode === 'arena' ? S.nextAR || null : null;
     if (!WBX && !ARX && S.torch < 5) { modal('<h3 class="stroke">횃불이 모자라요</h3><p>챕터에 들어가려면 횃불 5개가 필요해요. 횃불은 6분마다 1개씩 차요.</p><div class="row"><div class="btn r" data-act="buy" data-v="torch30">옥 40으로 30개 채우기</div></div>'); return; }
     if (!WBX && !ARX && S.torch >= TORCH_MAX) S.torchT = now();
     if (!WBX && !ARX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? 3 : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
+    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? curAct() : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -724,35 +731,36 @@ if (window.IS_EN) document.title = 'K Zombi';
     r = r || {};
     meta.classList.remove('off');
     try { window.JZB && window.JZB.hide && window.JZB.hide(); } catch (e) {}
-    const A3r = (r.act | 0) === 3, n = r.chapter || lastCh, C = A3r ? a3chapters() : chapters(), c = C[n - 1] || C[0], waves = r.waves || c.waves, wave = Math.min(r.wave || 0, waves);
+    const RAN = r.act | 0, A3r = RAN >= 3, n = r.chapter || lastCh, C = A3r ? actChapters(RAN) : chapters(), c = C[n - 1] || C[0], waves = r.waves || c.waves, wave = Math.min(r.wave || 0, waves);
     const win = !!r.win, NMr = !!r.nightmare;
-    { const ckey = (r.nightmare ? 'n' : 'c') + (r.chapter || lastCh); if (win) S.loseSt = null; else { S.loseSt = S.loseSt && S.loseSt.k === ckey ? { k: ckey, n: S.loseSt.n + 1 } : { k: ckey, n: 1 }; if (S.loseSt.n >= 2 && !S.mbow && S.mbowAsk !== today()) { S.mbowAsk = today(); setTimeout(() => { try { mbowModal(true); } catch (e) {} }, 1600); } } }   /* 같은 장 2연패: 신화 활 제안(하루 1번) */ if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} }; if (!S.a3) S.a3 = { chap: 1, stars: {}, best: {}, first: {} }; const wasA3 = a3Open();
-    const STb = A3r ? S.a3.stars : NMr ? S.nm.stars : S.stars, BSb = A3r ? S.a3.best : NMr ? S.nm.best : S.best, wasOpen = nmOpen();
+    { const ckey = (r.nightmare ? 'n' : 'c') + (r.chapter || lastCh); if (win) S.loseSt = null; else { S.loseSt = S.loseSt && S.loseSt.k === ckey ? { k: ckey, n: S.loseSt.n + 1 } : { k: ckey, n: 1 }; if (S.loseSt.n >= 2 && !S.mbow && S.mbowAsk !== today()) { S.mbowAsk = today(); setTimeout(() => { try { mbowModal(true); } catch (e) {} }, 1600); } } }   /* 같은 장 2연패: 신화 활 제안(하루 1번) */ if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} }; if (!S.a3) S.a3 = { chap: 1, stars: {}, best: {}, first: {} }; const wasA3 = a3Open(), wasNext = A3r && RAN < 10 ? actOpen(RAN + 1) : true;
+    const STb = A3r ? actSt(RAN).stars : NMr ? S.nm.stars : S.stars, BSb = A3r ? actSt(RAN).best : NMr ? S.nm.best : S.best, wasOpen = nmOpen();
     const stars = win ? (wave >= waves ? 3 : 2) : wave >= waves * 0.66 ? 2 : wave >= waves * 0.33 ? 1 : 0;
     if (stars > (STb[n] || 0)) STb[n] = stars;
     if (wave > (BSb[n] || 0)) BSb[n] = wave;
-    const unlocked = A3r ? (win && n === S.a3.chap && S.a3.chap < C.length) : NMr ? (win && n === S.nm.chap && S.nm.chap < C.length) : (win && n === S.chap && S.chap < C.length);
-    if (unlocked) { if (A3r) S.a3.chap++; else if (NMr) S.nm.chap++; else { S.chap++; S.sel = S.chap; } }
+    const unlocked = A3r ? (win && n === actSt(RAN).chap && actSt(RAN).chap < C.length) : NMr ? (win && n === S.nm.chap && S.nm.chap < C.length) : (win && n === S.chap && S.chap < C.length);
+    if (unlocked) { if (A3r) actSt(RAN).chap++; else if (NMr) S.nm.chap++; else { S.chap++; S.sel = S.chap; } }
     { const lg = unlocked ? 1 : 0; if (lg) { S.lsh = (S.lsh || 0) + lg; setTimeout(() => { try { toast(TT('새 장 첫 클리어: 전설 조각 +1', 'New chapter cleared: Legend shard +1')); } catch (e) {} }, 2200); } try { msCheck(); } catch (e) {} setTimeout(() => { try { rkPost(true); } catch (e) {} }, 2500); }
-    const nmFirst = NMr && win && !S.nm.first[n] ? 100 + 10 * n : 0; if (nmFirst) S.nm.first[n] = 1; const a3First = A3r && win && !S.a3.first[n] ? 150 + 10 * n : 0; if (a3First) S.a3.first[n] = 1;
+    const nmFirst = NMr && win && !S.nm.first[n] ? 100 + 10 * n : 0; if (nmFirst) S.nm.first[n] = 1; const a3First = A3r && win && !actSt(RAN).first[n] ? 150 + 10 * (n + 30 * (RAN - 3)) : 0; if (a3First) actSt(RAN).first[n] = 1;
+    if (A3r && win && !wasNext && actOpen(RAN + 1)) setTimeout(() => { try { modal('<h3 class="stroke" style="color:' + actCol(RAN + 1) + '">' + actTT(RAN + 1) + TT(' 열림!', ' is open!') + '</h3><div style="display:flex;gap:6px;margin:4px 0 10px">' + [1, 2, 3].map(k => '<img src="img/story/act' + RAN + '_end' + k + '.jpg" style="width:33%;border-radius:10px" onerror="this.remove()">').join('') + '</div>' + (window.JZD && window.JZD.ACT_END && window.JZD.ACT_END[RAN] ? '<p style="text-align:center;color:#ffe3a3;font-weight:700">' + TT(window.JZD.ACT_END[RAN][0], window.JZD.ACT_END[RAN][1]) + '</p>' : '') + '<p style="text-align:center">' + TT('지도 위 「' + (RAN + 1) + '막」을 눌러 떠나세요.', 'Tap "Act ' + (RAN + 1) + '" on the map to continue.') + '</p>'); } catch (e) {} }, 2600);   /* 다음 막 열림 */
     if (NMr && win && !wasA3 && a3Open()) setTimeout(() => { try { modal('<h3 class="stroke" style="color:#6ad0ff">' + TT('3막 · 바다 너머로 열림!', 'Act 3 · Beyond the Sea is open!') + '</h3><p style="text-align:center">' + TT('몽마가 남긴 검은 나침반이 바다 너머 서쪽을 가리킨다. 지도 위 「3막」을 눌러 출항하세요.', 'The black compass left by the Lord of Nightmares points west across the sea. Tap "Act 3" on the map to set sail.') + '</p>'); } catch (e) {} }, 2600);
     if (!NMr && win && n === C.length && !S.seenEnd1) { S.seenEnd1 = 1; setTimeout(() => { try { storyCuts(END_CUTS, i => 'end' + (i + 1), null); } catch (e) {} }, 1500); }
     const act2 = !NMr && !wasOpen && nmOpen(), nmTitle = NMr && win && n === 30 && !S.title; if (nmTitle) S.title = '악몽을 넘은 자';
-    const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)) * (A3r ? 2.5 : NMr ? 2 : 1), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
+    const tk = Math.min(2.4, Math.max(1, +r.tierK || 1)) * (A3r ? 2.5 + 0.5 * (RAN - 3) : NMr ? 2 : 1), gold = Math.round(((r.gold || 0) + (win ? 400 : 150) * n + (r.kills || 0) * 2) * tk);   /* 판 등급만큼 보상도 */
     const exp = Math.round((win ? 90 : 40) * n * tk);
     const stone = win ? 4 + n * 2 : Math.floor(n * wave / waves * 2);
-    ITEM_SRC = (NMr && !A3r ? '악몽 ' : '') + (A3r ? 60 + n : n) + '장 우두머리 처치'; ITEM_CH = A3r ? 60 + n : NMr ? 30 + n : n; const capD = maxG(ITEM_CH), drop = win ? mkItem(rnd(SLOTS).id, rareUp(Math.min(capD, rollGrade(Math.max(0, capD - 2), capD) + (Math.random() < 0.3 ? 1 : 0)), ITEM_CH, 'box')) : null; ITEM_CH = 0; rareShow(drop);   /* 우두머리 상자: 그 장 문(GATE)을 넘지 않음, 확률만 조금 높음 */ ITEM_SRC = '';
+    ITEM_SRC = (NMr && !A3r ? '악몽 ' : '') + (A3r ? 30 * (RAN - 1) + n : n) + '장 우두머리 처치'; ITEM_CH = A3r ? 30 * (RAN - 1) + n : NMr ? 30 + n : n; const capD = maxG(ITEM_CH), drop = win ? mkItem(rnd(SLOTS).id, rareUp(Math.min(capD, rollGrade(Math.max(0, capD - 2), capD) + (Math.random() < 0.3 ? 1 : 0)), ITEM_CH, 'box')) : null; ITEM_CH = 0; rareShow(drop);   /* 우두머리 상자: 그 장 문(GATE)을 넘지 않음, 확률만 조금 높음 */ ITEM_SRC = '';
     const ob = r.objective || null, obJade = ob && ob.ok ? 20 + 5 * n : 0;
     const rw = { gold, exp, stone, drop, jade: (win && unlocked ? 50 : 0) + obJade + nmFirst + a3First, dbl: false };
     S.gold += gold; S.stone += stone; S.jade += rw.jade; if (drop) S.inv.push(drop);
-    if (win && ((r.nemBox | 0) > 0 || (n === 30 && !NMr))) { ITEM_SRC = '숙적 보상 상자'; ITEM_CH = A3r ? 60 + n : NMr ? 30 + n : n; const capN = maxG(ITEM_CH); for (let k = 0; k < Math.max(1, r.nemBox | 0); k++) { const nb = mkItem(rnd(SLOTS).id, rareUp(rollGrade(Math.max(0, capN - 1), capN), ITEM_CH, 'nem')); S.inv.push(nb); rareShow(nb); rw.nemDrop = nb; } ITEM_CH = 0; ITEM_SRC = ''; }   /* 숙적(14·22장 퇴장, 30장 처치) 장비 상자: 가끔 확률 nem */
+    if (win && ((r.nemBox | 0) > 0 || (n === 30 && !NMr))) { ITEM_SRC = '숙적 보상 상자'; ITEM_CH = A3r ? 30 * (RAN - 1) + n : NMr ? 30 + n : n; const capN = maxG(ITEM_CH); for (let k = 0; k < Math.max(1, r.nemBox | 0); k++) { const nb = mkItem(rnd(SLOTS).id, rareUp(rollGrade(Math.max(0, capN - 1), capN), ITEM_CH, 'nem')); S.inv.push(nb); rareShow(nb); rw.nemDrop = nb; } ITEM_CH = 0; ITEM_SRC = ''; }   /* 숙적(14·22장 퇴장, 30장 처치) 장비 상자: 가끔 확률 nem */
     const lvUp = addExp(exp); save();
     lastRw = rw;
     const d = r.dmg || {}, tot = Math.max(1, (d.skill || 0) + (d.hero || 0) + (d.building || 0) + (d.player || 0));
     const rows = [['skill', '신력', 'tPower', '#9a4ef0', 'linear-gradient(90deg,#b070ff,#6a20c0)'], ['hero', '영웅', 'tComp', '#2b9520', 'linear-gradient(90deg,#9df27a,#2b9520)'], ['building', '건물', 'skGun', '#1d62c9', 'linear-gradient(90deg,#7fd0ff,#1d62c9)'], ['player', '처용', 'bow', '#c0301b', 'linear-gradient(90deg,#ffb02a,#e0401b)']];
     const el = $('#s-result'); el.className = 'm-scr ' + (win ? '' : 'lose');
     el.innerHTML = '<div class="rays"></div><div class="rtitle"><span>' + (win ? '승리' : '패배') + '</span></div>' +
-      '<div class="rsub stroke-s">' + (A3r ? '<span style="color:#6ad0ff">' + TT('3막', 'Act 3') + '</span> ' + (60 + n) : (NMr ? '<span style="color:#ff7a6a">악몽</span> ' : '챕터 ') + n) + ' · ' + c.name + (unlocked ? ' · 다음 챕터 열림!' : '') + (nmFirst || a3First ? ' · 첫 클리어 옥 +' + (nmFirst || a3First) : '') + '</div>' +
+      '<div class="rsub stroke-s">' + (A3r ? '<span style="color:' + actCol(RAN) + '">' + TT(RAN + '막', 'Act ' + RAN) + '</span> ' + (30 * (RAN - 1) + n) : (NMr ? '<span style="color:#ff7a6a">악몽</span> ' : '챕터 ') + n) + ' · ' + c.name + (unlocked ? ' · 다음 챕터 열림!' : '') + (nmFirst || a3First ? ' · 첫 클리어 옥 +' + (nmFirst || a3First) : '') + '</div>' +
       (ob ? '<div class="robj stroke-s ' + (ob.ok ? 'ok' : 'no') + '">목표 · ' + String(ob.name || '').replace(/[<>&]/g, '') + ' — ' + (ob.ok ? '달성! 옥 +' + obJade : '실패') + '</div>' : '') +
       '<div class="rinfo"><div class="stat stroke-s">밤 ' + wave + '/' + waves + '</div><div class="stat stroke-s">물리친 좀비 ' + fmt(r.kills || 0) + '</div><div class="stat stroke-s">' + Math.floor((r.time || 0) / 60) + '분 ' + ((r.time || 0) % 60) + '초</div></div>' +
       '<div class="dmg box"><h4 class="stroke-s">피해 비율</h4>' + rows.map(([k, nm, i, bg, grad]) => { const p = Math.round((d[k] || 0) / tot * 100); return '<div class="drow"><div class="ic2" style="background:' + bg + '">' + ic(i) + '</div><div class="nm stroke-s">' + nm + '</div><div class="bar"><i data-w="' + p + '" style="background:' + grad + '"></i></div><div class="pc stroke-s">' + p + '%</div></div>'; }).join('') +
@@ -1730,8 +1738,10 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'chap': S.sel = Math.max(1, Math.min(S.chap, S.sel + (+v))); refresh(); break;
       case 'map': renderMap(); break;
       case 'lobby': renderLobby(); break;
-      case 'mapNM': S.mapNM = v === '1'; S.mapA3 = v === '3'; save(); renderMap(); break;
-      case 'node': { const n = +v; if (n > (isA3() ? S.a3.chap : isNM() ? S.nm.chap : S.chap)) { toast('앞 챕터를 먼저 깨야 해요'); break; } S.sel = n; save(); chapModal(n); break; }
+      case 'actPick': { const OA = [3, 4, 5, 6, 7, 8, 9, 10].filter(actOpen); if (!isA3() || OA.length < 2) { S.mapNM = false; S.mapA3 = true; S.mapAct = +v; save(); renderMap(); break; } modal('<h3 class="stroke">' + TT('막 고르기', 'Choose an act') + '</h3>' + OA.map(N => '<div class="row"><div class="btn ' + (N === curAct() ? 'y' : 'b') + '" data-act="actGo" data-v="' + N + '" style="width:100%">' + actTT(N) + '</div></div>').join('')); break; }
+      case 'actGo': closeModal(); S.mapNM = false; S.mapA3 = true; S.mapAct = +v; save(); renderMap(); break;
+      case 'mapNM': S.mapNM = v === '1'; S.mapA3 = +v >= 3; S.mapAct = +v >= 3 ? +v : 0; save(); renderMap(); break;
+      case 'node': { const n = +v; if (n > (isA3() ? actSt(curAct()).chap : isNM() ? S.nm.chap : S.chap)) { toast('앞 챕터를 먼저 깨야 해요'); break; } S.sel = n; save(); chapModal(n); break; }
       case 'chest': e.stopPropagation(); S.chest[v] = 1; S.jade += 50; S.stone += 5; save(); toast('보상 상자: 옥 50, 신력석 5'); renderMap(); break;
       case 'start': startBattle(S.sel); break;
       case 'go': startBattle(+v); break;
