@@ -357,6 +357,12 @@ button{font-family:inherit;cursor:pointer}
 #reward .rw .ico{font-size:22px;color:var(--cy)}#reward .rw.g{background:#ff9ad814;border-color:#ff9ad855}#reward .rw.g .ico{color:#ff9ad8}
 #reward .rwd{font-size:11px;opacity:.6;margin-top:6px}#reward .rwm{font-size:13px;color:#7dff9a;margin-top:6px}
 #ovBtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center}
+#over{overflow-y:auto;justify-content:safe center;padding:14px 16px 0}#over > *{flex-shrink:0}
+#ovBtns{position:sticky;bottom:0;width:100%;padding:12px 0 max(12px,env(safe-area-inset-bottom));margin-top:6px;background:linear-gradient(transparent,#05070ef5 28%);z-index:3}
+#ovBtns .go,#ovBtns .ghost{margin:0}#ovBtns .go{padding:13px 30px;font-size:17px;letter-spacing:2px}
+@media (max-height:640px){#ovT{font-size:30px!important;letter-spacing:4px}#ovSub{margin:4px 0 8px}#ovStars{margin-bottom:6px}#ovStars span i{font-size:26px}#ovLine{font-size:12px;margin-bottom:6px}
+  #stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;margin:4px 0 8px}#stats div{padding:6px 4px}#stats b{font-size:16px}#stats .ico{font-size:16px}
+  #reward{margin-bottom:4px}#reward .rw{padding:6px 12px;font-size:17px}#reward .rwd,#reward .rwm{font-size:11px;margin-top:3px}}
 .adbtn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:6px;border:1px solid #7dff9a77;background:#0f2a1a;color:#b8ffc8;font:800 14px var(--ff)}
 
 /* ───────── 일시정지: 현재 빌드 ───────── */
@@ -654,7 +660,7 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
   <button class="go" id="resume">계속</button><div style="display:flex;gap:8px"><button class="ghost" id="mute">소리 끄기</button><button class="ghost" id="quit">나가기</button></div></div>
 <div id="story" class="ov hide"><div class="stbox"><small id="stK"></small><h3 id="stT"></h3><p id="stP"></p><button class="go" id="stGo">계속</button></div></div>
 <div id="over" class="ov hide"><h2 id="ovT"></h2><div id="ovSub"></div><div id="ovLine" class="hide"></div><div id="ovStars"></div><div id="newrec" class="hide">신기록</div><div id="stats"></div>
-  <div id="reward"></div><div id="ovBtns"><button class="go hide" id="nextThreat">다음 장</button><button class="go" id="retry">다시 출격</button><button class="adbtn hide" id="adDouble"></button><button class="ghost" id="toTitle">격납고로</button></div></div>
+  <div id="reward"></div><div id="ovBtns"><button class="go hide" id="nextThreat">다음 장</button><button class="go" id="retry">다시 출격</button><button class="adbtn hide" id="adDouble"></button><button class="ghost" id="toTitle">주메뉴로</button></div></div>
 
 <script>window.__MSLE_BB=23.75/90; window.__MSLE_PROF = { vertical: { climb: .2, v0: 120, vClimb: 250, vmax: 780, vEnd: 1050, endR: 300, acc: 1500, turn: 10, turnUp: 32, wob: .2 } };window.__phone=matchMedia("(pointer:coarse)").matches;window.step=function(){};window.mdlAnimate=function(){};window.__tfHoldOK=true;</script>
 <script src="lib/explosionfx.js?v=3"></script>
@@ -663,6 +669,6 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
 <script src="lib/gicons.js?v=1"></script>
-<script type="module" src="game.js?v=23"></script>
+<script type="module" src="game.js?v=24"></script>
 </body>
 </html>

@@ -1174,11 +1174,13 @@ function updPlayer(dt) {
   const tgt = nearest(P.x, P.z, 150);
   const want = tgt ? Math.atan2(tgt.x - P.x, tgt.z - P.z) : Math.atan2(P.dx, P.dz);
   let da = want - P.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU;
-  if (!P.fly) P.yaw += da * Math.min(1, dt * 14);
+  if (!P.fly) { const w = (P.sw || P.dashT > 0 ? 16 : 10) * dt; P.yaw += Math.abs(da) < w ? da : Math.sign(da) * w; }
   P.alt = lerp(P.alt, P.fly && P.tfUp ? FLY.alt : 0, Math.min(1, dt * (P.fly && P.tfUp ? 7 : 9))); if (!P.fly && P.alt < .05) P.alt = 0;
   P.group.position.set(P.x, P.alt, P.z); P.wrap.position.set(0, 0, 0); P.wrap.rotation.set(0, P.yaw - Math.PI / 2, 0); P.wrap.scale.setScalar(1.25); pMark.position.set(P.x, .4, P.z);
   P.group.visible = !(P.inv > 0 && P.dashT <= 0 && P.ultT <= 0 && Math.floor(P.inv * 20) % 2 === 0);
   const moving = !!(inp.x || inp.z) || P.dashT > 0 || !!P.mv;
+  if ((P.dashT > 0 || P.mv) && !P.fly && (P.ghT = (P.ghT || 0) - dt) <= 0) { P.ghT = .045; spawnGhost(); }
+  updGhosts(dt);
   const twoHand = ['rifle', 'rail', 'gatling', 'homing', 'burst'].includes(PRIM);
   animTick(dt, P.dashT > 0 ? 'hover' : moving ? 'run' : (tgt && twoHand) ? 'shoot' : 'idle', moving);
 
@@ -2906,9 +2908,51 @@ function meleePose() {
     armIK(B.LeftArm, B.LeftForeArm, B.LeftHand, grip, 1);
   }
 }
+// ── 잔상 분신: 뼈대만 복제해 그 순간 자세로 얼리고, 몸 모델(형상)은 원본을 함께 쓴다
+const GHOSTS = [];
+function spawnGhost() {
+  if (!P.wrap || GHOSTS.length > 8 || G.state !== 'play') return;
+  const root = P.spin.children[0]; if (!root) return; root.updateMatrixWorld(true);
+  const col = (ELEM[P.el] || {}).hex || 0x7fe6ff, mat = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: .5, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+  const grp = new THREE.Group(); grp.matrixAutoUpdate = false;
+  const skins = []; root.traverse((o) => { if (o.isSkinnedMesh && o.visible) skins.push(o); });
+  const done = new Map();
+  for (const sm of skins) {
+    const sk = sm.skeleton, top = sk.bones.find((b) => !b.parent || !b.parent.isBone) || sk.bones[0]; let map = done.get(top);
+    if (!map) {
+      const cl = top.clone(true); map = new Map(); const walk = (a, b) => { map.set(a, b); if (b.isMesh) b.material = mat; for (let i = 0; i < a.children.length; i++) if (b.children[i]) walk(a.children[i], b.children[i]); }; walk(top, cl);
+      const holder = new THREE.Group(); holder.matrixAutoUpdate = false; holder.matrix.copy(top.parent ? top.parent.matrixWorld : new THREE.Matrix4()); holder.add(cl); grp.add(holder); done.set(top, map);
+    }
+    const bones = sk.bones.map((b) => map.get(b) || b), skel = new THREE.Skeleton(bones, sk.boneInverses);
+    const gm = new THREE.SkinnedMesh(sm.geometry, mat); gm.bindMode = sm.bindMode; gm.matrixAutoUpdate = false; gm.matrix.copy(sm.matrixWorld); gm.frustumCulled = false; gm.bind(skel, sm.bindMatrix);
+    grp.add(gm);
+  }
+  scene.add(grp); GHOSTS.push({ grp, mat, t: 0, T: .34 });
+}
+function updGhosts(dt) {
+  for (let i = GHOSTS.length - 1; i >= 0; i--) { const o = GHOSTS[i]; o.t += dt; const k = o.t / o.T; o.mat.opacity = .5 * Math.max(0, 1 - k) ** 1.5;
+    if (k >= 1) { scene.remove(o.grp); o.mat.dispose(); GHOSTS.splice(i, 1); } }
+}
+// ── 로봇다운 몸놀림: 달릴 때 상체·머리는 덜 흔들리고(단단한 몸통), 팔은 덜 휘두른다(무기를 앞에 들고)
+const ROBO_STIFF = [['Spine02', .35], ['Spine01', .45], ['Spine', .5], ['neck', .6], ['Head', .6]], ROBO_ARM = [['LeftArm', .4], ['RightArm', .4], ['LeftForeArm', .35], ['RightForeArm', .35]];
+function roboBody(dt) {
+  const B = armed && armed.bones; if (!B || G.state !== 'play' || P.fly) return;
+  const run = !!(inp.x || inp.z) && P.dashT <= 0 && !P.mv;
+  P.rbK = lerp(P.rbK || 0, run ? 1 : .35, Math.min(1, dt * 8)); const k = P.rbK;
+  for (const [n, w] of ROBO_STIFF) { const b = B[n]; if (b && b.userData.q0 && !(P.sw && n !== 'Head')) b.quaternion.slerp(b.userData.q0, w * k); }
+  if (!P.sw && (P.aimK || 0) < .1 && (P.lAimK || 0) < .1) for (const [n, w] of ROBO_ARM) { const b = B[n]; if (b && b.userData.q0) b.quaternion.slerp(b.userData.q0, w * k); }
+  // 발 디딤: 발이 땅에 닿는 순간 쿵(먼지·작은 진동·낮은 소리)
+  if (run) for (const s of ['Left', 'Right']) { const f = B[s + 'Foot']; if (!f) continue; f.getWorldPosition(_va); const y = _va.y - P.group.position.y, key = 'ft' + s, low = (armed.footRest ?? 0) + 1.1;
+    if (y < low && (P[key] ?? 9) >= low && (P['fs' + s] = (P['fs' + s] || 0)) <= G.t) { P['fs' + s] = G.t + .16; burst(_va.x, .6, _va.z, 4, 0xb8a07a, 22, .35, 7, .2); G.shake = Math.max(G.shake, .5); if (gate('stomp', 120)) tone(90, 40, .09, 'sine', .07); }
+    P[key] = y; }
+  // 달리는 동안 등 추진기 불빛
+  if (run && B.Spine && (P.thT = (P.thT || 0) - dt) <= 0) { P.thT = .05; B.Spine.getWorldPosition(_va); const bx = _va.x - Math.sin(P.yaw) * 2.6, bz = _va.z - Math.cos(P.yaw) * 2.6;
+    flare(bx, _va.y - 1, bz, 0x7fd8ff, 6, .06); burst(bx, _va.y - 1.5, bz, 1, 0x9fe8ff, 18, .2, 5, -.2); }
+}
 function placeArms(dt) {
   if (!armed) return;
   if (lobby.on && G.state === 'title') lobbyStand();
+  else roboBody(dt);
   P.group.updateMatrixWorld(true);
   const B = armed.bones, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw), mw = armed.main;
   // 왼손 레이저(손바닥 빔·알파 빔·빛 깃털): 쏘는 동안 왼팔을 적 쪽으로 뻗는다
@@ -3420,7 +3464,7 @@ function bindCur(root) { root.querySelectorAll('.pl').forEach((b) => (b.onclick 
 // ── 정비: 무기 · 기체 숙련 · 공통 강화
 let arsTab = 'wpn', wSel = null;
 function openArsenal(t) { if (t) arsTab = t; drawArsenal(); $('#arsenal').classList.remove('hide'); }
-if (location.search.includes('dev')) Object.assign(window, { __el: Object.assign(window.__el || {}, { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, wOf, placeArms, get HZ() { return HZ; } }) });
+if (location.search.includes('dev')) Object.assign(window, { __el: Object.assign(window.__el || {}, { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, wOf, placeArms, spawnGhost, get GH() { return GHOSTS; }, get HZ() { return HZ; } }) });
 function drawArsenal() {
   const m = MECH(save.mech), X = ELEM[m.el];
   $('#aTitle').innerHTML = `${ico('anvil')}정비`;
