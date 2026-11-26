@@ -2781,14 +2781,50 @@ function aimGun(mw, dir, k) {
   const mz = mw.userData.body.localToWorld(_gv[0].copy(m)); mw.userData.body.localToWorld(rear); const v = mz.sub(rear); if (v.lengthSq() < 1e-6) return; v.normalize();
   rotW(RH, new THREE.Quaternion().slerp(_gq.setFromUnitVectors(v, dir), k));
 }
+const UPY = new THREE.Vector3(0, 1, 0);
+// 상체를 표적 쪽으로 돌린다. ang: 표적보다 오른쪽으로 더 트는 각도(왼어깨가 앞으로 나오는 사격 자세), pitch: +앞으로 숙임 / -뒤로 젖힘
+function torsoAim(dir, ang, pitch, k) {
+  const B = armed.bones, sp1 = B.Spine01 || B.Spine1, sp = B.Spine; if (!sp || !B.RightArm || !B.LeftArm || k < .02) return;
+  const dh = new THREE.Vector3(dir.x, 0, dir.z); if (dh.lengthSq() < 1e-6) return; dh.normalize();
+  const df = dh.clone().multiplyScalar(Math.cos(ang)).addScaledVector(new THREE.Vector3().crossVectors(dh, UPY).normalize(), Math.sin(ang)).normalize();
+  for (const [bone, w] of [[sp1, .5], [sp, 1]]) { if (!bone) continue;
+    const side = B.RightArm.getWorldPosition(new THREE.Vector3()).sub(B.LeftArm.getWorldPosition(new THREE.Vector3())); side.y = 0; if (side.lengthSq() < 1e-6) return; side.normalize();
+    const cf = new THREE.Vector3().crossVectors(UPY, side).normalize(); const a = clamp(Math.atan2(new THREE.Vector3().crossVectors(cf, df).y, cf.dot(df)), -1.1, 1.1);
+    const q = new THREE.Quaternion().setFromAxisAngle(UPY, a * w * k);
+    if (bone === sp && pitch) q.premultiply(new THREE.Quaternion().setFromAxisAngle(side, -pitch * k));
+    rotW(bone, q); }
+}
+// 머리가 표적을 본다(상체를 튼 만큼 되돌려 앞을 본다)
+function headAim(dir, k) {
+  const B = armed.bones, hd = B.Head || B.neck; if (!hd || !B.RightArm || !B.LeftArm || k < .02) return;
+  const side = B.RightArm.getWorldPosition(new THREE.Vector3()).sub(B.LeftArm.getWorldPosition(new THREE.Vector3())); side.y = 0; if (side.lengthSq() < 1e-6) return; side.normalize();
+  const cf = new THREE.Vector3().crossVectors(UPY, side).normalize(), dh = new THREE.Vector3(dir.x, 0, dir.z).normalize();
+  const a = clamp(Math.atan2(new THREE.Vector3().crossVectors(cf, dh).y, cf.dot(dh)), -.9, .9); rotW(hd, new THREE.Quaternion().setFromAxisAngle(UPY, a * k));
+}
+// 왼손 방향 맞추기: 손바닥이 N을, 손가락이 F 쪽을 보게(받침손은 손바닥이 위로)
+function handOrient(hand, N, F, k) {
+  const f = armed && armed.lpf; if (!f || k < .02) return;
+  hand.getWorldQuaternion(_pfq); const Nw = _pf2.copy(f.N).applyQuaternion(_pfq).normalize(), Fw = _pf1.copy(f.F).applyQuaternion(_pfq); Fw.addScaledVector(Nw, -Fw.dot(Nw)).normalize();
+  const Nt = N.clone().normalize(), Ft = F.clone().addScaledVector(Nt, -F.dot(Nt)); if (Ft.lengthSq() < 1e-6) return; Ft.normalize();
+  _pm1.makeBasis(Nw, Fw, _pf4.crossVectors(Nw, Fw).normalize()); const q1 = new THREE.Quaternion().setFromRotationMatrix(_pm1);
+  _pm2.makeBasis(Nt, Ft, new THREE.Vector3().crossVectors(Nt, Ft).normalize()); const q2 = new THREE.Quaternion().setFromRotationMatrix(_pm2);
+  rotW(hand, new THREE.Quaternion().slerp(q2.multiply(q1.invert()), k));
+}
+// 쏠 때 반동 세기(기관포는 잔떨림, 레일은 크게)
+const recoilK = () => (P.recoil || 0) * (ARM === 'gatling' ? .35 : ARM === 'rail' ? 1.5 : ARM === 'cannon' ? 1.3 : 1);
 function gunTwoHand(mode, dir, k) {
   const B = armed.bones, mw = armed.main; if (!B.RightArm || !B.RightForeArm || !B.RightHand || !B.LeftArm) return;
+  const rc = mode === 'ready' ? 0 : recoilK();
+  // 비스듬히 선 자세: 소총은 왼어깨를 앞으로 틀고 살짝 숙인다, 기관포는 덜 틀고 뒤로 젖혀 무게를 받친다. 쏘면 상체가 뒤로 밀린다
+  if (mode !== 'ready') torsoAim(dir, mode === 'hip' ? .18 : .4, (mode === 'hip' ? -.1 : .07) - .07 * rc, k);
   const rs = B.RightArm.getWorldPosition(_gv[2]), ls = B.LeftArm.getWorldPosition(_gv[3]), side = _gv[4].copy(rs).sub(ls); side.y = 0; if (side.lengthSq() < 1e-6) return; side.normalize();
   const fe = B.RightForeArm.getWorldPosition(_gv[5]), hd = B.RightHand.getWorldPosition(_gv[6]), L = rs.distanceTo(fe) + fe.distanceTo(hd);
   const fw = _gv[7].set(dir.x, 0, dir.z).normalize(); let T, aim;
   if (mode === 'shoulder') { T = rs.clone().addScaledVector(fw, L * .52).addScaledVector(side, L * .1); T.y -= L * .44; aim = dir; }
   else if (mode === 'hip') { T = rs.clone().addScaledVector(fw, L * .4).addScaledVector(side, -L * .04); T.y -= L * .62; aim = new THREE.Vector3(dir.x, .03, dir.z).normalize(); }
   else { T = rs.clone().addScaledVector(fw, L * .34).addScaledVector(side, -L * .12); T.y -= L * .66; aim = fw.clone().multiplyScalar(.72).addScaledVector(side, -.55); aim.y = -.42; aim.normalize(); }
+  // 반동: 오른손이 뒤로 밀리고 총구가 위로 튄다
+  if (rc > .01) { T.addScaledVector(fw, -L * .09 * rc); T.y += L * .03 * rc; aim = aim.clone(); aim.y += (mode === 'hip' ? .05 : .11) * rc; aim.normalize(); }
   armIK(B.RightArm, B.RightForeArm, B.RightHand, T, k); aimGun(mw, aim, k);
   // 머리 피하기: 총신 선이 머리 가까이 지나가면 오른손을 바깥·아래로 옮겨 다시 맞춘다(총이 머리를 뚫지 않게)
   if (mode === 'shoulder' && B.Head) for (let it = 0; it < 4; it++) {
@@ -2800,7 +2836,10 @@ function gunTwoHand(mode, dir, k) {
     mw.updateMatrixWorld(true); const mzp = mw.userData.body.localToWorld(new THREE.Vector3().copy(mw.userData.muzzle)), hp = B.RightHand.getWorldPosition(new THREE.Vector3());
     const grip = hp.lerp(mzp, mode === 'hip' ? .3 : .44); grip.y -= L * .05;
     armIK(B.LeftArm, B.LeftForeArm, B.LeftHand, grip, k);
+    // 받침손: 손바닥을 위로, 손가락은 총구 쪽으로 감싸 쥔다(기관포는 위 손잡이를 위에서 잡는다)
+    handOrient(B.LeftHand, mode === 'hip' ? new THREE.Vector3(0, -1, 0) : UPY, aim, k * .85);
   }
+  if (mode !== 'ready') headAim(dir, k * .85);
 }
 function placeArms(dt) {
   if (!armed) return;
@@ -2836,7 +2875,8 @@ function placeArms(dt) {
       const ax = tg ? tg.x - P.x : fx, az = tg ? tg.z - P.z : fz, al = Math.hypot(ax, az) || 1;
       const two = gk === 2 && !(CURM && CURM.off === 'shield');
       if (two) gunTwoHand(ARM === 'gatling' ? 'hip' : 'shoulder', v3b.set(ax / al, ARM === 'gatling' ? -.03 : -.06, az / al).normalize(), P.aimK);
-      else { const dir = v3b.set(ax / al, -.1, az / al).normalize(); pointArm(B.RightArm, B.RightHand, dir, .95 * P.aimK); pointArm(B.RightForeArm, B.RightHand, dir, .95 * P.aimK); aimGun(mw, dir, .9 * P.aimK); }
+      else { const rc = recoilK(), dir = v3b.set(ax / al, -.1 + .16 * rc, az / al).normalize(); torsoAim(dir, .22, .03 - .05 * rc, P.aimK);
+        pointArm(B.RightArm, B.RightHand, dir, .95 * P.aimK); pointArm(B.RightForeArm, B.RightHand, dir, .95 * P.aimK); aimGun(mw, new THREE.Vector3().copy(dir).setY(dir.y + .06 * rc).normalize(), .9 * P.aimK); headAim(dir, .8 * P.aimK); }
     }
     // 대기 화면: 두 손 총은 비스듬히 내려 든 준비 자세
     if (lobby.on && G.state === 'title' && gk === 2 && !(CURM && CURM.off === 'shield')) gunTwoHand('ready', v3b.set(fx, 0, fz), 1);
