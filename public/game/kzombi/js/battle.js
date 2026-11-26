@@ -249,7 +249,7 @@ function newGame(cfg) {
   let nights = cfg.act === 3 && D.a3Nights ? D.a3Nights(ch) : D.nightsOf(ch);
   /* 2막 악몽: 같은 지도·목표, 적이 훨씬 세고 많다 (장마다 곡선) */
   const NMK = mode !== 'adventure' ? null : cfg.act === 3 && D.a3K ? D.a3K(ch) : cfg.nightmare ? D.nmK(ch) : null;
-  if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
+  if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { dhp: n.dhp != null ? n.dhp : n.hp, hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
   if (mode === 'gold' || mode === 'xp') nights = nights.slice(0, 3).map((n, i) => Object.assign({}, n, { name: (i + 1) + '번째 밤', kind: i === 2 ? 'elite' : 'normal', boss: null, elites: i === 2 ? [0.5] : [], dur: 45 }));
   if (mode === 'boss') nights = [Object.assign({}, nights[nights.length - 1], { name: '우두머리 토벌', dur: 90, elites: [0.01], rate: [0.8, 1.6] })];
   /* 월드 보스·문파 보스: 정해진 거대 보스 하나와 90초 동안 피해량 겨루기 (보스는 쓰러지지 않을 만큼 단단하다) */
@@ -1750,7 +1750,7 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + N.hp * 0.2) * (e.elite ? 1.4 + 0.45 * (e.hk || 0) : 1) * (e.boss ? 1.3 + 0.7 * (e.hk || 0) : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
+    const dmg = d.dmg * (0.8 + (N.dhp != null ? N.dhp : N.hp) * 0.2) *   /* 악몽·3막: 피해는 배율 전 체력 기준(배율 피해는 NMK.dmg 가 맡음, 11-27 시뮬) */ (e.elite ? 1.4 + 0.45 * (e.hk || 0) : 1) * (e.boss ? 1.3 + 0.7 * (e.hk || 0) : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
     if (e.boss && !e.p2 && e.hp < e.max * (G.nm ? 0.85 : 0.5)) {

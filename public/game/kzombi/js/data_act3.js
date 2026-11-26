@@ -68,15 +68,19 @@
   D.a3Tpl = n => Math.min(30, 16 + Math.floor((n - 1) / 2));   /* 틀: 1막 16~30장(무리가 다양한 뒤쪽 장) */
   D.ACT3C = D.ACT3.map((a, i) => { const t = D.CHAPTERS[D.a3Tpl(i + 1) - 1]; return Object.assign({}, t, { n: a.n, tpl: D.a3Tpl(i + 1), gn: a.gn, name: EN ? a.nameEn : a.name, nameKo: a.name, theme: a.theme, boss: D.EN[a.boss] ? a.boss : t.boss, tint: 'sea', act: 3, story: EN ? a.storyEn : a.story, fresh: [], objective: t.objective === 'survive' ? 'defend' : t.objective });   /* 3막은 매 장 우두머리가 나오게(버티기 목표 제외) */ });
   { const L = D.ACT3C[29]; L.finIn = ['수귀 제독 강림', '깊은 바다의 마지막 밤', 'Admiral Drowned Rises', 'Last night of the deep']; L.finP2 = ['수귀 제독 · 심해의 분노', '바다가 너를 삼킨다, 처용!', 'Admiral Drowned · Wrath of the Deep', 'The sea will swallow you, Cheoyong!']; }
-  /* 난이도: 악몽 30장(1막 30장 밤 × 악몽 배율) 수준에서 이어서 시작, 30장 동안 약 2.2배까지 */
-  D.a3K = n => ({ hp: 1, rate: 1.55 + 0.006 * (n - 1), dmg: 3.7 + 0.05 * (n - 1) });
+  /* 난이도(11-27 시뮬 맞춤): 악몽 30장 마지막 밤 × 1.45 에서 시작, 30장 동안 1.58배까지 */
+  D.a3K = n => ({ hp: 1, rate: 1.55 + 0.006 * (n - 1), dmg: 2.1 + 0.03 * (n - 1) });
   D.a3Nights = function (n) {
     const o = D.nightsOf(D.a3Tpl(n)), ref = D.nightsOf(30), C = D.ACT3C[n - 1];
     const last = a => a[a.length - 1].hp, nm30 = D.nmK ? D.nmK(30).hp : 36;
-    const k = last(ref) * nm30 * 1.05 * (1 + 0.04 * (n - 1)) / Math.max(0.01, last(o)) * (D.A3HP && D.A3HP[n] || 1);
-    o.forEach(x => { x.hp *= k; if (x.boss) x.boss = C.boss; });
+    const k = last(ref) * nm30 * 1.45 * (1 + 0.02 * (n - 1)) / Math.max(0.01, last(o)) * (D.A3HP && D.A3HP[n] || 1);
+    o.forEach(x => { x.dhp = x.hp; x.hp *= k; if (x.boss) x.boss = C.boss; });   /* dhp: 적 피해 기준(배율 전) */
     return o;
   };
+
+  /* 11-27 시뮬 보정(돈 다 쓰는 계정, 장마다 4판 — 표본 적음): 악몽 앞 장 쉬움·가운데 어려움, 3막 16~24장 어려움·끝 쉬움 */
+  D.NMHP = Object.assign(D.NMHP || {}); for (let c = 1; c <= 30; c++) D.NMHP[c] = D.NMHP[c] || (c <= 5 ? 1.6 : c <= 10 ? 1.2 : 0.9);
+  D.A3HP = Object.assign(D.A3HP || {}); for (let c = 1; c <= 30; c++) D.A3HP[c] = D.A3HP[c] || (c >= 16 && c <= 24 ? 0.75 : c >= 25 ? 1.1 : 1);
   /* 장 사이 대화 → 화면 대화 형식으로 */
   D.ACT3_DLG_UI = n => { const L = D.ACT3_DLG[n]; if (!L) return null; const P = { '처용': ['img/ui/hero_face.webp', 'Cheoyong', '#ffcf6a'], '수귀 제독': ['img/story/op3.webp', 'Admiral Drowned', '#6ad0ff'], '이순신': ['img/ui/hero_yisunsin.webp?v=4', 'Admiral Yi', '#8fd4ff'], '도깨비': ['img/ui/hero_dokkaebi.webp?v=4', 'Dokkaebi', '#8fd4ff'], '김충선': ['img/ui/hero_kimchungseon.webp?v=4', 'Kim Chung-seon', '#8fd4ff'], '장영실': ['img/story/op2.webp', 'Jang Yeong-sil', '#cfe8b0'], '해룡': ['img/story/op2.webp', 'Sea Dragon', '#6ad0ff'], '이와키': ['img/story/op2.webp', 'Iwaki', '#cfe8b0'] };
     return L.map(l => { const p = P[l[0]] || ['img/story/op2.webp', l[0], '#cfe8b0']; return ['x', l[1], l[2], [p[0], EN ? p[1] : l[0], p[2]]]; }); };

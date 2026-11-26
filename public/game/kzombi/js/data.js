@@ -161,7 +161,8 @@ D.layoutOf = function (ch) {
 };
 /* 챕터 하나의 밤 목록을 만든다. kind: normal / elite / boss (웨이브 줄 아이콘) */
 /* 2막 악몽 배율: 노멀 30장 클리어 계정 기준. 1장에서 시작해 30장까지 오른다 */
-D.nmK = ch => ({ hp: 10 + 0.9 * (ch - 1), rate: 1.3 + 0.008 * (ch - 1), dmg: 2.2 + 0.05 * (ch - 1) });
+/* 11-27 시뮬(돈 다 쓰는 계정): 옛 곡선은 1막 장별 증가 × 악몽 배율이 겹쳐 악몽 15장부터 못 깸 → 악몽 n장 마지막 밤 = 1막 30장 마지막 밤 × (1.3 + 0.03(n-1)) × D.NMHP[n] */
+D.nmK = ch => { const L = c => { const o = D.nightsOf(c); return o[o.length - 1].hp; }; return { hp: L(30) * (1.3 + 0.03 * (ch - 1)) / Math.max(0.01, L(ch)) * (D.NMHP && D.NMHP[ch] || 1), rate: 1.3 + 0.008 * (ch - 1), dmg: 1.2 + 0.03 * (ch - 1) }; };
 D.nightsOf = function (ch) {
   const C = D.CHAPTERS[ch - 1], out = [], hp0 = 1 + 0.34 * (ch - 1) + 0.004 * (ch - 1) * (ch - 1); /* 시뮬 조정(11-25): 장별 체력 증가를 완만하게 */
   for (let i = 0; i < C.nights; i++) {
