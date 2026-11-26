@@ -473,16 +473,37 @@ if (window.IS_EN) document.title = 'K Zombi';
       '</div>');
   }  let selComp = 'dokkaebi', infoFold = false;
   function pgPower() {
-    const list = SKILLS.map(s => {
+    /* 신력 화면 갱신(사용자 11-29: 기술이 늘어난 만큼 이 화면도) — 탭: 기술 별 / 진화 / 처용 기운 숙련 */
+    const JD = window.JZD || {}, ALL = (JD.SKILLS || []).filter(s => s.kind === 'atk'), ELS = JD.EL || {};
+    const tab = S._pwTab || 'star';
+    const aOk = a => !a || a <= 1 || (a === 2 ? progCh() >= 30 : (typeof actOpen === 'function' && actOpen(a)));
+    const actNm = a => a === 2 ? TT('2막 악몽', 'Act 2 Nightmare') : TT(a + '막', 'Act ' + a);
+    const chip = el => { const E = ELS[el]; return E ? '<span style="display:inline-block;padding:0 7px;border-radius:9px;font-size:13px;line-height:20px;background:rgba(0,0,0,.35);border:1px solid ' + E.c + ';color:' + E.c + '">' + E.i + ' ' + E.n + '</span>' : ''; };
+    const loc = (SKILLS.find(o => o.id === 'x') || null);
+    const card = s => {
+      const L = SKILLS.find(o => o.id === s.id) || {}, act = s.act || 1, ok = aOk(act);
       const lv = S.skills[s.id] || 1, cost = lv * 15, gc = lv * 400;
       const stars = [1, 2, 3, 4, 5].map(k => ic(lv >= k ? 'star' : 'star0')).join('');
-      return '<div class="sk box"><div class="ico" style="background:' + s.c + ';overflow:hidden">' + ic(s.ic) + '<img src="img/skills/' + s.id + '.webp?v=2" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:17px" onerror="this.remove()"></div><h4 class="stroke-s">' + s.n + '</h4><p>' + s.d + '</p>' +
-        '<p style="color:#ffe27a">위력 ' + (100 + (lv - 1) * 25) + '%' + ((window.JZD && JZD.SK_UNLOCK && (JZD.SK_UNLOCK[s.id] || 1) > Math.max(1, S.chap || 1)) ? ' <b style="color:#ffb0a0">🔒 ' + JZD.SK_UNLOCK[s.id] + '장에서 열림</b>' : '') + '</p><div class="stars">' + stars + '</div>' +
-        (lv >= 5 ? '<div class="btn y dis">최고</div>' : '<div class="btn g ' + (S.stone >= cost && S.gold >= gc ? '' : 'dis') + '" data-act="skUp" data-v="' + s.id + '">' + ic('stone').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + cost + '</div>') + '</div>';
-    }).join('');
-    const EVO = window.JZD && JZD.EVO ? JZD.EVO : {}; const SN = id => (window.JZD ? (JZD.SKILLS.find(s => s.id === id) || {}).n : id);
-    const evo = Object.keys(EVO).map(id => '<div class="box" style="display:flex;gap:10px;align-items:center;padding:8px;margin:6px 0"><img src="img/skills/' + id + '.webp?v=2" style="width:54px;height:54px;border-radius:10px;background:#2a2f5a" onerror="this.style.visibility=\'hidden\'"><span class="stroke-s" style="font-size:20px">+</span><img src="img/skills/' + EVO[id].pair + '.webp" style="width:54px;height:54px;border-radius:10px"><span class="stroke-s" style="font-size:24px">→</span><img src="img/skills/ev_' + id + '.webp" style="width:48px;height:70px;border-radius:8px;object-fit:cover"><div style="font-size:18px;line-height:1.3"><b style="color:#ffe27a">' + EVO[id].n + '</b><br>' + SN(id) + ' 5단계 + ' + SN(EVO[id].pair) + '</div></div>').join('');
-    return '<div class="hdr stroke">신력<span class="sub">신력석 ' + S.stone + '개 · 별을 올리면 전투 속 기술이 세져요</span></div><div class="skills" style="top:96px">' + list + '<div style="grid-column:1/-1"><div class="stroke" style="font-size:26px;margin:14px 0 6px">' + TT('처용 기운 숙련', 'Cheoyong element mastery') + '</div>' + kiunRows() + '</div>' + '<div style="grid-column:1/-1"><div class="stroke" style="font-size:26px;margin:14px 0 6px">진화 짝 (전투 중)</div>' + evo + '</div></div>';
+      const d = L.d || (typeof s.d === 'function' ? s.d(1) : (s.d || ''));
+      return '<div class="sk box"' + (ok ? '' : ' style="opacity:.45"') + '><div class="ico" style="background:' + (L.c || s.c || '#333') + ';overflow:hidden">' + (L.ic ? ic(L.ic) : '') + '<img src="img/skills/' + s.id + '.webp?v=3" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:17px" onerror="this.remove()"></div><h4 class="stroke-s">' + s.n + '</h4><p style="margin:2px 0">' + chip(s.el) + '</p><p>' + d + '</p>' +
+        '<p style="color:#ffe27a">' + TT('위력 ', 'Power ') + (100 + (lv - 1) * 25) + '%' + (!ok ? ' <b style="color:#ffb0a0">🔒 ' + TT(actNm(act) + '부터', 'From ' + actNm(act)) + '</b>' : '') + '</p><div class="stars">' + stars + '</div>' +
+        (lv >= 5 ? '<div class="btn y dis">' + TT('최고', 'MAX') + '</div>' : '<div class="btn g ' + (ok && S.stone >= cost && S.gold >= gc ? '' : 'dis') + '" data-act="skUp" data-v="' + s.id + '">' + ic('stone').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + cost + '</div>') + '</div>';
+    };
+    const head = t => '<div class="stroke" style="grid-column:1/-1;font-size:24px;margin:14px 0 4px">' + t + '</div>';
+    const isK = s => /^k_/.test(s.id);
+    let body = '';
+    if (tab === 'star') {
+      const groups = {}; for (const s of ALL) { const g = isK(s) ? 'k' : (s.act || 1); (groups[g] = groups[g] || []).push(s); }
+      for (const g of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) if (groups[g]) body += head(g === 1 ? TT('기본 기술', 'Basic skills') : actNm(g) + TT(' 기술', ' skills') + (aOk(g) ? '' : ' 🔒')) + groups[g].map(card).join('');
+      if (groups.k) body += head(TT('처용 계열 기술', 'Cheoyong element skills') + ' <span style="font-size:15px;opacity:.8">' + TT('(그 계열 영웅을 데려가면 나와요)', '(appear with a hero of that element)') + '</span>') + groups.k.map(card).join('');
+    } else if (tab === 'evo') {
+      const EVO = JD.EVO || {}; const SN = id => ((JD.SKILLS || []).find(s => s.id === id) || {}).n || id;
+      const ord = id => { const s = (JD.SKILLS || []).find(o => o.id === id) || {}; return (isK(s) ? 100 : (s.act || 1)) * 10 + Object.keys(ELS).indexOf(s.el || ''); };
+      body = '<div style="grid-column:1/-1">' + Object.keys(EVO).sort((a, b) => ord(a) - ord(b)).map(id => { const s = (JD.SKILLS || []).find(o => o.id === id) || {}, ok = aOk(s.act || 1);
+        return '<div class="box" style="display:flex;gap:10px;align-items:center;padding:8px;margin:6px 0' + (ok ? '' : ';opacity:.45') + '"><img src="img/skills/' + id + '.webp?v=3" style="width:54px;height:54px;border-radius:10px;background:#2a2f5a" onerror="this.style.visibility=\'hidden\'"><span class="stroke-s" style="font-size:20px">+</span><img src="img/skills/' + EVO[id].pair + '.webp" style="width:54px;height:54px;border-radius:10px"><span class="stroke-s" style="font-size:24px">→</span><img src="img/skills/ev_' + id + '.webp?v=3" style="width:48px;height:70px;border-radius:8px;object-fit:cover;background:#2a2f5a"><div style="font-size:17px;line-height:1.3;min-width:0"><b style="color:#ffe27a">' + EVO[id].n + '</b> ' + chip(s.el) + '<br>' + SN(id) + TT(' 5단계 + ', ' Lv5 + ') + SN(EVO[id].pair) + (ok ? '' : ' <b style="color:#ffb0a0">🔒 ' + actNm(s.act) + '</b>') + '</div></div>'; }).join('') + '</div>';
+    } else body = '<div style="grid-column:1/-1">' + kiunRows() + '</div>';
+    const tb = (k, t) => '<div class="btn ' + (tab === k ? 'y' : 'b') + ' sm" style="flex:1;font-size:17px;padding:6px 0" data-act="pwTab" data-v="' + k + '">' + t + '</div>';
+    return '<div class="hdr stroke">' + TT('신력', 'Spirit') + '<span class="sub">' + TT('신력석 ', 'Spirit stones ') + S.stone + TT('개 · 별을 올리면 전투 속 기술이 세져요', ' · Stars power up your skills in battle') + '</span></div><div class="skills" style="top:96px"><div style="grid-column:1/-1;display:flex;gap:6px;margin:2px 0 4px">' + tb('star', TT('기술 별', 'Skill stars')) + tb('evo', TT('진화', 'Evolutions')) + tb('kiun', TT('처용 기운', 'Elements')) + '</div>' + body + '</div>';
   }
   /* ---------------- 월드 보스 · 문파 보스 (ADSCEND 거대 보스를 조선풍으로) ---------------- */
   const WBS = [{ id: 'wb_stone', n: '돌장승 거신', d: '돌을 쌓아 만든 거대한 장승. 단단해서 방어를 깎는 공격이 좋아요' }, { id: 'wb_fire', n: '화마', d: '불을 두른 거인. 불길을 흩뿌려요' }, { id: 'wb_plague', n: '역병 대장군', d: '돌진하며 내려찍는 좀비 대장군' }];
@@ -1840,7 +1861,8 @@ foeElTxt(1, n) + skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? 
       case 'compUp': { const c = S.comps[v], lc = 300 * c.lv * (COMP[v].g + 1); if (S.gold < lc || c.lv >= c.star * 10) break; S.gold -= lc; c.lv++; refresh(); toast(COMP[v].n + ' 레벨 ' + c.lv); break; }
       case 'compStar': { const c = S.comps[v], sc = c.star * 10; if (c.sh < sc || c.star >= 5) break; c.sh -= sc; c.star++; refresh(); toast(COMP[v].n + ' 별 ' + c.star + '개!'); break; }
       case 'compUnlock': { const c = S.comps[v]; if (c.sh < 10) break; c.sh -= 10; c.own = true; refresh(); toast(COMP[v].n + '이(가) 함께해요!'); break; }
-      case 'skUp': { const lv = S.skills[v], cost = lv * 15, gc = lv * 400; if (S.stone < cost || S.gold < gc || lv >= 5) break; S.stone -= cost; S.gold -= gc; S.skills[v] = lv + 1; refresh(); break; }
+      case 'pwTab': S._pwTab = v; refresh(); break;
+      case 'skUp': { const lv = S.skills[v] || 1, cost = lv * 15, gc = lv * 400; if (S.stone < cost || S.gold < gc || lv >= 5) break; S.stone -= cost; S.gold -= gc; S.skills[v] = lv + 1; refresh(); break; }
       case 'skins': skinModal(); break;
       case 'mounts': mountModal(); break;
       case 'mountOn': if (mOwn(v)) { S.mount = v; save(); toast('탈것에 올랐어요'); mountModal(); refresh(); } break;
