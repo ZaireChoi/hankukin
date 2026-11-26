@@ -578,3 +578,6 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .skills .sk.box{height:auto!important;min-height:200px!important;padding-bottom:72px!important;overflow:hidden}
 .skills .sk.box p.skd{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:15px}
 .skills .sk.box .btn{bottom:10px}
+
+/* 레이스 배지가 위 버튼 글자(패스)를 가리지 않게(점검 11-29) */
+.sb .rcb{top:2px!important;left:auto!important;right:-26px!important;transform:none!important;font-size:11px!important;line-height:16px!important;padding:0 4px!important}
