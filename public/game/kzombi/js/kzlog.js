@@ -53,6 +53,26 @@
   W.KZQ = { lv: lv, auto: !saved, kcap: KC[lv],
     set: function (v) { if (!KC[v]) return; this.lv = v; this.kcap = KC[v]; this.auto = false; try { localStorage.setItem('kz_q', v); } catch (e) {} try { dispatchEvent(new Event('resize')); } catch (e) {} },
     down: function () { if (!this.auto) return; var nx = this.lv === 'high' ? 'mid' : 'low'; if (nx === this.lv) return; this.lv = nx; this.kcap = KC[nx]; try { dispatchEvent(new Event('resize')); } catch (e) {} send({ k: 'boot', m: 'quality auto down → ' + nx }); } };
+  /* 뒤로 가기(안드로이드·TWA 앱): 바로 꺼지지 않게 — 창 닫기 → 전투면 일시정지 → 로비면 '한 번 더 누르면 종료' */
+  try {
+    var BK = function () { try { history.pushState({ kz: 1 }, ''); } catch (e) {} };
+    var note = function (s) { var d = document.createElement('div'); d.textContent = s; d.style.cssText = 'position:fixed;left:50%;bottom:12%;transform:translateX(-50%);background:rgba(10,10,20,.85);color:#fff;padding:10px 18px;border-radius:20px;font:600 15px sans-serif;z-index:99999;pointer-events:none'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1800); };
+    addEventListener('load', BK);
+    addEventListener('popstate', function () {
+      W.KZLOG_LAST = 'back';
+      var m = document.getElementById('mdl');
+      if (m) { var x = m.querySelector('[data-act="close"]'); if (x) x.click(); else m.remove(); BK(); return; }
+      var st = document.getElementById('stage'), J = W.JZB;
+      if (st && st.style.display !== 'none' && J && J.G && J.pause) {
+        var end = document.getElementById('ovEnd'), lvl = document.getElementById('ovLevel'), ps = document.getElementById('ovPause');
+        if (!(end && end.classList.contains('on')) && !(lvl && lvl.classList.contains('on'))) J.pause(!(ps && ps.classList.contains('on')));
+        BK(); return;
+      }
+      var now = Date.now();
+      if (now - (W.__kzBack || 0) < 2000) { history.back(); return; }
+      W.__kzBack = now; BK(); note(W.IS_EN ? 'Press back again to exit' : '한 번 더 누르면 종료돼요');
+    });
+  } catch (e) {}
   /* 캔버스 실패 확인 */
   try { var c = document.createElement('canvas'); if (!c.getContext('2d')) send({ k: 'canvas', m: 'no 2d context' }); } catch (e) { send({ k: 'canvas', m: String(e && e.message) }); }
 })();

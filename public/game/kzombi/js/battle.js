@@ -3117,7 +3117,7 @@ const JZB = window.JZB = {
   /* 시험용 */
   caps: { tCap: (k, h) => tCap(k, h), slotMax: h => slotMax(h), block: k => buildBlock(k) },
   runLog: runLogAll,
-  get G() { return G; }, startNight, pickSkill, build, useUlt, useCult, spawnBig, openLevel, levelChoices
+  get G() { return G; }, pause: on => pause(!!on), get paused() { return paused; }, startNight, pickSkill, build, useUlt, useCult, spawnBig, openLevel, levelChoices
 };
 const defaultEndRef = defaultEnd;
 /* 새 기술(카드)이 열린 장을 처음 시작할 때 소개 창. 건물 창이 떠 있으면 닫힌 뒤 띄운다 */
