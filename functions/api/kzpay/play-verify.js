@@ -4,7 +4,7 @@
    - Google Play Developer API 로 구매를 확인(purchaseState 0)하고 소모(consume)한 뒤, 웹 결제와 같은 형식의 서명 영수증을 돌려준다.
    - 게임은 영수증의 주문번호마다 한 번만 지급한다(payClaim). */
 const PKG = 'com.hankukin.kzombi';
-const PRODUCTS = { kz_jade_s: ['jade300', 500], kz_jade_m: ['jade1k', 990], kz_starter: ['starter', 990], kz_pass: ['pass', 990] };
+const PRODUCTS = { kz_jade_s: ['jade300', 500], kz_jade_m: ['jade1k', 990], kz_starter: ['starter', 990], kz_pass: ['pass', 990], kz_mythic_bow: ['mbow', 1900], kz_mythic_bow_launch: ['mbowL', 990] };
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const enc = s => new TextEncoder().encode(s);
 const b64u = buf => { let s = ''; const a = new Uint8Array(buf); for (let i = 0; i < a.length; i++) s += String.fromCharCode(a[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
