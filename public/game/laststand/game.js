@@ -1169,8 +1169,16 @@ function dealDmg(e, base, kx, kz, kb = 1) {
   e.hp -= d; e.flash = .11;
   const m = e.T.r > 10 ? .12 : 1; e.kx += kx * 26 * kb * m; e.kz += kz * 26 * kb * m;
   if (cr || d >= 40) num(e.x, e.T.h, e.z, cr ? d + '!' : d, cr ? '#ffd24a' : '#fff', cr ? 21 : 15); else if (Math.random() < .22) num(e.x, e.T.h, e.z, d, '#ffffffcc', 13);
-  sfx.hit();
+  sfx.hit(); hitSpark(e, kx, kz, cr, d);
   if (e.hp <= 0) kill(e); else onHitFx(e, d, cr);
+}
+function hitSpark(e, kx, kz, cr, d) {
+  const now = performance.now(); if (now - (G.hfxT || 0) > 16) { G.hfxT = now; G.hfx = 0; } if (++G.hfx > 14) return;
+  const T = e.T, y = T.fly || T.h * .55, mech = T.mech || T.virt || T.boss, kl = Math.hypot(kx, kz) || 1, sx = e.x - kx / kl * T.r * .55, sz = e.z - kz / kl * T.r * .55;
+  burst(sx, y, sz, cr ? 7 : 3, mech ? 0xffc070 : (T.col || 0xff6a8a), cr ? 95 : 60, mech ? .2 : .3, mech ? 3.5 : 6, .9);
+  if (mech && (cr || Math.random() < .5)) burst(sx, y, sz, 2, 0xffffff, 130, .1, 2.5, .6);
+  if (cr) { flare(sx, y, sz, 0xfff0b0, 15 + T.r * .8, .08); if (mech && gate('crt', 60)) tone(2600, 1700, .05, 'triangle', .025); }
+  else if (d >= 40 && Math.random() < .4) flare(sx, y, sz, 0xfff6e0, 7 + T.r * .4, .05);
 }
 function explode(x, z, r, dmg, color) {
   ring(x, z, r * .2, r * 1.1, .4, color); burst(x, 5, z, 26, color, 70, .55, 9); burst(x, 5, z, 10, 0xffffff, 40, .3, 12);
@@ -1191,7 +1199,8 @@ function updPlayer(dt) {
   if (inp.dash && P.dashCd <= 0) {
     P.dashT = .2; P.dashCd = P.dashMax; P.inv = Math.max(P.inv, .34); checkPerfectDodge();
     if (inp.x || inp.z) { const d = Math.hypot(inp.x, inp.z); P.dx = inp.x / d; P.dz = inp.z / d; }
-    sfx.dash(); ring(P.x, P.z, 4, 20, .3, 0x9ff3ff); flare(P.x, 9, P.z, 0x9ff3ff, 16, .12); mark(P.x, P.z, 7, 0x1a120c, 'scorch', 2.5, .35);
+    sfx.dash(); ring(P.x, P.z, 4, 20, .3, 0x9ff3ff); flare(P.x, 9, P.z, 0x9ff3ff, 16, .12);
+    { const bx = P.x - P.dx * 6, bz = P.z - P.dz * 6; burst(bx, 9, bz, 10, 0x9fe8ff, 90, .25, 5, .1); flare(bx, 9, bz, 0xbff6ff, 10, .1); noise(.26, .07, 3600); tone(520, 170, .2, 'sawtooth', .018); } mark(P.x, P.z, 7, 0x1a120c, 'scorch', 2.5, .35);
   }
   inp.dash = false;
   if (P.fly) flyMove(dt);
@@ -1211,6 +1220,7 @@ function updPlayer(dt) {
   const tgt = nearest(P.x, P.z, 150);
   const want = tgt ? Math.atan2(tgt.x - P.x, tgt.z - P.z) : Math.atan2(P.dx, P.dz);
   let da = want - P.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU;
+  if (!P.fly && Math.abs(da) > 1 && G.state === 'play' && gate('servo', 520)) tone(240, 480, .13, 'sawtooth', .011);
   if (!P.fly) { const w = (P.sw || P.dashT > 0 ? 16 : 10) * dt; P.yaw += Math.abs(da) < w ? da : Math.sign(da) * w; }
   P.alt = lerp(P.alt, P.fly && P.tfUp ? FLY.alt : 0, Math.min(1, dt * (P.fly && P.tfUp ? 7 : 9))); if (!P.fly && P.alt < .05) P.alt = 0;
   P.group.position.set(P.x, P.alt, P.z); P.wrap.position.set(0, 0, 0); P.wrap.rotation.set(0, P.yaw - Math.PI / 2, 0); P.wrap.scale.setScalar(1.25); pMark.position.set(P.x, .4, P.z);
@@ -1680,7 +1690,8 @@ function endFly() { if (!P.fly || !P.tfUp) return; P.tfUp = false; P.tf = FLY.tf
 function flyMove(dt) {
   P.tf = Math.max(0, P.tf - dt);
   if (P.tfUp) { P.flyT -= dt; if (P.flyT <= 0) endFly(); }
-  else if (P.tf <= 0) { P.fly = false; P.flyCd = FLY.cd * (P.flyCdMul || 1); P.inv = Math.max(P.inv, .5); P.yaw = P.hd; return; }
+  else if (P.tf <= 0) { P.fly = false; P.flyCd = FLY.cd * (P.flyCdMul || 1); P.inv = Math.max(P.inv, .5); P.yaw = P.hd;
+    ring(P.x, P.z, 4, 28, .32, 0xc8b08a); burst(P.x, 1, P.z, 14, 0xc8b08a, 60, .45, 8, .2); mark(P.x, P.z, 10, 0x2a2016, 'scorch', 2, .25); tone(95, 40, .25, 'sine', .13); noise(.18, .1, 900); G.shake = Math.max(G.shake, 2); return; }
   let turn = 0;
   if (inp.x || inp.z) { let da = Math.atan2(inp.x, inp.z) - P.hd; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; turn = clamp(da * 3, -1, 1); }
   const r = Math.hypot(P.x, P.z);
@@ -1846,11 +1857,14 @@ function hurtPlayer(d, air) {
   d = Math.round(d * (1 + .2 * (G.threat - 1)) * (P.taken || 1) * (.3 + .7 * EZ()));
   if (P.bar > 0) {          // 보호막이 먼저 받는다
     const a = Math.min(P.bar, d); P.bar -= a; d -= a; P.barHit = 1; if (P.bar <= 0) { P.barT = 0; burst(P.x, 12, P.z, 30, 0x9ff3ff, 90, .4, 9); tone(900, 200, .25, 'square', .05); }
+    if (gate('barfx', 110)) { ring(P.x, P.z, 6, 24, .25, 0x9ff3ff); flare(P.x, 12 + P.alt, P.z, 0x9ff3ff, 14, .08); burst(P.x, 12 + P.alt, P.z, 5, 0xbff6ff, 80, .2, 4, .5); }
     if (d <= 0) { P.inv = .3; tone(1200, 700, .08, 'triangle', .05); return; }
   }
   P.hp -= d; P.inv = .6; G.shake = Math.max(G.shake, 4); sfx.hurt();
   $('#hurt').style.opacity = .8; setTimeout(() => ($('#hurt').style.opacity = 0), 140);
-  num(P.x, 22, P.z, '-' + d, '#ff6a5a', 18); burst(P.x, 10, P.z, 14, 0xff5a4a, 60, .4, 9);
+  num(P.x, 22, P.z, '-' + d, '#ff6a5a', 18);
+  { const y = 12 + P.alt; burst(P.x, y, P.z, 10, 0xffb060, 110, .3, 3.5, .9); burst(P.x, y, P.z, 4, 0xffffff, 150, .12, 2.5, .6); burst(P.x, y - 2, P.z, 5, 0x8a93a5, 60, .5, 4, 1.1); flare(P.x, y, P.z, 0xffd0a0, 12, .07);
+    if (gate('clank', 90)) { tone(2100, 1300, .07, 'triangle', .03); noise(.06, .08, 5200); } }
   if (!AN.over && d >= 10) oneShot('hit', .42);
   if (P.hp <= 0) { P.hp = 0; endRun(false); return; }
   if (P.hp < P.maxHp * .3) radio('low', 1); else if (d >= P.maxHp * .08 || Math.random() < .2) radio('hit');
@@ -2343,7 +2357,7 @@ function updSpawner(dt) {
     else spawn(ty, x, z);
   }
 }
-function eShot(x, z, ang, sp, dmg, life = 5, col, air) { if (ebs.length < 270) ebs.push({ x, z, vx: Math.sin(ang) * sp, vz: Math.cos(ang) * sp, dmg, life, col, air, y: air && P.alt > 10 ? P.alt + 6 : 8 }); }
+function eShot(x, z, ang, sp, dmg, life = 5, col, air) { if (gate('emz', 22)) flare(x + Math.sin(ang) * 3, 8, z + Math.cos(ang) * 3, col || 0xff7a4a, 6, .05); if (ebs.length < 270) ebs.push({ x, z, vx: Math.sin(ang) * sp, vz: Math.cos(ang) * sp, dmg, life, col, air, y: air && P.alt > 10 ? P.alt + 6 : 8 }); }
 // 날고 있는 기체를 노리는 대공탄: 움직이는 방향을 조금 앞서 겨눈다
 function aaShot(e, sp, dmg, spread = 0, col = 0xffa040) {
   const lead = Math.hypot(P.x - e.x, P.z - e.z) / sp, hx = P.fly ? Math.sin(P.hd) * FLY.spd * lead * .7 : inp.x * 40 * lead, hz = P.fly ? Math.cos(P.hd) * FLY.spd * lead * .7 : inp.z * 40 * lead;
@@ -3039,6 +3053,8 @@ function roboBody(dt) {
   if (run && !P.glide) for (const s of ['Left', 'Right']) { const f = B[s + 'Foot']; if (!f) continue; f.getWorldPosition(_va); const y = _va.y - P.group.position.y, key = 'ft' + s, low = (armed.footRest ?? 0) + 1.1;
     if (y < low && (P[key] ?? 9) >= low && (P['fs' + s] = (P['fs' + s] || 0)) <= G.t) { P['fs' + s] = G.t + .16; burst(_va.x, .6, _va.z, 4, 0xb8a07a, 22, .35, 7, .2); G.shake = Math.max(G.shake, .5); if (gate('stomp', 120)) tone(90, 40, .09, 'sine', .07); }
     P[key] = y; }
+  if (P.hp < P.maxHp * .35 && B.Spine && (P.smT = (P.smT || 0) - dt) <= 0) { P.smT = rand(.12, .28); B.Spine.getWorldPosition(_va);
+    burst(_va.x + rand(-2, 2), _va.y + rand(-1, 3), _va.z + rand(-2, 2), 2, 0xffa050, 70, .3, 3, 1.2); if (Math.random() < .25) { flare(_va.x, _va.y + 2, _va.z, 0x9fe8ff, 6, .05); if (gate('zap', 600)) noise(.05, .04, 6000); } }
   // 달리는 동안 등 추진기 불빛
   if (run && B.Spine && (P.thT = (P.thT || 0) - dt) <= 0) { P.thT = .05; B.Spine.getWorldPosition(_va); const bx = _va.x - Math.sin(P.yaw) * 2.6, bz = _va.z - Math.cos(P.yaw) * 2.6;
     flare(bx, _va.y - 1, bz, 0x7fd8ff, 6, .06); burst(bx, _va.y - 1.5, bz, 1, 0x9fe8ff, 18, .2, 5, -.2); }
