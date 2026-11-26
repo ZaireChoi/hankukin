@@ -113,7 +113,7 @@
 #lvFoot .rr2{font-size:24px;padding:12px 26px;border-radius:16px;background:linear-gradient(#ffe08a,#f0a830);color:#3a1e08;border:3px solid #7a4a10;box-shadow:0 6px 0 #7a4a10}
 #lvFoot .rr2.off{filter:grayscale(1);opacity:.6;pointer-events:none}
 </style>
-<style>.kil-note{margin:14px auto 0;max-width:var(--maxw,44rem);padding:0 1rem}.kil-note a{display:block;text-decoration:none;color:var(--ink,#12100f);background:var(--paper-2,#f6f1ea);border:1px solid var(--line,#e5ddd3);border-left:4px solid #11826f;border-radius:10px;padding:11px 14px;font-family:var(--font-sans,system-ui,sans-serif);font-size:15px;line-height:1.45}.kil-note a:hover{border-color:#11826f}.kil-note strong{color:#11826f}.kil-note small{display:block;color:var(--ink-3,#8a807a);font-size:12.5px;margin-top:3px}</style></head>
+</head>
 <body>
 <div id="stage">
   <canvas id="cv"></canvas>
@@ -173,6 +173,5 @@ function lay(){var s=Math.min(innerWidth/W,innerHeight/H),w=W*s,h=H*s,wide=(inne
 function paint(){if(!document.body.classList.contains('kzwide'))return;try{var cv=document.getElementById('cv'),G=window.JZB&&window.JZB.G;if(G&&cv&&cv.width){g.drawImage(cv,0,0,72,128);}else if(title.complete&&title.naturalWidth){var r=title.naturalWidth/title.naturalHeight,sw=title.naturalHeight*72/128;g.drawImage(title,(title.naturalWidth-sw)/2,0,sw,title.naturalHeight,0,0,72,128);}}catch(e){}}
 addEventListener('resize',lay);lay();setInterval(paint,1200);title.onload=paint;})();
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"10a521277ce44c18842c75730f41b57d","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
