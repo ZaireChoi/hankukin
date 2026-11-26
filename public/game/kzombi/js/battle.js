@@ -1210,7 +1210,7 @@ function update(dtr) {
 
   movePlayer(dt); moveComps(dt);
   playerAttack(dt);
-  skills(dt); tagEl(); tagIco(); G.curEl = null; G.curIco = null;
+  { const preT = Object.assign({}, G.skT); skills(dt); skPost(preT); } tagEl(); tagIco(); G.curEl = null; G.curIco = null;
   turrets(dt); tagEl(); G.curEl = null;
   guards(dt);
   comps(dt); tagEl(); G.curEl = null;
@@ -1492,7 +1492,7 @@ function skills(dt) {
     const lv = G.sk[id], S = SKILLS.find(s => s.id === id);
     tagEl(); tagIco(); G.curEl = S && S.el || null; G.curIco = S && (S.gen || S.act || S.kiun) ? (aw(id) ? 'ev_' + id : id) : null; G.curIcoC = S ? ((S.gen && S.gen.c) || hexRgb(S.c)) : null;
     if (S.kind !== 'atk') continue;
-    const A = aw(id), sm = m * starMul(id) * elMul(S.el) * lvK(lv) * (A ? 1.5 : 1);
+    const A = aw(id), sm = m * starMul(id) * elMul(S.el) * lvK(lv) * (A ? 1.5 : 1) * skKf(id, S);
     if (id === 'dance') {
       const n = 1 + lv, R = A ? 140 : lv >= 5 ? 118 : 100, sp = 3.4;
       for (let i = 0; i < n; i++) {
@@ -1518,6 +1518,7 @@ function skills(dt) {
     }
     G.skT[id] = (G.skT[id] || 0) - dt * (G.trT && G.trT.cdK || 1) / Math.pow(0.9, fxN('skillCd10'));
     if (G.skT[id] > 0) continue;
+    if (skBig(id, S) && skBusy()) { G.skT[id] = 0.2 + Math.random() * 0.12; continue; }   /* 같은 순간 큰 기술은 2개까지, 나머지는 줄 세워 차례로 */
     if (S.gen) { genSkill(id, S, lv, sm, A, p); continue; }
     if (id === 'ghost') {
       const tg = nearestEnemy(p.x, p.y, 460); if (!tg) { G.skT[id] = 0.3; continue; }
@@ -1571,6 +1572,21 @@ function skills(dt) {
 }
 
 /* 막마다 새 기술(4~10막) 공통 실행 — 장판·투사체 재사용, 한 동작이 또렷하게 */
+
+/* 기술 쿨타임 바닥(사용자 11-29: 쿨타임이 너무 짧으면 어수선) — 한 번 한 번이 사건이 되게. 늘어난 만큼 한 방 피해를 올려 초당 피해는 그대로 */
+const SK_PROJ = { ghost: 1, ice: 1, talisman: 1, nabi: 1 };
+function skBig(id, S) { if (SK_PROJ[id]) return false; const t = S && S.gen && S.gen.t; return !(t === 'fan' || t === 'six' || t === 'shot' || t === 'chain'); }
+function skFloor(id, S) { return skBig(id, S) ? 4.2 : 2.0; }
+function skRate() { return (G.trT && G.trT.cdK || 1) / Math.pow(0.9, fxN('skillCd10')); }
+function skKf(id, S) { const n = G.skNat && G.skNat[id], fl = skFloor(id, S); return n && n < fl ? 1 + (fl / n - 1) * 0.55 : 1; }
+function skBusy() { const B = G.bigT || (G.bigT = []); while (B.length && G.t - B[0] > 0.35) B.shift(); return B.length >= 2; }
+function skPost(pre) {
+  const r = skRate(); G.skNat = G.skNat || {};
+  for (const id in G.sk) { const a = G.skT[id]; if (!(a > 0.35 && a > (pre[id] || 0) + 1e-6)) continue;
+    const S = SKILLS.find(s => s.id === id); if (!S || S.kind !== 'atk') continue;
+    const nat = a / r, fl = skFloor(id, S); G.skNat[id] = nat; if (nat < fl) G.skT[id] = fl * r;
+    if (skBig(id, S)) (G.bigT || (G.bigT = [])).push(G.t); }
+}
 
 /* 새 기술 연출(사용자 11-29: 새 기술 펼치는 모션·효과가 안 보임) — 기술 그림을 시전·장판·투사체·터짐에 크게 보여 준다 */
 const SKI = {};
