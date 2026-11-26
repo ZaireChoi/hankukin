@@ -1337,8 +1337,8 @@ function primFire(tgt, dt) {
     case 'gatling': P.gSpin = Math.min(1, P.gSpin + .1); P.cd.rifle = cd0 * (1.05 - .8 * P.gSpin); gunShot(tgt, n > 2 ? 2 : 1, .06, base * .55, pr, { jit: .06, col: 0xffd27a }); break;
     case 'rail': P.cd.rifle = cd0 * 2.3; railShot(tgt, base * 3.4 * still, n); break;
     case 'homing': P.cd.rifle = cd0 * 1.35; homingShot(n + 1, base * 1.15); break;
-    case 'mortar': P.cd.rifle = cd0 * 1.75; for (let i = 0; i < n; i++) mortar(tgt.x + (i ? rand(-18, 18) : 0), tgt.z + (i ? rand(-18, 18) : 0), base * 2.4, 17 * (P.splash || 1), .7 + i * .08); break;
-    case 'bits': P.cd.rifle = cd0 * 1.05; bitsFire(2 + n, base * 1.05); break;
+    case 'mortar': if (ARM === 'hammer' && d < 34) { startSwing(tgt); break; } P.cd.rifle = cd0 * 1.75; for (let i = 0; i < n; i++) mortar(tgt.x + (i ? rand(-18, 18) : 0), tgt.z + (i ? rand(-18, 18) : 0), base * 2.4, 17 * (P.splash || 1), .7 + i * .08); break;
+    case 'bits': if (ARM === 'spear' && d < 40) { startSwing(tgt); break; } P.cd.rifle = cd0 * 1.05; bitsFire(2 + n, base * 1.05); break;
     case 'saber': if (d < 46) startSwing(tgt); else { P.cd.rifle = cd0; gunShot(tgt, n, .12, base, pr, { palm: 1, col: 0xffc060 }); P.palmT = .5; } break;
     case 'feather': if (d < 44) startSwing(tgt); else { P.cd.rifle = cd0 * 1.1; const k = n + 2; gunShot(tgt, k, .16, base * .85, pr + 1, { kind: 'f', col: 0xfff3b0, palm: 1 }); P.palmT = .3; } break;
     case 'katana': startSwing(tgt); break;
@@ -1430,25 +1430,43 @@ function castUlt() {
   }
 }
 
-// 카타나: 연속 베기 5종을 번갈아 쓰고 여섯 번째는 내리찍는 마무리 베기
+// 근접 무기별 동작 묶음(검도·창술·도끼질 참고 사진 기준)
+//  · 카타나: 대각 베기(袈裟)·가로 베기·찌르기(突き)·올려 베기, 마지막은 내려 베기. 두 손으로 자루를 잡는다
+//  · 빔 세이버: 한 손 연속 베기(다른 손은 손바닥 레이저)
+//  · 대검: 두 손, 느리고 무겁게. 대각 베기 → 내려찍기 → 회전 베기
+//  · 장창: 두 손. 찌르기 두 번 → 휘둘러 베기 → 머리 위로 돌리는 회전 공격
+//  · 해머(도끼와 같은 무거운 무기): 머리 위로 들어 내려찍기 → 비껴 치기 → 회전
 const CUTS = ['cut1', 'cut2', 'cut3', 'cut4', 'cut5'];
+const MSTY = {
+  katana: { two: 1, seq: ['cut1', 'cut2', 'thrust', 'cut3', 'cut4', 'fin'] },
+  saber: { two: 0, seq: ['cut1', 'cut2', 'cut3', 'cut4', 'cut5', 'fin'] },
+  great: { two: 1, seq: ['cut3', 'cut1', 'chop', 'cut4', 'spin'], slow: 1.2 },
+  spear: { two: 1, seq: ['thrust', 'thrust', 'cut2', 'thrust', 'spin'] },
+  hammer: { two: 1, seq: ['chop', 'cut4', 'chop', 'spin'], slow: 1.3 },
+};
+const MTIP = { katana: [0, .5, 0], saber: [0, -.5, 0], great: [-.5, 0, 0], spear: [0, .5, 0], hammer: [.5, 0, 0] };
 function startSwing(tgt) {
-  const cd = st('rifle', 'cd') * P.cdMul * 1.1; P.swN++;
-  const fin = P.swN % 6 === 0, k = fin ? 'fin' : CUTS[(P.swN - 1 - Math.floor(P.swN / 6)) % 5];
-  const dur = fin ? Math.max(.62, cd * 1.7) : clamp(cd * 1.2, .36, .6);
-  P.cd.rifle = fin ? dur * .92 : cd;
-  oneShot(k, dur);
-  P.sw = { t: 0, T: dur, at: dur * (MV ? MV[k].hit : .5), done: false, fin, tilt: (P.swN % 2 ? 1 : -1) * rand(.25, .55) };
-  P.lunge = clamp(Math.hypot(tgt.x - P.x, tgt.z - P.z) - 24, 0, fin ? 26 : 12);
+  const S = MSTY[ARM] || MSTY.saber, cd = st('rifle', 'cd') * P.cdMul * 1.1 * (S.slow || 1); P.swN++;
+  const k = S.seq[(P.swN - 1) % S.seq.length], fin = k === 'fin' || k === 'chop' || k === 'spin';
+  const dur = k === 'spin' ? Math.max(.7, cd * 1.9) : k === 'thrust' ? clamp(cd * 1.15, .34, .55) : fin ? Math.max(.62, cd * 1.7) : clamp(cd * 1.2, .36, .6);
+  P.cd.rifle = fin ? dur * .92 : Math.max(cd, k === 'thrust' ? dur * .85 : 0);
+  if (k === 'chop') oneShot('slam', dur); else if (MV && MV[k]) oneShot(k, dur);
+  const at = k === 'thrust' ? .45 : k === 'spin' ? .45 : k === 'chop' ? (MV ? MV.slam.hit : .55) : (MV && MV[k] ? MV[k].hit : .5);
+  P.sw = { t: 0, T: dur, at: dur * at, done: false, fin, k, hits: k === 'spin' ? [dur * .45, dur * .72] : null, hn: 0, tilt: (P.swN % 2 ? 1 : -1) * rand(.25, .55) };
+  P.lunge = clamp(Math.hypot(tgt.x - P.x, tgt.z - P.z) - 24, 0, k === 'thrust' ? 30 : fin ? 26 : 12);
   sfx.swing(fin);
 }
 function updSwing(dt) {
   const s = P.sw; s.t += dt;
-  if (P.lunge > 0 && s.t < s.at) { const d = Math.min(P.lunge, 110 * dt); P.x += Math.sin(P.yaw) * d; P.z += Math.cos(P.yaw) * d; P.lunge -= d; }
-  if (!s.done && s.t >= s.at) { s.done = true; slashHit(s); }
+  if (P.lunge > 0 && s.t < s.at) { const d = Math.min(P.lunge, (s.k === 'thrust' ? 190 : 110) * dt); P.x += Math.sin(P.yaw) * d; P.z += Math.cos(P.yaw) * d; P.lunge -= d; }
+  // 회전 공격: 몸 전체가 한 바퀴 돈다
+  if (s.k === 'spin') { const u = clamp((s.t / s.T - .15) / .7, 0, 1); P.wrap.rotation.y += u * u * (3 - 2 * u) * TAU; }
+  if (s.hits) { while (s.hn < s.hits.length && s.t >= s.hits[s.hn]) { s.hn++; slashHit(s); } }
+  else if (!s.done && s.t >= s.at) { s.done = true; slashHit(s); }
   if (s.t >= s.T) P.sw = null;
 }
 function slashHit(s) {
+  if (s.k === 'thrust' || s.k === 'spin' || s.k === 'chop') { slashHit2(s); return; }
   const fy = P.yaw, fx = Math.sin(fy), fz = Math.cos(fy), R = s.fin ? 48 : 34, dmg = st('rifle', 'dmg') * (s.fin ? 2.8 : 1.5) * (P.meleeMul || 1) * cloakMul();
   crescent(P.x + fx * 4, P.z + fz * 4, fy, R, s.fin ? 0 : s.tilt, s.fin ? 0xffe7a0 : (ARMS[ARM] && ARMS[ARM].col) || 0xbff6ff);
   if (s.fin) { ring(P.x + fx * 16, P.z + fz * 16, 4, 34, .3, 0xffe7a0); G.shake = Math.max(G.shake, 3.5); }
@@ -1462,6 +1480,27 @@ function slashHit(s) {
   const n = st('rifle', 'n') + (s.fin ? 2 : 0);
   for (let i = 0; i < n; i++) fire(P.x + fx * 8, P.z + fz * 8, fy + (i - (n - 1) / 2) * .2, st('rifle', 'dmg'), st('rifle', 'pierce') + 1, 'w', null, 8, 0);
   if (hits) { G.slow = Math.max(G.slow, s.fin ? .09 : .035); sfx.slash(); }
+}
+
+// 찌르기·회전·내려찍기 판정과 효과
+function slashHit2(s) {
+  const fy = P.yaw, fx = Math.sin(fy), fz = Math.cos(fy), col = (ARMS[ARM] && ARMS[ARM].col) || 0xbff6ff, base = st('rifle', 'dmg') * (P.meleeMul || 1) * cloakMul();
+  if (s.k === 'thrust') {
+    const R = ARM === 'spear' ? 64 : 48, n = lineHit(P.x, P.z, fy, R, 9, base * 1.7, 2.4);
+    beamFx(P.x + fx * 6, 11, P.z + fz * 6, P.x + fx * R, 9, P.z + fz * R, 1.1, col, .16); flare(P.x + fx * R, 9, P.z + fz * R, col, 16, .12); burst(P.x + fx * R * .8, 9, P.z + fz * R * .8, 10, 0xffffff, 80, .25, 8, .2);
+    for (let i = 0; i < st('rifle', 'n'); i++) fire(P.x + fx * 10, P.z + fz * 10, fy + (i - (st('rifle', 'n') - 1) / 2) * .08, st('rifle', 'dmg') * 1.2, st('rifle', 'pierce') + 2, 'w', null, 9, 0);
+    if (n) { G.slow = Math.max(G.slow, .04); sfx.slash(); } return;
+  }
+  if (s.k === 'spin') {
+    const R = ARM === 'spear' ? 54 : 50, n = areaHit(P.x, P.z, R, base * 1.5, 2.6);
+    ring(P.x, P.z, R * .3, R, .35, col); for (let i = 0; i < 4; i++) { const a = fy + i * Math.PI / 2 + s.hn * .7; crescent(P.x, P.z, a, R * .8, rand(-.3, .3), col); }
+    burst(P.x, 8, P.z, 24, col, 110, .35, 8, .4); G.shake = Math.max(G.shake, 2.5); if (n) { G.slow = Math.max(G.slow, .05); sfx.slash(); } return;
+  }
+  // 내려찍기(도끼·해머·대검): 앞쪽 좁고 길게, 땅이 갈라진다
+  const R = 56, x1 = P.x + fx * 24, z1 = P.z + fz * 24; let n = 0;
+  for (const e of E) { if (e.dead || e.ally) continue; const dx = e.x - P.x, dz = e.z - P.z, d = Math.hypot(dx, dz); if (d > R + e.T.r || (d > 8 && (dx * fx + dz * fz) / d < .55)) continue; dealDmg(e, base * 3, dx / (d || 1), dz / (d || 1), 3); applySt(e, 'stun', .5); n++; }
+  areaHit(x1, z1, 20, base * 1.2, 2, .4); ring(x1, z1, 4, 30, .35, col); mark(x1, z1, 16, 0x0e0805, 'scorch', 6, .6); burst(x1, 3, z1, 30, 0xffd27a, 100, .45, 10, .3); xfBoom(x1, z1, 'grunt', 9, 'emp');
+  G.shake = Math.max(G.shake, 5); G.hstop = Math.max(G.hstop || 0, .06); if (n) sfx.boom();
 }
 
 // ── 미사일 엔진(ASCEND '수직 발사' 비행을 이 전장 크기에 맞춰 줄임) ──
@@ -2841,6 +2880,32 @@ function gunTwoHand(mode, dir, k) {
   }
   if (mode !== 'ready') headAim(dir, k * .85);
 }
+function wEnds(mw) { const t = MTIP[mw.userData.key]; if (!t) return null; mw.updateMatrixWorld(true); const b = mw.userData.body; return [b.localToWorld(new THREE.Vector3(t[0], t[1], t[2])), b.localToWorld(new THREE.Vector3(-t[0], -t[1], -t[2]))]; }
+function aimTool(mw, dir, k) { const RH = armed.bones.RightHand, e = wEnds(mw); if (!e || !RH || k < .02) return; const v = e[0].sub(e[1]); if (v.lengthSq() < 1e-6) return; v.normalize(); rotW(RH, new THREE.Quaternion().slerp(new THREE.Quaternion().setFromUnitVectors(v, dir), k)); }
+function meleePose() {
+  const s = P.sw, mw = armed && armed.main, B = armed && armed.bones, S = MSTY[ARM]; if (!s || !mw || !S || !B.RightArm || !B.LeftArm || !B.RightHand) return;
+  const fw = new THREE.Vector3(Math.sin(P.yaw), 0, Math.cos(P.yaw)), u = s.t / s.T;
+  const rs = B.RightArm.getWorldPosition(new THREE.Vector3()), ls = B.LeftArm.getWorldPosition(new THREE.Vector3()), side = rs.clone().sub(ls); side.y = 0; if (side.lengthSq() < 1e-6) return; side.normalize();
+  const L = rs.distanceTo(B.RightForeArm.getWorldPosition(new THREE.Vector3())) + B.RightForeArm.getWorldPosition(new THREE.Vector3()).distanceTo(B.RightHand.getWorldPosition(new THREE.Vector3()));
+  if (s.k === 'thrust') {
+    // 뒤로 당겼다가(0~35%) 한 번에 뻗고(35~50%) 잠깐 멈췄다가 거둔다. 상체는 틀었다가 찌르며 정면으로
+    const ext = u < .35 ? -.3 * (u / .35) : u < .5 ? -.3 + 1.3 * ((u - .35) / .15) : u < .7 ? 1 : 1 - (u - .7) / .3, e1 = clamp(ext, 0, 1);
+    torsoAim(fw, .5 - .42 * e1, .03 + .14 * e1, 1);
+    // 창은 뒷손을 허리에 붙이고 자루가 몸 바깥(오른쪽 옆구리)으로 지나가게, 칼은 가슴 앞에서 곧게 찌른다
+    const sp = ARM === 'spear', T = rs.clone().addScaledVector(fw, L * ((sp ? .05 : .2) + .62 * ext)).addScaledVector(side, sp ? L * .16 : -L * .1); T.y -= L * (sp ? .55 : .42);
+    armIK(B.RightArm, B.RightForeArm, B.RightHand, T, 1); aimTool(mw, fw.clone().setY(sp ? .07 : -.06).normalize(), 1);
+  } else if (s.k === 'spin') {
+    // 무기를 몸 바깥으로 수평으로 뻗어 돌린다
+    const T = rs.clone().addScaledVector(side, L * .5).addScaledVector(fw, L * .3); T.y -= L * .3;
+    armIK(B.RightArm, B.RightForeArm, B.RightHand, T, 1); aimTool(mw, side.clone().multiplyScalar(.8).addScaledVector(fw, .6).setY(-.05).normalize(), 1);
+  }
+  // 두 손 잡이: 칼·해머는 오른손 바로 아래 자루를, 창은 앞쪽 자루를 잡는다
+  if (S.two && B.LeftForeArm && B.LeftHand && (P.lAimK || 0) < .1) {
+    const e = wEnds(mw); if (!e) return; const hp = B.RightHand.getWorldPosition(new THREE.Vector3()), ax = e[0].clone().sub(hp), len = ax.length(); if (len < 1e-4) return; ax.normalize();
+    const grip = ARM === 'spear' ? hp.clone().addScaledVector(ax, len * .38) : hp.clone().addScaledVector(ax, -L * .13);
+    armIK(B.LeftArm, B.LeftForeArm, B.LeftHand, grip, 1);
+  }
+}
 function placeArms(dt) {
   if (!armed) return;
   if (lobby.on && G.state === 'title') lobbyStand();
@@ -2854,6 +2919,7 @@ function placeArms(dt) {
     for (let it = 0; it < 2; it++) { pointArm(B.LeftArm, B.LeftHand, dir, k); pointArm(B.LeftForeArm, B.LeftHand, dir, k); }
     palmFace(B.LeftHand, dir, k);
   }
+  if (P.sw && G.state === 'play') meleePose();
   if (B.LeftHand) { B.LeftHand.getWorldPosition(_va); const tg = nearest(P.x, P.z, 160), a = tg ? Math.atan2(tg.x - _va.x, tg.z - _va.z) : P.yaw, ex = P.lAimK > .5 ? 2.6 : 1.5; P.palm = { x: _va.x + Math.sin(a) * ex, y: _va.y, z: _va.z + Math.cos(a) * ex }; }
   // 아틸러리 어깨 곡사포: 왼쪽 어깨 위에 얹고 앞을 향한다(총구 -X)
   if (howW) {
