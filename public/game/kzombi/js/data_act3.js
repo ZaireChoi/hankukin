@@ -71,7 +71,7 @@
   /* 난이도(11-27 시뮬 맞춤): 악몽 30장 마지막 밤 × 1.45 에서 시작, 30장 동안 1.58배까지 */
   D.a3K = n => ({ hp: 1, rate: 1.55 + 0.006 * (n - 1), dmg: 2.1 + 0.03 * (n - 1) });
   D.a3Nights = function (n) {
-    const o = D.nightsOf(D.a3Tpl(n)), ref = D.nightsOf(30), C = D.ACT3C[n - 1];
+    const o = D.nightsOf(D.a3Tpl(n), n), ref = D.nightsOf(30), C = D.ACT3C[n - 1];
     const last = a => a[a.length - 1].hp, nm30 = D.nmK ? D.nmK(30).hp : 36;
     const k = last(ref) * nm30 * 1.45 * (1 + 0.02 * (n - 1)) / Math.max(0.01, last(o)) * (D.A3HP && D.A3HP[n] || 1);
     o.forEach(x => { x.dhp = x.hp; x.hp *= k; if (x.boss) x.boss = C.boss; });   /* dhp: 적 피해 기준(배율 전) */

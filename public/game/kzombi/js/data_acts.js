@@ -68,7 +68,7 @@
   D.ACTHP = D.ACTHP || {};
   D.actNights = function (N, n) {
     if (N === 3 && D.a3Nights) return D.a3Nights(n);
-    const C = D.actC(N)[n - 1], o = D.nightsOf(tpl(n)), ref = D.nightsOf(30), last = a => a[a.length - 1].hp, nm30 = D.nmK ? D.nmK(30).hp : 36, m = mOf(N, n);
+    const C = D.actC(N)[n - 1], o = D.nightsOf(tpl(n), n), ref = D.nightsOf(30), last = a => a[a.length - 1].hp, nm30 = D.nmK ? D.nmK(30).hp : 36, m = mOf(N, n);
     const k = last(ref) * nm30 * 1.45 * 1.58 * 0.85 * Math.pow(1.3, (m - 30) / 30) / Math.max(0.01, last(o)) * (1.25 - 0.015 * (n - 1)) * (D.ACTK[N] || 1) * (D.ACTHP[D.actG(N, n)] || 1);
     o.forEach(x => { x.hp *= k; if (x.boss) x.boss = C.boss; }); return o;
   };

@@ -414,6 +414,7 @@ function drawObjThing(o) {
 function hurtEnemy(e, dmg, src, o) {
   if (e.dead) return 0;
   if (e.nemInv) return 0;
+  if (e.ghostT > 0) return 0;   /* 7막 저승 좀비: 맞으면 잠깐 흐려짐 */
   o = o || {};
   if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.05 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
@@ -423,8 +424,9 @@ function hurtEnemy(e, dmg, src, o) {
   if (!o.nocrit && Math.random() < 0.05 + 0.12 * skLv('crit') + 0.1 * fxN('crit10') + 0.05 * fxN('crit5')) { dmg *= 2 + 0.5 * Math.min(1, skLv('crit')) + 0.3 * fxN('critDmg30'); crit = true; }
   if (e.slowT > 0 && src === 'building') dmg *= 1.1;
   if (e.elite || e.boss) dmg *= 1 + 0.25 * fxN('eliteDmg25');
+  if (e.abC === 'blade' && e.ab >= 2 && src !== 'skill' && e.y < G.player.y - 20) dmg *= 0.7;   /* 방패 막기: 정면 피해 감소 */
   if (e.ward > 0) { dmg *= 0.3; if (Math.random() < 0.3) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 2, '170,90,230', 0.2, 3); }
-  e.hp -= dmg; e.hitT = 0.09; e.squash = 1;
+  e.hp -= dmg; e.hitT = 0.09; e.squash = 1; if (e.vGhost && !(e.ghCd > 0) && e.hp > 0) { e.ghostT = 0.4; e.ghCd = 3; }
   if (!src || src === 'player') { if (crit && G.t - (G.hsT || -9) > 0.25) { G.hsT = G.t; sfx('crit'); G.freezeT = Math.max(G.freezeT || 0, 0.04); } else sfx('thud', 0.8); }   /* 처용 타격 손맛 */
   G.dmg[src || 'player'] += dmg;
   if (src === 'player' && G.fx && G.fx.ls > 0 && G.player && G.player.hp > 0) G.player.hp = Math.min(G.player.max, G.player.hp + dmg * G.fx.ls / 100);   /* 피흡 */
@@ -489,7 +491,7 @@ function killEnemy(e) {
   if (e.dead) return;
   if (e.nem) { e.hp = 1; nemRetreat(e); return; }
   if (EN[e.type] && EN[e.type].bomber && !e.blasted) bombBlast(e, 0, true);
-  e.dead = true;
+  e.dead = true; if (e.vBlast || (e.abC === 'crowd' && e.ab >= 2 && Math.random() < 0.5)) varBlast(e);
   if (e.mut === 'plague' && G.pzs) { G.pzs.push({ x: e.x, y: e.y, r: 62, t: 5, life: 5, tick: 0 }); FX.smoke(e.x, e.y, 5, '110,200,60', 16, 40); }
   G.kills++;
   const d = EN[e.type], big = e.elite || e.boss; sfx('die', big ? 1.1 : 0.7);
@@ -530,6 +532,50 @@ function pickVar(type) {
   const ks = Object.keys(ZVAR).filter(ok), tot = ks.reduce((a, k) => a + ZVAR[k].w, 0); let r = Math.random() * tot;
   for (const k of ks) { r -= ZVAR[k].w; if (r <= 0) return k; } return 'shamble';
 }
+/* 막 변형·좀비 능력(사용자 11-28) */
+function curAct() { return G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; }
+const VAR_TF10 = [2, 4, 6, 8];
+function actVar(e) {
+  const D2 = window.JZD; if (!D2 || !D2.VARIANT || e.boss || e.nem || (G.cfg && G.cfg.wbBoss)) return;
+  const a = curAct(); if (a < 2) return; let V = D2.VARIANT[a]; if (!V) return;
+  e.vt = a; let tr = V;
+  if (V.chaos) { const k = VAR_TF10[(Math.random() * 4) | 0]; tr = D2.VARIANT[k]; e.vtf = tr.tf; } else e.vtf = V.tf;
+  if (tr.hp) { e.hp *= tr.hp; e.max = e.hp; } if (tr.sp) e.sp *= tr.sp; if (tr.dmg) e.dmgK = (e.dmgK || 1) * tr.dmg;
+  e.vScream = !!tr.scream; e.vBolt = !!tr.bolt; e.vGhost = !!tr.ghost; e.vBlast = !!tr.blast;
+  const cat = D2.abCat(e.type); e.abC = cat; e.ab = EN[e.type].fly ? 0 : D2.abStage(cat, a); e.abT = rnd(1.5, 4); e.vT = rnd(2, 6);
+  const AI = { arrow: ['', '🔥', '❄', '☠', '➶'], spear: ['', '➤', '➤', '➤'], blade: ['', '🌀', '🛡', '🛡'], crowd: ['', '»', '💥', '💥'], caster: ['', '✚', '👥', '👥'], charge: ['', '➤', '💫', '💫'], beast: ['', '⤴', '📢', '📢'] };
+  e.abI = e.ab > 0 ? (AI[cat] || [])[e.ab] || '' : '';
+}
+function vName(type, e) { const D2 = window.JZD, d = EN[type]; const a = curAct(), V = D2 && D2.VARIANT && D2.VARIANT[a]; let n = d.n; if (V && a >= 2) n = (window.IS_EN ? V.preEn : V.pre) + n; if (e && e.ab > 0 && D2.ABIL[e.abC]) { const L = D2.ABIL[e.abC][e.ab]; if (L && L[0]) n += ' (' + (window.IS_EN ? L[1] : L[0]) + ')'; } return n; }
+function varTick(e, dt) {
+  const p = G.player; e.dashT = (e.dashT || 0) - dt; e.ghostT = (e.ghostT || 0) - dt; e.ghCd = (e.ghCd || 0) - dt; e.abT -= dt; e.vT -= dt;
+  if (e.st === 'rise' || e.frzT > 0 || e.stunT > 0) return;
+  const dp = Math.hypot(e.x - p.x, e.y - p.y);
+  if (e.vScream && e.vT <= 0 && dp < 150) { e.vT = 7; p.slowT = Math.max(p.slowT || 0, 1.1); FX.ring(e.x, e.y - e.hh * 0.6, 150, '190,110,255', 0.35, 5); FX.num(e.x, e.y - e.hh - 10, window.IS_EN ? 'Scream!' : '비명!', false, '#d8a8ff'); }
+  if (e.vBolt && e.vT <= 0) { e.vT = rnd(4, 6); if (Math.random() < 0.3) { e.dashT = 0.35; FX.ring(e.x, e.y, e.r * 2.2, '180,220,255', 0.3, 3); } }
+  if (e.ab <= 0 || e.abT > 0) return;
+  const c = e.abC;
+  if ((c === 'spear' || c === 'charge' || (c === 'beast' && e.ab === 1)) && dp < 240 && dp > 60) { e.abT = rnd(4, 6); FX.ring(e.x, e.y, e.r * 2, '255,90,70', 0.3, 3); G.queue.push({ t: 0.3, fn: () => { if (!e.dead) { e.dashT = 0.4; e.trample = c === 'charge' && e.ab >= 2; } } }); }
+  else if (c === 'beast' && e.ab >= 2 && dp < 170) { e.abT = 7; FX.ring(e.x, e.y - e.hh * 0.5, 170, '255,200,90', 0.35, 5); G.queue.push({ t: 0.3, fn: () => { if (!e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 175) p.slowT = Math.max(p.slowT || 0, 1.0); } }); }
+  else if (c === 'blade' && e.ab === 1 && dp < 95) { e.abT = 4; FX.ring(e.x, e.y - e.hh * 0.3, 95, '255,150,90', 0.3, 4); G.queue.push({ t: 0.3, fn: () => { if (!e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 100) hurtT(p, (EN[e.type].dmg || 8) * 0.8 * (e.dmgK || 1)); } }); }
+  else if (c === 'crowd') { e.abT = 0.6; let n = 0; for (const o of G.enemies) if (o !== e && Math.abs(o.x - e.x) < 90 && Math.abs(o.y - e.y) < 90 && ++n >= 3) break; e.swarmK = n >= 3 ? 1.25 : 1; }
+  else if (c === 'caster') { e.abT = 5; let healed = 0; for (const o of G.enemies) if (o !== e && !o.boss && !o.nem && o.hp < o.max && Math.hypot(o.x - e.x, o.y - e.y) < 140) { o.hp = Math.min(o.max, o.hp + o.max * 0.12); if (++healed >= 5) break; } if (healed) FX.ring(e.x, e.y - e.hh * 0.5, 140, '120,255,140', 0.35, 4);
+    if (e.ab >= 2 && !e.cloned && e.hp < e.max * 0.5 && G.enemies.length < 48) { e.cloned = 1; const k = spawnEnemy(e.type, e.x + rnd(-40, 40), e.y + rnd(-20, 20), { small: true }); if (k) { k.cloned = 1; k.vtf = e.vtf; } FX.smoke(e.x, e.y, 4, '180,140,255', 14, 30); } }
+}
+function abArrow(e, s) {
+  G.eshots.push(s);
+  if (s.kind !== 'earrow' || !(e.ab > 0) || e.abC !== 'arrow') return;
+  const EL = [null, 'fire', 'ice', 'poison']; s.el = e.ab >= 4 ? EL[1 + ((Math.random() * 3) | 0)] : EL[e.ab];
+  if (e.ab >= 4) for (const da of [-0.22, 0.22]) { const c = Math.cos(da), sn = Math.sin(da); G.eshots.push(Object.assign({}, s, { vx: s.vx * c - s.vy * sn, vy: s.vx * sn + s.vy * c, dmg: s.dmg * 0.6 })); }
+}
+function abArrowHit(a, tg) {
+  const p = G.player;
+  if (a.el === 'fire') { FX.ring(a.x, a.y, 46, '255,140,60', 0.3, 4); if (Math.hypot(p.x - a.x, p.y - a.y) < 60 && tg !== p) hurtT(p, a.dmg * 0.3); }
+  else if (a.el === 'ice') { if (tg === p) p.slowT = Math.max(p.slowT || 0, 1.2); FX.ring(a.x, a.y, 36, '150,220,255', 0.3, 3); }
+  else if (a.el === 'poison' && G.pzs && G.pzs.length < 12) G.pzs.push({ x: a.x, y: a.y + 30, r: 40, t: 2.5, life: 2.5, tick: 0 });
+}
+function varBlast(e) { const p = G.player, dm = (EN[e.type].dmg || 8) * 0.7 * (e.dmgK || 1); FX.ring(e.x, e.y - 20, 80, e.vt === 8 ? '255,70,40' : '200,160,90', 0.35, 6); FX.smoke(e.x, e.y, 3, '90,40,30', 14, 30);
+  if (Math.hypot(p.x - e.x, p.y - e.y) < 85) hurtT(p, dm); for (const t of G.turrets) if (Math.hypot(t.x - e.x, t.y - e.y) < 75) { hurtT(t, dm * 0.6); break; } }
 function spawnEnemy(type, x, y, o) {
   o = o || {};
   const d = EN[type], N = curN();
@@ -543,8 +589,8 @@ function spawnEnemy(type, x, y, o) {
   const e = { type, x, y, r: d.r * sc, hp, max: hp, sp: d.sp * rnd(0.92, 1.08) * (o.boss ? 0.85 : 1), cd: rnd(0.3, 1), hitT: 0, wob: rnd(0, 6.28), turn: Math.random() < 0.5 ? 1 : -1,
     gx: rnd(-46, 46), hk: (o.elite || o.boss) ? HK : 0, elite: !!o.elite, boss: !!o.boss, small: !!o.small, armor: d.armor || 0, sc, charmT: 0, burnT: 0, jumpT: 0, var: 'shamble', st: 'move', stT: 0, twT: rnd(1, 5), twA: 0, screamed: false, d8: 0, pile: 0, atkT: 0, hh: (d.h || 60) * sc, slowT: 0, frzT: 0, stunT: 0, t1: rnd(3, 5), t2: 6, chg: 0, tele: 0, squash: 0, flip: false };
   if (!o.boss && !o.elite && !d.fly && !o.small) { e.var = pickVar(type); const V = ZVAR[e.var]; e.sp *= V.sp; if (V.hp) { e.hp *= V.hp; e.max = e.hp; } if (V.low) e.hh *= 0.45; }
-  mutate(e);
-  if (!o.boss && G.C && G.C.fresh && G.C.fresh.includes(type)) { G.seenNew = G.seenNew || {}; if (!G.seenNew[type]) { G.seenNew[type] = 1; G.banner = { s: '새 좀비 등장: ' + d.n, t: 2.2, kind: 'boss' }; FX.ring(e.x, e.y, 120, d.tint || '255,220,120', 0.5, 6); } }
+  mutate(e); actVar(e);
+  if (!o.boss && G.C && G.C.fresh && G.C.fresh.includes(type)) { G.seenNew = G.seenNew || {}; if (!G.seenNew[type]) { G.seenNew[type] = 1; G.banner = { s: '새 좀비 등장: ' + vName(type, e), t: 2.2, kind: 'boss' }; FX.ring(e.x, e.y, 120, d.tint || '255,220,120', 0.5, 6); } }
   if (o.rise) { e.st = 'rise'; e.stT = 1.0; FX.debris(e.x, e.y, 8, '#4a3a2a', 160); FX.smoke(e.x, e.y, 4, '90,80,60', 16, 30); }
   G.enemies.push(e);
   return e;
@@ -1724,7 +1770,7 @@ function enemies(dt) {
     if (e.dead) continue;
     const d = EN[e.type];
     if (e.boss && !e.enr && e !== G.nem && e.hp > 0 && e.hp < e.max * 0.5) { e.enr = 1; e.sc = (e.sc || 1) * 1.12; e.sp *= 1.15; FX.ring(e.x, e.y - 30, 220, '255,60,30', 0.7, 12); FX.num(e.x, e.y - (e.hh || 120) - 40, window.IS_EN ? 'ROAR!' : '크아앙!', true, '#ff5a3a'); FX.shake = Math.max(FX.shake || 0, 0.5); sfx('warn'); }
-    e.hitT -= dt; e.squash = Math.max(0, e.squash - dt * 6); e.slowT -= dt; e.frzT -= dt; e.stunT -= dt;
+    e.hitT -= dt; e.squash = Math.max(0, e.squash - dt * 6); e.slowT -= dt; e.frzT -= dt; e.stunT -= dt; if (e.vt) varTick(e, dt);
     if (e.accT > 0) { e.accT -= dt; if (e.accT <= 0 && e.accD > 0.5) { FX.num(e.x, e.y - e.hh * 0.9, e.accD, false); e.accD = 0; } }
     if (e.burnT > 0) { e.burnT -= dt; hurtEnemy(e, e.burnD * dt, 'skill', { acc: 1, nocrit: 1, col: '#ff9a50' }); if (Math.random() < dt * 12) FX.ember(e.x, e.y - e.hh * 0.5, '255,130,40', 1, 80); if (e.dead) continue; }
     if (e.charmT > 0) {
@@ -1756,7 +1802,7 @@ function enemies(dt) {
     /* 킹덤: 가끔 몸이 꺾이는 발작 */
     e.twT -= dt; if (e.twT <= 0) { e.twT = rnd(1.5, 5); e.twA = 0.18; e.twR = rnd(-0.35, 0.35); }
     if (e.twA > 0) e.twA -= dt;
-    let sp = e.sp * (e.slowT > 0 ? (e.boss ? 0.7 : 0.5) : 1) * (e.frenzy ? 1.6 : 1) * (e.y < WALL_Y - 700 && !G.arFoe ? 3 : 1);
+    let sp = e.sp * (e.dashT > 0 ? 2.6 : 1) * (e.swarmK || 1) * (e.slowT > 0 ? (e.boss ? 0.7 : 0.5) : 1) * (e.frenzy ? 1.6 : 1) * (e.y < WALL_Y - 700 && !G.arFoe ? 3 : 1);
     e.d8 = dir8(Math.atan2(dy, dx)); if (e.var === 'backward') e.d8 = (e.d8 + 4) % 8;
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
@@ -1840,7 +1886,7 @@ function enemies(dt) {
       e.x += vx / vl * sp * dt; e.y += vy / vl * sp * dt;
       if (e.x < 60 || e.x > WW - 60 || e.y < camTop() - 60 || e.y > WALL_Y - 40) e.turn = -e.turn;
       e.x = clamp(e.x, 40, WW - 40); e.y = clamp(e.y, -120, WALL_Y - 30);
-      if (dd < d.range && e.cd <= 0) { e.cd = d.cd; G.eshots.push({ kind: 'earrow', x: e.x, y: e.y - 40, vx: dx / dd * 250, vy: dy / dd * 250, dmg, life: 1.6 }); }
+      if (dd < d.range && e.cd <= 0) { e.cd = d.cd; abArrow(e, { kind: 'earrow', x: e.x, y: e.y - 40, vx: dx / dd * 250, vy: dy / dd * 250, dmg, life: 1.6 }); }
       continue;
     }
     const reach = d.range ? d.range : e.r + (tg.r || 16) + (d.reach || 4);
@@ -1855,7 +1901,7 @@ function enemies(dt) {
       e.cd = d.cd * (e.boss ? 0.8 : 1);
       if (d.range && d.gun) { e.atkT = 0.5; G.eshots.push({ kind: 'ebullet', x: e.x, y: e.y - 40, vx: dx / dd * 430, vy: dy / dd * 430, dmg, life: 1.15 }); FX.p({ kind: 'glow', x: e.x + dx / dd * 20, y: e.y - 40 + dy / dd * 20, life: 0.08, s: 26, s2: 8, c: '255,220,140', hard: 1 }); FX.smoke(e.x + dx / dd * 22, e.y - 42, 2, '200,200,200', 8, 20); sfx('gun', 0.5); }
       else if (d.range) { if (d.plague) { const px = tg.x, py = tg.y; G.queue.push({ t: Math.min(1.1, dd / 220), fn: () => { if (G.pzs) G.pzs.push({ x: px, y: py, r: 56, t: 4, life: 4, tick: 0 }); FX.smoke(px, py, 4, '110,200,60', 14, 30); } }); }
-        e.atkT = 0.5; G.eshots.push({ kind: d.caster ? 'curse' : 'earrow', x: e.x, y: e.y - 40, vx: dx / dd * (d.caster ? 210 : 250), vy: dy / dd * (d.caster ? 210 : 250), dmg, life: 1.8, slow: d.caster ? 1 : 0 }); if (d.caster) FX.p({ kind: 'glow', x: e.x, y: e.y - 44, life: 0.2, s: 26, s2: 8, c: '180,90,255' }); }
+        e.atkT = 0.5; abArrow(e, { kind: d.caster ? 'curse' : 'earrow', x: e.x, y: e.y - 40, vx: dx / dd * (d.caster ? 210 : 250), vy: dy / dd * (d.caster ? 210 : 250), dmg, life: 1.8, slow: d.caster ? 1 : 0 }); if (d.caster) FX.p({ kind: 'glow', x: e.x, y: e.y - 44, life: 0.2, s: 26, s2: 8, c: '180,90,255' }); }
       else { hurtT(tg, dmg * (d.siege && tg !== G.player && tg !== G.shrine ? d.siege : 1)); e.lunge = 0.15; e.atkT = 0.5; FX.hit((e.x + tg.x) / 2, (e.y + tg.y) / 2 - 24, '255,120,100'); }
     }
     if (e.lunge > 0) e.lunge -= dt;
@@ -1870,11 +1916,12 @@ function enemies(dt) {
   for (const a of G.eshots) {
     a.x += a.vx * dt; a.y += a.vy * dt; a.life -= dt;
     if (a.kind === 'curse') FX.trail(a.x, a.y, '170,80,255', 14, 0.25);
+    else if (a.el) FX.trail(a.x, a.y, a.el === 'fire' ? '255,130,50' : a.el === 'ice' ? '150,220,255' : '120,220,80', 12, 0.22);
     let tg = null;
     if (Math.hypot(a.x - p.x, a.y - (p.y - 40)) < p.r + 18) tg = p;
     else if (Math.hypot(a.x - sh.x, a.y - (sh.y - 40)) < sh.r + 10) tg = sh;
     else for (const t of G.turrets) if (Math.hypot(a.x - t.x, a.y - (t.y - 30)) < t.r + 10) { tg = t; break; }
-    if (tg) { hurtT(tg, a.dmg); a.life = 0; FX.hit(a.x, a.y, a.kind === 'curse' ? '190,110,255' : '255,140,110'); if (a.slow && tg === p) p.slowT = 1.5; }
+    if (tg) { hurtT(tg, a.dmg); a.life = 0; FX.hit(a.x, a.y, a.kind === 'curse' ? '190,110,255' : '255,140,110'); if (a.slow && tg === p) p.slowT = 1.5; if (a.el) abArrowHit(a, tg); }
   }
   G.eshots = G.eshots.filter(a => a.life > 0);
   const before = G.turrets.length;
@@ -2078,8 +2125,9 @@ function drawEnemy(e) {
     py = -e.pile * 14;
   }
   const tw = e.twA > 0 ? e.twR * (e.twA / 0.18) : 0;
-  const TF = window.JZD && window.JZD.TINTF ? (e.artKey ? enTF(e.artKey) || null : e.tf || enTF(e.type) || (G.C && G.C.tint && !e.nem && !enArt(e.type) ? window.JZD.TINTF[G.C.tint] : null)) : null;
-  const ok = drawSprite(EK(e.artKey || e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { tf: TF, anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
+  const TF = window.JZD && window.JZD.TINTF ? (e.vtf ? e.vtf : e.artKey ? enTF(e.artKey) || null : e.tf || enTF(e.type) || (G.C && G.C.tint && !e.nem && !enArt(e.type) ? window.JZD.TINTF[G.C.tint] : null)) : null;
+  const ok = drawSprite(EK(e.artKey || e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { tf: TF, alpha: e.vGhost ? (e.ghostT > 0 ? 0.3 : 0.8) : 1, anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
+    if (e.abI && !G.low && !e.dead) txt(e.abI, x, y - e.hh - 6, 15, '#ffffff', 'center', '#1a1010', 3);   /* 좀비 능력 표시 */
   if (!ok) {
     const r = e.r; circle(x, y - r, r); ctx.fillStyle = mode === 'white' ? '#fff' : (e.boss ? '#8a2a3a' : '#8ac04a'); ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 3; ctx.stroke();
     circle(x - r * 0.35, y - r * 1.15, r * 0.3); circle(x + r * 0.35, y - r * 1.15, r * 0.3); ctx.fillStyle = '#fff'; ctx.fill();

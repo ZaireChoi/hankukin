@@ -366,10 +366,10 @@ D.SKILLS = [
       m += w[t] * (units(t) * d.hp * TH(t) * (d.big ? 0.62 : 1) + (tt <= 2 ? 0.35 : tt === 3 ? 0.15 : 0) * b.hp * TH(base)); }
     return m || 1; };
   const nf = D.nightsOf;
-  D.nightsOf = function (ch) {
+  D.nightsOf = function (ch, wch) {   /* wch: 막(3~10막) 안 장 번호 — 막마다 사다리를 처음부터 다시 쓴다 */
     const o = nf(ch); if (!o || !o.length) return o;
     const C = D.CHAPTERS[ch - 1]; if (!C) return o;
-    const [m1, m2, m3, m4] = D.mobWin(ch), n = o.length, VAR = D.VAR_OF || {};
+    const [m1, m2, m3, m4] = D.mobWin(wch || ch), n = o.length, VAR = D.VAR_OF || {};
     o.forEach((N, i) => {
       const old = mass(N.base, N.mix), last = i === n - 1;
       let base, mix;
@@ -388,4 +388,36 @@ D.SKILLS = [
     });
     return o;
   };
+})();
+
+/* 막 변형·좀비 능력 단계(사용자 11-28: "사다리를 다 쓰고 나면 2·3막엔 백성좀비가 빨갛게 변해 공격력이 오른다 — 저주받은 백성좀비, 4막엔 울부짖는 백성좀비…",
+   "막이 진행되면 좀비도 특수능력이 생긴다 — 궁수좀비는 일반 화살 → 불화살·얼음화살·독화살"). 색 그림은 drawSprite 가 필터별로 한 번 만들어 캐시한다. */
+(function () {
+  const D = window.JZD; if (!D) return;
+  D.VARIANT = {
+    2: { pre: '저주받은 ', preEn: 'Cursed ', tf: 'hue-rotate(-110deg) saturate(1.55) brightness(.95)', dmg: 1.15, d: '공격력이 오른다', dEn: 'Higher attack' },
+    3: { pre: '물먹은 ', preEn: 'Drowned ', tf: 'hue-rotate(75deg) saturate(1.15)', hp: 1.12, sp: 0.92, d: '체력이 높고 느리다', dEn: 'Tougher but slower' },
+    4: { pre: '울부짖는 ', preEn: 'Howling ', tf: 'hue-rotate(160deg) saturate(1.3)', scream: 1, d: '가까이 오면 비명으로 처용을 느리게 한다', dEn: 'Screams to slow Cheoyong up close' },
+    5: { pre: '모래먼지 ', preEn: 'Dust ', tf: 'hue-rotate(-80deg) saturate(.8) sepia(.35) brightness(1.05)', sp: 1.12, d: '빠르다', dEn: 'Faster' },
+    6: { pre: '번개 맞은 ', preEn: 'Thunderstruck ', tf: 'hue-rotate(90deg) saturate(.6) brightness(1.3)', bolt: 1, d: '가끔 번개처럼 돌진한다', dEn: 'Sometimes dashes like lightning' },
+    7: { pre: '저승 ', preEn: 'Underworld ', tf: 'hue-rotate(80deg) saturate(.45) brightness(1.35)', ghost: 1, d: '맞으면 잠깐 흐려져 피해를 받지 않는다', dEn: 'Fades briefly when hit' },
+    8: { pre: '마계 ', preEn: 'Demonic ', tf: 'hue-rotate(-115deg) saturate(1.8) brightness(.7)', blast: 1, d: '쓰러질 때 작게 터진다', dEn: 'Bursts when killed' },
+    9: { pre: '거울 ', preEn: 'Mirror ', tf: 'grayscale(1) invert(.88) contrast(1.15)', hp: 1.06, dmg: 1.06, d: '거울 세계의 좀비', dEn: 'From the mirror world' },
+    10: { pre: '혼돈 ', preEn: 'Chaos ', tf: '', chaos: 1, d: '무작위 특성', dEn: 'Random trait' }
+  };
+  D.TINTF = D.TINTF || {}; for (const a in D.VARIANT) if (D.VARIANT[a].tf) D.TINTF['act' + a] = D.VARIANT[a].tf;
+  /* 좀비 종류 → 능력 갈래 */
+  D.abCat = k => { const e = D.EN[k] || {}; if (e.range && !e.gun && !e.caster) return 'arrow'; if (e.caster) return 'caster'; if (/spear/.test(k)) return 'spear'; if (/rider|zox|zboar/.test(k)) return 'charge';
+    if (/dog|bear|tiger|wolf|bat|crow|rat|beast/.test(k)) return 'beast'; if (/sword|samurai|waegun|munsin|yangban|shield|general|jang|blade/.test(k)) return 'blade'; return 'crowd'; };
+  /* 막 단계(1막=0)별 능력 이름 */
+  D.ABIL = {
+    arrow: [['', ''], ['불화살', 'Fire Arrow'], ['얼음화살', 'Ice Arrow'], ['독화살', 'Poison Arrow'], ['세 갈래 화살', 'Triple Arrow']],
+    spear: [['', ''], ['돌진 찌르기', 'Lunge'], ['관통 돌진', 'Piercing Lunge'], ['관통 돌진', 'Piercing Lunge']],
+    blade: [['', ''], ['회전 베기', 'Spin Slash'], ['방패 막기', 'Shield Guard'], ['방패 막기', 'Shield Guard']],
+    crowd: [['', ''], ['떼 지어 빨라짐', 'Swarm Rush'], ['시체 폭발', 'Corpse Burst'], ['시체 폭발', 'Corpse Burst']],
+    caster: [['', ''], ['아군 치유', 'Heal Allies'], ['분신', 'Clone'], ['분신', 'Clone']],
+    charge: [['', ''], ['돌진', 'Charge'], ['짓밟기 기절', 'Trample'], ['짓밟기 기절', 'Trample']],
+    beast: [['', ''], ['도약', 'Leap'], ['포효', 'Roar'], ['포효', 'Roar']]
+  };
+  D.abStage = (cat, act) => Math.min((D.ABIL[cat] || [0]).length - 1, Math.max(0, act - 1));
 })();
