@@ -453,6 +453,7 @@ function hurtT(tg, dmg) {
   if (tg === G.shrine) { if (G.guards.some(g => g.id === 'turtle' && !(g.seal > 0))) dmg *= 0.7; if (G.shShield > 0) { const a = Math.min(G.shShield, dmg); G.shShield -= a; dmg -= a; if (dmg <= 0) { FX.ring(tg.x, tg.y - 40, 90, '255,215,110', 0.2, 4); return; } } G.alertT = 1.2; if (G.bubbleCd <= 0) { G.bubble = { s: '사당이 공격받고 있어!', t: 2.6 }; G.bubbleCd = 9; } }
   if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4) * (G.nm ? 0.55 : 1);   /* 악몽·3막: 적 피해 배율이 커서 봉화대가 사당보다 먼저 무너짐(11-28 시뮬 90장 0/4) */
   if (tg.pad != null && TUR[tg.type]) dmg /= tScale() * (1 + 0.04 * G.ch + 0.03 * Math.max(0, G.ch - 14));
+  if (tg.style === 'soldier' && tg.type === 's_sword' && actNum() >= 2) dmg *= 0.72;   /* 2막부터 검사 방패 막기 */
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
   if (tg === G.player) { FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
@@ -703,7 +704,7 @@ function jangPair() { if (!G || !G.turrets) return false; let a = 0, b = 0; for 
 function lvInfo(k, lv) {
   const d = TUR[k], m = 3.4 * (1 + 0.4 * (lv - 1));
   if (k === 'arrow') { const c = crewOf({ lv }); return (c[0] === 's_gun' ? '조총수' : c[0] === 's_crossbow' ? '연노병' : '궁수') + ' ' + c[1] + '명이 쏜다'; }
-  if (k === 'barracks') return '병사 최대 ' + (2 + Math.floor(lv * 1.5)) + '명 · ' + Object.keys(D.SOLDIER).filter(s => D.SOLDIER[s].unlock <= lv).map(s => D.SOLDIER[s].n).join(', ');
+  if (k === 'barracks') return '병사 최대 ' + (2 + Math.floor(lv * 1.5)) + '명 · 한 번에 ' + Math.min(6, 2 + lv) + '명 · 전체 ' + (G && G.allies ? G.allies.filter(a => a.style === 'soldier').length : 0) + '/' + (G && G.hq ? soldierMax() : 9) + ' · ' + Object.keys(D.SOLDIER).filter(s => D.SOLDIER[s].unlock <= lv).map(s => D.SOLDIER[s].n).join(', ');
   if (k === 'mine') return '밤마다 엽전 +' + d.income * lv;
   if (k === 'well') return '주변 회복 ' + d.heal * lv + '/초';
   if (k === 'general') return '광선 피해 ' + Math.round(d.dmg * m) + ' · 사거리 ' + d.range + (jangPair() ? ' · 짝 효과: 피해 +40%, 옆 적에게 튐' : ' · 지하여장군과 짝이면 더 강해짐');
@@ -756,7 +757,8 @@ function slotMax(hq) { return SLOTS[hq || G.hq] || 10; }
 function buildBlock(k) { if (G.C && G.C.rule === 'heroes') return 'rule'; if (G.C && G.C.rule === 'towers' && k === 'barracks') return 'rule';   /* 7막 재판정: 영웅만 / 탑만 */ if (G.turrets.length >= slotMax()) return 'slots'; if (tCount(k) >= tCap(k)) { for (let h = G.hq + 1; h <= 5; h++) if (tCap(k, h) > tCap(k)) return 'hq' + h; return 'max'; } return ''; }
 function blockMsg(k, b) { return b === 'slots' ? '건설 칸 가득 · 본부 레벨업' : b === 'max' ? TUR[k].name + ' 최대 ' + tCap(k) + '개' : '본부 ' + b.slice(2) + '레벨 필요'; }
 function hqOpens() { const h = G.hq + 1, o = []; if (h > 5) return ''; for (const k in TUR) if (tCap(k, h) > tCap(k)) o.push(TUR[k].name + ' ' + tCap(k, h)); return o.join(', '); }
-function soldierMax() { return 6 + 3 * G.hq; }
+function actNum() { return G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; }
+function soldierMax() { return Math.min(36, 6 + 3 * G.hq + 2 * (actNum() - 1)); }   /* 사용자 11-28: 병사 생산 증가(막마다 +2, 최대 36) */
 function build(pad, k) {
   if (D.tUnlocked && !D.tUnlocked(k, G.ch, G.nm)) { G.bubble = { s: TUR[k].name + '은(는) ' + D.TUR_UNLOCK[k] + '장에서 열려요', t: 2 }; return false; }
   { const blk = buildBlock(k); if (blk) { G.bubble = { s: blockMsg(k, blk), t: 2 }; G.padKey = ''; return false; } }
@@ -1161,6 +1163,7 @@ function drawGadget(g) {
   const k = Math.max(0, Math.min(1, g.t / 9)); ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(x - 14, y + 4, 28, 4); ctx.fillStyle = '#9ef0ff'; ctx.fillRect(x - 14, y + 4, 28 * k, 4);
 }
 function updSoldier(a, dt) {
+  if (a.confT > 0 && actNum() >= 4 && (a.type === 's_taoist' || G.allies.some(o => o.type === 's_taoist' && Math.hypot(o.x - a.x, o.y - a.y) < 160))) a.confT = 0;   /* 4막부터 도사: 홀림·저주 풀기 */
   if (a.confT > 0) { a.confT -= dt; a.mv = false; a.tg = null; if (Math.random() < dt * 3) FX.p({ kind: 'glow', x: a.x + rnd(-6, 6), y: a.y - 50, life: 0.4, s: 5, s2: 1, c: '200,200,255' }); return; }
   const S = D.SOLDIER[a.type];
   if (a.hitT > 0) a.hitT -= dt;
@@ -1171,14 +1174,15 @@ function updSoldier(a, dt) {
   let tx = a.rx, ty = a.ry;
   if (e) {
     const dx = e.x - a.x, dy = e.y - a.y, d = Math.hypot(dx, dy) || 1; a.fdir = Math.atan2(dy, dx);
-    if (S.range) { if (d > S.range) { tx = e.x; ty = e.y; } else { tx = a.x; ty = a.y; if (a.cd <= 0) { a.cd = S.rate; a.atk = 0.3; const dm = S.dmg * a.k * a.atkM * kimK(e);
+    if (S.range) { if (d > S.range) { tx = e.x; ty = e.y; } else { tx = a.x; ty = a.y; if (a.cd <= 0) { a.cd = S.rate; a.atk = 0.3; const dm = S.dmg * a.k * a.atkM * kimK(e) * (a.type === 's_archer' && actNum() >= 2 ? 1.2 : 1);   /* 2막부터 궁수 불화살 */
+      if (a.type === 's_archer' && actNum() >= 2) FX.p({ kind: 'glow', x: a.x, y: a.y - 38, life: 0.14, s: 12, s2: 3, c: '255,140,40' });
       if (S.chain) chainLightning(a.x, a.y - 40, e, dm, 3, '200,220,255', 'building');
-      else shot({ kind: S.gun ? 'tracer' : 'tarrow', x: a.x, y: a.y - 36, vx: dx / d * (S.gun ? 1200 : 760), vy: (dy - 20) / d * (S.gun ? 1200 : 760), dmg: dm, pierce: S.gun ? 1 : 0, life: 0.6, src: 'building', r: 8 });
+      else shot({ kind: S.gun ? 'tracer' : 'tarrow', x: a.x, y: a.y - 36, vx: dx / d * (S.gun ? 1200 : 760), vy: (dy - 20) / d * (S.gun ? 1200 : 760), dmg: dm, pierce: S.gun ? (actNum() >= 4 ? 3 : 1) : 0, life: 0.6, src: 'building', r: 8 });
       if (S.gun) { FX.p({ kind: 'glow', x: a.x + dx / d * 18, y: a.y - 38 + dy / d * 18, life: 0.08, s: 28, s2: 8, c: '255,210,120', hard: 1 }); FX.smoke(a.x + dx / d * 20, a.y - 40, 2, '210,210,210', 8, 20); sfx('gun', 0.4); } } } }
     else { const reach = S.reach + e.r; if (d > reach) { tx = e.x; ty = e.y; } else { tx = a.x; ty = a.y; if (a.cd <= 0) { a.cd = 0.6; a.atk = 0.3; const dm = S.dps * 0.6 * a.k * a.atkM * kimK(e);
       if (S.cleave) { for (const o of G.enemies) if (Math.hypot(o.x - a.x, o.y - a.y) < reach + 20) hurtEnemy(o, dm, 'building', { kb: 8, kx: a.x, ky: a.y }); }
-      else hurtEnemy(e, dm * (S.charge && a.mvT > 0.6 ? 2.5 : 1), 'building', { kb: S.charge ? 16 : 5, kx: a.x, ky: a.y });
-      if (S.heal) for (const o of G.allies) if (o.style === 'soldier' && o.hp < o.max && Math.hypot(o.x - a.x, o.y - a.y) < 120) o.hp = Math.min(o.max, o.hp + o.max * 0.06);
+      else hurtEnemy(e, dm * (S.charge && a.mvT > 0.6 ? 2.5 : 1) * (a.type === 's_spear' && actNum() >= 3 && /rider|cavalry|boar|ox/.test(e.type || '') ? 1.6 : 1), 'building', { kb: S.charge ? 16 : 5, kx: a.x, ky: a.y });
+      if (S.heal) for (const o of G.allies) if (o.style === 'soldier' && o.hp < o.max && Math.hypot(o.x - a.x, o.y - a.y) < 120) o.hp = Math.min(o.max, o.hp + o.max * (actNum() >= 3 ? 0.09 : 0.06));
       FX.hit(e.x, e.y - 28, '255,230,170'); } } }
   }
   { const cr = allyCross(a, ty); if (cr) { tx = cr.x; ty = cr.y; } }
@@ -1398,7 +1402,7 @@ function turrets(dt) {
     const bl = bl0 * 3.4 * tScale() * (1 + 0.04 * Math.max(0, G.ch - 14)) * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
     if (d.kind === 'barracks') {
       t.cd -= dt; const lv = t.lv, cap = 2 + Math.floor(lv * 1.5) + (G.setBarracks || 0), mine = (G.allies || []).filter(a => a.style === 'soldier' && a.home === t).length;
-      if (t.cd <= 0 && mine < cap && isNight() && (G.allies || []).filter(a => a.style === 'soldier').length < soldierMax()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); spawnSoldier(t, pick(types)); }
+      if (t.cd <= 0 && mine < cap && isNight() && (G.allies || []).filter(a => a.style === 'soldier').length < soldierMax()) { t.cd = Math.max(2.5, d.rate - lv * 0.9); const types = Object.keys(D.SOLDIER).filter(k => D.SOLDIER[k].unlock <= lv); { const all = (G.allies || []).filter(a => a.style === 'soldier').length, B = Math.min(6, 2 + lv, cap - mine, soldierMax() - all); for (let q = 0; q < B; q++) spawnSoldier(t, pick(types)); if (B > 1) FX.num(t.x, t.y - 96, '+' + B, false, '#bfe8ff'); } }   /* 병영 한 번에 Lv1 3명 → Lv4~ 6명 */
       continue;
     }
     if (d.kind === 'heal') {
