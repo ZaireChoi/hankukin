@@ -2786,10 +2786,16 @@ function gunTwoHand(mode, dir, k) {
   const rs = B.RightArm.getWorldPosition(_gv[2]), ls = B.LeftArm.getWorldPosition(_gv[3]), side = _gv[4].copy(rs).sub(ls); side.y = 0; if (side.lengthSq() < 1e-6) return; side.normalize();
   const fe = B.RightForeArm.getWorldPosition(_gv[5]), hd = B.RightHand.getWorldPosition(_gv[6]), L = rs.distanceTo(fe) + fe.distanceTo(hd);
   const fw = _gv[7].set(dir.x, 0, dir.z).normalize(); let T, aim;
-  if (mode === 'shoulder') { T = rs.clone().addScaledVector(fw, L * .46).addScaledVector(side, -L * .17); T.y -= L * .22; aim = dir; }
+  if (mode === 'shoulder') { T = rs.clone().addScaledVector(fw, L * .52).addScaledVector(side, L * .1); T.y -= L * .44; aim = dir; }
   else if (mode === 'hip') { T = rs.clone().addScaledVector(fw, L * .4).addScaledVector(side, -L * .04); T.y -= L * .62; aim = new THREE.Vector3(dir.x, .03, dir.z).normalize(); }
   else { T = rs.clone().addScaledVector(fw, L * .34).addScaledVector(side, -L * .12); T.y -= L * .66; aim = fw.clone().multiplyScalar(.72).addScaledVector(side, -.55); aim.y = -.42; aim.normalize(); }
   armIK(B.RightArm, B.RightForeArm, B.RightHand, T, k); aimGun(mw, aim, k);
+  // 머리 피하기: 총신 선이 머리 가까이 지나가면 오른손을 바깥·아래로 옮겨 다시 맞춘다(총이 머리를 뚫지 않게)
+  if (mode === 'shoulder' && B.Head) for (let it = 0; it < 4; it++) {
+    const hp = B.RightHand.getWorldPosition(new THREE.Vector3()), hdp = B.Head.getWorldPosition(new THREE.Vector3()); hdp.y += L * .12;
+    const t = hdp.clone().sub(hp).dot(aim), dist = hp.clone().addScaledVector(aim, t).distanceTo(hdp), need = L * .62;
+    if (dist >= need) break; T.addScaledVector(side, need - dist + L * .04); T.y -= L * .05; armIK(B.RightArm, B.RightForeArm, B.RightHand, T, k); aimGun(mw, aim, k);
+  }
   if (mw && mw.userData.muzzle && B.LeftForeArm && B.LeftHand && (P.lAimK || 0) < .1) {
     mw.updateMatrixWorld(true); const mzp = mw.userData.body.localToWorld(new THREE.Vector3().copy(mw.userData.muzzle)), hp = B.RightHand.getWorldPosition(new THREE.Vector3());
     const grip = hp.lerp(mzp, mode === 'hip' ? .3 : .44); grip.y -= L * .05;
