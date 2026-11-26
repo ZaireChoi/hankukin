@@ -443,7 +443,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (e.nemInv) return 0;
   if (e.ghostT > 0) return 0;   /* 7막 저승 좀비: 맞으면 잠깐 흐려짐 */
   o = o || {};
-  { const ael = o.el !== undefined ? o.el : G.curEl, ek = D.elVs ? D.elVs(ael, e.el) : 1; if (ek !== 1) { dmg *= ek; if (!(e.ekT > G.t)) { e.ekT = G.t + 1.2; FX.num(e.x, e.y - e.hh - 26, ek > 1 ? (window.IS_EN ? 'Weak!' : '약점!') : (window.IS_EN ? 'Resist' : '저항'), false, ek > 1 ? '#ffa040' : '#9a9a9a'); } } }   /* 계열 상성 ×1.5 / ×0.6 (사용자 11-28) */
+  { const ael = o.el !== undefined ? o.el : G.curEl, ek = D.elVs ? D.elVs(ael, e.el) : 1; if (ek !== 1) { dmg *= ek; if (!(e.ekT > G.t)) { e.ekT = G.t + 1.2; if (e.boss || e.nem) FX.num(e.x, e.y - e.hh - 26, ek > 1 ? (window.IS_EN ? 'Weak!' : '약점!') : (window.IS_EN ? 'Resist' : '저항'), false, ek > 1 ? '#ffa040' : '#9a9a9a'); } o.ekCol = ek > 1 ? '#ffc890' : '#bdbdbd'; } else o.ekCol = null; }   /* 상성 글자는 보스만, 잡몹은 숫자 색만 은은하게(사용자 11-30) */   /* 계열 상성 ×1.5 / ×0.6 (사용자 11-28) */
   if (e.vulnUntil && G.t < e.vulnUntil) dmg *= 1.3;
   if ((e.elite || e.boss || e.nem) && src === 'hero' && G.comps && G.comps.some(c => c.id === 'haetae' && c.active)) { dmg *= 1.2; e.evilT = Math.max(e.evilT || 0, 1); } /* 해태 시비 판별: 강한 적에게 '악' 표식, 영웅 피해 +20% */ /* 구미호 홀림: 우두머리는 받는 피해 +30% */
   if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.05 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
@@ -465,7 +465,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (src === 'player' && e.hp <= 0) e.byPlayer = true;
   if (!o.silent) {
     if (o.acc) { e.accD = (e.accD || 0) + dmg; if (!(e.accT > 0)) { e.accT = 0.3; } }
-    else FX.num(e.x, e.y - e.hh * 0.9, dmg, crit, o.col);
+    else FX.num(e.x, e.y - e.hh * 0.9, dmg, crit, o.col || o.ekCol);
   }
   if (!o.kb && !e.boss && e.hp > 0 && (dmg > e.max * 0.06 || crit) && (e.hitCd || 0) <= G.t && e.st !== 'rise' && e.st !== 'climb' && e.st !== 'hit') { e.hitCd = G.t + 0.55; const a = Math.atan2(e.y - G.player.y, e.x - G.player.x); if (SPR[EK(e.type)] && SPR[EK(e.type)].A && SPR[EK(e.type)].A.hit) { e.st = 'hit'; e.stT = 0.18; e.kbx = Math.cos(a) * 40; e.kby = Math.sin(a) * 40; } else { e.x += Math.cos(a) * 4; e.y += Math.sin(a) * 4; } }
   if (e.boss && dmg > e.max * 0.04 && (e.hitCd || 0) <= G.t) { e.hitCd = G.t + 0.8; e.lunge = -0.1; FX.shake = Math.max(FX.shake || 0, 0.12); }
@@ -2488,7 +2488,7 @@ function drawEnemy(e) {
   /* 체력 막대: 다친 적, 정예, 우두머리 */
   if (e.arena) txt(EN[e.type].n, x, y - e.hh - 26, 15, '#ff9a8a', 'center', '#200808', 3);
   if (e.boss && e.enr && e.hp > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - e.hh * 0.45, e.hh * 0.75, '255,40,20', 0.22 + 0.1 * Math.sin(G.t * 8)); ctx.restore(); }   /* 분노한 우두머리 붉은 기운 */
-  if (e.el && D.EL[e.el]) { const big = e.boss || e.elite, zs = Math.max(0.5, ctx.getTransform().a / K), rr = (big ? 24 : 16) / zs, ix = x + (big ? 0 : e.r * 0.9 + rr * 0.4), iy = y - e.hh - (big ? 34 : 10) / zs; ctx.save(); ctx.beginPath(); ctx.arc(ix, iy, rr, 0, TAU); ctx.fillStyle = 'rgba(16,12,24,.82)'; ctx.fill(); ctx.lineWidth = (big ? 4 : 3) / zs; ctx.strokeStyle = D.EL[e.el].c; ctx.stroke(); ctx.font = '900 ' + Math.round(rr * 1.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(D.EL[e.el].i || '', ix, iy + rr * 0.05); ctx.restore(); }   /* 적 계열 아이콘(휴대폰에서 보이게) */
+  if (e.el && D.EL[e.el] && (e.boss || e.nem)) { const big = true, zs = Math.max(0.5, ctx.getTransform().a / K), rr = (big ? 24 : 16) / zs, ix = x + (big ? 0 : e.r * 0.9 + rr * 0.4), iy = y - e.hh - (big ? 34 : 10) / zs; ctx.save(); ctx.beginPath(); ctx.arc(ix, iy, rr, 0, TAU); ctx.fillStyle = 'rgba(16,12,24,.82)'; ctx.fill(); ctx.lineWidth = (big ? 4 : 3) / zs; ctx.strokeStyle = D.EL[e.el].c; ctx.stroke(); ctx.font = '900 ' + Math.round(rr * 1.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(D.EL[e.el].i || '', ix, iy + rr * 0.05); ctx.restore(); }   /* 적 계열 아이콘(휴대폰에서 보이게) */
   drawReact(e, x, y);
   if (e.elite) hpBar(x - 32, y - e.hh - 16, 64, 7, e.hp / e.max, '#ff4a3a');
   else if (!e.boss && e.hp < e.max) hpBar(x - 16, y - e.hh - 8, 32, 4, e.hp / e.max, '#ff5a4a');
@@ -2915,7 +2915,7 @@ function drawHUD(day) {
   if (boss) {
     panel(90, 202, 540, 66, 14, 'rgba(10,6,8,.9)', '#8a1a1a');
     waveIcon('boss', 122, 236, 26, false, false);
-    txt((boss.nemName || EN[boss.type].n) + (boss.enr ? ' · 분노' : ''), 372, 220, 26, boss.enr ? '#ff7a5a' : '#ffcfb0', 'center');
+    { const bE = boss.el && D.EL[boss.el], wk = bE && D.elVs ? Object.keys(D.EL).find(k => D.elVs(k, boss.el) > 1) : null, wE = wk && D.EL[wk]; txt((bE ? (bE.i || '') + ' ' : '') + (boss.nemName || EN[boss.type].n) + (boss.enr ? (window.IS_EN ? ' · Enraged' : ' · 분노') : ''), 372, 220, 26, boss.enr ? '#ff7a5a' : '#ffcfb0', 'center'); if (wE) txt((window.IS_EN ? 'Weak to ' : '약점: ') + (wE.i || '') + (window.IS_EN ? ({ fire: 'Fire', thunder: 'Lightning', ice: 'Water', qi: 'Light', metal: 'Metal', wind: 'Wind', dark: 'Underworld', nature: 'Nature' }[wk] || wk) : wE.n), 372, 286, 17, '#ffd890', 'center'); }   /* 보스 이름 옆 계열·약점(사용자 11-30) */
     hpBar(156, 238, 452, 20, boss.hp / boss.max, boss.hp < boss.max * 0.5 ? '#ff3a1a' : '#e8322a');
   }
   if (isNight() || G.phase === 'level') {
