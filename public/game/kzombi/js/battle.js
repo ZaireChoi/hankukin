@@ -1289,21 +1289,30 @@ function updGadgets(dt) {
   if (G.fog) { G.fog.t -= dt; if (G.fog.t <= 0) G.fog = null; } if (G.hgGhost) { for (const o of G.hgGhost) o.t -= dt; G.hgGhost = G.hgGhost.filter(o => o.t > 0); }
   if (G.bellT > 0) { G.bellT -= dt; const x = dt * 0.6; G.player.cd -= x; for (const c of G.comps) c.cd -= x; for (const t of G.turrets) t.cd -= x * 0.5; if (Math.random() < dt * 6) FX.p({ kind: 'glow', x: G.player.x + rnd(-30, 30), y: G.player.y - rnd(20, 90), vy: -40, life: 0.6, s: 6, s2: 2, c: '180,220,255' }); }
   if (!G.gadgets) return;
-  for (const g of G.gadgets) { if (g.t <= 0) continue; g.t -= dt; g.cd -= dt; const e = nearestEnemy(g.x, g.y, 380); if (e) g.a = Math.atan2(e.y - e.hh * 0.5 - (g.y - 26), e.x - g.x);
-    if (e && g.cd <= 0) { g.cd = 0.45 / (g.rk || 1); g.fire = 0.1; { const GH = (HOV.player || 150) * 1.05 * (g.big || 1), fx0 = g.x + Math.cos(g.a) * GH * 0.42, fy0 = g.y - GH * 0.68 + Math.sin(g.a) * GH * 0.2; shot({ kind: 'tracer', x: fx0, y: fy0, vx: Math.cos(g.a) * 1000, vy: Math.sin(g.a) * 1000, dmg: g.dm, pierce: 0, life: 0.6, src: 'hero', r: 9 }); FX.p({ kind: 'glow', x: fx0, y: fy0, life: 0.1, s: 30, s2: 8, c: '255,190,90', hard: 1 }); } if (Math.random() < 0.4) sfx('gun', 0.25); }
-    if (g.fire > 0) g.fire -= dt; if (g.t <= 0) FX.smoke(g.x, g.y - 10, 5, '150,140,130', 14, 30); }
+  for (const g of G.gadgets) { if (g.t <= 0) continue; if (g.born > 0) { g.born -= dt; if (g.born <= 0) { g.land = 0.22; FX.ring(g.x, g.y, 64, '210,185,140', 0.35, 5); FX.debris(g.x, g.y, 7, '#5a4028', 170); FX.smoke(g.x, g.y, 4, '190,170,140', 14, 18); FX.shake = Math.max(FX.shake || 0, 0.1); } continue; } if (g.land > 0) g.land -= dt; g.t -= dt; g.cd -= dt; const e = nearestEnemy(g.x, g.y, 380); if (e) g.a = Math.atan2(e.y - e.hh * 0.5 - (g.y - 26), e.x - g.x);
+    if (e && g.cd <= 0) { g.cd = 0.45 / (g.rk || 1); g.fire = 0.1; { const GH = (HOV.player || 150) * 0.55 * (g.big || 1), fx0 = g.x + Math.cos(g.a) * GH * 0.32, fy0 = g.y - GH * 0.5 + Math.sin(g.a) * GH * 0.14; shot({ kind: 'tracer', x: fx0, y: fy0, vx: Math.cos(g.a) * 1000, vy: Math.sin(g.a) * 1000, dmg: g.dm, pierce: 0, life: 0.6, src: 'hero', r: 9 }); FX.p({ kind: 'glow', x: fx0, y: fy0, life: 0.1, s: 30, s2: 8, c: '255,190,90', hard: 1 }); } if (Math.random() < 0.4) sfx('gun', 0.25); }
+    if (g.fire > 0) g.fire -= dt; if (g.t < 0.45 && !g.sinkFx) { g.sinkFx = 1; FX.smoke(g.x, g.y, 5, '170,150,120', 14, 22); FX.debris(g.x, g.y, 4, '#5a4028', 110); } }
   G.gadgets = G.gadgets.filter(g => g.t > 0);
 }
 function hgClones(c) { const n = Math.floor(c.cl || 2), out = []; for (let i = 0; i < n; i++) { const a = Math.PI + (i + 1) * Math.PI / (n + 1) + Math.sin(G.t * 1.3 + i) * 0.12; out.push({ x: c.x + Math.cos(a) * 70, y: c.y - 14 + Math.sin(a) * 36 }); } return out; } /* 홍길동 분신 위치 */
-const JTUR = new Image(); JTUR.src = 'img/hero/jang_turret.webp?v=1'; /* 장영실 포탑 새 그림(사용자 11-29: 너무 작고 허접) */
-function drawGadget(g) {
-  const x = g.x, y = g.y;
-  if (JTUR.complete && JTUR.naturalWidth) { const GH = (HOV.player || 150) * 1.05 * (g.big || 1), GW = GH * JTUR.naturalWidth / JTUR.naturalHeight, rc = g.fire > 0 ? 1 - g.fire * 0.6 : 1, left = Math.cos(g.a) < 0; shadowE(x, y + 4, GW * 0.42, 0.35); ctx.save(); ctx.translate(x, y + 6); if (left) ctx.scale(-1, 1); ctx.scale(1, rc > 0.96 ? 1 : 0.97); ctx.drawImage(JTUR, -GW / 2 - (g.fire > 0 ? 4 : 0), -GH, GW, GH); ctx.restore(); if (g.born > 0) { g.born -= 1 / 60; } const k = Math.max(0, Math.min(1, g.t / (g.T || 9))); ctx.fillStyle = 'rgba(0,0,0,.55)'; rrPath(x - 26, y + 10, 52, 6, 3); ctx.fill(); ctx.fillStyle = '#ffcf6a'; rrPath(x - 26, y + 10, 52 * k, 6, 3); ctx.fill(); return; }
-  shadowE(x, y + 2, 16, 0.3);
-  ctx.fillStyle = '#6a4a2a'; rrPath(x - 14, y - 12, 28, 12, 4); ctx.fill(); ctx.strokeStyle = '#2a1a0a'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.save(); ctx.translate(x, y - 22); ctx.rotate(g.a); ctx.fillStyle = '#b08a3a'; rrPath(-6, -6, 30 - (g.fire > 0 ? 5 : 0), 12, 5); ctx.fill(); ctx.stroke(); ctx.restore();
-  circle(x, y - 22, 9); ctx.fillStyle = '#c8a050'; ctx.fill(); ctx.stroke();
-  const k = Math.max(0, Math.min(1, g.t / 9)); ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(x - 14, y + 4, 28, 4); ctx.fillStyle = '#9ef0ff'; ctx.fillRect(x - 14, y + 4, 28 * k, 4);
+/* 장영실 포탑: 화차 시설 그림(hwacha_head) 재사용으로 바꿈(11-29) */
+function drawGadget(g) { /* 장영실 휴대용 신기전(사용자 11-29: 게임 그림체와 맞게, 작게, 땅에 박히는 느낌) — 화차 시설 그림 재사용 */
+  const x = g.x, y = g.y, GH = (HOV.player || 150) * 0.55 * (g.big || 1);
+  const bk = g.born > 0 ? Math.min(1, g.born / 0.25) : 0, sink = g.t < 0.45 ? Math.min(1, (0.45 - g.t) / 0.45) : 0, land = g.land > 0 ? g.land / 0.22 : 0;
+  ctx.save(); ctx.globalAlpha = (1 - bk) * (1 - sink * 0.6);
+  ctx.fillStyle = 'rgba(78,54,30,.5)'; ctx.beginPath(); ctx.ellipse(x, y + 2, GH * 0.5, GH * 0.19, 0, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(42,26,12,.6)'; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < 7; i++) { const a = i * 0.9 + (g.sd || 0), r0 = GH * 0.18, r1 = GH * (0.42 + 0.08 * Math.sin(i * 2.3)); ctx.moveTo(x + Math.cos(a) * r0, y + 2 + Math.sin(a) * r0 * 0.38); ctx.lineTo(x + Math.cos(a + 0.12) * (r0 + r1) / 2, y + 2 + Math.sin(a + 0.12) * (r0 + r1) / 2 * 0.38); ctx.lineTo(x + Math.cos(a - 0.05) * r1, y + 2 + Math.sin(a - 0.05) * r1 * 0.38); } ctx.stroke();
+  ctx.fillStyle = 'rgba(110,80,50,.8)'; for (let i = 0; i < 5; i++) { const a = i * 1.3 + (g.sd || 0) * 2; circle(x + Math.cos(a) * GH * 0.46, y + 2 + Math.sin(a) * GH * 0.17, 2.5 + (i % 2)); ctx.fill(); }
+  ctx.restore();
+  shadowE(x, y + 3, GH * 0.34 * (1 - bk * 0.45), 0.36 * (1 - bk * 0.5));
+  const dy = -bk * bk * 240 + sink * GH * 0.6, sx = 1 + land * 0.1, sy = 1 - land * 0.16;
+  const rc = g.fire > 0 ? g.fire / 0.1 : 0, bx = -Math.cos(g.a) * rc * 6, by = -Math.sin(g.a) * rc * 2.5;
+  ctx.save(); if (sink > 0) { ctx.beginPath(); ctx.rect(x - GH * 2, y - GH * 3, GH * 4, GH * 3 + 4); ctx.clip(); }
+  const hs = SPR.hwacha_head, ok = hs && drawSprite('hwacha_head', x + bx, y + dy + by + 4, { dir: dirN(g.a, hs.dirs || 16), h: GH, sx, sy });
+  if (ok) { const fx = x - GH * 0.34, fy = y + dy - GH * 0.18, wv = Math.sin(G.t * 7 + (g.sd || 0)) * 3; ctx.strokeStyle = '#4a2e14'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx, fy - GH * 0.62); ctx.stroke(); ctx.fillStyle = '#3d7fe0'; ctx.strokeStyle = '#13284a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(fx, fy - GH * 0.62); ctx.quadraticCurveTo(fx - GH * 0.14, fy - GH * 0.58 + wv, fx - GH * 0.26, fy - GH * 0.52 + wv); ctx.lineTo(fx, fy - GH * 0.42); ctx.closePath(); ctx.fill(); ctx.stroke(); circle(fx, fy - GH * 0.64, 3.5); ctx.fillStyle = '#e8c060'; ctx.fill(); }
+  else { ctx.fillStyle = '#6a4a2a'; rrPath(x - 14, y - 12, 28, 12, 4); ctx.fill(); ctx.save(); ctx.translate(x, y - 22); ctx.rotate(g.a); ctx.fillStyle = '#b08a3a'; rrPath(-6, -6, 30, 12, 5); ctx.fill(); ctx.restore(); }
+  ctx.restore();
+  if (bk <= 0 && sink <= 0) { const k = Math.max(0, Math.min(1, g.t / (g.T || 9))), bw = GH * 0.62; ctx.fillStyle = 'rgba(0,0,0,.55)'; rrPath(x - bw / 2, y + 12, bw, 5, 2.5); ctx.fill(); ctx.fillStyle = '#7ec8ff'; rrPath(x - bw / 2, y + 12, bw * k, 5, 2.5); ctx.fill(); }
 }
 function updSoldier(a, dt) {
   if (a.confT > 0 && actNum() >= 4 && (a.type === 's_taoist' || G.allies.some(o => o.type === 's_taoist' && Math.hypot(o.x - a.x, o.y - a.y) < 160))) a.confT = 0;   /* 4막부터 도사: 홀림·저주 풀기 */
@@ -1762,7 +1771,7 @@ function comps(dt) {
       } };
     } else if (c.id === 'jangyeongsil') {
       G.gadgets = G.gadgets || []; const live = G.gadgets.filter(g => g.t > 0);
-      const JL = HSK('jangyeongsil')[0], JMAX = 2 + (JL >= 3 ? 1 : 0) + (JL >= 5 ? 1 : 0); if (live.length < JMAX) { const pj = pairOn('p_jang'), jt = (pj ? 14 : 9) * (1 + 0.1 * (JL - 1)); G.gadgets.push({ x: c.x + rnd(-90, 90), y: c.y + rnd(-10, 40), t: jt, T: jt, cd: 0.2, big: JL >= 5 && live.length === JMAX - 1 ? 1.25 : 1, rk: 1 + 0.1 * (JL - 1), dm: dm * 0.55 * (pj ? 1.6 : 1), a: -Math.PI / 2 }); FX.smoke(c.x, c.y, 4, '200,190,170', 12, 26); sfx('build'); }
+      const JL = HSK('jangyeongsil')[0], JMAX = 2 + (JL >= 3 ? 1 : 0) + (JL >= 5 ? 1 : 0); if (live.length < JMAX) { const pj = pairOn('p_jang'), jt = (pj ? 14 : 9) * (1 + 0.1 * (JL - 1)); G.gadgets.push({ x: c.x + rnd(-90, 90), y: c.y + rnd(-10, 40), t: jt, T: jt, cd: 0.45, born: 0.25, sd: rnd(0, 6), big: JL >= 5 && live.length === JMAX - 1 ? 1.25 : 1, rk: 1 + 0.1 * (JL - 1), dm: dm * 0.55 * (pj ? 1.6 : 1), a: -Math.PI / 2 }); FX.smoke(c.x, c.y, 4, '200,190,170', 12, 26); sfx('build'); }
       else { const aa = Math.atan2(e.y - e.hh * 0.5 - (c.y - 40), e.x - c.x); shot({ kind: 'tracer', x: c.x, y: c.y - 40, vx: Math.cos(aa) * 1100, vy: Math.sin(aa) * 1100, dmg: dm, pierce: 1, life: 0.5, src: 'hero', r: 8 }); sfx('gun', 0.35); }
     } else if (c.id === 'gangamchan') {
       chainLightning(c.x, c.y - 60, e, dm, 4, '140,190,255', 'hero');
