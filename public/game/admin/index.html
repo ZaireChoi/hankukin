@@ -87,8 +87,18 @@ textarea{min-height:160px;resize:vertical;line-height:1.55}
   <button data-tab="users">회원</button>
   <button data-tab="board">순위표</button>
   <button data-tab="links">바로가기</button>
+  <button data-tab="errs">게임 오류</button>
 </nav>
 
+
+<!-- 게임 오류 (조선좀비 실기기 안정성) -->
+<section data-pane="errs" class="hide">
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><h3>조선좀비 최근 오류</h3><button id="btnErrs">새로고침</button></div>
+    <p style="opacity:.7;font-size:13px">휴대폰에서 생긴 오류·멈춤을 모아 보여요(개인정보 없음). Cloudflare 데이터센터별 최근 200건이라, 지역에 따라 일부만 보일 수 있어요.</p>
+    <div id="errList" style="overflow:auto;font-size:13px"></div>
+  </div>
+</section>
 <!-- 현황 -->
 <section data-pane="dash">
   <div class="kpis" id="kpis"></div>
@@ -229,6 +239,7 @@ $('tabs').onclick = e => {
   document.querySelectorAll('section[data-pane]').forEach(p => p.classList.toggle('hide', p.dataset.pane !== b.dataset.tab));
   if (b.dataset.tab === 'users' && !loaded.users) loadUsers();
   if (b.dataset.tab === 'board' && !loaded.board) loadBoards();
+  if (b.dataset.tab === 'errs') loadErrs();
 };
 
 // ── 현황 ──
@@ -372,6 +383,25 @@ $('bWrap').onclick = async e => {
   try { await deleteDoc(doc(db, p)); loadBoards(); } catch (err) { alert('지우지 못했어요: ' + (err.code || err.message)); }
 };
 $('btnReloadBoard').onclick = loadBoards;
+
+// ── 게임 오류 (조선좀비) ──
+async function loadErrs() {
+  const box = $('errList'); box.textContent = '불러오는 중…';
+  try {
+    const tk = await auth.currentUser.getIdToken();
+    const r = await fetch('/api/kzlog/report', { headers: { authorization: 'Bearer ' + tk } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) { box.textContent = '불러오지 못했어요 (' + (j.code || r.status) + ')'; return; }
+    const it = j.items || [];
+    if (!it.length) { box.textContent = '아직 모인 오류가 없어요.'; return; }
+    const esc = s => String(s == null ? '' : s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    const kst = t => { try { return new Date(t).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch (e) { return t; } };
+    const KN = { err: '오류', rej: '약속 거부', long: '긴 멈춤', mem: '메모리', canvas: '캔버스', quota: '저장 공간', boot: '알림' };
+    box.innerHTML = '<table style="width:100%;border-collapse:collapse"><tr style="text-align:left"><th>시각</th><th>종류</th><th>내용</th><th>위치</th><th>버전·앱</th><th>장·단계</th><th>기기</th></tr>' +
+      it.map(e => '<tr style="border-top:1px solid rgba(255,255,255,.1)"><td>' + kst(e.t) + '</td><td>' + (KN[e.k] || esc(e.k)) + '</td><td>' + esc(e.m) + (e.n ? ' ×' + e.n : '') + '</td><td>' + esc(e.src) + (e.ln ? ':' + e.ln : '') + '</td><td>' + esc(e.v) + ' ' + esc(e.app) + ' ' + esc(e.q) + '</td><td>' + esc(e.ch) + ' ' + esc(e.ph) + '</td><td title="' + esc(e.ua) + '">' + esc(String(e.ua).replace(/^.*?\(([^)]*)\).*$/, '$1').slice(0, 40)) + ' ' + e.w + 'x' + e.h + '</td></tr>').join('') + '</table>';
+  } catch (e) { box.textContent = '불러오지 못했어요'; }
+}
+$('btnErrs').onclick = loadErrs;
 </script>
 </body>
 </html>
