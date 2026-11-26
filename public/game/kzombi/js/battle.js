@@ -61,7 +61,7 @@ function fit() {
   stage.style.transform = 'scale(' + s + ')';
   stage.style.left = Math.round((innerWidth - W * s) / 2) + 'px';
   stage.style.top = Math.round((innerHeight - VH * s) / 2) + 'px';
-  K = Math.max(1, Math.min(2.5, s * (window.devicePixelRatio || 1)));
+  K = Math.max(1, Math.min((window.KZQ && KZQ.kcap) || 2.5, s * (window.devicePixelRatio || 1)));   /* 화질 단계별 해상도 상한(실기기 안정성 11-30) */
   cv.width = Math.round(W * K); cv.height = Math.round(VH * K);
 }
 addEventListener('resize', fit); fit();
@@ -3036,10 +3036,12 @@ $('btnRetry').addEventListener('click', () => { $('ovEnd').classList.remove('on'
 /* ---------- 루프 ---------- */
 let last = performance.now(); const FT = { avg: 16, badT: 0 };
 function frame(now) {
+  if (document.hidden) { last = now; requestAnimationFrame(frame); return; }   /* 백그라운드면 진행 멈춤(실기기 안정성) */
+  if (G && window.KZQ && KZQ.lv === 'low' && !G._qset) { G._qset = 1; if (!G.lowOff) { G.low = true; FX.low = true; } }   /* 낮은 화질이면 원활 모드로 시작 */
   /* 렉 대책(사용자 11-28): 느린 휴대폰에서 게임이 슬로모션처럼 느려지지 않게 한 프레임을 최대 3번(각 0.05초)으로 나눠 따라잡고, 3초 넘게 버벅이면 원활 모드 자동 */
   const raw = Math.min(0.15, Math.max(0, (now - last) / 1000)); last = now;
   FT.avg = FT.avg * 0.92 + raw * 1000 * 0.08;
-  if (G && !G.low && !G.lowOff && G.phase === 'night' && !paused) { if (FT.avg > 30) FT.badT += raw; else FT.badT = Math.max(0, FT.badT - raw * 0.5); if (FT.badT > 3) { G.low = true; FX.low = true; G.lowAuto = 1; FT.badT = 0; const bl = $('btnLow'); if (bl) bl.textContent = window.IS_EN ? 'Smooth mode on' : '원활 모드 켬'; } }
+  if (G && !G.low && !G.lowOff && G.phase === 'night' && !paused) { if (FT.avg > 30) FT.badT += raw; else FT.badT = Math.max(0, FT.badT - raw * 0.5); if (FT.badT > 3) { G.low = true; FX.low = true; G.lowAuto = 1; FT.badT = 0; if (window.KZQ) KZQ.down(); const bl = $('btnLow'); if (bl) bl.textContent = window.IS_EN ? 'Smooth mode on' : '원활 모드 켬'; } }
   const steps = raw > 0.05 ? Math.min(3, Math.ceil(raw / 0.05)) : 1, dt = (steps === 1 ? Math.min(0.05, raw) : raw / steps);
   for (let si = 0; si < steps; si++) { if (G && !paused && G.phase !== 'level' && G.phase !== 'guard') update(dt); else break; }
   if (G && G.phase === 'guard') { FX.update(dt); }
