@@ -485,8 +485,8 @@ if (window.IS_EN) document.title = 'K Zombi';
       const lv = S.skills[s.id] || 1, cost = lv * 15, gc = lv * 400;
       const stars = [1, 2, 3, 4, 5].map(k => ic(lv >= k ? 'star' : 'star0')).join('');
       const d = L.d || (typeof s.d === 'function' ? s.d(1) : (s.d || ''));
-      return '<div class="sk box"' + (ok ? '' : ' style="opacity:.45"') + '><div class="ico" style="background:' + (L.c || s.c || '#333') + ';overflow:hidden">' + (L.ic ? ic(L.ic) : '') + '<img src="img/skills/' + s.id + '.webp?v=3" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:17px" onerror="this.remove()"></div><h4 class="stroke-s">' + s.n + '</h4><p style="margin:2px 0">' + chip(s.el) + '</p><p>' + d + '</p>' +
-        '<p style="color:#ffe27a">' + TT('위력 ', 'Power ') + (100 + (lv - 1) * 25) + '%' + (!ok ? ' <b style="color:#ffb0a0">🔒 ' + TT(actNm(act) + '부터', 'From ' + actNm(act)) + '</b>' : '') + '</p><div class="stars">' + stars + '</div>' +
+      return '<div class="sk box"' + (ok ? '' : ' style="opacity:.45"') + '><div class="ico" style="background:' + (L.c || s.c || '#333') + ';overflow:hidden">' + (L.ic ? ic(L.ic) : '') + '<img src="img/skills/' + s.id + '.webp?v=3" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:17px" onerror="this.remove()"></div><h4 class="stroke-s">' + s.n + '</h4><p style="margin:2px 0">' + chip(s.el) + '</p><p class="skd">' + d + '</p>' +
+        '<p style="color:#ffe27a">' + TT('위력 ', 'Power ') + (100 + (lv - 1) * 25) + '%' + '' + '</p><div class="stars">' + stars + '</div>' +
         (lv >= 5 ? '<div class="btn y dis">' + TT('최고', 'MAX') + '</div>' : '<div class="btn g ' + (ok && S.stone >= cost && S.gold >= gc ? '' : 'dis') + '" data-act="skUp" data-v="' + s.id + '">' + ic('stone').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + cost + '</div>') + '</div>';
     };
     const head = t => '<div class="stroke" style="grid-column:1/-1;font-size:24px;margin:14px 0 4px">' + t + '</div>';

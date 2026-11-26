@@ -572,3 +572,9 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .mbowbn{box-shadow:0 0 0 3px #ff5a3a,0 0 22px rgba(255,80,40,.55)!important}.mbowtag{align-self:center;font-size:14px;font-weight:900;color:#ffd36b;margin-right:8px;text-shadow:0 1px 2px #000}.mbowtag s{color:#ddd;opacity:.7;margin-left:4px}
 
 .compinfo{overflow-y:auto;-webkit-overflow-scrolling:touch} /* 영웅 기술 강화 줄이 잘리지 않게(11-29) */
+
+/* 신력 카드 글자 겹침 고침(11-29) */
+.skills{grid-auto-rows:auto!important}
+.skills .sk.box{height:auto!important;min-height:200px!important;padding-bottom:72px!important;overflow:hidden}
+.skills .sk.box p.skd{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:15px}
+.skills .sk.box .btn{bottom:10px}
