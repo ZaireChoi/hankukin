@@ -305,6 +305,22 @@ if (window.IS_EN) document.title = 'K Zombi';
   const HERO_Q = {"dokkaebi":["방망이 준비 완료! 뚝딱!","Club ready! Bonk!"],"honggildong":["동에 번쩍 서에 번쩍, 오늘도 간다!","Flash east, flash west, here I go!"],"haetae":["크르릉… 정의의 불꽃이 깨어났다.","Grrr… the flame of justice wakes."],"yisunsin":["신에게는 아직 화살이 남아 있소.","I still have arrows left."],"eulji":["적을 유인해 한 번에 무찌르겠소.","Lure them in, crush them at once."],"gangamchan":["귀주의 바람이 다시 분다!","The wind of Guiju blows again!"],"gumiho":["후후, 오늘 밤은 사냥하기 좋겠네.","Heh, a fine night for a hunt."],"bari":["저승길에서 돌아온 몸, 두렵지 않아요.","I returned from the underworld. I fear nothing."],"wonhyo":["마음 하나에 모든 길이 있소.","All paths lie in one mind."],"jeonwoochi":["그림 속 병사들도 준비됐소.","My painted soldiers are ready."],"samyeong":["승병들이여, 나라를 구하러 가자.","Warrior monks, let us save the land."],"daejanggeum":["다치면 바로 말씀하세요.","Tell me the moment you are hurt."],"sadaham":["화랑의 칼은 물러서지 않는다!","A Hwarang blade never retreats!"],"kimchungseon":["귀순한 칼, 이제 조선을 위해 쓰리라.","My blade now serves Joseon."],"jangyeongsil":["장치 점검 끝, 언제든 가동!","Gadgets checked, ready to go!"],"imugi":["천 년을 기다린 몸, 오늘도 싸운다.","A thousand years waiting, still I fight."],"samjoko":["해가 뜨기 전까지 비추리라.","I will shine until the dawn."]}; /* 영웅 고를 때 한 줄 대사(세계관) */
   function guardLine(id) { const g = GUARD[id]; return g ? (window.IS_EN ? g[1] : g[0]) : ''; }
 
+
+  /* 세계관: 지도 숙적·결전 표식, 로비 처용 대사(진행 막 따라) */
+  function loreMark(n, A) {
+    const D = window.JZD, NA = D && D.NEM_ACT && D.NEM_ACT[A];
+    const nm = A === 1 ? TT('역신', 'Plague God') : A === 2 ? TT('몽마', 'Nightmare Lord') : NA ? TT(NA.name, NA.nameEn || NA.name) : '';
+    const st = 'position:absolute;left:50%;top:-30px;transform:translateX(-50%);white-space:nowrap;padding:2px 9px;border-radius:12px;font:800 15px/20px Pretendard,sans-serif;color:#fff;border:2px solid #fff3;box-shadow:0 2px 6px #0008;pointer-events:none;';
+    if (n === 30) return '<div style="' + st + 'background:linear-gradient(#b8231b,#6a0d0a)">⚔ ' + TT('결전', 'Final') + (nm ? ' · ' + nm : '') + '</div>';
+    if ((n === 7 || n === 14 || n === 22) && nm) return '<div style="' + st + 'background:linear-gradient(#6b2a8c,#33124a)">👹 ' + nm + '</div>';
+    return '';
+  }
+  const LOBBY_SAY = { 1: ['역병이 번진다. 오늘 밤도 마을을 지키자.', 'The plague spreads. We guard the village tonight.'], 2: ['꿈속까지 어둠이 스며들었군. 잠들면 안 돼.', 'Darkness has seeped into dreams. Stay awake.'], 3: ['검은 나침반이 바다를 가리킨다. 출항이다!', 'The black compass points to sea. Set sail!'], 4: ['안개 너머에 역병을 만든 자가 있다.', 'Beyond the fog waits the one who made the plague.'], 5: ['흩어진 어둠의 씨앗, 하나도 남기지 않겠다.', 'Not one seed of darkness will remain.'], 6: ['하늘마저 물들었다. 사방신이여, 함께해 다오.', 'Even heaven is stained. Four Guardians, fly with me.'], 7: ['저승의 문이 열렸다. 죽은 이들을 돌려보내자.', 'The underworld gate is open. Let us lead the dead home.'], 8: ['산 자가 간 적 없는 땅… 그래도 간다.', 'No living soul has gone there… yet I go.'], 9: ['거울 속의 나… 저것도 나인가.', 'That one in the mirror… is that me?'], 10: ['모두 함께, 처음의 춤을!', 'Everyone, together — the First Dance!'] };
+  function loreLobbySay() {
+    let A = 1; for (let N = 10; N >= 2; N--) { try { if (loreReached(N)) { A = N; break; } } catch (e) {} }
+    const L = LOBBY_SAY[A]; if (!L) return '';
+    return '<div style="position:absolute;left:50%;top:6%;transform:translateX(-50%);max-width:78%;padding:8px 14px;border-radius:16px;background:rgba(20,16,36,.78);border:2px solid #ffd36b88;color:#fff4d6;font:800 17px/1.4 Pretendard,sans-serif;text-align:center;pointer-events:none;animation:bob 3s infinite">' + TT(L[0], L[1]) + '</div>';
+  }
   function loreTimeline() {
     const E = window.IS_EN; let h = '<h4 style="margin:8px 0">' + (E ? 'Chronicle' : '이야기 연대기') + '</h4>';
     for (let N = 1; N <= 10; N++) { const L = LORE_ACTS[N], ok = loreReached(N), cl = ok && loreCleared(N);
@@ -451,7 +467,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div class="sb" data-act="friend">' + ic('heart') + '<div class="lb stroke-s">친구</div></div>' +
       '<div class="sb" data-act="guild">' + ic('sword') + '<div class="lb stroke-s">문파</div></div>' +
       '</div>' +
-      '<div class="herostage"><div class="glow"></div><div class="hero" data-act="tab" data-v="equip"' + skinFull() + '></div></div>' +
+      '<div class="herostage"><div class="glow"></div><div class="hero" data-act="tab" data-v="equip"' + skinFull() + '></div>' + loreLobbySay() + '</div>' +
       '<div class="statline"><div class="stat stroke-s">' + ic('sword') + fmt(st.atk) + '</div><div class="stat stroke-s">' + ic('heart') + fmt(st.hp) + '</div></div>' +
       '<div class="teamrow">' + team + '</div>' +
       '<div class="patrol" data-act="patrol">' + ic(p.h >= 1 ? 'chestOpen' : 'chest', 'chest') + '<div class="lb stroke-s">순찰 보상</div><div class="bar"><i style="width:' + (p.ms / PATROL_MAX * 100) + '%"></i><span class="stroke-s">' + hm(p.ms) + '</span></div>' + (p.h >= 1 ? '<i class="dot"></i>' : '') + '</div>' +
@@ -709,7 +725,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       const st = [1, 2, 3].map(k => ic((PST[c.n] || 0) >= k ? 'star' : 'star0')).join('');
       const chest = !NMm && !A3m && (S.stars[c.n] || 0) >= 3 && !S.chest[c.n] ? '<svg class="ch" viewBox="0 0 64 64" data-act="chest" data-v="' + c.n + '" style="animation:bob 1.4s infinite">' + I.chest + '</svg>' : '';
       return '<div class="node ' + (lock ? 'lock' : done ? 'done' : '') + (cur ? ' cur' : '') + '" style="left:' + pos[i][0] + 'px;top:' + pos[i][1] + 'px" data-act="node" data-v="' + c.n + '">' +
-        '<div class="ball stroke">' + (lock ? ic('lock').replace('class="ic ', 'style="width:60px;height:60px" class="ic ') : (c.gn || c.n)) + chest + '</div>' +
+        '<div class="ball stroke">' + (lock ? ic('lock').replace('class="ic ', 'style="width:60px;height:60px" class="ic ') : (c.gn || c.n)) + chest + '</div>' + loreMark(c.n, A3m ? curAct() : NMm ? 2 : 1) +
         '<div class="lab stroke-s">' + c.name + '</div><div class="st">' + st + '</div></div>';
     }).join('');
     $('#s-map').innerHTML = '<div class="mapscroll" id="mapscroll"><div class="mapbody"><svg class="mpath" width="720" height="' + HB + '"><path d="' + d + '" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="22" stroke-linecap="round"/><path d="' + d + '" fill="none" stroke="#ffe9a8" stroke-width="10" stroke-dasharray="2 22" stroke-linecap="round"/></svg>' + nodes + '</div></div>' +
