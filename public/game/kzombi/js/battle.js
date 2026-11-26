@@ -157,8 +157,8 @@ function acInit() { if (AC) return AC; AC = new (window.AudioContext || window.w
 ['pointerdown', 'touchstart', 'keydown'].forEach(ev => addEventListener(ev, () => { try { acInit(); if (AC.state === 'suspended' && !document.hidden) AC.resume(); } catch (e) {} }, { capture: true, passive: true }));
 document.addEventListener('visibilitychange', () => { try { if (!AC) return; if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) {} });
 window.KZSFX = { play: (k, v) => sfx(k, v), vol: v => { try { localStorage.setItem('kz_sfxv', v); if (SFXG) SFXG.gain.value = +v; } catch (e) {} } };
-const SFX_GAP = { die: 0.07, thud: 0.06, hit: 0.05, crit: 0.09, shoot: 0.045, gun: 0.06, boom: 0.09, zap: 0.06, coin: 0.05, elite: 0.6, boss: 1.5, nemIn: 2, nemOut: 2, legend: 1 };
-function sfx(kind, vol) {
+const SFX_GAP = { die: 0.07, thud: 0.06, hit: 0.05, crit: 0.09, shoot: 0.045, gun: 0.06, boom: 0.09, zap: 0.06, coin: 0.05, elite: 0.6, boss: 1.5, nemIn: 2, nemOut: 2, legend: 1, hurt: 0.3, card: 0.2 };
+function sfx(kind, vol, who) {
   if (!sfxOn) return;
   try {
     acInit(); if (AC.state !== 'running') return;
@@ -192,11 +192,12 @@ function sfx(kind, vol) {
       case 'card': [659, 784, 1046].forEach((f, i) => bell(i * 0.05, f, 0.3, v * 0.32)); break;
       case 'warn': tone(0, 230, 200, 0.16, 'triangle', v * 0.6); tone(0.22, 230, 200, 0.16, 'triangle', v * 0.6); drum(0, 80, 0.25, v * 0.6); break;
       case 'build': noise(0, 0.05, 'lowpass', 900, 0.8, v * 0.7); noise(0.11, 0.05, 'lowpass', 900, 0.8, v * 0.7); tone(0.2, 520, 780, 0.16, 'triangle', v * 0.4); break;
-      case 'ult': { const r = Math.random(); noise(0, 0.5, 'bandpass', 300, 0.8, v * 0.7, 0.12, 2600); if (r < 0.34) gong(0.3, 175, 1.3, v * 0.8); else if (r < 0.67) { drum(0.28, 60, 0.4, v * 1.3); noise(0.3, 0.6, 'lowpass', 2200, 0.5, v * 0.8, 0.005, 150); } else [392, 523, 659, 784].forEach((f, i) => bell(0.28 + i * 0.03, f, 0.8, v * 0.35)); break; }
+      case 'ult': { const r = /^(player|yisunsin|eulji|gangamchan|kimchungseon|sadaham)$/.test(who || 'player') ? 0.1 : /^(haetae|imugi|samjoko|gumiho|dokkaebi|sp)$/.test(who) ? 0.5 : 0.9;   /* 영웅마다 궁극기 소리 고정: 장수=징, 신수=북·천둥, 도사·의녀=종 */ noise(0, 0.5, 'bandpass', 300, 0.8, v * 0.7, 0.12, 2600); if (r < 0.34) gong(0.3, 175, 1.3, v * 0.8); else if (r < 0.67) { drum(0.28, 60, 0.4, v * 1.3); noise(0.3, 0.6, 'lowpass', 2200, 0.5, v * 0.8, 0.005, 150); } else [392, 523, 659, 784].forEach((f, i) => bell(0.28 + i * 0.03, f, 0.8, v * 0.35)); break; }
       case 'elite': drum(0, 72, 0.38, v * 1.7); drum(0.2, 62, 0.42, v * 1.5); break;
       case 'boss': drum(0, 55, 0.5, v * 2); drum(0.24, 55, 0.5, v * 1.8); drum(0.48, 50, 0.6, v * 2.1); gong(0.55, 130, 2.4, v * 1.0); break;
       case 'nemIn': gong(0, 68, 2.6, v * 0.9); noise(0, 1.9, 'bandpass', 380, 0.6, v * 0.45, 0.6, 950); laugh(0.5, 150, 5, v * 0.7); break;
       case 'nemOut': noise(0, 1.6, 'bandpass', 900, 0.6, v * 0.45, 0.3, 300); [0, 0.55, 1.1].forEach((t, i) => laugh(t, 160 - i * 10, 4, v * 0.7 / (1 + i * 1.1))); break;
+      case 'hurt': tone(0, 330, 120, 0.13, 'triangle', v * 0.55); noise(0, 0.09, 'lowpass', 1300, 0.7, v * 0.6); tone(0, 90, 50, 0.12, 'sine', v * 0.5); break;
       case 'legend': bell(0, 1046, 1.6, v * 0.6); bell(0.12, 1568, 1.4, v * 0.5); bell(0.24, 2093, 1.2, v * 0.4); noise(0, 1.2, 'highpass', 6000, 0.5, v * 0.18, 0.3); break;
       default: return;
     }
@@ -206,13 +207,14 @@ function sfx(kind, vol) {
 /* 배경음: 낮↔밤↔우두머리 서서히 바꾸기, 장 구간마다 빠르기 조금 다르게, 음량 설정 */
 const BGM = {}; let bgmCur = '', bgmOn = true;
 const BGMV = () => { try { const v = parseFloat(localStorage.getItem('kz_bgmv')); return isNaN(v) ? 1 : v; } catch (e) { return 1; } };
-['bgm_lobby', 'bgm_battle', 'bgm_boss', 'sting_victory', 'sting_defeat'].forEach(k => { try { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; a.loop = k.indexOf('bgm') === 0; a.volume = (a.loop ? 0.45 : 0.7) * BGMV(); BGM[k] = a; } catch (e) {} });
+['kz_day', 'kz_night', 'kz_boss', 'sting_victory', 'sting_defeat'].forEach(k => { try { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; a.loop = k.indexOf('sting') !== 0; a.volume = (a.loop ? 0.45 : 0.7) * BGMV(); BGM[k] = a; } catch (e) {} });
 window.KZBGMV = v => { try { localStorage.setItem('kz_bgmv', v); for (const n in BGM) BGM[n].volume = (BGM[n].loop ? 0.45 : 0.7) * v; } catch (e) {} };
 function bgmFade(a, to, ms, done) { clearInterval(a._fd); const st = a.volume, t0 = performance.now(); a._fd = setInterval(() => { const k = Math.min(1, (performance.now() - t0) / ms); try { a.volume = Math.max(0, Math.min(1, st + (to - st) * k)); } catch (e) {} if (k >= 1) { clearInterval(a._fd); if (done) done(); } }, 50); }
 function setBgm(k) {
+  k = ({ bgm_lobby: 'kz_day', bgm_battle: 'kz_night', bgm_boss: 'kz_boss' })[k] || k;   /* 국악 합성곡: 낮=굿거리, 밤·우두머리=자진모리(11-27) */
   if (!bgmOn) k = '';
   if (k === bgmCur) return; bgmCur = k;
-  const start = () => { if (bgmCur !== k || !k || !BGM[k]) return; const a = BGM[k]; try { const rk = G && G.ch > 20 ? 1.07 : G && G.ch > 10 ? 1.035 : 1; a.playbackRate = k === 'bgm_battle' ? rk : 1; a.preservesPitch = !(G && G.ch > 20); a.currentTime = 0; a.volume = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); bgmFade(a, 0.45 * BGMV(), 1100); } catch (e) {} };
+  const start = () => { if (bgmCur !== k || !k || !BGM[k]) return; const a = BGM[k]; try { const rk = G && G.ch > 20 ? 1.07 : G && G.ch > 10 ? 1.035 : 1; a.playbackRate = k === 'kz_night' ? rk : 1; a.preservesPitch = !(G && G.ch > 20); a.currentTime = 0; a.volume = 0; const p = a.play(); if (p && p.catch) p.catch(() => {}); bgmFade(a, 0.45 * BGMV(), 1100); } catch (e) {} };
   const old = Object.keys(BGM).map(n => BGM[n]).filter(a => a.loop && !a.paused && a !== BGM[k]);
   if (old.length) { let left = old.length; old.forEach(a => bgmFade(a, 0, 650, () => { a.pause(); if (--left === 0) start(); })); } else start();
 }
@@ -439,7 +441,7 @@ function hurtT(tg, dmg) {
   if (tg === G.player) {
     const p = G.player; if (p.invT > 0) return;
     if (fxN('dodge10') && Math.random() < 0.1 * fxN('dodge10')) { FX.num(p.x, p.y - 70, '회피', false, '#9fe8ff'); return; }
-    dmg *= Math.pow(0.9, fxN('dmgCut10')) * (p.moving ? Math.pow(0.8, fxN('moveCut20')) : 1);
+    sfx('hurt', 0.8); dmg *= Math.pow(0.9, fxN('dmgCut10')) * (p.moving ? Math.pow(0.8, fxN('moveCut20')) : 1);
     if (G.tonicT > 0) dmg *= 0.6;
     if (G.shield > 0) { const a = Math.min(G.shield, dmg); G.shield -= a; dmg -= a; if (dmg <= 0) return; }
     if (fxN('lastStand') && !G.lastStandUsed && p.hp - dmg < p.max * 0.3) { G.lastStandUsed = true; p.invT = 2; FX.ring(p.x, p.y, 90, '255,240,160', 0.5, 8); G.banner = { s: '흑립의 가호! 잠시 무적', t: 1.6, kind: 'win' }; }
@@ -863,6 +865,7 @@ function openLevel() {
   ovLevel.classList.add('on');
 }
 function pickSkill(id) {
+  sfx('card');
   const p = G.player; if (G.log) G.log.skills.push([id, G.night + 1]);
   if (id.indexOf('ev_') === 0) { const sid = id.slice(3); if (!G.evo) G.evo = {}; G.evo[sid] = true; G.banner = { s: D.EVO[sid].n + ' 진화!', t: 2.2, kind: 'win' }; G.freezeT = 0.35; G.flash = { c: '255,215,110', t: 0.6 }; G.title = { s: D.EVO[sid].n + '!', sub: String(D.AWAKE[sid] || '').replace('진화: ', ''), t: 2.4, big: 1 }; vib([60, 40, 140]); FX.shake = 0.4; FX.explode(p.x, p.y - 40, 120, 'purple'); FX.ring(p.x, p.y, 220, '255,220,120', 0.7, 14); sfx('ult'); ovLevel.classList.remove('on'); G.phase = 'night'; G.pendingLv--; if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 250); return; }
   G.sk[id] = skLv(id) + 1;
@@ -893,7 +896,7 @@ function gainXp(v) {
 function cutinOff() { try { return localStorage.getItem('kz_cutin_off') === '1'; } catch (e) { return false; } }   /* 설정: 컷인 끄기 */
 function useUlt() {
   if (!G || !isNight() || G.ult > 0 || G.cutin) return;
-  G.ult = G.ultMax; sfx('ult');
+  G.ult = G.ultMax; sfx('ult', 1, 'player');
   G.cutin = { t: 0.7, life: 0.7, who: 'player', name: '처용 진노', col: '255,90,60', fn: () => {
     const m = atkMul() * starMul('ult');
     const vis = G.enemies.filter(e => onScreen(e)).sort((a, b) => b.hp - a.hp).slice(0, 28);
@@ -926,7 +929,7 @@ function drawBig() { if (!G.bigs || !G.bigs.length) return; ctx.save();
 function useCult() {
   if (!G || !isNight() || G.cult > 0 || G.cutin) return;
   const c = G.comps.find(o => o.active && !(o.drop > 0)); if (!c) return;
-  const C = COMP[c.id]; G.cult = G.cultMax; sfx('ult'); if (!G.saidUlt) { G.saidUlt = 1; G.queue.push({ t: 1.0, fn: () => heroSay(3, c.id) }); }
+  const C = COMP[c.id]; G.cult = G.cultMax; sfx('ult', 1, c.id); if (!G.saidUlt) { G.saidUlt = 1; G.queue.push({ t: 1.0, fn: () => heroSay(3, c.id) }); }
   sfx('ult_' + c.id); G.cutin = { t: 0.55, life: 0.55, who: c.id, name: C.ult, col: C.col, fn: () => {
     const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id), p = G.player;
     const vis = () => G.enemies.filter(onScreen);
@@ -1461,7 +1464,7 @@ function guards(dt) {
     const e = densest(g.x, g.y, Gd.range * 1.6) || nearestEnemy(g.x, g.y, Gd.range * 1.6); if (!e) { g.cd = 0.5; continue; }
     g.cd = SP.cd; g.flash = 0.6;
     G.spirits.push({ g, id: g.id, x: g.x, y: g.y - 30, z: 0, ph: 'out', t: 0, tx: e.x, ty: e.y, trail: [], fdir: Math.atan2(e.y - g.y, e.x - g.x), hits: 0 });
-    FX.ring(g.x, g.y, 70, SP.col, 0.5, 8); sfx('ult', 0.5);
+    FX.ring(g.x, g.y, 70, SP.col, 0.5, 8); sfx('ult', 0.5, 'sp');
   }
   for (const s of G.spirits) {
     const SP = SPIRIT[s.id], g = s.g, m = atkMul() * 0.9; s.t += dt;
