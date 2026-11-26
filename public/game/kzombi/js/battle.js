@@ -1117,7 +1117,7 @@ function update(dtr) {
   /* 등장 */
   const prog = Math.min(1, G.time / N.dur);
   const bossAlive = G.bossRef && !G.bossRef.dead;
-  const rate = G.time > N.dur ? (bossAlive ? 1.2 : 0) : N.rate[0] + (N.rate[1] - N.rate[0]) * prog;
+  const rate = G.time > N.dur ? (bossAlive && !G.nem ? 1.2 : 0) :   /* 숙적과 1:1 — 숙적이 있는 동안 일반 몹 생성 멈춤(11-28) */ N.rate[0] + (N.rate[1] - N.rate[0]) * prog;
   if (N.elites && G.eliteIdx < N.elites.length && prog >= N.elites[G.eliteIdx]) { G.eliteIdx++; if (N.boss) { spawnBig(N.boss, true); G.bossOut = true; } else spawnBig(N.eliteType, false); }
   if (G.enemies.length < (curN().cap || 230)) { G.spawnAcc += rate * dt * (G.bossRef && !G.bossRef.dead ? 0.65 : 1);   /* 우두머리 결투 중엔 졸개를 줄여 결투에 집중, 후반 늘어짐 완화 */ while (G.spawnAcc >= 1) { G.spawnAcc -= 1; spawnWave(); } }
 
