@@ -232,6 +232,7 @@ function newGame(cfg) {
   /* 장비 합계 */
   const IS = window.JZI && cfg.items && cfg.items.length ? window.JZI.sum(cfg.items) : { atk: 0, hp: 0, speed: 0, fx: {}, weapon: null };
   if (IS.weapon) cfg.weapon = IS.weapon;
+  if (C.rule === 'equal') { const EQ = 1 + 0.11 * ((cfg.act >= 3 ? ch + 30 * (cfg.act - 1) - 1 : ch) - 1); cfg.atk = EQ * 1.1; cfg.hp = EQ * 1.1; cfg.heroLv = 1; }   /* 7막 재판정: 모두 같은 힘 */
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
   /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
   const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.act >= 3 ? ch + 30 * (cfg.act - 1) - 1 : cfg.nightmare ? ch + 29 : ch) - 1);
@@ -239,7 +240,7 @@ function newGame(cfg) {
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
   try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool.map(k => (EN[k] && EN[k].spr) || k), C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {}
-  WD.actArt = C.act >= 4 && D.actArt ? Object.assign({}, D.actArt(C.act) || {}, { act: C.act }) : null; WORLD = WD.build(C.theme, LAY);   /* 4~10막 바닥·소품 그림 */
+  WD.actArt = C.act >= 4 && D.actArt ? Object.assign({}, D.actArt(C.act) || {}, { act: C.act, mirror: !!C.mirror }) : null; WORLD = WD.build(C.theme, LAY);   /* 4~10막 바닥·소품 그림 */
   FX.reset();
   const wp = WEAPON[cfg.weapon] || WEAPON.bow;
   const fx = IS.fx || {}; if (cfg.afx) for (const k in cfg.afx) fx[k] = (fx[k] || 0) + cfg.afx[k];   /* 장비 부가 옵션·고유 효과(meta afxSum) */
@@ -249,7 +250,7 @@ function newGame(cfg) {
   const mode = cfg.mode || 'adventure';
   let nights = cfg.act >= 3 && D.actNights && D.actC && D.actC(cfg.act) ? D.actNights(cfg.act, ch) : cfg.act === 3 && D.a3Nights ? D.a3Nights(ch) : D.nightsOf(ch);
   if (C.rule === 'longnight') nights = nights.map(x => Object.assign({}, x, { dur: Math.round((x.dur || 50) * 1.5) }));   /* 7막 재판정: 밤이 길다 */
-  if (C.rule === 'solo' && cfg.companions) cfg.companions = [];   /* 7막 재판정: 처용 홀로 */
+  if ((C.rule === 'solo' || C.rule === 'towers') && cfg.companions) cfg.companions = [];   /* 7막 재판정: 처용 홀로 / 탑만 */
   /* 2막 악몽: 같은 지도·목표, 적이 훨씬 세고 많다 (장마다 곡선) */
   const NMK = mode !== 'adventure' ? null : cfg.act >= 3 && D.actK ? D.actK(cfg.act, ch) : cfg.act === 3 && D.a3K ? D.a3K(ch) : cfg.nightmare ? D.nmK(ch) : null;
   if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { dhp: n.dhp != null ? n.dhp : n.hp, hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
@@ -267,7 +268,7 @@ function newGame(cfg) {
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
     shrine: { x: SHRINE.x, y: SHRINE.y, r: SHRINE.r, hp: shMax, max: shMax, hitT: 0 },
-    player: { x: CX, y: WALL_Y - 80, r: 16, hp: hpMax, max: hpMax, sp: 215 * (1 + IS.speed + 0.1 * (fx.speed10 || 0)) * (1 + ({ pony: 0.1, tiger: 0.15, haetae: 0.15, crane: 0.2 }[cfg.mount] || 0)), cd: 0.3, rate: wp.rate * Math.pow(0.85, fx.haste15 || 0) * Math.pow(0.9, fx.haste10 || 0), dmg: wp.dmg, range: wp.range,
+    player: { x: CX, y: WALL_Y - 80, r: 16, hp: hpMax, max: hpMax, sp: 215 * (C.rule === 'sandstorm' ? 0.8 : 1) * (1 + IS.speed + 0.1 * (fx.speed10 || 0)) * (1 + ({ pony: 0.1, tiger: 0.15, haetae: 0.15, crane: 0.2 }[cfg.mount] || 0)), cd: 0.3, rate: wp.rate * Math.pow(0.85, fx.haste15 || 0) * Math.pow(0.9, fx.haste10 || 0), dmg: wp.dmg * (C.rule === 'towers' ? 0.35 : 1), range: wp.range,
               face: -Math.PI / 2, hitT: 0, lv: 1, xp: 0, moving: false, recoil: 0, muzzle: 0, invT: 0 },
     weapon: cfg.weapon in WEAPON ? cfg.weapon : 'bow',
     sk: {}, skT: {}, turrets: [], enemies: [], shots: [], eshots: [], orbs: [], coins: [], zones: [], vortexes: [], corpses: [], tele: [],
@@ -751,7 +752,7 @@ const SLOTS = [0, 5, 6, 7, 8, 10];
 function tCap(k, hq) { hq = hq || (G ? G.hq : 1); if (k === 'barracks') return hq >= 5 ? 3 : hq >= 3 ? 2 : 1; if (k === 'mine' || k === 'well') return hq >= 2 ? 2 : 1; if (k === 'general' || k === 'lady' || k === 'cannon' || k === 'hwacha') return hq >= 3 ? 2 : 1; return hq >= 5 ? 4 : hq >= 3 ? 3 : 2; }
 function tCount(k) { return G.turrets.filter(t => t.type === k).length; }
 function slotMax(hq) { return SLOTS[hq || G.hq] || 10; }
-function buildBlock(k) { if (G.turrets.length >= slotMax()) return 'slots'; if (tCount(k) >= tCap(k)) { for (let h = G.hq + 1; h <= 5; h++) if (tCap(k, h) > tCap(k)) return 'hq' + h; return 'max'; } return ''; }
+function buildBlock(k) { if (G.C && G.C.rule === 'heroes') return 'rule'; if (G.C && G.C.rule === 'towers' && k === 'barracks') return 'rule';   /* 7막 재판정: 영웅만 / 탑만 */ if (G.turrets.length >= slotMax()) return 'slots'; if (tCount(k) >= tCap(k)) { for (let h = G.hq + 1; h <= 5; h++) if (tCap(k, h) > tCap(k)) return 'hq' + h; return 'max'; } return ''; }
 function blockMsg(k, b) { return b === 'slots' ? '건설 칸 가득 · 본부 레벨업' : b === 'max' ? TUR[k].name + ' 최대 ' + tCap(k) + '개' : '본부 ' + b.slice(2) + '레벨 필요'; }
 function hqOpens() { const h = G.hq + 1, o = []; if (h > 5) return ''; for (const k in TUR) if (tCap(k, h) > tCap(k)) o.push(TUR[k].name + ' ' + tCap(k, h)); return o.join(', '); }
 function soldierMax() { return 6 + 3 * G.hq; }
@@ -2446,6 +2447,7 @@ function drawHUD(day) {
   /* 상단 어둡게 */
   const tg = ctx.createLinearGradient(0, 0, 0, 200); tg.addColorStop(0, 'rgba(6,8,12,.6)'); tg.addColorStop(1, 'rgba(6,8,12,0)'); ctx.fillStyle = tg; ctx.fillRect(0, 0, W, 200);
   /* 일시정지 */
+  if (G.C && G.C.rule === 'sandstorm') { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const cw = ctx.canvas.width, chh = ctx.canvas.height, gr = ctx.createRadialGradient(cw / 2, chh * 0.55, Math.min(cw, chh) * 0.2, cw / 2, chh * 0.55, Math.max(cw, chh) * 0.6); gr.addColorStop(0, 'rgba(214,170,100,0)'); gr.addColorStop(1, 'rgba(196,150,80,0.8)'); ctx.fillStyle = gr; ctx.fillRect(0, 0, cw, chh); ctx.globalAlpha = 0.2; ctx.fillStyle = '#e8c890'; for (let i = 0; i < 46; i++) { const yy = (i * 97 + G.t * 240) % chh, xx = ((i * 211 + G.t * 560) % (cw + 200)) - 100; ctx.fillRect(xx, yy, 110, 2); } ctx.restore(); }   /* 5막 모래폭풍: 시야 가림 + 처용 이동 0.8배 */
   tealBtn(20, 22, 66, 62); ctx.fillStyle = '#123a3a'; ctx.fillRect(41, 38, 8, 28); ctx.fillRect(57, 38, 8, 28); UI.pause = [20, 22, 66, 66];
   /* 경험치 막대 */
   panel(104, 34, 440, 40, 10, 'rgba(10,14,18,.88)', '#05080a');

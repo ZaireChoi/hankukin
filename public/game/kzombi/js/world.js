@@ -175,6 +175,7 @@ JZW.build = function (theme, LAY) {
 
   /* 본진 앞 등불 */
   [[CX - 64, WALL_Y - 58], [CX + 64, WALL_Y - 58], [SH.x - 90, SH.y + 90], [SH.x + 90, SH.y + 90]].forEach(q => lights.push({ x: q[0], y: q[1], r: 70, c: T.light, k: 0.9 }));
+  if (JZW.actArt && JZW.actArt.mirror) { try { const c2 = document.createElement('canvas'); c2.width = cv.width; c2.height = cv.height; const g2 = c2.getContext('2d'); g2.translate(cv.width, 0); g2.scale(-1, 1); g2.drawImage(cv, 0, 0); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height); g.drawImage(c2, 0, 0); g.setTransform(GS, 0, 0, GS, MX * GS, MT * GS); for (const L of lights.concat(fires)) if (L && typeof L.x === 'number') L.x = W - L.x; } catch (e) {} }   /* 9막 거울: 판 좌우 뒤집기 */
   return { cv, GS, lights, fires, T, MX, MT, MB };
 };
 
