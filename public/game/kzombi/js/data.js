@@ -231,26 +231,26 @@ D.GUARD = {
 
 /* 동료: 처용을 따라다니며 싸운다 */
 D.COMP = {
-  yisunsin:    { n: '이순신', role: '원거리', el: 'metal', grade: 4, d: '화살 다섯 대를 부채꼴로 쏜다', spr: 'yisunsin', rate: 1.1, dmg: 16, range: 380, col: '255,90,70', ult: '학익진', ultD: '거북선이 나타나 포탄을 퍼붓는다' },
+  yisunsin:    { n: '이순신', role: '원거리', el: 'metal', el2: 'ice', grade: 4, d: '화살 다섯 대를 부채꼴로 쏜다', spr: 'yisunsin', rate: 1.1, dmg: 16, range: 380, col: '255,90,70', ult: '학익진', ultD: '거북선이 나타나 포탄을 퍼붓는다' },
   eulji:       { n: '을지문덕', role: '근거리', el: 'ice', grade: 4, d: '적에게 뛰어들어 회전 베기', spr: 'eulji', rate: 1.3, dmg: 34, range: 230, col: '120,200,255', ult: '살수대첩', ultD: '거대한 물결이 적을 쓸어 간다' },
-  wonhyo:      { n: '원효대사', role: '법사', el: 'qi', grade: 4, d: '염주에서 금빛 광선을 쏜다', spr: 'wonhyo', rate: 0.1, dmg: 26, range: 330, col: '255,210,120', ult: '정화 결계', ultD: '큰 결계로 적을 태우고 아군을 치유' },
-  gangamchan:  { n: '강감찬', role: '번개', el: 'thunder', grade: 3, d: '벼락이 적에서 적으로 옮겨 붙는다', spr: 'gangamchan', rate: 1.4, dmg: 22, range: 340, col: '140,190,255', ult: '귀주대첩', ultD: '화면 모든 적에게 벼락' },
-  honggildong: { n: '홍길동', role: '날쌘 공격', el: 'metal', grade: 3, d: '분신 둘이 함께 비수를 던진다', spr: 'honggildong', rate: 0.9, dmg: 12, range: 320, col: '200,60,60', ult: '둔갑 연속베기', ultD: '순간이동하며 적 열둘을 벤다' },
-  gumiho:      { n: '구미호', role: '마법', el: 'fire', grade: 3, d: '여우불 셋이 적을 쫓아간다', spr: 'gumiho', rate: 1.6, dmg: 18, range: 360, col: '120,200,255', ult: '홀림', ultD: '적 여덟을 홀려 서로 싸우게 한다' },
-  bari:        { n: '바리공주', role: '혼령술', el: 'qi', grade: 4, d: '쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 한다', spr: 'bari', rate: 1.4, dmg: 18, range: 320, col: '170,220,255', ult: '저승길 인도', ultD: '화면 안 적에게 피해를 주고 쓰러진 적을 혼령 아군으로 일으킨다' },
-  jeonwoochi:  { n: '전우치', role: '도술 검객', el: 'thunder', grade: 4, d: '칼을 휘둘러 적을 꿰뚫는 검기를 날린다', spr: 'jeonwoochi', rate: 1.0, dmg: 26, range: 340, col: '90,170,255', ult: '화중병', ultD: '그림 속 먹물 병사 여섯을 불러내 함께 싸운다' },
-  samyeong:    { n: '사명대사', role: '권법', el: 'metal', grade: 3, d: '권법 연타로 적을 기절시킨다', spr: 'samyeong', rate: 0.9, dmg: 20, range: 200, col: '255,190,90', ult: '승병 봉기', ultD: '승병 다섯을 불러 앞을 막는다' },
-  daejanggeum: { n: '대장금', role: '치유', el: 'qi', grade: 4, d: '약재 주머니를 던지고 주변 처용과 동료를 치유한다', spr: 'daejanggeum', rate: 1.3, dmg: 14, range: 320, col: '150,240,190', ult: '어의의 탕약', ultD: '사당과 처용, 시설을 크게 회복하고 잠시 받는 피해를 줄인다' },
-  sadaham:     { n: '화랑 사다함', role: '근거리', el: 'metal', grade: 3, d: '적 사이를 오가며 세 번 연달아 벤다', spr: 'sadaham', rate: 1.1, dmg: 22, range: 220, col: '90,220,200', ult: '화랑 검무', ultD: '일직선으로 돌진하며 앞의 적을 모두 벤다' },
+  wonhyo:      { n: '원효대사', role: '법사', el: 'qi', el2: 'dark', grade: 4, d: '염주에서 금빛 광선을 쏜다', spr: 'wonhyo', rate: 0.1, dmg: 26, range: 330, col: '255,210,120', ult: '정화 결계', ultD: '큰 결계로 적을 태우고 아군을 치유' },
+  gangamchan:  { n: '강감찬', role: '번개', el: 'thunder', el2: 'qi', grade: 3, d: '벼락이 적에서 적으로 옮겨 붙는다', spr: 'gangamchan', rate: 1.4, dmg: 22, range: 340, col: '140,190,255', ult: '귀주대첩', ultD: '화면 모든 적에게 벼락' },
+  honggildong: { n: '홍길동', role: '날쌘 공격', el: 'metal', el2: 'wind', grade: 3, d: '분신 둘이 함께 비수를 던진다', spr: 'honggildong', rate: 0.9, dmg: 12, range: 320, col: '200,60,60', ult: '둔갑 연속베기', ultD: '순간이동하며 적 열둘을 벤다' },
+  gumiho:      { n: '구미호', role: '마법', el: 'fire', el2: 'dark', grade: 3, d: '여우불 셋이 적을 쫓아간다', spr: 'gumiho', rate: 1.6, dmg: 18, range: 360, col: '120,200,255', ult: '홀림', ultD: '적 여덟을 홀려 서로 싸우게 한다' },
+  bari:        { n: '바리공주', role: '혼령술', el: 'qi', el2: 'dark', grade: 4, d: '쓰러진 좀비의 혼을 인도해 잠시 아군 혼령으로 싸우게 한다', spr: 'bari', rate: 1.4, dmg: 18, range: 320, col: '170,220,255', ult: '저승길 인도', ultD: '화면 안 적에게 피해를 주고 쓰러진 적을 혼령 아군으로 일으킨다' },
+  jeonwoochi:  { n: '전우치', role: '도술 검객', el: 'thunder', el2: 'wind', grade: 4, d: '칼을 휘둘러 적을 꿰뚫는 검기를 날린다', spr: 'jeonwoochi', rate: 1.0, dmg: 26, range: 340, col: '90,170,255', ult: '화중병', ultD: '그림 속 먹물 병사 여섯을 불러내 함께 싸운다' },
+  samyeong:    { n: '사명대사', role: '권법', el: 'metal', el2: 'qi', grade: 3, d: '권법 연타로 적을 기절시킨다', spr: 'samyeong', rate: 0.9, dmg: 20, range: 200, col: '255,190,90', ult: '승병 봉기', ultD: '승병 다섯을 불러 앞을 막는다' },
+  daejanggeum: { n: '대장금', role: '치유', el: 'nature', el2: 'qi', grade: 4, d: '약재 주머니를 던지고 주변 처용과 동료를 치유한다', spr: 'daejanggeum', rate: 1.3, dmg: 14, range: 320, col: '150,240,190', ult: '어의의 탕약', ultD: '사당과 처용, 시설을 크게 회복하고 잠시 받는 피해를 줄인다' },
+  sadaham:     { n: '화랑 사다함', role: '근거리', el: 'metal', el2: 'wind', grade: 3, d: '적 사이를 오가며 세 번 연달아 벤다', spr: 'sadaham', rate: 1.1, dmg: 22, range: 220, col: '90,220,200', ult: '화랑 검무', ultD: '일직선으로 돌진하며 앞의 적을 모두 벤다' },
   kimchungseon: { n: '김충선', role: '암살', el: 'metal', grade: 4, d: '귀화한 사무라이. 적진의 원거리·마법 유닛만 노려 뒤로 파고들어 벤다', spr: 'kimchungseon', rate: 1.2, dmg: 70, range: 520, col: '220,60,60', ult: '귀순의 칼', ultD: '화면 안 원거리·마법 적을 차례로 순간이동하며 모두 벤다' },
-  imugi:       { n: '이무기', role: '비행', el: 'fire', grade: 4, d: '하늘을 날며 불길을 뿜는다', spr: 'imugi', rate: 0.1, dmg: 34, range: 260, col: '255,120,40', ult: '승천', ultD: '하늘로 솟구치며 불덩이 비를 쏟는다', fly: 1 },
-  dokkaebi:    { n: '도깨비', role: '근거리', el: 'fire', grade: 2, d: '도깨비방망이를 던져 되돌아오게 한다', spr: 'dokkaebi', rate: 1.5, dmg: 18, range: 300, col: '255,190,60', ult: '방망이 지진', ultD: '땅을 세 번 내리쳐 적을 기절시킨다' },
-  haetae:      { n: '해태', role: '수호', el: 'fire', grade: 2, d: '불길을 내뿜어 앞의 적을 태운다', spr: 'haetae', rate: 0.1, dmg: 30, range: 200, col: '255,120,40', ult: '해치의 불바다', ultD: '앞쪽 땅을 불바다로 만든다' },
-  jangyeongsil: { n: '장영실', role: '발명가', el: 'metal', grade: 4, d: '작은 화포 장치를 세워 한동안 저절로 쏘게 한다', spr: 'jangyeongsil', rate: 1.2, dmg: 18, range: 360, col: '120,180,255', ult: '자격루의 종', ultD: '자격루 종이 울려 아군 공격 속도가 크게 오른다', gadget: 1 },
-  samjoko:     { n: '삼족오', role: '원거리', el: 'qi', grade: 2, d: '태양 광선으로 여러 적을 꿰뚫는다', spr: 'samjoko', rate: 2.0, dmg: 26, range: 380, col: '255,220,90', ult: '태양 강림', ultD: '하늘에서 태양 광선이 쏟아진다' }
+  imugi:       { n: '이무기', role: '비행', el: 'ice', el2: 'fire', grade: 4, d: '하늘을 날며 불길을 뿜는다', spr: 'imugi', rate: 0.1, dmg: 34, range: 260, col: '255,120,40', ult: '승천', ultD: '하늘로 솟구치며 불덩이 비를 쏟는다', fly: 1 },
+  dokkaebi:    { n: '도깨비', role: '근거리', el: 'fire', el2: 'dark', grade: 2, d: '도깨비방망이를 던져 되돌아오게 한다', spr: 'dokkaebi', rate: 1.5, dmg: 18, range: 300, col: '255,190,60', ult: '방망이 지진', ultD: '땅을 세 번 내리쳐 적을 기절시킨다' },
+  haetae:      { n: '해태', role: '수호', el: 'fire', el2: 'qi', grade: 2, d: '불길을 내뿜어 앞의 적을 태운다', spr: 'haetae', rate: 0.1, dmg: 30, range: 200, col: '255,120,40', ult: '해치의 불바다', ultD: '앞쪽 땅을 불바다로 만든다' },
+  jangyeongsil: { n: '장영실', role: '발명가', el: 'metal', el2: 'thunder', grade: 4, d: '작은 화포 장치를 세워 한동안 저절로 쏘게 한다', spr: 'jangyeongsil', rate: 1.2, dmg: 18, range: 360, col: '120,180,255', ult: '자격루의 종', ultD: '자격루 종이 울려 아군 공격 속도가 크게 오른다', gadget: 1 },
+  samjoko:     { n: '삼족오', role: '원거리', el: 'qi', el2: 'fire', grade: 2, d: '태양 광선으로 여러 적을 꿰뚫는다', spr: 'samjoko', rate: 2.0, dmg: 26, range: 380, col: '255,220,90', ult: '태양 강림', ultD: '하늘에서 태양 광선이 쏟아진다' }
 };
 /* 원소 다섯: 불, 번개, 얼음, 기, 쇠 */
-D.EL = { fire: { n: '불', c: '#ff7a3a' }, thunder: { n: '번개', c: '#7fb8ff' }, ice: { n: '얼음', c: '#9ff0ff' }, qi: { n: '기', c: '#c08aff' }, metal: { n: '쇠', c: '#d8d8d8' } };
+D.EL = { fire: { n: '불', c: '#ff7a3a', i: '🔥' }, thunder: { n: '번개', c: '#7fb8ff', i: '⚡' }, ice: { n: '물·얼음', c: '#9ff0ff', i: '💧' }, qi: { n: '빛', c: '#ffe27a', i: '☀' }, metal: { n: '쇠', c: '#d8d8d8', i: '⚔' }, wind: { n: '바람', c: '#9effc8', i: '🌀' }, dark: { n: '저승', c: '#b09ae0', i: '☾' }, nature: { n: '자연', c: '#8fd06a', i: '🌿' } };   /* 계열 8개(사용자 11-28: 계열 상성) */
 /* 진화(탕탕특공대식): 공격 기술 5단계 + 짝 보조 기술 */
 D.EVO = { yakbyeong: { pair: 'bless', n: '만병통치 대약' }, topni: { pair: 'rapid', n: '천년 시계' }, morae: { pair: 'swift', n: '황사 폭풍' }, hwalsi: { pair: 'multi', n: '신궁 바람' }, beonbuk: { pair: 'power', n: '뇌고 천둥' }, eunha: { pair: 'pierce', n: '은하 대전' }, honbul: { pair: 'heal', n: '백귀 사슬' }, myeongbu: { pair: 'crit', n: '염라 판결' }, yukdo: { pair: 'multi', n: '육도윤회' }, yongam: { pair: 'power', n: '화산 대분화' }, geoul: { pair: 'bless', n: '명경지수' }, geurimja: { pair: 'crit', n: '천의 그림자' }, taecho: { pair: 'heal', n: '태초의 노래' }, byeoljari: { pair: 'magnet', n: '은하 낙성' }, gawi: { pair: 'swift', n: '천년 가위' }, nabi: { pair: 'crit', n: '호접몽' }, mulgi: { pair: 'pierce', n: '용오름' }, geobuk: { pair: 'power', n: '학익진 일제 포격' }, ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
 /* 각성(별 다섯) 효과 */
@@ -285,12 +285,12 @@ D.AWAKE = {
 
 /* 전투 안 성장 카드. kind: atk(공격 기술) / buff */
 D.SKILLS = [
-  { id: 'ghost',    n: '귀화탄',     kind: 'atk', el: 'qi', max: 5, c: '#b066ff', d: l => '보랏빛 귀신불 ' + (2 + l) + '발이 적을 쫓아간다' },
+  { id: 'ghost',    n: '귀화탄',     kind: 'atk', el: 'dark', max: 5, c: '#b066ff', d: l => '보랏빛 귀신불 ' + (2 + l) + '발이 적을 쫓아간다' },
   { id: 'meteor',   n: '별똥불',     kind: 'atk', el: 'fire', max: 5, c: '#ff8a3a', d: l => '불타는 운석 ' + l + '개가 떨어져 불바다를 남긴다' },
   { id: 'thunder',  n: '벼락',       kind: 'atk', el: 'thunder', max: 5, c: '#7fd0ff', d: l => '하늘에서 벼락 ' + (1 + l) + '줄기가 내리꽂힌다' },
   { id: 'ice',      n: '얼음송곳',   kind: 'atk', el: 'ice', max: 5, c: '#9ff0ff', d: l => '얼음송곳 ' + (3 + l) + '개를 부채꼴로 쏘아 얼린다' },
   { id: 'dance',    n: '처용무',     kind: 'atk', el: 'metal', max: 5, c: '#ff6a8a', d: l => '부채 ' + (1 + l) + '개가 처용 둘레를 돌며 벤다' },
-  { id: 'talisman', n: '벽사부',     kind: 'atk', el: 'fire', max: 5, c: '#ffd84a', d: l => '부적 ' + (1 + Math.floor(l / 2)) + '장이 날아가 터진다' },
+  { id: 'talisman', n: '벽사부',     kind: 'atk', el: 'qi', max: 5, c: '#ffd84a', d: l => '부적 ' + (1 + Math.floor(l / 2)) + '장이 날아가 터진다' },
   { id: 'beam',     n: '신궁 광선',  kind: 'atk', el: 'qi', max: 5, c: '#ff5a4a', d: l => '붉은 광선이 이어지며 ' + l + '명을 꿰뚫는다' },
   { id: 'vortex',   n: '불회오리',   kind: 'atk', el: 'fire', max: 5, c: '#ffb03a', d: l => '불회오리가 적을 빨아들이며 태운다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
   { id: 'rapid',    n: '속사',       kind: 'buff', max: 5, c: '#8affc0', d: () => '쏘는 간격이 20% 짧아진다' },
@@ -303,22 +303,22 @@ D.SKILLS = [
   { id: 'heal',     n: '정화수',     kind: 'buff', max: 99, c: '#8affc0', d: () => '체력 40 회복, 최대 체력 +20' },
   { id: 'repair',   n: '사당 보수',  kind: 'buff', max: 99, c: '#8affc0', d: () => '사당 내구도를 100 되살린다', need: g => g.shrine.hp < g.shrine.max },
   { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +40%', need: g => g.turrets.length > 0 },
-  { id: 'yakbyeong', n: '연금 약병', kind: 'atk', el: 'fire', max: 5, act: 4, c: '#8aff6a', gen: {t:'multi',cd:[5,0.25],dm:[28,11],R:[75,5],n:[1,0.5],burn:[4,1.5],c:'140,255,110'}, d: l => '약병 ' + (1 + Math.floor(l / 2)) + '개가 깨져 독 웅덩이를 남긴다' },
+  { id: 'yakbyeong', n: '연금 약병', kind: 'atk', el: 'nature', max: 5, act: 4, c: '#8aff6a', gen: {t:'multi',cd:[5,0.25],dm:[28,11],R:[75,5],n:[1,0.5],burn:[4,1.5],c:'140,255,110'}, d: l => '약병 ' + (1 + Math.floor(l / 2)) + '개가 깨져 독 웅덩이를 남긴다' },
   { id: 'topni', n: '시계 톱니', kind: 'atk', el: 'metal', max: 5, act: 4, c: '#ffcf6a', gen: {t:'ring',cd:[2.6,0.12],dm:[50,18],R:[150,10],kb:18,c:'255,210,110'}, d: l => '톱니 칼날이 처용 둘레를 한 바퀴 벤다 (반경 ' + (120 + 8 * l) + ')' },
-  { id: 'morae', n: '모래 회오리', kind: 'atk', el: 'metal', max: 5, act: 5, c: '#e8c070', gen: {t:'vortex',cd:[6.5,0.35],dm:[30,13],R:[100,6],c:'230,190,110'}, d: l => '모래 회오리가 적을 휘감으며 깎는다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
-  { id: 'hwalsi', n: '활시위 바람', kind: 'atk', el: 'qi', max: 5, act: 5, c: '#8affb0', gen: {t:'fan',cd:[2.6,0.1],dm:[16,6],n:[3,1],pierce:3,c:'150,255,180'}, d: l => '바람 화살 ' + (3 + l) + '발이 세 명을 꿰뚫는다' },
+  { id: 'morae', n: '모래 회오리', kind: 'atk', el: 'wind', max: 5, act: 5, c: '#e8c070', gen: {t:'vortex',cd:[6.5,0.35],dm:[30,13],R:[100,6],c:'230,190,110'}, d: l => '모래 회오리가 적을 휘감으며 깎는다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
+  { id: 'hwalsi', n: '활시위 바람', kind: 'atk', el: 'wind', max: 5, act: 5, c: '#8affb0', gen: {t:'fan',cd:[2.6,0.1],dm:[16,6],n:[3,1],pierce:3,c:'150,255,180'}, d: l => '바람 화살 ' + (3 + l) + '발이 세 명을 꿰뚫는다' },
   { id: 'beonbuk', n: '번개 북', kind: 'atk', el: 'thunder', max: 5, act: 6, c: '#7fd0ff', gen: {t:'ring',cd:[4,0.2],dm:[70,26],R:[190,10],stun:0.5,c:'150,210,255'}, d: l => '북소리 번개가 둘레 적을 치고 잠깐 멈춘다' },
   { id: 'eunha', n: '은하수 화살', kind: 'atk', el: 'qi', max: 5, act: 6, c: '#c9b8ff', gen: {t:'fan',cd:[3,0.12],dm:[18,6.5],n:[1,1],pierce:6,sp:900,life:0.9,c:'200,190,255'}, d: l => '별빛 화살 ' + (1 + l) + '발이 길게 꿰뚫는다' },
-  { id: 'honbul', n: '혼불 사슬', kind: 'atk', el: 'ice', max: 5, act: 7, c: '#9fe0ff', gen: {t:'chain',cd:[3.2,0.18],dm:[40,14],n:[2,1],slow:1.2,heal:2,c:'160,220,255'}, d: l => '혼불 ' + (2 + l) + '개가 적을 잇고, 맞힐 때 처용 체력 회복' },
-  { id: 'myeongbu', n: '저승 명부', kind: 'atk', el: 'qi', max: 5, act: 7, c: '#ff7a7a', gen: {t:'zone',cd:[7,0.4],dm:[64,24],R:[90,7],exec:0.12,c:'255,110,110'}, d: l => '명부에 적힌 적을 친다. 체력 12% 아래 일반 적은 바로 쓰러진다' },
+  { id: 'honbul', n: '혼불 사슬', kind: 'atk', el: 'dark', max: 5, act: 7, c: '#9fe0ff', gen: {t:'chain',cd:[3.2,0.18],dm:[40,14],n:[2,1],slow:1.2,heal:2,c:'160,220,255'}, d: l => '혼불 ' + (2 + l) + '개가 적을 잇고, 맞힐 때 처용 체력 회복' },
+  { id: 'myeongbu', n: '저승 명부', kind: 'atk', el: 'dark', max: 5, act: 7, c: '#ff7a7a', gen: {t:'zone',cd:[7,0.4],dm:[64,24],R:[90,7],exec:0.12,c:'255,110,110'}, d: l => '명부에 적힌 적을 친다. 체력 12% 아래 일반 적은 바로 쓰러진다' },
   { id: 'yukdo', n: '아수라 육도', kind: 'atk', el: 'metal', max: 5, act: 8, c: '#ff9a5a', gen: {t:'six',cd:[3,0.12],dm:[26,10],pierce:2,c:'255,160,90'}, d: l => '여섯 방향으로 칼날을 날린다 (' + (6 + (l >= 4 ? 6 : 0)) + '발)' },
   { id: 'yongam', n: '용암 분출', kind: 'atk', el: 'fire', max: 5, act: 8, c: '#ff5a2a', gen: {t:'multi',cd:[5.5,0.3],dm:[36,13],R:[80,6],n:[1,0.6],burn:[6,2],c:'255,100,40'}, d: l => '땅에서 용암이 ' + (1 + Math.floor(l * 0.6)) + '번 솟아 태운다' },
   { id: 'geoul', n: '거울 반사', kind: 'atk', el: 'qi', max: 5, act: 9, c: '#e8f0ff', gen: {t:'ring',cd:[3.6,0.18],dm:[75,28],R:[180,10],clear:1,c:'230,240,255'}, d: l => '거울 빛이 둘레 적을 치고 날아오는 적 탄을 지운다' },
-  { id: 'geurimja', n: '그림자 분신', kind: 'atk', el: 'qi', max: 5, act: 9, c: '#a07aff', gen: {t:'shot',cd:[2.8,0.12],dm:[18,7],n:[2,1],R:[50,4],c:'170,130,255'}, d: l => '그림자 분신 ' + (2 + l) + '개가 적에게 달려들어 터진다' },
-  { id: 'taecho', n: '태초의 춤', kind: 'atk', el: 'fire', max: 5, act: 10, c: '#ffe08a', gen: {t:'ring',cd:[6,0.3],dm:[120,42],R:[260,12],healS:0.03,c:'255,230,140'}, d: l => '처음의 춤이 넓게 퍼져 적을 치고 사당을 조금 고친다' },
+  { id: 'geurimja', n: '그림자 분신', kind: 'atk', el: 'dark', max: 5, act: 9, c: '#a07aff', gen: {t:'shot',cd:[2.8,0.12],dm:[18,7],n:[2,1],R:[50,4],c:'170,130,255'}, d: l => '그림자 분신 ' + (2 + l) + '개가 적에게 달려들어 터진다' },
+  { id: 'taecho', n: '태초의 춤', kind: 'atk', el: 'qi', max: 5, act: 10, c: '#ffe08a', gen: {t:'ring',cd:[6,0.3],dm:[120,42],R:[260,12],healS:0.03,c:'255,230,140'}, d: l => '처음의 춤이 넓게 퍼져 적을 치고 사당을 조금 고친다' },
   { id: 'byeoljari', n: '별자리 낙하', kind: 'atk', el: 'fire', max: 5, act: 10, c: '#ffd84a', gen: {t:'multi',cd:[5,0.25],dm:[29,10],R:[85,6],n:[2,0.7],c:'255,220,120'}, d: l => '별 ' + (2 + Math.floor(l * 0.7)) + '개가 떨어져 터진다' },
-  { id: 'gawi',     n: '가위눌림',   kind: 'atk', el: 'qi', max: 5, act: 2, c: '#9a7aff', d: l => '가장 붐비는 곳에 가위눌림 장판, 적 ' + (0.6 + 0.15 * l).toFixed(2) + '초 묶음' },
-  { id: 'nabi',     n: '꿈 나비',    kind: 'atk', el: 'qi', max: 5, act: 2, c: '#ff9ae6', d: l => '꿈 나비 ' + (1 + l) + '마리가 날아가 터진다' },
+  { id: 'gawi',     n: '가위눌림',   kind: 'atk', el: 'dark', max: 5, act: 2, c: '#9a7aff', d: l => '가장 붐비는 곳에 가위눌림 장판, 적 ' + (0.6 + 0.15 * l).toFixed(2) + '초 묶음' },
+  { id: 'nabi',     n: '꿈 나비',    kind: 'atk', el: 'nature', max: 5, act: 2, c: '#ff9ae6', d: l => '꿈 나비 ' + (1 + l) + '마리가 날아가 터진다' },
   { id: 'mulgi',    n: '물기둥',     kind: 'atk', el: 'ice', max: 5, act: 3, c: '#5ad0ff', d: l => '물기둥 ' + l + '개가 솟아 적을 띄운다' },
   { id: 'geobuk',   n: '거북선 포격', kind: 'atk', el: 'fire', max: 5, act: 3, c: '#ffb070', d: l => '큰 포탄 ' + (1 + Math.floor(l / 2)) + '발, 넓게 터진다' },
   { id: 'bond',     n: '영웅 결속',  kind: 'buff', max: 3, c: '#ffc85a', d: () => '함께한 영웅의 위력 +40%, 큰 기술이 빨리 찬다', need: g => g.comps.some(c => c.active) }
@@ -371,6 +371,16 @@ D.TRAITS = {
 };
 D.ACT_TRAITS = { 2: ['gawi'], 3: ['tide'], 4: ['alchemy', 'fog'], 5: ['desertwind'], 6: ['storm'], 7: ['soulfire', 'judgment'], 8: ['lava'], 9: ['mirror'], 10: ['dawnlight', 'chaos'] };
 D.traitOf = (a, ch) => { a = a | 0 || 1; ch = ch | 0; if (a === 1 && ch <= 2) return null; const th = D.ACT_TRAITS[a] || [], pool = ['harvest', 'luck', 'curse', 'swift', null].concat(th, th); return pool[(a * 31 + ch * 7) % pool.length]; };
+/* 적 계열과 상성(사용자 11-28): 물→불→쇠→자연·바람→번개→물, 빛↔저승 */
+D.EL.metal.en = 'Metal'; D.EL.fire.en = 'Fire'; D.EL.thunder.en = 'Thunder'; D.EL.ice.en = 'Water'; D.EL.qi.en = 'Light'; D.EL.wind.en = 'Wind'; D.EL.dark.en = 'Underworld'; D.EL.nature.en = 'Nature';
+D.EL_ADV = { ice: ['fire'], fire: ['metal'], metal: ['nature', 'wind'], nature: ['thunder'], wind: ['thunder'], thunder: ['ice'], qi: ['dark'], dark: ['qi'] };
+D.elVs = (a, e) => { if (!a || !e) return 1; if ((D.EL_ADV[a] || []).indexOf(e) >= 0) return 1.5; if ((D.EL_ADV[e] || []).indexOf(a) >= 0) return 0.6; return 1; };
+D.counterEl = e => { for (const k in D.EL_ADV) if (k !== e && D.EL_ADV[k].indexOf(e) >= 0) return k; return null; };
+D.ENEL = { peasant: 'nature', archer: 'wind', spear: 'metal', rider: 'wind', harcher: 'wind', yangban: 'dark', munsin: 'qi', zdog: 'nature', zrat: 'nature', zcrow: 'wind', zboar: 'nature', zox: 'metal', zbear: 'nature', ztiger: 'thunder', zsword: 'metal', zwaegun: 'fire', zsamurai: 'metal', zmonk: 'qi', zgrand: 'metal', zqueen2: 'ice', yeoksin: 'dark', wb_stone: 'metal', wb_fire: 'fire', wb_plague: 'nature', bulgasari: 'metal', jangsanbeom: 'ice', mudang: 'dark', mujang: 'metal', king: 'dark', iron_spear: 'metal', red_sword: 'fire', black_archer: 'dark', blood_dog: 'fire', skull_monk: 'dark', plague_rider: 'nature', ghost_yangban: 'dark', shadow_samurai: 'dark', war_ox: 'metal', giant_bear: 'nature', zsiege: 'metal', zbomb: 'fire', zshield: 'metal', znest: 'nature', zplague: 'nature', zbat: 'dark', byeomra: 'dark', bdokryong: 'ice', bheukryong: 'thunder', bdukkeobi: 'nature', xwisp: 'fire', xlooter: 'metal' };
+D.ACT_EL = { 2: 'fire', 3: 'ice', 4: 'nature', 5: 'wind', 6: 'thunder', 7: 'dark', 8: 'fire', 9: 'qi' };
+D.enemyEl = (type, act, boss) => { if (!boss && D.ACT_EL[act]) return D.ACT_EL[act]; if (!boss && act === 10) { const L = ['ice', 'fire', 'metal', 'nature', 'thunder', 'qi', 'dark']; return L[(Math.random() * L.length) | 0]; } return D.ENEL[type] || 'nature'; };
+D.majorEl = (act, ch) => { if (D.ACT_EL[act]) return D.ACT_EL[act]; if (act === 1 && D.mobWin) { const c = {}; for (const t of D.mobWin(ch)) { const e = D.ENEL[t] || 'nature'; c[e] = (c[e] || 0) + 1; } return Object.keys(c).sort((a, b) => c[b] - c[a])[0]; } return null; };
+D.chEl = function (ch, nm, act) { const a = act || (nm ? 2 : 1), foe = D.majorEl(a, ch | 0 || 1), el = foe ? D.counterEl(foe) : null; return el ? { el, k: 0.5, foe } : { el: 'fire', k: 0, foe: null }; };   /* 장 약점 = 이 장 적 주력 계열을 이기는 계열 (상성 ×1.5) */
 D.skUnlocked = (id, ch, nm) => !!nm || (ch | 0) >= (D.SK_UNLOCK[id] || 1);
   /* 영웅 전용 카드: 그 영웅을 데려가야 카드 풀에 들어온다. 효과는 그 영웅 위력(+35%/단계)과 특수 효과 */
   const HS = {

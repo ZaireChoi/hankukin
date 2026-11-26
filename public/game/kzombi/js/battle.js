@@ -264,7 +264,7 @@ function newGame(cfg) {
   if (mode === 'adventure' && C.objective === 'survive') nights = nights.map((n, i) => Object.assign({}, n, { rate: [n.rate[0] * (ch <= 6 ? 1.12 : 1.25), n.rate[1] * (ch <= 6 ? 1.12 : 1.25)], boss: null, elites: n.boss ? [0.3, 0.7] : n.elites, kind: n.boss ? 'elite' : n.kind }));
   const shMax = Math.round((400 + (NMK ? ch + 29 : ch) * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
   G = {
-    cfg, ch, C, nights, chEl: D.chEl ? D.chEl(ch, !!cfg.nightmare) : null, pkey: PKEY, nm: NMK, pzs: [], tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
+    cfg, ch, C, nights, chEl: D.chEl ? D.chEl(ch, !!cfg.nightmare, cfg.act >= 3 ? cfg.act : cfg.nightmare ? 2 : 1) : null, pkey: PKEY, nm: NMK, pzs: [], tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
     gold: C.rule === 'nogold' ? 0 : 170 + 14 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
@@ -303,9 +303,12 @@ const GRK = { 0: 0.75, 1: 0.82, 2: 0.9, 3: 1.05, 4: 1.35 }; const gradeK = id =>
 const skK = id => { const l = HSK(id)[0]; return (1 + 0.15 * (l - 1)) * (l >= 5 ? 1.2 : 1); };
 const ulK = id => { const l = HSK(id)[1]; return (1 + 0.2 * (l - 1)) * (l >= 5 ? 1.25 : 1); };
 /* 원소 배율: 공명 +25%, 동료 연계 +20% */
-const chElK = el => (G.chEl && el && el === G.chEl.el ? 1 + G.chEl.k : 1);   /* 이 장의 원소 약점 */
-const TUR_EL = { fire: 'fire', hwacha: 'fire', general: 'fire', talisman: 'thunder', cannon: 'metal', arrow: 'metal', lady: 'ice', well: null, mine: null, barracks: 'metal' };
-const elMul = el => (1 + (G.res && G.res === el ? 0.25 : 0) + (el && G.comps.some(c => c.active && COMP[c.id].el === el) ? 0.2 : 0)) * chElK(el);
+const chElK = el => 1;   /* 장 약점은 적 계열 상성(D.elVs)으로 합쳐짐 */   /* 이 장의 원소 약점 */
+const TUR_EL = { fire: 'fire', hwacha: 'fire', general: 'fire', talisman: 'qi', cannon: 'metal', arrow: 'metal', lady: 'ice', well: null, mine: null, barracks: 'metal' };
+const heroEls = id => { const C0 = COMP[id] || {}; return [C0.el, C0.el2].filter(Boolean); };   /* 계열 상성(사용자 11-28) */
+const synN = el => el ? G.comps.filter(c => c.active && heroEls(c.id).indexOf(el) >= 0).length : 0;
+const heroSyn = id => { const E = heroEls(id); let n = 0; for (const k in G.sk) { const S0 = SKILLS.find(o => o.id === k); if (S0 && S0.kind === 'atk' && E.indexOf(S0.el) >= 0) n++; } return 1 + Math.min(0.32, 0.08 * n); };
+const elMul = el => (1 + (G.res && G.res === el ? 0.25 : 0) + (synN(el) >= 2 ? 0.35 : synN(el) === 1 ? 0.2 : 0)) * chElK(el);
 const compMul = () => 1 + 0.3 * fxN('compDmg30') + G.linkBonus + 0.4 * skLv('bond');
 const starMul = id => 1 + 0.15 * ((G.cfg.skillStars || {})[id] || 0);
 const xpNeed = lv => 6 + lv * 5 + Math.floor(lv * lv * 0.1);   /* 카드 수는 줄이지 않는다(사용자 결정): 한 판 약 40장 */
@@ -421,6 +424,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (e.nemInv) return 0;
   if (e.ghostT > 0) return 0;   /* 7막 저승 좀비: 맞으면 잠깐 흐려짐 */
   o = o || {};
+  { const ael = o.el !== undefined ? o.el : G.curEl, ek = D.elVs ? D.elVs(ael, e.el) : 1; if (ek !== 1) { dmg *= ek; if (!(e.ekT > G.t)) { e.ekT = G.t + 1.2; FX.num(e.x, e.y - e.hh - 26, ek > 1 ? (window.IS_EN ? 'Weak!' : '약점!') : (window.IS_EN ? 'Resist' : '저항'), false, ek > 1 ? '#ffa040' : '#9a9a9a'); } } }   /* 계열 상성 ×1.5 / ×0.6 (사용자 11-28) */
   if (e.vulnUntil && G.t < e.vulnUntil) dmg *= 1.3; /* 구미호 홀림: 우두머리는 받는 피해 +30% */
   if (src === 'skill') dmg *= 0.22 / ((1 + 0.03 * (G.ch - 1)) * (1 + 0.05 * Math.max(0, G.ch - 14)));   /* 뒤 장일수록 기술 비중을 낮춰 시설이 주력이 되게 */
   dmg *= objBuildK(src, e);
@@ -599,6 +603,7 @@ function spawnEnemy(type, x, y, o) {
   mutate(e); actVar(e);
   if (!o.boss && G.C && G.C.fresh && G.C.fresh.includes(type)) { G.seenNew = G.seenNew || {}; if (!G.seenNew[type]) { G.seenNew[type] = 1; G.banner = { s: '새 좀비 등장: ' + vName(type, e), t: 2.2, kind: 'boss' }; FX.ring(e.x, e.y, 120, d.tint || '255,220,120', 0.5, 6); } }
   if (o.rise) { e.st = 'rise'; e.stT = 1.0; FX.debris(e.x, e.y, 8, '#4a3a2a', 160); FX.smoke(e.x, e.y, 4, '90,80,60', 16, 30); }
+  e.el = D.enemyEl ? D.enemyEl(type, actNowSk(), !!(o.boss || e.boss || e.nem || EN[type] && EN[type].boss)) : null;
   if (G.trT && !e.boss && !e.nem) { if (G.trT.eHp) { e.hp *= G.trT.eHp; e.max = e.hp; } if (G.trT.eSp) e.sp *= G.trT.eSp; }   /* 장 특성 */
   G.enemies.push(e);
   return e;
@@ -919,9 +924,9 @@ function openLevel() {
     if (s.kind === 'legend') stars = ''; else if (s.max < 99) for (let i = 0; i < s.max; i++) stars += '<span class="' + (i < lv ? 'on' : (i === lv ? 'nx' : '')) + '">★</span>';
     else if (!s.evo) stars = '<span class="now">즉시</span>';
     const willAw = !!s.evo;
-    const link = s.el ? G.comps.find(c => c.active && COMP[c.id].el === s.el) : null;
-    const elTag = s.el ? '<span class="el" style="background:' + D.EL[s.el].c + '">' + D.EL[s.el].n + (G.chEl && G.chEl.el === s.el ? ' · 유리' : '') + '</span>' : '';
-    b.innerHTML = '<div class="ic"></div><div class="tx"><div class="n">' + elTag + s.n + (lv || s.evo || s.kind === 'legend' ? '' : ' <em>새 기술</em>') + (willAw ? ' <em class="aw">진화</em>' : '') + '</div><div class="st">' + (s.evo ? '' : stars) + '</div><div class="d">' + (s.evo ? String(D.AWAKE[s.evo] || '').replace('각성:', '진화:') : s.d(lv + 1)) + '</div>' + ((link || s.hero) ? (() => { const hid = link ? link.id : s.hero, H = COMP[hid] || {}; return '<div class="hlink"><div class="chain"></div><img class="hf" src="img/ui/hero_' + hid + '.webp?v=' + (hid === 'haetae' ? 3 : hid === 'jeonwoochi' ? 5 : 4) + '" onerror="this.style.visibility=\'hidden\'"><div class="hn">' + (link ? '연결 · ' : '전용 · ') + (H.n || '') + '</div><div class="hd">◆ ' + (link ? '이 기술 위력 +20%, 동료 피해 +15%' : (H.n || '') + '와 함께일 때만 나오는 기술') + '</div></div>'; })() : '') + evoHint(s) + '</div>';
+    const link = s.el ? G.comps.find(c => c.active && heroEls(c.id).indexOf(s.el) >= 0) : null;
+    const elTag = s.el ? '<span class="el" style="background:' + D.EL[s.el].c + '">' + (D.EL[s.el].i || '') + D.EL[s.el].n + (G.chEl && G.chEl.el === s.el ? ' · 유리' : '') + '</span>' : '';
+    b.innerHTML = '<div class="ic"></div><div class="tx"><div class="n">' + elTag + s.n + (lv || s.evo || s.kind === 'legend' ? '' : ' <em>새 기술</em>') + (willAw ? ' <em class="aw">진화</em>' : '') + '</div><div class="st">' + (s.evo ? '' : stars) + '</div><div class="d">' + (s.evo ? String(D.AWAKE[s.evo] || '').replace('각성:', '진화:') : s.d(lv + 1)) + '</div>' + ((link || s.hero) ? (() => { const hid = link ? link.id : s.hero, H = COMP[hid] || {}; return '<div class="hlink"><div class="chain"></div><img class="hf" src="img/ui/hero_' + hid + '.webp?v=' + (hid === 'haetae' ? 3 : hid === 'jeonwoochi' ? 5 : 4) + '" onerror="this.style.visibility=\'hidden\'"><div class="hn">' + (link ? '상성 ↑ ' : '전용 · ') + (H.n || '') + '</div><div class="hd">◆ ' + (link ? '같은 계열 · 이 기술 위력 +' + (synN(s.el) >= 2 ? 35 : 20) + '%, ' + (H.n || '') + ' 공격 +8%' : (H.n || '') + '와 함께일 때만 나오는 기술') + '</div></div>'; })() : '') + evoHint(s) + '</div>';
     { const ic = b.querySelector('.ic'), src = s.icon ? s.icon : s.evo ? 'img/skills/ev_' + s.evo + '.webp' : s.hero ? 'img/ui/hero_' + s.hero + '.webp?v=' + (s.hero === 'haetae' ? 3 : s.hero === 'jeonwoochi' ? 5 : 4) : 'img/skills/' + s.id + '.webp'; const im = document.createElement('img'); im.src = src; im.style.cssText = 'width:96px;height:' + (s.evo ? 140 : 96) + 'px;object-fit:cover;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.5)'; im.onerror = () => { im.remove(); ic.appendChild(skillIcon(s.id, 96)); }; ic.appendChild(im); if (s.evo) { ic.style.flexBasis = '96px'; ic.style.height = '140px'; ic.style.borderRadius = '16px'; } }
     { const tx = b.querySelector('.tx'), nn = tx && tx.querySelector('.n'), ic2 = b.querySelector('.ic'); if (nn && ic2) nn.after(ic2); }
     if (willAw) b.classList.add('awk');
@@ -978,7 +983,7 @@ function pickSkill(id, rar) {
   if (id === 'h_honggildong' || id === 'h_gumiho') G.cultMax *= 0.9;
   if (!(id in G.skT)) G.skT[id] = 0.5;
   const S = SKILLS.find(s => s.id === id);
-  if (S.el && G.sk[id] === 1 && G.comps.some(c => c.active && COMP[c.id].el === S.el)) G.linkBonus += 0.15;
+  /* 예전 연결 보너스는 계열 상성(heroSyn)으로 바뀜 */
   if (S.kind === 'atk' && G.sk[id] === (fxN('awaken') ? 4 : 5) && D.EVO[id]) { G.banner = { s: S.n + ' 최대 · ' + SKILLS.find(s => s.id === D.EVO[id].pair).n + '와 짝이면 진화', t: 2.2, kind: 'elite' }; }
   ovLevel.classList.remove('on');
   G.phase = 'night'; G.pendingLv--;
@@ -1032,7 +1037,7 @@ function useCult() {
   const c = G.comps.find(o => o.active && !(o.drop > 0)); if (!c) return;
   const C = COMP[c.id]; G.cult = G.cultMax * (HSK(c.id)[1] >= 3 ? 0.85 : 1); sfx('ult', 1, c.id); if (!G.saidUlt) { G.saidUlt = 1; G.queue.push({ t: 1.0, fn: () => heroSay(3, c.id) }); }
   sfx('ult_' + c.id); G.cutin = { t: 0.55, life: 0.55, who: c.id, name: C.ult, col: C.col, fn: () => {
-    const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id) * ulK(c.id), p = G.player;
+    const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id) * heroSyn(c.id) * ulK(c.id), p = G.player;
     const vis = () => G.enemies.filter(onScreen);
     if (c.id === 'dokkaebi') {
       /* 금 나와라 뚝딱!(사용자 11-29): 범위 일반 몹은 엽전 더미로, 정예는 큰 피해 + 엽전 비 */ { const UL = HSK('dokkaebi')[1], R = 300 + (UL >= 3 ? 50 : 0), TB = bigTarget(220), px0 = TB.x, py0 = TB.y; let nK = 0, coin = 0; c.x = px0 - 30; c.y = py0 + 40; G.banner = { s: window.IS_EN ? 'Gold, Come Out! Bonk!' : '금 나와라 뚝딱!', t: 1.5, kind: 'win' }; for (const e of G.enemies.slice()) { if (e.dead || Math.hypot(e.x - px0, e.y - py0) > R) continue; if (!e.elite && !e.boss && !e.nem && nK < 26) { nK++; coin += 3 + Math.floor(G.ch / 5); const ex = e.x, ey = e.y; killEnemy(e); for (let i = 0; i < 6; i++) FX.p({ kind: 'glow', x: ex + rnd(-12, 12), y: ey - 10, vx: rnd(-60, 60), vy: -rnd(160, 300), grav: 620, life: 0.9, s: 9, s2: 6, c: i % 2 ? '255,215,80' : '255,240,160' }); if (UL >= 5) bigFx({ k: 'field', x: ex, y: ey, R: 70, col: '255,210,90', life: 0.35, dmg: 30 * m }); } } G.gold += coin; bigFx({ k: 'field', x: px0, y: py0, R, col: '255,190,80', life: 0.7, dmg: 220 * m, stun: 1.4, kb: 60 }); for (let i = 0; i < 28; i++) FX.p({ kind: 'glow', x: px0 + rnd(-R, R), y: py0 - 500 - rnd(0, 200), vy: rnd(300, 500), life: 1.2, s: 8, s2: 6, c: '255,215,80' }); if (coin) G.queue.push({ t: 0.5, fn: () => { G.title = { s: (window.IS_EN ? '+' + coin + ' coins' : '엽전 +' + coin), t: 1.4, big: 0 }; } }); } FX.debris(c.x + 30, c.y - 40, 14, '#6a5040', 420); FX.shake = Math.max(FX.shake || 0, 0.8); G.flash = { c: '255,220,120', t: 0.3 }; sfx('boom');
@@ -1089,7 +1094,7 @@ function useCult() {
 function onScreen(e) { /* WIDE_MAP2: 판 전체가 보여도 기술 범위는 예전 화면 크기(처용 둘레)로 */ const p = G.player; return e.x > p.x - 380 && e.x < p.x + 380 && e.y > p.y - 760 && e.y < p.y + 420; }
 
 /* ---------- 탄 만들기 ---------- */
-function shot(o) { o.hit = o.hit || []; o.t = 0; o.r = o.r || 8; G.shots.push(o); return o; }
+function shot(o) { if (o.el === undefined) o.el = G.curEl || null; o.hit = o.hit || []; o.t = 0; o.r = o.r || 8; G.shots.push(o); return o; }
 function nearestEnemy(x, y, range, skip) {
   let best = null, bd = range;
   for (const e of G.enemies) { if (e.dead || (skip && skip.indexOf(e) >= 0)) continue; const d = Math.hypot(e.x - x, e.y - y); if (d < bd) { bd = d; best = e; } }
@@ -1129,7 +1134,7 @@ function update(dtr) {
   if (G.flash) { G.flash.t -= dtr; if (G.flash.t <= 0) G.flash = null; }
   G.bubbleCd -= dt; G.alertT -= dt;
   for (const q of G.queue) q.t -= dt;
-  const due = G.queue.filter(q => q.t <= 0); G.queue = G.queue.filter(q => q.t > 0); for (const q of due) q.fn();
+  const due = G.queue.filter(q => q.t <= 0); G.queue = G.queue.filter(q => q.t > 0); for (const q of due) { G.curEl = q.el || null; q.fn(); } G.curEl = null;
   for (const c of G.corpses) c.t += dt; G.corpses = G.corpses.filter(c => c.t < (c.hasDie ? c.life : 0.45));
   for (const b of G.beams) b.t -= dt; G.beams = G.beams.filter(b => b.t > 0);
   for (const t of G.turrets) { if (t.rise > 0) t.rise -= dt; if (t.crewA) for (let i = 0; i < t.crewA.length; i++) if (t.crewA[i] > 0) t.crewA[i] -= dt; }
@@ -1171,10 +1176,10 @@ function update(dtr) {
 
   movePlayer(dt); moveComps(dt);
   playerAttack(dt);
-  skills(dt);
-  turrets(dt);
+  skills(dt); tagEl(); G.curEl = null;
+  turrets(dt); tagEl(); G.curEl = null;
   guards(dt);
-  comps(dt);
+  comps(dt); tagEl(); G.curEl = null;
   updShots(dt);
   updAllies(dt);
   updGadgets(dt);
@@ -1433,10 +1438,12 @@ function playerAttack(dt) {
   if (wp.fx === 'tracer' || wp.fx === 'pellet') { FX.smoke(ox + Math.cos(a) * 18, oy + Math.sin(a) * 18, 2, '200,200,200', 8, 30); FX.spark(ox + Math.cos(a) * 16, oy + Math.sin(a) * 16, '255,220,120', 4, 200); sfx('gun'); } else sfx('shoot');
 }
 
+function tagEl() { for (const q of G.queue) if (q.el === undefined) q.el = G.curEl || null; for (const v of G.vortexes) if (v.el === undefined) v.el = G.curEl || 'fire'; for (const t of G.tele) if (t.el === undefined) t.el = G.curEl || null; }
 function skills(dt) {
   const p = G.player, m = atkMul();
   for (const id in G.sk) {
     const lv = G.sk[id], S = SKILLS.find(s => s.id === id);
+    tagEl(); G.curEl = S && S.el || null;
     if (S.kind !== 'atk') continue;
     const A = aw(id), sm = m * starMul(id) * elMul(S.el) * lvK(lv) * (A ? 1.5 : 1);
     if (id === 'dance') {
@@ -1545,7 +1552,7 @@ function turrets(dt) {
   const bl0 = 1 + skLv('bless') * 0.4;
   for (const t of G.turrets) {
     t.hitT -= dt; t.fire -= dt;
-    const d = TUR[t.type];
+    const d = TUR[t.type]; G.curEl = TUR_EL[t.type] || null;
     if (t.seal > 0) { t.seal -= dt; continue; }
     if (d.kind === 'mine') { if (Math.random() < dt * 0.6) FX.p({ kind: 'glow', x: t.x + rnd(-14, 14), y: t.y - rnd(10, 40), vy: -30, life: 0.8, s: 6, s2: 1, c: '255,220,90' }); continue; }
     const bl = bl0 * 3.4 * tScale() * (1 + 0.04 * Math.max(0, G.ch - 14)) * (1 + 0.1 * skLv('h_yisunsin')) * (1 + 0.4 * (t.lv - 1)) * (1 + 0.2 * fxN('build20')) * (1 + 0.05 * (G.cfg.heroLv - 1)) * chElK(TUR_EL[t.type]), oy = t.y - d.top * 0.75;
@@ -1668,7 +1675,7 @@ function drawSpirit(s) {
 
 function comps(dt) {
   const m0 = atkMul() * compMul();
-  for (const c of G.comps) { const m = m0 * heroK(c.id);
+  for (const c of G.comps) { const m = m0 * heroK(c.id) * heroSyn(c.id); G.curEl = (COMP[c.id] || {}).el || null;
     if (!c.active || c.drop > 0 || c.dash) continue;
     const C = COMP[c.id], el = elMul(C.el); c.cd -= dt * (HSK(c.id)[0] >= 3 ? 1.18 : 1);
     const dm = C.dmg * m * el * skK(c.id) * (c.dragonT > 0 ? 1.6 : 1);
@@ -1763,7 +1770,7 @@ function comps(dt) {
 }
 
 function updShots(dt) {
-  for (const b of G.shots) {
+  for (const b of G.shots) { G.curEl = b.el || null;
     b.t += dt; b.life -= dt;
     if (b.kind === 'meteor' || b.kind === 'shell') {
       b.age += dt; const k = Math.min(1, b.age / b.T);
@@ -1819,7 +1826,7 @@ function updShots(dt) {
       if (b.pierce > 0 && b.pierce < 99) b.pierce--; else if (b.pierce !== 99) b.life = 0;
     }
   }
-  G.shots = G.shots.filter(b => b.life > 0);
+  G.shots = G.shots.filter(b => b.life > 0); G.curEl = null;
 }
 function boomShot(b) {
   b.exploded = true;
@@ -1836,7 +1843,7 @@ function updZones(dt) {
     if (z.tick <= 0) { z.tick = 0.4; for (const e of G.enemies) { const dx = (e.x - z.x) / z.r, dy = (e.y - z.y) / (z.r * 0.62); if (dx * dx + dy * dy < 1) hurtEnemy(e, z.dps * 0.4, z.src, { col: '#ffb070' }); } }
   }
   G.zones = G.zones.filter(z => z.t > 0);
-  for (const v of G.vortexes) {
+  for (const v of G.vortexes) { G.curEl = v.el || 'fire';
     v.t -= dt; v.tick -= dt; v.x += v.vx * dt; v.y += v.vy * dt;
     for (let i = 0; i < 3; i++) { const a = G.t * 9 + i * 2.1, rr = v.r * rnd(0.3, 1); FX.p({ kind: 'glow', x: v.x + Math.cos(a) * rr, y: v.y + Math.sin(a) * rr * 0.5 - rnd(0, 60), vx: -Math.sin(a) * 120, vy: -rnd(60, 140), life: 0.4, s: rnd(8, 14), s2: 2, c: Math.random() < 0.5 ? '255,140,40' : '255,220,110', hard: 1 }); }
     for (const e of G.enemies) { const d = Math.hypot(e.x - v.x, e.y - v.y); if (d < v.r * 1.6 && d > 4 && !e.boss) { e.x += (v.x - e.x) / d * 80 * dt; e.y += (v.y - e.y) / d * 80 * dt; } }
@@ -2249,6 +2256,7 @@ function drawEnemy(e) {
   /* 체력 막대: 다친 적, 정예, 우두머리 */
   if (e.arena) txt(EN[e.type].n, x, y - e.hh - 26, 15, '#ff9a8a', 'center', '#200808', 3);
   if (e.boss && e.enr && e.hp > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - e.hh * 0.45, e.hh * 0.75, '255,40,20', 0.22 + 0.1 * Math.sin(G.t * 8)); ctx.restore(); }   /* 분노한 우두머리 붉은 기운 */
+  if (e.el && D.EL[e.el] && !G.lowFx) { ctx.save(); ctx.font = (e.boss || e.elite ? '900 22px ' : '700 12px ') + 'sans-serif'; ctx.textAlign = 'center'; ctx.globalAlpha = 0.9; ctx.fillText(D.EL[e.el].i || '', x + (e.boss || e.elite ? 0 : e.r * 0.9), y - e.hh - (e.boss || e.elite ? 30 : 4)); ctx.restore(); }
   if (e.elite) hpBar(x - 32, y - e.hh - 16, 64, 7, e.hp / e.max, '#ff4a3a');
   else if (!e.boss && e.hp < e.max) hpBar(x - 16, y - e.hh - 8, 32, 4, e.hp / e.max, '#ff5a4a');
 }
