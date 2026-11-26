@@ -77,6 +77,7 @@ function drawPort(id, x, y, r, ring) { const im = PORT[id]; if (!im) return fals
 /* 캐릭터 크게(사용자 11-26: 후더덕 대비 처용·영웅이 작아 보임) */ { const CHAR_K = 1.2; for (const k of Object.keys(HOV)) HOV[k] = Math.round(HOV[k] * CHAR_K); HOV.player = Math.round(118 * 1.3); for (const k of ['player_amhaeng', 'player_jeoseung', 'player_gonryong', 'player_janggun', 'player_seonbi', 'player_podo']) HOV[k] = HOV.player; }
 /* 처용·영웅 30% 더 크게(사용자 11-27: 병사와 헷갈림, 홍길동 찾기 어려움) */ { for (const k of Object.keys(HOV)) if (k !== 'yeoksin' && k !== 'mudang') HOV[k] = Math.round(HOV[k] * 1.3); }
 /* 영웅 크기를 처용과 같게, 장군만 조금 크게(사용자 11-29: 장영실이 작음) */ { const P = HOV.player, GEN = { yisunsin: 1, eulji: 1, gangamchan: 1, kimchungseon: 1 }; for (const id in D.COMP) { const s = D.COMP[id].spr || id; HOV[s] = Math.round(P * (GEN[id] ? 1.12 : 1)); } }
+/* 그림 안 몸 비율(ch) 차이 보정: 실제 화면 키를 처용과 맞춤(사용자 11-29: 사다함이 작음). 사다함은 화랑 장수라 1.1배 */ { const VK = { honggildong: 1.07, yisunsin: 1.03, gumiho: 0.93, gangamchan: 0.86, eulji: 1.04, bari: 1.05, jeonwoochi: 1.05, samyeong: 1.03, daejanggeum: 1.08, sadaham: 1.19 * 1.1, jangyeongsil: 1.05 }; for (const id in VK) { const s = (D.COMP[id] && D.COMP[id].spr) || id; if (HOV[s]) HOV[s] = Math.round(HOV[s] * VK[id]); } }
 for (const k in EN) HOV[k] = EN[k].h;
 /* SIZE_RATIO(11-25): 후더덕 비율(처용 키 118 = 1) — 탑 약 1.5, 사당 약 2.1, 금광·우물 약 1.2, 성벽 약 0.8 */
 Object.assign(HOV, { tower_arrow: 175, tower_fire: 175, tower_talisman: 175, tower_catapult: 150, tur_general: 175, tur_lady: 175, barracks: 170, mine: 140, well: 140, tower_cannon: 100, tower_cannon_barrel: 45, tower_hwacha: 107, tower_hwacha_rack: 58, base: 312, shrine: 312, wall: 95, gate: 185, guard_turtle: 115, guard_phoenix: 120, guard_tiger: 118, guard_dragon: 120 });
@@ -1286,7 +1287,7 @@ function kimK(e) { if (!pairOn('p_kim') || !e || e.kimHit) return 1; e.kimHit = 
 /* 장영실 화포 장치 + 자격루 종 */
 function updGadgets(dt) {
   if (G.kwall) { G.kwall.t -= dt; const K = G.kwall; if (G.eshots) G.eshots = G.eshots.filter(s => !(Math.abs(s.x - K.x) < K.w / 2 && Math.abs(s.y - K.y) < 34)); if (K.t <= 0) G.kwall = null; } if (G.wingShips) { G.wingShips.t -= dt; if (G.wingShips.t <= 0) G.wingShips = null; }
-  if (G.sunT > 0) G.sunT -= dt; if (G.torrent) { G.torrent.t -= dt; if (G.torrent.t <= 0) G.torrent = null; } for (const c of G.comps) { if (c.dragonT > 0) c.dragonT -= dt; if (c.id === 'honggildong' && c.active) { for (const o of hgClones(c)) for (const e of G.enemies) { if (e.dead || e.boss || e.charmT > 0) continue; const dx = o.x - e.x, dy = o.y - e.y, dd = Math.hypot(dx, dy); if (dd < 170 && dd > 20) { e.x += dx / dd * 38 * dt; e.y += dy / dd * 20 * dt; e.slowT = Math.max(e.slowT || 0, 0.15); } } } } /* 홍길동 분신 미끼: 가까운 적을 끌어 모은다 */
+  if (G.sunT > 0) G.sunT -= dt; if (G.torrent) { G.torrent.t -= dt; if (G.torrent.t <= 0) G.torrent = null; } for (const c of G.comps) { if (c.dragonT > 0) c.dragonT -= dt; if (c.id === 'honggildong' && c.active) { hgCloneAI(c, dt); for (const o of hgClones(c)) for (const e of G.enemies) { if (e.dead || e.boss || e.charmT > 0) continue; const dx = o.x - e.x, dy = o.y - e.y, dd = Math.hypot(dx, dy); if (dd < 170 && dd > 20) { e.x += dx / dd * 38 * dt; e.y += dy / dd * 20 * dt; e.slowT = Math.max(e.slowT || 0, 0.15); } } } } /* 홍길동 분신 미끼: 가까운 적을 끌어 모은다 */
   if (G.fog) { G.fog.t -= dt; if (G.fog.t <= 0) G.fog = null; } if (G.hgGhost) { for (const o of G.hgGhost) o.t -= dt; G.hgGhost = G.hgGhost.filter(o => o.t > 0); }
   if (G.bellT > 0) { G.bellT -= dt; const x = dt * 0.6; G.player.cd -= x; for (const c of G.comps) c.cd -= x; for (const t of G.turrets) t.cd -= x * 0.5; if (Math.random() < dt * 6) FX.p({ kind: 'glow', x: G.player.x + rnd(-30, 30), y: G.player.y - rnd(20, 90), vy: -40, life: 0.6, s: 6, s2: 2, c: '180,220,255' }); }
   if (!G.gadgets) return;
@@ -1295,7 +1296,15 @@ function updGadgets(dt) {
     if (g.fire > 0) g.fire -= dt; if (g.t < 0.45 && !g.sinkFx) { g.sinkFx = 1; FX.smoke(g.x, g.y, 5, '170,150,120', 14, 22); FX.debris(g.x, g.y, 4, '#5a4028', 110); } }
   G.gadgets = G.gadgets.filter(g => g.t > 0);
 }
-function hgClones(c) { const n = Math.floor(c.cl || 2), out = []; for (let i = 0; i < n; i++) { const a = Math.PI + (i + 1) * Math.PI / (n + 1) + Math.sin(G.t * 1.3 + i) * 0.12; out.push({ x: c.x + Math.cos(a) * 70, y: c.y - 14 + Math.sin(a) * 36 }); } return out; } /* 홍길동 분신 위치 */
+function hgClones(c) { const n = Math.floor(c.cl || 2); if (!c.clo) c.clo = []; while (c.clo.length < n) { const a = rnd(0, TAU); c.clo.push({ x: c.x + Math.cos(a) * 60, y: c.y + Math.sin(a) * 36, tg: null, th: rnd(0, 0.4), off: rnd(0.05, 0.45), fdir: Math.PI / 2, mv: 0, slot: c.clo.length }); } if (c.clo.length > n) c.clo.length = n; return c.clo; } /* 홍길동 분신: 저마다 따로 움직이는 분신(사용자 11-29: 몰려다녀서 이상함) */
+function hgCloneAI(c, dt) { const L = hgClones(c), C = COMP[c.id], night = G.phase === 'night', taken = new Set(); for (const o of L) if (o.tg && !o.tg.dead) taken.add(o.tg);
+  L.forEach((o, i) => { o.th -= dt; if (night && (o.th <= 0 || !o.tg || o.tg.dead || Math.hypot(o.tg.x - c.x, o.tg.y - c.y) > 660)) { o.th = 0.45 + rnd(0, 0.2); if (o.tg) taken.delete(o.tg); let best = null, bs = 1e9; for (const e of G.enemies) { if (e.dead || e.charmT > 0) continue; const dB = Math.hypot(e.x - c.x, e.y - c.y); if (dB > 620) continue; const d = Math.hypot(e.x - o.x, e.y - o.y) + (taken.has(e) ? 600 : 0) + (e.boss ? 120 : 0); if (d < bs) { bs = d; best = e; } } o.tg = best; if (best) taken.add(best); }
+    let gx, gy; if (night && o.tg && !o.tg.dead) { const a = Math.atan2(c.y - o.tg.y, c.x - o.tg.x) + (o.slot - (L.length - 1) / 2) * 0.7; gx = o.tg.x + Math.cos(a) * 140; gy = o.tg.y + Math.sin(a) * 80; } else { const a = (o.slot + 0.5) * TAU / L.length + G.t * 0.25; gx = c.x + Math.cos(a) * 130; gy = c.y - 14 + Math.sin(a) * 70; }
+    const dB = Math.hypot(gx - c.x, gy - c.y); if (dB > 400) { gx = c.x + (gx - c.x) / dB * 400; gy = c.y + (gy - c.y) / dB * 400; }
+    let vx = gx - o.x, vy = gy - o.y; const dl = Math.hypot(vx, vy); if (dl > 4) { vx /= dl; vy /= dl; } else { vx = 0; vy = 0; }
+    for (const q of L) { if (q === o) continue; const dx = o.x - q.x, dy = o.y - q.y, dd = Math.hypot(dx, dy); if (dd < 78 && dd > 0.1) { vx += dx / dd * 1.2; vy += dy / dd * 1.2; } } { const dx = o.x - c.x, dy = o.y - c.y, dd = Math.hypot(dx, dy); if (dd < 46 && dd > 0.1) { vx += dx / dd * 0.9; vy += dy / dd * 0.9; } }
+    const sp = 290 * dt, vl = Math.hypot(vx, vy); o.mv = vl > 0.15 && dl > 6 ? 1 : 0; if (vl > 0.01) { o.x += vx / Math.max(1, vl) * Math.min(sp, Math.max(dl, 30)); o.y += vy / Math.max(1, vl) * Math.min(sp, Math.max(dl, 30)) * 0.8; if (o.mv) o.fdir = Math.atan2(vy, vx); }
+    if (o.tg && !o.tg.dead) o.fdir = Math.atan2(o.tg.y - o.y, o.tg.x - o.x); if (o.fireT > 0) o.fireT -= dt; }); }
 /* 장영실 포탑: 화차 시설 그림(hwacha_head) 재사용으로 바꿈(11-29) */
 function drawGadget(g) { /* 장영실 휴대용 신기전(사용자 11-29: 게임 그림체와 맞게, 작게, 땅에 박히는 느낌) — 화차 시설 그림 재사용 */
   const x = g.x, y = g.y, GH = (HOV.player || 150) * 0.55 * (g.big || 1);
@@ -1864,8 +1873,8 @@ function comps(dt) {
     } else if (c.id === 'honggildong') {
       /* 홍길동 분신 술법(사용자 11-29): 분신 2명이 늘 따라다니고 공격할 때마다 늘어난다(최대 5, 강화 Lv3 +1) */
       const CMX = 5 + (HSK('honggildong')[0] >= 3 ? 1 : 0); c.cl = Math.min(CMX, Math.max(2, (c.cl || 2) + 0.34));
-      const srcs = [{ x: c.x, y: c.y, k: 1 }, ...hgClones(c).map(o => ({ x: o.x, y: o.y, k: 0.55 }))];
-      srcs.forEach((s, i) => { const t2 = nearestEnemy(s.x + rnd(-60, 60), s.y - 120, C.range) || e; const aa = Math.atan2(t2.y - t2.hh * 0.45 - (s.y - 40), t2.x - s.x); G.queue.push({ t: i * 0.05, fn: () => shot({ kind: 'knife', x: s.x, y: s.y - 40, vx: Math.cos(aa) * 820, vy: Math.sin(aa) * 820, dmg: dm * s.k, pierce: 1, life: 0.5, src: 'hero', r: 9, rot: 0 }) }); });
+      const srcs = [{ x: c.x, y: c.y, k: 1, o: null }, ...hgClones(c).map(o => ({ x: o.x, y: o.y, k: 0.55, o }))];   /* 분신은 저마다의 목표·박자로 던진다 */
+      srcs.forEach((s, i) => { const dl = s.o ? s.o.off + rnd(0, 0.25) : 0; G.queue.push({ t: dl, fn: () => { const sx = s.o ? s.o.x : s.x, sy = s.o ? s.o.y : s.y; let t2 = s.o && s.o.tg && !s.o.tg.dead ? s.o.tg : (nearestEnemy(sx, sy - 60, C.range) || e); if (!t2 || t2.dead) return; if (s.o) s.o.fireT = 0.3; const aa = Math.atan2(t2.y - t2.hh * 0.45 - (sy - 40), t2.x - sx); shot({ kind: 'knife', x: sx, y: sy - 40, vx: Math.cos(aa) * 820, vy: Math.sin(aa) * 820, dmg: dm * s.k, pierce: 1, life: 0.5, src: 'hero', r: 9, rot: 0 }); } }); });
       c.cloneT = 0.7; sfx('shoot', 0.5);
     } else if (c.id === 'bari') {
       shot({ kind: 'ghost', x: c.x, y: c.y - 50, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, sp: 520, dmg: dm, pierce: 0, life: 2, src: 'hero', target: e, home: 8, r: 12 }); sfx('shoot', 0.4);
@@ -2485,7 +2494,7 @@ function drawComp(c) {
   shadowE(c.x, c.y + 2, 18 * (c.drop > 0 ? 1 - c.drop * 0.6 : 1));
   if (c.soar > 0) c.soar -= 1 / 60;
   const fly = (c.id === 'samjoko' ? -26 + bob : c.id === 'imugi' ? -70 + bob * 2 - (c.soar > 0 ? Math.sin(Math.min(1, (2.6 - c.soar) / 2.6) * Math.PI) * 220 : 0) : 0) + dropY;
-  if (c.id === 'honggildong') for (const o of hgClones(c)) drawCompBody(c, C, o.x, o.y, 0.5 + (c.cloneT > 0 ? 0.2 : 0));
+  if (c.id === 'honggildong') for (const o of hgClones(c)) { const sv = { fdir: c.fdir, moving: c.moving, fire: c.fire, atkK: c.atkK }; c.fdir = o.fdir; c.moving = !!o.mv; c.fire = o.fireT > 0 ? o.fireT : 0; c.atkK = 'atk'; if (o.mv) drawCompBody(c, C, o.x - Math.cos(o.fdir) * 14, o.y - Math.sin(o.fdir) * 8, 0.18); drawCompBody(c, C, o.x, o.y, 0.55 + (o.fireT > 0 ? 0.2 : 0)); Object.assign(c, sv); }
   drawCompBody(c, C, c.x, c.y + fly, 1);
   /* 이름표 */
   ctx.font = '900 14px ' + FONT; ctx.textAlign = 'center'; ctx.lineWidth = 4; ctx.strokeStyle = '#0c1416'; ctx.strokeText(C.n, c.x, c.y + fly - (HOV[C.spr] || 70) - 12); ctx.fillStyle = 'rgb(' + C.col + ')'; ctx.fillText(C.n, c.x, c.y + fly - (HOV[C.spr] || 70) - 12);
