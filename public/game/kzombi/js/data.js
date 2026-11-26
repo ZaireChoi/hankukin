@@ -347,3 +347,45 @@ D.SKILLS = [
 
 /* SIZE_CAP(11-25): 무기 든 큰 좀비는 처용의 약 1.35배, 말 탄 좀비 약 1.4배로 표시 크기만 줄임(체력 배율 유지) */
 (function () { const D = window.JZD; if (!D) return; const RID = { rider: 1, harcher: 1, plague_rider: 1 }; for (const k in D.EN) { const e = D.EN[k]; if (!e.big || !e.h || e.__cap) continue; const tgt = 118 * (RID[k] ? 1.4 : 1.35), cur = e.h * (e.sc || 1); if (cur > tgt) e.sc = +(tgt / e.h).toFixed(3); e.__cap = 1; } })();
+
+/* 몹 사다리(사용자 11-28: "후더덕보다 몬스터가 압도적으로 많고 17장쯤 종류가 너무 많다. 밤마다 일반몹 한두 종 + 중간보스 + 최종보스.
+   가장 약한 몹은 다음 장에서 초반 2밤만, 3밤부터 2·3번 몹, 마지막 밤은 1(잡몹 떼)·3(주력)·4(소수)번. 중간중간 무기 든 몹").
+   장 c 의 창 = 사다리 4칸 [m1..m4], 장마다 한 칸씩 밀린다. 한 밤 일반 몹 최대 2종(마지막 밤 3종).
+   마리 수는 약 38% 줄이고(CNTK), 그만큼 한 마리 체력·피해를 올려 압박은 유지. 체력은 바뀐 몹 구성의 '한 무리 체력 합'이 예전과 같도록 맞춘다. */
+(function () {
+  const D = window.JZD; if (!D || !D.EN || !D.nightsOf) return;
+  const L = ['peasant', 'zdog', 'zrat', 'archer', 'zcrow', 'spear', 'yangban', 'zbat', 'munsin', 'zwaegun', 'zsword', 'zbomb', 'zmonk', 'harcher', 'rider', 'zboar', 'zshield', 'zplague', 'zsamurai', 'zox', 'blood_dog', 'black_archer', 'red_sword', 'skull_monk', 'ghost_yangban', 'iron_spear', 'plague_rider', 'shadow_samurai', 'war_ox', 'giant_bear'].filter(k => D.EN[k]);
+  D.LADDER = L;
+  const CNTK = 0.62;
+  D.mobWin = ch => { const c = Math.max(1, Math.min(30, ch)), p = Math.round((c - 1) * (L.length - 4) / 29); return L.slice(p, p + 4); };
+  const TH = t => (D.TIERHP && D.TIERHP[(D.TIER && D.TIER[t]) || 2]) || 1;
+  const units = t => t === 'zrat' ? 2 : t === 'zcrow' ? 3 : (D.EN[t] && D.EN[t].swarm) || 1;
+  const mass = (base, mix) => { /* spawnWave 한 번이 만드는 체력 합의 기댓값(늦은 밤 0.5 기준) */
+    const w = {}; let acc = 0; for (const k in (mix || {})) { const v = Math.min(1 - acc, mix[k] * 1.1); if (v > 0) { w[k] = v; acc += v; } } w[base] = (w[base] || 0) + Math.max(0, 1 - acc);
+    let m = 0; for (const t in w) { const d = D.EN[t]; if (!d) continue; const tt = (D.TIER && D.TIER[t]) || 2, b = D.EN[base] || d;
+      m += w[t] * (units(t) * d.hp * TH(t) * (d.big ? 0.62 : 1) + (tt <= 2 ? 0.35 : tt === 3 ? 0.15 : 0) * b.hp * TH(base)); }
+    return m || 1; };
+  const nf = D.nightsOf;
+  D.nightsOf = function (ch) {
+    const o = nf(ch); if (!o || !o.length) return o;
+    const C = D.CHAPTERS[ch - 1]; if (!C) return o;
+    const [m1, m2, m3, m4] = D.mobWin(ch), n = o.length, VAR = D.VAR_OF || {};
+    o.forEach((N, i) => {
+      const old = mass(N.base, N.mix), last = i === n - 1;
+      let base, mix;
+      if (last) { base = m1; mix = { [m3]: 0.32, [m4]: 0.14 }; }
+      else if (i <= 1) { base = m1; mix = { [m2]: 0.36 }; }
+      else if (i < Math.max(3, n - 2)) { base = m2; mix = { [m3]: 0.36 }; }
+      else { base = m3; mix = { [m4]: 0.36 }; }
+      /* 양념: 짝수 번째 밤마다 그 밤 주력의 무기 든 판이 조금 섞인다 */
+      N.allow = [base].concat(Object.keys(mix)); /* 이 밤 안에서 올리기(upgradeType)는 주 몹끼리만 */
+      if (ch >= 8 && i >= 2 && !last && i % 2 === 1) { const v = VAR[Object.keys(mix)[0]]; if (v && D.EN[v]) mix[v] = 0.05; }
+      N.base = base; N.mix = mix;
+      const k = old / mass(base, mix), LK = ch <= 3 ? 1 : ch <= 9 ? 0.75 : ch <= 12 ? 1 : ch <= 15 ? 0.85 : ch <= 18 ? 1.1 : ch <= 24 ? 0.9 : 0.8; /* 시뮬 보정(11-28 spend 4판) */
+      N.hp *= Math.max(0.35, Math.min(3, k)) / CNTK * LK; if (N.dhp != null) N.dhp *= 1;
+      N.rate = [N.rate[0] * CNTK, N.rate[1] * CNTK]; N.dk = 1.25; N.cap = 48;
+      if (!N.eliteType || !D.EN[N.eliteType]) N.eliteType = C.elite;
+    });
+    return o;
+  };
+})();

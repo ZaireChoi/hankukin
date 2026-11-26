@@ -561,6 +561,7 @@ function upgradeType(type) {
   const C = G.C || D.CHAPTERS[G.ch - 1]; let pool = C.pool.filter(k => (TIER[k] || 2) > t0 && EN[k]);
   /* 아직 공개되지 않은 적은 끌어오지 않는다: 이번 장까지 나온 적 중 한 단계 위만 */
   if (th > 6) { const rv = D.revealed ? D.revealed(G.ch) : new Set(); pool = pool.concat([...rv].filter(k => TIER[k] === Math.min(5, t0 + 1) && EN[k] && !EN[k].fly)); }
+  { const AL = curN().allow; if (AL) pool = AL.filter(k => (TIER[k] || 2) > t0 && EN[k]); } /* 몹 사다리: 그 밤에 정해진 몹 안에서만 올린다(사용자 11-28) */
   if (G.nm && D.VAR_OF && D.VAR_OF[type] && Math.random() < 0.45) return D.VAR_OF[type];
   /* UPPER_GATE: 상위 종은 그 밤 무리에 들어 있거나 3번째 밤부터만 끌어온다 (첫 밤 사당 즉사 방지) */
   if (!G.nm && D.VAR_OF && G.night < 2) { const UP = new Set(Object.values(D.VAR_OF)), mix = curN().mix || {}; pool = pool.filter(k => !UP.has(k) || mix[k]); }
@@ -1070,7 +1071,7 @@ function update(dtr) {
   const bossAlive = G.bossRef && !G.bossRef.dead;
   const rate = G.time > N.dur ? (bossAlive ? 1.2 : 0) : N.rate[0] + (N.rate[1] - N.rate[0]) * prog;
   if (N.elites && G.eliteIdx < N.elites.length && prog >= N.elites[G.eliteIdx]) { G.eliteIdx++; if (N.boss) { spawnBig(N.boss, true); G.bossOut = true; } else spawnBig(N.eliteType, false); }
-  if (G.enemies.length < 230) { G.spawnAcc += rate * dt * (G.bossRef && !G.bossRef.dead ? 0.65 : 1);   /* 우두머리 결투 중엔 졸개를 줄여 결투에 집중, 후반 늘어짐 완화 */ while (G.spawnAcc >= 1) { G.spawnAcc -= 1; spawnWave(); } }
+  if (G.enemies.length < (curN().cap || 230)) { G.spawnAcc += rate * dt * (G.bossRef && !G.bossRef.dead ? 0.65 : 1);   /* 우두머리 결투 중엔 졸개를 줄여 결투에 집중, 후반 늘어짐 완화 */ while (G.spawnAcc >= 1) { G.spawnAcc -= 1; spawnWave(); } }
 
   movePlayer(dt); moveComps(dt);
   playerAttack(dt);
@@ -1756,7 +1757,7 @@ function enemies(dt) {
     /* 양반 기운: 주변을 빠르게 */
     if (e.hasteT > 0) { e.hasteT -= dt; sp *= 1.3; }
     if (d.aura && Math.random() < dt * 2) for (const o of G.enemies) if (o !== e && Math.hypot(o.x - e.x, o.y - e.y) < 110) o.hasteT = 1;
-    const dmg = d.dmg * (0.8 + (N.dhp != null ? N.dhp : N.hp) * 0.2) *   /* 악몽·3막: 피해는 배율 전 체력 기준(배율 피해는 NMK.dmg 가 맡음, 11-27 시뮬) */ (e.elite ? 1.4 + 0.45 * (e.hk || 0) : 1) * (e.boss ? 1.3 + 0.7 * (e.hk || 0) : 1) * (e.dmgK || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
+    const dmg = d.dmg * (0.8 + (N.dhp != null ? N.dhp : N.hp) * 0.2) *   /* 악몽·3막: 피해는 배율 전 체력 기준(배율 피해는 NMK.dmg 가 맡음, 11-27 시뮬) */ (e.elite ? 1.4 + 0.45 * (e.hk || 0) : 1) * (e.boss ? 1.3 + 0.7 * (e.hk || 0) : 1) * (e.dmgK || 1) * (N.dk || 1) * Math.sqrt(G.tierK || 1) * (G.nm ? G.nm.dmg : 1);
 
     /* 우두머리 2단계: 체력 절반에서 분노 — 빨라지고 세지며, 충격파와 졸개를 부른다 (패턴 변화) */
     if (e.boss && !e.p2 && e.hp < e.max * (G.nm ? 0.85 : 0.5)) {
