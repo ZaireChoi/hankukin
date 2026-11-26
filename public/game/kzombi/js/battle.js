@@ -1256,6 +1256,7 @@ function drawAlly(a) {
     const ok = drawSprite(a.spr, a.x, a.y - gal, { anim: a.hitT > 0 ? 'hit' : a.atk > 0 ? 'atk' : a.mv ? 'walk' : 'idle', at: a.atk > 0 ? 1 - a.atk / 0.3 : null, dir: dir8(a.fdir), t: G.t + a.rx, h: (spS && spS.height) || 60, mode: a.hitT > 0 ? 'white' : null });
     if (!ok) { const bob = a.mv ? Math.abs(Math.sin(G.t * 12 + a.rx)) * 3 : 0; rrPath(a.x - 11, a.y - 34 - bob, 22, 30, 8); ctx.fillStyle = 'rgb(' + S.col + ')'; ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 2.5; ctx.stroke(); circle(a.x, a.y - 44 - bob, 11); ctx.fillStyle = '#f2d2b0'; ctx.fill(); ctx.stroke(); ctx.fillStyle = '#17171a'; ctx.fillRect(a.x - 14, a.y - 56 - bob, 28, 4); ctx.fillRect(a.x - 7, a.y - 64 - bob, 14, 9); if (a.elite) { ctx.fillStyle = '#ffd34a'; ctx.fillRect(a.x - 11, a.y - 22 - bob, 22, 4); } txt(S.n[0], a.x, a.y - 20 - bob, 13, '#fff', 'center', '#1a1410', 3); }
     if (a.hp < a.max) hpBar(a.x - 14, a.y - 74, 28, 4, a.hp / a.max, '#6fdc6a');
+    { const AB = { s_sword: [2, '▣', '#9fc7ff'], s_archer: [2, '▲', '#ff9a40'], s_spear: [3, '↑', '#ffe08a'], s_monk: [3, '+', '#8df08a'], s_gun: [4, '»', '#d8d8ff'], s_taoist: [4, '✦', '#f0f0ff'] }[a.type]; if (AB && actNum() >= AB[0]) { circle(a.x + 15, a.y - 70, 7); ctx.fillStyle = 'rgba(10,14,18,.8)'; ctx.fill(); ctx.font = '900 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = AB[2]; ctx.fillText(AB[1], a.x + 15, a.y - 69.5); ctx.textBaseline = 'alphabetic'; } }   /* 막이 오를수록 생긴 병사 능력 표시 */
     return;
   }
   const k = Math.min(1, a.t / 0.5, (a.life - a.t) / 0.3);
@@ -2524,6 +2525,9 @@ function drawHUD(day) {
     txt(String(i + 1), x + 12, 144, 15, '#fff', 'center');
     if (cur) { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(x - 8, 96); ctx.lineTo(x + 8, 96); ctx.lineTo(x, 106); ctx.fill(); }
   }
+  /* 이번 밤 일반 몹 얼굴 미리보기(사용자 11-28: 밤마다 한두 종류) */
+  { const NN = G.nights[Math.min(G.night, n - 1)], mobs = NN ? [NN.base].concat(Object.entries(NN.mix || {}).filter(q => q[1] >= 0.1).map(q => q[0])).filter((t, i, s) => t && s.indexOf(t) === i && D.EN[t]).slice(0, n >= 7 ? 2 : 3) : []; const px0 = x0 + (n - 1) * gap + 62;
+    mobs.forEach((t, j) => { const px = px0 + j * 38; circle(px, 128, 17); ctx.fillStyle = 'rgba(40,46,56,.95)'; ctx.fill(); ctx.save(); circle(px, 128, 16); ctx.clip(); drawSprite((D.EN[t] && D.EN[t].spr) || t, px, 178, { h: 62, dir: dir8(Math.PI / 2), t: 0 }); ctx.restore(); circle(px, 128, 17); ctx.strokeStyle = j ? 'rgba(255,255,255,.45)' : '#ffd46a'; ctx.lineWidth = 2; ctx.stroke(); }); }
   /* 챕터 이름 */
   /* 정보칩: 1줄 장 이름, 2줄 약점 원소 + 목표 진행 (예전 배지 4~5개를 합침) */
   { const nm = (G.C.gn || G.ch) + '. ' + G.C.name + (G.mode !== 'adventure' ? ' · ' + ({ challenge: '극한 도전', endless: '무한 방어선', gold: '엽전 던전', xp: '경험치 던전', boss: '우두머리 토벌' }[G.mode] || '') : ''); ctx.font = '800 15px ' + FONT; const w1 = Math.min(300, ctx.measureText(nm).width + 22); panel(20, 160, w1, 28, 14, 'rgba(10,14,18,.5)', null); txt(nm, 31, 174, 15, '#ffe3a0', 'left', false);
