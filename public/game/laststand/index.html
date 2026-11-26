@@ -598,6 +598,81 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 .cpnRow{display:flex;gap:8px;margin-top:14px}.cpnRow input{flex:1;min-width:0;padding:11px 12px;background:#070a10;border:1px solid #3a4356;color:#fff;font-size:17px;letter-spacing:3px;text-transform:uppercase;outline:none}
 .cpnRow input:focus{border-color:#f2b544}.cpnRow .go{margin:0;padding:10px 22px}
 .cpnMsg{min-height:20px;margin:10px 0 0;font-size:14px}.cpnMsg.ok{color:#9ff0a8}.cpnMsg.bad{color:#ff9a8a}
+/* 스킬 자동/수동 · 버튼 반응 */
+#bSkMode{position:fixed;right:58px;top:18px;height:40px;padding:0 12px 0 10px;border-radius:10px;border:1px solid #ffffff33;background:#0b1020cc;color:#cfe8ff;font:800 13px var(--ff,inherit);pointer-events:auto;display:flex;align-items:center;gap:6px;letter-spacing:1px}
+#bSkMode i{font-style:normal;font-size:10px;color:#6fe08a}#bSkMode.man{border-color:#f2b544aa;color:#ffe2a0}#bSkMode.man i{color:#f2b544}
+.rb.deny{animation:rbDeny .36s}.rb.deny::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px #ff6a5a;pointer-events:none}
+@keyframes rbDeny{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.rb.fired{animation:rbFire .3s ease-out}@keyframes rbFire{0%{transform:scale(.86);filter:brightness(1.8)}100%{transform:scale(1);filter:none}}
+#hud.skman .rb.el.ready{box-shadow:0 0 0 2px #f2b544,0 0 16px #f2b54499}
+/* v27 프로필·우편·무기 7등급·보급·재화·스킬 강화 */
+.prof{position:relative;display:flex;align-items:center;gap:9px;height:46px;padding:0 12px 0 0;margin-right:auto;border:0;background:linear-gradient(90deg,#0e1424f2,#0a0e16cc);box-shadow:inset 0 0 0 1px var(--ln);color:#fff;cursor:pointer;font-family:var(--ff);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);text-align:left}
+.prof:hover{box-shadow:inset 0 0 0 1px var(--ac)}
+.prof .pav{position:relative;width:46px;height:46px;flex:0 0 auto;overflow:hidden;background:#0b1020}.prof .pav img{width:100%;height:100%;object-fit:cover;display:block}
+.prof .pav b{position:absolute;left:0;bottom:0;min-width:20px;padding:1px 4px;font:900 11px/1.2 var(--ff);background:var(--ac);color:#1a1206;text-align:center}
+.prof .pin{display:flex;flex-direction:column;gap:2px;min-width:92px;max-width:150px}.prof .pin b{font:900 14px/1.1 var(--ff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prof .pin small{font:700 10.5px var(--ff);color:var(--tx2);white-space:nowrap}.prof .pxp{display:block;height:4px;background:#ffffff1a;margin-top:2px}.prof .pxp i{display:block;height:100%;background:linear-gradient(90deg,#f2b544,#ffe08a)}
+.prof .pdot{position:absolute;top:2px;left:2px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#ff4d4d;color:#fff;font:900 10px/16px var(--ff);font-style:normal;text-align:center;box-shadow:0 0 0 2px #0a0e16}
+@media (max-width:480px){.prof .pin{display:none}.prof{padding-right:0;clip-path:none}}
+.cur.mini{padding-right:8px}.cur.mini .ci{font-size:16px;color:#b8c7e0}.cur.mini.ore .ci{color:#ffc46b}.cur.mini.chip .ci{color:#7fe0ff}.cur.mini .cv{min-width:44px}
+.tabs .tn{display:inline-block;min-width:16px;padding:0 4px;margin-left:3px;border-radius:8px;background:#ff4d4d;color:#fff;font:900 10px/16px var(--ff);font-style:normal}
+#profP{z-index:7}#pfBody{width:100%;max-width:980px;margin:0 auto;padding:6px 14px 24px;text-align:left}
+.pfw{display:grid;gap:12px}.pfc{display:flex;gap:16px;align-items:center;padding:16px;background:linear-gradient(90deg,#121a2cf2,#0b0f18e6);box-shadow:inset 0 0 0 1px var(--ln);clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+.pfa{position:relative;width:128px;height:128px;flex:0 0 auto;box-shadow:0 0 0 2px var(--ac),0 0 24px #f2b54444}.pfa img{width:100%;height:100%;object-fit:cover;display:block}
+.pfa b{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);padding:3px 10px;background:var(--ac);color:#1a1206;font:900 13px var(--ff);white-space:nowrap}
+.pfi{flex:1;min-width:0}.pfi>small{font:800 11px var(--ff);letter-spacing:1px;color:var(--ac)}
+.pfn{display:flex;gap:8px;margin:6px 0 10px}.pfn input{flex:1;min-width:0;max-width:280px;padding:8px 10px;background:#070a10;border:1px solid #3a4356;color:#fff;font:900 20px var(--ff);outline:none}.pfn input:focus{border-color:var(--ac)}
+.pfx{display:flex;align-items:center;gap:10px}.pfx span{flex:1;height:8px;background:#ffffff14;box-shadow:inset 0 0 0 1px #ffffff14}.pfx span i{display:block;height:100%;background:linear-gradient(90deg,#f2b544,#ffe08a)}.pfx em{font:800 12px var(--ff);color:#cfd8ea;font-style:normal}
+.pfb{margin:8px 0 0;font-size:12.5px;color:#aab6cc}.pfb b{color:#9ff0a8}
+.pfs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.pfs div{padding:10px 8px;text-align:center;background:#0c1220e6;box-shadow:inset 0 0 0 1px var(--ln)}.pfs small{display:block;font-size:11px;color:var(--tx2)}.pfs b{font:900 18px var(--ff)}
+.pfm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pmb{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border:0;background:linear-gradient(90deg,#141b2aee,#0a0e16ee);box-shadow:inset 0 0 0 1px var(--ln);color:#fff;text-align:left;cursor:pointer;font-family:var(--ff);clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px)}
+.pmb:hover{box-shadow:inset 0 0 0 1px var(--ac)}.pmb>span:nth-child(2){flex:1;min-width:0}.pmb b{display:flex;align-items:center;gap:6px;font:900 15px var(--ff)}.pmb small{display:block;font-size:12px;color:var(--tx2);margin-top:2px}.pmb em{font-style:normal;color:var(--ac);font-size:20px}
+.pmb .dot,.mlh .dot{position:static;width:8px;height:8px;border-radius:50%;background:#ff4d4d;display:inline-block}
+.mlw{display:grid;gap:10px}.mlh{display:flex;align-items:center;gap:10px}.mlh b{font:900 17px var(--ff)}.mlh small{flex:1;color:var(--tx2);font-size:12px}
+.mll{display:grid;gap:8px}.mli{display:flex;align-items:center;gap:12px;padding:12px;background:#0d1322ee;box-shadow:inset 0 0 0 1px var(--ln);border-left:3px solid var(--ac)}.mli.got{opacity:.5;border-left-color:#3a4356}
+.mlt{flex:1;min-width:0}.mlt b{font:900 15px var(--ff)}.mlt p{margin:3px 0 6px;font-size:12.5px;line-height:1.45;color:#b7c2d6}
+.mlr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}.mlr small{font-size:11px;color:var(--tx2);white-space:nowrap}
+.rwl{display:flex;flex-wrap:wrap;gap:5px}.rwc{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#070a12;box-shadow:inset 0 0 0 1px var(--ln2);font:800 12px var(--ff);color:#dfe6f3}.rwc .ico{font-size:14px;color:#9fe8ff}.rwc.gem .ico{color:#ff9ad8}.rwc.ore .ico{color:#ffc46b}.rwc.core .ico{color:#7fd8ff}.rwc[style] {box-shadow:inset 0 0 0 1px var(--rc);color:var(--rc)}
+.emp{color:var(--tx2);text-align:center;padding:30px}
+.pfcp{padding-top:6px}
+.plw .snote{margin:0 0 10px}.plg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.plc{position:relative;padding:0 0 10px;border:0;background:#0c1220;box-shadow:inset 0 0 0 1px var(--ln);color:#fff;cursor:pointer;font-family:var(--ff);overflow:hidden}
+.plc img{width:100%;aspect-ratio:1;object-fit:cover;display:block;filter:saturate(.85) brightness(.85);transition:filter .2s}.plc:hover img,.plc.on img{filter:none}
+.plc b{display:block;margin-top:7px;font:900 15px var(--ff)}.plc small{color:var(--tx2);font-size:11.5px}.plc.on{box-shadow:inset 0 0 0 2px var(--ac),0 0 18px #f2b54444}
+.plc em{position:absolute;top:6px;right:6px;padding:2px 7px;background:var(--ac);color:#1a1206;font:900 11px var(--ff);font-style:normal}
+.stw{display:grid;gap:8px}.str{display:flex;align-items:center;gap:12px;padding:14px;background:#0d1322ee;box-shadow:inset 0 0 0 1px var(--ln)}.str>span{flex:1}.str b{display:block;font:900 15px var(--ff)}.str small{color:var(--tx2);font-size:12px}
+/* 무기 7등급 */
+.wt .ws{position:absolute;left:3px;bottom:2px;font:900 9.5px var(--ff);color:#ffd36b;font-style:normal}.wt .wl{position:absolute;right:3px;bottom:2px;font-size:9px;font-style:normal}
+.wt.g5,.wt.g6{box-shadow:inset 0 0 0 2px var(--rc),0 0 12px color-mix(in srgb,var(--rc) 45%,transparent)}
+.wsr{color:#ffd36b;letter-spacing:1px}.wsr s{text-decoration:none;color:#ffffff26}
+.wop li b{display:block;font-size:12.5px}.wop li small{font-size:11.5px;color:#9fb0c8}.wop li.none{list-style:none}
+.wmg{display:flex;align-items:center;gap:10px;margin-top:10px;padding:9px 10px;background:#0b1020;box-shadow:inset 0 0 0 1px var(--ln)}.wmg>span{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.wmg .ico{font-size:20px;color:var(--tx2)}.wmg b{font:900 13px var(--ff);white-space:nowrap}.wmg small{font-size:11.5px;color:var(--tx2)}.wmg.ok{box-shadow:inset 0 0 0 1px #7df06a88}.wmg.ok .ico{color:#7df06a}
+.wbt{flex-wrap:wrap}.wbt .bp .ico,.wbt .bs .ico{font-size:13px}.gh .bs.sm{margin-left:auto;padding:5px 9px;font-size:11.5px}.gh .bs.warn{background:#4a1a1a;box-shadow:inset 0 0 0 1px #ff6a5a;color:#ffd0c8}
+.bp:disabled,.bs:disabled{filter:grayscale(.8) brightness(.6);cursor:default}
+/* 스킬 강화 */
+.skw{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;width:min(860px,100%);box-sizing:border-box;margin:0 auto;text-align:left}.skw .snote{margin:0}
+.skc{display:flex;align-items:center;gap:14px;padding:12px 14px;background:linear-gradient(90deg,#121a2cf2,#0b0f18e6);box-shadow:inset 0 0 0 1px var(--ln);clip-path:polygon(12px 0,100% 0,100% 100%,0 100%,0 12px);text-align:left}
+.skc .skt.lg{width:64px;height:64px;font-size:40px}.skx{flex:1;min-width:0}.skx small{font:800 10.5px var(--ff);letter-spacing:1px;color:var(--ac)}.skx b{display:block;font:900 16px var(--ff)}.skx p{margin:2px 0 6px;font-size:12px;color:#aab6cc}
+.sks{display:inline-flex;align-items:center;gap:3px}.sks i{width:18px;height:6px;background:#ffffff1a}.sks i.on{background:var(--ac)}.sks em{margin-left:6px;font:900 12px var(--ff);font-style:normal;color:#ffe2a0}
+.skf{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:5px;font-size:12px;color:var(--tx2)}.skf b{color:#dfe6f3}
+.skc .bp{flex-direction:column;min-width:118px;padding:9px 10px}.skc .bp small{display:flex;align-items:center;gap:3px;font:800 11px var(--ff)}.skc .bp .ico{font-size:12px}
+/* 보급·재화 */
+.pity{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:10px 0;padding:9px 12px;background:#0d1322ee;box-shadow:inset 0 0 0 1px var(--ln);text-align:left}.pity b{color:var(--ac);font-size:16px}.pity small{color:var(--tx2);font-size:11.5px}
+.legw{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px;background:linear-gradient(90deg,#2a1d08f0,#0d0f16e6);box-shadow:inset 0 0 0 1px #ffd36b88;text-align:left;clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.lgh{flex:1;min-width:240px}.lgh small{font:800 11px var(--ff);letter-spacing:1px;color:#ffd36b}.lgh b{display:block;font:900 18px var(--ff)}.lgh p{margin:4px 0 0;font-size:12.5px;color:#d9cdb2;line-height:1.6}.lgh .chip{--ec:#fff;color:var(--ec);box-shadow:inset 0 0 0 1px var(--ec)}
+.lgb{display:flex;flex-direction:column;gap:6px}.lgb .bp{background:linear-gradient(180deg,#ffe08a,#f2b544)}
+.wres{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px 0}.wmn{width:76px;padding:6px 4px;text-align:center;background:#0b1020;box-shadow:inset 0 0 0 1px var(--rc);animation:wmnIn .35s ease-out both}
+.wmn span{display:block;font-size:30px}.wmn b{display:block;font:900 11.5px var(--ff);color:var(--rc)}.wmn small{font-size:10.5px;color:var(--tx2)}.wmn.g4,.wmn.g5,.wmn.g6{box-shadow:inset 0 0 0 2px var(--rc),0 0 16px var(--rc)}
+.wres .wmn:nth-child(2){animation-delay:.04s}.wres .wmn:nth-child(3){animation-delay:.08s}.wres .wmn:nth-child(4){animation-delay:.12s}.wres .wmn:nth-child(5){animation-delay:.16s}.wres .wmn:nth-child(n+6){animation-delay:.2s}
+@keyframes wmnIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
+.gds{width:min(900px,100%);margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.gd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 10px 12px;background:linear-gradient(180deg,#141b2aee,#0a0e16ee);box-shadow:inset 0 0 0 1px var(--ln)}.gd.free{box-shadow:inset 0 0 0 1px #7df06a88}
+.gdi{font-size:44px}.gd b{font:900 14px var(--ff)}.gd small{font-size:11.5px;color:var(--tx2);text-align:center}.gd .bp{margin-top:auto;width:100%}
+.mrw{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin:6px 0;font-size:13px;color:#cfd8ea}.mrw span{display:inline-flex;align-items:center;gap:4px}.mrw .ico{font-size:15px;color:#ffc46b}.mrw b{color:#fff}.mrw em{font-style:normal;color:#9ff0a8;font-weight:800}
+@media (max-width:640px){.pfc{flex-direction:column;text-align:center}.pfn{justify-content:center}.pfs{grid-template-columns:repeat(3,minmax(0,1fr))}.pfm{grid-template-columns:1fr}.plg{grid-template-columns:repeat(2,minmax(0,1fr))}.skc{flex-wrap:wrap}.skc .bp{width:100%}.pfa{width:104px;height:104px}}
+
 </style>
 </head>
 <body>
@@ -615,7 +690,7 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
   <div id="banner"></div>
 <div id="misArrow" class="hide"><i></i><b></b></div>
   <div id="hpwrap"><div id="pfp"></div><div id="hpcol"><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt" class="num"></div></div></div>
-  <button id="bPause" aria-label="일시정지"></button>
+  <button id="bPause" aria-label="일시정지"></button><button id="bSkMode" aria-label="스킬 자동/수동"></button>
   <div id="btns">
     <button class="rb sm el" id="bElem" aria-label="계열 기술 (R)" title="계열 기술 (R)"><span></span><i></i><b></b><kbd>R</kbd></button>
 <button class="rb sm el" id="bAuto" aria-label="스킬 (E)" title="스킬 (E)"><span></span><i></i><b></b><kbd>E</kbd></button>
@@ -629,11 +704,11 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 
 <div id="title" class="ov">
   <header id="topbar">
-    <div class="brand"><b>ASCEND</b><span>LAST STAND</span></div>
+    <button id="prof" class="prof" aria-label="프로필"></button>
     <div class="curs"><span class="cur" id="curCore"></span><span class="cur gem" id="curGem"></span></div>
     <button class="ib" id="bSound" aria-label="소리"></button>
   </header>
-  <nav id="rail"><button class="rl" id="bRoster"></button><button class="rl" id="bArms"></button><button class="rl" id="bGacha"></button><button class="rl" id="bDaily"></button><button class="rl" id="bCpn"></button><button class="rl hide" id="bHangar"></button></nav>
+  <nav id="rail"><button class="rl" id="bRoster"></button><button class="rl" id="bArms"></button><button class="rl" id="bGacha"></button><button class="rl" id="bDaily"></button><button class="rl hide" id="bHangar"></button></nav>
   <div id="lobby">
     <section id="stage"><div id="mnav"><button id="mPrev" aria-label="이전 기체">‹</button><button id="mNext" aria-label="다음 기체">›</button></div><div id="dragHint">끌어서 돌려 보기</div></section>
     <section id="mdet"></section>
@@ -657,10 +732,11 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
   </div>
   <div class="shopT hide" id="shopWpn"></div>
   <div class="shopT hide" id="shopGem"></div>
-  <div class="shopT hide" id="shopCpn"></div>
+  <div class="shopT hide" id="shopGoods"></div>
 </div>
 <div id="hangar" class="ov hide panel"><button class="close" id="hClose">✕</button><h2 id="hTitle"></h2><p class="pnote">모든 기체에 영구 적용됩니다 · 보유 코어 <b id="coreH">0</b></p><div id="upList"></div></div>
 <div id="arsenal" class="ov hide panel scr"><div class="scrH"><h2 id="aTitle"></h2><div class="tabs" id="aTabs"></div><div class="curS" id="aCur"></div><button class="close" id="aClose">✕</button></div><p class="snote" id="aNote"></p><div id="arsBody"></div></div>
+<div id="profP" class="ov hide panel scr"><div class="scrH"><h2 id="pfTitle"></h2><div class="tabs" id="pfTabs"></div><div class="curS" id="pfCur"></div><button class="close" id="pfClose">✕</button></div><div id="pfBody"></div></div>
 <div id="daily" class="ov hide panel"><button class="close" id="dClose">✕</button><h2 id="dTitle"></h2><p class="pnote" id="streak"></p><div id="loginRow"></div><button class="go small" id="claimLogin" style="margin-top:12px">출석 보상 받기</button><h3>오늘의 임무</h3><div id="msList"></div></div>
 <div id="lvl" class="ov hide"><div class="rays"></div><h2 id="lvlT">LEVEL UP</h2><p id="lvlS">강화 하나를 고르세요</p><div id="cards"></div><div id="lvlFoot"><button class="ghost" id="reroll"></button></div></div>
 <div id="pause" class="ov hide"><h2 style="margin:0;letter-spacing:6px;font-size:30px">일시정지</h2><div id="build"></div>
@@ -676,6 +752,6 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
 <script src="lib/gicons.js?v=1"></script>
-<script type="module" src="game.js?v=26"></script>
+<script type="module" src="game.js?v=27"></script>
 </body>
 </html>
