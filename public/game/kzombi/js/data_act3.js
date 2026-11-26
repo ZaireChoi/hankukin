@@ -79,8 +79,8 @@
   };
 
   /* 11-27 시뮬 보정(돈 다 쓰는 계정, 장마다 4판 — 표본 적음): 악몽 앞 장 쉬움·가운데 어려움, 3막 16~24장 어려움·끝 쉬움 */
-  D.NMHP = Object.assign(D.NMHP || {}); for (let c = 1; c <= 30; c++) D.NMHP[c] = D.NMHP[c] || (c <= 5 ? 1.05 : c <= 10 ? 1.0 : c <= 25 ? 0.9 : 0.8);
-  D.A3HP = Object.assign(D.A3HP || {}); for (let c = 1; c <= 30; c++) D.A3HP[c] = D.A3HP[c] || (c >= 16 && c <= 24 ? 0.75 : c >= 25 ? 0.85 : 1);
+  D.NMHP = Object.assign(D.NMHP || {}); for (let c = 1; c <= 30; c++) D.NMHP[c] = D.NMHP[c] || (c <= 5 ? 1.25 : c <= 10 ? 1.28 : c <= 25 ? 1.15 : 1.02);   /* 2차   /* 11-29 새 웨이브 곡선 뒤 재보정 */
+  D.A3HP = Object.assign(D.A3HP || {}); for (let c = 1; c <= 30; c++) D.A3HP[c] = D.A3HP[c] || (c >= 16 && c <= 24 ? 1.3 : c >= 25 ? 1.35 : 2.2);   /* 11-29 재보정 */
   /* 11-28 최종 시뮬(자동 이동 개선 뒤 8판): 악몽 1장 8/8, 30장 7/8, 61장 7/8, 90장 8/8 — 쉬움 → 악몽 체력 1~10장 x2.0, 11~20장 x1.7, 21~30장 x1.5, 피해 x1.1(3막은 악몽 30장 기준이라 체력 x1.5 함께 오름) */
   { const f = D.nmK; if (f && !f.__fin) { D.nmK = c => { const o = f(c), h = c <= 5 ? 2.4 : c <= 10 ? 2.0 : c <= 20 ? 1.7 : 1.5; return Object.assign({}, o, { hp: o.hp * h, dmg: o.dmg * 1.1 }); }; D.nmK.__fin = 1; } const g = D.a3K; if (g && !g.__fin) { D.a3K = n => { const o = g(n); return Object.assign({}, o, { dmg: o.dmg * 1.1 }); }; D.a3K.__fin = 1; } }
   /* 4~10막은 악몽 30장 기준(nm30)을 따라 x1.5 올라가므로 막 보정을 1/1.5 로 되돌린다 — data_acts.js 의 기본값보다 먼저 정한다 */
