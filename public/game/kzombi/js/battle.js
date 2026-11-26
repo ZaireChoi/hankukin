@@ -470,7 +470,7 @@ function hurtT(tg, dmg) {
   if (tg.style === 'soldier' && tg.type === 's_sword' && actNum() >= 2) dmg *= 0.72;   /* 2막부터 검사 방패 막기 */
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
-  if (tg === G.player) { FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
+  if (tg === G.player) { G.hurtV = Math.min(1, Math.max(G.hurtV || 0, 0.35 + dmg / tg.max * 4)); G.kickY = Math.min(6, 2 + dmg / tg.max * 40); FX.num(tg.x, tg.y - 70, dmg, false, '#ff6a5a'); if ((G.vibT || 0) <= G.t) { G.vibT = G.t + 0.25; vib(dmg > tg.max * 0.1 ? 60 : 25); } }
 }
 /* 우두머리 처치: 금빛 장비 상자가 튀어나와 빛기둥 (실제 지급은 결과 화면) */
 function drawLoot(L) {
@@ -1046,7 +1046,7 @@ function bigFx(o) { o.t = 0; o.hit = []; o.life = o.life || o.T || 0.6; (G.bigs 
 function bigHit(b, x, y, R) { for (const e of G.enemies.slice()) { if (e.dead || b.hit.indexOf(e) >= 0) continue; if (Math.hypot(e.x - x, (e.y - y) * 1.3) < R + (e.r || 0)) { b.hit.push(e); if (b.dmg > 0) { hurtEnemy(e, b.dmg * (b.bonus ? b.bonus(e) : 1), 'hero', b.kb ? { kb: b.kb, kx: x, ky: y } : undefined); if (b.stun && !e.boss) e.stunT = Math.max(e.stunT || 0, b.stun); if (b.soul && e.dead && !e.boss) summonAlly(e.type, e.x, e.y, 'soul', 8, b.soul); } } } }
 function updBig(dt) { if (!G.bigs || !G.bigs.length) return; for (const b of G.bigs) { b.t += dt;
   if (b.k === 'crescent') { b.x += Math.cos(b.dir) * b.sp * dt; b.y += Math.sin(b.dir) * b.sp * dt; bigHit(b, b.x, b.y, b.R); }
-  else if (b.k === 'proj') { if (!b.boom && b.t >= b.T) { b.boom = 1; bigHit(b, b.tx, b.ty, b.R); FX.explode(b.tx, b.ty - 10, b.R * 0.55); FX.shake = Math.max(FX.shake || 0, 0.6); sfx('boom'); if (b.end) b.end(b); b.life = b.T + 0.4; } }
+  else if (b.k === 'proj') { if (!b.boom && b.t >= b.T) { b.boom = 1; if (G.t - (G.hsBig || -9) > 0.35) { G.hsBig = G.t; G.freezeT = Math.max(G.freezeT || 0, FX.low ? 0.04 : 0.07); } bigHit(b, b.tx, b.ty, b.R); FX.explode(b.tx, b.ty - 10, b.R * 0.55); FX.shake = Math.max(FX.shake || 0, 0.6); sfx('boom'); if (b.end) b.end(b); b.life = b.T + 0.4; } }
   else if (b.k === 'field') { if (!b.boom && b.t >= 0.12) { b.boom = 1; bigHit(b, b.x, b.y, b.R); } }
   else if (b.k === 'pillar') { if (!b.boom && b.t >= 0.15) { b.boom = 1; bigHit(b, b.x, b.y, b.R); FX.explode(b.x, b.y - 10, b.R * 0.45); } } }
   G.bigs = G.bigs.filter(b => b.t < b.life); }
@@ -1168,6 +1168,7 @@ function update(dtr) {
   if (G.title) { G.title.t -= dtr * (G.title.big ? 1 : 1.7); if (G.title.t <= 0) G.title = null; }
   if (G.bubble) { if (G.bubble.t > 3) G.bubble.t = 3; G.bubble.t -= dtr; if (G.bubble.t <= 0) G.bubble = null; }
   if (G.flash) { G.flash.t -= dtr; if (G.flash.t <= 0) G.flash = null; }
+  if (G.hurtV > 0) G.hurtV = Math.max(0, G.hurtV - dtr * 2.2); if (G.kickY) G.kickY = Math.abs(G.kickY) < 0.3 ? 0 : -G.kickY * Math.max(0, 1 - dtr * 14);
   G.bubbleCd -= dt; G.alertT -= dt;
   for (const q of G.queue) q.t -= dt;
   const due = G.queue.filter(q => q.t <= 0); G.queue = G.queue.filter(q => q.t > 0); for (const q of due) { G.curEl = q.el || null; q.fn(); } G.curEl = null;
@@ -1261,7 +1262,8 @@ function movePlayer(dt) {
   }
   const ml = Math.hypot(mx, my);
   p.moving = ml > 0.05;
-  if (p.moving) { const k = Math.min(1, ml) / ml; p.x += mx * k * p.sp * dt; p.y += my * k * p.sp * dt; p.mdir = Math.atan2(my, mx); if (Math.abs(mx) > 0.1 && !p.aimT) p.flip = mx < 0; if (Math.random() < dt * 8) FX.p({ kind: 'smoke', x: p.x + rnd(-6, 6), y: p.y + 4, vx: rnd(-10, 10), vy: -10, life: 0.6, s: 6, s2: 14, c: WORLD.T.snowy ? '240,245,255' : '190,170,130', rot: 0, vr: 0 }); }
+  { const kk = ml > 0.05 ? Math.min(1, ml) / ml : 0, A = Math.min(1, dt * (ml > 0.05 ? 16 : 22)); p.vx = (p.vx || 0) + (mx * kk * p.sp - (p.vx || 0)) * A; p.vy = (p.vy || 0) + (my * kk * p.sp - (p.vy || 0)) * A; if (!p.moving && Math.hypot(p.vx, p.vy) > 6) { p.x += p.vx * dt; p.y += p.vy * dt; } }   /* 손맛(11-30): 출발·멈춤 가속 곡선 */
+  if (p.moving) { p.x += p.vx * dt; p.y += p.vy * dt; p.mdir = Math.atan2(my, mx); if (Math.abs(mx) > 0.1 && !p.aimT) p.flip = mx < 0; if (Math.random() < dt * 8) FX.p({ kind: 'smoke', x: p.x + rnd(-6, 6), y: p.y + 4, vx: rnd(-10, 10), vy: -10, life: 0.6, s: 6, s2: 14, c: WORLD.T.snowy ? '240,245,255' : '190,170,130', rot: 0, vr: 0 }); }
   p.x = clamp(p.x, 50, WW - 50); p.y = clamp(p.y, 60, H - 90);
   const ds = Math.hypot(p.x - sh.x, p.y - sh.y);
   if (ds < sh.r + p.r + 20) { const k = (sh.r + p.r + 20) / (ds || 1); p.x = sh.x + (p.x - sh.x) * k; p.y = sh.y + (p.y - sh.y) * k; }
@@ -2709,7 +2711,7 @@ function draw() {
   if (isNight() || G.phase === 'level' || G.phase === 'lose') dark = Math.min(0.62, 0.42 + Math.min(1, G.time / curN().dur) * 0.1 + G.night * 0.03 + (WORLD.T.snowy ? 0.06 : 0));
   else if (G.phase === 'dawn' || G.phase === 'win') dark = 0.06 + 0.4 * Math.max(0, G.dawnT / 2.2);
   G.dark += (dark - G.dark) * 0.05;
-  const sk = FX.shake > 0 ? FX.shake * 30 : 0, shx = rnd(-sk, sk), shy = rnd(-sk, sk);
+  const sk = FX.shake > 0 ? Math.min(15, 24 * Math.pow(Math.min(1, FX.shake), 1.35)) * (FX.low ? 0.6 : 1) : 0, shx = sk * Math.sin(G.t * 63), shy = sk * Math.cos(G.t * 49) + (G.kickY || 0);   /* 손맛(11-30): 흔들림 상한 15px·부드러운 진동, 피격 반동 */
   ctx.drawImage(WORLD.cv, (camX + (WORLD.MX || 0)) * WORLD.GS, (camY + (WORLD.MT || 0)) * WORLD.GS, vw * WORLD.GS, vh * WORLD.GS, shx, shy, W, VH);
   shade(G.dark);
   ctx.save(); ctx.scale(zoom, zoom); ctx.translate(-camX + shx / zoom, -camY + shy / zoom);
@@ -2803,6 +2805,7 @@ function draw() {
   /* 사당 공격받음: 붉은 테두리 */
   if (G.alertT > 0 || G.crisisT > 0 || (isNight() && G.shrine.hp < G.shrine.max * 0.25)) { const a = (0.35 + 0.25 * Math.sin(G.t * 10)) * (G.crisisT > 0 ? 1.5 : G.alertT > 0 ? 1 : 0.6); const rg = ctx.createRadialGradient(W / 2, VH / 2, VH * 0.35, W / 2, VH / 2, VH * 0.72); rg.addColorStop(0, 'rgba(255,0,0,0)'); rg.addColorStop(1, 'rgba(230,20,20,' + a + ')'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, VH); }
   if (G.flash) { ctx.fillStyle = 'rgba(' + G.flash.c + ',' + Math.min(0.6, G.flash.t * 1.6) + ')'; ctx.fillRect(0, 0, W, VH); }
+  if (G.hurtV > 0.02) { const hv = ctx.createRadialGradient(W / 2, VH / 2, VH * 0.32, W / 2, VH / 2, VH * 0.62); hv.addColorStop(0, 'rgba(200,0,0,0)'); hv.addColorStop(1, 'rgba(200,0,0,' + (0.55 * G.hurtV) + ')'); ctx.fillStyle = hv; ctx.fillRect(0, 0, W, VH); }   /* 처용 피격 붉은 테두리 */
   FX.drawNums(ctx, toS);
   drawHUD(day);
 }
