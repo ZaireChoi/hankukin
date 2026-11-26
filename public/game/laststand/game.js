@@ -1086,7 +1086,7 @@ scene.add(P.group);
 // 변신 엔진은 로봇 감싸개(wrap)가 +X를 보는 것으로 다룬다(ASCEND 기준). group(위치) → wrap(방향·크기) → spin(+Z 모델을 +X로)
 P.wrap = new THREE.Group(); P.spin = new THREE.Group(); P.spin.rotation.y = Math.PI / 2; P.wrap.add(P.spin); P.group.add(P.wrap); P.wrap.scale.setScalar(1.25);
 const pMark = new THREE.Mesh(new THREE.RingGeometry(7.2, 8.2, 48).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x18d8ff, transparent: true, opacity: .85, depthWrite: false, toneMapped: false }));
-pMark.renderOrder = 3; scene.add(pMark);
+pMark.renderOrder = 3; pMark.visible = false; scene.add(pMark);   // 전투 중 발밑 위치 원은 쓰지 않는다
 let E = [], shots = [], ebs = [], gems = [], picks = [];
 let mixer = null, acts = {}, curAct = null, ARM = null, PRIM = null, armed = null, howW = null;
 let msl = [];           // 어깨 포드에서 쏜 미사일
@@ -1257,8 +1257,8 @@ function updPlayer(dt) {
   if (inp.dash && P.dashCd <= 0) {
     P.dashT = .2; P.dashCd = P.dashMax; P.inv = Math.max(P.inv, .34); checkPerfectDodge();
     if (inp.x || inp.z) { const d = Math.hypot(inp.x, inp.z); P.dx = inp.x / d; P.dz = inp.z / d; }
-    sfx.dash(); ring(P.x, P.z, 4, 20, .3, 0x9ff3ff); flare(P.x, 9, P.z, 0x9ff3ff, 16, .12);
-    { const bx = P.x - P.dx * 6, bz = P.z - P.dz * 6; burst(bx, 9, bz, 10, 0x9fe8ff, 90, .25, 5, .1); flare(bx, 9, bz, 0xbff6ff, 10, .1); noise(.26, .07, 3600); tone(520, 170, .2, 'sawtooth', .018); } mark(P.x, P.z, 7, 0x1a120c, 'scorch', 2.5, .35);
+    sfx.dash(); flare(P.x, 9, P.z, 0x9ff3ff, 16, .12);
+    { const bx = P.x - P.dx * 6, bz = P.z - P.dz * 6; burst(bx, 9, bz, 10, 0x9fe8ff, 90, .25, 5, .1); flare(bx, 9, bz, 0xbff6ff, 10, .1); noise(.26, .07, 3600); tone(520, 170, .2, 'sawtooth', .018); }
   }
   inp.dash = false;
   if (P.fly) flyMove(dt);
@@ -1506,7 +1506,7 @@ function doAuto(k, tg) {
     case 'cloak': P.cloakT = 3; P.cloakHits = 3; P.inv = Math.max(P.inv, .4); ring(P.x, P.z, 4, 24, .3, 0xb48cff); tone(1200, 300, .4, 'sine', .05); num(P.x, 30, P.z, '은신', '#c9b8ff', 16); return true;
     case 'bitstorm': P.bitBoost = 4; bitsFire(8, base * 2.2, 170); return true;
     case 'blink': { const a = tg ? Math.atan2(P.x - tg.x, P.z - tg.z) + rand(-.6, .6) : fy + Math.PI, x0 = P.x, z0 = P.z; P.x += Math.sin(a) * 60; P.z += Math.cos(a) * 60; const r = Math.hypot(P.x, P.z); if (r > ARENA_R - 8) { P.x *= (ARENA_R - 8) / r; P.z *= (ARENA_R - 8) / r; }
-      P.inv = Math.max(P.inv, .4); areaHit(x0, z0, 32, base * 3.5, 2.5); ring(x0, z0, 4, 34, .35, 0xffe28a); burst(x0, 10, z0, 26, 0xffe28a, 80, .4, 10); burst(P.x, 10, P.z, 20, 0xffffff, 60, .3, 10); tone(600, 2000, .2, 'sine', .06); return true; }
+      P.inv = Math.max(P.inv, .4); areaHit(x0, z0, 32, base * 3.5, 2.5); burst(x0, 10, z0, 26, 0xffe28a, 80, .4, 10); burst(P.x, 10, P.z, 20, 0xffffff, 60, .3, 10); tone(600, 2000, .2, 'sine', .06); return true; }
     case 'featherstorm': { const p = palmPos(); for (let i = 0; i < 16; i++) fire(p.x, p.z, i / 16 * TAU, base * 1.3, 2, 'f', null, p.y, 0, .55, 0xfff3b0); tone(900, 1800, .3, 'triangle', .05); ring(P.x, P.z, 4, 30, .3, 0xfff3b0); return true; }
   }
   return false;
@@ -3080,7 +3080,7 @@ const ROBO_STIFF = [['Spine02', .35], ['Spine01', .45], ['Spine', .5], ['neck', 
 // 멈출 때 역추진 제동: 앞쪽으로 짧게 뿜고 먼지가 인다
 function brakeFx() {
   const fx = Math.sin(P.yaw), fz = Math.cos(P.yaw);
-  burst(P.x + fx * 5, 1, P.z + fz * 5, 10, 0xb8a07a, 45, .45, 8, .15); mark(P.x, P.z, 9, 0x2a2016, 'scorch', 1.6, .2);
+  burst(P.x + fx * 5, 1, P.z + fz * 5, 10, 0xb8a07a, 45, .45, 8, .15);
   for (const s of [-1, 1]) { const bx = P.x + fx * 7 + fz * s * 3, bz = P.z + fz * 7 - fx * s * 3; flare(bx, 9, bz, 0x9fe8ff, 7, .08); burst(bx, 9, bz, 4, 0xbff6ff, 70, .2, 5, 0); }
   if (gate('brk', 280)) { noise(.24, .07, 2300); tone(380, 140, .2, 'sawtooth', .022); tone(90, 50, .12, 'sine', .05, .04); }
 }
