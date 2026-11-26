@@ -1866,16 +1866,22 @@ const ALLOWED_HOSTS=['hankuk-in.com','hankukin.pages.dev'];
 // v1.1: 크레이지게임즈에 파일을 직접 올린 경우(게임이 crazygames 도메인에서 열림)도 CG 모드로 인식
 const CG_HOST=(()=>{try{return /(^|\.)crazygames\.[a-z.]+$|(^|\.)1001juegos\.com$/i.test(location.hostname);}catch(e){return false;}})();
 const CG_MODE=CG_HOST||(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='crazygames'){try{sessionStorage.setItem('hk_src','crazygames');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='crazygames';}catch(e){return false;}})();
+// v2.0: GameDistribution(게임 유통 사이트) - GD 서버에서 열리거나 ?src=gd 일 때. 승인 후 GD_GAME_ID 를 넣어 빌드
+const GD_GAME_ID='';
+const GD_HOST=(()=>{try{return /(^|\.)gamedistribution\.com$|(^|\.)gdgames\.net$/i.test(location.hostname);}catch(e){return false;}})();
+const GD_MODE=GD_HOST||(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='gd'){try{sessionStorage.setItem('hk_src','gd');}catch(e){}return true;}return sessionStorage.getItem('hk_src')==='gd';}catch(e){return false;}})();
+const GD={ok:false,rw:null,paused:false};
+function gdInit(){if(!GD_MODE||!GD_GAME_ID)return;window.GD_OPTIONS={gameId:GD_GAME_ID,onEvent:e=>{try{switch(e.name){case 'SDK_READY':GD.ok=true;try{window.gdsdk.preloadAd('rewarded').catch(()=>{});}catch(x){}break;case 'SDK_GAME_PAUSE':adMute();if(G.players&&G.running&&!G.paused&&!G.ended&&!isOnline()){G.paused=true;GD.paused=true;}break;case 'SDK_GAME_START':adUnmute();if(GD.paused){GD.paused=false;if(G.players&&!G.ended)G.paused=false;}break;case 'SDK_REWARDED_WATCH_COMPLETE':{const f=GD.rw;GD.rw=null;if(f)f();}break;}}catch(x){}}};loadScript('https://html5.api.gamedistribution.com/main.min.js').catch(()=>{});}
 // v1.4: 원스토어 웹게임(Web 상품) - 실행 주소 ?src=onestore 또는 원스토어 페이지 안에서 열릴 때만
 const OS_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='onestore'){try{sessionStorage.setItem('hk_os','1');}catch(e){}return true;}try{if(sessionStorage.getItem('hk_os')==='1')return true;}catch(e){}return !!document.referrer&&/(^|\.)onestore\.(co\.kr|net)$/i.test(new URL(document.referrer).hostname);}catch(e){return false;}})();
-function noExt(){try{return CG_MODE||OS_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE||OS_MODE;}}
+function noExt(){try{return CG_MODE||GD_MODE||OS_MODE||!!(window.HKAccount&&window.HKAccount.disabled);}catch(e){return CG_MODE||OS_MODE;}}
 // v1.5: 로블록스판 안내 버튼 - 사이트판에서만 (크레이지게임즈·원스토어·앱(src=app)·설치형 실행에서는 숨김)
 const ROBLOX_URL='https://www.roblox.com/games/131171001545708';
 const APP_MODE=(()=>{try{const q=new URLSearchParams(location.search);if((q.get('src')||'').toLowerCase()==='app'){try{sessionStorage.setItem('hk_app','1');}catch(e){}return true;}try{if(sessionStorage.getItem('hk_app')==='1')return true;}catch(e){}if(/^android-app:/i.test(document.referrer||''))return true;return !!(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);}catch(e){return false;}})();
 function robloxOK(){try{return !noExt()&&!APP_MODE&&ownHost();}catch(e){return false;}}
 function ownHost(){try{const h=location.hostname;return /^https?:/.test(location.protocol)&&ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return false;}}
 
-function hostOK(){try{const h=location.hostname;if(CG_HOST||!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
+function hostOK(){try{const h=location.hostname;if(CG_HOST||GD_HOST||!ALLOWED_HOSTS.length||!/^https?:/.test(location.protocol)||h==='localhost'||h==='127.0.0.1')return true;return ALLOWED_HOSTS.some(a=>h===a||h.endsWith('.'+a));}catch(e){return true;}}
 /* ---- 크레이지게임즈 SDK v3: 플레이 시작/중단 알림, 승리 축하, 광고 요청. CG 모드에서만 불러옴 ---- */
 const CG={sdk:null,ok:false,playing:false};
 function cgInit(){if(!CG_MODE)return;loadScript('https://sdk.crazygames.com/crazygames-sdk-v3.js').then(async()=>{try{await window.CrazyGames.SDK.init();CG.sdk=window.CrazyGames.SDK;CG.ok=true;if(G.players&&G.running&&!G.paused&&G.mode!=='demo')cgPlay(true);}catch(e){}}).catch(()=>{});}
@@ -1900,7 +1906,7 @@ function osInit(){return new Promise(res=>{let done=false;const fin=()=>{if(!don
   }).then(fin,fin);});}
 function cgPlay(on){if(!CG.ok||CG.playing===on)return;CG.playing=on;try{if(on)CG.sdk.game.gameplayStart();else CG.sdk.game.gameplayStop();}catch(e){}}
 function cgHappy(){try{if(CG.ok)CG.sdk.game.happytime();}catch(e){}}
-function adsReady(){return CG.ok||!!(ADS.on&&window.adBreak);}
+function adsReady(){return CG.ok||GD.ok||!!(ADS.on&&window.adBreak);}
 function showCopyBlock(){document.body.innerHTML='<div style="font-family:sans-serif;text-align:center;padding:60px 20px;color:#4a3426"><h1 style="color:#ff5c8a">Anibrix</h1><p>'+tr('copy_block')+'</p>'+(GAME_URL?'<p><a style="font-size:20px;color:#ff5c8a" href="'+GAME_URL+'">'+GAME_URL+'</a></p>':'')+'<p style="opacity:.6">\u00a9 '+new Date().getFullYear()+' '+OWNER+'. All rights reserved.</p></div>';}
 // 광고: 승인 받은 뒤 on:true 와 client 값을 넣으세요. test:true 이면 구글 테스트 광고만 나옵니다.
 // provider: 'adsense' = 내 사이트/안드로이드 앱(AdMob 연동), 포털(Poki·CrazyGames)에 올릴 때는 그 회사 SDK로 교체
@@ -1911,11 +1917,13 @@ function adsInit(){if(!ADS.on||ADS.provider!=='adsense')return;window.adsbygoogl
 let _adVol=null;const adMute=()=>{try{if(Snd.master){_adVol=Snd.master.gain.value;Snd.master.gain.value=0;}}catch(e){}},adUnmute=()=>{try{if(Snd.master&&_adVol!==null)Snd.master.gain.value=_adVol;}catch(e){}};
 // 판과 판 사이 전면 광고 (ADS.every 판마다 1번, 그 외에는 바로 진행)
 function adGate(fn){ADS.n++;
+  if(GD.ok){if(ADS.n%ADS.every!==0||prof().lv<3){fn();return;}let d=false;const go=()=>{if(d)return;d=true;adUnmute();fn();};try{window.gdsdk.showAd().then(go).catch(go);setTimeout(()=>{if(!GD.paused)go();},6000);}catch(e){go();}return;}
   if(CG.ok){if(ADS.n%ADS.every!==0||prof().lv<3){fn();return;}let d=false,st=false;const go=()=>{if(d)return;d=true;adUnmute();fn();};try{CG.sdk.ad.requestAd('midgame',{adStarted:()=>{st=true;adMute();},adFinished:go,adError:go});setTimeout(()=>{if(!d&&!st)go();},4000);}catch(e){go();}return;}
   if(!ADS.on||!window.adBreak||ADS.n%ADS.every!==0||(prof().lv<3)){fn();return;}let done=false;const go=()=>{if(done)return;done=true;adUnmute();fn();};
   try{adBreak({type:'next',name:'between_match',beforeAd:adMute,afterAd:adUnmute,adBreakDone:go});setTimeout(go,8000);}catch(e){go();}}
 // 보상형 광고 (보고 나면 보상)
 function showRewarded(name,onReward){
+  if(GD.ok){if(ADS.busy)return;ADS.busy=true;GD.rw=onReward;try{window.gdsdk.showAd('rewarded').then(()=>{ADS.busy=false;adUnmute();}).catch(()=>{ADS.busy=false;GD.rw=null;adUnmute();toast(tr('ad_none'));});}catch(e){ADS.busy=false;GD.rw=null;toast(tr('ad_none'));}return;}
   if(CG.ok){if(ADS.busy)return;ADS.busy=true;try{CG.sdk.ad.requestAd('rewarded',{adStarted:adMute,adFinished:()=>{ADS.busy=false;adUnmute();onReward();},adError:()=>{ADS.busy=false;adUnmute();toast(tr('ad_none'));}});}catch(e){ADS.busy=false;toast(tr('ad_none'));}return;}
   if(!ADS.on||!window.adBreak){toast(tr('ad_none'));return;}if(ADS.busy)return;ADS.busy=true;let shown=false;
   try{adBreak({type:'reward',name,beforeAd:adMute,afterAd:adUnmute,beforeReward:show=>{shown=true;show();},adViewed:()=>{onReward();},adDismissed:()=>toast(tr('ad_skip')),adBreakDone:()=>{ADS.busy=false;adUnmute();if(!shown)toast(tr('ad_none'));}});}catch(e){ADS.busy=false;toast(tr('ad_none'));}}
@@ -2454,7 +2462,7 @@ if(ownHost()&&!CG_HOST){
   const s=document.createElement('script');s.type='module';s.src='/game/account.js';s.dataset.game='anibrix';s.dataset.prefix='anibrix_';document.body.appendChild(s);
 }
 document.addEventListener('pointerdown',e=>{const b=e.target&&e.target.closest&&e.target.closest('button,.btn,.cta,.rbtn,.lbtn,.icbtn,.sbtn,.arr');if(!b||b.closest('#touch'))return;Snd.init();Snd.click();},true);
-if(!hostOK())showCopyBlock();else{adsInit();cgInit();socBoot();fxInit();bgInit();applyStatic();const boot=()=>{if(isNewbie()){const go=()=>{document.body.classList.add('ftue');startMatch('ai',1);};if(!store.get('story0',0)&&!CG_MODE)playIntro(go);else go();}else showMenu();};if(OS_MODE)osInit().then(boot);else boot();requestAnimationFrame(loop);}
+if(!hostOK())showCopyBlock();else{adsInit();cgInit();gdInit();socBoot();fxInit();bgInit();applyStatic();const boot=()=>{if(isNewbie()){const go=()=>{document.body.classList.add('ftue');startMatch('ai',1);};if(!store.get('story0',0)&&!CG_MODE)playIntro(go);else go();}else showMenu();};if(OS_MODE)osInit().then(boot);else boot();requestAnimationFrame(loop);}
 </script>
 </body>
 </html>
