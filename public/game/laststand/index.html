@@ -195,6 +195,21 @@ button{font-family:inherit;cursor:pointer}
 .rec span.ok{background:#3ddc8440;color:#a6f5c8;box-shadow:inset 0 0 0 1px #3ddc8488}
 #ovLine{max-width:min(620px,92vw);margin:10px auto 2px;padding:10px 16px;border-radius:10px;background:#ffffff0d;border-left:3px solid var(--gold);text-align:left;font-size:15px;line-height:1.6}
 #ovLine b{display:block;font:800 11px var(--ff);letter-spacing:2px;color:var(--gold);margin-bottom:2px}
+#combo{position:fixed;right:18px;top:118px;text-align:right;pointer-events:none;z-index:4;--ct:1}
+#combo b{display:block;font:900 46px/1 var(--ff);letter-spacing:-1px;background:linear-gradient(180deg,#fff,#9fe8ff);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 6px #000)}
+#combo small{font:900 12px var(--ff);letter-spacing:4px;color:#9fe8ff}
+#combo i{display:block;height:3px;margin-top:4px;margin-left:auto;width:calc(var(--ct) * 90px);background:#9fe8ff;border-radius:2px}
+#combo[data-tier="1"] b{background-image:linear-gradient(180deg,#fff,#ffd166)}#combo[data-tier="1"] small{color:#ffd166}#combo[data-tier="1"] i{background:#ffd166}
+#combo[data-tier="2"] b{background-image:linear-gradient(180deg,#ffe0a0,#ff8a3a)}#combo[data-tier="2"] small{color:#ff8a3a}#combo[data-tier="2"] i{background:#ff8a3a}
+#combo[data-tier="3"] b,#combo[data-tier="4"] b{background-image:linear-gradient(180deg,#ffd0e0,#ff3a6a)}#combo[data-tier="3"] small,#combo[data-tier="4"] small{color:#ff5a7a}#combo[data-tier="3"] i,#combo[data-tier="4"] i{background:#ff5a7a}
+#combo.pop b{animation:cpop .18s ease-out}@keyframes cpop{from{transform:scale(1.35)}}
+#bossStgW{height:4px;margin:3px 0 0;background:#00000066;border-radius:2px;overflow:hidden}
+#bossStg{height:100%;width:0;background:linear-gradient(90deg,#c89a2a,#ffd166);transition:width .12s}
+#bossStg.on{animation:stgOn .25s infinite alternate}@keyframes stgOn{to{filter:brightness(1.8)}}
+.rec .mth{background:#5fe3ff22;color:#bff2ff;box-shadow:inset 0 0 0 1px #5fe3ff55}
+.card.evo{background:linear-gradient(180deg,#3a0f1c,#140810)!important;box-shadow:0 0 30px #ff5a7a88,inset 0 0 0 2px #ff5a7a}
+.slot.evo{box-shadow:0 0 10px #ff5a7a,inset 0 0 0 1px #ff9ab0}
+@media (max-width:820px){#combo{top:96px;right:10px}#combo b{font-size:34px}}
 #partTabs{display:flex;gap:8px;width:min(1220px,96vw);margin-bottom:10px;overflow-x:auto}
 .pt{flex:0 0 auto;text-align:left;padding:8px 14px;border-radius:8px;border:1px solid #ffffff22;background:var(--pan);color:inherit;cursor:pointer}
 .pt small{display:block;font:800 10px var(--ff);letter-spacing:2px;color:var(--gold)}
@@ -363,7 +378,8 @@ button{font-family:inherit;cursor:pointer}
   <div id="slots"></div>
   <div id="timeBox"><div id="time" class="num">5:00</div><div id="chLabel">CHAPTER 1</div><div id="mis" class="hide"></div></div>
   <div id="kills"><span class="k num"></span><span class="c num"></span></div>
-  <div id="boss" class="hide"><div id="bossname"><span>제타 여왕</span></div><div id="bossbar"><div id="bossfill"></div></div></div>
+<div id="combo" class="hide"><b class="num">0</b><small>COMBO</small><i></i></div>
+  <div id="boss" class="hide"><div id="bossname"><span>제타 여왕</span></div><div id="bossbar"><div id="bossfill"></div></div><div id="bossStgW"><div id="bossStg"></div></div></div>
   <div id="banner"></div>
 <div id="misArrow" class="hide"><i></i><b></b></div>
   <div id="hpwrap"><div id="pfp"></div><div id="hpcol"><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt" class="num"></div></div></div>
@@ -419,6 +435,6 @@ button{font-family:inherit;cursor:pointer}
 <script src="lib/transform.js?v=3"></script>
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
-<script type="module" src="game.js?v=15"></script>
+<script type="module" src="game.js?v=16"></script>
 </body>
 </html>
