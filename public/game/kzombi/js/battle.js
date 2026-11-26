@@ -936,13 +936,13 @@ function useCult() {
     if (c.id === 'dokkaebi') {
       bigFx({ k: 'field', x: p.x, y: p.y, R: 330, col: '255,190,80', life: 0.7, dmg: 150 * m, stun: 1.4, kb: 60 }); FX.debris(p.x, p.y, 14, '#6a5040', 420); FX.shake = Math.max(FX.shake || 0, 0.7); sfx('boom');
     } else if (c.id === 'haetae') {
-      { const T = bigTarget(200); bigFx({ k: 'proj', x: c.x, y: c.y - 40, tx: T.x, ty: T.y, T: 0.45, r: 56, R: 230, col: '255,120,40', dmg: 130 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 200, t: 4, life: 4, dps: 26 * m, src: 'hero', tick: 0 }) }); }
+      { const T = bigTarget(200); bigFx({ k: 'proj', x: c.x, y: c.y - 40, tx: T.x, ty: T.y, T: 0.45, r: 80, R: 230, col: '255,120,40', dmg: 15 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 200, t: 4, life: 4, dps: 9 * m, src: 'hero', tick: 0 }) }); }
       sfx('boom');
     } else if (c.id === 'samjoko') {
-      { const T = bigTarget(200); bigFx({ k: 'pillar', x: T.x, y: T.y, R: 210, col: '255,220,100', life: 0.75, dmg: 190 * m }); sfx('zap'); }
+      { const T = bigTarget(200); bigFx({ k: 'pillar', x: T.x, y: T.y, R: 210, col: '255,220,100', life: 0.75, dmg: 200 * m }); sfx('zap'); }
     } else if (c.id === 'yisunsin') {
       G.ship = { t: 2.4, life: 2.4 };
-      for (let i = 0; i < 6; i++) G.queue.push({ t: 0.35 + i * 0.22, fn: () => { const e = pick(vis()) || { x: p.x + rnd(-200, 200), y: p.y - rnd(150, 400) }; const sx = p.x + rnd(-120, 120), sy = p.y + 420; shot({ kind: 'shell', x: sx, y: sy, sx, sy, tx: e.x + rnd(-20, 20), ty: e.y + rnd(-20, 20), T: 0.7, age: 0, dmg: 150 * m, R: 130, src: 'hero', life: 9, pierce: 99, nohit: 1 }); FX.p({ kind: 'glow', x: sx, y: sy, life: 0.15, s: 50, s2: 20, c: '255,200,100', hard: 1 }); sfx('gun'); } });
+      for (let i = 0; i < 6; i++) G.queue.push({ t: 0.3 + i * 0.2, fn: () => { const e = pick(vis()) || { x: p.x + rnd(-200, 200), y: p.y - rnd(150, 400) }; const sx = p.x + rnd(-140, 140), sy = p.y + 300; bigFx({ k: 'proj', x: sx, y: sy, tx: e.x + rnd(-20, 20), ty: e.y, T: 0.5, r: 44, R: 130, col: '255,160,60', dmg: 150 * m }); FX.p({ kind: 'glow', x: sx, y: sy, life: 0.15, s: 50, s2: 20, c: '255,200,100', hard: 1 }); sfx('gun'); } });
     } else if (c.id === 'eulji') {
       G.waves.push({ y: p.y + 40, x0: p.x - 380, x1: p.x + 380, t: 1.3, life: 1.3, dmg: 90 * m, hit: [] });
       sfx('boom');
@@ -950,9 +950,9 @@ function useCult() {
       G.zones.push({ x: p.x, y: p.y, r: 270, t: 5, life: 5, dps: 30 * m, src: 'hero', tick: 0, holy: 1 });
       FX.ring(p.x, p.y, 280, '255,230,150', 0.6, 14);
     } else if (c.id === 'jangyeongsil') {
-      G.bellT = 8; G.flash = { c: '180,210,255', t: 0.25 }; FX.ring(p.x, p.y - 40, 420, '180,220,255', 0.7, 10); G.banner = { s: '자격루의 종! 공격 속도 상승', t: 1.6, kind: 'win' }; sfx('build');
+      G.bellT = 8; G.flash = { c: '180,210,255', t: 0.25 }; bigFx({ k: 'field', x: p.x, y: p.y, R: 400, col: '140,200,255', life: 0.9, dmg: 0 }); G.banner = { s: '자격루의 종! 공격 속도 상승', t: 1.6, kind: 'win' }; sfx('build');
     } else if (c.id === 'gangamchan') {
-      { const T = bigTarget(240); bigFx({ k: 'proj', x: T.x - 260, y: T.y - 760, tx: T.x, ty: T.y, T: 0.5, r: 70, R: 280, col: '140,190,255', dmg: 160 * m, stun: 0.8 }); }
+      { const T = bigTarget(240); bigFx({ k: 'proj', x: T.x - 260, y: T.y - 760, tx: T.x, ty: T.y, T: 0.5, r: 90, R: 280, col: '140,190,255', dmg: 100 * m, stun: 0.8 }); }
       G.flash = { c: '200,220,255', t: 0.3 };
     } else if (c.id === 'honggildong') {
       { const T = bigTarget(160), a = Math.atan2(T.y - (c.y - 30), T.x - c.x); bigFx({ k: 'crescent', x: c.x, y: c.y - 30, dir: a, R: 220, sp: 1000, life: 0.6, col: '255,90,120', dmg: 150 * m, kb: 40 }); sfx('hit'); }
@@ -963,11 +963,11 @@ function useCult() {
       for (let i = 0; i < 6; i++) { const a2 = -Math.PI / 2 + (i - 2.5) * 0.4; summonAlly(i % 2 ? 'spear' : 'zsword' in SPR ? 'zsword' : 'archer', p.x + Math.cos(a2) * 110, p.y - 40 + Math.sin(a2) * 70, 'ink', 9, 30 * m); }
       for (let i = 0; i < 8; i++) FX.p({ kind: 'smoke', x: p.x + rnd(-150, 150), y: p.y - rnd(0, 140), vx: rnd(-20, 20), vy: -rnd(10, 40), life: 1.2, s: 14, s2: 40, c: '30,30,45', rot: 0, vr: 0.5 });
     } else if (c.id === 'samyeong') {
-      for (let i = 0; i < 5; i++) summonAlly('zmonk' in SPR ? 'zmonk' : 'munsin', p.x + (i - 2) * 50, p.y - 90, 'monk', 10, 26 * m);
+      for (let i = 0; i < 5; i++) summonAlly('zmonk' in SPR ? 'zmonk' : 'munsin', p.x + (i - 2) * 50, p.y - 90, 'monk', 10, 26 * m); bigFx({ k: 'field', x: p.x, y: p.y - 90, R: 200, col: '255,200,100', life: 0.8, dmg: 0 });
     } else if (c.id === 'daejanggeum') {
       G.shrine.hp = Math.min(G.shrine.max, G.shrine.hp + G.shrine.max * 0.25); p.hp = p.max; for (const t of G.turrets) t.hp = t.max; for (const w of G.walls) if (w.hp > 0) w.hp = w.max;
       for (let i = 0; i < 10; i++) FX.p({ kind: 'glow', x: p.x + rnd(-260, 260), y: p.y + rnd(-200, 120), vy: -rnd(40, 120), life: rnd(0.8, 1.5), s: rnd(8, 16), s2: 2, c: i % 2 ? '160,255,200' : '255,230,250' });
-      FX.ring(p.x, p.y, 300, '160,255,220', 0.8, 12); G.banner = { s: '어의의 탕약!', t: 1.6, kind: 'win' }; p.invT = Math.max(p.invT, 0); G.tonicT = 6;
+      bigFx({ k: 'field', x: p.x, y: p.y, R: 320, col: '120,255,170', life: 0.9, dmg: 0 }); G.banner = { s: '어의의 탕약!', t: 1.6, kind: 'win' }; p.invT = Math.max(p.invT, 0); G.tonicT = 6;
     } else if (c.id === 'sadaham') {
       const a0 = -Math.PI / 2; c.dash = { sx: c.x, sy: c.y, tx: c.x, ty: Math.max(160, c.y - 520), t: 0.5, T: 0.5, fn: () => {} }; bigFx({ k: 'crescent', x: c.x, y: c.y - 30, dir: -Math.PI / 2, R: 230, sp: 1100, life: 0.5, col: '255,200,90', dmg: 0 }); sfx('hit');
       for (const o of G.enemies) if (Math.abs(o.x - c.x) < 70 && o.y < c.y && o.y > c.y - 540) G.queue.push({ t: (c.y - o.y) / 1040, fn: () => { if (o.dead) return; G.marks.push({ x: o.x, y: o.y - o.hh * 0.5, t: 0.25, life: 0.25, a: rnd(-0.8, 0.8) }); hurtEnemy(o, 120 * m, 'hero', { kb: 30, kx: o.x + rnd(-10, 10), ky: o.y + 20 }); } });
@@ -975,7 +975,7 @@ function useCult() {
       const tg = vis().filter(e => { const ed = EN[e.type]; return ed.range || ed.caster || ed.gun; }).slice(0, 14);
       { const T = tg.length ? tg.reduce((s, e) => ({ x: s.x + e.x / tg.length, y: s.y + e.y / tg.length }), { x: 0, y: 0 }) : bigTarget(160), a = Math.atan2(T.y - (c.y - 30), T.x - c.x); bigFx({ k: 'crescent', x: c.x, y: c.y - 30, dir: a, R: 220, sp: 1100, life: 0.65, col: '230,60,60', dmg: 120 * m, bonus: e => { const ed = EN[e.type] || {}; return ed.range || ed.caster || ed.gun ? 1.6 : 1; } }); sfx('hit'); }
     } else if (c.id === 'imugi') {
-      c.soar = 1.6; { const T = bigTarget(220); bigFx({ k: 'proj', x: T.x - 220, y: T.y - 680, tx: T.x, ty: T.y, T: 0.55, r: 50, R: 260, col: '120,230,200', dmg: 150 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 220, t: 4, life: 4, dps: 18 * m, src: 'hero', tick: 0 }) }); }
+      c.soar = 1.6; { const T = bigTarget(220); bigFx({ k: 'proj', x: T.x - 220, y: T.y - 680, tx: T.x, ty: T.y, T: 0.55, r: 84, R: 260, col: '120,230,200', dmg: 190 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 220, t: 4, life: 4, dps: 18 * m, src: 'hero', tick: 0 }) }); }
     } else if (c.id === 'gumiho') {
       const tg = vis().filter(e => !e.boss).sort((a, b) => b.hp - a.hp).slice(0, 8);
       for (const e of tg) { e.charmT = 5; FX.ring(e.x, e.y, 40, '255,120,190', 0.5, 6); }
