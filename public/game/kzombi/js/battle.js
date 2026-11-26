@@ -437,7 +437,7 @@ function hurtEnemy(e, dmg, src, o) {
   if (e.elite || e.boss) dmg *= 1 + 0.25 * fxN('eliteDmg25');
   if (e.abC === 'blade' && e.ab >= 2 && src !== 'skill' && e.y < G.player.y - 20) dmg *= 0.7;   /* 방패 막기: 정면 피해 감소 */
   if (e.ward > 0) { dmg *= 0.3; if (Math.random() < 0.3) FX.ring(e.x, e.y - e.hh * 0.5, e.r * 2, '170,90,230', 0.2, 3); }
-  e.hp -= dmg; e.hitT = 0.09; e.squash = 1; if (e.vGhost && !(e.ghCd > 0) && e.hp > 0) { e.ghostT = 0.4; e.ghCd = 3; }
+  e.hp -= dmg; e.hitT = 0.09; e.squash = 1; hitReact(e, o.el !== undefined ? o.el : G.curEl, src, dmg); if (e.vGhost && !(e.ghCd > 0) && e.hp > 0) { e.ghostT = 0.4; e.ghCd = 3; }
   if (!src || src === 'player') { if (crit && G.t - (G.hsT || -9) > 0.25) { G.hsT = G.t; sfx('crit'); G.freezeT = Math.max(G.freezeT || 0, 0.04); } else sfx('thud', 0.8); }   /* 처용 타격 손맛 */
   G.dmg[src || 'player'] += dmg;
   if (src === 'player' && G.fx && G.fx.ls > 0 && G.player && G.player.hp > 0) G.player.hp = Math.min(G.player.max, G.player.hp + dmg * G.fx.ls / 100);   /* 피흡 */
@@ -501,6 +501,7 @@ function bombBlast(e, dmg, byFoe) {
 function killEnemy(e) {
   if (e.dead) return;
   if (e.nem) { e.hp = 1; nemRetreat(e); return; }
+  killReact(e);
   if (EN[e.type] && EN[e.type].bomber && !e.blasted) bombBlast(e, 0, true);
   if (G.trT && G.trT.killHeal && G.player) G.player.hp = Math.min(G.player.max, G.player.hp + G.player.max * G.trT.killHeal);
   e.dead = true; if (e.vBlast || (e.abC === 'crowd' && e.ab >= 2 && Math.random() < 0.5)) varBlast(e);
@@ -1573,12 +1574,51 @@ function skills(dt) {
 
 /* 막마다 새 기술(4~10막) 공통 실행 — 장판·투사체 재사용, 한 동작이 또렷하게 */
 
+/* 계열별 맞는 반응·쓰러짐(사용자 11-29: 기술에 맞는 장면도 특성에 따라 연출) — 한 프레임 반응 수 상한, 원활 모드면 줄임 */
+const RE_C = { fire: '255,130,50', ice: '150,220,255', thunder: '230,240,255', qi: '255,215,90', dark: '170,100,255', metal: '230,230,240', wind: '210,190,140', nature: '120,230,90' };
+function hitReact(e, el, src, dmg) {
+  if (!el || !RE_C[el] || src === 'building' && Math.random() < 0.6) return;
+  e.reEl = el; e.reT = 0.5; if (el === 'thunder') e.shakeT = 0.18;
+  const big = e.boss || e.elite || e.nem; if (G.reF !== G.t) { G.reF = G.t; G.reB = 0; } if (G.reB > (G.low ? 5 : 16)) return; G.reB++;
+  const c = RE_C[el], x = e.x, y = e.y - e.hh * 0.5, n = big ? 2 : 4;
+  if (el === 'fire') { FX.spark(x, y, c, n, 160); if (!big) e.sootT = 1.4; }
+  else if (el === 'ice') { FX.spark(x, y, c, n + 1, 200); }
+  else if (el === 'thunder') { FX.spark(x, y, c, n, 260); }
+  else if (el === 'qi') { FX.spark(x, y, c, n, 200); FX.ring(x, y, e.r * 1.6, c, 0.18, 3); }
+  else if (el === 'dark') { for (let i = 0; i < n - 1; i++) FX.p({ kind: 'glow', x: x + rnd(-8, 8), y: y, vx: rnd(-15, 15), vy: rnd(-90, -50), life: 0.5, s: 12, s2: 3, c }); }
+  else if (el === 'metal') { e.slashT = 0.22; e.slashA = rnd(-0.6, 0.6); if (!big && src === 'skill') { e.x += (e.x > G.player.x ? 1 : -1) * 6; } }
+  else if (el === 'wind') { FX.smoke(e.x, e.y, 2, c, 12, 30); if (!big) { const a = Math.atan2(e.y - G.player.y, e.x - G.player.x); e.x += Math.cos(a) * 7; e.y += Math.sin(a) * 5; e.tiltT = 0.3; } }
+  else if (el === 'nature') { FX.spark(x, y, c, n, 150); if (!big) e.vineT = 0.6; }
+}
+function killReact(e) {
+  const el = e.reT > 0 || (e.reEl && e.reT > -0.3) ? e.reEl : null; if (!el || !RE_C[el]) return; if (G.reF !== G.t) { G.reF = G.t; G.reB = 0; } if (G.reB > (G.low ? 6 : 20)) return; G.reB += 2;
+  const c = RE_C[el], x = e.x, y = e.y - e.hh * 0.5, k = e.boss || e.elite ? 2 : 1;
+  if (el === 'fire') { FX.smoke(x, y, 4 * k, '60,50,45', 18, 50); FX.spark(x, y, '255,160,60', 6 * k, 180); }
+  else if (el === 'ice') { FX.spark(x, y, '220,245,255', 10 * k, 300); FX.ring(x, y, e.r * 2, c, 0.25, 4); }
+  else if (el === 'thunder') { FX.smoke(x, y, 3 * k, '40,40,50', 14, 50); FX.spark(x, y, c, 5 * k, 280); }
+  else if (el === 'dark') { for (let i = 0; i < 3 * k; i++) FX.p({ kind: 'glow', x: x + rnd(-10, 10), y: y - 10, vx: rnd(-20, 20), vy: rnd(-140, -80), life: 0.8, s: 16, s2: 4, c }); }
+  else if (el === 'nature') { FX.spark(x, y, '255,150,200', 5 * k, 160); FX.spark(x, y, c, 4 * k, 160); }
+  else if (el === 'qi') { FX.ring(x, y, e.r * 2.4, c, 0.3, 5); FX.spark(x, y, c, 6 * k, 220); }
+  else if (el === 'metal') { FX.spark(x, y, c, 6 * k, 260); }
+  else if (el === 'wind') { FX.smoke(e.x, e.y, 4 * k, c, 16, 40); }
+}
+function drawReact(e, x, y) {
+  const dt = 1 / 60; if (e.reT > -1) e.reT -= dt; const hy = y - e.hh * 0.5, el = e.reEl;
+  if (e.reT > 0 && el && RE_C[el]) { const k = e.reT / 0.5; ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, hy, e.hh * 0.6, RE_C[el], 0.5 * k); ctx.restore();
+    if (el === 'thunder') { ctx.save(); ctx.strokeStyle = 'rgba(235,245,255,' + (0.9 * k) + ')'; ctx.lineWidth = 2.5; for (let j = 0; j < 2; j++) { ctx.beginPath(); let px = x - e.r * 1.2, py = hy - e.hh * 0.3 + j * e.hh * 0.4; ctx.moveTo(px, py); for (let s = 0; s < 5; s++) { px += e.r * 0.5; py += rnd(-9, 9); ctx.lineTo(px, py); } ctx.stroke(); } ctx.restore(); }
+  }
+  if (e.sootT > 0) { e.sootT -= dt; ctx.save(); ctx.globalAlpha = Math.min(0.35, e.sootT * 0.3); ctx.fillStyle = '#1a1210'; ctx.beginPath(); ctx.ellipse(x, hy, e.r * 0.9, e.hh * 0.45, 0, 0, TAU); ctx.fill(); ctx.restore(); if (Math.random() < 0.12) FX.p({ kind: 'glow', x: x + rnd(-8, 8), y: hy, vx: 0, vy: -60, life: 0.4, s: 6, s2: 1, c: '255,140,40' }); }
+  if (e.slashT > 0) { e.slashT -= dt; const k = e.slashT / 0.22; ctx.save(); ctx.translate(x, hy); ctx.rotate(e.slashA || 0); ctx.strokeStyle = 'rgba(255,255,255,' + k + ')'; ctx.lineWidth = 5 * k + 1; ctx.beginPath(); ctx.arc(0, 0, e.r * 1.4, -2.4, -0.7); ctx.stroke(); ctx.restore(); }
+  if (e.vineT > 0) { e.vineT -= dt; ctx.save(); ctx.globalAlpha = Math.min(1, e.vineT * 3); ctx.strokeStyle = '#4caf3a'; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(x, y - 6, e.r * 1.2, e.r * 0.5, 0, 0, TAU); ctx.stroke(); ctx.strokeStyle = '#8be06a'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(x, y - 16, e.r * 1.05, e.r * 0.42, 0.3, 0, TAU); ctx.stroke(); ctx.restore(); }
+  if (e.stunT > 0 && !e.dead) { const n = 3; for (let i = 0; i < n; i++) { const a = G.t * 5 + i / n * TAU; txt('★', x + Math.cos(a) * e.r * 1.1, y - e.hh - 12 + Math.sin(a) * 5, 16, '#ffe35a', 'center', '#3a2a00', 3); } }
+}
+
 /* 기술 쿨타임 바닥(사용자 11-29: 쿨타임이 너무 짧으면 어수선) — 한 번 한 번이 사건이 되게. 늘어난 만큼 한 방 피해를 올려 초당 피해는 그대로 */
 const SK_PROJ = { ghost: 1, ice: 1, talisman: 1, nabi: 1 };
 function skBig(id, S) { if (SK_PROJ[id]) return false; const t = S && S.gen && S.gen.t; return !(t === 'fan' || t === 'six' || t === 'shot' || t === 'chain'); }
 function skFloor(id, S) { return skBig(id, S) ? 4.2 : 2.0; }
 function skRate() { return (G.trT && G.trT.cdK || 1) / Math.pow(0.9, fxN('skillCd10')); }
-function skKf(id, S) { const n = G.skNat && G.skNat[id], fl = skFloor(id, S); return n && n < fl ? 1 + (fl / n - 1) * 0.55 : 1; }
+function skKf(id, S) { const n = G.skNat && G.skNat[id], fl = skFloor(id, S), w = id === 'gawi' || id === 'ghost' ? 0.25 : 0.55; return n && n < fl ? 1 + (fl / n - 1) * w : 1; }
 function skBusy() { const B = G.bigT || (G.bigT = []); while (B.length && G.t - B[0] > 0.35) B.shift(); return B.length >= 2; }
 function skPost(pre) {
   const r = skRate(); G.skNat = G.skNat || {};
@@ -2349,6 +2389,7 @@ function drawEnemy(e) {
   if (e.arena) txt(EN[e.type].n, x, y - e.hh - 26, 15, '#ff9a8a', 'center', '#200808', 3);
   if (e.boss && e.enr && e.hp > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - e.hh * 0.45, e.hh * 0.75, '255,40,20', 0.22 + 0.1 * Math.sin(G.t * 8)); ctx.restore(); }   /* 분노한 우두머리 붉은 기운 */
   if (e.el && D.EL[e.el]) { const big = e.boss || e.elite, zs = Math.max(0.5, ctx.getTransform().a / K), rr = (big ? 24 : 16) / zs, ix = x + (big ? 0 : e.r * 0.9 + rr * 0.4), iy = y - e.hh - (big ? 34 : 10) / zs; ctx.save(); ctx.beginPath(); ctx.arc(ix, iy, rr, 0, TAU); ctx.fillStyle = 'rgba(16,12,24,.82)'; ctx.fill(); ctx.lineWidth = (big ? 4 : 3) / zs; ctx.strokeStyle = D.EL[e.el].c; ctx.stroke(); ctx.font = '900 ' + Math.round(rr * 1.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(D.EL[e.el].i || '', ix, iy + rr * 0.05); ctx.restore(); }   /* 적 계열 아이콘(휴대폰에서 보이게) */
+  drawReact(e, x, y);
   if (e.elite) hpBar(x - 32, y - e.hh - 16, 64, 7, e.hp / e.max, '#ff4a3a');
   else if (!e.boss && e.hp < e.max) hpBar(x - 16, y - e.hh - 8, 32, 4, e.hp / e.max, '#ff5a4a');
 }
