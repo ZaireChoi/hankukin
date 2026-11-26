@@ -491,6 +491,7 @@ function killEnemy(e) {
   if (e.dead) return;
   if (e.nem) { e.hp = 1; nemRetreat(e); return; }
   if (EN[e.type] && EN[e.type].bomber && !e.blasted) bombBlast(e, 0, true);
+  if (G.trT && G.trT.killHeal && G.player) G.player.hp = Math.min(G.player.max, G.player.hp + G.player.max * G.trT.killHeal);
   e.dead = true; if (e.vBlast || (e.abC === 'crowd' && e.ab >= 2 && Math.random() < 0.5)) varBlast(e);
   if (e.mut === 'plague' && G.pzs) { G.pzs.push({ x: e.x, y: e.y, r: 62, t: 5, life: 5, tick: 0 }); FX.smoke(e.x, e.y, 5, '110,200,60', 16, 40); }
   G.kills++;
@@ -592,6 +593,7 @@ function spawnEnemy(type, x, y, o) {
   mutate(e); actVar(e);
   if (!o.boss && G.C && G.C.fresh && G.C.fresh.includes(type)) { G.seenNew = G.seenNew || {}; if (!G.seenNew[type]) { G.seenNew[type] = 1; G.banner = { s: '새 좀비 등장: ' + vName(type, e), t: 2.2, kind: 'boss' }; FX.ring(e.x, e.y, 120, d.tint || '255,220,120', 0.5, 6); } }
   if (o.rise) { e.st = 'rise'; e.stT = 1.0; FX.debris(e.x, e.y, 8, '#4a3a2a', 160); FX.smoke(e.x, e.y, 4, '90,80,60', 16, 30); }
+  if (G.trT && !e.boss && !e.nem) { if (G.trT.eHp) { e.hp *= G.trT.eHp; e.max = e.hp; } if (G.trT.eSp) e.sp *= G.trT.eSp; }   /* 장 특성 */
   G.enemies.push(e);
   return e;
 }
@@ -896,7 +898,7 @@ function openLevel() {
   if (!document.getElementById('rarCss')) { const st = document.createElement('style'); st.id = 'rarCss'; st.textContent = '.card{position:relative}.card.rar-rare{box-shadow:0 0 0 3px #5aa8ff,0 0 18px rgba(90,168,255,.65)!important}.card.rar-legend{box-shadow:0 0 0 3px #ffcf4a,0 0 26px rgba(255,200,70,.85)!important;background:linear-gradient(160deg,#5a3a10,#2a1a08)!important;animation:rarPulse 1.2s ease-in-out infinite}@keyframes rarPulse{50%{box-shadow:0 0 0 3px #fff2b0,0 0 38px rgba(255,220,120,1)}}.rartag{position:absolute;top:-8px;left:10px;padding:2px 9px;border-radius:10px;font:900 12px sans-serif;color:#1a1208;background:#5aa8ff}.rar-legend .rartag{background:#ffcf4a}'; document.head.appendChild(st); }
   G.phase = 'level'; joy.on = false; sfx('level');
   $('lvTitle').textContent = '신력이 차올랐다!';
-  $('lvSub').textContent = '하나를 고르십시오' + (G.trait ? ' · ' + TRAITS[G.trait].n : '');
+  $('lvSub').textContent = '하나를 고르십시오' + (G.trT ? ' · ' + (window.IS_EN ? G.trT.en : G.trT.n) : '');
   { const ft = $('lvFoot'); if (ft) { const fr = rrFree(), M = window.JZMeta && JZMeta.save ? JZMeta.save() : null, tor = M ? (M.torch | 0) : 0; let lab = '', ok = true; if (G.rerolls > 0) lab = '새로고침 · 남은 ' + G.rerolls; else if (fr > 0) lab = '새로고침 · 오늘 무료 ' + fr + '/3'; else if (tor > 0) lab = '새로고침 · 횃불 1 (' + tor + ')'; else { lab = '새로고침 · 횃불 없음'; ok = false; } ft.innerHTML = '<button id="btnReroll" class="reroll rr2' + (ok ? '' : ' off') + '">⟳ ' + lab + '</button>'; } }
   cards.innerHTML = '';
   /* 위쪽 슬롯 막대: 공격 5칸 / 보조 4칸 */
@@ -923,16 +925,14 @@ function openLevel() {
   ovLevel.classList.add('on');
 }
 /* 카드 등급(사용자 11-28: 기술이 매번 같아 지루함) — 희귀: 한 번에 2단계, 전설: 한 판 한 번 큰 변화 */
-/* 장 특성(사용자 11-28: 같은 기술도 장마다 다르게 쓰이게) */
-const TRAITS = { harvest: { n: '풍년의 장', d: '새벽 엽전 +30%' }, luck: { n: '길한 날', d: '희귀 카드가 두 배로 잘 나온다' }, curse: { n: '저주의 장', d: '카드 새로고침 없음, 대신 전설 카드 확률 두 배' }, swift: { n: '질풍의 장', d: '처용 이동 +25%' } };
+/* 장 특성: data.js D.TRAITS / D.traitOf (장 선택 창과 같은 규칙) */
 function setTrait() {
-  const c = G.cfg || {}, a = c.act >= 3 ? c.act : c.nightmare ? 2 : 1, ch = G.ch | 0;
-  if (c.mode && c.mode !== 'adventure') { G.trait = null; return; }
-  if (a === 1 && ch <= 2) { G.trait = null; return; }
-  const keys = ['harvest', 'luck', 'curse', 'swift', null], k = keys[(a * 31 + ch * 7) % keys.length]; G.trait = k;
-  if (k === 'curse') G.rerolls = 0;
-  if (k === 'swift') G.player.sp *= 1.25;
-  if (k) setTimeout(() => { if (G && G.trait === k) G.banner = { s: '장 특성 · ' + TRAITS[k].n + ' — ' + TRAITS[k].d, t: 3.2, kind: 'elite' }; }, 1200);
+  const c = G.cfg || {}, a = c.act >= 3 ? c.act : c.nightmare ? 2 : 1;
+  G.trait = null; G.trT = null; if (c.mode && c.mode !== 'adventure') return;
+  const k = D.traitOf ? D.traitOf(a, G.ch) : null; if (!k || !D.TRAITS[k]) return; const T = D.TRAITS[k]; G.trait = k; G.trT = T;
+  if (T.noReroll) G.rerolls = 0;
+  if (T.pSp) G.player.sp *= T.pSp;
+  setTimeout(() => { if (G && G.trait === k) G.banner = { s: (window.IS_EN ? 'Chapter trait · ' + T.en + ' — ' + T.de : '장 특성 · ' + T.n + ' — ' + T.d), t: 3.2, kind: 'elite' }; }, 1200);
 }
 const LG_CARDS = [
   { id: 'lg_allup', n: '천지개벽', icon: 'img/skills/power.webp', d: () => '가진 공격 기술이 모두 한 단계 오른다' },
@@ -941,9 +941,9 @@ const LG_CARDS = [
   { id: 'lg_gold', n: '풍년 잔치', icon: 'img/skills/magnet.webp', d: () => '엽전 +600, 사당 내구도를 모두 되살린다' }
 ];
 function cardRarity(list) {
-  const out = list.map(s => { if (s.evo || s.kind === 'evo' || s.max >= 99) return s; const lv = skLv(s.id); if (lv + 2 <= s.max && Math.random() < (0.14 + 0.01 * Math.min(10, G.night | 0)) * (G.trait === 'luck' ? 2 : 1)) return Object.assign({}, s, { rar: 'rare' }); return s; });
+  const out = list.map(s => { if (s.evo || s.kind === 'evo' || s.max >= 99) return s; const lv = skLv(s.id); if (lv + 2 <= s.max && Math.random() < (0.14 + 0.01 * Math.min(10, G.night | 0)) * (G.trT && G.trT.rare || 1)) return Object.assign({}, s, { rar: 'rare' }); return s; });
   const atkOwn = Object.keys(G.sk || {}).some(k => (SKILLS.find(o => o.id === k) || {}).kind === 'atk');
-  if (!G.lgUsed && atkOwn && (G.lgForce || Math.random() < (G.trait === 'curse' ? 0.1 : 0.05))) { G.lgForce = 0; const pool = LG_CARDS.filter(c => c.id !== 'lg_tower' || G.turrets.length > 0); const L = pool[(Math.random() * pool.length) | 0]; out[out.length - 1] = Object.assign({ kind: 'legend', max: 1, c: '#ffcf4a', rar: 'legend' }, L); }
+  if (!G.lgUsed && atkOwn && (G.lgForce || Math.random() < 0.05 * (G.trT && G.trT.legend || 1))) { G.lgForce = 0; const pool = LG_CARDS.filter(c => c.id !== 'lg_tower' || G.turrets.length > 0); const L = pool[(Math.random() * pool.length) | 0]; out[out.length - 1] = Object.assign({ kind: 'legend', max: 1, c: '#ffcf4a', rar: 'legend' }, L); }
   return out;
 }
 function pickLegend(id) {
@@ -1134,7 +1134,7 @@ function update(dtr) {
     if (G.dawnT <= 0) {
       let inc = 0; for (const t of G.turrets) if (TUR[t.type].income) inc += TUR[t.type].income * t.lv * (pairOn('p_dok') ? 2 : 1);
       if (G.log) G.log.nights.push(logSnap('dawn', { inc: 95 + G.night * 28 + inc }));
-      G.gold += Math.round((95 + G.night * 28 + inc) * (G.trait === 'harvest' ? 1.3 : 1)); for (const t of G.turrets) t.hp = t.max; /* 새벽마다 시설 수리 */
+      G.gold += Math.round((95 + G.night * 28 + inc) * (G.trT && G.trT.gold || 1)); for (const t of G.turrets) t.hp = t.max; /* 새벽마다 시설 수리 */
       G.night++;
       if (G.obj && G.obj.beacon && G.obj.beacon.hp > 0) { G.obj.beacon.hp = Math.min(G.obj.beacon.max, G.obj.beacon.hp + G.obj.beacon.max * 0.5); G.obj.bwarn = 0; }
       if (G.mode === 'endless' && G.night >= G.nights.length) { const L = G.nights[G.nights.length - 1]; G.nights.push(Object.assign({}, L, { name: (G.night + 1) + '번째 밤', hp: L.hp * 1.22, rate: [L.rate[0] * 1.08, L.rate[1] * 1.08], kind: G.night % 3 === 2 ? 'boss' : 'elite', boss: G.night % 3 === 2 ? pick(['mujang', 'zbear', 'ztiger', 'zox']) : null, elites: [0.45] })); }
@@ -1446,7 +1446,7 @@ function skills(dt) {
       }
       continue;
     }
-    G.skT[id] = (G.skT[id] || 0) - dt / Math.pow(0.9, fxN('skillCd10'));
+    G.skT[id] = (G.skT[id] || 0) - dt * (G.trT && G.trT.cdK || 1) / Math.pow(0.9, fxN('skillCd10'));
     if (G.skT[id] > 0) continue;
     if (S.gen) { genSkill(id, S, lv, sm, A, p); continue; }
     if (id === 'ghost') {

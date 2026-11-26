@@ -350,7 +350,28 @@ D.SKILLS = [
 (function () {
   const D = window.JZD; if (!D || !D.SKILLS) return;
   D.SK_UNLOCK = { ghost: 1, thunder: 1, dance: 1, rapid: 1, power: 1, heal: 1, repair: 1, bless: 2, ice: 2, multi: 3, talisman: 3, bond: 4, crit: 5, meteor: 6, pierce: 8, swift: 10, beam: 12, magnet: 15, vortex: 18 };
-  D.skUnlocked = (id, ch, nm) => !!nm || (ch | 0) >= (D.SK_UNLOCK[id] || 1);
+  /* 장 특성: 공통 5 + 막 테마(사용자 11-28) — 효과 값: gold 새벽 엽전, pSp 처용 이동, eSp 적 이동, eHp 적 체력, rare 희귀 카드, legend 전설 카드, noReroll, cdK 기술 대기 빠르기, killHeal 처치 시 처용 회복 */
+D.TRAITS = {
+  harvest: { n: '풍년의 장', en: 'Harvest', d: '새벽 엽전 +30%', de: 'Dawn coins +30%', gold: 1.3 },
+  luck: { n: '길한 날', en: 'Lucky Day', d: '희귀 카드가 두 배로 잘 나온다', de: 'Rare cards twice as often', rare: 2 },
+  curse: { n: '저주의 장', en: 'Cursed', d: '카드 새로고침 없음, 대신 전설 카드 확률 두 배', de: 'No rerolls, legendary cards x2', noReroll: 1, legend: 2 },
+  swift: { n: '질풍의 장', en: 'Gale', d: '처용 이동 +25%', de: 'Cheoyong moves +25%', pSp: 1.25 },
+  gawi: { n: '가위의 밤', en: 'Sleep Paralysis', d: '적 체력 +15%, 희귀 카드 1.5배', de: 'Enemy HP +15%, rare cards x1.5', eHp: 1.15, rare: 1.5 },
+  tide: { n: '밀물', en: 'High Tide', d: '길이 물에 잠겨 적이 15% 느리다, 대신 적 체력 +10%', de: 'Flooded paths: enemies 15% slower, HP +10%', eSp: 0.85, eHp: 1.1 },
+  alchemy: { n: '연금술의 장', en: 'Alchemy', d: '새벽 엽전 +20%, 적 체력 +10%', de: 'Dawn coins +20%, enemy HP +10%', gold: 1.2, eHp: 1.1 },
+  fog: { n: '짙은 안개', en: 'Thick Fog', d: '적이 10% 느리다, 기술 대기 10% 빠름', de: 'Enemies 10% slower, skills charge 10% faster', eSp: 0.9, cdK: 1.1 },
+  desertwind: { n: '사막 바람', en: 'Desert Wind', d: '적이 10% 빠르다, 새벽 엽전 +25%', de: 'Enemies 10% faster, dawn coins +25%', eSp: 1.1, gold: 1.25 },
+  storm: { n: '천둥 치는 밤', en: 'Thunder Night', d: '기술 대기 15% 빠름, 적 체력 +10%', de: 'Skills charge 15% faster, enemy HP +10%', cdK: 1.15, eHp: 1.1 },
+  soulfire: { n: '혼불 밤', en: 'Soulfire Night', d: '적을 쓰러뜨릴 때마다 처용 체력 1% 회복, 적 체력 +10%', de: 'Heal 1% per kill, enemy HP +10%', killHeal: 0.01, eHp: 1.1 },
+  judgment: { n: '심판의 날', en: 'Judgment', d: '새로고침 없음, 희귀 카드 두 배', de: 'No rerolls, rare cards x2', noReroll: 1, rare: 2 },
+  lava: { n: '용암 대지', en: 'Lava Land', d: '적이 10% 빠르다, 처치 시 회복 0.5%', de: 'Enemies 10% faster, heal 0.5% per kill', eSp: 1.1, killHeal: 0.005 },
+  mirror: { n: '거울 밤', en: 'Mirror Night', d: '희귀·전설 카드 두 배, 새로고침 없음', de: 'Rare and legendary x2, no rerolls', rare: 2, legend: 2, noReroll: 1 },
+  dawnlight: { n: '태초의 빛', en: 'First Light', d: '기술 대기 15% 빠름, 적 체력 +15%', de: 'Skills charge 15% faster, enemy HP +15%', cdK: 1.15, eHp: 1.15 },
+  chaos: { n: '혼돈의 장', en: 'Chaos', d: '적이 10% 빠르고 체력 +10%, 전설 카드 두 배', de: 'Enemies 10% faster and +10% HP, legendary x2', eSp: 1.1, eHp: 1.1, legend: 2 }
+};
+D.ACT_TRAITS = { 2: ['gawi'], 3: ['tide'], 4: ['alchemy', 'fog'], 5: ['desertwind'], 6: ['storm'], 7: ['soulfire', 'judgment'], 8: ['lava'], 9: ['mirror'], 10: ['dawnlight', 'chaos'] };
+D.traitOf = (a, ch) => { a = a | 0 || 1; ch = ch | 0; if (a === 1 && ch <= 2) return null; const th = D.ACT_TRAITS[a] || [], pool = ['harvest', 'luck', 'curse', 'swift', null].concat(th, th); return pool[(a * 31 + ch * 7) % pool.length]; };
+D.skUnlocked = (id, ch, nm) => !!nm || (ch | 0) >= (D.SK_UNLOCK[id] || 1);
   /* 영웅 전용 카드: 그 영웅을 데려가야 카드 풀에 들어온다. 효과는 그 영웅 위력(+35%/단계)과 특수 효과 */
   const HS = {
     honggildong: ['분신 둔갑', '홍길동 위력 +35%, 큰 기술이 10% 빨리 찬다'],
