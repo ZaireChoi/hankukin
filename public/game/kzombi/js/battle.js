@@ -161,16 +161,20 @@ function acInit() { if (AC) return AC; AC = new (window.AudioContext || window.w
 document.addEventListener('visibilitychange', () => { try { if (!AC) return; if (document.hidden) AC.suspend(); else AC.resume(); } catch (e) {} });
 window.KZSFX = { play: (k, v) => sfx(k, v), vol: v => { try { localStorage.setItem('kz_sfxv', v); if (SFXG) SFXG.gain.value = +v; } catch (e) {} } };
 const SFX_GAP = { die: 0.07, thud: 0.06, hit: 0.05, crit: 0.09, shoot: 0.045, gun: 0.06, boom: 0.09, zap: 0.06, coin: 0.05, elite: 0.6, boss: 1.5, nemIn: 2, nemOut: 2, legend: 1, hurt: 0.3, card: 0.2 };
+/* 실제 녹음 효과음(CC0, Kenney — 조선좀비게임\\소리_출처.md). 파일이 있으면 재생, 없으면 아래 합성 소리(사용자 11-30: 상업 수준 소리) */
+const SAMP = {}, SAMP_N = { hit: 3, thud: 2, crit: 2, die: 3, shoot: 2, boom: 3, gun: 2, zap: 2, coin: 2, gem: 1, build: 2, level: 1, card: 1, legend: 1, ult: 1, elite: 1, boss: 2, nemIn: 1, hurt: 1, warn: 1 }, SAMP_V = { hit: 1.6, thud: 1.8, crit: 1.7, die: 1.3, shoot: 1.2, boom: 1.9, gun: 1.5, zap: 1.2, coin: 1.1, gem: 1, build: 1.5, level: 1.6, card: 1.3, legend: 1.8, ult: 2, elite: 1.8, boss: 2.2, nemIn: 2.2, hurt: 1.4, warn: 1.2 }; let sampReq = 0;
+function sampLoad() { if (sampReq || !AC) return; sampReq = 1; for (const k in SAMP_N) for (let i = 0; i < SAMP_N[k]; i++) fetch('audio/sfx/' + k + '_' + i + '.ogg').then(r => r.ok ? r.arrayBuffer() : null).then(b => b && AC.decodeAudioData(b)).then(buf => { if (buf) (SAMP[k] = SAMP[k] || []).push(buf); }).catch(() => {}); }
 function sfx(kind, vol, who) {
   if (!sfxOn) return;
   try {
-    acInit(); if (AC.state !== 'running') return;
+    acInit(); sampLoad(); if (AC.state !== 'running') return;
     const now = AC.currentTime, gap = SFX_GAP[kind] || 0.045;
     if (sfxLast[kind] && now - sfxLast[kind] < gap) return; sfxLast[kind] = now;
     const big = /boss|nem|elite|legend|ult|level|warn/.test(kind);
     if (sfxVoices > 14 && !big) return;   /* 동시에 너무 많으면 작은 소리는 건너뜀 */
     const duck = big ? 1 : 1 / (1 + Math.max(0, sfxVoices - 4) * 0.12);
     const out = AC.createGain(); out.connect(SFXG); const v = Math.max(0.001, (vol || 1) * 0.24 * duck);
+    if (SAMP[kind] && SAMP[kind].length && !(kind === 'ult' && who && who !== 'player')) { const L = SAMP[kind], src = AC.createBufferSource(); src.buffer = L[(Math.random() * L.length) | 0]; src.playbackRate.value = 0.94 + Math.random() * 0.12; const g = AC.createGain(); g.gain.value = Math.min(1.2, v * (SAMP_V[kind] || 1.4)); src.connect(g); g.connect(out); sfxVoices++; src.onended = () => { sfxVoices = Math.max(0, sfxVoices - 1); try { out.disconnect(); } catch (e) {} }; src.start(now); return; }
     let end = 0.1;
     const env = (g, pk, t0, a, d) => { g.gain.setValueAtTime(0.0001, now + t0); g.gain.exponentialRampToValueAtTime(Math.max(0.0002, pk), now + t0 + a); g.gain.exponentialRampToValueAtTime(0.0001, now + t0 + a + d); end = Math.max(end, t0 + a + d); };
     const nbuf = dur => { const k = Math.max(1, Math.ceil(dur * 10)); if (NOISEB[k]) return NOISEB[k]; const b = AC.createBuffer(1, Math.round(AC.sampleRate * k / 10), AC.sampleRate), d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return (NOISEB[k] = b); };
