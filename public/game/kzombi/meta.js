@@ -669,6 +669,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     modal('<h3 class="stroke">챕터 ' + n + ' · ' + c.name + '</h3>' + '<p style="text-align:center;color:#ffe3a3;font-weight:700;margin:-4px 0 10px">' + chStory(n) + '</p>' +
       '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ffd36b;margin-bottom:14px"></div>' +
       elInfo(n, false) + '<p>밤 ' + c.waves + '번을 버티면 이겨요. 마지막 밤에는 우두머리가 나와요.</p>' +
+(window.JZD && JZD.mobWin && n > 1 && JZD.EN[JZD.mobWin(n)[3]] ? '<p>' + TT('이번 장 새 몹', 'New zombie') + ' · <b style="color:#ffb35a">' + JZD.EN[JZD.mobWin(n)[3]].n + '</b></p>' : '') +   /* 몹 사다리: 장마다 새 몹 1종 */
       '<p>권장 전투력 <b style="color:' + (st.power >= rec ? '#7df06a' : '#ff8e8e') + '">' + fmt(rec) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
       '<p>최고 기록: ' + (S.best[n] ? '밤 ' + S.best[n] + '/' + c.waves : '없음') + '</p>' +
       '<div class="row"><div class="btn y" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>도전하기</span><small style="font-size:18px;display:flex;gap:4px;align-items:center;color:#7a3300">' + ic('torch').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + '5</small></div></div>' +
