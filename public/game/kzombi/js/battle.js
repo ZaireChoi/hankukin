@@ -1035,12 +1035,12 @@ function useCult() {
     const m = atkMul() * 1.2 * compMul() * elMul(C.el) * heroK(c.id) * ulK(c.id), p = G.player;
     const vis = () => G.enemies.filter(onScreen);
     if (c.id === 'dokkaebi') {
-      bigFx({ k: 'field', x: p.x, y: p.y, R: 330, col: '255,190,80', life: 0.7, dmg: 150 * m, stun: 1.4, kb: 60 }); FX.debris(p.x, p.y, 14, '#6a5040', 420); FX.shake = Math.max(FX.shake || 0, 0.7); sfx('boom');
+      /* 금 나와라 뚝딱!(사용자 11-29): 범위 일반 몹은 엽전 더미로, 정예는 큰 피해 + 엽전 비 */ { const UL = HSK('dokkaebi')[1], R = 300 + (UL >= 3 ? 50 : 0), TB = bigTarget(220), px0 = TB.x, py0 = TB.y; let nK = 0, coin = 0; c.x = px0 - 30; c.y = py0 + 40; G.banner = { s: window.IS_EN ? 'Gold, Come Out! Bonk!' : '금 나와라 뚝딱!', t: 1.5, kind: 'win' }; for (const e of G.enemies.slice()) { if (e.dead || Math.hypot(e.x - px0, e.y - py0) > R) continue; if (!e.elite && !e.boss && !e.nem && nK < 26) { nK++; coin += 3 + Math.floor(G.ch / 5); const ex = e.x, ey = e.y; killEnemy(e); for (let i = 0; i < 6; i++) FX.p({ kind: 'glow', x: ex + rnd(-12, 12), y: ey - 10, vx: rnd(-60, 60), vy: -rnd(160, 300), grav: 620, life: 0.9, s: 9, s2: 6, c: i % 2 ? '255,215,80' : '255,240,160' }); if (UL >= 5) bigFx({ k: 'field', x: ex, y: ey, R: 70, col: '255,210,90', life: 0.35, dmg: 30 * m }); } } G.gold += coin; bigFx({ k: 'field', x: px0, y: py0, R, col: '255,190,80', life: 0.7, dmg: 220 * m, stun: 1.4, kb: 60 }); for (let i = 0; i < 28; i++) FX.p({ kind: 'glow', x: px0 + rnd(-R, R), y: py0 - 500 - rnd(0, 200), vy: rnd(300, 500), life: 1.2, s: 8, s2: 6, c: '255,215,80' }); if (coin) G.queue.push({ t: 0.5, fn: () => { G.title = { s: (window.IS_EN ? '+' + coin + ' coins' : '엽전 +' + coin), t: 1.4, big: 0 }; } }); } FX.debris(c.x + 30, c.y - 40, 14, '#6a5040', 420); FX.shake = Math.max(FX.shake || 0, 0.8); G.flash = { c: '255,220,120', t: 0.3 }; sfx('boom');
     } else if (c.id === 'haetae') {
       { const T = bigTarget(200); bigFx({ k: 'proj', x: c.x, y: c.y - 40, tx: T.x, ty: T.y, T: 0.45, r: 80, R: 230, col: '255,120,40', dmg: 15 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 200, t: 4, life: 4, dps: 9 * m, src: 'hero', tick: 0 }) }); }
       sfx('boom');
     } else if (c.id === 'samjoko') {
-      { const T = bigTarget(200); bigFx({ k: 'pillar', x: T.x, y: T.y, R: 210, col: '255,220,100', life: 0.75, dmg: 200 * m }); sfx('zap'); }
+      /* 해가 뜬다!(사용자 11-29): 화면이 환해지며 모든 적이 3초 눈이 멀고, 빛기둥 여러 개 */ { const UL = HSK('samjoko')[1], bt = 3 + (UL >= 3 ? 1 : 0); G.flash = { c: '255,250,210', t: 0.7 }; G.sunT = 1.2; G.banner = { s: window.IS_EN ? 'The Sun Rises!' : '해가 뜬다!', sub: window.IS_EN ? 'All enemies blinded' : '모든 적이 눈이 멀었다', t: 1.6, kind: 'win' }; for (const e of G.enemies) if (!e.dead && onScreen(e)) e.blindT = e.boss || e.nem ? bt * 0.5 : bt; const T = bigTarget(200); bigFx({ k: 'pillar', x: T.x, y: T.y, R: 210, col: '255,220,100', life: 0.75, dmg: 130 * m }); const vv = vis(); for (let i = 0; i < 3 + (UL >= 5 ? 2 : 0); i++) { const o = vv[(i * 5 + 3) % Math.max(1, vv.length)]; if (o) G.queue.push({ t: 0.15 + i * 0.12, fn: () => bigFx({ k: 'pillar', x: o.x, y: o.y, R: 130, col: '255,235,140', life: 0.6, dmg: 45 * m }) }); } sfx('zap'); }
     } else if (c.id === 'yisunsin') {
       G.ship = { t: 2.4, life: 2.4 };
       for (let i = 0; i < 6; i++) G.queue.push({ t: 0.3 + i * 0.2, fn: () => { const e = pick(vis()) || { x: p.x + rnd(-200, 200), y: p.y - rnd(150, 400) }; const sx = p.x + rnd(-140, 140), sy = p.y + 300; bigFx({ k: 'proj', x: sx, y: sy, tx: e.x + rnd(-20, 20), ty: e.y, T: 0.5, r: 44, R: 130, col: '255,160,60', dmg: 150 * m }); FX.p({ kind: 'glow', x: sx, y: sy, life: 0.15, s: 50, s2: 20, c: '255,200,100', hard: 1 }); sfx('gun'); } });
@@ -1057,7 +1057,7 @@ function useCult() {
       { const T = bigTarget(240); bigFx({ k: 'proj', x: T.x - 260, y: T.y - 760, tx: T.x, ty: T.y, T: 0.5, r: 90, R: 280, col: '140,190,255', dmg: 100 * m, stun: 0.8 }); }
       G.flash = { c: '200,220,255', t: 0.3 };
     } else if (c.id === 'honggildong') {
-      /* 동에 번쩍 서에 번쩍!(사용자 11-29): 분신 12명이 화면 곳곳에 나타나 동시에 베고 연기처럼 사라진다 */ { const UL = HSK('honggildong')[1], N = 12 + (UL >= 3 ? 2 : 0) + (UL >= 5 ? 4 : 0); const vs = vis(); G.banner = { s: window.IS_EN ? 'Flash East, Flash West!' : '동에 번쩍 서에 번쩍!', t: 1.4, kind: 'win' }; G.flash = { c: '255,120,150', t: 0.25 }; for (let i = 0; i < N; i++) { const T = vs.length ? vs[(i * 7) % vs.length] : { x: p.x + rnd(-300, 300), y: p.y - rnd(150, 500), hh: 60 }; const sx = T.x + rnd(-50, 50), sy = T.y + rnd(10, 40); G.queue.push({ t: 0.04 * i, fn: () => { FX.smoke(sx, sy - 30, 4, '60,40,70', 14, 30); G.hgGhost = G.hgGhost || []; G.hgGhost.push({ x: sx, y: sy, t: 0.55 }); G.queue.push({ t: 0.18, fn: () => { bigFx({ k: 'crescent', x: sx, y: sy - 30, dir: Math.atan2(T.y - sy, T.x - sx) || -Math.PI / 2, R: 110, sp: 600, life: 0.35, col: '255,100,140', dmg: 34 * m, kb: 20 }); sfx('hit', 0.4); } }); } }); } G.queue.push({ t: 0.04 * N + 0.3, fn: () => { FX.shake = Math.max(FX.shake || 0, 0.6); G.flash = { c: '255,150,180', t: 0.25 }; } }); }
+      /* 동에 번쩍 서에 번쩍!(사용자 11-29): 분신 12명이 화면 곳곳에 나타나 동시에 베고 연기처럼 사라진다 */ { const UL = HSK('honggildong')[1], N = 12 + (UL >= 3 ? 2 : 0) + (UL >= 5 ? 4 : 0); const vs = vis(); G.banner = { s: window.IS_EN ? 'Flash East, Flash West!' : '동에 번쩍 서에 번쩍!', t: 1.4, kind: 'win' }; G.flash = { c: '255,120,150', t: 0.25 }; const ct = camTop(), cols = 4, rows = Math.ceil(N / cols); for (let i = 0; i < N; i++) { const gx0 = 70 + ((i % cols) + 0.5) * (W - 140) / cols + rnd(-30, 30), gy0 = ct + 200 + (Math.floor(i / cols) + 0.5) * Math.min(260, (p.y - ct - 120) / rows) + rnd(-30, 30); const near = nearestEnemy(gx0, gy0, 90); const T = near || { x: gx0, y: gy0, hh: 60 }; const sx = (near ? near.x : gx0) + rnd(-40, 40), sy = (near ? near.y : gy0) + rnd(10, 30); /* 화면 여러 곳에 퍼지게(11-29) */ G.queue.push({ t: 0.04 * i, fn: () => { FX.smoke(sx, sy - 30, 4, '60,40,70', 14, 30); G.hgGhost = G.hgGhost || []; G.hgGhost.push({ x: sx, y: sy, t: 0.55 }); G.queue.push({ t: 0.18, fn: () => { bigFx({ k: 'crescent', x: sx, y: sy - 30, dir: Math.atan2(T.y - sy, T.x - sx) || -Math.PI / 2, R: 110, sp: 600, life: 0.35, col: '255,100,140', dmg: 34 * m, kb: 20 }); sfx('hit', 0.4); } }); } }); } G.queue.push({ t: 0.04 * N + 0.3, fn: () => { FX.shake = Math.max(FX.shake || 0, 0.6); G.flash = { c: '255,150,180', t: 0.25 }; } }); }
     } else if (c.id === 'bari') {
       bigFx({ k: 'field', x: p.x, y: p.y, R: 340, col: '150,210,255', life: 0.8, dmg: 70 * m, soul: 16 * m });
       G.flash = { c: '170,210,255', t: 0.3 };
@@ -1078,7 +1078,7 @@ function useCult() {
       const tg = vis().filter(e => { const ed = EN[e.type]; return ed.range || ed.caster || ed.gun; }).slice(0, 14);
       { const T = tg.length ? tg.reduce((s, e) => ({ x: s.x + e.x / tg.length, y: s.y + e.y / tg.length }), { x: 0, y: 0 }) : bigTarget(160), a = Math.atan2(T.y - (c.y - 30), T.x - c.x); bigFx({ k: 'crescent', x: c.x, y: c.y - 30, dir: a, R: 220, sp: 1100, life: 0.65, col: '230,60,60', dmg: 120 * m, bonus: e => { const ed = EN[e.type] || {}; return ed.range || ed.caster || ed.gun ? 1.6 : 1; } }); sfx('hit'); FX.shake = Math.max(FX.shake || 0, 0.45); G.flash = { c: '255,110,110', t: 0.25 }; }
     } else if (c.id === 'imugi') {
-      c.soar = 1.6; { const T = bigTarget(220); bigFx({ k: 'proj', x: T.x - 220, y: T.y - 680, tx: T.x, ty: T.y, T: 0.55, r: 84, R: 260, col: '120,230,200', dmg: 190 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 220, t: 4, life: 4, dps: 18 * m, src: 'hero', tick: 0 }) }); }
+      c.soar = 1.6; c.dragonT = 6 * (HSK('imugi')[1] >= 5 ? 2 : 1); G.banner = { s: window.IS_EN ? 'Ascension! The Dragon Wakes' : '승천! 용이 되었다', t: 1.6, kind: 'win' }; { const yy = p.y - 260; G.beams.push({ x1: 40, y1: yy, x2: W - 40, y2: yy - 60, c: '140,240,210', w: 46, t: 0.5, life: 0.5 }); for (const o of G.enemies) if (!o.dead && Math.abs((o.y - o.hh * 0.5) - (yy - 30)) < 120) hurtEnemy(o, 60 * m, 'hero', { kb: 20, kx: o.x, ky: o.y - 50 }); FX.shake = Math.max(FX.shake || 0, 0.6); } /* 이무기 승천: 용 변신 + 화면을 가로지르는 용의 숨결(11-29) */ { const T = bigTarget(220); bigFx({ k: 'proj', x: T.x - 220, y: T.y - 680, tx: T.x, ty: T.y, T: 0.55, r: 84, R: 260, col: '120,230,200', dmg: 190 * m, end: b => G.zones.push({ x: b.tx, y: b.ty, r: 220, t: 4, life: 4, dps: 18 * m, src: 'hero', tick: 0 }) }); }
     } else if (c.id === 'gumiho') {
       const tg = vis().filter(e => !e.boss).sort((a, b) => b.hp - a.hp).slice(0, 8);
       /* 천년 여우의 홀림(사용자 11-29): 분홍 안개 안의 좀비들이 자기들끼리 싸운다 */ { const UL = HSK('gumiho')[1], R = 380 + (UL >= 5 ? 80 : 0), dur = 6 + (UL >= 3 ? 1 : 0); let nC = 0; for (const e of G.enemies) { if (e.dead || Math.hypot(e.x - p.x, e.y - (p.y - 120)) > R) continue; if (e.boss || e.nem) { e.vulnUntil = G.t + dur; FX.ring(e.x, e.y - e.hh * 0.5, 60, '255,90,170', 0.6, 8); continue; } if (nC >= 34) continue; nC++; e.charmT = e.elite ? 3 : dur; FX.ring(e.x, e.y, 40, '255,120,190', 0.5, 6); } G.fog = { x: p.x, y: p.y - 120, R, t: 1.4, life: 1.4, col: '255,130,200' }; G.banner = { s: window.IS_EN ? 'Thousand-Year Fox Charm!' : '천년 여우의 홀림!', sub: (window.IS_EN ? 'Charmed: ' : '홀린 좀비 ') + nC, t: 1.6, kind: 'win' }; }
@@ -1245,6 +1245,7 @@ function spawnSoldier(home, type) {
 function kimK(e) { if (!pairOn('p_kim') || !e || e.kimHit) return 1; e.kimHit = 1; FX.num(e.x, e.y - e.hh - 10, '기습!', true, '#ff5a6a'); return 3; }
 /* 장영실 화포 장치 + 자격루 종 */
 function updGadgets(dt) {
+  if (G.sunT > 0) G.sunT -= dt; for (const c of G.comps) { if (c.dragonT > 0) c.dragonT -= dt; if (c.id === 'honggildong' && c.active) { for (const o of hgClones(c)) for (const e of G.enemies) { if (e.dead || e.boss || e.charmT > 0) continue; const dx = o.x - e.x, dy = o.y - e.y, dd = Math.hypot(dx, dy); if (dd < 170 && dd > 20) { e.x += dx / dd * 38 * dt; e.y += dy / dd * 20 * dt; e.slowT = Math.max(e.slowT || 0, 0.15); } } } } /* 홍길동 분신 미끼: 가까운 적을 끌어 모은다 */
   if (G.fog) { G.fog.t -= dt; if (G.fog.t <= 0) G.fog = null; } if (G.hgGhost) { for (const o of G.hgGhost) o.t -= dt; G.hgGhost = G.hgGhost.filter(o => o.t > 0); }
   if (G.bellT > 0) { G.bellT -= dt; const x = dt * 0.6; G.player.cd -= x; for (const c of G.comps) c.cd -= x; for (const t of G.turrets) t.cd -= x * 0.5; if (Math.random() < dt * 6) FX.p({ kind: 'glow', x: G.player.x + rnd(-30, 30), y: G.player.y - rnd(20, 90), vy: -40, life: 0.6, s: 6, s2: 2, c: '180,220,255' }); }
   if (!G.gadgets) return;
@@ -1670,7 +1671,7 @@ function comps(dt) {
   for (const c of G.comps) { const m = m0 * heroK(c.id);
     if (!c.active || c.drop > 0 || c.dash) continue;
     const C = COMP[c.id], el = elMul(C.el); c.cd -= dt * (HSK(c.id)[0] >= 3 ? 1.18 : 1);
-    const dm = C.dmg * m * el * skK(c.id);
+    const dm = C.dmg * m * el * skK(c.id) * (c.dragonT > 0 ? 1.6 : 1);
     /* 해태: 가까우면 앞발 후려치기, 떨어져 있으면 입으로 불뿜기 */
     if (c.id === 'haetae') {
       const e = nearestEnemy(c.x, c.y, C.range); if (!e) continue;
@@ -1704,6 +1705,7 @@ function comps(dt) {
     const a = Math.atan2(e.y - e.hh * 0.45 - (c.y - 40), e.x - c.x);
     if (c.id === 'dokkaebi') {
       shot({ kind: 'club', x: c.x, y: c.y - 40, vx: Math.cos(a) * 520, vy: Math.sin(a) * 520, dmg: dm, pierce: 99, life: 1.4, src: 'hero', owner: c, ret: 0.5, r: 18, rot: 0, rehit: 0.25 }); sfx('shoot', 0.6);
+      /* 도깨비 장난: 맞은 적이 가끔 엽전을 떨군다(사용자 11-29) */ if (Math.random() < 0.14 + (HSK('dokkaebi')[0] >= 3 ? 0.06 : 0)) G.queue.push({ t: 0.3, fn: () => { if (!e || e.dead) return; const g = 2 + Math.floor(G.ch / 6); G.gold += g; for (let i = 0; i < 5; i++) FX.p({ kind: 'glow', x: e.x + rnd(-10, 10), y: e.y - e.hh * 0.5, vx: rnd(-90, 90), vy: -rnd(120, 220), grav: 520, life: 0.7, s: 7, s2: 5, c: '255,215,80' }); } });
     } else if (c.id === 'yisunsin') {
       for (let i = 0; i < 5; i++) { const aa = a + (i - 2) * 0.09; shot({ kind: 'arrow', x: c.x, y: c.y - 44, vx: Math.cos(aa) * 950, vy: Math.sin(aa) * 950, dmg: dm, pierce: 1, life: 0.5, src: 'hero', r: 9 }); }
       FX.p({ kind: 'glow', x: c.x + Math.cos(a) * 16, y: c.y - 44 + Math.sin(a) * 16, life: 0.08, s: 24, s2: 8, c: '255,220,150', hard: 1 }); sfx('shoot', 0.6);
@@ -1885,6 +1887,7 @@ function enemies(dt) {
       continue;
     }
     if (e.jumpT > 0) { e.jumpT -= dt; e.y += 170 * dt; if (e.jumpT <= 0) FX.smoke(e.x, e.y, 3, '170,150,120', 10, 20); continue; }
+    if (e.blindT > 0) { e.blindT -= dt; e.x += Math.sin(G.t * 3 + (e.gx || 0)) * 24 * dt; if (Math.random() < dt * 2) FX.p({ kind: 'glow', x: e.x + rnd(-6, 6), y: e.y - e.hh - 4, life: 0.4, s: 6, s2: 2, c: '255,250,200' }); continue; } /* 삼족오: 눈멀어 공격 못 함 */
     if (e.frzT > 0 || e.stunT > 0 || e.leaving || e.peekHold) continue;
     e.cd -= dt; e.wob += dt * 7;
     /* 노릴 대상 */
@@ -2349,7 +2352,7 @@ function drawComp(c) {
 function drawCompBody(c, C, x, y, alpha) {
   if (c.id === 'haetae' && c.fire > 0 && c.atkK === 'atk') { const hk = Math.sin(Math.min(1, Math.max(0, 1 - c.fire / 0.45)) * Math.PI), ha = c.fdir || 0; x += Math.cos(ha) * 22 * hk; y += Math.sin(ha) * 12 * hk - 10 * hk; } /* 개처럼 짧게 뛰어들기 */
   const can = c.fire > 0 ? (c.atkK || 'atk') : c.moving ? 'walk' : 'idle';
-  const ok = drawSprite(C.spr, x, y, { anim: can, at: can === 'atk' ? 1 - Math.max(0, c.fire) / (c.id === 'haetae' ? 0.45 : 0.35) : null, dir: dir8(c.fdir != null ? c.fdir : Math.PI / 2), t: G.t + c.id.length, flip: c.flip, sy: c.fire > 0 ? 1.06 : 1, alpha });
+  const ok = drawSprite(C.spr, x, y, { anim: can, at: can === 'atk' ? 1 - Math.max(0, c.fire) / (c.id === 'haetae' ? 0.45 : 0.35) : null, dir: dir8(c.fdir != null ? c.fdir : Math.PI / 2), t: G.t + c.id.length, flip: c.flip, sy: c.fire > 0 ? 1.06 : 1, alpha, sc: c.dragonT > 0 ? 1.9 : 1 }); if (c.dragonT > 0 && alpha > 0.9) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - 120, 120, '120,240,210', 0.35 + 0.15 * Math.sin(G.t * 6)); ctx.restore(); }
   if (!ok && PORT[c.id]) {
     ctx.globalAlpha = alpha; const bob2 = c.moving ? Math.abs(Math.sin(c.t * 10)) * 4 : 0;
     rrPath(x - 16, y - 34 - bob2, 32, 34, 12); const bg = ctx.createLinearGradient(0, y - 34, 0, y); bg.addColorStop(0, 'rgb(' + C.col + ')'); bg.addColorStop(1, '#2a1a2a'); ctx.fillStyle = bg; ctx.fill(); ctx.strokeStyle = '#1a1010'; ctx.lineWidth = 3; ctx.stroke();
