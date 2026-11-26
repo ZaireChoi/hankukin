@@ -582,5 +582,9 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 /* 레이스 배지가 위 버튼 글자(패스)를 가리지 않게(점검 11-29) */
 .sb .rcb{top:2px!important;left:auto!important;right:-26px!important;transform:none!important;font-size:11px!important;line-height:16px!important;padding:0 4px!important}
 
-/* 탐험 단추 추가로 오른쪽 8칸(11-30) */
-.sidebtns.r.n8{gap:13px!important}.sidebtns.r.n8 .sb{width:52px!important;height:52px!important;border-radius:14px}.sidebtns.r.n8 .sb svg{width:36px!important;height:36px!important}.sidebtns.r.n8 .sb .lb{font-size:13px!important;bottom:-17px!important}
+/* 영웅 화면: 팀 미리보기를 제목 아래 칸에 넣어 겹침 없앰(점검 11-30) */
+.hdr .combohd{margin:2px 18px 0;font-size:13px;line-height:1.35;text-align:left;-webkit-text-stroke:0;paint-order:normal;text-shadow:0 1px 2px #000}
+.hdr .combohd>div{margin:0!important;padding:5px 10px!important}
+.hdr .combohd b{-webkit-text-stroke:0}
+.hdr:has(.combohd){font-size:34px;top:2px}
+.hdr:has(.combohd) ~ .comps{top:146px!important}
