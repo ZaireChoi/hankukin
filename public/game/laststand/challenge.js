@@ -433,10 +433,10 @@
     if (!box() || tab !== t0) return;
     if (!a || !a.topScores) { box().innerHTML = '<p>온라인 순위표에 연결되지 않았습니다. hankuk-in.com 에서 열면 순위가 보입니다.</p>'; return; }
     const bid = { raid: 'lsraid-' + x.raid.wk, dc: 'lsdc-' + x.dc.day, prog: 'lsprog' }[t0];
-    if (a.user) { if (t0 === 'raid' && x.raid.best) await a.submitScore(bid, x.raid.best * 1000, myName()).catch(() => { }); if (t0 === 'dc' && x.dc.best) await a.submitScore(bid, x.dc.best, myName()).catch(() => { }); if (t0 === 'prog') await a.submitScore(bid, Math.max(0, (S().chMax || 1) - 1) * 1000 + starSum(), myName()).catch(() => { }); settleRaid(); }
+    if (a.user) { if (t0 === 'raid' && x.raid.best) await a.submitScore(bid, x.raid.best * 1000, myName()).catch(() => { }); if (t0 === 'dc' && x.dc.best) await a.submitScore(bid, x.dc.best, myName()).catch(() => { }); if (t0 === 'prog' && (S().chMax || 1) > 1) await a.submitScore(bid, Math.max(0, (S().chMax || 1) - 1) * 1000 + starSum(), myName()).catch(() => { }); settleRaid(); }
     let L = []; try { L = await a.topScores(bid, 50); } catch (e) { if (box()) box().innerHTML = '<p>순위를 불러오지 못했습니다. 잠시 뒤 다시 열어 주세요.</p>'; return; }
     if (!box() || tab !== t0) return; const me = a.user && a.user.uid;
-    const val = (sc) => (t0 === 'raid' ? `${Math.floor(sc / 1000)}단계` : t0 === 'prog' ? `${Math.floor(sc / 1000)}장 · 별 ${sc % 1000}` : `${fmtN(sc)}점`);
+    L = L.filter((e) => (e.score || 0) > 0); const val = (sc) => (t0 === 'raid' ? `${Math.floor(sc / 1000)}단계` : t0 === 'prog' ? `${Math.floor(sc / 1000)}장 · 별 ${sc % 1000}` : `${fmtN(sc)}점`);
     box().innerHTML = L.length ? L.map((e, i) => `<div class="lsx-rk ${e.uid === me || e.id === me ? 'me' : ''}"><b>${i + 1}</b><span>${esc(e.name || '파일럿')}</span><em>${val(e.score || 0)}</em></div>`).join('') : '<p>아직 기록이 없습니다. 첫 번째가 되어 보세요.</p>';
   }
 
