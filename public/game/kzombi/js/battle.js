@@ -2263,7 +2263,7 @@ function drawEnemy(e) {
   /* 체력 막대: 다친 적, 정예, 우두머리 */
   if (e.arena) txt(EN[e.type].n, x, y - e.hh - 26, 15, '#ff9a8a', 'center', '#200808', 3);
   if (e.boss && e.enr && e.hp > 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - e.hh * 0.45, e.hh * 0.75, '255,40,20', 0.22 + 0.1 * Math.sin(G.t * 8)); ctx.restore(); }   /* 분노한 우두머리 붉은 기운 */
-  if (e.el && D.EL[e.el] && !G.lowFx) { ctx.save(); ctx.font = (e.boss || e.elite ? '900 22px ' : '700 12px ') + 'sans-serif'; ctx.textAlign = 'center'; ctx.globalAlpha = 0.9; ctx.fillText(D.EL[e.el].i || '', x + (e.boss || e.elite ? 0 : e.r * 0.9), y - e.hh - (e.boss || e.elite ? 30 : 4)); ctx.restore(); }
+  if (e.el && D.EL[e.el]) { const big = e.boss || e.elite, zs = Math.max(0.5, ctx.getTransform().a / K), rr = (big ? 24 : 16) / zs, ix = x + (big ? 0 : e.r * 0.9 + rr * 0.4), iy = y - e.hh - (big ? 34 : 10) / zs; ctx.save(); ctx.beginPath(); ctx.arc(ix, iy, rr, 0, TAU); ctx.fillStyle = 'rgba(16,12,24,.82)'; ctx.fill(); ctx.lineWidth = (big ? 4 : 3) / zs; ctx.strokeStyle = D.EL[e.el].c; ctx.stroke(); ctx.font = '900 ' + Math.round(rr * 1.15) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#fff'; ctx.fillText(D.EL[e.el].i || '', ix, iy + rr * 0.05); ctx.restore(); }   /* 적 계열 아이콘(휴대폰에서 보이게) */
   if (e.elite) hpBar(x - 32, y - e.hh - 16, 64, 7, e.hp / e.max, '#ff4a3a');
   else if (!e.boss && e.hp < e.max) hpBar(x - 16, y - e.hh - 8, 32, 4, e.hp / e.max, '#ff5a4a');
 }
