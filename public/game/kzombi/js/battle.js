@@ -1400,9 +1400,10 @@ function moveComps(dt) {
       for (const e of G.enemies) {
         if (e.dead || e.charmT > 0) continue;
         const ed = EN[e.type], dc = Math.hypot(e.x - c.x, e.y - c.y), da = Math.hypot(e.x - anchor.x, e.y - anchor.y);
-        if (P.assassin) { if (!(ed.range || ed.caster || ed.gun)) continue; }
-        else if (da > LEASH + 120) continue;
-        let s = -dc * 0.6 - da * 0.25;
+        const isR = !!(ed.range || ed.caster || ed.gun);   /* 김충선: 원거리 적을 먼저 노리되, 없으면 가까운 적을 찾아가 벤다(사용자 11-29: 처용 뒤만 따라다님) */
+        if (P.assassin && isR) { if (da > LEASH + 120) continue; }
+        else if (da > (P.assassin ? 420 : LEASH) + 120) continue;
+        let s = -dc * 0.6 - da * 0.25; if (P.assassin && isR) s += 500;
         if (Math.hypot(e.x - sh.x, e.y - sh.y) < 150) s += 420;
         if (Math.hypot(e.x - p.x, e.y - p.y) < 130) s += 300;
         if (!e.passed && e.y > WALL_Y - 50 && e.y < WALL_Y) s += 180;
