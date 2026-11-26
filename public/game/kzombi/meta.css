@@ -588,3 +588,6 @@ html[lang=en] .m-scr p,html[lang=en] .modal p{word-break:normal;overflow-wrap:an
 .hdr .combohd b{-webkit-text-stroke:0}
 .hdr:has(.combohd){font-size:34px;top:2px}
 .hdr:has(.combohd) ~ .comps{top:146px!important}
+
+/* 탐험 단추 추가로 오른쪽 8칸(11-30) */
+.sidebtns.r.n8{gap:13px!important}.sidebtns.r.n8 .sb{width:52px!important;height:52px!important;border-radius:14px}.sidebtns.r.n8 .sb svg{width:36px!important;height:36px!important}.sidebtns.r.n8 .sb .lb{font-size:13px!important;bottom:-17px!important}
