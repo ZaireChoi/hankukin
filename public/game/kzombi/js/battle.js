@@ -893,6 +893,7 @@ function evoHint(s) {
 function rrFree() { let o = {}; try { o = JSON.parse(localStorage.getItem('kz_rr') || '{}'); } catch (e) {} return o.d === new Date().toDateString() ? Math.max(0, 3 - (o.n | 0)) : 3; }
 function rrUse() { const d = new Date().toDateString(); let o = {}; try { o = JSON.parse(localStorage.getItem('kz_rr') || '{}'); } catch (e) {} if (o.d !== d) o = { d, n: 0 }; o.n++; try { localStorage.setItem('kz_rr', JSON.stringify(o)); } catch (e) {} }
 function openLevel() {
+  if (!document.getElementById('rarCss')) { const st = document.createElement('style'); st.id = 'rarCss'; st.textContent = '.card{position:relative}.card.rar-rare{box-shadow:0 0 0 3px #5aa8ff,0 0 18px rgba(90,168,255,.65)!important}.card.rar-legend{box-shadow:0 0 0 3px #ffcf4a,0 0 26px rgba(255,200,70,.85)!important;background:linear-gradient(160deg,#5a3a10,#2a1a08)!important;animation:rarPulse 1.2s ease-in-out infinite}@keyframes rarPulse{50%{box-shadow:0 0 0 3px #fff2b0,0 0 38px rgba(255,220,120,1)}}.rartag{position:absolute;top:-8px;left:10px;padding:2px 9px;border-radius:10px;font:900 12px sans-serif;color:#1a1208;background:#5aa8ff}.rar-legend .rartag{background:#ffcf4a}'; document.head.appendChild(st); }
   G.phase = 'level'; joy.on = false; sfx('level');
   $('lvTitle').textContent = '신력이 차올랐다!';
   $('lvSub').textContent = '하나를 고르십시오';
@@ -900,31 +901,56 @@ function openLevel() {
   cards.innerHTML = '';
   /* 위쪽 슬롯 막대: 공격 5칸 / 보조 4칸 */
   { const sbEl = $('slotBar'); if (sbEl) { const ids = Object.keys(G.sk || {}), A = ids.filter(k => (SKILLS.find(s => s.id === k) || {}).kind === 'atk'), Bf = ids.filter(k => (SKILLS.find(s => s.id === k) || {}).kind !== 'atk'); const slot = (k) => k ? '<div class="s"><img src="img/skills/' + (G.evo && G.evo[k] ? 'ev_' : '') + k + '.webp" onerror="this.style.display=\'none\'"><b>' + G.sk[k] + '</b></div>' : '<div class="s"></div>'; let h = '<div class="grp a"><div class="ico h">⚔</div>'; for (let i = 0; i < Math.max(5, A.length); i++) h += slot(A[i]); h += '</div><div class="grp b">'; for (let i = 0; i < Math.max(4, Bf.length); i++) h += slot(Bf[i]); h += '<div class="ico h">🛡</div></div>'; sbEl.innerHTML = h; } }
-  const lcAll = levelChoices(); if (G.log && G.log.offers.length < 60) G.log.offers.push(lcAll.map(s => s.id));
+  const lcAll = cardRarity(levelChoices()); if (G.log && G.log.offers.length < 60) G.log.offers.push(lcAll.map(s => s.id));
   for (const s of lcAll) {
     const lv = s.evo ? 0 : skLv(s.id), b = document.createElement('button');
-    b.className = 'card ' + (s.kind === 'evo' ? 'atk awk evo' : s.kind === 'atk' ? 'atk' : 'buff') + (lv || s.evo ? '' : ' new');
+    b.className = 'card ' + (s.kind === 'evo' || s.kind === 'legend' ? 'atk awk evo' : s.kind === 'atk' ? 'atk' : 'buff') + (lv || s.evo || s.kind === 'legend' ? '' : ' new');
     let stars = '';
-    if (s.max < 99) for (let i = 0; i < s.max; i++) stars += '<span class="' + (i < lv ? 'on' : (i === lv ? 'nx' : '')) + '">★</span>';
+    if (s.kind === 'legend') stars = ''; else if (s.max < 99) for (let i = 0; i < s.max; i++) stars += '<span class="' + (i < lv ? 'on' : (i === lv ? 'nx' : '')) + '">★</span>';
     else if (!s.evo) stars = '<span class="now">즉시</span>';
     const willAw = !!s.evo;
     const link = s.el ? G.comps.find(c => c.active && COMP[c.id].el === s.el) : null;
     const elTag = s.el ? '<span class="el" style="background:' + D.EL[s.el].c + '">' + D.EL[s.el].n + (G.chEl && G.chEl.el === s.el ? ' · 유리' : '') + '</span>' : '';
-    b.innerHTML = '<div class="ic"></div><div class="tx"><div class="n">' + elTag + s.n + (lv || s.evo ? '' : ' <em>새 기술</em>') + (willAw ? ' <em class="aw">진화</em>' : '') + '</div><div class="st">' + (s.evo ? '' : stars) + '</div><div class="d">' + (s.evo ? String(D.AWAKE[s.evo] || '').replace('각성:', '진화:') : s.d(lv + 1)) + '</div>' + ((link || s.hero) ? (() => { const hid = link ? link.id : s.hero, H = COMP[hid] || {}; return '<div class="hlink"><div class="chain"></div><img class="hf" src="img/ui/hero_' + hid + '.webp?v=' + (hid === 'haetae' ? 3 : hid === 'jeonwoochi' ? 5 : 4) + '" onerror="this.style.visibility=\'hidden\'"><div class="hn">' + (link ? '연결 · ' : '전용 · ') + (H.n || '') + '</div><div class="hd">◆ ' + (link ? '이 기술 위력 +20%, 동료 피해 +15%' : (H.n || '') + '와 함께일 때만 나오는 기술') + '</div></div>'; })() : '') + evoHint(s) + '</div>';
-    { const ic = b.querySelector('.ic'), src = s.evo ? 'img/skills/ev_' + s.evo + '.webp' : s.hero ? 'img/ui/hero_' + s.hero + '.webp?v=' + (s.hero === 'haetae' ? 3 : s.hero === 'jeonwoochi' ? 5 : 4) : 'img/skills/' + s.id + '.webp'; const im = document.createElement('img'); im.src = src; im.style.cssText = 'width:96px;height:' + (s.evo ? 140 : 96) + 'px;object-fit:cover;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.5)'; im.onerror = () => { im.remove(); ic.appendChild(skillIcon(s.id, 96)); }; ic.appendChild(im); if (s.evo) { ic.style.flexBasis = '96px'; ic.style.height = '140px'; ic.style.borderRadius = '16px'; } }
+    b.innerHTML = '<div class="ic"></div><div class="tx"><div class="n">' + elTag + s.n + (lv || s.evo || s.kind === 'legend' ? '' : ' <em>새 기술</em>') + (willAw ? ' <em class="aw">진화</em>' : '') + '</div><div class="st">' + (s.evo ? '' : stars) + '</div><div class="d">' + (s.evo ? String(D.AWAKE[s.evo] || '').replace('각성:', '진화:') : s.d(lv + 1)) + '</div>' + ((link || s.hero) ? (() => { const hid = link ? link.id : s.hero, H = COMP[hid] || {}; return '<div class="hlink"><div class="chain"></div><img class="hf" src="img/ui/hero_' + hid + '.webp?v=' + (hid === 'haetae' ? 3 : hid === 'jeonwoochi' ? 5 : 4) + '" onerror="this.style.visibility=\'hidden\'"><div class="hn">' + (link ? '연결 · ' : '전용 · ') + (H.n || '') + '</div><div class="hd">◆ ' + (link ? '이 기술 위력 +20%, 동료 피해 +15%' : (H.n || '') + '와 함께일 때만 나오는 기술') + '</div></div>'; })() : '') + evoHint(s) + '</div>';
+    { const ic = b.querySelector('.ic'), src = s.icon ? s.icon : s.evo ? 'img/skills/ev_' + s.evo + '.webp' : s.hero ? 'img/ui/hero_' + s.hero + '.webp?v=' + (s.hero === 'haetae' ? 3 : s.hero === 'jeonwoochi' ? 5 : 4) : 'img/skills/' + s.id + '.webp'; const im = document.createElement('img'); im.src = src; im.style.cssText = 'width:96px;height:' + (s.evo ? 140 : 96) + 'px;object-fit:cover;border-radius:16px;box-shadow:0 4px 10px rgba(0,0,0,.5)'; im.onerror = () => { im.remove(); ic.appendChild(skillIcon(s.id, 96)); }; ic.appendChild(im); if (s.evo) { ic.style.flexBasis = '96px'; ic.style.height = '140px'; ic.style.borderRadius = '16px'; } }
     { const tx = b.querySelector('.tx'), nn = tx && tx.querySelector('.n'), ic2 = b.querySelector('.ic'); if (nn && ic2) nn.after(ic2); }
     if (willAw) b.classList.add('awk');
-    b.addEventListener('click', () => pickSkill(s.id));
+    if (s.rar) { b.classList.add('rar-' + s.rar); const tg = document.createElement('div'); tg.className = 'rartag'; tg.textContent = s.rar === 'legend' ? '전설 · 한 판 한 번' : '희귀 · 한 번에 +2단계'; b.appendChild(tg); }
+    b.addEventListener('click', () => pickSkill(s.id, s.rar));
     cards.appendChild(b);
   }
   const rr = $('btnReroll'); if (rr) rr.addEventListener('click', ev => { ev.stopPropagation(); if (G.rerolls > 0) G.rerolls--; else if (rrFree() > 0) rrUse(); else { const M = window.JZMeta && JZMeta.save ? JZMeta.save() : null; if (!M || !(M.torch > 0)) return; M.torch--; try { localStorage.setItem('jz_save', JSON.stringify(M)); } catch (e) {} } openLevel(); });
   ovLevel.classList.add('on');
 }
-function pickSkill(id) {
+/* 카드 등급(사용자 11-28: 기술이 매번 같아 지루함) — 희귀: 한 번에 2단계, 전설: 한 판 한 번 큰 변화 */
+const LG_CARDS = [
+  { id: 'lg_allup', n: '천지개벽', icon: 'img/skills/power.webp', d: () => '가진 공격 기술이 모두 한 단계 오른다' },
+  { id: 'lg_tower', n: '만리장성', icon: 'img/skills/bless.webp', d: () => '세운 시설이 모두 한 단계 오른다' },
+  { id: 'lg_ult', n: '영웅 각성', icon: 'img/skills/bond.webp', d: () => '이번 판 영웅 큰 기술 대기 시간이 절반이 된다' },
+  { id: 'lg_gold', n: '풍년 잔치', icon: 'img/skills/magnet.webp', d: () => '엽전 +600, 사당 내구도를 모두 되살린다' }
+];
+function cardRarity(list) {
+  const out = list.map(s => { if (s.evo || s.kind === 'evo' || s.max >= 99) return s; const lv = skLv(s.id); if (lv + 2 <= s.max && Math.random() < 0.14 + 0.01 * Math.min(10, G.night | 0)) return Object.assign({}, s, { rar: 'rare' }); return s; });
+  const atkOwn = Object.keys(G.sk || {}).some(k => (SKILLS.find(o => o.id === k) || {}).kind === 'atk');
+  if (!G.lgUsed && atkOwn && (G.lgForce || Math.random() < 0.05)) { G.lgForce = 0; const pool = LG_CARDS.filter(c => c.id !== 'lg_tower' || G.turrets.length > 0); const L = pool[(Math.random() * pool.length) | 0]; out[out.length - 1] = Object.assign({ kind: 'legend', max: 1, c: '#ffcf4a', rar: 'legend' }, L); }
+  return out;
+}
+function pickLegend(id) {
+  const p = G.player; G.lgUsed = 1;
+  if (id === 'lg_allup') for (const k in G.sk) { const S = SKILLS.find(o => o.id === k); if (S && S.kind === 'atk' && G.sk[k] < S.max) G.sk[k]++; }
+  if (id === 'lg_tower') for (const t of G.turrets) upTurret(t, true);
+  if (id === 'lg_ult') { G.cultMax *= 0.5; G.cult = Math.min(G.cult, G.cultMax); }
+  if (id === 'lg_gold') { G.gold += 600; G.shrine.hp = G.shrine.max; }
+  const L = LG_CARDS.find(c => c.id === id) || {}; G.title = { s: L.n + '!', sub: L.d ? L.d() : '', t: 2.4, big: 1 }; G.flash = { c: '255,215,110', t: 0.6 }; FX.ring(p.x, p.y, 240, '255,220,120', 0.7, 14); sfx('ult'); vib([60, 40, 140]);
+  ovLevel.classList.remove('on'); G.phase = 'night'; if (G.pendingLv > 0) { G.pendingLv--; setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 250); }
+}
+function pickSkill(id, rar) {
+  if (id.indexOf('lg_') === 0) { sfx('card'); return pickLegend(id); }
   sfx('card');
   const p = G.player; if (G.log) G.log.skills.push([id, G.night + 1]);
   if (id.indexOf('ev_') === 0) { const sid = id.slice(3); if (!G.evo) G.evo = {}; G.evo[sid] = true; G.banner = { s: D.EVO[sid].n + ' 진화!', t: 2.2, kind: 'win' }; G.freezeT = 0.35; G.flash = { c: '255,215,110', t: 0.6 }; G.title = { s: D.EVO[sid].n + '!', sub: String(D.AWAKE[sid] || '').replace('진화: ', ''), t: 2.4, big: 1 }; vib([60, 40, 140]); FX.shake = 0.4; FX.explode(p.x, p.y - 40, 120, 'purple'); FX.ring(p.x, p.y, 220, '255,220,120', 0.7, 14); sfx('ult'); ovLevel.classList.remove('on'); G.phase = 'night'; G.pendingLv--; if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 250); return; }
   G.sk[id] = skLv(id) + 1;
+  { const S0 = SKILLS.find(s => s.id === id); if (rar === 'rare' && S0 && G.sk[id] < S0.max) { G.sk[id]++; G.banner = { s: '희귀 카드! ' + S0.n + ' +2단계', t: 1.6, kind: 'elite' }; } }
   if (id === 'rapid') p.rate *= 0.8;
   if (id === 'swift') p.sp *= 1.15;
   if (id === 'heal') { p.max += 20; p.hp = Math.min(p.max, p.hp + 40); }
@@ -2755,6 +2781,7 @@ function logFinish(res) {
 /* ---------- 바깥과 잇는 창구 ---------- */
 const JZB = window.JZB = {
   buildWalls,
+  testLevelUp: o => { if (!G) return 0; o = o || {}; if (o.sk) G.sk = Object.assign({}, o.sk); if (o.legend) G.lgForce = 1; if (o.nm) G.nm = true; openLevel(); return 1; },   /* 시험용(화면 확인), 사용자 흐름에서는 안 불림 */
   start: cfg => { newGame(cfg); try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
