@@ -40,7 +40,7 @@ FX.glow = function (ctx, x, y, r, c, a, hard) {
 };
 
 FX.low = false;
-const VIMG = {}; ['vfx_explode', 'vfx_fire', 'vfx_splash', 'vfx_zap', 'vfx_holy', 'vfx_leaf'].forEach(n => { const i = new Image(); i.src = 'img/fx/' + n + '.webp?v=1'; VIMG[n] = i; });   /* 그림체 통일: 그림 효과 소재(가산 합성) */
+const VIMG = {}; ['vfx_explode', 'vfx_fire', 'vfx_splash', 'vfx_zap', 'vfx_holy', 'vfx_leaf', 'vfx_ice', 'vfx_soul', 'vfx_ring', 'vfx_dust'].forEach(n => { const i = new Image(); i.src = 'img/fx/' + n + '.webp?v=1'; VIMG[n] = i; });   /* 그림체 통일: 그림 효과 소재(가산 합성) */
 let vN = 0;
 FX.vfx = function (n, x, y, r, life, rot) { const im = VIMG[n]; if (!im || !im.complete || !im.naturalWidth || vN >= (FX.low ? 6 : 22)) return; vN++; add({ kind: 'vimg', n, x, y, t: life || 0.4, life: life || 0.4, s: r, rot: rot == null ? rnd(-0.4, 0.4) : rot, vx: 0, vy: 0 }); };
 function add(p) { if (parts.length < (FX.low ? 400 : 1300)) parts.push(p); return p; }
@@ -52,7 +52,7 @@ FX.spark = function (x, y, c, n, sp, life) {
 };
 FX.hit = function (x, y, c, big) {
   c = c || '255,230,170';
-  if (big) { const q = c.split(',').map(Number), R = q[0], Gn = q[1], B = q[2]; const nm = B > 200 && R < 200 ? (Gn > 215 && R < 150 ? 'vfx_splash' : 'vfx_zap') : R > 220 && Gn > 200 && B < 190 ? 'vfx_holy' : Gn > R + 20 && Gn > B ? 'vfx_leaf' : R > 200 && Gn < 190 ? 'vfx_explode' : null; if (nm) FX.vfx(nm, x, y, 30, 0.24); }
+  if (big) { const q = c.split(',').map(Number), R = q[0], Gn = q[1], B = q[2]; const nm = R > 140 && B > 200 && Gn < 150 ? 'vfx_soul' : B > 200 && R >= 150 && Gn > 200 ? 'vfx_ice' : B > 200 && R < 200 ? (Gn > 215 && R < 150 ? 'vfx_splash' : 'vfx_zap') : R > 220 && Gn > 200 && B < 190 ? 'vfx_holy' : Gn > R + 20 && Gn > B ? 'vfx_leaf' : R > 200 && Gn < 190 ? 'vfx_explode' : null; if (nm) FX.vfx(nm, x, y, 30, 0.24); }
   add({ kind: 'glow', x, y, t: 0.12, life: 0.12, s: big ? 46 : 26, s2: big ? 10 : 6, c });
   FX.spark(x, y, c, big ? 7 : 4, big ? 380 : 260);
 };
@@ -83,7 +83,7 @@ FX.explode = function (x, y, r, pal) {
   FX.debris(x, y, 6 + (r / 15 | 0), '#3a2e26', r * 5);
   FX.smoke(x, y - r * 0.2, 4 + (r / 20 | 0), pal ? '60,50,70' : '70,60,55', r * 0.35, 60);
   if (pal !== 'blue') FX.scorch(x, y, r * 0.9);
-  { const nm = pal === 'blue' ? 'vfx_splash' : pal === 'green' ? 'vfx_leaf' : pal === 'purple' ? null : 'vfx_explode'; if (nm) FX.vfx(nm, x, y - r * 0.1, r * 1.3, 0.42); if (!pal || pal === 'fire') FX.vfx('vfx_fire', x, y - r * 0.35, r * 0.8, 0.5, 0); }
+  { const nm = pal === 'blue' ? 'vfx_splash' : pal === 'green' ? 'vfx_leaf' : pal === 'purple' ? null : 'vfx_explode'; if (nm) FX.vfx(nm, x, y - r * 0.1, r * 1.3, 0.42); FX.vfx('vfx_ring', x, y + r * 0.15, r * 1.5, 0.34, 0); if (pal === 'purple') FX.vfx('vfx_soul', x, y - r * 0.3, r * 1.2, 0.55, 0); if (!pal || pal === 'fire') FX.vfx('vfx_fire', x, y - r * 0.35, r * 0.8, 0.5, 0); }
   FX.shake = Math.max(FX.shake, Math.min(0.35, r / 300));
 };
 
