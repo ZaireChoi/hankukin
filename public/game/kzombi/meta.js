@@ -658,18 +658,19 @@ if (window.IS_EN) document.title = 'K Zombi';
       '<div style="height:200px;border-radius:16px;background:url(' + (AXN >= 4 ? 'img/acts/act' + AXN + '/bg_map.webp' : 'img/ui/map_bg_a3.jpg') + ') center ' + (100 - (n - 1) * 3) + '%/cover;border:3px solid ' + actCol(AXN) + ';margin-bottom:14px"></div>' +
       elInfo(n, true) + '<p>' + (AXN >= 4 ? actDesc(AXN, n) : TT('바다 너머 원정. 적이 악몽보다 세고, 바다 좀비는 물에 젖은 푸른빛이에요. 숙적 수귀 제독이 7·14·22장에 나타나요.', 'The voyage beyond the sea. Foes are stronger than Nightmare, and sea zombies glow a drowned blue. Admiral Drowned appears in stages 7, 14 and 22.')) + '</p>' +
       '<p>' + TT('보상: 엽전·경험치 ' + (2.5 + 0.5 * (AXN - 3)) + '배, 장비 단계 T' + AXN + ', 첫 클리어 옥 ', 'Rewards: coins & XP x' + (2.5 + 0.5 * (AXN - 3)) + ', gear tier T' + AXN + ', first clear jade ') + (150 + 10 * (n + 30 * (AXN - 3))) + '</p>' +
-      '<p>' + TT('권장 전투력', 'Recommended power') + ' <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · ' + TT('내 전투력', 'My power') + ' ' + fmt(st.power) + '</p>' +
+      (window.JZD && JZD.traitOf && JZD.traitOf(AXN, n) ? (T0 => '<p>' + TT('장 특성', 'Trait') + ' · <b style="color:#7fd0ff">' + TT(T0.n, T0.en) + '</b> — ' + TT(T0.d, T0.de) + '</p>')(JZD.TRAITS[JZD.traitOf(AXN, n)]) : '') + '<p>' + TT('권장 전투력', 'Recommended power') + ' <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · ' + TT('내 전투력', 'My power') + ' ' + fmt(st.power) + '</p>' +
       '<div class="row"><div class="btn b" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>' + TT('출항', 'Set sail') + '</span><small style="font-size:18px">' + TT('횃불 5', 'Torch 5') + '</small></div></div>'); return; }
     if (isNM()) { const nr = Math.round(900 * Math.pow(n + 29, 1.6) * 1.6); modal('<h3 class="stroke" style="color:#ff7a6a">악몽 ' + n + ' · ' + c.name + '</h3>' +
       '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ff5a4a;margin-bottom:14px;filter:hue-rotate(-30deg) saturate(1.6) brightness(.75)"></div>' +
       elInfo(n, true) + '<p>적이 훨씬 세고 많아요. 우두머리는 일찍 분노하고, 역병 걸린 좀비는 죽으며 독 웅덩이를 남겨요.</p>' +
       '<p>보상: 엽전·경험치 2배, 신화 장비 확률, 첫 클리어 옥 ' + (100 + 10 * n) + '</p>' +
+      (window.JZD && JZD.traitOf && JZD.traitOf(2, n) ? (T0 => '<p>' + TT('장 특성', 'Trait') + ' · <b style="color:#7fd0ff">' + TT(T0.n, T0.en) + '</b> — ' + TT(T0.d, T0.de) + '</p>')(JZD.TRAITS[JZD.traitOf(2, n)]) : '') + 
       '<p>권장 전투력 <b style="color:' + (st.power >= nr ? '#7df06a' : '#ff8e8e') + '">' + fmt(nr) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
       '<div class="row"><div class="btn r" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>악몽 도전</span><small style="font-size:18px">횃불 5</small></div></div>'); return; }
     modal('<h3 class="stroke">챕터 ' + n + ' · ' + c.name + '</h3>' + '<p style="text-align:center;color:#ffe3a3;font-weight:700;margin:-4px 0 10px">' + chStory(n) + '</p>' +
       '<div style="height:200px;border-radius:16px;background:url(img/ui/map_bg.jpg) center ' + (100 - (n - 1) * 11) + '%/cover;border:3px solid #ffd36b;margin-bottom:14px"></div>' +
       elInfo(n, false) + '<p>밤 ' + c.waves + '번을 버티면 이겨요. 마지막 밤에는 우두머리가 나와요.</p>' +
-(window.JZD && JZD.mobWin && n > 1 && JZD.EN[JZD.mobWin(n)[3]] ? '<p>' + TT('이번 장 새 몹', 'New zombie') + ' · <b style="color:#ffb35a">' + JZD.EN[JZD.mobWin(n)[3]].n + '</b></p>' : '') +   /* 몹 사다리: 장마다 새 몹 1종 */
+(window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT('장 특성', 'Trait') + ' · <b style="color:#7fd0ff">' + TT(T0.n, T0.en) + '</b> — ' + TT(T0.d, T0.de) + '</p>')(JZD.TRAITS[JZD.traitOf(1, n)]) : '') + (window.JZD && JZD.mobWin && n > 1 && JZD.EN[JZD.mobWin(n)[3]] ? '<p>' + TT('이번 장 새 몹', 'New zombie') + ' · <b style="color:#ffb35a">' + JZD.EN[JZD.mobWin(n)[3]].n + '</b></p>' : '') +   /* 몹 사다리: 장마다 새 몹 1종 */
       '<p>권장 전투력 <b style="color:' + (st.power >= rec ? '#7df06a' : '#ff8e8e') + '">' + fmt(rec) + '</b> · 내 전투력 ' + fmt(st.power) + '</p>' +
       '<p>최고 기록: ' + (S.best[n] ? '밤 ' + S.best[n] + '/' + c.waves : '없음') + '</p>' +
       '<div class="row"><div class="btn y" data-act="go" data-v="' + n + '" style="flex-direction:column;gap:0"><span>도전하기</span><small style="font-size:18px;display:flex;gap:4px;align-items:center;color:#7a3300">' + ic('torch').replace('class="ic ', 'style="width:26px;height:26px" class="ic ') + '5</small></div></div>' +
@@ -1855,7 +1856,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     // 첫 화면 음악은 첫 터치 때 (브라우저 규칙)
     const first = () => { if ($('#s-title').classList.contains('on')) music('bgm_title'); removeEventListener('pointerdown', first, true); };
     addEventListener('pointerdown', first, true);
-    window.JZMeta = { show: () => { meta.classList.remove('off'); renderLobby(); }, onEnd, save: () => S, reset: () => { localStorage.removeItem(KEY); load(); } };
+    window.JZMeta = { testChap: n => chapModal(n), show: () => { meta.classList.remove('off'); renderLobby(); }, onEnd, save: () => S, reset: () => { localStorage.removeItem(KEY); load(); } };
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 })();
