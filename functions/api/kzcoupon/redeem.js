@@ -7,7 +7,7 @@
    - 답: { ok, reward, key, mode, receipt } — receipt 는 KZPAY_HMAC 로 서명(uid·key·보상·시각). 게임은 receipt 마다 한 번만 지급. */
 const PROJECT = 'hankukin-play';
 const CPN_SALT = 'jz:MQMRT2QLZ2';
-const LEGACY = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 } };
+const LEGACY = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 } };
 const J = (o, s) => new Response(JSON.stringify(o), { status: s || 200, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const enc = s => new TextEncoder().encode(s);
 const hex = buf => [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
