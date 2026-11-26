@@ -996,7 +996,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     })();
   }
   function settingsModal() {
-    modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
+    modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' + (function () { let off = false; try { off = localStorage.getItem('kz_cutin_off') === '1'; } catch (e) {} return '<div class="row"><div class="btn ' + (off ? 'b' : 'g') + '" data-act="toggleCutin">' + (window.IS_EN ? (off ? 'Hero cut-in: OFF' : 'Hero cut-in: ON') : (off ? '영웅 컷인 끔' : '영웅 컷인 켬')) + '</div></div>'; })() +
       (function () { const gv = k => { const v = parseFloat(localStorage.getItem(k)); return isNaN(v) ? 1 : v; }; const row = (lb, k, fn) => '<div class="row" style="align-items:center;gap:10px;padding:0 6px"><span style="min-width:96px;font-size:15px">' + (window.IS_EN ? (k === 'kz_bgmv' ? 'Music volume' : 'Sound volume') : lb) + '</span><input type="range" min="0" max="1" step="0.05" value="' + gv(k) + '" style="flex:1;accent-color:#ffd36b" oninput="' + fn + '(this.value)"></div>'; return row('음악 음량', 'kz_bgmv', 'KZVOLM') + row('효과음 음량', 'kz_sfxv', 'KZVOLS'); })() +   /* 음악·효과음 음량 따로(11-27) */
       '<div class="row"><div class="btn ' + (localStorage.getItem('kz_vib') === '0' ? 'b' : 'g') + '" data-act="toggleVib">' + (localStorage.getItem('kz_vib') === '0' ? '진동 끔' : '진동 켬') + '</div></div>' +
       '<div class="row"><div class="btn p" data-act="coupon">쿠폰 입력</div><div class="btn b" data-act="runlog">판 기록</div></div>' + '<div class="row"><div class="btn g" data-act="opening">' + (window.IS_EN ? 'Replay opening' : '오프닝 다시 보기') + '</div></div>' +
@@ -1739,6 +1739,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'starter': starterModal(); break;
       case 'cpnUse': useCoupon(); break;
       case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
+      case 'toggleCutin': try { localStorage.setItem('kz_cutin_off', localStorage.getItem('kz_cutin_off') === '1' ? '0' : '1'); } catch (e) {} settingsModal(); break;
       case 'toggleMusic': S.music = !S.music; save(); if (S.music) music('bgm_lobby'); else stopMusic(); settingsModal(); break;
       case 'reset': if (confirm('저장을 모두 지우고 처음부터 할까요?')) { localStorage.removeItem(KEY); load(); closeModal(); tab = 'home'; renderLobby(); } break;
       case 'profile': { const st = stats(); modal('<h3 class="stroke">처용</h3>' + (S.title ? '<p style="text-align:center;color:#ff7a6a;font-size:24px">〈' + S.title + '〉</p>' : '') + '<p>레벨 ' + S.lv + ' (경험 ' + S.exp + '/' + needExp(S.lv) + ')</p><p>공격력 ' + fmt(st.atk) + ' · 체력 ' + fmt(st.hp) + ' · 전투력 ' + fmt(st.power) + '</p><p>깬 챕터 ' + (S.chap - 1) + ' · 도전 ' + S.plays + '번</p>' +
