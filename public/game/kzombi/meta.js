@@ -863,7 +863,7 @@ skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT
      코드 원문은 넣지 않고 해시만 둔다. rep: 여러 번 쓸 수 있는 시험용. 이 검사는 기기 안에서만 하므로
      정식 유료 판매 전에는 서버 검사로 바꿔야 한다. */
   const CPN_SALT = 'jz:MQMRT2QLZ2';
-  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'yq1o8r10h4': { jade: 0, mbow: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 } };
+  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'yq1o8r10h4': { jade: 0, mbow: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 }, '25oggeu1hc9': { jade: 0, allHero: 1, rep: true } };
   const cpnHash = (str, seed) => { let h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0); for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
   /* 신규 스타트팩(990원, 계정당 1회): 홍길동 + 영웅 장비 4점 + 옥 300 + 횃불 20. 결제 전에는 시험 쿠폰으로만 받는다 */
   const stBorn = () => { if (!S.born) S.born = Date.now(); return S.born; };
@@ -1003,6 +1003,7 @@ skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT
     S.cpn = S.cpn || {};
     if (c && S.cpn[k] && !c.rep) { toast('이미 쓴 코드예요'); return; }
     const grant = (kk, jade, starter, mb) => {
+      if (c && c.allHero && kk === k) { for (const cc of COMPS) { const x = S.comps[cc.id]; if (x && !x.own) { x.own = true; x.lv = Math.max(x.lv || 1, 1); x.star = Math.max(x.star || 1, 1); } } S.cpn[kk] = (S.cpn[kk] || 0) + 1; save(); closeModal(); refresh(); toast(window.IS_EN ? 'Admin coupon: all heroes unlocked' : '관리자 쿠폰: 모든 영웅을 쓸 수 있어요'); return; } /* 관리자 쿠폰(사용자 11-28) */
       if (mb) { if (S.mbow) { toast('신화 활은 계정당 한 번이에요'); return; } S.cpn[kk] = 1; closeModal(); grantMbow(); return; }
       if (starter) { if (S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; } S.cpn[kk] = 1; grantStarter(); return; }
       S.cpn[kk] = (S.cpn[kk] || 0) + 1; S.jade += jade; save(); closeModal(); toast('쿠폰 보상: 옥 ' + fmt(jade)); refresh();
