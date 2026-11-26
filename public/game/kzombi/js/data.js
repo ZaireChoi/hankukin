@@ -252,9 +252,23 @@ D.COMP = {
 /* 원소 다섯: 불, 번개, 얼음, 기, 쇠 */
 D.EL = { fire: { n: '불', c: '#ff7a3a' }, thunder: { n: '번개', c: '#7fb8ff' }, ice: { n: '얼음', c: '#9ff0ff' }, qi: { n: '기', c: '#c08aff' }, metal: { n: '쇠', c: '#d8d8d8' } };
 /* 진화(탕탕특공대식): 공격 기술 5단계 + 짝 보조 기술 */
-D.EVO = { gawi: { pair: 'swift', n: '천년 가위' }, nabi: { pair: 'crit', n: '호접몽' }, mulgi: { pair: 'pierce', n: '용오름' }, geobuk: { pair: 'power', n: '학익진 일제 포격' }, ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
+D.EVO = { yakbyeong: { pair: 'bless', n: '만병통치 대약' }, topni: { pair: 'rapid', n: '천년 시계' }, morae: { pair: 'swift', n: '황사 폭풍' }, hwalsi: { pair: 'multi', n: '신궁 바람' }, beonbuk: { pair: 'power', n: '뇌고 천둥' }, eunha: { pair: 'pierce', n: '은하 대전' }, honbul: { pair: 'heal', n: '백귀 사슬' }, myeongbu: { pair: 'crit', n: '염라 판결' }, yukdo: { pair: 'multi', n: '육도윤회' }, yongam: { pair: 'power', n: '화산 대분화' }, geoul: { pair: 'bless', n: '명경지수' }, geurimja: { pair: 'crit', n: '천의 그림자' }, taecho: { pair: 'heal', n: '태초의 노래' }, byeoljari: { pair: 'magnet', n: '은하 낙성' }, gawi: { pair: 'swift', n: '천년 가위' }, nabi: { pair: 'crit', n: '호접몽' }, mulgi: { pair: 'pierce', n: '용오름' }, geobuk: { pair: 'power', n: '학익진 일제 포격' }, ghost: { pair: 'crit', n: '백귀야행' }, meteor: { pair: 'power', n: '천벌 유성우' }, thunder: { pair: 'rapid', n: '뇌신강림' }, ice: { pair: 'swift', n: '빙룡' }, dance: { pair: 'heal', n: '처용 대무' }, talisman: { pair: 'multi', n: '팔괘 부적진' }, beam: { pair: 'pierce', n: '해모수 광선' }, vortex: { pair: 'magnet', n: '화룡 회오리' } };
 /* 각성(별 다섯) 효과 */
 D.AWAKE = {
+  yakbyeong: '진화: 웅덩이가 두 배로 오래 남고 독이 세진다',
+  topni: '진화: 톱니가 두 겹으로 돈다',
+  morae: '진화: 회오리가 둘로 갈라진다',
+  hwalsi: '진화: 화살이 두 배, 맞은 적을 밀어낸다',
+  beonbuk: '진화: 멈춤이 길고 범위가 넓다',
+  eunha: '진화: 화살이 끝까지 뚫는다',
+  honbul: '진화: 회복 두 배, 맞은 적이 얼어붙는다',
+  myeongbu: '진화: 바로 쓰러뜨리는 기준이 25%로',
+  yukdo: '진화: 열두 방향',
+  yongam: '진화: 용암이 더 크고 오래 탄다',
+  geoul: '진화: 반경이 넓고 위력 두 배',
+  geurimja: '진화: 분신이 두 배',
+  taecho: '진화: 사당을 더 고치고 처용도 회복',
+  byeoljari: '진화: 별이 두 배',
   gawi: '진화: 묶는 시간 두 배, 묶인 적이 받는 피해 +30%',
   nabi: '진화: 나비가 터지면 작은 나비 둘로 갈라진다',
   mulgi: '진화: 물기둥이 두 배로 넓다',
@@ -289,7 +303,21 @@ D.SKILLS = [
   { id: 'heal',     n: '정화수',     kind: 'buff', max: 99, c: '#8affc0', d: () => '체력 40 회복, 최대 체력 +20' },
   { id: 'repair',   n: '사당 보수',  kind: 'buff', max: 99, c: '#8affc0', d: () => '사당 내구도를 100 되살린다', need: g => g.shrine.hp < g.shrine.max },
   { id: 'bless',    n: '장승 가호',  kind: 'buff', max: 3, c: '#8affc0', d: () => '세운 시설의 위력과 속도 +40%', need: g => g.turrets.length > 0 },
-{ id: 'gawi',     n: '가위눌림',   kind: 'atk', el: 'qi', max: 5, act: 2, c: '#9a7aff', d: l => '가장 붐비는 곳에 가위눌림 장판, 적 ' + (0.6 + 0.15 * l).toFixed(2) + '초 묶음' },
+  { id: 'yakbyeong', n: '연금 약병', kind: 'atk', el: 'fire', max: 5, act: 4, c: '#8aff6a', gen: {t:'multi',cd:[5,0.25],dm:[28,11],R:[75,5],n:[1,0.5],burn:[4,1.5],c:'140,255,110'}, d: l => '약병 ' + (1 + Math.floor(l / 2)) + '개가 깨져 독 웅덩이를 남긴다' },
+  { id: 'topni', n: '시계 톱니', kind: 'atk', el: 'metal', max: 5, act: 4, c: '#ffcf6a', gen: {t:'ring',cd:[2.6,0.12],dm:[50,18],R:[150,10],kb:18,c:'255,210,110'}, d: l => '톱니 칼날이 처용 둘레를 한 바퀴 벤다 (반경 ' + (120 + 8 * l) + ')' },
+  { id: 'morae', n: '모래 회오리', kind: 'atk', el: 'metal', max: 5, act: 5, c: '#e8c070', gen: {t:'vortex',cd:[6.5,0.35],dm:[30,13],R:[100,6],c:'230,190,110'}, d: l => '모래 회오리가 적을 휘감으며 깎는다 (위력 ' + (100 + 30 * (l - 1)) + '%)' },
+  { id: 'hwalsi', n: '활시위 바람', kind: 'atk', el: 'qi', max: 5, act: 5, c: '#8affb0', gen: {t:'fan',cd:[2.6,0.1],dm:[16,6],n:[3,1],pierce:3,c:'150,255,180'}, d: l => '바람 화살 ' + (3 + l) + '발이 세 명을 꿰뚫는다' },
+  { id: 'beonbuk', n: '번개 북', kind: 'atk', el: 'thunder', max: 5, act: 6, c: '#7fd0ff', gen: {t:'ring',cd:[4,0.2],dm:[70,26],R:[190,10],stun:0.5,c:'150,210,255'}, d: l => '북소리 번개가 둘레 적을 치고 잠깐 멈춘다' },
+  { id: 'eunha', n: '은하수 화살', kind: 'atk', el: 'qi', max: 5, act: 6, c: '#c9b8ff', gen: {t:'fan',cd:[3,0.12],dm:[18,6.5],n:[1,1],pierce:6,sp:900,life:0.9,c:'200,190,255'}, d: l => '별빛 화살 ' + (1 + l) + '발이 길게 꿰뚫는다' },
+  { id: 'honbul', n: '혼불 사슬', kind: 'atk', el: 'ice', max: 5, act: 7, c: '#9fe0ff', gen: {t:'chain',cd:[3.2,0.18],dm:[40,14],n:[2,1],slow:1.2,heal:2,c:'160,220,255'}, d: l => '혼불 ' + (2 + l) + '개가 적을 잇고, 맞힐 때 처용 체력 회복' },
+  { id: 'myeongbu', n: '저승 명부', kind: 'atk', el: 'qi', max: 5, act: 7, c: '#ff7a7a', gen: {t:'zone',cd:[7,0.4],dm:[64,24],R:[90,7],exec:0.12,c:'255,110,110'}, d: l => '명부에 적힌 적을 친다. 체력 12% 아래 일반 적은 바로 쓰러진다' },
+  { id: 'yukdo', n: '아수라 육도', kind: 'atk', el: 'metal', max: 5, act: 8, c: '#ff9a5a', gen: {t:'six',cd:[3,0.12],dm:[26,10],pierce:2,c:'255,160,90'}, d: l => '여섯 방향으로 칼날을 날린다 (' + (6 + (l >= 4 ? 6 : 0)) + '발)' },
+  { id: 'yongam', n: '용암 분출', kind: 'atk', el: 'fire', max: 5, act: 8, c: '#ff5a2a', gen: {t:'multi',cd:[5.5,0.3],dm:[36,13],R:[80,6],n:[1,0.6],burn:[6,2],c:'255,100,40'}, d: l => '땅에서 용암이 ' + (1 + Math.floor(l * 0.6)) + '번 솟아 태운다' },
+  { id: 'geoul', n: '거울 반사', kind: 'atk', el: 'qi', max: 5, act: 9, c: '#e8f0ff', gen: {t:'ring',cd:[3.6,0.18],dm:[75,28],R:[180,10],clear:1,c:'230,240,255'}, d: l => '거울 빛이 둘레 적을 치고 날아오는 적 탄을 지운다' },
+  { id: 'geurimja', n: '그림자 분신', kind: 'atk', el: 'qi', max: 5, act: 9, c: '#a07aff', gen: {t:'shot',cd:[2.8,0.12],dm:[18,7],n:[2,1],R:[50,4],c:'170,130,255'}, d: l => '그림자 분신 ' + (2 + l) + '개가 적에게 달려들어 터진다' },
+  { id: 'taecho', n: '태초의 춤', kind: 'atk', el: 'fire', max: 5, act: 10, c: '#ffe08a', gen: {t:'ring',cd:[6,0.3],dm:[120,42],R:[260,12],healS:0.03,c:'255,230,140'}, d: l => '처음의 춤이 넓게 퍼져 적을 치고 사당을 조금 고친다' },
+  { id: 'byeoljari', n: '별자리 낙하', kind: 'atk', el: 'fire', max: 5, act: 10, c: '#ffd84a', gen: {t:'multi',cd:[5,0.25],dm:[29,10],R:[85,6],n:[2,0.7],c:'255,220,120'}, d: l => '별 ' + (2 + Math.floor(l * 0.7)) + '개가 떨어져 터진다' },
+  { id: 'gawi',     n: '가위눌림',   kind: 'atk', el: 'qi', max: 5, act: 2, c: '#9a7aff', d: l => '가장 붐비는 곳에 가위눌림 장판, 적 ' + (0.6 + 0.15 * l).toFixed(2) + '초 묶음' },
   { id: 'nabi',     n: '꿈 나비',    kind: 'atk', el: 'qi', max: 5, act: 2, c: '#ff9ae6', d: l => '꿈 나비 ' + (1 + l) + '마리가 날아가 터진다' },
   { id: 'mulgi',    n: '물기둥',     kind: 'atk', el: 'ice', max: 5, act: 3, c: '#5ad0ff', d: l => '물기둥 ' + l + '개가 솟아 적을 띄운다' },
   { id: 'geobuk',   n: '거북선 포격', kind: 'atk', el: 'fire', max: 5, act: 3, c: '#ffb070', d: l => '큰 포탄 ' + (1 + Math.floor(l / 2)) + '발, 넓게 터진다' },

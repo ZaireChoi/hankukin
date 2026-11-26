@@ -1448,6 +1448,7 @@ function skills(dt) {
     }
     G.skT[id] = (G.skT[id] || 0) - dt / Math.pow(0.9, fxN('skillCd10'));
     if (G.skT[id] > 0) continue;
+    if (S.gen) { genSkill(id, S, lv, sm, A, p); continue; }
     if (id === 'ghost') {
       const tg = nearestEnemy(p.x, p.y, 460); if (!tg) { G.skT[id] = 0.3; continue; }
       G.skT[id] = 2.3 - 0.12 * lv;
@@ -1499,6 +1500,31 @@ function skills(dt) {
   }
 }
 
+/* 막마다 새 기술(4~10막) 공통 실행 — 장판·투사체 재사용, 한 동작이 또렷하게 */
+function genSkill(id, S, lv, sm, A, p) {
+  const g = S.gen, V = a => a ? a[0] + a[1] * lv : 0, dm = V(g.dm) * sm * (A ? 1.4 : 1), c = g.c;
+  const hitR = (x, y, R) => { for (const e of G.enemies) { if (e.dead || Math.hypot(e.x - x, e.y - y) > R) continue; hurtEnemy(e, dm, 'skill', g.kb ? { kb: g.kb, kx: x, ky: y } : undefined); if (g.burn) { e.burnT = A ? 4 : 2.5; e.burnD = V(g.burn) * sm * 0.35; } if (g.stun && !e.boss) e.stunT = Math.max(e.stunT || 0, g.stun * (A ? 1.8 : 1)); if (g.slow) e.slowT = Math.max(e.slowT || 0, g.slow); if (g.exec && !e.boss && !e.elite && !e.dead && e.hp < e.max * (A ? 0.25 : g.exec)) hurtEnemy(e, e.hp + 1, 'skill'); } };
+  G.skT[id] = Math.max(0.6, g.cd[0] - g.cd[1] * lv);
+  if (g.t === 'ring') {
+    const R = V(g.R) * (A ? 1.25 : 1); FX.ring(p.x, p.y - 20, R, c, 0.4, 9); if (A && id === 'topni') FX.ring(p.x, p.y - 20, R * 0.7, c, 0.4, 7);
+    hitR(p.x, p.y, R); if (A && id === 'topni') hitR(p.x, p.y, R * 0.7);
+    if (g.clear && G.eshots) G.eshots = G.eshots.filter(s => Math.hypot(s.x - p.x, s.y - p.y) > R);
+    if (g.healS) { G.shrine.hp = Math.min(G.shrine.max, G.shrine.hp + G.shrine.max * g.healS * (A ? 2 : 1)); if (A) p.hp = Math.min(p.max, p.hp + p.max * 0.05); }
+    sfx(id === 'beonbuk' ? 'zap' : 'shoot', 0.7); return;
+  }
+  const es = G.enemies.filter(e => !e.dead && Math.hypot(e.x - p.x, e.y - p.y) < 480); if (!es.length) { G.skT[id] = 0.3; return; }
+  if (g.t === 'zone') { const T = densest(p.x, p.y, 480) || es[0], tx = T.x, ty = T.y, R = V(g.R); G.tele.push({ x: tx, y: ty, r: R, t: 0.5, life: 0.5, c }); G.queue.push({ t: 0.5, fn: () => { FX.ring(tx, ty, R, c, 0.4, 8); FX.spark(tx, ty, c, 10, 260); hitR(tx, ty, R); sfx('boom', 0.5); } }); return; }
+  if (g.t === 'multi') { const n = Math.floor(V(g.n)) * (A && id === 'byeoljari' ? 2 : 1), R = V(g.R) * (A ? 1.2 : 1); for (let i = 0; i < n; i++) { const T = i ? pick(es) : (densest(p.x, p.y, 480) || es[0]), tx = T.x + rnd(-15, 15), ty = T.y + rnd(-15, 15); G.tele.push({ x: tx, y: ty, r: R, t: 0.55 + i * 0.12, life: 0.55 + i * 0.12, c }); G.queue.push({ t: 0.55 + i * 0.12, fn: () => { FX.ring(tx, ty, R, c, 0.4, 8); FX.spark(tx, ty, c, 10, 280); hitR(tx, ty, R); sfx('boom', 0.45); } }); } return; }
+  if (g.t === 'chain') { const n = Math.floor(V(g.n)); let src = { x: p.x, y: p.y - 50 }, used = []; let cur = nearestEnemy(p.x, p.y, 460); for (let k = 0; k < n && cur; k++) { used.push(cur); const tx = cur.x, ty = cur.y - cur.hh * 0.5; G.beams.push({ x1: src.x, y1: src.y, x2: tx, y2: ty, c, w: 8, t: 0.18, life: 0.18 }); hurtEnemy(cur, dm, 'skill'); if (g.slow) cur.slowT = Math.max(cur.slowT || 0, g.slow); if (A && !cur.boss) cur.stunT = Math.max(cur.stunT || 0, 0.5); if (g.heal) p.hp = Math.min(p.max, p.hp + g.heal * (A ? 2 : 1)); FX.spark(tx, ty, c, 4, 200); src = { x: tx, y: ty }; cur = nearestEnemy(tx, ty, 200, used); } sfx('zap', 0.6); return; }
+  if (g.t === 'fan' || g.t === 'six') {
+    const tg = nearestEnemy(p.x, p.y, 460) || es[0], a0 = Math.atan2(tg.y - p.y, tg.x - p.x);
+    const n = g.t === 'six' ? (lv >= 4 || A ? 12 : 6) : Math.floor(V(g.n)) * (A && id === 'hwalsi' ? 2 : 1), sp = g.sp || 720;
+    for (let i = 0; i < n; i++) { const a = g.t === 'six' ? a0 + i / n * TAU : a0 + (i - (n - 1) / 2) * 0.14; shot({ kind: 'ice', x: p.x, y: p.y - 40, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, dmg: dm, pierce: A && id === 'eunha' ? 99 : g.pierce || 1, life: g.life || 0.7, src: 'skill', slow: 0, frz: 0, r: 12 }); }
+    FX.ring(p.x, p.y - 30, 50, c, 0.25, 4); sfx('shoot', 0.7); return;
+  }
+  if (g.t === 'shot') { const n = Math.floor(V(g.n)) * (A ? 2 : 1); for (let i = 0; i < n; i++) { const a = -Math.PI / 2 + (i - n / 2) * 0.45, T = pick(es); shot({ kind: 'talisman', x: p.x, y: p.y - 50, vx: Math.cos(a) * 280, vy: Math.sin(a) * 280, sp: 460, dmg: dm, R: V(g.R), pierce: 0, life: 2.2, src: 'skill', target: T, home: 6, r: 12, rot: 0 }); } sfx('shoot', 0.6); return; }
+  if (g.t === 'vortex') { const T = densest(p.x, p.y, 460) || es[0], a = Math.atan2(T.y - p.y, T.x - p.x), mk = da => G.vortexes.push({ x: p.x, y: p.y - 10, vx: Math.cos(a + da) * 110, vy: Math.sin(a + da) * 110, t: 3.6, life: 3.6, r: V(g.R), dps: dm, tick: 0 }); mk(0); if (A) mk(0.9); return; }
+}
 function turrets(dt) {
   const bl0 = 1 + skLv('bless') * 0.4;
   for (const t of G.turrets) {
