@@ -13,12 +13,12 @@ const HERO_SAY = {"_":[["오늘 밤도 지켜 내자!","Let us hold the line ton
 function heroSay(k, id) { if (!G || !G.comps || !G.comps.length) return; const c = id || (G.comps.find(o => o.active) || G.comps[0]).id; const L = HERO_SAY[c] || HERO_SAY._, l = L[k] || HERO_SAY._[k]; G.bubble = { s: window.IS_EN ? l[1] : l[0], t: 2.6, who: c }; }
 const NEM_CH = { 7: { peek: 1 }, 14: { at: 0.3, k: 1.25 }, 22: { at: 0.15, k: 1.6 } };
 const NEM_SAY = {"meet":["크크크… 처용이 깨어났다고? 재미있구나.","Heh heh… Cheoyong has awoken? How amusing."],"again":["또 만났구나, 처용. 이번엔 지난번과 다를 것이다.","We meet again, Cheoyong. This time will be different."],"peek":["오늘은 인사만 하마. 곧 다시 보자, 처용.","Just a greeting today. We will meet soon, Cheoyong."],"r14":["…제법이구나, 처용. 다음엔 살려두지 않겠다!","…Not bad, Cheoyong. Next time I will not spare you!"],"r22":["큭… 또인가. 궁궐에서 기다리마. 그곳이 네 무덤이다!","Tch… again? I wait in the palace. It will be your grave!"]};
-function nemA() { const D2 = window.JZD, a = G && G.cfg && G.cfg.act === 3 ? 3 : G && G.nm ? 2 : 1; return a > 1 && D2 && D2.NEM_ACT ? D2.NEM_ACT[a] || null : null; }   /* 막마다 숙적: 2막 몽마, 3막 수귀 제독 */
+function nemA() { const D2 = window.JZD, a = G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; return a > 1 && D2 && D2.NEM_ACT ? D2.NEM_ACT[a] || null : null; }   /* 막마다 숙적: 2막 몽마, 3막 수귀 제독 */
 function nemSay(k, t) { const A = nemA(), s = A && A.lines && A.lines[k] ? A.lines[k] : NEM_SAY[k]; if (!s) return; G.title = { s: A ? (window.IS_EN ? A.nameEn : A.name) : window.IS_EN ? 'Yeoksin' : '역신', sub: window.IS_EN ? s[1] : s[0], t: t || 3.2 }; }
 function spawnNem(c) {
   const x = G.player.x + rnd(-60, 60), y = Math.max(camTop() + 380, G.player.y - 430);
   const NA = nemA(), NK = NA && NA.key && EN[NA.key] ? NA.key : 'yeoksin';   /* 막마다 숙적 그림(3막 수귀 제독 boss_sugwi) */
-  const e = spawnEnemy(NK, x, y, { boss: true }); const d = EN[NK], sc = 300 / (d.h || 124);
+  const e = spawnEnemy(NK, x, y, { boss: true }); const NA0 = nemA(), d = EN[NK], sc = ((NA0 && NA0.bh) || 300) / (d.h || 124); if (NA0 && NA0.dk) e.dmgK = (e.dmgK || 1) * NA0.dk; if (NA0 && NA0.ekey && NA0.ekey !== NK && enArt(NA0.ekey)) e.artKey = NA0.ekey;   /* 막 숙적: 화면 키 300~370, 공격 막마다 x1.15, 새 그림 있으면 그것 */
   e.nem = 1; e.sc = sc; e.r = d.r * sc; e.hh = (d.h || 124) * sc; { const A = nemA(); e.nemName = c.peek || G.ch < 22 ? '???' : A ? (window.IS_EN ? A.nameEn : A.name) : (window.IS_EN ? 'Yeoksin' : '역신'); if (A && window.JZD.TINTF) e.tf = window.JZD.TINTF[A.tint]; }
   e.hp = e.max = Math.max(G.lastBossMax || 0, e.max) * (c.k || 1); G.nem = e; G.nemAt = c.at || 0; G.bossRef = e; sfx('nem_in');
   G.flash = { c: '70,0,60', t: 1.3 }; FX.shake = 0.9; FX.ring(e.x, e.y, 320, '170,60,220', 1.0, 14); FX.smoke(e.x, e.y - 40, 16, '50,20,60', 30, 80); sfx('warn'); vib([160, 80, 160]);
@@ -228,18 +228,18 @@ const UI = {};   /* 캔버스 버튼 영역 */
 
 function newGame(cfg) {
   cfg = Object.assign({ chapter: 1, heroLv: 1, atk: 1, hp: 1, companions: ['dokkaebi'], skillStars: {}, weapon: 'bow', items: [], mode: 'adventure', hqLv: 1 }, cfg || {});
-  const ch = clamp(cfg.chapter | 0, 1, D.CHAPTERS.length), C = cfg.act === 3 && D.ACT3C ? D.ACT3C[ch - 1] : D.CHAPTERS[ch - 1];   /* 3막(61~90장): 막 안 번호 1~30 */
+  const ch = clamp(cfg.chapter | 0, 1, D.CHAPTERS.length), C = cfg.act >= 3 && D.actC && D.actC(cfg.act) ? D.actC(cfg.act)[ch - 1] : cfg.act === 3 && D.ACT3C ? D.ACT3C[ch - 1] : D.CHAPTERS[ch - 1];   /* 3~10막: 막 안 번호 1~30 */   /* 3막(61~90장): 막 안 번호 1~30 */
   /* 장비 합계 */
   const IS = window.JZI && cfg.items && cfg.items.length ? window.JZI.sum(cfg.items) : { atk: 0, hp: 0, speed: 0, fx: {}, weapon: null };
   if (IS.weapon) cfg.weapon = IS.weapon;
   const atk0 = cfg.itemsFxOnly ? cfg.atk : cfg.atk * (1 + IS.atk / 100), hp0 = cfg.itemsFxOnly ? cfg.hp : cfg.hp * (1 + IS.hp / 400);
   /* 판 등급: 계정이 그 장에 비해 강할수록 적도 세진다(상한 2.4배). 보상도 같은 배율로 올라간다 */
-  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.act === 3 ? ch + 59 : cfg.nightmare ? ch + 29 : ch) - 1);
+  const POW = Math.sqrt(Math.max(0.2, atk0) * Math.max(0.2, hp0)) * (1 + 0.04 * ((cfg.heroLv | 0 || 1) - 1)), EXPV = 1 + 0.11 * ((cfg.act >= 3 ? ch + 30 * (cfg.act - 1) - 1 : cfg.nightmare ? ch + 29 : ch) - 1);
   const TIERK = (cfg.mode || 'adventure') === 'adventure' ? Math.min(4, Math.max(1, 1 + 0.75 * (POW / EXPV - 1.2))) : 1;
   const LAY = D.layoutOf(ch); PADS = LAY.pads; LANE_X = LAY.lanes;
   const PKEY = cfg.skin && SMETA['player_' + cfg.skin] ? 'player_' + cfg.skin : 'player'; try { need(PKEY); } catch (e) {}
   try { const N0 = D.nightsOf(ch); const ks = new Set([...C.pool.map(k => (EN[k] && EN[k].spr) || k), C.elite, C.boss, ...(cfg.companions || []).map(id => COMP[id] && COMP[id].spr), 'sp_dragon', 'sp_tiger', 'sp_phoenix', 'sp_turtle', ...Object.keys(D.SOLDIER || {}), ...Object.keys(N0[0].mix || {})].filter(Boolean)); preload([...ks], ['walk', 'atk', 'hit', 'die', 'run', 'idle']); } catch (e) {}
-  WORLD = WD.build(C.theme, LAY);
+  WD.actArt = C.act >= 4 && D.actArt ? Object.assign({}, D.actArt(C.act) || {}, { act: C.act }) : null; WORLD = WD.build(C.theme, LAY);   /* 4~10막 바닥·소품 그림 */
   FX.reset();
   const wp = WEAPON[cfg.weapon] || WEAPON.bow;
   const fx = IS.fx || {}; if (cfg.afx) for (const k in cfg.afx) fx[k] = (fx[k] || 0) + cfg.afx[k];   /* 장비 부가 옵션·고유 효과(meta afxSum) */
@@ -247,9 +247,11 @@ function newGame(cfg) {
   if ((SB.mugwan || 0) >= 4) fx.dmgCut10 = (fx.dmgCut10 || 0) + 1; if ((SB.seonbi || 0) >= 2) fx.xp15 = (fx.xp15 || 0) + 1; if ((SB.seonbi || 0) >= 4) fx.reroll1 = (fx.reroll1 || 0) + 1; if ((SB.cheoyong || 0) >= 4) fx.ultCd20 = (fx.ultCd20 || 0) + 1;
   const hpMax = Math.round(120 * hp0 * ((SB.mugwan || 0) >= 2 ? 1.1 : 1) * (1 + 0.06 * (cfg.heroLv - 1)));
   const mode = cfg.mode || 'adventure';
-  let nights = cfg.act === 3 && D.a3Nights ? D.a3Nights(ch) : D.nightsOf(ch);
+  let nights = cfg.act >= 3 && D.actNights && D.actC && D.actC(cfg.act) ? D.actNights(cfg.act, ch) : cfg.act === 3 && D.a3Nights ? D.a3Nights(ch) : D.nightsOf(ch);
+  if (C.rule === 'longnight') nights = nights.map(x => Object.assign({}, x, { dur: Math.round((x.dur || 50) * 1.5) }));   /* 7막 재판정: 밤이 길다 */
+  if (C.rule === 'solo' && cfg.companions) cfg.companions = [];   /* 7막 재판정: 처용 홀로 */
   /* 2막 악몽: 같은 지도·목표, 적이 훨씬 세고 많다 (장마다 곡선) */
-  const NMK = mode !== 'adventure' ? null : cfg.act === 3 && D.a3K ? D.a3K(ch) : cfg.nightmare ? D.nmK(ch) : null;
+  const NMK = mode !== 'adventure' ? null : cfg.act >= 3 && D.actK ? D.actK(cfg.act, ch) : cfg.act === 3 && D.a3K ? D.a3K(ch) : cfg.nightmare ? D.nmK(ch) : null;
   if (NMK) nights = nights.map((n, i) => Object.assign({}, n, { dhp: n.dhp != null ? n.dhp : n.hp, hp: n.hp * NMK.hp, rate: [n.rate[0] * NMK.rate, n.rate[1] * NMK.rate], elites: n.boss ? n.elites : (n.elites.length ? n.elites.concat([0.8]) : [0.55]), kind: n.boss ? n.kind : 'elite' }));
   if (mode === 'gold' || mode === 'xp') nights = nights.slice(0, 3).map((n, i) => Object.assign({}, n, { name: (i + 1) + '번째 밤', kind: i === 2 ? 'elite' : 'normal', boss: null, elites: i === 2 ? [0.5] : [], dur: 45 }));
   if (mode === 'boss') nights = [Object.assign({}, nights[nights.length - 1], { name: '우두머리 토벌', dur: 90, elites: [0.01], rate: [0.8, 1.6] })];
@@ -261,7 +263,7 @@ function newGame(cfg) {
   const shMax = Math.round((400 + (NMK ? ch + 29 : ch) * 60) * (1 + 0.2 * (fx.shrine20 || 0) + 0.15 * (fx.shrine15 || 0)));
   G = {
     cfg, ch, C, nights, chEl: D.chEl ? D.chEl(ch, !!cfg.nightmare) : null, pkey: PKEY, nm: NMK, pzs: [], tierK: TIERK, night: 0, phase: 'day', t: 0, time: 0, spawnAcc: 0, dawnT: 0, slow: 1, mode, fx, atk0: atk0 * ((SB.cheoyong || 0) >= 2 ? 1.08 : 1), setBarracks: (SB.mugwan || 0) >= 6 ? 2 : 0, speed2: false, low: false,
-    gold: 170 + 14 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
+    gold: C.rule === 'nogold' ? 0 : 170 + 14 * (ch - 1) + 60 * (fx.startGold60 || 0), kills: 0, startT: performance.now(), hq: clamp(cfg.hqLv | 0 || 1, 1, 5), coinAcc: 0, bossDmg: 0, linkBonus: 0, killHealN: 0, lastStandUsed: false, shield: 0, shotN: 0,
     walls: D.WALLS.map(w => ({ x: w.x, gate: !!w.gate, hp: 0, max: (w.gate ? 420 : 280) * (1 + 0.35 * (ch - 1)), hitT: 0, built: false })), wallLv: 0,
     pickups: [], waves: [], clones: [], missions: null,
     shrine: { x: SHRINE.x, y: SHRINE.y, r: SHRINE.r, hp: shMax, max: shMax, hitT: 0 },
@@ -534,7 +536,7 @@ function spawnEnemy(type, x, y, o) {
   const HK = Math.min(1, Math.max(0, ((G.tierK || 1) - 1) / 0.9, (G.ch - 8) / 30)); /* 강한 계정·뒤 장일수록 정예·우두머리 강화(사용자 11-27) */
   if (o.elite) { hp *= 5 * (1 + 0.6 * HK); sc = Math.min(3.0, 1.85 * (d.sc || 1)); }   /* 중간보스: 크게, 강한 판일수록 단단하게 */
   if (o.small) { hp *= 0.25; sc = 0.6; }
-  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 2.0 : Math.min(2.9, 290 / (d.h || 100)); hp *= 1.35 * (1 + 0.8 * HK); }   /* 우두머리: 화면 키 최대 약 290, 체력 1.7배 더(사용자 11-27) */   /* 우두머리 화면 키 최대 약 220 */
+  if (o.boss) { hp = type === 'king' ? d.hp * (1 + 0.3 * (G.ch - 1)) : d.hp * N.hp * (type === 'mujang' ? 2.4 : 4.5); sc = type === 'king' ? 2.0 : d.bh ? Math.min(3.6, d.bh / (d.h || 100)) : Math.min(2.9, 290 / (d.h || 100)); hp *= 1.35 * (1 + 0.8 * HK); }   /* 우두머리: 화면 키 최대 약 290, 체력 1.7배 더(사용자 11-27) */   /* 우두머리 화면 키 최대 약 220 */
   if (o.boss && G.cfg && G.cfg.wbBoss) { hp *= 60; sc *= 1.15; }
   const e = { type, x, y, r: d.r * sc, hp, max: hp, sp: d.sp * rnd(0.92, 1.08) * (o.boss ? 0.85 : 1), cd: rnd(0.3, 1), hitT: 0, wob: rnd(0, 6.28), turn: Math.random() < 0.5 ? 1 : -1,
     gx: rnd(-46, 46), hk: (o.elite || o.boss) ? HK : 0, elite: !!o.elite, boss: !!o.boss, small: !!o.small, armor: d.armor || 0, sc, charmT: 0, burnT: 0, jumpT: 0, var: 'shamble', st: 'move', stT: 0, twT: rnd(1, 5), twA: 0, screamed: false, d8: 0, pile: 0, atkT: 0, hh: (d.h || 60) * sc, slowT: 0, frzT: 0, stunT: 0, t1: rnd(3, 5), t2: 6, chg: 0, tele: 0, squash: 0, flip: false };
@@ -547,7 +549,9 @@ function spawnEnemy(type, x, y, o) {
 }
 /* 위협 단계: 챕터·몇 번째 밤·처용 레벨·밤 후반일수록 올라간다. 높을수록 약한 좀비가 강한 좀비로 바뀌고 변이체가 섞인다 */
 const TIER = D.TIER || {};
-const EK = t => (EN[t] && EN[t].spr) || t;   /* 상위 종은 원래 종 그림을 쓴다 */
+const enArt = t => { const d = EN[t]; return !!(d && d.sprPref && SPR[d.sprPref]); };   /* 새 보스 그림(boss_morgan 등, 기존키_v2)이 있으면 그것, 없으면 원래 그림+색 */
+const EK = t => enArt(t) ? EN[t].sprPref : (EN[t] && EN[t].spr) || t;
+const enTF = t => { const d = EN[t]; return d ? (enArt(t) ? d.tfArt || null : d.tf || null) : null; };   /* 상위 종은 원래 종 그림을 쓴다 */
 function threat() { const late = Math.min(1, G.time / curN().dur); return (G.ch - 1) * 0.45 + G.night * 1.0 + (Math.min(G.player.lv, 20) - 1) * 0.25 + late * 1.5; }
 function upgradeType(type) {
   const th = threat(), t0 = TIER[type] || 2; if (t0 >= 4) return type;
@@ -2068,8 +2072,8 @@ function drawEnemy(e) {
     py = -e.pile * 14;
   }
   const tw = e.twA > 0 ? e.twR * (e.twA / 0.18) : 0;
-  const TF = window.JZD && window.JZD.TINTF ? (e.tf || (EN[e.type] && EN[e.type].tf) || (G.C && G.C.tint && !e.nem ? window.JZD.TINTF[G.C.tint] : null)) : null;
-  const ok = drawSprite(EK(e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { tf: TF, anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
+  const TF = window.JZD && window.JZD.TINTF ? (e.artKey ? enTF(e.artKey) || null : e.tf || enTF(e.type) || (G.C && G.C.tint && !e.nem && !enArt(e.type) ? window.JZD.TINTF[G.C.tint] : null)) : null;
+  const ok = drawSprite(EK(e.artKey || e.type), x + lun + (e.twA > 0 ? Math.sin(G.t * 90) * 3 : 0), y + py, { tf: TF, anim: an, at, fps, dir: spA || (SPR[EK(e.type)] && SPR[EK(e.type)].dirs > 1) ? e.d8 : null, t: walkT, flip: e.flip, sc: e.sc, mode, sx, sy, rot: tw + (SPR[EK(e.type)] && SPR[EK(e.type)].frames === 1 && !fly ? Math.sin(e.wob * 1.4) * 0.06 : 0) });
   if (!ok) {
     const r = e.r; circle(x, y - r, r); ctx.fillStyle = mode === 'white' ? '#fff' : (e.boss ? '#8a2a3a' : '#8ac04a'); ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 3; ctx.stroke();
     circle(x - r * 0.35, y - r * 1.15, r * 0.3); circle(x + r * 0.35, y - r * 1.15, r * 0.3); ctx.fillStyle = '#fff'; ctx.fill();

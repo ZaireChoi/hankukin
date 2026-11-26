@@ -35,8 +35,10 @@ JZW.build = function (theme, LAY) {
   const lights = [], fires = [];
 
   /* 바탕 */
+  const AA = JZW.actArt || null;   /* 4~10막 그림(미술 갈래): 바닥 반복 그림 + 소품 */
   g.fillStyle = T.base; g.fillRect(-MX, -MT, W + 2 * MX, H + MT + MB);
-  for (let i = 0; i < 340; i++) blob(rr(-MX, W + MX), rr(-MT, H + MB), rr(70, 190), R() < 0.5 ? T.hi : T.lo, rr(0.2, 0.45));
+  if (AA && AA.g) { try { const pt = g.createPattern(AA.g, 'repeat'); if (pt.setTransform) pt.setTransform(new DOMMatrix().scale(AA.gs || 0.45)); g.fillStyle = pt; g.fillRect(-MX, -MT, W + 2 * MX, H + MT + MB); } catch (e) {} }
+  for (let i = 0; i < (AA && AA.g ? 90 : 340); i++) blob(rr(-MX, W + MX), rr(-MT, H + MB), rr(70, 190), R() < 0.5 ? T.hi : T.lo, rr(0.2, 0.45));
   /* 물길 */
   if (T.water) {
     const wc = T.water === 2 ? ['120,20,40', '200,60,80'] : ['40,90,110', '120,190,200'];
@@ -141,7 +143,7 @@ JZW.build = function (theme, LAY) {
   
   /* 여백 숲·장식 (길 입구는 비움) */ for (let y = -MT + 30; y < H + MB; y += rr(60, 95)) for (const side of [0, 1]) { const x = side ? rr(W + 110, W + MX - 30) : rr(-MX + 30, -110), s = rr(0.9, 1.5); items.push([y, () => tree(x, y, s)]); if (R() < 0.35) { const xx = side ? rr(W + 90, W + MX - 40) : rr(-MX + 40, -90), yy = y + rr(10, 40), nm = T.props[(R() * T.props.length) | 0]; if (P[nm]) items.push([yy, () => P[nm](xx, yy)]); } }
   for (let y = -MT + 30; y < -90; y += rr(70, 110)) for (let x = rr(-MX, -MX + 80); x < W + MX; x += rr(90, 150)) { if (LANES.some(L => Math.abs(L - x) < 130) || Math.abs(x - CX) < 90) continue; const s = rr(0.9, 1.4), yy = y; items.push([yy, () => tree(x, yy, s)]); }
-  spots.forEach((q, i) => { const name = T.props[i % T.props.length]; const fn = P[name]; if (fn) items.push([q[1], () => fn(q[0] + (T.water ? (q[0] < CX ? -60 : 60) : 0), q[1])]); });
+  spots.forEach((q, i) => { const AP = JZW.actArt && JZW.actArt.props; if (AP && AP.length) { const im = AP[i % AP.length], sc2 = rr(0.4, 0.55), w2 = im.naturalWidth * sc2, h2 = im.naturalHeight * sc2; items.push([q[1], () => { shadow(q[0] + 4, q[1] + 4, w2 * 0.35, 9); g.drawImage(im, q[0] - w2 / 2, q[1] - h2 + 6, w2, h2); }]); return; } const name = T.props[i % T.props.length]; const fn = P[name]; if (fn) items.push([q[1], () => fn(q[0] + (T.water ? (q[0] < CX ? -60 : 60) : 0), q[1])]); });
   /* 본진 뒤쪽 */
   items.push([SH.y + 178, () => P.jars(SH.x - 30, SH.y + 148)]); items.push([SH.y + 128, () => P.fence(SH.x - 110, SH.y + 130)]); items.push([SH.y + 130, () => P.fence(SH.x + 110, SH.y + 130)]);
   /* 성벽 앞 가로등(후더덕의 가로등 빛처럼) */
