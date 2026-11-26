@@ -847,7 +847,7 @@ function startNight() { clearCombat();
 
 /* ---------- 성장 카드 ---------- */
 const ICON = {};
-const SKI = {};
+const SKICO = {};
 for (const s of SKILLS) { const im = new Image(); im.onload = () => { SKI[s.id] = im; }; im.src = 'img/skills/' + s.id + '.webp'; const ie = new Image(); ie.onload = () => { SKI['ev_' + s.id] = ie; }; ie.src = 'img/skills/ev_' + s.id + '.webp'; }
 function skillIcon(id, s) {
   const key = id + s; if (ICON[key]) return ICON[key];
@@ -1210,7 +1210,7 @@ function update(dtr) {
 
   movePlayer(dt); moveComps(dt);
   playerAttack(dt);
-  skills(dt); tagEl(); G.curEl = null;
+  skills(dt); tagEl(); tagIco(); G.curEl = null; G.curIco = null;
   turrets(dt); tagEl(); G.curEl = null;
   guards(dt);
   comps(dt); tagEl(); G.curEl = null;
@@ -1490,7 +1490,7 @@ function skills(dt) {
   const p = G.player, m = atkMul();
   for (const id in G.sk) {
     const lv = G.sk[id], S = SKILLS.find(s => s.id === id);
-    tagEl(); G.curEl = S && S.el || null;
+    tagEl(); tagIco(); G.curEl = S && S.el || null; G.curIco = S && (S.gen || S.act || S.kiun) ? (aw(id) ? 'ev_' + id : id) : null; G.curIcoC = S ? ((S.gen && S.gen.c) || hexRgb(S.c)) : null;
     if (S.kind !== 'atk') continue;
     const A = aw(id), sm = m * starMul(id) * elMul(S.el) * lvK(lv) * (A ? 1.5 : 1);
     if (id === 'dance') {
@@ -1571,7 +1571,33 @@ function skills(dt) {
 }
 
 /* 막마다 새 기술(4~10막) 공통 실행 — 장판·투사체 재사용, 한 동작이 또렷하게 */
+
+/* 새 기술 연출(사용자 11-29: 새 기술 펼치는 모션·효과가 안 보임) — 기술 그림을 시전·장판·투사체·터짐에 크게 보여 준다 */
+const SKI = {};
+function skIco(id) { let im = SKICO[id]; if (!im) { im = new Image(); im.src = 'img/skills/' + id + '.webp?v=3'; SKICO[id] = im; } return im.complete && im.naturalWidth ? im : null; }
+function hexRgb(h) { if (!h || h[0] !== '#') return '255,225,150'; const n = parseInt(h.slice(1, 7), 16); return ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255); }
+function drawIco(im, x, y, d, rot, alpha, col) {
+  if (alpha <= 0.01 || d < 4) return; ctx.save(); ctx.globalAlpha = Math.min(1, alpha); ctx.translate(x, y);
+  if (col) { ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, 0, 0, d * 0.85, col, 0.55 * Math.min(1, alpha)); ctx.globalCompositeOperation = 'source-over'; }
+  ctx.rotate(rot || 0); ctx.beginPath(); ctx.arc(0, 0, d / 2, 0, TAU); ctx.closePath(); ctx.save(); ctx.clip();
+  const iw = im.naturalWidth, ih = im.naturalHeight, s = Math.min(iw, ih); ctx.drawImage(im, (iw - s) / 2, (ih - s) / 2, s, s, -d / 2, -d / 2, d, d); ctx.restore();
+  ctx.lineWidth = Math.max(2.5, d * 0.055); ctx.strokeStyle = 'rgba(255,246,214,.95)'; ctx.stroke(); ctx.restore();
+}
+function castEmb(id, col) { const p = G.player; if (!p || !id) return; G.embCd = G.embCd || {}; if ((G.embCd[id] || 0) > G.t) return; G.embCd[id] = G.t + 0.45; const E = G.emb || (G.emb = []); if (E.length > 40) E.shift(); E.push({ id, x: p.x, y: p.y - (HOV[G.pkey || 'player'] || 150) - 30, vy: -70, s: 64, t: 0.7, life: 0.7, c: col, cast: 1 }); FX.ring(p.x, p.y - 20, 70, col || '255,225,150', 0.3, 5); }
+function embBurst(id, x, y, s, col, big) { const E = G.emb || (G.emb = []); if (E.length > 40) E.shift(); E.push({ id, x, y, s: Math.max(70, s), t: big ? 0.7 : 0.55, life: big ? 0.7 : 0.55, c: col }); }
+function tagIco() { const k = G.curIco, c = G.curIcoC; let n = 0; for (const s of G.shots) if (s.ico === undefined) { s.ico = k; s.icoC = c; if (k) n++; } for (const t of G.tele) if (t.ico === undefined) { t.ico = k; t.icoC = c; if (k) n++; } for (const v of G.vortexes) if (v.ico === undefined) { v.ico = k; v.icoC = c; if (k) n++; } for (const q of G.queue) if (q.ico === undefined) { q.ico = k; if (k) n++; } if (k && n) castEmb(k, c); }
+function drawEmbs() {
+  if (!G.emb) return;
+  for (const e of G.emb) {
+    const im = skIco(e.id); if (!im) continue; const k = 1 - e.t / e.life;
+    if (e.cast) { const sc = k < 0.18 ? 0.5 + k / 0.18 * 0.6 : 1.1 - (k - 0.18) * 0.12; drawIco(im, e.x, e.y, e.s * sc, 0, k < 0.65 ? 1 : (1 - k) / 0.35, e.c); continue; }
+    const sc = k < 0.2 ? 0.55 + k / 0.2 * 0.6 : 1.15 - (k - 0.2) * 0.2, al = k < 0.55 ? 1 : (1 - k) / 0.45;
+    ctx.save(); ctx.globalAlpha = Math.max(0, 1 - k); ctx.strokeStyle = 'rgba(' + (e.c || '255,225,150') + ',1)'; ctx.lineWidth = 6 * (1 - k) + 1.5; ctx.beginPath(); ctx.ellipse(e.x, e.y + 6, e.s * (0.55 + k * 0.75), e.s * (0.55 + k * 0.75) * 0.62, 0, 0, TAU); ctx.stroke(); ctx.restore();
+    drawIco(im, e.x, e.y - e.s * 0.15, e.s * sc, (1 - Math.min(1, k * 4)) * 0.8, al, e.c);
+  }
+}
 function genSkill(id, S, lv, sm, A, p) {
+  if (S.gen && S.gen.t === 'ring') { const R0 = (S.gen.R ? S.gen.R[0] + S.gen.R[1] * lv : 120) * (A ? 1.25 : 1); embBurst(G.curIco || id, p.x, p.y - 30, Math.min(210, R0 * 0.9), G.curIcoC, 1); }
   const g = S.gen, V = a => a ? a[0] + a[1] * lv : 0, dm = V(g.dm) * sm * (A ? 1.4 : 1), c = g.c;
   const hitR = (x, y, R) => { for (const e of G.enemies) { if (e.dead || Math.hypot(e.x - x, e.y - y) > R) continue; hurtEnemy(e, dm, 'skill', g.kb ? { kb: g.kb, kx: x, ky: y } : undefined); if (g.burn) { e.burnT = A ? 4 : 2.5; e.burnD = V(g.burn) * sm * 0.35; } if (g.stun && !e.boss) e.stunT = Math.max(e.stunT || 0, g.stun * (A ? 1.8 : 1)); if (g.slow) e.slowT = Math.max(e.slowT || 0, g.slow); if (g.exec && !e.boss && !e.elite && !e.dead && e.hp < e.max * (A ? 0.25 : g.exec)) hurtEnemy(e, e.hp + 1, 'skill'); } };
   G.skT[id] = Math.max(0.6, g.cd[0] - g.cd[1] * lv);
@@ -1898,7 +1924,7 @@ function updZones(dt) {
   }
   G.vortexes = G.vortexes.filter(v => v.t > 0);
   if (G.pzs && G.pzs.length) { const pl = G.player; for (const z of G.pzs) { z.t -= dt; z.tick -= dt; if (z.tick <= 0 && Math.hypot(pl.x - z.x, (pl.y - z.y) / 0.62) < z.r) { z.tick = 0.5; hurtT(pl, 6 + G.ch * 0.6); } } G.pzs = G.pzs.filter(z => z.t > 0); }
-  for (const t of G.tele) { t.t -= dt; if (t.boom && t.t <= 0) { FX.explode(t.x, t.y - 10, t.r); sfx('boom', 0.5); const pl = G.player; if (Math.hypot(pl.x - t.x, (pl.y - t.y) / 0.62) < t.r) hurtT(pl, t.boom); t.boom = 0; } } G.tele = G.tele.filter(t => t.t > 0);
+  if (G.emb) { for (const e of G.emb) { e.t -= dt; if (e.vy) e.y += e.vy * dt; } G.emb = G.emb.filter(e => e.t > 0); } for (const t of G.tele) { t.t -= dt; if (t.ico && t.t <= 0 && !t._eb) { t._eb = 1; embBurst(t.ico, t.x, t.y - 6, Math.min(200, t.r * 1.5), t.icoC); } if (t.boom && t.t <= 0) { FX.explode(t.x, t.y - 10, t.r); sfx('boom', 0.5); const pl = G.player; if (Math.hypot(pl.x - t.x, (pl.y - t.y) / 0.62) < t.r) hurtT(pl, t.boom); t.boom = 0; } } G.tele = G.tele.filter(t => t.t > 0);
   /* 살수대첩 물결 */
   for (const w of G.waves) {
     w.t -= dt; w.y -= 560 * dt;
@@ -2181,6 +2207,7 @@ function drawBeam(b) {
 }
 function drawShot(b) {
   const a = Math.atan2(b.vy, b.vx);
+  if (b.ico) { const im = skIco(b.ico); if (im) { const d = Math.max(46, (b.r || 12) * 4); for (let k = 2; k >= 1; k--) drawIco(im, b.x - b.vx * 0.025 * k, b.y - b.vy * 0.025 * k, d * (1 - k * 0.18), G.t * 3, 0.28 / k, null); drawIco(im, b.x, b.y, d, G.t * 3, 1, b.icoC); return; } }
   ctx.save();
   if (b.kind === 'arrow' || b.kind === 'tarrow') {
     const L = b.kind === 'arrow' ? 34 : 24, col = b.kind === 'arrow' ? '255,215,110' : '255,170,90';
@@ -2562,6 +2589,8 @@ function draw() {
   if (G.hgGhost && G.hgGhost.length) { const hc = G.comps.find(o => o.id === 'honggildong'); if (hc) for (const o of G.hgGhost) drawCompBody(hc, COMP.honggildong, o.x, o.y, Math.min(0.85, o.t * 2.2)); }
   if (G.pzs) for (const z of G.pzs) { const k = Math.min(1, z.t / 0.6, (z.life - z.t) * 4 + 0.2); ctx.save(); ctx.translate(z.x, z.y); ctx.scale(1, 0.62); const gr = ctx.createRadialGradient(0, 0, 4, 0, 0, z.r); gr.addColorStop(0, 'rgba(150,240,70,' + 0.55 * k + ')'); gr.addColorStop(0.7, 'rgba(70,160,30,' + 0.4 * k + ')'); gr.addColorStop(1, 'rgba(40,90,20,0)'); ctx.fillStyle = gr; circle(0, 0, z.r); ctx.fill(); ctx.restore(); if (Math.random() < 0.15) FX.p({ kind: 'glow', x: z.x + rnd(-z.r * 0.7, z.r * 0.7), y: z.y + rnd(-14, 14), vy: -18, life: 0.7, s: 6, s2: 1, c: '170,255,90' }); }
   for (const t of G.tele) drawTele(t);
+  for (const t of G.tele) if (t.ico) { const im = skIco(t.ico); if (im) { const k = Math.max(0, Math.min(1, 1 - t.t / (t.life || 0.5))), e = 1 - Math.pow(1 - k, 3); drawIco(im, t.x, t.y - 8, Math.min(180, t.r * 1.25) * (0.3 + 0.7 * e), (1 - e) * 2.2, 0.45 + 0.45 * k, t.icoC); } }
+  if (G.vortexes) for (const v of G.vortexes) if (v.ico) { const im = skIco(v.ico); if (im) drawIco(im, v.x, v.y - 40, 78, G.t * 5, 0.95, v.icoC); }
   for (let i = 0; i < PADS.length; i++) {
     if (G.turrets.some(t => t.pad === i)) continue;
     const q = PADS[i];
@@ -2617,6 +2646,7 @@ function draw() {
   for (const mk of G.marks) { const k = mk.t / mk.life; ctx.save(); ctx.translate(mk.x, mk.y); ctx.rotate(mk.a); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = 'rgba(255,255,255,' + k + ')'; ctx.lineCap = 'round'; for (let i = -1; i <= 1; i++) { ctx.lineWidth = 6 * k + 1; ctx.beginPath(); ctx.moveTo(-30, i * 12 - 20); ctx.quadraticCurveTo(0, i * 12, 30, i * 12 + 20); ctx.stroke(); } ctx.restore(); }
   if (G.loot) drawLoot(G.loot);
   FX.draw(ctx);
+  drawEmbs();
   ctx.restore();
 
   /* 빛: 등불 웅덩이와 가로등 원뿔 */
