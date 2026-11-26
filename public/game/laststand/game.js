@@ -165,6 +165,9 @@ const UP = {
   reactor:  { ic: '❄', nm: '냉각 반응로', max: 5, kind: 'p', ds: ['모든 무기 주기 −7%'] },
   crit:     { ic: '✦', nm: '조준 보정', max: 5, kind: 'p', ds: ['치명타 확률 +10% (피해 2배)'] },
   repair:   { ic: '✚', nm: '수리 드론', max: 4, kind: 'p', ds: ['초당 내구 0.7 회복'] },
+  elemUp:   { ic: '◆', nm: '계열 각성', max: 5, kind: 'p', ds: ['계열 기술(R) 위력 +25% · 재사용 -8%'] },
+  stunUp:   { ic: '✶', nm: '충격 탄두', max: 4, kind: 'p', ds: ['공격 6% 확률로 1초 기절', '기절 확률 +4%'] },
+  aoeUp:    { ic: '✹', nm: '폭렬 탄두', max: 4, kind: 'p', ds: ['처치한 적이 12% 확률로 폭발', '폭발 확률 +8%'] },
 };
 
 // ───────── 화면 ─────────
@@ -937,7 +940,7 @@ addEventListener('keydown', (e) => {
   if (e.repeat) return; keys.add(e.code);
   if (e.code === 'Space' || e.code === 'ShiftLeft') { inp.dash = true; e.preventDefault(); }
   if (e.code === 'KeyQ') inp.ult = true;
-  if (e.code === 'KeyE') inp.auto = true;
+  if (e.code === 'KeyE') inp.auto = true; if (e.code === 'KeyR') inp.elem = true;
   if (e.code === 'KeyF') inp.fly = true;
   if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
   if (G.state === 'levelup' && ['Digit1', 'Digit2', 'Digit3'].includes(e.code)) pickCard(+e.code.slice(-1) - 1);
@@ -959,7 +962,7 @@ addEventListener('pointermove', (e) => {
 const stickEnd = (e) => { if (e.pointerId === stick.id) { stick.id = null; stick.x = stick.y = 0; stickEl.classList.add('hide'); } };
 addEventListener('pointerup', stickEnd); addEventListener('pointercancel', stickEnd);
 const tap = (el, fn) => el.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); fn(); });
-tap($('#bDash'), () => (inp.dash = true)); tap($('#bAuto'), () => (inp.auto = true)); tap($('#bFly'), () => (inp.fly = true)); tap($('#bUlt'), () => (inp.ult = true)); tap($('#bPause'), () => togglePause());
+tap($('#bDash'), () => (inp.dash = true)); tap($('#bAuto'), () => (inp.auto = true)); tap($('#bElem'), () => (inp.elem = true)); tap($('#bFly'), () => (inp.fly = true)); tap($('#bUlt'), () => (inp.ult = true)); tap($('#bPause'), () => togglePause());
 addEventListener('contextmenu', (e) => e.preventDefault());
 
 function readMove() {
@@ -998,17 +1001,17 @@ function resetRun() {
   for (const e of E) if (e.vis) scene.remove(e.vis.wrap); E = []; shots = []; ebs = []; gems = []; picks = []; msl = []; nums.length = 0; if (XF) XF.clear();
   AN.over = null; AN.overT = 0; mslClear();
   clearMission();
-  Object.assign(G, { finalT: null, t: 0, kills: 0, shake: 0, slow: 0, bossOn: false, boss: null, mid: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0, st: { big: 0, flights: 0, ults: 0, skills: 0, maxCombo: 0, pd: 0 }, combo: 0, comboT: 0, hstop: 0, hsCd: 0, pdCd: 0, evq: null, drops: [], elites: 0, bonusCore: 0, ashT: 0, storm: 0 });
+  Object.assign(G, { finalT: null, t: 0, kills: 0, shake: 0, slow: 0, bossOn: false, boss: null, mid: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0, st: { big: 0, flights: 0, ults: 0, skills: 0, maxCombo: 0, pd: 0 }, combo: 0, comboT: 0, hstop: 0, hsCd: 0, pdCd: 0, evq: null, drops: [], elites: 0, bonusCore: 0, ashT: 0, storm: 0, tor: [] });
   LATER.length = 0; shells = []; clearVFX();
   Object.assign(P, {
     x: 0, z: 0, yaw: 0, hp: 100, maxHp: 100, inv: 0, lvl: 1, xp: 0, need: 6, spdMul: 1, cdMul: 1, crit: .05, magnet: 30, regen: 0,
     dashT: 0, dashCd: 0, dashMax: 2.6, dx: 0, dz: 1, ult: 0, flash: 0, bladeA: 0, sw: null, swN: 0, podT: 0, podK: 0, recoil: 0, ultT: 0, lunge: 0, pod: null, mz: null,
     fly: false, flyT: 0, flyCd: 0, tf: 0, tfUp: false, alt: 0, hd: 0, bank: 0, dT: 0,
     bar: 0, barMax: 0, barT: 0, barCd: 3, barHit: 0,
-    w: { rifle: 1, blade: 0, missile: 0, pulse: 0, strike: 0, armor: 0, thruster: 0, magnet: 0, reactor: 0, crit: 0, repair: 0 },
+    w: { rifle: 1, blade: 0, missile: 0, pulse: 0, strike: 0, armor: 0, thruster: 0, magnet: 0, reactor: 0, crit: 0, repair: 0, elemUp: 0, stunUp: 0, aoeUp: 0 },
     cd: { rifle: .3, missile: 1, pulse: 2, strike: 1.5 },
     dmgMul: 1, meleeMul: 1, taken: 1, stillMul: 1, splash: 1, ultGain: 1, flyCdMul: 1, gSpin: 0, burstN: 0, burstT: 0, beamTk: 0, beamB: null,
-    evo: {}, iceK: 1, burnT: 0, zapT: 0,
+    evo: {}, iceK: 1, burnT: 0, zapT: 0, el: 'fire', ekCd: 5, relT: 0, relEl: null, relTk: 0, rel: null, wo: {}, wAuto: [], elT: 0, healK: 1, wpn: null,
     dodge: 0, bitPlus: 0, lifesteal: 0, rr: 2, odT: 0, palmT: 0, cloakT: 0, cloakHits: 0, akCd: 2, mv: null, bitBoost: 0, palm: null, how: null, howRc: 0, lAimK: 0,
   });
 }
@@ -1072,7 +1075,7 @@ const EVO = {
 
 function nearest(x, z, range, skip) {
   let best = null, bd = range * range;
-  for (const e of E) { if (e.dead || e === skip) continue; const d = (e.x - x) ** 2 + (e.z - z) ** 2; if (d < bd) { bd = d; best = e; } }
+  for (const e of E) { if (e.dead || e.ally || e === skip) continue; const d = (e.x - x) ** 2 + (e.z - z) ** 2; if (d < bd) { bd = d; best = e; } }
   return best;
 }
 function fire(x, z, ang, dmg, pierce, kind, tgt, y = 10, vy = 0, life, col) {
@@ -1081,7 +1084,8 @@ function fire(x, z, ang, dmg, pierce, kind, tgt, y = 10, vy = 0, life, col) {
   shots.push({ x, z, y, vy, vx: Math.sin(ang) * sp, vz: Math.cos(ang) * sp, ang, life: life || (kind === 'w' ? .46 : .62), dmg, pierce, kind, tgt, hit: null, col });
 }
 function dealDmg(e, base, kx, kz, kb = 1) {
-  const cr = Math.random() < P.crit; let d = Math.round(base * (P.dmgMul || 1) * (cr ? 2 : 1) * rand(.9, 1.1));
+  if (e.ally || e.dead) return;
+  const cr = Math.random() < P.crit; let d = Math.round(base * (P.dmgMul || 1) * (cr ? 2 : 1) * rand(.9, 1.1) * (e.vulT > 0 ? 1.3 : 1) * (P.relT > 0 ? 1.3 : 1));
   const bossy = e.T.r > 10 && (e.T.boss || e.t === 'queen' || e.T.virt) && !e.flee;
   if (bossy) {
     if (e.groggy > 0) d = Math.round(d * 1.5);
@@ -1094,7 +1098,7 @@ function dealDmg(e, base, kx, kz, kb = 1) {
   const m = e.T.r > 10 ? .12 : 1; e.kx += kx * 26 * kb * m; e.kz += kz * 26 * kb * m;
   if (cr || d >= 40) num(e.x, e.T.h, e.z, cr ? d + '!' : d, cr ? '#ffd24a' : '#fff', cr ? 21 : 15); else if (Math.random() < .22) num(e.x, e.T.h, e.z, d, '#ffffffcc', 13);
   sfx.hit();
-  if (e.hp <= 0) kill(e);
+  if (e.hp <= 0) kill(e); else onHitFx(e, d, cr);
 }
 function explode(x, z, r, dmg, color) {
   ring(x, z, r * .2, r * 1.1, .4, color); burst(x, 5, z, 26, color, 70, .55, 9); burst(x, 5, z, 10, 0xffffff, 40, .3, 12);
@@ -1177,7 +1181,7 @@ function updPlayer(dt) {
     if (P.cd.strike <= 0 && E.length) {
       P.cd.strike = st('strike', 'cd') * P.cdMul; const dmg = st('strike', 'dmg');
       for (let i = 0; i < st('strike', 'n'); i++) {
-        const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 130 * 130), e = near[Math.random() * near.length | 0];
+        const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 130 * 130), e = near[Math.random() * near.length | 0];
         if (!e) break; const x = e.x + e.vx * .3, z = e.z + e.vz * .3;
         decal(x, z, 16, .42, 0x4adfff, () => { explode(x, z, 16, dmg, 0x7fe6ff); burst(x, 30, z, 12, 0xbff6ff, 30, .3, 14, 2); });
       }
@@ -1257,7 +1261,7 @@ function updBits(dt) {
     const a = droneClock * 2.2 + i / Math.min(6, n) * TAU; B.x = P.x + Math.cos(a) * 11; B.z = P.z + Math.sin(a) * 11; B.y = P.alt + 24 + Math.sin(droneClock * 3 + i) * 2; B.g.position.set(B.x, B.y, B.z); }
 }
 function bitsFire(n, dmg, range = 150) {
-  const live = BITS.filter((b) => b.g.visible); if (!live.length) return 0; const tg = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < range * range).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n);
+  const live = BITS.filter((b) => b.g.visible); if (!live.length) return 0; const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < range * range).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n);
   tg.forEach((e, i) => { const B = live[i % live.length]; beamFx(B.x, B.y, B.z, e.x, e.T.h * .5, e.z, .6, 0x6fdcff, .14); dealDmg(e, dmg, 0, 0, .4); burst(e.x, e.T.h * .5, e.z, 3, 0x9fe8ff, 40, .18, 7); });
   if (tg.length) tone(1800, 900, .06, 'square', .025); return tg.length;
 }
@@ -1283,7 +1287,7 @@ function palmPos() { return P.palm || { x: P.x, y: 14 + P.alt, z: P.z }; }
 function homingShot(n, dmg) {
   if (!MSW) { launchSalvo(n, dmg); return; }
   const b = P.mz || { x: P.x, y: 14 + P.alt, z: P.z }, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw);
-  const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 170 * 170);
+  const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 170 * 170);
   for (let i = 0; i < n; i++) { const tg = near.length ? near[(Math.random() * Math.min(near.length, 8)) | 0] : null, side = i % 2 ? -1 : 1;
     MSLE.fire({ wh: 'he', profile: 'vertical', kind: 'micro', x: b.x / MK, h: b.y / MK, y: b.z / MK, dir: [-fz * side * .4 + fx * .3, .8, fx * side * .4 + fz * .3], target: tg ? pxOf(tg) : null, tx: tg ? null : (P.x + fx * 100) / MK, ty: tg ? null : (P.z + fz * 100) / MK, th: tg ? null : 8, dmg, src: window.G.local, dt: 'x', splash: 12 / MK, team: 0, delay: i * .06 }); }
   sfx.launch();
@@ -1320,6 +1324,7 @@ function primTick(tgt, dt) {
 }
 // 자동 스킬: 재사용이 끝나고 적이 가까우면 스스로(화면의 아이콘을 눌러도 즉시)
 function autoTick(dt) {
+  elemTick(dt);
   const A = MECH(save.mech).auto; P.akCd -= dt;
   if (P.akCd > 0 || P.mv || P.ultT > 0) { inp.auto = false; return; }
   const near = nearest(P.x, P.z, A.k === 'backstep' ? 34 : 100);
@@ -1353,12 +1358,12 @@ function doAuto(k, tg) {
 // 필살기(Q): 기체마다 본편의 필살기를 이 전장에 맞게 옮긴 것
 function castUlt() {
   const k = MECH(save.mech).ult.k, fy = P.yaw, fx = Math.sin(fy), fz = Math.cos(fy), big = (e) => e.T.r > 10;
-  P.ult = 0; P.inv = Math.max(P.inv, 1.2); P.sw = null; G.st.ults++; sfx.ult(); G.shake = Math.max(G.shake, 4);
+  P.ult = 0; P.inv = Math.max(P.inv, 1.2); P.sw = null; G.st.ults++; if (P.rel) later(.3, () => castRelease(P.rel)); sfx.ult(); G.shake = Math.max(G.shake, 4);
   const UC = { bladefall: '#bff6ff', tenzan: '#dff8ff', laserstorm: '#9ff3ff', phoenix: '#ff8a3a', satsnipe: '#9ff6ff', carpet: '#ffa040', aegis: '#ffd27a', titanfall: '#ffb04a', mstorm: '#ff9a4a', execute: '#b48cff', allrange: '#6fdcff', nova: '#ffe28a', descent: '#fff3b0' }[k] || '#ffffff';
   screenFlash(UC, .28, .5); lightFlash(P.x, 22, P.z, UC, 55, .5); ring(P.x, P.z, 4, 46, .45, +('0x' + UC.slice(1))); flare(P.x, 14 + P.alt, P.z, +('0x' + UC.slice(1)), 26, .2);
   const D = (e, small, large) => (big(e) ? large : small);
   switch (k) {
-    case 'bladefall': { oneShot('fin', .7); const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 160 * 160);
+    case 'bladefall': { oneShot('fin', .7); const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 160 * 160);
       for (let i = 0; i < 22; i++) later(i * .05, () => { const e = near[(Math.random() * near.length) | 0]; const x = e && !e.dead ? e.x : P.x + rand(-120, 120), z = e && !e.dead ? e.z : P.z + rand(-120, 120);
         beamFx(x, 90, z, x, 0, z, 1.4, 0xbff6ff, .18); decal(x, z, 14, .25, 0x9ff3ff, () => { for (const o of E) { if (o.dead) continue; if (Math.hypot(o.x - x, o.z - z) < 14 + o.T.r) dealDmg(o, D(o, 170, 500), 0, 0, 1.5); } ring(x, z, 3, 16, .25, 0xbff6ff); }); }); break; }
     case 'tenzan': { oneShot('fin', .8); later(.35, () => { for (const da of [0, -1.05, 1.05]) { const a = fy + da; lineHit(P.x - Math.sin(a) * 130, P.z - Math.cos(a) * 130, a, 260, 16, 0, 0, (e) => dealDmg(e, D(e, 320, 950), Math.sin(a), Math.cos(a), 3)); beamFx(P.x - Math.sin(a) * 130, 9, P.z - Math.cos(a) * 130, P.x + Math.sin(a) * 130, 9, P.z + Math.cos(a) * 130, 3, 0xdff8ff, .4); crescent(P.x, P.z, a, 90, da, 0xdff8ff); }
@@ -1367,20 +1372,20 @@ function castUlt() {
     case 'phoenix': { oneShot('fin', .6); const L = 150, x0 = P.x, z0 = P.z; moveTo(P.x + fx * L, P.z + fz * L, .3);
       for (let i = 0; i < 8; i++) later(i * .035, () => { burst(P.x, 10, P.z, 14, 0xff7a2a, 70, .6, 13, .8); burst(P.x, 12, P.z, 6, 0xffe08a, 50, .4, 16, 1); });
       later(.3, () => { lineHit(x0, z0, fy, L + 10, 22, 0, 0, (e) => dealDmg(e, D(e, 380, 1100), fx, fz, 3)); beamFx(x0, 10, z0, x0 + fx * L, 10, z0 + fz * L, 4, 0xff8a3a, .45); xfBoom(P.x, P.z, 'elite', 16, 'emp'); G.slow = .35; }); break; }
-    case 'satsnipe': { const tg = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 230 * 230).sort((a, b) => b.hp - a.hp).slice(0, 7);
+    case 'satsnipe': { const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 230 * 230).sort((a, b) => b.hp - a.hp).slice(0, 7);
       tg.forEach((e, i) => later(.15 + i * .14, () => { if (e.dead) return; decal(e.x, e.z, 16, .2, 0x9ff6ff); beamFx(e.x, 260, e.z, e.x, 0, e.z, 3.2, 0x9ff6ff, .45); dealDmg(e, D(e, 900, 1600), 0, 0, 0); areaHit(e.x, e.z, 18, 160, 1.5); burst(e.x, 6, e.z, 30, 0xdff8ff, 90, .45, 12); tone(2600, 200, .35, 'sawtooth', .06); })); break; }
     case 'carpet': { for (let row = 0; row < 4; row++) for (let i = 0; i < 5; i++) { const dist = 30 + row * 32, a = fy + (i - 2) * .28, x = P.x + Math.sin(a) * dist, z = P.z + Math.cos(a) * dist; later(row * .16 + i * .03, () => mortar(x, z, 240, 26, .55)); } break; }
     case 'aegis': oneShot('slam', .7); P.barMax = P.bar = Math.round(P.maxHp * .6); P.barT = 9; P.barHit = 1; P.inv = Math.max(P.inv, 2.2);
       later(.35, () => { areaHit(P.x, P.z, 85, 160, 6, 1.5); ring(P.x, P.z, 8, 90, .6, 0xffd27a); ring(P.x, P.z, 4, 70, .45, 0x9ff3ff); xfBoom(P.x, P.z, 'elite', 14, 'emp'); }); break;
     case 'titanfall': oneShot('slam', .8); later(.42, () => { for (const e of E) { if (e.dead) continue; const dx = e.x - P.x, dz = e.z - P.z, d = Math.hypot(dx, dz); if (d < 150) { dealDmg(e, D(e, 260, 950), dx / (d || 1), dz / (d || 1), 4.5); e.stun = Math.max(e.stun || 0, 2); } }
       ring(P.x, P.z, 8, 155, .7, 0xffb04a); ring(P.x, P.z, 4, 110, .5, 0xffffff); burst(P.x, 8, P.z, 90, 0xffb04a, 180, .9, 13); xfBoom(P.x, P.z, 'boss', 18, 'emp'); G.slow = .5; G.shake = 9; ebs.length = 0; }); break;
-    case 'mstorm': if (MSW) { const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 200 * 200); const b = P.pod || { x: P.x, y: 22 + P.alt, z: P.z };
+    case 'mstorm': if (MSW) { const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 200 * 200); const b = P.pod || { x: P.x, y: 22 + P.alt, z: P.z };
       for (let i = 0; i < 24; i++) { const tg = near.length ? near[i % near.length] : null, side = i % 2 ? -1 : 1; MSLE.fire({ wh: 'he', profile: 'vertical', kind: 'micro', x: b.x / MK, h: b.y / MK, y: b.z / MK, dir: [side * rand(.1, .5), 1, rand(-.4, .4)], target: tg ? pxOf(tg) : null, tx: tg ? null : (P.x + rand(-90, 90)) / MK, ty: tg ? null : (P.z + rand(-90, 90)) / MK, th: tg ? null : 8, dmg: 140, src: window.G.local, dt: 'x', splash: 18 / MK, team: 0, delay: i * .045 }); }
       P.podT = 1.8; } else launchSalvo(20, 140); break;
-    case 'execute': { const tg = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 190 * 190).sort((a, b) => b.hp - a.hp).slice(0, 9), x0 = P.x, z0 = P.z; P.inv = Math.max(P.inv, tg.length * .09 + .6);
+    case 'execute': { const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 190 * 190).sort((a, b) => b.hp - a.hp).slice(0, 9), x0 = P.x, z0 = P.z; P.inv = Math.max(P.inv, tg.length * .09 + .6);
       tg.forEach((e, i) => later(i * .09, () => { if (e.dead) return; P.x = e.x - 6; P.z = e.z - 6; dealDmg(e, D(e, 650, 1300), 0, 0, 1); crescent(e.x, e.z, rand(0, TAU), 26, rand(-.6, .6), 0xc9b8ff); burst(e.x, 9, e.z, 16, 0xb48cff, 70, .35, 10); sfx.slash(); }));
       later(tg.length * .09 + .05, () => { P.x = x0; P.z = z0; ring(P.x, P.z, 4, 30, .3, 0xb48cff); }); break; }
-    case 'allrange': { const tg = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).slice(0, 36); P.bitBoost = 4;
+    case 'allrange': { const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).slice(0, 36); P.bitBoost = 4;
       tg.forEach((e, i) => later((i % 6) * .05, () => { if (e.dead) return; const B = BITS[i % 6]; beamFx(B.x || P.x, B.y || 24, B.z || P.z, e.x, e.T.h * .5, e.z, .9, 0x6fdcff, .25); dealDmg(e, D(e, 280, 700), 0, 0, .8); })); tone(2200, 600, .5, 'square', .04); break; }
     case 'nova': for (let w = 0; w < 2; w++) later(w * .35, () => { areaHit(P.x, P.z, 170, 300, 4); ring(P.x, P.z, 8, 175, .65, 0xffe28a); burst(P.x, 12, P.z, 60, 0xffe28a, 170, .7, 12); xfBoom(P.x, P.z, 'elite', 14, 'emp'); });
       P.hp = Math.min(P.maxHp, P.hp + P.maxHp * .3); num(P.x, 30, P.z, '+' + Math.round(P.maxHp * .3), '#7dff9a', 18); break;
@@ -1430,7 +1435,7 @@ const MP = { climb: .42, v0: 29, vClimb: 95, vmax: 290, vEnd: 365, endR: 120, ac
 function launchSalvo(n, dmg) {
   if (MSW) return engineSalvo(n, dmg);
   const base = P.pod || { x: P.x, y: 22, z: P.z }, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw);
-  const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n * 3);
+  const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n * 3);
   const big = near.filter((e) => e.T.r > 10);
   for (let i = 0; i < n; i++) {
     const tg = big.length && i % 2 === 0 ? big[0] : near.length ? near[(i * 2 + (Math.random() * 2 | 0)) % near.length] : null, side = i % 2 ? -1 : 1;
@@ -1472,19 +1477,19 @@ function mslSync(dt) {
   for (const e of E) { if (e.dead) continue; const u = pxOf(e); u.x = e.x / MK; u.y = e.z / MK; W.units.push(u); }
   window.step(dt);
 }
-function mslClear() { if (!MSW) return; const W = window.G; W.over = true; try { window.step(0); } catch (e) { } W.over = false; }
+function mslClear() { if (!MSW) return; const W = window.G; W.over = true; W.t = 1e9; try { window.step(0); } catch (e) { } W.over = false; W.t = 0; ME_U.slow = 0; }
 function mslHurt(u, amt, src, ang, dt) {
   if (!u || !(amt > 0)) return;
   if (u === ME_U) {
     if (P.alt > 10 || G.state !== 'play') return;            // 날고 있으면 밑에서 터져도 안 맞는다
-    if (dt === 'x') { if (P.inv > 0 || P.bar > 0) return; P.hp -= amt * .35; if (Math.random() < .3) num(P.x, 20, P.z, '-' + Math.max(1, Math.round(amt * .35)), '#9be05a', 14); if (P.hp <= 0) { P.hp = 0; endRun(false); } return; }
+    if (dt === 'x') { if (P.inv > 0 || P.bar > 0) return; P.hp -= amt * .35 * (.3 + .7 * EZ()); if (Math.random() < .3) num(P.x, 20, P.z, '-' + Math.max(1, Math.round(amt * .35 * (.3 + .7 * EZ()))), '#9be05a', 14); if (P.hp <= 0) { P.hp = 0; endRun(false); } return; }
     hurtPlayer(amt); return;
   }
   const e = u.ref; if (!e || e.dead) return; const a = ang || 0; dealDmg(e, amt, Math.cos(a), Math.sin(a), 1.3);
 }
 function engineSalvo(n, dmg) {
   const base = P.pod || { x: P.x, y: 22 + P.alt, z: P.z }, fx = Math.sin(P.yaw), fz = Math.cos(P.yaw);
-  const near = E.filter((e) => !e.dead && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n * 3);
+  const near = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 175 * 175).sort((a, b) => ((a.x - P.x) ** 2 + (a.z - P.z) ** 2) - ((b.x - P.x) ** 2 + (b.z - P.z) ** 2)).slice(0, n * 3);
   const big = near.filter((e) => e.T.r > 10);
   for (let i = 0; i < n; i++) {
     const tg = big.length && i % 2 === 0 ? big[0] : near.length ? near[(i * 2 + (Math.random() * 2 | 0)) % near.length] : null, side = i % 2 ? -1 : 1;
@@ -1696,7 +1701,7 @@ function castBarrier() {
 function hurtPlayer(d, air) {
   if (P.inv > 0 || G.state !== 'play' || G.won || (P.alt > 10 && !air) || P.cloakT > 0) return;
   if (P.dodge && Math.random() < P.dodge) { P.inv = .25; num(P.x, 24 + P.alt, P.z, '회피', '#fff3b0', 15); flare(P.x, 12 + P.alt, P.z, 0xfff3b0, 14, .15); return; }
-  d = Math.round(d * (1 + .2 * (G.threat - 1)) * (P.taken || 1));
+  d = Math.round(d * (1 + .2 * (G.threat - 1)) * (P.taken || 1) * (.3 + .7 * EZ()));
   if (P.bar > 0) {          // 보호막이 먼저 받는다
     const a = Math.min(P.bar, d); P.bar -= a; d -= a; P.barHit = 1; if (P.bar <= 0) { P.barT = 0; burst(P.x, 12, P.z, 30, 0x9ff3ff, 90, .4, 9); tone(900, 200, .25, 'square', .05); }
     if (d <= 0) { P.inv = .3; tone(1200, 700, .08, 'triangle', .05); return; }
@@ -1712,7 +1717,7 @@ function updShots(dt) {
   for (const s of shots) {
     s.x += s.vx * dt; s.z += s.vz * dt; s.y = Math.max(3, s.y + s.vy * dt); s.life -= dt;
     for (const e of E) {
-      if (e.dead) continue; const dx = e.x - s.x, dz = e.z - s.z, rr = e.T.r + (s.kind === 'w' ? 5 : 2);
+      if (e.dead || e.ally) continue; const dx = e.x - s.x, dz = e.z - s.z, rr = e.T.r + (s.kind === 'w' ? 5 : 2);
       if (dx * dx + dz * dz > rr * rr || (s.hit && s.hit.includes(e))) continue;
       dealDmg(e, s.dmg, s.vx / 300, s.vz / 300, s.kind === 'w' ? .9 : .5); burst(s.x, s.kind === 'w' ? 7 : s.y, s.z, 4, s.col || (s.kind === 'w' ? 0xdff8ff : 0x7fe6ff), 55, .22, 6, .9);
       flare(s.x, s.kind === 'w' ? 7 : s.y, s.z, s.col || (s.kind === 'w' ? 0xdff8ff : s.kind === 'f' ? 0xfff0a0 : 0x7fe6ff), s.kind === 'w' ? 12 : 7, .08);
@@ -1751,7 +1756,7 @@ function updPickups(dt) {
     if (d < 11) {
       p.dead = true;
       ring(p.x, p.z, 3, 26, .4, p.kind === 'heal' ? 0x7dff9a : 0xffcf5a); flare(p.x, 8, p.z, p.kind === 'heal' ? 0x9dffb0 : 0xffe08a, 22, .22); burst(p.x, 7, p.z, 24, p.kind === 'heal' ? 0x7dff9a : 0xffcf5a, 70, .5, 8, .9);
-      if (p.kind === 'heal') { P.hp = Math.min(P.maxHp, P.hp + 30); num(P.x, 24, P.z, '+30', '#7dff9a', 18); tone(520, 1040, .2, 'sine', .12); }
+      if (p.kind === 'heal') { const hv = Math.round(30 * (P.healK || 1)); P.hp = Math.min(P.maxHp, P.hp + hv); num(P.x, 24, P.z, '+' + hv, '#7dff9a', 18); tone(520, 1040, .2, 'sine', .12); }
       else { G.pend++; G.chest = true; }
     }
   }
@@ -1773,14 +1778,14 @@ function buildCards() {
   const hi = (s) => s.replace(/([+−-]?\d+(?:\.\d+)?%?)/g, '<em>$1</em>');
   cardKeys.forEach((k, i) => {
     if (k.startsWith('_evo_')) { const ek = k.slice(5), X = EVO[ek], b = document.createElement('button'); b.className = 'card evo'; b.style.setProperty('--rc', '#ff5a7a'); b.style.setProperty('--rg', '#ff5a7a88');
-      b.innerHTML = `<span class="tag">무기 진화</span><div class="med">${ico(ek === 'rifle' ? PRIM : ek)}</div><div class="nm">${X.nm}</div><div class="pips"></div><div class="ds">${hi(X.ds)}</div><kbd>${i + 1}</kbd>`; b.addEventListener('click', () => pickCard(i)); box.appendChild(b); return; }
+      b.innerHTML = `<span class="tag">무기 진화</span><div class="med">${ico2(ek === 'rifle' ? PRIM : ek, '#ff9ab0')}</div><div class="nm">${X.nm}</div><div class="pips"></div><div class="ds">${hi(X.ds)}</div><kbd>${i + 1}</kbd>`; b.addEventListener('click', () => pickCard(i)); box.appendChild(b); return; }
     const u = UP[k], lv = k === '_heal' ? 0 : P.w[k], b = document.createElement('button'); b.className = 'card';
     const an = k === 'rifle' && ARM_NAME[PRIM], nm = k === '_heal' ? '긴급 수리' : an ? an.nm : u.nm;
     const ds = k === '_heal' ? '내구 40 회복' : (an && lv === 0 ? an.ds0 : u.ds[Math.min(lv, u.ds.length - 1)] + (an && ARM === 'katana' && /탄/.test(u.ds[Math.min(lv, u.ds.length - 1)]) ? ' (검기 +1)' : ''));
     const last = u && lv + 1 === u.max, col = k === '_heal' ? '#7dff9a' : last ? '#ff5a7a' : lv === 0 ? '#ffcf5a' : u.kind === 'w' ? '#5fe3ff' : '#b67bff';
     const tag = k === '_heal' ? '회복' : last ? '최종 강화' : lv === 0 ? (u.kind === 'w' ? '새 무기' : '새 장비') : u.kind === 'w' ? '무기 강화' : '장비 강화';
     b.style.setProperty('--rc', col); b.style.setProperty('--rg', col + '88');
-    b.innerHTML = `<span class="tag">${tag}</span><div class="med">${ico(k === 'rifle' ? PRIM : k)}</div><div class="nm">${nm}</div>`
+    b.innerHTML = `<span class="tag">${tag}</span><div class="med">${ico2(k === 'rifle' ? PRIM : k, col)}</div><div class="nm">${nm}</div>`
       + (u ? `<div class="pips">${Array.from({ length: u.max }, (_, j) => `<i class="${j < lv ? 'on' : j === lv ? 'nx' : ''}"></i>`).join('')}</div>` : '<div class="pips"></div>')
       + `<div class="ds">${hi(ds)}</div><kbd>${i + 1}</kbd>`;
     b.addEventListener('click', () => pickCard(i)); box.appendChild(b);
@@ -1812,7 +1817,7 @@ function pickCard(i) {
 }
 function drawSlots() {
   $('#slots').innerHTML = Object.keys(UP).filter((k) => P.w[k] > 0).map((k) => { const u = UP[k], nm = k === 'rifle' && ARM_NAME[PRIM] ? ARM_NAME[PRIM].nm : u.nm;
-    return `<div class="slot ${u.kind === 'w' ? 'w' : ''} ${P.evo && P.evo[k] ? 'evo' : ''}" title="${nm} Lv ${P.w[k]}">${ico(k === 'rifle' ? PRIM : k)}<u>${Array.from({ length: u.max }, (_, i) => `<i class="${i < P.w[k] ? 'on' : ''}"></i>`).join('')}</u></div>`; }).join('');
+    return `<div class="slot ${u.kind === 'w' ? 'w' : ''} ${P.evo && P.evo[k] ? 'evo' : ''}" title="${nm} Lv ${P.w[k]}">${ico2(k === 'rifle' ? PRIM : k, u.kind === 'w' ? '#ffd98a' : '#9ff3ff')}<u>${Array.from({ length: u.max }, (_, i) => `<i class="${i < P.w[k] ? 'on' : ''}"></i>`).join('')}</u></div>`; }).join('');
 }
 function drawBuild() {
   const m = MECH(save.mech);
@@ -1830,7 +1835,7 @@ function spawn(type, x, z) {
   const tm = Math.min(G.t, RUN_TIME) / 60, hs = (1 + .5 * tm + .13 * tm * tm) * (1 + .35 * (G.threat - 1));
   const e = { t: type, T, x, z, vx: 0, vz: 0, kx: 0, kz: 0, yaw: 0, hp: T.hp * (T.r > 10 ? 1 + .35 * (G.threat - 1) : hs), flash: 0, bladeT: 0,
     st: 'move', tm: rand(1, 3), ph: rand(0, 6), sc: 1, born: .35, sm: (1 + .05 * tm) * rand(.92, 1.1) };
-  e.max = e.hp; if (G.mis && G.mis.tgt && !T.fly && !T.boss && !T.virt && T.dmg > 0 && type !== 'bane' && Math.random() < (G.mis.tgtP || .4)) e.tgo = 1;
+  e.hp *= T.r > 10 ? (.85 + .15 * EZ()) * (T.boss || type === 'queen' ? 1.25 + .55 * EZ() : 1) : EZ(); e.max = e.hp; if (G.mis && G.mis.tgt && !T.fly && !T.boss && !T.virt && T.dmg > 0 && type !== 'bane' && Math.random() < (G.mis.tgtP || .4)) e.tgo = 1;
   E.push(e); return e;
 }
 function spawnPos(dMin, dMax) {
@@ -1923,7 +1928,7 @@ function checkPerfectDodge() {
   for (let i = ebs.length - 1; i >= 0; i--) { const b = ebs[i], dx = P.x - b.x, dz = P.z - b.z; if (dx * dx + dz * dz < 36 * 36 && b.vx * dx + b.vz * dz > 0) { hit++; burst(b.x, 6, b.z, 4, 0xbff6ff, 40, .3, 6); ebs.splice(i, 1); } }
   if (!hit) for (const e of E) { if (e.dead) continue; if ((e.st === 'dash' || e.st === 'ldash' || e.st === 'charge' || e.st === 'fuse') && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 55 * 55) { hit++; break; } }
   if (!hit) return;
-  G.pdCd = 1.4; G.slow = Math.max(G.slow, .55); P.inv = Math.max(P.inv, .6); P.ult = Math.min(100, P.ult + 12); G.st.pd = (G.st.pd || 0) + 1;
+  G.pdCd = 2.5; G.slow = Math.max(G.slow, .55); P.inv = Math.max(P.inv, .6); P.ult = Math.min(100, P.ult + 6); G.st.pd = (G.st.pd || 0) + 1;
   num(P.x, 26, P.z, '완벽 회피!', '#bff6ff', 22); ring(P.x, P.z, 4, 46, .45, 0xbff6ff); flare(P.x, 10, P.z, 0xbff6ff, 26, .2); tone(1200, 2400, .18, 'sine', .1);
 }
 // ───────── 장소별 땅: 모래(원래 땅) · 도시 · 금속 갑판 · 용암 · 설원 · 공허 · 잿빛 폐허 · 하이브
@@ -2183,7 +2188,7 @@ function updSpawner(dt) {
   // 날고 있으면 날벌레·대공 보병이 더 몰려온다(하늘도 안전하지 않게)
   if (P.fly && !G.won && (G.flyAcc = (G.flyAcc || 0) + dt) > Math.max(.7, 1.6 - G.t / 300)) { G.flyAcc = 0; const [x, z] = spawnPos(120, 150); if (Math.random() < .55) { spawn('wing', x, z); spawn('wing', x + 8, z + 6); } else spawn('aat', x, z); }
   let rate = (1.5 + Math.min(G.t, RUN_TIME) / 60 * 1.05) * (1 + .15 * (G.threat - 1));   // 초당 무리 수
-  if (G.bossOn) rate *= .3;
+  rate *= .75 + .25 * EZ(); if (G.bossOn) rate *= .3;
   G.spawnAcc += rate * dt;
   while (G.spawnAcc >= 1) {
     G.spawnAcc -= 1; if (E.length >= MAX_ALIVE) continue;
@@ -2313,7 +2318,7 @@ function bossAI(e, dt, d, toP, rage) {
 
 function kill(e) {
   if (e.dead) return; e.dead = true; cancelDecal(e.dec); e.dec = null;
-  const T = e.T; G.kills++; comboKill(e);
+  const T = e.T; G.kills++; comboKill(e); elemKill(e);
   if (e.t === 'barrel') later(.05, () => explode(e.x, e.z, 46, 160 * (1 + .25 * (G.threat - 1)), 0xff7a3a));
   if (e.flee) { banner('보물 운반선 격추!', 1600); for (let i = 0; i < 18; i++) dropGem(e.x + rand(-16, 16), e.z + rand(-16, 16), 4); picks.push({ kind: 'chest', x: e.x, z: e.z, t: 0 }); G.bonusCore = (G.bonusCore || 0) + 120; }
   if (e.elite) { for (let i = 0; i < 5; i++) dropGem(e.x + rand(-10, 10), e.z + rand(-10, 10), 3); if (--G.elites <= 0) { picks.push({ kind: 'chest', x: e.x, z: e.z, t: 0 }); banner('정예 섬멸 · 전리품', 1600); } } if (P.lifesteal) P.hp = Math.min(P.maxHp, P.hp + P.lifesteal);
@@ -2330,7 +2335,7 @@ function kill(e) {
     picks.push({ kind: 'chest', x: e.x, z: e.z, t: 0 }); picks.push({ kind: 'heal', x: e.x + 12, z: e.z + 6, t: 0 });
     for (let i = 0; i < 14; i++) dropGem(e.x + rand(-14, 14), e.z + rand(-14, 14), 3);
   } else {
-    sfx.kill(); P.ult = Math.min(100, P.ult + (G.bossOn ? 1.6 : 1.1) * (P.ultGain || 1));
+    sfx.kill(); P.ult = Math.min(100, P.ult + (G.bossOn ? 1.2 : .75) * (P.ultGain || 1));
     dropGem(e.x, e.z, T.xp); if (Math.random() < .008) picks.push({ kind: 'heal', x: e.x, z: e.z, t: 0 });
   }
 }
@@ -2339,10 +2344,13 @@ function updEnemies(dt) {
   const n = E.length;
   for (let i = 0; i < n; i++) {
     const e = E[i]; if (e.dead) continue; const T = e.T;
-    const TG = e.tgo && G.mis && G.mis.tgt && G.mis.tgt.hp > 0 ? G.mis.tgt : P, dx = TG.x - e.x, dz = TG.z - e.z, d = Math.hypot(dx, dz) || 1, ux = dx / d, uz = dz / d;
+    if (e.ally) { allyTick(e, dt); continue; }
+    if (stTick(e, dt)) continue;
+    const TG = (e.confT > 0 && confTarget(e)) || (e.tgo && G.mis && G.mis.tgt && G.mis.tgt.hp > 0 ? G.mis.tgt : P), dx = TG.x - e.x, dz = TG.z - e.z, d = Math.hypot(dx, dz) || 1, ux = dx / d, uz = dz / d;
     let mx = ux, mz = uz, sp = T.spd * e.sm; e.tm -= dt; e.flash -= dt; e.bladeT -= dt; e.born -= dt; e.ph += dt;
 
-    if (e.flee) { const a = Math.atan2(-dx, -dz) + Math.sin(e.ph * 1.3) * .9; mx = Math.sin(a); mz = Math.cos(a); sp = T.spd; }
+    if (TG.T || e.frzT > 0) { }
+    else if (e.flee) { const a = Math.atan2(-dx, -dz) + Math.sin(e.ph * 1.3) * .9; mx = Math.sin(a); mz = Math.cos(a); sp = T.spd; }
     else if (e.t === 'bane') {
       if (e.st === 'move' && d < 20) { e.st = 'fuse'; e.tm = .7; e.dec = decal(e.x, e.z, 22, .7, 0xff5a2a); sfx.tele(); }
       if (e.st === 'fuse') {
@@ -2377,6 +2385,7 @@ function updEnemies(dt) {
     else if (T.anim || T.fly || T.boss || e.t === 'spit' || e.t === 'aagun') { sp = unitAI(e, dt, d, dx, dz) * e.sm; mx = Math.sin(e.mv); mz = Math.cos(e.mv); }
 
     if (e.stun > 0) { e.stun -= dt; sp = 0; if (Math.random() < .08) burst(e.x, e.T.h + 2, e.z, 1, 0xfff07a, 10, .3, 6, .2); }
+    if (e.frzT > 0) sp = 0; else if (e.slwT > 0) sp *= .5;
     if (P.cloakT > 0 && e.st === 'move') { sp *= .35; mx = Math.sin(e.ph); mz = Math.cos(e.ph * .7); }   // 은신 중에는 헤맨다
     // 서로 밀어내기
     for (let j = i + 1; j < n; j++) {
@@ -2390,10 +2399,11 @@ function updEnemies(dt) {
     const er = Math.hypot(e.x, e.z), lim = e.t === 'jet' ? ARENA_R + 70 : ARENA_R - 4; if (er > lim) { e.x *= lim / er; e.z *= lim / er; }
     if (e.st !== 'fuse' && e.st !== 'stomp' && sp > 0) { const want = Math.atan2(mx, mz); let da = want - e.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; e.yaw += da * Math.min(1, dt * 9); }
     // 접촉 피해
-    if (TG !== P) { if (d < T.r + TG.r && e.born <= 0 && T.dmg > 0) { TG.hp -= T.dmg * dt * .55; TG.hitT = .15; } }
-    else if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0) {
+    if (TG.T) { if (d < T.r + TG.T.r + 3 && e.born <= 0 && !(e.frzT > 0)) unitHit(TG, Math.max(8, T.dmg) * 3 * dt * (1 + .35 * (G.threat - 1)), e); }
+    else if (TG !== P) { if (d < T.r + TG.r && e.born <= 0 && T.dmg > 0) { TG.hp -= T.dmg * dt * .55; TG.hitT = .15; } }
+    else if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0 && !(e.frzT > 0)) {
       if (P.alt > 10) { if (T.fly) hurtPlayer(T.dmg, true); }
-      else if (!T.fly || (e.alt || 0) < -T.fly * .6) hurtPlayer(e.st === 'dash' ? T.dmg * 1.3 : T.dmg);
+      else if (!T.fly || (e.alt || 0) < -T.fly * .6) hurtPlayer((e.st === 'dash' ? T.dmg * 1.3 : T.dmg) * (e.weakT > 0 ? .6 : 1));
     }
   }
   E = E.filter((e) => { if (e.dead && e.px) e.px.dead = true; if (e.dead && e.vis) dropBossVis(e); return !e.dead; });
@@ -2453,13 +2463,13 @@ function endRun(won) {
   const key = `c${G.chi + 1}`, prev = save.best[key] || { t: 0, k: 0, w: 0 };
   const better = (won && !prev.w) || (won === !!prev.w && (won ? G.t < prev.t : G.t > prev.t));
   if (better) save.best[key] = { t: Math.round(G.t), k: G.kills, w: won ? 1 : 0 };
-  const rw = runReward(won); persist();
+  const rw = runReward(won); const wdrop = dropWeapon(won); persist();
   $('#ovT').textContent = won ? '임무 완료' : G.failMsg ? '임무 실패' : '기체 대파'; $('#ovT').className = won ? 'win' : 'lose';
   $('#ovSub').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`;
   $('#ovStars').innerHTML = ['보스 격파', '내구 50% 이상', '결전 60초 안에'].map((s, i) => `<span class="${G.lastStars[i] ? 'on' : ''}"><i>★</i>${s}</span>`).join('');
   $('#newrec').classList.toggle('hide', !better);
   $('#stats').innerHTML = [['clock', fmt(G.t), '생존 시간'], ['skull', G.kills, '격파'], ['lv', P.lvl, '레벨'], ['star', G.st.maxCombo || 0, '최고 콤보']].map(([i, v, l]) => `<div>${ico(i)}<b class="num">${v}</b><small>${l}</small></div>`).join('');
-  $('#reward').innerHTML = rw.html;
+  $('#reward').innerHTML = rw.html + (wdrop ? wdropHtml(wdrop) : '');
   const nextOk = won && G.chi + 1 < CHAPTERS.length; $('#nextThreat').classList.toggle('hide', !nextOk); $('#nextThreat').textContent = nextOk ? `다음 · ${stLabel(G.chi + 1)}` : '';
   ADS.offer('double', $('#adDouble'), `광고 보고 보상 2배`, () => { save.core += rw.earned; save.gem += rw.gem; persist(); $('#reward').insertAdjacentHTML('beforeend', '<div class="rwm">광고 보상 2배 지급 완료</div>'); });
   setTimeout(() => { $('#over').classList.remove('hide'); countUp($('#reward')); }, won ? 300 : 700);
@@ -2483,7 +2493,7 @@ async function startRun() {
   G.chi = clamp(save.ch, 1, save.chMax) - 1; G.threat = CHAPTERS[G.chi].th; leaveLobby(); resetRun(); await setMech(save.mech);
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
-  { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico(m.ult.k); $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico(m.auto.k); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
+  { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico2(m.ult.k, '#ffd98a'); const EL0 = ELEM[m.el]; $('#bElem').firstElementChild.innerHTML = ico2('el_' + m.el, EL0.col); $('#bElem').style.setProperty('--ec', EL0.col); $('#bElem').title = `${EL0.sk.nm} · 계열 기술 (R)`; $('#bAuto').style.setProperty('--ec', EL0.col); UP.elemUp.nm = `${EL0.nm} 각성`; $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico2(m.auto.k, '#ffffff'); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
     $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=15)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
@@ -2511,7 +2521,7 @@ function drawInstances(time) {
     if (e.T.fly) dummy.rotation.set(e.st === 'dive' ? .35 : .05, e.yaw + e.T.yaw, e.bank || 0); else dummy.rotation.set(moving && F === 1 ? .12 : 0, e.yaw + e.T.yaw, F > 1 ? 0 : Math.sin(e.ph * 7) * (big ? .02 : .07));
     dummy.scale.set(e.sc * grow * sq, e.sc * grow * (2 - sq), e.sc * grow * sq); dummy.updateMatrix();
     im.setMatrixAt(i, dummy.matrix);
-    im.setColorAt(i, e.flash > 0 ? tmpC.setRGB(4, 4, 4) : (e.gold || e.elite) ? tmpC.setRGB(2.1, 1.6, .5) : e.groggy > 0 ? tmpC.setRGB(1.8, 1.6, .8) : e.st === 'fuse' ? tmpC.setRGB(2.4, .8, .5) : tmpC.setRGB(1, 1, 1));
+    im.setColorAt(i, e.flash > 0 ? tmpC.setRGB(4, 4, 4) : e.ally ? tmpC.setRGB(.85, .45, 2) : e.frzT > 0 ? tmpC.setRGB(1.3, 2.2, 3) : e.confT > 0 ? tmpC.setRGB(1.3, 2.1, 1.1) : (e.gold || e.elite) ? tmpC.setRGB(2.1, 1.6, .5) : e.groggy > 0 ? tmpC.setRGB(1.8, 1.6, .8) : e.st === 'fuse' ? tmpC.setRGB(2.4, .8, .5) : e.burnT > 0 ? tmpC.setRGB(1.9, 1.15, .8) : e.weakT > 0 ? tmpC.setRGB(1.15, 1.45, 1.25) : tmpC.setRGB(1, 1, 1));
     put(e.x, e.z, e.T.r * (e.T.fly ? .8 : 1.15));
   }
   for (const k in ET) IM[k].forEach((im, f) => { im.count = Math.min(cnt[k][f], ET[k].max); im.instanceMatrix.needsUpdate = true; im.instanceColor.needsUpdate = true; });
@@ -2626,6 +2636,7 @@ function drawHud(dt) {
   if (P.fly) setCd('#bFly', 0, P.flyT); else setCd('#bFly', P.flyCd / (FLY.cd * (P.flyCdMul || 1)), P.flyCd);
   setCd('#bDash', P.dashCd / P.dashMax, P.dashCd);
   { const A = MECH(save.mech).auto, cdm = A.cd * P.cdMul; setCd('#bAuto', P.akCd / cdm, P.akCd); $('#bAuto').classList.toggle('ready', P.akCd <= 0); }
+  { const cdm = ekCdMax(); setCd('#bElem', P.ekCd / cdm, P.ekCd); $('#bElem').classList.toggle('ready', P.ekCd <= 0); $('#hud').classList.toggle('rel', P.relT > 0); }
   { const b = $('#bUlt'); b.style.setProperty('--cd', P.ult + '%'); b.classList.toggle('ready', P.ult >= 100); const s = P.ult >= 100 ? '' : Math.floor(P.ult) + '%', el = b.querySelector('b'); if (el.textContent !== s) el.textContent = s; }
   { const B = G.boss && !G.boss.dead ? G.boss : G.mid && !G.mid.dead ? G.mid : null; $('#boss').classList.toggle('hide', !B || G.won);
     if (B) { const nm = B.T.boss || '제타 여왕'; if ($('#bossname').dataset.nm !== nm) { $('#bossname').dataset.nm = nm; $('#bossname').innerHTML = `${ico('skull')}<span>${nm}</span>${ico('skull')}`; } $('#bossfill').style.width = clamp(B.hp / B.max * 100, 0, 100) + '%'; } }
@@ -2896,6 +2907,320 @@ const ICO = {
 Object.assign(ICO, { rifleUp: ICO.rifle, cannon: ICO.shotgun, great: ICO.katana, staff: ICO.bits, hammer: ICO.mortar, _heal: ICO.heal });
 const ico = (k, cls = '') => `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ICO.star}</svg>`;
 
+// ───────── 계열(속성) 7종: 기체마다 하나. 계열마다 노는 맛이 다르다
+const ELEM = {
+  fire:  { nm: '불', col: '#ff7a3a', hex: 0xff7a3a, wn: '홍염의', ds: '광역 공격이 강하다 · 처치한 적이 20% 확률로 폭발 · 공격 10% 확률로 화상',
+    sk: { nm: '화염 폭풍', cd: 13, ds: '주변을 세 번 휩쓰는 불길 · 맞은 적은 화상' } },
+  water: { nm: '물', col: '#4ab8ff', hex: 0x4ab8ff, wn: '청류의', ds: '치유와 탱커 · 초당 회복 +1.5 · 받는 피해 -12% · 회복 아이템 +50%',
+    sk: { nm: '치유의 해일', cd: 15, ds: '해일로 적을 밀어내고 기절 · 내구 22% 회복 · 보호막' } },
+  wind:  { nm: '바람', col: '#7dffc8', hex: 0x7dffc8, wn: '질풍의', ds: '전자기 바람 · 이동 +8% · 공격 12% 확률로 적 약화(공격력 -40%)',
+    sk: { nm: '전자기 폭풍', cd: 14, ds: '회오리가 적을 빨아들이고 혼란에 빠뜨려 서로 싸우게 한다' } },
+  elec:  { nm: '전기', col: '#ffe14a', hex: 0xffe14a, wn: '뇌명의', ds: '여럿을 한꺼번에 · 공격 12% 확률로 번개가 3마리에 튄다 · 재사용 -5%',
+    sk: { nm: '연쇄 번개', cd: 11, ds: '번개가 적 14마리를 잇달아 꿰뚫고 감전시켜 멈춘다' } },
+  ice:   { nm: '얼음', col: '#9fe8ff', hex: 0x9fe8ff, wn: '서리의', ds: '공격 22% 확률로 둔화 · 얼어붙은 적은 이동 정지, 받는 피해 +30%',
+    sk: { nm: '절대 영도', cd: 15, ds: '주변 적을 통째로 얼려 멈추고 방어를 깎는다' } },
+  light: { nm: '빛', col: '#fff0a8', hex: 0xfff0a8, wn: '성광의', ds: '치명타 +8% · 치명타 때 15% 확률로 빛기둥',
+    sk: { nm: '심판의 빛', cd: 13, ds: '빛기둥 8개가 내리꽂혀 적을 기절시키고 내구 10% 회복' } },
+  dark:  { nm: '어둠', col: '#b47aff', hex: 0xb47aff, wn: '흑월의', ds: '네크로맨서 · 쓰러뜨린 적 기계를 30% 확률로 해킹해 부하로 되살린다',
+    sk: { nm: '그림자 군단', cd: 16, ds: '그림자 기동병 3기를 불러내 함께 싸운다' } },
+};
+const EL_KEYS = Object.keys(ELEM);
+const EL_OF = { mech4: 'elec', m_samurai: 'wind', m_striker: 'light', mech3: 'fire', m_guardian: 'water', m_titan: 'fire', m_ranger: 'ice', m_artillery: 'fire', m_sky: 'wind',
+  m_phantom: 'dark', m_wizard: 'elec', m_origin: 'ice', mech_leg: 'light', astra: 'water', god: 'light', god_white: 'elec', god_red: 'dark', god_black: 'dark' };
+for (const m of MECHS) m.el = EL_OF[m.id] || 'fire';
+// 초반 난이도 완화: 1부 앞쪽 장은 적이 약하고 덜 아프다(1부 8장부터 원래 난이도)
+const EZ = () => { const c = CHAPTERS[G.chi]; if (!c || c.part !== 1) return 1; return Math.min(1, .66 + G.chi * .02); };
+
+// ───────── 세련된 스킬 아이콘: 계열색 그라데이션 + 은은한 빛번짐
+Object.assign(ICO, {
+  el_fire: '<path d="M12 22c-4.4 0-7-3-7-6.6 0-3.2 2.2-5.4 3.6-7.4.4 1.8 1.4 3 2.6 3.4-.4-3.6 1.2-6.8 3.8-9.4.4 3.4 2.2 5.6 3.6 7.6 1 1.4 1.4 3 1.4 4.6C20 19.4 16.6 22 12 22z"/><path class="f" d="M12 22c-1.9 0-3.2-1.3-3.2-3 0-1.8 1.5-3 2.2-4.4.8 1.2 1.6 1.6 2.3 1.7.3-.9.2-1.8 0-2.6 1.4 1.1 2.3 2.6 2.3 4.4 0 2.2-1.6 3.9-3.6 3.9z"/>',
+  el_water: '<path d="M12 2.5c3.5 4.6 6.5 8.2 6.5 11.8a6.5 6.5 0 0 1-13 0C5.5 10.7 8.5 7.1 12 2.5z"/><path class="f" d="M8.4 15c1.2 1 2.4 1 3.6.2 1.1-.8 2.3-.8 3.6.2-.3 2.1-1.9 3.6-3.6 3.6S8.7 17.5 8.4 15z"/>',
+  el_wind: '<path d="M3 8.5h10.5a3 3 0 1 0-3-3"/><path d="M3 12.5h15.5a3 3 0 1 1-3 3"/><path d="M3 16.5h6.5a2.5 2.5 0 1 1-2.5 2.5"/>',
+  el_elec: '<path class="f" d="M13.5 1.8L4.6 13.6h5.8L9.3 22.2l9.6-12.6h-5.8z"/>',
+  el_ice: '<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7"/><path d="M9.6 3.6L12 6l2.4-2.4M9.6 20.4L12 18l2.4 2.4M4.2 10.4l3.3.8-.8 3.3M19.8 13.6l-3.3-.8.8-3.3M4.2 13.6l3.3-.8-.8-3.3M19.8 10.4l-3.3.8.8 3.3"/>',
+  el_light: '<circle class="f" cx="12" cy="12" r="4.2"/><path d="M12 1.5v3.4M12 19.1v3.4M1.5 12h3.4M19.1 12h3.4M4.6 4.6l2.4 2.4M17 17l2.4 2.4M4.6 19.4L7 17M17 7l2.4-2.4"/>',
+  el_dark: '<path d="M15.5 2.6A9.6 9.6 0 1 0 21.4 15a7.6 7.6 0 0 1-5.9-12.4z"/><circle class="f" cx="10.4" cy="12.6" r="2.3"/><path d="M6 6.5l1.2 1.2M4.2 12H6M6 17.5l1.2-1.2" opacity=".7"/>',
+  wpn: '<path d="M14.6 2.8H21v6.4L10.2 20 3.9 13.8z"/><path class="f" d="M17.4 4.6h1.8v1.8L9.9 15.7l-1.8-1.8z" opacity=".8"/><path d="M7 11l6 6M3 21l3.2-3.2"/>',
+  release: '<path d="M12 1.8l2.4 6.4 6.8.5-5.2 4.4 1.6 6.7L12 16.2l-5.6 3.6L8 13.1 2.8 8.7l6.8-.5z"/><path class="f" d="M12 7.4l1 2.7 2.9.2-2.2 1.9.7 2.8-2.4-1.5-2.4 1.5.7-2.8-2.2-1.9 2.9-.2z"/>',
+  stunUp: '<circle cx="12" cy="12" r="9" stroke-dasharray="3 2.6"/><path class="f" d="M12 6l1.7 3.7 4 .4-3 2.7.9 4L12 14.8l-3.6 2 .9-4-3-2.7 4-.4z"/>',
+  aoeUp: '<path d="M12 1.8l1.9 4.8L18.6 4l-1.5 5 5.1 1.1-4.3 2.9 3.3 4.1-5.2-.6.2 5.3L12 18.4l-4.2 3.4.2-5.3-5.2.6 3.3-4.1-4.3-2.9 5.1-1.1-1.5-5 4.7 2.6z"/><circle class="f" cx="12" cy="12" r="2.8"/>',
+  elemUp: '<path d="M12 1.8l8.4 10.2L12 22.2 3.6 12z"/><path class="f" d="M12 6.6l4.4 5.4-4.4 5.4L7.6 12z" opacity=".85"/>',
+});
+let _ig = 0;
+function shadeHex(c, k = .45) { const n = parseInt(c.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; const f = (v) => Math.round(v * k).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
+function ico2(k, c = '#9ff3ff', cls = '') {
+  const id = 'ig' + (++_ig), src = ICO[k] || ICO.star, fg = src.replace(/class="f"/g, `class="f" style="fill:url(#${id})"`);
+  return `<svg class="ico ico2 ${cls}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="5" y1="1" x2="15" y2="23"><stop offset="0" stop-color="#ffffff"/><stop offset=".42" stop-color="${c}"/><stop offset="1" stop-color="${shadeHex(c, .62)}"/></linearGradient></defs>`
+    + `<g class="gw" style="stroke:${c};color:${c}">${src}</g><g style="stroke:url(#${id})">${fg}</g></svg>`;
+}
+
+// ───────── 무기 장비: 일반~신화. 특수 각인과 다른 계열 기술 자동 시전, 전설·신화는 고유 해방(만해 같은 궁극기)
+const WR = ['N', 'R', 'SR', 'SSR', 'UR'];
+const W_DMG = { N: 5, R: 10, SR: 16, SSR: 24, UR: 34 }, W_OPT_N = { N: 0, R: 1, SR: 2, SSR: 2, UR: 3 };
+const WOPT = {
+  burn: { nm: '화염 각인', ds: '공격 12% 확률로 화상' }, frz: { nm: '서리 각인', ds: '공격 8% 확률로 1초 빙결' },
+  chain: { nm: '뇌전 각인', ds: '공격 12% 확률로 번개가 3마리에 튄다' }, conf: { nm: '교란 각인', ds: '공격 8% 확률로 적이 혼란에 빠져 서로 싸운다' },
+  stun: { nm: '충격 각인', ds: '공격 7% 확률로 1초 기절' }, boom: { nm: '폭렬 각인', ds: '처치한 적이 18% 확률로 폭발' },
+  hack: { nm: '해킹 각인', ds: '쓰러뜨린 적 기계를 15% 확률로 부하로 되살린다' }, leech: { nm: '흡수 각인', ds: '처치할 때마다 내구 1 회복' },
+  crit: { nm: '정밀 각인', ds: '치명타 +8%' }, cool: { nm: '냉각 각인', ds: '모든 재사용 -10%' }, guard: { nm: '수호 각인', ds: '받는 피해 -8%' },
+};
+for (const el of EL_KEYS) WOPT['auto_' + el] = { nm: `${ELEM[el].sk.nm} 자동 시전`, ds: `16초마다 ${ELEM[el].nm} 계열 기술을 70% 위력으로 저절로 쓴다`, auto: el };
+const REL = {
+  fire: { nm: '홍련 해방 · 겁화', ds: '8초 동안 불기둥이 연달아 적을 태운다' }, water: { nm: '청룡 해방 · 해일', ds: '물의 용이 세 방향을 휩쓸고 내구 40% 회복' },
+  wind: { nm: '질풍 해방 · 신풍', ds: '8초 동안 칼바람 고리가 돌며 베고 혼란시킨다' }, elec: { nm: '뇌신 해방 · 천뢰', ds: '8초 동안 하늘에서 벼락이 쏟아져 감전시킨다' },
+  ice: { nm: '빙화 해방 · 백야', ds: '화면의 적을 모두 얼리고 얼음꽃이 터진다' }, light: { nm: '성검 해방 · 여명', ds: '거대한 빛의 검이 네 방향을 베고 내구 20% 회복' },
+  dark: { nm: '흑월 해방 · 월식', ds: '검은 초승달 세 줄기와 그림자 기동병 3기' },
+};
+save.wpn ??= { inv: [], eq: {}, uid: 1 }; save.mlv ??= {};
+function mkWeapon(rar, el) {
+  el ||= EL_KEYS[Math.random() * EL_KEYS.length | 0];
+  const w = { u: save.wpn.uid++, rar, el, lv: 0, opts: [] }, n = W_OPT_N[rar];
+  if (n && (rar === 'SSR' || rar === 'UR' || (rar === 'SR' && Math.random() < .6))) w.opts.push('auto_' + el);
+  const pool = Object.keys(WOPT).filter((k) => !k.startsWith('auto_'));
+  while (w.opts.length < n && pool.length) w.opts.push(pool.splice(Math.random() * pool.length | 0, 1)[0]);
+  if (rar === 'SSR' || rar === 'UR') w.rel = el;
+  return w;
+}
+if (!save.wpn.inv.length && !save.wpn.gift) { save.wpn.gift = 1; const w = mkWeapon('R', MECH(save.mech).el); save.wpn.inv.push(w); save.wpn.eq[save.mech] = w.u; }
+const wOf = (id) => save.wpn.inv.find((w) => w.u === save.wpn.eq[id]);
+const wDmg = (w) => W_DMG[w.rar] + w.lv * 2;
+const wName = (w, m) => `${ELEM[w.el].wn} ${(ARM_NAME[(m || MECH(save.mech)).prim] || { nm: '무기' }).nm}`;
+const wUpCost = (w) => Math.round(60 * Math.pow(1.4, w.lv) * (1 + WR.indexOf(w.rar) * .35));
+const wSell = (w) => Math.round(40 * (1 + WR.indexOf(w.rar) * 1.6) * (1 + w.lv * .3));
+const mlvCost = (lv) => Math.round(120 * Math.pow(1.32, lv)), MLV_MAX = 20;
+function applyGear(m) {
+  const lv = save.mlv[m.id] || 0; P.maxHp *= 1 + lv * .03; P.dmgMul *= 1 + lv * .03; P.elT = Math.floor(lv / 5);
+  P.el = m.el; P.wo = {}; P.wAuto = []; P.rel = null; P.healK = 1; P.ekCd = 5;
+  if (P.el === 'water') { P.regen += 1.5; P.taken = (P.taken || 1) * .88; P.healK = 1.5; }
+  if (P.el === 'wind') P.spdMul *= 1.08;
+  if (P.el === 'elec') P.cdMul *= .95;
+  if (P.el === 'light') P.crit += .08;
+  if (P.el === 'fire') P.splash = (P.splash || 1) * 1.15;
+  const w = wOf(m.id); P.wpn = w || null;
+  if (w) {
+    P.dmgMul *= 1 + (wDmg(w) + (w.el === m.el ? 10 : 0)) / 100;
+    for (const o of w.opts) { P.wo[o] = 1; if (WOPT[o].auto) P.wAuto.push({ el: WOPT[o].auto, t: 8 }); }
+    if (P.wo.crit) P.crit += .08; if (P.wo.cool) P.cdMul *= .9; if (P.wo.guard) P.taken = (P.taken || 1) * .92;
+    P.rel = w.rel || null;
+  }
+}
+
+// ───────── 상태 이상: 화상·빙결·둔화·혼란·약화·기절·방어 약화
+function applySt(e, k, t, v) {
+  if (!e || e.dead || e.ally || e.T.stat) return; const boss = e.T.r > 10;
+  if (k === 'burn') { e.burnT = Math.max(e.burnT || 0, t); e.burnD = Math.max(e.burnD || 0, v || 6); }
+  else if (k === 'frz') { if (boss) e.slwT = Math.max(e.slwT || 0, t); else { if (!(e.frzT > 0)) burst(e.x, e.T.h * .6, e.z, 8, 0xbff6ff, 40, .4, 7, .3); e.frzT = Math.max(e.frzT || 0, t); } e.vulT = Math.max(e.vulT || 0, t + 2); }
+  else if (k === 'slw') e.slwT = Math.max(e.slwT || 0, t);
+  else if (k === 'conf') { if (boss) e.weakT = Math.max(e.weakT || 0, t); else e.confT = Math.max(e.confT || 0, t); }
+  else if (k === 'weak') e.weakT = Math.max(e.weakT || 0, t);
+  else if (k === 'vul') e.vulT = Math.max(e.vulT || 0, t);
+  else if (k === 'stun') e.stun = Math.max(e.stun || 0, boss ? Math.min(t, .5) : t);
+}
+function stTick(e, dt) {
+  if (e.frzT > 0) e.frzT -= dt; if (e.slwT > 0) e.slwT -= dt; if (e.confT > 0) { e.confT -= dt; if (Math.random() < .06) burst(e.x, e.T.h + 3, e.z, 1, 0x7dffc8, 14, .4, 6, .3); }
+  if (e.weakT > 0) e.weakT -= dt; if (e.vulT > 0) e.vulT -= dt;
+  if (e.burnT > 0) { e.burnT -= dt; e.hp -= e.burnD * dt; if (Math.random() < .2) burst(e.x, e.T.h * .5, e.z, 1, 0xff7a2a, 22, .4, 7, 1.2); if (e.hp <= 0) { kill(e); return true; } }
+  return false;
+}
+// 혼란에 빠진 적: 가장 가까운 다른 적을 노린다
+function confTarget(e) {
+  if (e.cfTg && !e.cfTg.dead && (e.cfTg.x - e.x) ** 2 + (e.cfTg.z - e.z) ** 2 < 150 * 150) return e.cfTg;
+  let b = null, bd = 130 * 130; for (const o of E) { if (o === e || o.dead || o.ally || o.T.stat) continue; const q = (o.x - e.x) ** 2 + (o.z - e.z) ** 2; if (q < bd) { bd = q; b = o; } }
+  e.cfTg = b; return b;
+}
+// 적끼리·부하가 때리는 피해
+function unitHit(t, dmg, src) {
+  if (!t || t.dead) return;
+  if (t.ally) { t.hp -= dmg; t.flash = .06; if (t.hp <= 0) allyDie(t); return; }
+  t.hp -= dmg * (t.vulT > 0 ? 1.3 : 1); t.flash = .08; if (Math.random() < .3) burst(t.x, t.T.h * .6, t.z, 3, src && src.ally ? 0xc9a0ff : 0x9dffb0, 40, .25, 6);
+  if (Math.random() < .12) num(t.x, t.T.h, t.z, Math.round(dmg), src && src.ally ? '#d8b8ff' : '#b8ffd0', 13);
+  if (t.hp <= 0) kill(t);
+}
+// 공격이 맞을 때: 계열 효과 + 무기 각인 + 강화 카드
+function onHitFx(e, d, cr) {
+  if (G._fx || e.dead) return; G._fx = 1;
+  try {
+    const el = P.el, pk = 1 + (P.elT >= 2 ? .5 : 0), wo = P.wo || {};
+    if ((el === 'fire' && Math.random() < .1 * pk) || (wo.burn && Math.random() < .12)) applySt(e, 'burn', 3, Math.max(4, d * .22));
+    if ((el === 'wind' && Math.random() < .12 * pk)) applySt(e, 'weak', 4);
+    if ((el === 'wind' && Math.random() < .04 * pk) || (wo.conf && Math.random() < .08)) applySt(e, 'conf', 3.5);
+    if ((el === 'ice' && Math.random() < .22 * pk)) applySt(e, 'slw', 1.6);
+    if ((el === 'ice' && Math.random() < .05 * pk) || (wo.frz && Math.random() < .08)) applySt(e, 'frz', 1.1);
+    if ((el === 'elec' && Math.random() < .12 * pk) || (wo.chain && Math.random() < .12)) chainZap(e, 3, d * .55, .3);
+    if (el === 'light' && cr && Math.random() < .15 * pk) holyPillar(e.x, e.z, d * 1.3, .7);
+    const sc = (P.w.stunUp ? .02 + .04 * P.w.stunUp : 0) + (wo.stun ? .07 : 0);
+    if (sc && Math.random() < sc) { applySt(e, 'stun', 1); num(e.x, e.T.h + 4, e.z, '기절', '#fff07a', 13); }
+  } finally { G._fx = 0; }
+}
+function elemKill(e) {
+  if (e.ally || e.T.stat) return; const el = P.el, wo = P.wo || {}, small = e.T.r <= 10, base = st('rifle', 'dmg') + 8;
+  const bc = (el === 'fire' ? .2 : 0) + (wo.boom ? .18 : 0) + (P.w.aoeUp ? .04 + .08 * P.w.aoeUp : 0);
+  if (small && bc && Math.random() < bc) { const x = e.x, z = e.z; later(.05, () => { G._fx = 1; explode(x, z, 26 * (P.splash || 1), base * 2.2, 0xff7a3a); G._fx = 0; }); }
+  if (wo.leech) P.hp = Math.min(P.maxHp, P.hp + 1);
+  const hc = (el === 'dark' ? .3 : 0) + (wo.hack ? .15 : 0);
+  if (hc && small && (e.T.mech || e.T.anim) && !e.flee && !e.elite && e.t !== 'jet' && Math.random() < hc) { const x = e.x, z = e.z, t = e.t; later(.35, () => { const a = mkAlly(t, x, z, 18); if (a) num(x, a.T.h + 6, z, '해킹', '#d8b8ff', 15); }); }
+}
+function chainZap(e0, n, dmg, stun) {
+  let px = e0.x, pz = e0.z; const hit = new Set([e0]);
+  for (let i = 0; i < n; i++) { let b = null, bd = 75 * 75; for (const o of E) { if (o.dead || o.ally || hit.has(o)) continue; const q = (o.x - px) ** 2 + (o.z - pz) ** 2; if (q < bd) { bd = q; b = o; } }
+    if (!b) break; hit.add(b); beamFx(px, 8, pz, b.x, b.T.h * .5, b.z, .5, 0xffe14a, .12); dealDmg(b, dmg, 0, 0, .3); if (stun) applySt(b, 'stun', stun); px = b.x; pz = b.z; }
+}
+function holyPillar(x, z, dmg, stun) { beamFx(x, 160, z, x, 0, z, 2.2, 0xfff0a8, .28); ring(x, z, 3, 20, .3, 0xfff0a8); burst(x, 4, z, 12, 0xfff6c8, 60, .4, 9);
+  for (const o of E) { if (o.dead || o.ally) continue; if (Math.hypot(o.x - x, o.z - z) < 18 + o.T.r) { dealDmg(o, dmg, 0, 0, .5); applySt(o, 'stun', stun); } } }
+
+// ───────── 부하: 어둠 계열의 소환·해킹. 보라빛으로 빛나며 가까운 적을 친다
+const ALLY_MAX = 9;
+function mkAlly(type, x, z, life) {
+  if (E.filter((o) => o.ally && !o.dead).length >= ALLY_MAX) return null; const T = ET[type]; if (!T) return null;
+  const e = { t: type, T, x, z, vx: 0, vz: 0, kx: 0, kz: 0, yaw: 0, hp: 60 + P.maxHp * .6, flash: 0, bladeT: 0, st: 'move', tm: 1, ph: rand(0, 6), sc: 1.15, born: .3, sm: 1.2, ally: 1, life, acd: 0 };
+  e.max = e.hp; E.push(e); ring(x, z, 3, 24, .45, 0xb47aff); burst(x, 8, z, 26, 0xb47aff, 80, .55, 9); flare(x, 10, z, 0xc9a0ff, 18, .2); return e;
+}
+function allyDie(e) { if (e.dead) return; e.dead = true; burst(e.x, 6, e.z, 22, 0xb47aff, 70, .5, 8); flare(e.x, 8, e.z, 0xb47aff, 14, .15); }
+function allyTick(e, dt) {
+  e.life -= dt; e.flash -= dt; e.born -= dt; e.ph += dt; e.acd -= dt;
+  if (e.life <= 0 || e.hp <= 0) { allyDie(e); return; }
+  let tg = null, bd = 1e12;
+  for (const o of E) { if (o.dead || o.ally || o.T.stat) continue; const q = (o.x - e.x) ** 2 + (o.z - e.z) ** 2; if (q < bd) { bd = q; tg = o; }
+    if (o.T.dmg > 0 && q < (o.T.r + e.T.r + 2) ** 2 && !(o.frzT > 0)) e.hp -= o.T.dmg * dt * .7; }
+  let mx = 0, mz = 0, sp = 0;
+  if (tg && bd < 230 * 230) { const d = Math.sqrt(bd), ux = (tg.x - e.x) / (d || 1), uz = (tg.z - e.z) / (d || 1), reach = e.T.r + tg.T.r + 4;
+    if (d > reach) { mx = ux; mz = uz; sp = 74; }
+    if (d < reach + 34 && e.acd <= 0) { e.acd = .5; const dm = (14 + st('rifle', 'dmg')) * (P.dmgMul || 1) * (1 + .25 * (G.threat - 1)) * (1 + .25 * (P.elT || 0));
+      if (d > reach + 4) beamFx(e.x, e.T.h * .6, e.z, tg.x, tg.T.h * .5, tg.z, .55, 0xb47aff, .1); else burst(tg.x, tg.T.h * .5, tg.z, 5, 0xc9a0ff, 50, .25, 7);
+      unitHit(tg, dm, e); } }
+  else { const dx = P.x - e.x, dz = P.z - e.z, d = Math.hypot(dx, dz); if (d > 36) { mx = dx / d; mz = dz / d; sp = 80; } }
+  e.vx = mx * sp; e.vz = mz * sp; e.x += e.vx * dt; e.z += e.vz * dt;
+  const er = Math.hypot(e.x, e.z); if (er > ARENA_R - 4) { e.x *= (ARENA_R - 4) / er; e.z *= (ARENA_R - 4) / er; }
+  if (sp > 0) { const want = Math.atan2(mx, mz); let da = want - e.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; e.yaw += da * Math.min(1, dt * 9); }
+  if (Math.random() < .12) burst(e.x, e.T.h * .8, e.z, 1, 0xb47aff, 12, .5, 5, .5);
+}
+
+// ───────── 계열 기술(R): 재사용이 끝나고 적이 모이면 저절로, 버튼을 누르면 바로
+const ekCdMax = () => ELEM[P.el].sk.cd * P.cdMul * (1 - .08 * (P.w.elemUp || 0)) * (P.elT >= 4 ? .75 : 1);
+function elemTick(dt) {
+  P.ekCd -= dt; if (P.relT > 0) { P.relT -= dt; relTick(dt); }
+  for (const a of P.wAuto || []) { a.t -= dt; if (a.t <= 0 && nearest(P.x, P.z, 120)) { a.t = 16 * P.cdMul; castElem(a.el, .7); } }
+  updTor(dt);
+  if (P.ekCd > 0) { inp.elem = false; return; }
+  let n = 0; for (const e of E) { if (e.dead || e.ally) continue; if ((e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 95 * 95) n += e.T.r > 10 ? 6 : 1; }
+  const want = inp.elem || n >= 6 || (P.el === 'water' && P.hp < P.maxHp * .45 && n > 0);
+  inp.elem = false; if (!want || P.mv) return;
+  castElem(P.el, 1); P.ekCd = ekCdMax(); G.st.skills++;
+}
+function castElem(el, pw) {
+  const k = pw * (1 + .25 * (P.elT || 0)) * (1 + .25 * (P.w.elemUp || 0)), base = (st('rifle', 'dmg') + 10) * k, X = ELEM[el], C = X.hex;
+  if (pw >= 1) { num(P.x, 34 + P.alt, P.z, X.sk.nm, X.col, 18); screenFlash(X.col, .14, .35); } else num(P.x, 30 + P.alt, P.z, X.sk.nm, X.col, 14);
+  flare(P.x, 14 + P.alt, P.z, C, 30, .2); lightFlash(P.x, 20, P.z, C, 40, .3);
+  switch (el) {
+    case 'fire': for (let w = 0; w < 3; w++) later(w * .26, () => { const r = 46 + w * 30;
+      for (const e of E) { if (e.dead || e.ally) continue; const dx = e.x - P.x, dz = e.z - P.z, d = Math.hypot(dx, dz); if (d < r + e.T.r) { dealDmg(e, base * 2.2, dx / (d || 1), dz / (d || 1), 1.6); applySt(e, 'burn', 4, base * .5); } }
+      ring(P.x, P.z, r * .3, r, .4, 0xff7a3a); ring(P.x, P.z, r * .2, r * .8, .3, 0xffd060); for (let i = 0; i < 10; i++) { const a = rand(0, TAU), q = rand(.3, 1) * r; burst(P.x + Math.cos(a) * q, 4, P.z + Math.sin(a) * q, 6, i % 2 ? 0xff5a1a : 0xffc040, 70, .55, 12, 1.4); }
+      if (w === 2) xfBoom(P.x, P.z, 'elite', 12, 'emp'); sfx.boom(); G.shake = Math.max(G.shake, 3); }); break;
+    case 'water': { const r = 110; ring(P.x, P.z, 6, r, .6, 0x4ab8ff); ring(P.x, P.z, 4, r * .7, .45, 0xbfe8ff); burst(P.x, 4, P.z, 60, 0x6ac8ff, 160, .6, 10, .6);
+      for (const e of E) { if (e.dead || e.ally) continue; const dx = e.x - P.x, dz = e.z - P.z, d = Math.hypot(dx, dz); if (d < r + e.T.r) { dealDmg(e, base * 1.8, dx / (d || 1), dz / (d || 1), 5); applySt(e, 'stun', .9); } }
+      const h = Math.round(P.maxHp * .22 * pw * (P.healK || 1)); P.hp = Math.min(P.maxHp, P.hp + h); num(P.x, 26, P.z, '+' + h, '#7dff9a', 18);
+      const b = Math.round(P.maxHp * .3 * pw); if (b > P.bar) { P.barMax = P.bar = b; P.barT = 6; P.barHit = 1; } tone(300, 900, .5, 'sine', .08); break; }
+    case 'wind': { const tg = nearest(P.x, P.z, 170), x = tg ? tg.x : P.x + Math.sin(P.yaw) * 60, z = tg ? tg.z : P.z + Math.cos(P.yaw) * 60;
+      G.tor.push({ x, z, t: 4 * (pw < 1 ? .7 : 1), tk: 0, dmg: base * .7 }); tone(200, 700, .6, 'sawtooth', .04); break; }
+    case 'elec': { const t0 = nearest(P.x, P.z, 160); if (!t0) break; beamFx(P.x, 14 + P.alt, P.z, t0.x, t0.T.h * .5, t0.z, .9, 0xffe14a, .18); dealDmg(t0, base * 2.4, 0, 0, .4); applySt(t0, 'stun', 1.2);
+      let px = t0.x, pz = t0.z; const hit = new Set([t0]), N = pw < 1 ? 9 : 14;
+      for (let i = 0; i < N; i++) later(i * .045, () => { let b = null, bd = 90 * 90; for (const o of E) { if (o.dead || o.ally || hit.has(o)) continue; const q = (o.x - px) ** 2 + (o.z - pz) ** 2; if (q < bd) { bd = q; b = o; } }
+        if (!b) return; hit.add(b); beamFx(px, 8, pz, b.x, b.T.h * .5, b.z, .8, 0xffe14a, .16); burst(b.x, b.T.h * .5, b.z, 8, 0xfff6a0, 70, .3, 7); dealDmg(b, base * 2.1, 0, 0, .3); applySt(b, 'stun', 1.2); px = b.x; pz = b.z; if (i % 3 === 0) tone(1800, 300, .08, 'square', .03); });
+      break; }
+    case 'ice': { const r = pw < 1 ? 110 : 150; ring(P.x, P.z, 6, r, .7, 0x9fe8ff); ring(P.x, P.z, 3, r * .6, .5, 0xffffff); burst(P.x, 6, P.z, 70, 0xdff8ff, 170, .7, 9, .4);
+      for (const e of E) { if (e.dead || e.ally) continue; const d = Math.hypot(e.x - P.x, e.z - P.z); if (d < r + e.T.r) { dealDmg(e, base * 1.3, 0, 0, 0); applySt(e, 'frz', 2.6); applySt(e, 'vul', 5); } }
+      tone(2400, 800, .6, 'triangle', .06); break; }
+    case 'light': { const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 180 * 180).sort((a, b) => b.hp - a.hp).slice(0, pw < 1 ? 5 : 8);
+      tg.forEach((e, i) => later(i * .08, () => { if (!e.dead) holyPillar(e.x, e.z, base * 2.6, 1.5); }));
+      const h = Math.round(P.maxHp * .1 * pw); P.hp = Math.min(P.maxHp, P.hp + h); num(P.x, 26, P.z, '+' + h, '#7dff9a', 16); tone(1200, 2400, .4, 'triangle', .06); break; }
+    case 'dark': { const n = pw < 1 ? 2 : 3 + ((P.elT || 0) >= 3 ? 1 : 0); for (let i = 0; i < n; i++) { const a = i / n * TAU + P.yaw; later(i * .12, () => mkAlly('robo', P.x + Math.sin(a) * 26, P.z + Math.cos(a) * 26, 14)); }
+      for (const e of E) { if (e.dead || e.ally) continue; if (Math.hypot(e.x - P.x, e.z - P.z) < 55 + e.T.r) { dealDmg(e, base * 1.2, 0, 0, 1); applySt(e, 'weak', 5); } }
+      ring(P.x, P.z, 4, 58, .5, 0xb47aff); burst(P.x, 6, P.z, 40, 0x7a3aff, 90, .6, 10, .2); tone(140, 60, .6, 'sawtooth', .08); break; }
+  }
+}
+// 바람 회오리: 적을 빨아들이고 베며 혼란·약화
+function updTor(dt) {
+  if (!G.tor || !G.tor.length) return;
+  for (const T of G.tor) { T.t -= dt; T.tk -= dt; const tg = nearest(T.x, T.z, 140); if (tg) { T.x += (tg.x - T.x) * dt * .6; T.z += (tg.z - T.z) * dt * .6; }
+    for (const e of E) { if (e.dead || e.ally || e.T.stat) continue; const dx = T.x - e.x, dz = T.z - e.z, d = Math.hypot(dx, dz); if (d > 85) continue;
+      if (e.T.r <= 10) { e.x += dx / (d || 1) * 60 * dt; e.z += dz / (d || 1) * 60 * dt; }
+      if (T.tk <= 0 && d < 40 + e.T.r) { dealDmg(e, T.dmg, 0, 0, 0); applySt(e, 'conf', 5); applySt(e, 'weak', 6); } }
+    if (T.tk <= 0) { T.tk = .3; ring(T.x, T.z, 6, 42, .3, 0x7dffc8); }
+    for (let i = 0; i < 3; i++) { const a = G.t * 9 + i * 2.1, h = rand(2, 40), q = 8 + h * .5; burst(T.x + Math.cos(a) * q, h, T.z + Math.sin(a) * q, 1, i ? 0x7dffc8 : 0xffffff, 30, .35, 6, .8); } }
+  G.tor = G.tor.filter((T) => T.t > 0);
+}
+// ───────── 무기 해방: 필살기를 쓸 때 전설·신화 무기가 고유 궁극기를 함께 펼친다
+function castRelease(el) {
+  const R0 = REL[el], X = ELEM[el], base = (st('rifle', 'dmg') + 14) * (1 + .25 * (P.elT || 0)) * (1 + .1 * (P.wpn ? P.wpn.lv : 0));
+  P.relT = 8; P.relEl = el; P.relTk = 0; banner(R0.nm, 2200); screenFlash(X.col, .4, .8); ring(P.x, P.z, 8, 160, .8, X.hex); ring(P.x, P.z, 4, 100, .6, 0xffffff); G.hstop = .14; G.shake = Math.max(G.shake, 7);
+  burst(P.x, 14, P.z, 80, X.hex, 200, .8, 12, .6); lightFlash(P.x, 30, P.z, X.hex, 90, .6);
+  if (el === 'water') { P.hp = Math.min(P.maxHp, P.hp + P.maxHp * .4); for (const da of [0, 2.09, -2.09]) { const a = P.yaw + da; lineHit(P.x, P.z, a, 260, 24, 0, 0, (e) => { dealDmg(e, base * 9, Math.sin(a), Math.cos(a), 5); applySt(e, 'stun', 1.2); });
+    beamFx(P.x, 10, P.z, P.x + Math.sin(a) * 260, 10, P.z + Math.cos(a) * 260, 5, 0x4ab8ff, .6); for (let i = 0; i < 14; i++) burst(P.x + Math.sin(a) * i * 18, 8, P.z + Math.cos(a) * i * 18, 6, 0x9fdcff, 80, .6, 11, 1); } }
+  if (el === 'ice') { for (const e of E) { if (e.dead || e.ally) continue; if (Math.hypot(e.x - P.x, e.z - P.z) < 230) { applySt(e, 'frz', 3.2); applySt(e, 'vul', 6); dealDmg(e, base * 4, 0, 0, 0); burst(e.x, e.T.h * .6, e.z, 6, 0xdff8ff, 60, .5, 9, .6); } } }
+  if (el === 'light') { for (let w = 0; w < 4; w++) later(w * .15, () => { const a = P.yaw + w * Math.PI / 2 + .4; lineHit(P.x - Math.sin(a) * 150, P.z - Math.cos(a) * 150, a, 300, 30, 0, 0, (e) => { dealDmg(e, base * 8, Math.sin(a), Math.cos(a), 3); applySt(e, 'stun', 1.5); });
+    beamFx(P.x - Math.sin(a) * 150, 12, P.z - Math.cos(a) * 150, P.x + Math.sin(a) * 150, 12, P.z + Math.cos(a) * 150, 7, 0xfff0a8, .5); crescent(P.x, P.z, a, 110, 0, 0xfff6c8); }); P.hp = Math.min(P.maxHp, P.hp + P.maxHp * .2); }
+  if (el === 'dark') { for (let w = 0; w < 3; w++) later(w * .2, () => { const a = P.yaw + (w - 1) * .5; lineHit(P.x, P.z, a, 280, 26, 0, 0, (e) => { dealDmg(e, base * 8, Math.sin(a), Math.cos(a), 3); applySt(e, 'weak', 6); });
+    crescent(P.x + Math.sin(a) * 60, P.z + Math.cos(a) * 60, a, 70, 0, 0x7a3aff); beamFx(P.x, 9, P.z, P.x + Math.sin(a) * 280, 9, P.z + Math.cos(a) * 280, 4, 0x8a4aff, .45); });
+    for (let i = 0; i < 3; i++) { const a = i / 3 * TAU; later(.3 + i * .1, () => mkAlly('robo', P.x + Math.sin(a) * 30, P.z + Math.cos(a) * 30, 16)); } }
+}
+function relTick(dt) {
+  const el = P.relEl, X = ELEM[el], base = (st('rifle', 'dmg') + 14) * (1 + .25 * (P.elT || 0)) * (1 + .1 * (P.wpn ? P.wpn.lv : 0)); P.relTk -= dt;
+  if (Math.random() < .5) { const a = rand(0, TAU); burst(P.x + Math.cos(a) * 10, rand(4, 26) + P.alt, P.z + Math.sin(a) * 10, 1, X.hex, 40, .5, 7, 1.2); }
+  if (P.relTk > 0) return;
+  if (el === 'fire') { P.relTk = .45; const tg = E.filter((e) => !e.dead && !e.ally && (e.x - P.x) ** 2 + (e.z - P.z) ** 2 < 150 * 150); for (let i = 0; i < 3 && tg.length; i++) { const e = tg.splice(Math.random() * tg.length | 0, 1)[0];
+      beamFx(e.x, 0, e.z, e.x, 70, e.z, 4, 0xff7a3a, .4); explode(e.x, e.z, 30, base * 3, 0xff7a3a); applySt(e, 'burn', 4, base * .6); } }
+  else if (el === 'wind') { P.relTk = .25; const a0 = G.t * 5; for (let i = 0; i < 4; i++) { const a = a0 + i * Math.PI / 2, x = P.x + Math.cos(a) * 55, z = P.z + Math.sin(a) * 55; burst(x, 8, z, 3, 0x7dffc8, 50, .3, 8);
+      for (const e of E) { if (e.dead || e.ally) continue; if (Math.hypot(e.x - x, e.z - z) < 20 + e.T.r) { dealDmg(e, base * 1.5, 0, 0, 1.5); applySt(e, 'conf', 4); } } } }
+  else if (el === 'elec') { P.relTk = .35; const tg = nearest(P.x + rand(-80, 80), P.z + rand(-80, 80), 140); if (tg) { beamFx(tg.x, 200, tg.z, tg.x, 0, tg.z, 2.4, 0xffe14a, .25); areaHit(tg.x, tg.z, 24, base * 3.2, 1.5, .8); ring(tg.x, tg.z, 3, 26, .3, 0xffe14a); tone(2200, 200, .12, 'square', .04); } }
+  else P.relTk = 1;
+}
+
+// ───────── 판이 끝나면 무기를 얻는다(이기면 확정, 지면 가끔). 뒤 장일수록 좋은 등급
+function dropWeapon(won) {
+  if (!won && (G.t < 90 || Math.random() > .35)) return null;
+  const c = CHAPTERS[G.chi], lift = Math.min(1, (G.chi || 0) / 30), r = Math.random() * 100;
+  let rar = won ? (r < 2 + lift * 4 ? 'UR' : r < 9 + lift * 10 ? 'SSR' : r < 26 + lift * 14 ? 'SR' : r < 58 ? 'R' : 'N') : (r < 30 ? 'R' : 'N');
+  const w = mkWeapon(rar, Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w);
+  if (save.wpn.inv.length > 60) { const i = save.wpn.inv.findIndex((x) => WR.indexOf(x.rar) === 0 && !Object.values(save.wpn.eq).includes(x.u)); if (i >= 0) save.wpn.inv.splice(i, 1); }
+  return w;
+}
+function wdropHtml(w) { const R0 = RAR[w.rar], X = ELEM[w.el];
+  return `<div class="wdrop" style="--rc:${R0.col};--ec:${X.col}"><span class="wi">${ico2('wpn', X.col)}</span><span><em>무기 획득</em><b>${wName(w)}</b><small>${R0.nm} · ${X.nm} 계열${w.rel ? ' · 해방 보유' : ''}</small></span></div>`; }
+
+// ───────── 무기고: 기체 숙련(기종별 성장)과 무기 장착·강화·분해
+if (location.search.includes('dev')) Object.assign(window, { __el: { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, drawArsenal, wOf, get HZ() { return HZ; } } });
+function drawArsenal() {
+  const m = MECH(save.mech), X = ELEM[m.el], lv = save.mlv[m.id] || 0, tier = Math.floor(lv / 5), cost = mlvCost(lv);
+  $('#coreA').textContent = save.core;
+  const tiers = ['계열 기술 위력 +25%', '계열 효과 확률 1.5배', '그림자·소환 +1 / 기술 위력 +25%', '계열 기술 재사용 -25%'];
+  $('#mmBox').innerHTML = `<div class="mm" style="--ec:${X.col}"><img src="img/${m.id}.jpg?v=15" alt=""><div class="tx"><b>${m.nm}</b><span class="elb">${ico2('el_' + m.el, X.col)}${X.nm} 계열</span><small>${X.ds}</small>`
+    + `<div class="sk">${ico2('el_' + m.el, X.col)}<span><b>계열 기술 · ${X.sk.nm}</b><small>R · ${X.sk.cd}초 · ${X.sk.ds}</small></span></div>`
+    + `<span class="lvp">${Array.from({ length: MLV_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''} ${(i + 1) % 5 === 0 ? 'k' : ''}"></i>`).join('')}</span>`
+    + `<em>숙련 Lv ${lv}/${MLV_MAX} · 내구·화력 +${lv * 3}%${tier ? ' · ' + tiers.slice(0, tier).join(' · ') : ''}</em>${tier < 4 ? `<em class="nx">다음 단계(Lv ${(tier + 1) * 5}): ${tiers[tier]}</em>` : ''}</div>`
+    + `<button id="mUp" ${lv >= MLV_MAX || save.core < cost ? 'disabled' : ''}>${lv >= MLV_MAX ? '최대' : `숙련 올리기<br>${ico('core')} ${cost}`}</button></div>`;
+  const row = (w, eqd) => { const R0 = RAR[w.rar], W = ELEM[w.el], owner = Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === w.u), mt = w.el === m.el;
+    return `<div class="wp ${eqd ? 'on' : ''}" style="--rc:${R0.col};--ec:${W.col}"><span class="wi">${ico2('wpn', W.col)}<i>${R0.nm}</i></span><div class="tx"><b>${wName(w, m)} <small>Lv ${w.lv}/10</small></b>`
+      + `<em>${ico2('el_' + w.el, W.col)} ${W.nm} 계열 · 피해 +${wDmg(w)}%${mt ? ' · 계열 일치 +10%' : ''}${owner && !eqd ? ` · ${MECH(owner).nm} 장착 중` : ''}</em>`
+      + (w.opts.length ? `<ul>${w.opts.map((o) => `<li class="${WOPT[o].auto ? 'au' : ''}"><b>${WOPT[o].nm}</b> ${WOPT[o].ds}</li>`).join('')}</ul>` : '<ul><li>특수 기능 없음</li></ul>')
+      + (w.rel ? `<p class="rel">${ico2('release', W.col)}<b>${REL[w.rel].nm}</b> 필살기와 함께 발동 · ${REL[w.rel].ds}</p>` : '') + `</div>`
+      + `<div class="bt">${eqd ? `<button data-a="off" data-u="${w.u}" class="gh">해제</button>` : `<button data-a="eq" data-u="${w.u}">장착</button>`}`
+      + `<button data-a="up" data-u="${w.u}" ${w.lv >= 10 || save.core < wUpCost(w) ? 'disabled' : ''}>${w.lv >= 10 ? '최대' : `강화 ${ico('core')} ${wUpCost(w)}`}</button>`
+      + (eqd ? '' : `<button data-a="sc" data-u="${w.u}" class="gh">분해 +${wSell(w)}</button>`) + `</div></div>`; };
+  const cur = wOf(m.id);
+  $('#weqBox').innerHTML = cur ? row(cur, true) : '<p class="pnote">장착한 무기가 없습니다. 아래에서 골라 장착하세요</p>';
+  const list = save.wpn.inv.filter((w) => !cur || w.u !== cur.u).sort((a, b) => WR.indexOf(b.rar) - WR.indexOf(a.rar) || b.lv - a.lv);
+  $('#wCnt').textContent = `${save.wpn.inv.length}개`;
+  $('#wList').innerHTML = list.length ? list.map((w) => row(w, false)).join('') : '<p class="pnote">장을 깨면 무기를 얻습니다. 뒤 장일수록 높은 등급이 잘 나옵니다</p>';
+  $('#mUp').onclick = () => { const l = save.mlv[m.id] || 0, c = mlvCost(l); if (l >= MLV_MAX || save.core < c) return; save.core -= c; save.mlv[m.id] = l + 1; persist(); sfx.lvl(); screenFlash(X.col, .25, .5); drawArsenal(); drawTitle(); };
+  $('#arsenal').querySelectorAll('.wp button').forEach((b) => b.addEventListener('click', () => { const w = save.wpn.inv.find((x) => x.u === +b.dataset.u); if (!w) return; const a = b.dataset.a;
+    if (a === 'eq') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.wpn.eq[m.id] = w.u; sfx.lvl(); }
+    if (a === 'off') delete save.wpn.eq[m.id];
+    if (a === 'up') { const c = wUpCost(w); if (w.lv >= 10 || save.core < c) return; save.core -= c; w.lv++; sfx.lvl(); }
+    if (a === 'sc') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.core += wSell(w); save.wpn.inv = save.wpn.inv.filter((x) => x !== w); tone(500, 200, .2, 'triangle', .08); }
+    persist(); drawArsenal(); drawTitle(); }));
+}
+
+
 // ───────── 첫 화면 ─────────
 // ───────── 성장·해금·출석·임무·챕터·뽑기 (계속 다시 하고 싶게 만드는 장치) ─────────
 // 코어: 판마다 격파·생존·승리로 벌고, 기체 구매와 격납고 영구 강화에 쓴다
@@ -2915,7 +3240,7 @@ function applyMech(m) {
   const U = (k) => save.up[k] || 0, pm = powMul(m);
   P.maxHp = Math.round(100 * m.hp * pm * (1 + .06 * U('armor'))); P.dmgMul = m.dmg * pm * (1 + .05 * U('power'));
   P.spdMul = m.spd * (1 + .03 * U('thrust')); P.cdMul = m.cd * (1 - .03 * U('cool')); P.magnet = 30 * (1 + .12 * U('magnet')); P.regen = .25 * U('repair');
-  if (m.init) m.init(P); P.maxHp = Math.round(P.maxHp); P.hp = P.maxHp;
+  if (m.init) m.init(P); applyGear(m); P.maxHp = Math.round(P.maxHp); P.hp = P.maxHp;
 }
 const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 // 출석 7일: 코어와 결정(✦)을 번갈아. 7일째 큰 보상
@@ -3193,7 +3518,7 @@ function drawTitle() {
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg?v=15" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg?v=15" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls} · <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm}</i></em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -3203,9 +3528,9 @@ function drawTitle() {
   $('#mdet').style.setProperty('--rc', R0.col);
   $('#mdet').innerHTML = `<span class="rar">${R0.nm}</span><span class="clsb">${ico(CLS[m.cls].k)}${m.cls}</span>${st ? `<span class="stars">${'★'.repeat(st)}${'☆'.repeat(5 - st)}</span>` : ''}<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
     + statBar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm)) + statBar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm)) + statBar('속도', m.spd, 1.3, Math.round(100 * m.spd)) + statBar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))
-    + `<div class="kit"><div><span class="bd">${ico(m.prim)}</span><span><b>${an.nm}</b><small>기본 무기 · ${an.ds0}</small></span></div>`
-    + `<div><span class="bd a">${ico(m.auto.k)}</span><span><b>${m.auto.nm}</b><small>스킬 · E · ${m.auto.cd}초</small></span></div>`
-    + `<div><span class="bd u">${ico(m.ult.k)}</span><span><b>${m.ult.nm}</b><small>필살기 · Q</small></span></div></div>`
+    + `<div class="kit"><div><span class="bd">${ico2(m.prim, '#ffd98a')}</span><span><b>${an.nm}</b><small>기본 무기 · ${an.ds0}</small></span></div>`
+    + `<div><span class="bd a" style="--ec:${ELEM[m.el].col}">${ico2(m.auto.k, '#ffffff')}</span><span><b>${m.auto.nm}</b><small>스킬 · E · ${m.auto.cd}초</small></span></div>`
+    + `<div><span class="bd u">${ico2(m.ult.k, '#ffd98a')}</span><span><b>${m.ult.nm}</b><small>필살기 · Q${wOf(m.id) && wOf(m.id).rel ? ' · 무기 해방 「' + REL[wOf(m.id).rel].nm + '」' : ''}</small></span></div><div><span class="bd e" style="--ec:${ELEM[m.el].col}">${ico2('el_' + m.el, ELEM[m.el].col)}</span><span><b>${ELEM[m.el].sk.nm} <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm} 계열</i></b><small>계열 기술 · R · ${ELEM[m.el].sk.ds}</small></span></div>${starOf(m.id) ? (() => { const w = wOf(m.id), X = w && ELEM[w.el]; return `<div><span class="bd w" style="--ec:${X ? X.col : '#8a93a8'}">${ico2('wpn', X ? X.col : '#8a93a8')}</span><span><b>${w ? wName(w, m) : '무기 없음'} ${w ? `<i class="elc" style="--ec:${RAR[w.rar].col}">${RAR[w.rar].nm} · Lv ${w.lv}</i>` : ''}</b><small>${w ? `피해 +${wDmg(w)}% · ${w.opts.map((o) => WOPT[o].nm).join(' · ') || '각인 없음'}` : '무기고에서 장착하세요'} · 숙련 Lv ${save.mlv[m.id] || 0}</small></span></div>`; })() : ''}</div>`
     + `<div class="ps">${m.pass}</div>`
     + (st ? '' : `<div class="buy"><button class="go" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()} 코어로 구매</button><button class="ghost" id="toGacha">${ico('gacha')} 뽑기로 얻기</button></div>`);
   if (!st) { $('#unlock').onclick = () => { if (save.core < m.cost) return; save.core -= m.cost; save.own[m.id] = 1; save.mech = m.id; persist(); sfx.lvl(); screenFlash(R0.col, .35, .6); if (lobby.on) enterLobby(); drawTitle(); }; $('#toGacha').onclick = openGacha; }
@@ -3301,6 +3626,8 @@ $('#claimLogin').addEventListener('click', () => { const D = save.daily; if (!lo
 $('#bHangar').addEventListener('click', () => { drawHangar(); $('#hangar').classList.remove('hide'); });
 $('#bDaily').addEventListener('click', () => { drawDaily(); $('#daily').classList.remove('hide'); });
 $('#hClose').addEventListener('click', () => $('#hangar').classList.add('hide'));
+$('#bArms').addEventListener('click', () => { drawArsenal(); $('#arsenal').classList.remove('hide'); });
+$('#aClose').addEventListener('click', () => $('#arsenal').classList.add('hide'));
 $('#dClose').addEventListener('click', () => $('#daily').classList.add('hide'));
 function toTitle() { $('#over').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.add('hide'); $('#title').classList.remove('hide'); G.state = 'title'; music.pause(); drawTitle(); enterLobby(); }
 $('#toTitle').addEventListener('click', toTitle);
@@ -3311,7 +3638,7 @@ $('#mute').addEventListener('click', (e) => { muted = !muted; e.target.textConte
 function drawStaticIcons() {
   $('#bGacha').innerHTML = `${ico('gacha')}<span>뽑기</span>`; $('#bHangar').innerHTML = `${ico('repair')}<span>강화</span>`;
   $('#bSound').innerHTML = ico(muted ? 'soundOff' : 'soundOn'); $('#chMap').innerHTML = `${ico('map')}<span>지도</span>`;
-  $('#bPause').innerHTML = ico('pause'); $('#bDash').firstElementChild.innerHTML = ico('dash');
+  $('#bPause').innerHTML = ico('pause'); $('#bArms').innerHTML = `${ico('wpn')}<span>무기</span>`; $('#aTitle').innerHTML = `${ico('wpn')} 무기고 · 기체 숙련`; $('#bDash').firstElementChild.innerHTML = ico('dash');
   $('#chTitle').innerHTML = `${ico('map')} 작전 지도<span class="gxs"> · ASCEND 은하</span>`; $('#hTitle').innerHTML = `${ico('repair')} 격납고 강화`; $('#dTitle').innerHTML = `${ico('calendar')} 출석 · 일일 임무`;
 }
 
