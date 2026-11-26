@@ -40,7 +40,7 @@ FX.glow = function (ctx, x, y, r, c, a, hard) {
 };
 
 FX.low = false;
-function add(p) { if (parts.length < (FX.low ? 450 : 2200)) parts.push(p); return p; }
+function add(p) { if (parts.length < (FX.low ? 400 : 1300)) parts.push(p); return p; }
 /* kind: glow(가산) spark(가산 선) smoke(연기) debris(파편) ember(가산 작은 불티) leaf(낙엽) */
 FX.p = function (o) { o.t = o.life = o.life || 0.5; o.vx = o.vx || 0; o.vy = o.vy || 0; o.s = o.s || 6; o.s2 = o.s2 == null ? o.s : o.s2; return add(o); };
 
