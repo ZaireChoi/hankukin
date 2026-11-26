@@ -843,7 +843,7 @@ if (window.IS_EN) document.title = 'K Zombi';
      코드 원문은 넣지 않고 해시만 둔다. rep: 여러 번 쓸 수 있는 시험용. 이 검사는 기기 안에서만 하므로
      정식 유료 판매 전에는 서버 검사로 바꿔야 한다. */
   const CPN_SALT = 'jz:MQMRT2QLZ2';
-  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 } };
+  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 } };
   const cpnHash = (str, seed) => { let h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0); for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
   /* 신규 스타트팩(990원, 계정당 1회): 홍길동 + 영웅 장비 4점 + 옥 300 + 횃불 20. 결제 전에는 시험 쿠폰으로만 받는다 */
   const stBorn = () => { if (!S.born) S.born = Date.now(); return S.born; };
