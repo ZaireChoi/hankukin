@@ -842,7 +842,7 @@ function startNight() { clearCombat();
   if (fxN('shield')) G.shield = G.player.max * 0.25;
   if (G.pendingLv > 0) setTimeout(() => { if (G && G.phase === 'night') openLevel(); }, 2300);
   const N = curN();
-  const elNote = G.night === 0 && G.chEl ? ' · 약점 ' + D.EL[G.chEl.el].n + ' +' + Math.round(G.chEl.k * 100) + '%' : '';
+  const elNote = G.night === 0 && G.chEl && G.chEl.k > 0 ? ' · 약점 ' + D.EL[G.chEl.el].n + ' +' + Math.round(G.chEl.k * 100) + '%' : '';
   G.title = { s: (G.nm && !(G.cfg && G.cfg.act) ? '악몽 ' : '') + N.name, sub: (G.night === 0 && G.obj ? (G.bubble = { s: G.obj.d + (OBJ_BUILD[G.obj.type] && OBJ_BUILD[G.obj.type][0] ? ' · 추천: ' + OBJ_BUILD[G.obj.type][1] + ' (피해 +25%)' : ''), t: 5 }, '목표 · ' + G.obj.n + ((G.tierK || 1) > 1.05 ? ' · 판 등급 ×' + (G.tierK).toFixed(1) : '')) : G.C.name + (N.kind === 'boss' ? ' · 우두머리의 밤' : '')) + elNote, t: G.night === 0 ? 3 : 2.2 };
   sfx('warn', 0.6);
 }
@@ -850,7 +850,7 @@ function startNight() { clearCombat();
 /* ---------- 성장 카드 ---------- */
 const ICON = {};
 const SKICO = {};
-for (const s of SKILLS) { const im = new Image(); im.onload = () => { SKI[s.id] = im; }; im.src = 'img/skills/' + s.id + '.webp'; const ie = new Image(); ie.onload = () => { SKI['ev_' + s.id] = ie; }; ie.src = 'img/skills/ev_' + s.id + '.webp'; }
+for (const s of SKILLS) { if (/^h_/.test(s.id)) continue; const im = new Image(); im.onload = () => { SKI[s.id] = im; }; im.src = 'img/skills/' + s.id + '.webp'; if (!(D.EVO && D.EVO[s.id])) continue; const ie = new Image(); ie.onload = () => { SKI['ev_' + s.id] = ie; }; ie.src = 'img/skills/ev_' + s.id + '.webp'; }   /* 없는 그림 45개 요청 줄임(점검 11-29) */
 function skillIcon(id, s) {
   const key = id + s; if (ICON[key]) return ICON[key];
   const sk = SKILLS.find(o => o.id === id) || { c: '#ccc', kind: 'buff' };
@@ -2866,7 +2866,7 @@ function drawHUD(day) {
   /* 챕터 이름 */
   /* 정보칩: 1줄 장 이름, 2줄 약점 원소 + 목표 진행 (예전 배지 4~5개를 합침) */
   { const nm = (G.C.gn || G.ch) + '. ' + G.C.name + (G.mode !== 'adventure' ? ' · ' + ({ challenge: '극한 도전', endless: '무한 방어선', gold: '엽전 던전', xp: '경험치 던전', boss: '우두머리 토벌' }[G.mode] || '') : ''); ctx.font = '800 15px ' + FONT; const w1 = Math.min(300, ctx.measureText(nm).width + 22); panel(20, 160, w1, 28, 14, 'rgba(10,14,18,.5)', null); txt(nm, 31, 174, 15, '#ffe3a0', 'left', false);
-    const E = G.chEl && D.EL[G.chEl.el] ? D.EL[G.chEl.el] : null, os = G.obj && !day ? String(objText()).replace(/^목표\s*·\s*/, '') : ''; if (E || os) { const es = E ? E.n + ' +' + Math.round(G.chEl.k * 100) + '%' : ''; ctx.font = '800 14px ' + FONT; const we = E ? ctx.measureText(es).width + 30 : 0, wo = os ? Math.min(300, ctx.measureText(os).width + 16) : 0; const warn = G.obj && (G.obj.enr || (G.obj.beacon && G.obj.beacon.hp < G.obj.beacon.max * 0.3)); panel(20, 194, we + wo + (E && os ? 6 : 0) + 4, 26, 13, 'rgba(10,14,18,.5)', warn ? '#ff5a3a' : null); let xx = 24; if (E) { circle(xx + 11, 207, 7); ctx.fillStyle = E.c; ctx.fill(); txt(es, xx + 22, 207, 14, '#fff', 'left', false); xx += we + 6; } if (os) { let s3 = os; while (s3.length > 4 && ctx.measureText(s3).width > 290) s3 = s3.slice(0, -2); if (s3 !== os) s3 += '…'; txt(s3, xx + 4, 207, 14, warn ? '#ff9a7a' : '#ffe3a0', 'left', false); } } }
+    const E = G.chEl && G.chEl.k > 0 && D.EL[G.chEl.el] ? D.EL[G.chEl.el] : null, os = G.obj && !day ? String(objText()).replace(/^목표\s*·\s*/, '') : ''; if (E || os) { const es = E ? E.n + ' +' + Math.round(G.chEl.k * 100) + '%' : ''; ctx.font = '800 14px ' + FONT; const we = E ? ctx.measureText(es).width + 30 : 0, wo = os ? Math.min(300, ctx.measureText(os).width + 16) : 0; const warn = G.obj && (G.obj.enr || (G.obj.beacon && G.obj.beacon.hp < G.obj.beacon.max * 0.3)); panel(20, 194, we + wo + (E && os ? 6 : 0) + 4, 26, 13, 'rgba(10,14,18,.5)', warn ? '#ff5a3a' : null); let xx = 24; if (E) { circle(xx + 11, 207, 7); ctx.fillStyle = E.c; ctx.fill(); txt(es, xx + 22, 207, 14, '#fff', 'left', false); xx += we + 6; } if (os) { let s3 = os; while (s3.length > 4 && ctx.measureText(s3).width > 290) s3 = s3.slice(0, -2); if (s3 !== os) s3 += '…'; txt(s3, xx + 4, 207, 14, warn ? '#ff9a7a' : '#ffe3a0', 'left', false); } } }
   if (G.missions) G.missions.forEach((m, i) => { const ok = m.ok(); panel(20, 264 + i * 34, 300, 30, 8, 'rgba(10,14,18,.6)', null); txt((ok ? '★ ' : '☆ ') + m.n, 30, 279 + i * 34, 16, ok ? '#ffd84a' : '#ddd', 'left', false); });
   /* 오른쪽: 동료 얼굴, 가진 기술 */
   let ry = 210;
