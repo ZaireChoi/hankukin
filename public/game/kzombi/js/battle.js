@@ -76,6 +76,7 @@ for (const id in COMP) { const im = new Image(); im.onload = () => { PORT[id] = 
 function drawPort(id, x, y, r, ring) { const im = PORT[id]; if (!im) return false; ctx.save(); circle(x, y, r); ctx.clip(); const s = Math.max(r * 2 / im.width, r * 2 / im.height) * 1.15; ctx.drawImage(im, x - im.width * s / 2, y - r - im.height * s * 0.04, im.width * s, im.height * s); ctx.restore(); circle(x, y, r); ctx.strokeStyle = ring || '#ffe08a'; ctx.lineWidth = 3; ctx.stroke(); return true; }
 /* 캐릭터 크게(사용자 11-26: 후더덕 대비 처용·영웅이 작아 보임) */ { const CHAR_K = 1.2; for (const k of Object.keys(HOV)) HOV[k] = Math.round(HOV[k] * CHAR_K); HOV.player = Math.round(118 * 1.3); for (const k of ['player_amhaeng', 'player_jeoseung', 'player_gonryong', 'player_janggun', 'player_seonbi', 'player_podo']) HOV[k] = HOV.player; }
 /* 처용·영웅 30% 더 크게(사용자 11-27: 병사와 헷갈림, 홍길동 찾기 어려움) */ { for (const k of Object.keys(HOV)) if (k !== 'yeoksin' && k !== 'mudang') HOV[k] = Math.round(HOV[k] * 1.3); }
+/* 영웅 크기를 처용과 같게, 장군만 조금 크게(사용자 11-29: 장영실이 작음) */ { const P = HOV.player, GEN = { yisunsin: 1, eulji: 1, gangamchan: 1, kimchungseon: 1 }; for (const id in D.COMP) { const s = D.COMP[id].spr || id; HOV[s] = Math.round(P * (GEN[id] ? 1.12 : 1)); } }
 for (const k in EN) HOV[k] = EN[k].h;
 /* SIZE_RATIO(11-25): 후더덕 비율(처용 키 118 = 1) — 탑 약 1.5, 사당 약 2.1, 금광·우물 약 1.2, 성벽 약 0.8 */
 Object.assign(HOV, { tower_arrow: 175, tower_fire: 175, tower_talisman: 175, tower_catapult: 150, tur_general: 175, tur_lady: 175, barracks: 170, mine: 140, well: 140, tower_cannon: 100, tower_cannon_barrel: 45, tower_hwacha: 107, tower_hwacha_rack: 58, base: 312, shrine: 312, wall: 95, gate: 185, guard_turtle: 115, guard_phoenix: 120, guard_tiger: 118, guard_dragon: 120 });
@@ -934,7 +935,7 @@ function setTrait() {
   const k = D.traitOf ? D.traitOf(a, G.ch) : null; if (!k || !D.TRAITS[k]) return; const T = D.TRAITS[k]; G.trait = k; G.trT = T;
   if (T.noReroll) G.rerolls = 0;
   if (T.pSp) G.player.sp *= T.pSp;
-  setTimeout(() => { if (G && G.trait === k) G.banner = { s: (window.IS_EN ? 'Chapter trait · ' + T.en + ' — ' + T.de : '장 특성 · ' + T.n + ' — ' + T.d), t: 3.2, kind: 'elite' }; }, 1200);
+  setTimeout(() => { if (G && G.trait === k) G.banner = { s: (window.IS_EN ? 'Chapter trait · ' + T.en : '장 특성 · ' + T.n), sub: (window.IS_EN ? T.de : T.d), t: 3.2, kind: 'elite' }; }, 1200);
 }
 const LG_CARDS = [
   { id: 'lg_allup', n: '천지개벽', icon: 'img/skills/power.webp', d: () => '가진 공격 기술이 모두 한 단계 오른다' },
@@ -2705,7 +2706,7 @@ function drawHUD(day) {
     ctx.fillStyle = bg; ctx.fillRect(0, by - 46, W, 92);
     ctx.fillStyle = 'rgba(255,230,160,.8)'; ctx.fillRect(60, by - 48, W - 120, 3); ctx.fillRect(60, by + 45, W - 120, 3);
     if (B.kind !== 'win') { ctx.fillStyle = '#ffd040'; ctx.beginPath(); ctx.moveTo(110, by - 34); ctx.lineTo(146, by + 30); ctx.lineTo(74, by + 30); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#3a1a00'; ctx.lineWidth = 4; ctx.stroke(); txt('!', 110, by + 10, 40, '#3a1a00', 'center', false); }
-    txt(B.s, 380, by + 2, 40, '#fff6d8', 'center', '#2a0a00', 8);
+    { const bx = B.kind !== 'win' ? (160 + W - 30) / 2 : W / 2, mw = B.kind !== 'win' ? W - 190 : W - 80; ctx.font = '900 40px ' + FONT; const fw = ctx.measureText(String(B.s)).width; const fs = Math.max(14, Math.min(40, Math.floor(40 * mw / Math.max(1, fw)))); txt(B.s, bx, by + 2, fs, '#fff6d8', 'center', '#2a0a00', fs < 30 ? 6 : 8); } /* 긴 띠 글자 잘림 방지(11-29) */
     if (B.sub) txt(B.sub, 380, by + 72, 19, '#ffe9c0', 'center', '#200800', 5);
     ctx.restore(); ctx.globalAlpha = 1;
   }
