@@ -220,7 +220,7 @@ if (window.IS_EN) document.title = 'K Zombi';
      - 탭을 숨기면 멈추고, 돌아오면 마지막 곡 하나만 다시 튼다
      - 설정에서 음악을 끄면 전투 음악도 나오지 않는다 */
   const AUD = new Set(); let pendBgm = null, lastBgm = null, hiddenStop = false;
-  const isBgm = a => /audio\/bgm_/.test(a.src || ''), isSting = a => /audio\/sting_/.test(a.src || '');
+  const isBgm = a => /audio\/(bgm_|kz_)/.test(a.src || ''), isSting = a => /audio\/sting_/.test(a.src || '');
   const stingOn = () => { for (const a of AUD) if (isSting(a) && !a.paused && !a.ended) return a; return null; };
   (function guard() {
     const P = HTMLMediaElement.prototype; if (P.__kzGuard) return; P.__kzGuard = 1;
@@ -247,7 +247,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   const BGM = {};
   let curBgm = null;
   /* 첫 화면·로비 음악: 직접 편곡한 아리랑 */
-  const BGM_FILE = { bgm_title: 'bgm_arirang', bgm_lobby: 'bgm_arirang' };
+  const BGM_FILE = { bgm_title: 'bgm_arirang', bgm_lobby: 'kz_lobby' };   /* 로비: 국악 합성곡 굿거리(11-27), 첫 화면은 아리랑 그대로 */
   function music(k) {
     const f = k && (BGM_FILE[k] || k);
     if (curBgm && curBgm !== f && BGM[curBgm]) { BGM[curBgm].pause(); }
