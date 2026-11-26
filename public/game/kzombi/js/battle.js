@@ -130,6 +130,21 @@ let ART = false;
 })();
 /* 화면 방향(라디안) -> 8방향 행: 0 아래 1 왼아래 2 왼 3 왼위 4 위 5 오른위 6 오른 7 오른아래 */
 const dir8 = a => ((Math.round((a * 180 / Math.PI - 90) / 45) % 8) + 8) % 8;
+/* 동작 개편(사용자 11-30: 영웅 동작 상업 수준) — 걸음은 실제 이동 거리로, 방향은 부드럽게 돌기, 대기 숨쉬기, 공격 예비 동작 */
+function mo(e, ax, ay, tgtAng, h) {
+  const m = e.__mo || (e.__mo = { px: ax, py: ay, ph: Math.random() * 8, ang: tgtAng == null ? Math.PI / 2 : tgtAng, t: G.t, hurt: 0 });
+  const dt = Math.min(0.1, Math.max(0, G.t - m.t)); m.t = G.t;
+  const d = Math.hypot(ax - m.px, ay - m.py); m.px = ax; m.py = ay;
+  if (d < 60) m.ph += d / Math.max(6, (h || 110) * 0.075);   /* 키의 약 7.5%를 한 걸음 칸으로 */
+  m.spd = d / Math.max(1e-3, dt);
+  if (tgtAng != null) { let df = tgtAng - m.ang; df = Math.atan2(Math.sin(df), Math.cos(df)); const st = Math.min(1, dt * 16); m.ang += Math.abs(df) > 2.6 ? df : df * st; }
+  return m;
+}
+function moSquash(prog) {   /* 공격 진행(0~1) → 예비 움츠림 → 뻗기 → 제자리 */
+  if (prog == null) return [1, 1];
+  const k = prog < 0.15 ? -(prog / 0.15) : prog < 0.35 ? -1 + (prog - 0.15) / 0.2 * 2.2 : Math.max(0, 1.2 * (1 - (prog - 0.35) / 0.65));
+  return [1 - k * 0.025, 1 + k * 0.035];
+}
 const dirN = (a, n) => ((Math.round((a * 180 / Math.PI - 90) / (360 / n)) % n) + n) % n;
 function drawSprite(key, x, y, o) {
   const sp = SPR[key]; if (!sp) { need(key); return false; } o = o || {};
@@ -137,7 +152,7 @@ function drawSprite(key, x, y, o) {
   const hh = (o.h || HOV[key] || sp.height) * (o.sc || 1);
   const A = o.anim && sp.A ? (sp.A[o.anim] || (o.anim === 'run' || o.anim === 'idle' ? null : null)) : null;
   const FR = A ? A.frames : sp.frames, src = A ? A.img : sp.img;
-  let f = o.at != null ? Math.min(FR - 1, Math.max(0, Math.floor(o.at * FR))) : Math.floor((o.t || 0) * (o.fps || sp.fps)) % FR;
+  let f = o.at != null ? Math.min(FR - 1, Math.max(0, Math.floor(o.at * FR))) : o.ph != null ? ((Math.floor(o.ph) % FR) + FR) % FR : Math.floor((o.t || 0) * (o.fps || sp.fps)) % FR;   /* o.ph: 걸은 거리로 정한 걸음 단계(미끄러짐 방지, 11-30 동작 개편) */
   if (o.rev) f = FR - 1 - f;
   const k = hh / (sp.cell * (sp.ch || 0.62)), w = sp.cell * k;
   ctx.save(); ctx.translate(x, y);
@@ -1374,7 +1389,8 @@ function drawAlly(a) {
   if (a.style === 'soldier') {
     const S = D.SOLDIER[a.type]; shadowE(a.x, a.y + 2, 14, 0.3);
     const spS = SPR[a.spr], still = spS && spS.still, gal = still && (a.mv || a.atk > 0) ? Math.abs(Math.sin(G.t * 11 + a.rx)) * 5 : (still ? Math.sin(G.t * 2 + a.rx) * 1 : 0); /* 기마병: 정지 그림이라 코드로 달리는 흔들림 */
-    const ok = drawSprite(a.spr, a.x, a.y - gal, { anim: a.hitT > 0 ? 'hit' : a.atk > 0 ? 'atk' : a.mv ? 'walk' : 'idle', at: a.atk > 0 ? 1 - a.atk / 0.3 : null, dir: dir8(a.fdir), t: G.t + a.rx, h: (spS && spS.height) || 60, mode: a.hitT > 0 ? 'white' : null });
+    const am = mo(a, a.x, a.y, a.fdir, (spS && spS.height) || 60), aan = a.hitT > 0 ? 'hit' : a.atk > 0 ? 'atk' : a.mv ? 'walk' : 'idle', aat = a.atk > 0 ? Math.min(1, 0.25 + 0.75 * (1 - a.atk / 0.3)) : null, asq = aat != null ? moSquash(aat) : aan === 'idle' ? [1, 1 + Math.sin(G.t * 2.6 + a.rx) * 0.016] : [1, 1];
+    const ok = drawSprite(a.spr, a.x, a.y - gal, { anim: aan, at: aat, ph: aan === 'walk' && !still ? am.ph : null, dir: dir8(a.atk > 0 ? a.fdir : am.ang), t: G.t + a.rx, h: (spS && spS.height) || 60, mode: a.hitT > 0 ? 'white' : null, sx: asq[0], sy: asq[1] });
     if (!ok) { const bob = a.mv ? Math.abs(Math.sin(G.t * 12 + a.rx)) * 3 : 0; rrPath(a.x - 11, a.y - 34 - bob, 22, 30, 8); ctx.fillStyle = 'rgb(' + S.col + ')'; ctx.fill(); ctx.strokeStyle = '#1a1410'; ctx.lineWidth = 2.5; ctx.stroke(); circle(a.x, a.y - 44 - bob, 11); ctx.fillStyle = '#f2d2b0'; ctx.fill(); ctx.stroke(); ctx.fillStyle = '#17171a'; ctx.fillRect(a.x - 14, a.y - 56 - bob, 28, 4); ctx.fillRect(a.x - 7, a.y - 64 - bob, 14, 9); if (a.elite) { ctx.fillStyle = '#ffd34a'; ctx.fillRect(a.x - 11, a.y - 22 - bob, 22, 4); } txt(S.n[0], a.x, a.y - 20 - bob, 13, '#fff', 'center', '#1a1410', 3); }
     if (a.hp < a.max) hpBar(a.x - 14, a.y - 74, 28, 4, a.hp / a.max, '#6fdc6a');
     { const AB = { s_sword: [2, '▣', '#9fc7ff'], s_archer: [2, '▲', '#ff9a40'], s_spear: [3, '↑', '#ffe08a'], s_monk: [3, '+', '#8df08a'], s_gun: [4, '»', '#d8d8ff'], s_taoist: [4, '✦', '#f0f0ff'] }[a.type]; if (AB && actNum() >= AB[0]) { circle(a.x + 15, a.y - 70, 7); ctx.fillStyle = 'rgba(10,14,18,.8)'; ctx.fill(); ctx.font = '900 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = AB[2]; ctx.fillText(AB[1], a.x + 15, a.y - 69.5); ctx.textBaseline = 'alphabetic'; } }   /* 막이 오를수록 생긴 병사 능력 표시 */
@@ -2547,14 +2563,16 @@ function drawPlayer(p) {
   const rec = p.recoil * 3 * (p.flip ? 1 : -1);
   const pdir = p.aimT > 0 ? p.face : (p.mdir != null ? p.mdir : Math.PI / 2);
   if (p.atkA > 0) p.atkA -= 1 / 60;
-  const pan = p.hitT > 0 ? 'hit' : p.atkA > 0 ? 'atk' : p.moving ? 'walk' : 'idle', pat = pan === 'atk' ? 1 - p.atkA / 0.32 : pan === 'hit' ? 1 - Math.max(0, p.hitT) / 0.12 : null;
+  const pm = mo(p, p.x, p.y, pdir, HOV[G.pkey || 'player']);
+  const pan = p.hitT > 0 ? 'hit' : p.atkA > 0 ? 'atk' : p.moving ? 'walk' : 'idle', pat = pan === 'atk' ? Math.min(1, 0.3 + 0.7 * (1 - p.atkA / 0.32)) : pan === 'hit' ? 1 - Math.max(0, p.hitT) / 0.12 : null;   /* 발사 순간 = 동작 30% 지점(쏘는 즉시 화살이 나가므로 예비 동작은 줄임) */
   /* 탈것: 처용 아래에 탈것을 그리고 처용을 안장 높이로 올린다. 학은 날갯짓 */
   const MK = G.cfg && G.cfg.mount && SPR['mount_' + G.cfg.mount] ? 'mount_' + G.cfg.mount : (G.cfg && G.cfg.mount ? (need('mount_' + G.cfg.mount), null) : null);
   let rideY = 0;
   if (MK) { const crane = G.cfg.mount === 'crane', flap = crane ? Math.sin(G.t * (p.moving ? 14 : 5)) : 0, hop = p.moving ? Math.abs(Math.sin(G.t * 12)) * 4 : 0;
     drawSprite(MK, p.x, p.y + 10 - hop, { anim: p.moving ? 'walk' : 'idle', dir: dir8(pdir), t: G.t, flip: p.flip, h: crane ? 96 : 78, sx: 1 + flap * 0.08, sy: 1 - flap * 0.04 });
     rideY = (crane ? 50 : 38) + hop; }
-  const ok = drawSprite(G.pkey || 'player', p.x + rec, p.y + 4 - rideY, { anim: pan, at: pat, dir: dir8(pdir), t: G.t, flip: p.flip, mode: p.hitT > 0 ? 'white' : null, sy: 1 + Math.sin(G.t * (p.moving ? 16 : 3)) * 0.015 });
+  const psq = pan === 'atk' ? moSquash(pat) : pan === 'idle' ? [1 - Math.sin(G.t * 2.4) * 0.008, 1 + Math.sin(G.t * 2.4) * 0.018] : [1, 1 + Math.abs(Math.sin(pm.ph * Math.PI / 2)) * 0.012];
+  const ok = drawSprite(G.pkey || 'player', p.x + rec, p.y + 4 - rideY, { anim: pan, at: pat, ph: pan === 'walk' ? pm.ph : null, dir: dir8(p.aimT > 0 ? pdir : pm.ang), t: G.t, flip: p.flip, mode: p.hitT > 0 ? 'white' : null, sx: psq[0], sy: psq[1], rot: p.hitT > 0 ? -Math.sin((1 - Math.max(0, p.hitT) / 0.12) * Math.PI) * 0.07 * (Math.cos(pdir) < 0 ? -1 : 1) : 0 });
   if (!ok) { circle(p.x, p.y - 30, 22); ctx.fillStyle = '#f0e8d8'; ctx.fill(); ctx.fillStyle = '#17171a'; ctx.fillRect(p.x - 26, p.y - 56, 52, 5); ctx.fillRect(p.x - 12, p.y - 70, 24, 15); }
   if (p.muzzle > 0) { ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, p.x + Math.cos(p.face) * 30, p.y - 46 + Math.sin(p.face) * 30, 22, '255,220,140', 1, 1); ctx.globalCompositeOperation = 'source-over'; }
   const PH = (HOV[G.pkey || 'player'] || HOV.player || 118) * 0.93; /* 체력바를 머리 위로(사용자 11-27: 얼굴에 붙던 문제) */
@@ -2577,7 +2595,10 @@ function drawComp(c) {
 function drawCompBody(c, C, x, y, alpha) {
   if (c.id === 'haetae' && c.fire > 0 && c.atkK === 'atk') { const hk = Math.sin(Math.min(1, Math.max(0, 1 - c.fire / 0.45)) * Math.PI), ha = c.fdir || 0; x += Math.cos(ha) * 22 * hk; y += Math.sin(ha) * 12 * hk - 10 * hk; } /* 개처럼 짧게 뛰어들기 */
   const can = c.fire > 0 ? (c.atkK || 'atk') : c.moving ? 'walk' : 'idle';
-  const ok = drawSprite(C.spr, x, y, { anim: can, at: can === 'atk' ? 1 - Math.max(0, c.fire) / (c.id === 'haetae' ? 0.45 : 0.35) : null, dir: dir8(c.fdir != null ? c.fdir : Math.PI / 2), t: G.t + c.id.length, flip: c.flip, sy: c.fire > 0 ? 1.06 : 1, alpha, sc: c.dragonT > 0 ? 1.9 : 1 }); if (c.dragonT > 0 && alpha > 0.9) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - 120, 120, '120,240,210', 0.35 + 0.15 * Math.sin(G.t * 6)); ctx.restore(); }
+  const cm = alpha < 1 ? null : mo(c, x, y, c.fdir != null ? c.fdir : Math.PI / 2, HOV[C.spr]);   /* 홍길동 분신은 각자 방향 그대로 */
+  const cat = can !== 'walk' && can !== 'idle' ? Math.min(1, 0.3 + 0.7 * (1 - Math.max(0, c.fire) / (c.id === 'haetae' ? 0.45 : 0.35))) : null;
+  const csq = cat != null ? moSquash(cat) : can === 'idle' ? [1 - Math.sin(G.t * 2.4 + c.id.length) * 0.008, 1 + Math.sin(G.t * 2.4 + c.id.length) * 0.018] : [1, 1];
+  const ok = drawSprite(C.spr, x, y, { anim: can, at: cat, ph: can === 'walk' && cm ? cm.ph : null, dir: dir8(!cm || (c.fire > 0 && c.fdir != null) ? (c.fdir != null ? c.fdir : Math.PI / 2) : cm.ang), t: G.t + c.id.length, flip: c.flip, sx: csq[0], sy: csq[1], alpha, sc: c.dragonT > 0 ? 1.9 : 1 }); if (c.dragonT > 0 && alpha > 0.9) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; FX.glow(ctx, x, y - 120, 120, '120,240,210', 0.35 + 0.15 * Math.sin(G.t * 6)); ctx.restore(); }
   if (!ok && PORT[c.id]) {
     ctx.globalAlpha = alpha; const bob2 = c.moving ? Math.abs(Math.sin(c.t * 10)) * 4 : 0;
     rrPath(x - 16, y - 34 - bob2, 32, 34, 12); const bg = ctx.createLinearGradient(0, y - 34, 0, y); bg.addColorStop(0, 'rgb(' + C.col + ')'); bg.addColorStop(1, '#2a1a2a'); ctx.fillStyle = bg; ctx.fill(); ctx.strokeStyle = '#1a1010'; ctx.lineWidth = 3; ctx.stroke();
