@@ -70,6 +70,18 @@ const MECHS = [
   { id: 'rex', nm: '아우렐리안 렉스', ty: '황제 근위기 · 황금 대검', hp: 1.48, dmg: 1.32, spd: .95, cd: .86, arm: 'great', prim: 'katana', cost: 7000, rar: 'SSR',
     pass: '받는 피해 -20% · 근접 피해 +25% · 3부 「제국의 칼날」 완료 보상', auto: { k: 'bash', nm: '제왕의 돌진', ic: '🦁', cd: 5.5 }, ult: { k: 'titanfall', nm: '황금 사자 낙하', ic: '👑' },
     init(p) { p.taken = .8; p.meleeMul = (p.meleeMul || 1) * 1.25; } },
+  { id: 'fortune', nm: '포춘', ty: '루나 전용기 · 행운의 미사일', hp: 1.1, dmg: 1.3, spd: 1.25, cd: .85, arm: 'rifle', prim: 'homing', cost: 7500, rar: 'SSR',
+    pass: '치명타 +15% · 이동 +5% · 4부 「연맹의 균열」 완료 보상', auto: { k: 'blink', nm: '행운의 도약', ic: '🍀', cd: 5 }, ult: { k: 'mstorm', nm: '행운의 유성우', ic: '🌠' },
+    init(p) { p.crit += .15; p.spdMul *= 1.05; } },
+  { id: 'lumen', nm: '루멘 가디언', ty: '빛의 수호자 · 성검', hp: 1.4, dmg: 1.35, spd: 1.05, cd: .85, arm: 'great', prim: 'katana', cost: 8000, rar: 'SSR',
+    pass: '근접 피해 +30% · 초당 내구 +1 · 5부 「빛의 수호자」 완료 보상', auto: { k: 'iaido', nm: '빛의 일섬', ic: '✨', cd: 4.5 }, ult: { k: 'bladefall', nm: '성검 강림', ic: '🗡️' },
+    init(p) { p.meleeMul = (p.meleeMul || 1) * 1.3; p.regen += 1; } },
+  { id: 'wraith', nm: '레이스 헌터', ty: '오메가 사냥 기체 · 점사 소총', hp: 1.05, dmg: 1.42, spd: 1.28, cd: .82, arm: 'rifle', prim: 'burst', cost: 8500, rar: 'SSR',
+    pass: '치명타 +10% · 이동 +10% · 6부 「거인의 문」 완료 보상', auto: { k: 'cloak', nm: '사냥꾼의 그림자', ic: '👻', cd: 7 }, ult: { k: 'execute', nm: '사냥 개시', ic: '🎯' },
+    init(p) { p.crit += .1; p.spdMul *= 1.1; } },
+  { id: 'ironlead', nm: '아이언 리드', ty: '분대장 민재의 기체 · 산탄포·방패', hp: 1.6, dmg: 1.3, spd: .95, cd: .85, arm: 'cannon', off: 'shield', prim: 'shotgun', cost: 9000, rar: 'SSR',
+    pass: '받는 피해 -25% · 8부 「허무의 균열」 완료 보상', auto: { k: 'bash', nm: '분대장의 돌격', ic: '🛡️', cd: 5 }, ult: { k: 'aegis', nm: '분대여, 내 뒤로', ic: '💠' },
+    init(p) { p.taken = .75; } },
   // 신화(뽑기·장기 구매): 날개 달린 신 기체 4종. 등급 배율이 가장 높고 패시브도 강하다
   { id: 'god', nm: '솔라리스', ty: '신화 · 태양 대검·빛 깃털', hp: 1.6, dmg: 1.5, spd: 1.18, cd: .75, arm: 'great', prim: 'feather', cost: 9000, rar: 'UR',
     pass: '모든 피해 +15% · 피격 20% 확률로 피해 무효', auto: { k: 'featherstorm', nm: '태양 깃털', ic: '☀️', cd: 3.5 }, ult: { k: 'descent', nm: '태양 강림', ic: '🌞' },
@@ -83,6 +95,12 @@ const MECHS = [
   { id: 'god_black', nm: '녹턴', ty: '신화 · 공허 광선', hp: 1.5, dmg: 1.55, spd: 1.25, cd: .75, arm: 'saber', prim: 'beam', cost: 9000, rar: 'UR',
     pass: '치명타 +20% · 이동 +10%', auto: { k: 'blink', nm: '공허 도약', ic: '🌀', cd: 4 }, ult: { k: 'execute', nm: '심연 처형', ic: '🌑' },
     init(p) { p.crit += .2; p.spdMul *= 1.1; } },
+  { id: 'arkos', nm: '아르코스', ty: '오메가 군주기 · 군주의 검', hp: 1.7, dmg: 1.62, spd: 1.18, cd: .75, arm: 'saber', prim: 'saber', cost: 12000, rar: 'UR',
+    pass: '근접 피해 +40% · 적을 처치할 때마다 내구 1 회복 · 7부 「오메가 본성 아르케」 완료 보상', auto: { k: 'iaido', nm: '군주의 일섬', ic: '⚔️', cd: 4 }, ult: { k: 'tenzan', nm: '아르케 붕괴', ic: '🌑' },
+    init(p) { p.meleeMul = 1.4; p.lifesteal = 1; } },
+  { id: 'zero', nm: '어센드 제로', ty: '원형기 · 모든 기종 전환', hp: 1.7, dmg: 1.65, spd: 1.22, cd: .72, arm: 'saber', prim: 'beam', cost: 15000, rar: 'UR', allCls: 1,
+    pass: '어느 장이든 추천 기종 보너스 · 모든 재사용 -20% · 10부 「대흑점」 완료 보상', auto: { k: 'blink', nm: '제로 시프트', ic: '✨', cd: 4 }, ult: { k: 'nova', nm: '어센드 노바', ic: '🌟' },
+    init(p) { p.cdMul *= .8; } },
 ];
 // 등급: 이름·색·능력 배율(내구·피해). 별(★)은 중복 획득마다 +1, 별당 +6%
 const RAR = { N: { nm: '일반', col: '#a7b0c2', mul: 1 }, R: { nm: '희귀', col: '#4fb6ff', mul: 1.06 }, SR: { nm: '영웅', col: '#b67bff', mul: 1.14 }, SSR: { nm: '전설', col: '#ffb84a', mul: 1.24 }, UR: { nm: '신화', col: '#ff5a7a', mul: 1.36 }, A: { nm: '고급', col: '#7df06a', mul: 1.03 }, UQ: { nm: '유니크', col: '#4cff9a', mul: 1.3 } };
@@ -90,10 +108,10 @@ const RAR_ORDER = ['N', 'R', 'SR', 'SSR', 'UR'];
 const MECH = (id) => MECHS.find((m) => m.id === id) || MECHS[0];
 // 기종 분류: 장마다 추천 기종이 있고, 맞춰 출격하면 보너스
 const CLS = { 근접: { k: 'katana', ds: '가까이 붙어 베는 기체' }, 사격: { k: 'rifle', ds: '멀리서 쏘는 기체' }, 기동: { k: 'dash', ds: '빠르게 움직이는 기체' }, 중장: { k: 'armor', ds: '튼튼하고 묵직한 기체' } };
-const CLS_OF = { rex: '중장', mech4: '기동', m_samurai: '근접', m_striker: '사격', mech3: '근접', m_guardian: '중장', m_titan: '중장', m_ranger: '사격', m_artillery: '중장', m_sky: '기동', m_phantom: '기동', m_wizard: '사격', m_origin: '사격', mech_leg: '근접', god: '근접', god_white: '사격', god_red: '근접', god_black: '기동', astra: '사격' };
+const CLS_OF = { fortune: '기동', lumen: '근접', wraith: '기동', ironlead: '중장', arkos: '근접', zero: '기동', rex: '중장', mech4: '기동', m_samurai: '근접', m_striker: '사격', mech3: '근접', m_guardian: '중장', m_titan: '중장', m_ranger: '사격', m_artillery: '중장', m_sky: '기동', m_phantom: '기동', m_wizard: '사격', m_origin: '사격', mech_leg: '근접', god: '근접', god_white: '사격', god_red: '근접', god_black: '기동', astra: '사격' };
 for (const m of MECHS) m.cls = CLS_OF[m.id] || '사격';
 // 기체별 전투기 모델(변신 엔진 JETM과 같은 이름)
-const JET_OF = { rex: 'm_titan_jet', mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet', god: 'm_wizard_jet', god_white: 'm_sky_jet', god_red: 'm_striker_jet', god_black: 'm_phantom_jet', astra: 'm_guardian_jet' };
+const JET_OF = { fortune: 'm_sky_jet', lumen: 'm_samurai_jet', wraith: 'm_phantom_jet', ironlead: 'm_guardian_jet', arkos: 'm_phantom_jet', zero: 'm_sky_jet', rex: 'm_titan_jet', mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet', god: 'm_wizard_jet', god_white: 'm_sky_jet', god_red: 'm_striker_jet', god_black: 'm_phantom_jet', astra: 'm_guardian_jet' };
 // 주무기 이름: 같은 강화(rifle)라도 기체의 기본 무기에 맞춰 부른다
 const ARM_NAME = {
   pistol: { nm: '빔 권총', ic: '🔫', ds0: '가까운 적을 권총으로 자동 사격' },
@@ -334,6 +352,12 @@ const PAINT = {
   m_phantom: { colorize: [.12, 281, .62, 1.2], dark: [.12, .5] },                                                         // 자주 + 검정
   m_origin: { swap: [[150, 215, 189, 1.6, 1.05]] },
   astra: { swap: [[180, 262, 262, .16, 1.75]], dark: [.3, .55] },
+  fortune: { sk: { acc: [46, .9, 1.15], lit: [335, .55, 1.05], drk: [320, .3, .5], cut: .3 } },
+  lumen: { sk: { acc: [45, .95, 1.25], lit: [48, .1, 1.35], drk: [44, .45, 1.1], cut: .14 } },
+  wraith: { sk: { acc: [355, .95, 1], lit: [0, .05, .4], drk: [0, .1, .25], cut: .3 } },
+  ironlead: { sk: { acc: [24, .95, 1.1], lit: [212, .25, .85], drk: [215, .3, .5], cut: .3 } },
+  arkos: { sk: { acc: [44, .95, 1.2], lit: [44, .75, .95], drk: [278, .65, .6], cut: .2 } },
+  zero: { sk: { acc: [188, 1, 1.25], lit: [196, .4, 1.05], drk: [210, .6, .55], cut: .3 } },
   rex: { sk: { acc: [6, .9, 1.1], lit: [42, .74, .86], drk: [352, .8, .6], cut: .25 } },                       // 제국 황금 + 진홍                                         // 알파 백색 + 보랏빛                                                      // 흰색 + 청록
 };
 const _hsl2rgb = (h, s, l) => { const C = (1 - Math.abs(2 * l - 1)) * s, H = (((h % 360) + 360) % 360) / 60, X = C * (1 - Math.abs(H % 2 - 1)), m = l - C / 2;
@@ -485,6 +509,13 @@ const SKINS = [
   { id: 'neon', nm: '네온 사이버', ds: '검은 장갑에 청록·자홍 네온', cur: 'gem', cost: 800, sw: ['#15181f', '#22f0ff', '#ff3ad0'], sk: { acc: [185, 1, 1.25], split: [305, 185], lit: [230, .15, .32], drk: [250, .2, .22], cut: .3 } },
   { id: 'imperial', nm: '제국 진홍', ds: '제국 기함의 진홍과 금빛 · 3부 2막 완료 보상', reward: '3부 2막 완료 보상', cost: 0, sw: ['#a81424', '#ffd36b', '#20080c'], sk: { acc: [46, .95, 1.15], lit: [352, .82, .72], drk: [348, .3, .3], cut: .3 } },
   { id: 'lion', nm: '황금 사자', ds: '검은 장갑에 황금 사자의 빛 · 3부 4막 완료 보상', reward: '3부 4막 완료 보상', cost: 0, sw: ['#1a1612', '#ffd36b', '#8a6a2a'], sk: { acc: [44, .95, 1.25], lit: [40, .55, .62], drk: [30, .2, .22], cut: .3 } },
+  { id: 'fedblue', nm: '연맹 청색', ds: '자유주의 연맹의 남청색과 흰 선 · 4부 4막 보상', reward: '4부 4막 완료 보상', cost: 0, sw: ['#1e3a7a', '#f4f6fa', '#0a1430'], sk: { acc: [210, .2, 1.3], lit: [220, .7, .6], drk: [224, .5, .3], cut: .3 } },
+  { id: 'starsilver', nm: '별빛 은색', ds: '은빛 장갑에 푸른 별빛 · 5부 4막 보상', reward: '5부 4막 완료 보상', cost: 0, sw: ['#c8d0dc', '#9fd8ff', '#4a5260'], sk: { acc: [200, .9, 1.25], lit: [215, .1, 1.05], drk: [215, .12, .6], cut: .3 } },
+  { id: 'shadow', nm: '그림자 흑색', ds: '빛을 삼키는 흑색에 보랏빛 선 · 6부 4막 보상', reward: '6부 4막 완료 보상', cost: 0, sw: ['#16121c', '#a06aff', '#08060a'], sk: { acc: [272, .9, 1.1], lit: [265, .12, .35], drk: [265, .15, .22], cut: .3 } },
+  { id: 'omega', nm: '오메가 자주', ds: '오메가 본군의 자주색과 금빛 · 7부 4막 보상', reward: '7부 4막 완료 보상', cost: 0, sw: ['#5a1a6a', '#e2b23a', '#1a0820'], sk: { acc: [44, .9, 1.1], lit: [290, .6, .55], drk: [290, .4, .28], cut: .3 } },
+  { id: 'first', nm: '첫 출격', ds: '1부 첫 출격 때의 흰색·하늘색 · 8부 4막 보상', reward: '8부 4막 완료 보상', cost: 0, sw: ['#eef2f6', '#5ad1ff', '#3a4250'], sk: { acc: [195, .9, 1.15], lit: [210, .06, 1.2], drk: [215, .15, .55], cut: .3 } },
+  { id: 'awaken', nm: '각성', ds: '신기의 각성 · 흰 금빛과 무지갯빛 선 · 9부 6막 보상', reward: '9부 6막 완료 보상', cost: 0, sw: ['#fff6dc', '#ff9af0', '#c8a050'], sk: { acc: [300, .7, 1.25], split: [40, 190], lit: [45, .25, 1.25], drk: [40, .5, .65], cut: .28 } },
+  { id: 'veteran', nm: '역전의 용사', ds: '수많은 전장을 지난 쇳빛과 붉은 표식 · 10부 4막 보상', reward: '10부 4막 완료 보상', cost: 0, sw: ['#6a6660', '#d8402a', '#2a2622'], sk: { acc: [8, .85, 1], lit: [30, .08, .62], drk: [30, .1, .35], cut: .3, camo: { c: [28, .12, .45], f: 4 } } },
   { id: 'taeguk', nm: '태극', ds: '흰 장갑에 태극의 빨강·파랑', cur: 'gem', cost: 800, sw: ['#f4f5f7', '#d6303c', '#2d5bd0'], sk: { acc: [355, .85, 1], split: [355, 218], lit: [0, 0, 1.25], drk: [220, .25, .45], cut: .3 } },
 ];
 for (const S of SKINS) if (S.sk) S.P = { sk: S.sk };
@@ -526,7 +557,7 @@ function drawShopSkin() {
   $('#shopSkin').querySelectorAll('[data-buy]').forEach((b) => (b.onclick = () => { const S = SKIN(b.dataset.buy); if (buySkin(S)) { flashMsg(`「${S.nm}」 도색을 샀습니다 · 기체 정보창의 도색에서 입히세요`); drawShopHead(); drawShopSkin(); drawTitle(); } }));
 }
 
-const MODEL_FILE = { astra: 'm_guardian', rex: 'm_titan' };   // 다른 기체의 몸을 빌려 쓰는 기체
+const MODEL_FILE = { astra: 'm_guardian', rex: 'm_titan', fortune: 'm_sky', lumen: 'm_samurai', wraith: 'm_phantom', ironlead: 'm_guardian', arkos: 'god_black', zero: 'god_white' };   // 다른 기체의 몸을 빌려 쓰는 기체
 async function loadMech(id) {
   if (mechCache[id]) return mechCache[id];
   const g = await gltfL.loadAsync(`models/${MODEL_FILE[id] || id}.glb`);
@@ -1785,7 +1816,7 @@ function jetFire(tgt) {
 // 로봇은 작아지며 사라지고 전투기가 펼쳐진다(반대도 같은 순서, 아주 짧게)
 // ── ASCEND 변신 엔진(lib/transform.js + lib/ascend_tf3.js) 연결: 로봇 뼈가 접히고 전투기 판이 날아와 맞물린다 ──
 // 피닉스(세이버 '피닉스')와 같은 '불꽃' 연출(판 72조각, 불뛰)을 세 기체에 모두 적용. 진행도 k는 이 게임이 직접 정해 아주 짧게 돌린다
-const JSKIN = { rex: 'm_titan', astra: 'm_guardian', god: 'm_wizard', god_white: 'm_sky', god_red: 'm_striker', god_black: 'm_phantom' };
+const JSKIN = { fortune: 'm_sky', lumen: 'm_samurai', wraith: 'm_phantom', ironlead: 'm_guardian', arkos: 'm_phantom', zero: 'm_sky', rex: 'm_titan', astra: 'm_guardian', god: 'm_wizard', god_white: 'm_sky', god_red: 'm_striker', god_black: 'm_phantom' };
 const TF_M = { obj: null, wrap: P.wrap, _ws0: 1.25, _bones: null };
 const TF_E = { mdl: TF_M, wg: { H: 23.75 }, fk: 'mech4', _jet: null };
 const TF_U = { id: 'me', cls: 'arkframe', x: 0, y: 0, vx: 0, vy: 0, dead: false, tf: { mode: 'robot', k: 0, mark: -1 } };
@@ -2096,6 +2127,11 @@ const EVENTS = [
   [262, () => { banner('무리 습격'); sfx.warn(); swarm(38); }],
   [RUN_TIME, () => { if (!(G.mis && G.mis.obj) && !(G.chal && G.chal.time > RUN_TIME)) spawnFinal(); }],
 ];
+function spawnBossK(bk, tag) {
+  if (G.won || G.state !== 'play' || !ET[bk]) return; const [x, z] = spawnPos(150, 170);
+  banner(`${tag ? tag + ' · ' : ''}${ET[bk].boss}`, 2600); sfx.warn(); screenFlash('#c9a8ff', .3, .8);
+  const e = spawn(bk, x, z); G.boss = e; if (e && ET[bk].virt) loadBossVis(bk).then((v) => { if (!e.dead && G.state !== 'over') { e.vis = v; scene.add(v.wrap); G.visOn = v; } }).catch(() => { });
+}
 function spawnFinal() {
   if (G.bossOn || G.won) return; G.finalT = G.t; const bk = CH().boss; later(1.4, () => radio('boss', 1));
   const [x, z] = spawnPos(150, 170);
@@ -2366,7 +2402,7 @@ function misMesh(kind, col) {
   scene.add(grp); misObjs.push(grp); return grp;
 }
 function initMission(C) {
-  const ty = C.type || '생존', k = 1 + .3 * (G.threat - 1), M = { ty, obj: false }; G.mis = M; G.failMsg = null;
+  const ty = C.type || '생존', k = 1 + .3 * (G.threat - 1), M = { ty, obj: false }; G.mis = M; G.failMsg = null; G.rushI = 0;
   if (ty === '방어') { const o = { x: 0, z: -34, r: 11, hp: 1200 * k, kind: 'pylon' }; o.max = o.hp; o.mesh = misMesh('pylon', 0x9fd8ff); M.tgt = o; M.obj = true; M.until = 170; M.tgtP = .3; }
   if (ty === '호위') { const o = { x: -185, z: 0, r: 12, hp: 1100 * k, kind: 'ship', vx: 370 / 150 }; o.max = o.hp; o.mesh = misMesh('ship'); M.tgt = o; M.obj = true; M.tgtP = .28; P.x = -160; P.z = 26; }
   if (ty === '소탕' || ty === '시간제한') { const N = ty === '소탕' ? 6 : 5; M.nests = N; M.obj = true; if (ty === '시간제한') M.limit = 140;
@@ -2570,6 +2606,7 @@ function kill(e) {
     ring(e.x, e.z, 6, 70, .6, T.col); sfx.boom(); G.shake = 6; G.slow = .35; G.hstop = .1; P.ult = Math.min(100, P.ult + 25 * (P.ultGain || 1)); G.st.big++;
     xfBoom(e.x, e.z, e.t === 'queen' ? 'boss' : 'elite', T.h * .9, 'zeta');
     if (e.vis) dropBossVis(e);
+    if (e === G.boss && CH().rush && (G.rushI = (G.rushI || 0) + 1) < CH().rush.length) { if (e.vis) dropBossVis(e); later(1.2, () => spawnBossK(CH().rush[G.rushI], `연전 ${G.rushI + 1}/${CH().rush.length}`)); return; }
     if (e.t === 'queen' || e === G.boss) { radio('win', 1); win(); return; }
     radio('big', 1);
     picks.push({ kind: 'chest', x: e.x, z: e.z, t: 0 }); picks.push({ kind: 'heal', x: e.x + 12, z: e.z + 6, t: 0 });
@@ -2736,7 +2773,7 @@ async function startRun() {
   G.chi = (CHN ? clamp(CHN.ch || 1, 1, CHAPTERS.length) : clamp(save.ch, 1, save.chMax)) - 1; G.threat = CHAPTERS[G.chi].th; leaveLobby(); resetRun(); G.chal = CHN || null; if (CHN && CHN.threat) G.threat = CHN.threat; await setMech(save.mech);
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   if (G.chal) { if (G.chal.pDmg) P.dmgMul *= G.chal.pDmg; if (G.chal.pHp) { P.maxHp = Math.round(P.maxHp * G.chal.pHp); P.hp = P.maxHp; } if (G.chal.noRegen) P.regen = 0; }
-  G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
+  G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls) || !!MECH(save.mech).allCls; if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
   { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico2('sk:' + m.id + ':q', '#ffd98a'); const EL0 = ELEM[m.el]; $('#bElem').firstElementChild.innerHTML = ico2('el_' + m.el, EL0.col); $('#bElem').style.setProperty('--ec', EL0.col); $('#bElem').title = `${EL0.sk.nm} · 계열 기술 (R)`; $('#bAuto').style.setProperty('--ec', EL0.col); UP.elemUp.nm = `${EL0.nm} 각성`; $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico2('sk:' + m.id + ':e', '#ffffff'); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
     $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=15)`; $('#chLabel').textContent = `${G.chal ? (G.chal.label || '도전') : stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
@@ -3357,7 +3394,7 @@ const ELEM = {
 };
 const EL_KEYS = Object.keys(ELEM);
 const EL_OF = { mech4: 'elec', m_samurai: 'wind', m_striker: 'light', mech3: 'fire', m_guardian: 'water', m_titan: 'fire', m_ranger: 'ice', m_artillery: 'fire', m_sky: 'wind',
-  m_phantom: 'dark', m_wizard: 'elec', m_origin: 'ice', mech_leg: 'light', astra: 'water', rex: 'fire', god: 'light', god_white: 'elec', god_red: 'dark', god_black: 'dark' };
+  m_phantom: 'dark', m_wizard: 'elec', m_origin: 'ice', mech_leg: 'light', astra: 'water', rex: 'fire', fortune: 'wind', lumen: 'light', wraith: 'dark', ironlead: 'elec', arkos: 'dark', zero: 'light', god: 'light', god_white: 'elec', god_red: 'dark', god_black: 'dark' };
 for (const m of MECHS) m.el = EL_OF[m.id] || 'fire';
 // 초반 난이도 완화: 1부 앞쪽 장은 적이 약하고 덜 아프다(1부 8장부터 원래 난이도)
 const EZ = () => { const c = CHAPTERS[G.chi]; if (!c || c.part !== 1) return 1; return Math.min(1, .66 + G.chi * .02); };
@@ -3381,7 +3418,7 @@ let _ig = 0;
 function shadeHex(c, k = .45) { const n = parseInt(c.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; const f = (v) => Math.round(v * k).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
 function tintHex(c, k) { const n = parseInt(c.slice(1), 16), f = (v) => Math.round(v + (255 - v) * k).toString(16).padStart(2, '0'); return '#' + f((n >> 16) & 255) + f((n >> 8) & 255) + f(n & 255); }
 function ico2(k, c = '#9ff3ff', cls = '') {
-  if (typeof k === 'string' && k.startsWith('sk:')) { const [, id, s] = k.split(':'); return imgIco(`s_${id}_${s}`, cls); }
+  if (typeof k === 'string' && k.startsWith('sk:')) { const [, id, s] = k.split(':'), mm = MECH(id); return imgIco(`s_${id}_${s}`, cls).replace('<img ', `<img onerror="this.onerror=null;this.src='img/icon/s_${s === 'e' ? mm.auto.k : mm.ult.k}.webp?v=1'" `); }
   { const f0 = IMGI[k] || IMGI2[k]; if (f0) return imgIco(f0, cls); }
   const id = 'ig' + (++_ig), n = gic(k);
   if (n) return `<svg class="ico ico2 gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="362" y2="512"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="${tintHex(c, .45)}"/><stop offset="1" stop-color="${c}"/></linearGradient></defs><path fill="url(#${id})" d="${GICO[n]}"/></svg>`;
@@ -3760,7 +3797,7 @@ const pilotImg = (i) => `img/pilot/p${i}.webp?v=1`;
 const pilotOf = () => PILOTS[((save.acc.pilot || 1) - 1) % PILOTS.length];
 const pName = () => save.acc.name || pilotOf().nm;
 function drawProf() { const el = $('#prof'); if (!el) return; const A = save.acc, n = mailNew();
-  el.innerHTML = `<span class="pav"><img src="${pilotImg(A.pilot || 1)}" alt=""><b class="num">${A.lv}</b></span><span class="pin"><b>${esc(pName())}</b><small>Lv ${A.lv} · ${pilotOf().cs}</small><i class="pxp"><i style="width:${Math.min(100, A.exp / needExp(A.lv) * 100).toFixed(1)}%"></i></i></span>${n ? `<em class="pdot num">${n}</em>` : ''}`; }
+  el.innerHTML = `<span class="pav"><img src="${pilotImg(A.pilot || 1)}" alt=""><b class="num">${A.lv}</b></span><span class="pin"><b>${esc(pName())}</b><small>Lv ${A.lv} · ${esc(A.emblem || pilotOf().cs)}</small><i class="pxp"><i style="width:${Math.min(100, A.exp / needExp(A.lv) * 100).toFixed(1)}%"></i></i></span>${n ? `<em class="pdot num">${n}</em>` : ''}`; }
 let profView = 'home';
 function openProf(v) { profView = v || 'home'; drawProfP(); $('#profP').classList.remove('hide'); }
 function drawProfP() {
@@ -3777,8 +3814,10 @@ function drawProfP() {
       <div class="pfx"><span><i style="width:${Math.min(100, A.exp / need * 100).toFixed(1)}%"></i></span><em class="num">${A.exp} / ${need}</em></div>
       <p class="pfb">계정 보너스 · 모든 기체 내구·화력 <b class="num">+${((A.lv - 1) * .5).toFixed(1)}%</b> · 레벨이 오를 때마다 우편으로 보상</p></div></div>
       <div class="pfs">${[['출격', save.stat.runs], ['승리', save.stat.wins], ['격파', save.stat.kills.toLocaleString()], ['깬 장', cleared], ['기동전사', `${own}/${MECHS.length}`]].map(([k, v]) => `<div><small>${k}</small><b class="num">${v}</b></div>`).join('')}</div>
+      ${(save.emblems || []).length ? `<div class="pfe"><b>칭호</b>${['', ...save.emblems].map((e) => `<button class="emb ${(A.emblem || '') === e ? 'on' : ''}" data-e="${esc(e)}">${e ? '「' + esc(e) + '」' : '달지 않음'}</button>`).join('')}</div>` : ''}
       <div class="pfm">${tiles.map(([ic, t, d, go, dot]) => `<button class="pmb" data-go="${go}"><span class="skt">${ico2(ic, '#f2b544')}</span><span><b>${t}${dot ? `<i class="dot"></i>` : ''}</b><small>${d}</small></span><em>›</em></button>`).join('')}</div></div>`;
     body.querySelectorAll('.pmb').forEach((b) => (b.onclick = () => { profView = b.dataset.go; drawProfP(); }));
+    body.querySelectorAll('.emb').forEach((b) => (b.onclick = () => { A.emblem = b.dataset.e || ''; persist(); drawProfP(); drawProf(); }));
     const saveName = () => { const v = $('#pfName').value.trim().slice(0, 10); A.name = v; persist(); drawProf(); flashMsg('이름을 저장했습니다'); };
     $('#pfNameGo').onclick = saveName; $('#pfName').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') saveName(); };
   } else if (profView === 'mail') {
@@ -4078,10 +4117,48 @@ const dailyPending = () => loginReady() || (save.daily.ms || []).some((m) => m.d
 // ── 챕터: 1장은 처음 난이도 그대로. 장이 오를수록 적 구성·땅 색·중간 보스가 바뀌고 강해진다
 // 막 = ASCEND 은하 지도의 행성, 장 = 그 행성의 전장. 기체는 유저가 고르고, 장마다 추천 기종만 있다
 // 부: 이야기 단위(6막 24장). 1부는 처음 만든 그대로, 2부부터 임무 방식과 막 보스가 붙는다
+// ───────── 4부~10부: 설계 자료(story_10parts.json) → 막·장·보스·보상 ─────────
+const PXD = [{"no":4,"nm":"연맹의 균열","syn":"연맹 수도 리베르타스가 둘로 갈라진다. 연맹 제독 「양」이 합류한다. \"홍차는 끝나고 마시자. 작전은 내가 짠다.\" 그런데 작전마다 적이 먼저 와 있다. 위치를 흘리고 있던 것은 다름 아닌 루나였다. \"이건 내가 아니야! 도와줘…!\"","end":"루나의 몸속에 심어진 제타 링크의 둥지를 부수고 루나를 되찾는다. 링크가 끊기는 순간, 루나가 마지막으로 받은 신호의 출처가 드러난다 ─ 거인의 문 너머.","acts":[{"place":"리베르타스 항구","title":"자유의 항구","story":"연맹 수도의 관문. 양 제독이 첫 작전을 짠다. 연맹 무인기 R-9가 제타 신호에 오염되어 있다.","boss":"오염된 무인기 R-9","reward":"결정 + 코어","ch":[["항구 경보","항구 상공에 들이닥친 무인기 떼를 떨어뜨려라",["사격"],"제공권"],["화물 부두","컨테이너 사이로 밀려드는 반란군을 막아라",["중장"],"생존"],["밀수선 추격","도망치는 밀수선을 끝까지 쫓아라",["기동"],"돌파"],["결전 · 오염된 R-9","양 제독 왈, \"회수하면 보너스예요.\" 오염된 R-9를 무력화하라",["근접"],"보스"]]},{"place":"의회 도시","title":"분열된 의회","story":"의회가 둘로 갈라졌다. 시민을 지키며 반란군 사령관을 찾는다.","boss":"반란군 사령관 기체","reward":"전용 문양 「자유의 깃발」","ch":[["시위 광장","광장의 시민이 대피할 때까지 지켜라",["근접"],"방어"],["의사당 지붕","지붕 위 저격 기체를 먼저 잡아라",["사격"],"생존"],["지하철 터널","불 꺼진 터널 속 매복을 뚫어라",["기동"],"야간"],["결전 · 반란군 사령관","반란을 이끄는 중기체 사령관과 맞서라",["중장"],"보스"]]},{"place":"리베르타스 외곽","title":"루나의 신호","story":"작전마다 적이 먼저 와 있다. 세라가 신호를 추적한다. 송신자는 루나였다.","boss":"루나를 쫓아라","reward":"결정 + 별 조각","ch":[["잘못된 좌표","함정 좌표에 떨어졌다. 빠르게 빠져나가라",["기동"],"탈출"],["포위된 분대","포위된 아군 분대를 끝까지 지켜라",["중장"],"방어"],["두 개의 신호","\"신호가 두 개예요.\" 가짜 신호기를 모두 부숴라",["사격"],"소탕"],["결전 · 루나를 쫓아라","달아나는 루나의 기체를 따라잡아라(쓰러뜨리지 말 것)",["근접"],"돌파"]]},{"place":"반란 함대","title":"깨진 깃발","story":"반란 함대의 기함에 루나가 붙잡혀 있다.","boss":"반란 기함","reward":"전용 도색 「연맹 청색」","ch":[["함대 정박지","정박지의 대공 포대를 제압하라",["사격"],"생존"],["함상 격납고","격납고 안 근접전. 문을 지키는 기체를 베어라",["근접"],"생존"],["엔진 블록","엔진 블록을 지키는 중장갑 부대를 밀어내라",["중장"],"생존"],["결전 · 반란 기함","기함의 포탑과 지휘 기체를 함께 무너뜨려라",["기동"],"보스"]]},{"place":"기억의 숲","title":"기억의 숲","story":"리베르타스 근교 유리 숲. 루나의 머릿속 링크는 이곳의 둥지와 이어져 있다.","boss":"링크 브루드","reward":"결정 + 코어","ch":[["유리 숲","유리 나무 사이를 누비며 무리를 흩어라",["기동"],"생존"],["뿌리 아래","어두운 뿌리 동굴의 잠복충을 끊어라",["근접"],"야간"],["신경망 둥지","숲 곳곳의 신경망 둥지를 모두 태워라",["사격"],"소탕"],["결전 · 링크 브루드","루나와 이어진 거대 링크 브루드를 쓰러뜨려라",["중장"],"보스"]]},{"place":"리베르타스 상공","title":"돌아온 루나","story":"링크가 끊기기 직전, 오염된 루나의 기체가 마지막으로 막아선다.","boss":"오염된 루나 기체(무력화)","reward":"새 기체 「포춘」(전설·기동, 루나 전용기)","ch":[["마지막 신호","하늘을 덮은 링크 개체를 쏘아 떨어뜨려라",["사격"],"제공권"],["루나의 꿈","루나의 기억 속 전장. 빠르게 빠져나가라",["기동"],"돌파"],["결전 직전","루나에게 가는 길을 막는 벽을 부숴라",["중장"],"생존"],["결전 · 루나를 되찾아라","루나의 기체를 쓰러뜨리지 말고 무력화하라",["근접"],"보스"]]}]},{"no":5,"nm":"빛의 수호자","syn":"거인의 문으로 가려면 먼저 빛의 사원의 허락이 필요하다. 사원의 노래가 끊기자 수호상들이 미쳐 날뛴다. 주인공은 이그니를 비롯한 정령들과 함께 수호상의 시험을 넘고, 별빛 도서관에서 기록되지 않은 전쟁 ─ 네 신기(神機)의 이야기 ─ 를 찾아낸다.","end":"타락한 수호자를 정화하자 수호자들이 맹세한다. 네 신기가 잠든 「신기 성소」는 거인의 문 너머, 오메가 지배권 깊은 곳에 있다.","acts":[{"place":"사원 외곽","title":"빛의 순례길","story":"빛의 사원으로 가는 순례길. 길목마다 수호 기계가 길을 막는다.","boss":"순례길의 파수꾼","reward":"결정 + 코어","ch":[["순례자의 길","긴 순례길을 따라 무리를 뚫고 나아가라",["기동"],"돌파"],["무너진 문","무너진 문 앞에서 쏟아지는 돌 병사를 버텨라",["중장"],"생존"],["빛의 함정","빛의 덫이 깔린 길. 멀리서 장치를 부숴라",["사격"],"소탕"],["결전 · 순례길의 파수꾼","순례자를 시험하는 파수꾼과 맞서라",["근접"],"보스"]]},{"place":"노래하는 탑","title":"잃어버린 노래","story":"사원의 노래가 끊겼다. 노래를 되찾아야 수호상이 잠든다.","boss":"침묵의 성가대장","reward":"전용 문양 「학과 보름달」","ch":[["메아리 회랑","메아리치는 회랑의 빛 기계를 떨어뜨려라",["사격"],"생존"],["노래하는 탑","노래가 다시 울릴 때까지 탑을 지켜라",["중장"],"방어"],["소리 없는 홀","빛도 소리도 없는 홀. 가까이 오는 적을 베어라",["근접"],"야간"],["결전 · 침묵의 성가대장","노래를 삼킨 성가대장을 쓰러뜨려라",["기동"],"보스"]]},{"place":"수호상의 정원","title":"수호상의 시험","story":"네 원소의 시험. 이그니가 웃는다. \"하하! 마음에 들었어. 앞으로는 내가 같이 타 줄게!\"","boss":"대지의 수호상","reward":"결정 + 별 조각","ch":[["불의 시험","이그니와 함께 불타는 정원을 버텨라",["중장"],"생존"],["물의 시험","밀려드는 물살 위를 빠르게 건너라",["기동"],"돌파"],["바람의 시험","하늘을 가르는 바람 정령을 쏘아 떨어뜨려라",["사격"],"제공권"],["결전 · 대지의 수호상","산만 한 대지의 수호상과 정면 승부",["근접"],"보스"]]},{"place":"별빛 도서관","title":"기록되지 않은 전쟁","story":"도서관 깊은 서가에서 네 신기 ─ 태양·성광·혈월·밤 ─ 의 기록이 나온다.","boss":"도서관의 사서","reward":"전용 도색 「별빛 은색」","ch":[["별빛 서가","서가 위를 날아다니는 빛 기계를 떨어뜨려라",["사격"],"생존"],["금서 구역","금서를 지키는 근위 기계를 베어라",["근접"],"생존"],["시간의 회랑","시간이 뒤틀린 회랑. 빠르게 지나가라",["기동"],"시간제한"],["결전 · 도서관의 사서","모든 기록을 지키는 거대 사서 기계와 맞서라",["중장"],"보스"]]},{"place":"성운의 심장","title":"성운의 심장","story":"사원의 빛을 먹어 치우는 타락한 수호자가 성운 한가운데에 있다.","boss":"타락한 수호자","reward":"결정 + 코어","ch":[["빛의 폭풍","빛의 폭풍 속 비행 개체를 쏘아라",["사격"],"제공권"],["성운 결정 광산","결정 광산에서 몰려드는 돌 병사를 밀어내라",["중장"],"생존"],["심장 박동","심장이 다시 뛰기 전에 봉인을 풀어라",["기동"],"시간제한"],["결전 · 타락한 수호자","빛을 삼킨 수호자를 정화하라",["근접"],"보스"]]},{"place":"맹세의 제단","title":"수호자의 맹세","story":"되살아난 수호자들이 맹세한다. 그 순간 공허의 그림자가 제단을 덮친다.","boss":"빛이 꺼지기 전에(공허 선봉)","reward":"새 기체 「루멘 가디언」(전설·근접)","ch":[["맹세의 제단","맹세 의식이 끝날 때까지 제단을 지켜라",["중장"],"방어"],["빛의 군대","수호자 군대와 함께 적 선봉을 쓸어라",["사격"],"생존"],["어둠의 습격","불이 꺼진 사원. 어둠 속 적을 베어라",["근접"],"야간"],["결전 · 빛이 꺼지기 전에","공허의 선봉 기체를 쓰러뜨려 사원의 빛을 지켜라",["기동"],"보스"]]}]},{"no":6,"nm":"거인의 문","syn":"배양 기록의 서명 「OMEGA」를 따라 거인의 문 앞에 선다. 오메가의 군주 「아르코스」가 말한다. \"창조주의 개들이여. 문 앞에서 기다리겠다.\" 쓰러진 거인들의 무덤과 그림자의 군주를 지나, 닫혀 있던 문이 처음으로 열린다.","end":"문지기 거인이 쓰러지고 거인의 문이 열린다. 문 너머로 오메가 본성 「아르케」의 불빛이 보인다. 아르코스의 목소리가 다시 들린다. \"창조주는 우리를 지우려 했다. 살아남으려 한 것이 죄인가?\"","acts":[{"place":"문 앞 전초","title":"창조주의 개들","story":"아르코스의 첫 메시지. 오메가는 인간을 알파의 개라고 부른다.","boss":"오메가 근위대장","reward":"결정 + 코어","ch":[["전초 기지","전초 기지를 지키는 오메가 저격대를 정리하라",["사격"],"생존"],["거인 뼈 사막","거인의 뼈가 널린 사막. 넓게 움직이며 싸워라",["기동"],"생존"],["오메가 정찰대","빠른 오메가 정찰 기체와 근접전",["근접"],"생존"],["결전 · 오메가 근위대","근위대장 기체와 그 호위를 쓰러뜨려라",["중장"],"보스"]]},{"place":"거인의 무덤","title":"거인의 무덤","story":"옛 거인들이 잠든 계곡. 무덤 안에서 무언가가 깨어난다.","boss":"무덤에서 깨어난 것","reward":"전용 문양 「거인의 해골」","ch":[["묘지 계곡","어두운 계곡의 매복을 베어 넘겨라",["근접"],"야간"],["쓰러진 거인","쓰러진 거인의 몸 위에서 버텨라",["중장"],"생존"],["무덤 도굴꾼","거인의 유물을 훔치는 도굴 기체를 쫓아 쏴라",["사격"],"소탕"],["결전 · 무덤에서 깨어난 것","되살아난 거인 병기를 다시 잠재워라",["기동"],"보스"]]},{"place":"무너진 다리","title":"건널 수 없는 강","story":"빛의 강 위 끊어진 다리. 하늘에는 오메가의 공중 요새가 떠 있다.","boss":"강의 수문장","reward":"결정 + 별 조각","ch":[["끊어진 다리","끊어진 다리를 건너 반대편으로 돌파하라",["기동"],"돌파"],["공중 요새","하늘을 덮은 공중 요새의 함재기를 떨어뜨려라",["사격"],"제공권"],["다리 위 결투","좁은 다리 위, 오메가 검사들과의 결투",["근접"],"생존"],["결전 · 강의 수문장","강을 지키는 거대 수문장을 쓰러뜨려라",["중장"],"보스"]]},{"place":"그림자 숲","title":"그림자의 군주","story":"빛이 들지 않는 숲. 그림자로 만든 분신들이 주인공을 흉내 낸다.","boss":"그림자의 군주","reward":"전용 도색 「그림자 흑색」","ch":[["그림자 숲","어둠 속에서 튀어나오는 적을 끊어라",["근접"],"야간"],["거울 미궁","거울 미궁을 빠르게 빠져나가라",["기동"],"탈출"],["그림자 분신","나를 흉내 내는 분신들을 멀리서 정리하라",["사격"],"생존"],["결전 · 그림자의 군주","숲을 지배하는 그림자의 군주와 맞서라",["중장"],"보스"]]},{"place":"문의 기관실","title":"거대한 기관","story":"거인의 문을 움직이는 거대한 톱니와 증기의 세계.","boss":"문을 여는 손","reward":"결정 + 코어","ch":[["톱니 회랑","맞물려 도는 톱니 사이에서 버텨라",["중장"],"생존"],["증기 갱도","증기가 뿜어지는 갱도 속 근접전",["근접"],"생존"],["동력로","문이 열릴 때까지 동력로를 지켜라",["사격"],"방어"],["결전 · 문을 여는 손","문을 여는 거대한 기계 팔을 쓰러뜨려라",["기동"],"보스"]]},{"place":"거인의 문","title":"열리는 문","story":"문이 열리며 오메가 대군이 쏟아진다. 문 꼭대기에서 문지기 거인이 내려다본다.","boss":"문지기 거인","reward":"새 기체 「레이스 헌터」(전설·기동, 오메가 사냥 기체)","ch":[["문틈의 빛","문틈으로 쏟아지는 비행 개체를 떨어뜨려라",["사격"],"제공권"],["쏟아지는 오메가","끝없이 쏟아지는 오메가 대군을 버텨라",["중장"],"생존"],["문 위의 결투","문 꼭대기, 오메가 결투사와의 일대일",["근접"],"생존"],["결전 · 문지기 거인","하늘만 한 문지기 거인과 결전",["기동"],"보스"]]}]},{"no":7,"nm":"오메가 본성 아르케","syn":"오메가 본성 아르케로 강하한다. 강철 숲과 배양 도시를 지나며 주인공은 오메가 역시 알파의 손으로 만들어졌고, 지워질 운명이었다는 기록을 본다. 왕좌의 계단 끝에서 아르코스가 기다린다.","end":"아르코스가 무릎을 꿇는다. \"…패배를 인정한다. 그리고 너의 손을 잡겠다. 창조주와는 다른 손이니.\" 인간과 오메가가 처음으로 손을 잡는 순간, 알파가 남겨 둔 마지막 정화 장치가 깨어나 은하 곳곳에 「허무의 균열」이 열린다.","acts":[{"place":"아르케 궤도","title":"강하 작전","story":"대기권을 뚫고 아르케로 강하한다. 착륙 지점을 지키지 못하면 후속 부대가 내려올 수 없다.","boss":"궤도 방어포","reward":"결정 + 코어","ch":[["강하 포드","포드에서 내리자마자 빠르게 거점을 잡아라",["기동"],"돌파"],["착륙 지점 사수","후속 부대가 내릴 때까지 착륙 지점을 지켜라",["중장"],"방어"],["대공 진지","강하선을 노리는 대공 진지를 모두 부숴라",["사격"],"소탕"],["결전 · 궤도 방어포","하늘을 겨눈 거대 방어포와 그 수호기를 쓰러뜨려라",["근접"],"보스"]]},{"place":"강철 숲","title":"강철 숲","story":"나무 대신 강철 기둥이 선 숲. 기계 늑대 무리가 사냥을 시작한다.","boss":"숲의 주인","reward":"전용 문양 「강철 늑대」","ch":[["강철 나무","강철 기둥 사이로 다가오는 적을 베어라",["근접"],"생존"],["기계 늑대 무리","빠른 기계 늑대 떼를 따돌리며 싸워라",["기동"],"생존"],["숲의 감시탑","감시탑의 저격 기계를 먼저 떨어뜨려라",["사격"],"소탕"],["결전 · 숲의 주인","강철 숲을 지배하는 거대 기계 짐승과 맞서라",["중장"],"보스"]]},{"place":"배양 도시","title":"오메가의 요람","story":"끝없는 배양 탑의 도시. 오메가 병사들이 지금도 태어나고 있다.","boss":"요람의 어머니","reward":"결정 + 별 조각","ch":[["배양 탑","배양 탑을 모두 무너뜨려라",["사격"],"소탕"],["요람 거리","좁은 거리에서 막 깨어난 병사들과 근접전",["근접"],"생존"],["깨어나는 병사들","사방에서 깨어나는 병사들을 버텨라",["중장"],"생존"],["결전 · 요람의 어머니","배양 도시의 핵, 요람의 어머니를 멈춰라",["기동"],"보스"]]},{"place":"창조주의 기록소","title":"창조주의 기록","story":"알파가 오메가를 지우려 한 기록. 아르코스가 묻는다. \"살아남으려 한 것이 죄인가?\"","boss":"기록 수호자","reward":"전용 도색 「오메가 자주」","ch":[["기록 보관소","기록을 내려받는 동안 보관소를 지켜라",["사격"],"방어"],["지워진 전쟁","불 꺼진 기록 속 유령 병사들을 베어라",["근접"],"야간"],["진실의 방","무너지는 진실의 방을 빠져나가라",["기동"],"탈출"],["결전 · 기록 수호자","기록을 지키는 수호자를 넘어서라",["중장"],"보스"]]},{"place":"왕좌의 계단","title":"왕좌의 계단","story":"천 개의 계단 위, 오메가 근위 기사단이 길을 막는다.","boss":"계단의 끝(근위 기사단장)","reward":"결정 + 코어","ch":[["천 개의 계단","쏟아지는 공격을 맞으며 계단을 끝까지 올라라",["중장"],"돌파"],["근위 기사단","근위 기사들과 정면으로 칼을 맞대라",["근접"],"생존"],["하늘 정원","하늘 정원을 지키는 비행 기사들을 떨어뜨려라",["사격"],"제공권"],["결전 · 계단의 끝","계단 끝을 지키는 기사단장과 결전",["기동"],"보스"]]},{"place":"아르케 왕좌","title":"아르코스","story":"오메가의 군주 아르코스와의 결전. 이 싸움은 지우기 위한 싸움이 아니다.","boss":"오메가 군주 아르코스","reward":"새 기체 「아르코스」(신화·근접, 오메가 군주기)","ch":[["왕좌의 문","왕좌 앞 포대를 모두 침묵시켜라",["사격"],"소탕"],["오메가 친위대","마지막 친위대를 버텨 내라",["중장"],"생존"],["군주의 시험","아르코스가 보낸 분신과의 시험",["근접"],"생존"],["결전 · 오메가 군주 아르코스","아르코스를 쓰러뜨리고 손을 내밀어라",["기동"],"보스"]]}]},{"no":8,"nm":"허무의 균열","syn":"알파의 마지막 정화 장치가 열어 버린 허무의 균열. 별이 하나씩 꺼지고, 도시가 거꾸로 뒤집힌다. 균열 깊은 곳, 시간이 멈춘 함대 속에서 주인공은 낯익은 인식표를 줍는다. 분대가 사라진 날, 분대는 죽은 것이 아니었다. 허무에 끌려간 것이었다.","end":"공허의 사도를 쓰러뜨리고 분대를 데리고 돌아온다. 분대장 민재가 웃는다. \"감이 아니라 경험이다.\" 그러나 균열 너머에서 다른 목소리가 들린다. 여섯 날개가 부른다 ─ 신기 성소로 오라고.","acts":[{"place":"균열 경계","title":"사라지는 별","story":"하늘에서 별이 하나씩 지워진다. 공허 포자가 땅을 덮는다.","boss":"균열의 문지기","reward":"결정 + 코어","ch":[["지워지는 하늘","하늘을 지우며 내려오는 공허 비행체를 쏘아라",["사격"],"제공권"],["공허 포자","땅을 덮은 공허 포자를 모두 태워라",["근접"],"소탕"],["별이 꺼진 자리","빛이 사라진 땅. 어둠 속에서 살아남아라",["기동"],"야간"],["결전 · 균열의 문지기","균열 입구를 지키는 문지기를 쓰러뜨려라",["중장"],"보스"]]},{"place":"거꾸로 선 도시","title":"거꾸로 선 도시","story":"하늘과 땅이 뒤바뀐 도시. 빌딩이 하늘로 떨어진다.","boss":"도시를 삼킨 것","reward":"전용 문양 「거꾸로 탑」","ch":[["뒤집힌 거리","뒤집힌 거리를 빠르게 누비며 싸워라",["기동"],"생존"],["떨어지는 빌딩","무너지는 빌딩 사이로 탈출하라",["중장"],"탈출"],["거울 시민","사람의 모습을 흉내 내는 공허 개체를 베어라",["근접"],"생존"],["결전 · 도시를 삼킨 것","도시 전체를 삼킨 공허 거체를 쏘아라",["사격"],"보스"]]},{"place":"시간이 멈춘 함대","title":"남겨진 함대","story":"시간이 멈춘 함대 한가운데에서 하윤의 인식표를 줍는다. 「한강 야시장, 네가 쏘는 거야」.","boss":"함대를 붙잡은 손","reward":"결정 + 별 조각","ch":[["멈춘 시간","멈춘 시간이 풀리는 동안 함선을 지켜라",["사격"],"방어"],["유령 함대","불 꺼진 함선 사이의 유령 병사를 베어라",["근접"],"야간"],["남겨진 인식표","인식표 신호를 따라 함대 깊숙이 들어가라",["기동"],"돌파"],["결전 · 함대를 붙잡은 손","함대를 쥐고 있는 거대한 공허의 손을 잘라라",["중장"],"보스"]]},{"place":"메아리 행성","title":"메아리","story":"과거의 전투가 되풀이되는 행성. 네오 서울의 하늘, 불의 행성, 하이브가 다시 나타난다.","boss":"메아리 여왕","reward":"전용 도색 「첫 출격」(1부 기본 도색 복각)","ch":[["메아리 · 네오 서울","그날의 네오 서울. 이번엔 분대를 지켜라",["근접"],"방어"],["메아리 · 불의 행성","되살아난 용암 둥지를 버텨라",["중장"],"생존"],["메아리 · 하이브","되살아난 하이브의 하늘을 비워라",["사격"],"제공권"],["결전 · 메아리 여왕","공허가 흉내 낸 제타 여왕과 다시 싸워라",["기동"],"보스"]]},{"place":"공허의 탑","title":"공허의 탑","story":"균열의 중심에 선 탑. 층마다 중력과 시간이 다르게 흐른다.","boss":"탑의 꼭대기","reward":"결정 + 코어","ch":[["탑의 1층","탑 입구의 공허 거체들을 버텨라",["중장"],"생존"],["무중력 층","떠다니는 잔해 사이를 빠르게 누벼라",["기동"],"생존"],["거꾸로 흐르는 시간","시간이 거꾸로 흐르기 전에 장치를 부숴라",["사격"],"시간제한"],["결전 · 탑의 꼭대기","탑 꼭대기의 공허 수호자와 근접전",["근접"],"보스"]]},{"place":"균열의 심장","title":"분대장 민재","story":"허무에 붙잡힌 분대를 찾았다. 민재가 말한다. \"…너라도 살아.\" 이번에는 다 같이 돌아간다.","boss":"공허의 사도","reward":"새 기체 「아이언 리드」(전설·중장, 분대장 민재 기체)","ch":[["마지막 통신","분대의 마지막 통신이 끊기기 전에 하늘을 비워라",["사격"],"제공권"],["붙잡힌 분대","풀려난 분대원들이 탈출할 때까지 곁을 지켜라",["중장"],"호위"],["공허의 사도들","사도를 따르는 공허 기사들을 베어라",["근접"],"생존"],["결전 · 공허의 사도","분대를 삼킨 공허의 사도와 결전",["기동"],"보스"]]}]},{"no":9,"nm":"신의 시련","syn":"여섯 날개의 부름을 따라 신기 성소에 들어선다. 이곳에는 네 신기 ─ 태양의 솔라리스, 성광의 아크엔젤, 혈월의 블러드 이클립스, 밤의 녹턴 ─ 가 잠들어 있다. 신기는 주인을 스스로 고른다. 시련을 넘은 자만이 그들을 탈 수 있다.","end":"네 신기가 주인공을 인정한다. 성소 가장 깊은 곳, 여섯 날개 세라핌이 마지막으로 알려 준다. 제타도, 오메가도, 공허도, 알파조차 한 존재의 실험이었다고. 은하 중심 대흑점에 있는 「설계자」의.","acts":[{"place":"성소 입구","title":"여섯 날개의 부름","story":"하늘로 이어진 계단. 천상의 문을 지키는 천사 수호기들이 앞을 막는다.","boss":"성소의 파수 천사","reward":"결정 + 코어","ch":[["하늘 계단","구름 위 계단을 빠르게 올라라",["기동"],"돌파"],["천상의 문","천상의 문 앞에서 천사 병사들을 버텨라",["중장"],"생존"],["깃털 폭풍","빛 깃털을 쏟아붓는 천사 편대를 떨어뜨려라",["사격"],"제공권"],["결전 · 성소의 파수 천사","성소를 지키는 파수 천사와 결전",["근접"],"보스"]]},{"place":"태양의 제단","title":"태양의 시련","story":"타오르는 들판 끝, 태양의 신기 솔라리스가 기다린다.","boss":"솔라리스","reward":"솔라리스 각성 조각(별 +1)","ch":[["타오르는 들판","불타는 들판에서 버텨라",["중장"],"생존"],["일식 직전","해가 가려지기 전에 빛 기둥을 모두 부숴라",["사격"],"시간제한"],["태양의 심장","태양의 심장까지 빠르게 파고들어라",["기동"],"돌파"],["결전 · 솔라리스","태양의 신기 솔라리스와 대검을 맞대라",["근접"],"보스"]]},{"place":"흰 깃털의 정원","title":"성광의 시련","story":"흰 깃털이 눈처럼 내리는 정원. 장창을 든 아크엔젤이 서 있다.","boss":"아크엔젤","reward":"아크엔젤 각성 조각(별 +1)","ch":[["흰 깃털의 정원","깃털 사이로 내려오는 비행 천사를 쏘아라",["사격"],"제공권"],["성광 비트 폭풍","사방에서 쏟아지는 성광 비트를 피하며 싸워라",["기동"],"생존"],["수호천사의 시험","수호천사들의 진형을 정면으로 버텨라",["중장"],"생존"],["결전 · 아크엔젤","성광의 신기 아크엔젤과 장창 대결",["근접"],"보스"]]},{"place":"붉은 달의 성","title":"혈월의 시련","story":"붉은 달이 뜬 성. 피로 맺은 맹세의 신기 블러드 이클립스.","boss":"블러드 이클립스","reward":"블러드 이클립스 각성 조각(별 +1)","ch":[["붉은 달 아래","붉은 달빛 아래 그림자 기사를 베어라",["근접"],"야간"],["피의 맹세","맹세의 제단이 꺼지지 않게 지켜라",["중장"],"방어"],["일식 진군","일식이 끝나기 전에 성문까지 돌파하라",["기동"],"시간제한"],["결전 · 블러드 이클립스","혈월의 신기 블러드 이클립스와 결전",["사격"],"보스"]]},{"place":"끝없는 밤의 회랑","title":"밤의 시련","story":"해가 뜨지 않는 회랑. 공허 광선을 쏘는 밤의 신기 녹턴.","boss":"녹턴","reward":"녹턴 각성 조각(별 +1)","ch":[["끝없는 밤","빛 한 점 없는 회랑에서 살아남아라",["사격"],"야간"],["공허 광선","쏟아지는 공허 광선을 피하며 앞으로 나아가라",["기동"],"돌파"],["그림자 날개","그림자 날개를 단 기사들을 베어라",["근접"],"생존"],["결전 · 녹턴","밤의 신기 녹턴과 결전",["중장"],"보스"]]},{"place":"성소 최심부","title":"신의 자격","story":"네 신기가 함께 노래한다. 성소가 무너지기 시작하고, 여섯 날개 세라핌이 마지막 시험을 낸다.","boss":"여섯 날개 세라핌","reward":"신기 전용 「각성」 도색 + 칭호 「신의 자격」","ch":[["네 신의 합창","네 신기의 시련을 한꺼번에 버텨라",["중장"],"생존"],["성소 붕괴","무너지는 성소를 빠져나가라",["기동"],"탈출"],["최심부","최심부를 지키는 천사 군단을 쏘아라",["사격"],"생존"],["결전 · 여섯 날개 세라핌","여섯 날개 세라핌과의 마지막 시련",["근접"],"보스"]]}]},{"no":10,"nm":"대흑점","syn":"은하 중심 대흑점. 지금까지 싸운 모두가 한 깃발 아래 모인다 ─ 양의 연맹 함대, 라인하르트의 제국 함대, 세라핀과 아스트라의 알파, 아르코스의 오메가, 이그니와 수호자들, 루나와 분대. 그리고 마지막 비밀이 드러난다. 세라는 처음부터 설계자가 심어 둔 감시 AI였다.","end":"세라는 설계자가 아닌 파일럿을 택한다. \"고른 게 아닙니다. 당신만 살아 있었습니다. …이번엔 제가 고릅니다.\" 설계자가 쓰러지고 꺼졌던 별들이 다시 켜진다. 에필로그 ─ 한강 야시장. 하윤이 말한다. \"네가 쏘는 거야.\"","acts":[{"place":"연합 함대 집결지","title":"모두의 깃발","story":"모든 세력이 한자리에 모인다. 양 제독이 작전을 짠다. \"홍차는 끝나고 마시자.\"","boss":"핵의 선봉","reward":"결정 + 코어","ch":[["집결지 방어","모든 함대가 모일 때까지 집결지를 지켜라",["중장"],"방어"],["연합 작전","제국·연맹 함대와 함께 적 전위대를 쳐라",["사격"],"생존"],["첫 충돌","설계자의 첫 군대와 정면 충돌",["근접"],"생존"],["결전 · 핵의 선봉","대흑점에서 나온 선봉 거체를 쓰러뜨려라",["기동"],"보스"]]},{"place":"사건의 지평선","title":"사건의 지평선","story":"빛조차 휘어지는 곳. 함대가 하나씩 끌려 들어간다.","boss":"지평선의 감시자","reward":"전용 문양 「꺼지지 않는 별」","ch":[["빛이 휘는 곳","휘어지는 공간을 빠르게 누벼라",["기동"],"생존"],["중력 폭풍","중력 폭풍 속에서 버텨라",["중장"],"생존"],["끌려가는 함대","끌려가는 아군 함선을 끝까지 지켜라",["사격"],"호위"],["결전 · 지평선의 감시자","지평선을 지키는 감시자와 근접전",["근접"],"보스"]]},{"place":"기원의 정원","title":"기원의 정원","story":"모든 실험이 시작된 정원. 제타의 첫 씨앗, 오메가의 첫 요람, 공허의 첫 그림자가 여기 있다.","boss":"정원사","reward":"결정 + 별 조각","ch":[["첫 번째 씨앗","제타의 첫 씨앗에서 깨어나는 원형 개체를 베어라",["근접"],"소탕"],["실패작의 무덤","버려진 실패작들의 무덤을 버텨라",["사격"],"생존"],["성공작의 요람","완벽하게 만들어진 원형 병사들을 막아라",["중장"],"생존"],["결전 · 정원사","정원을 가꾸던 설계자의 손, 정원사를 쓰러뜨려라",["기동"],"보스"]]},{"place":"모든 적의 회랑","title":"모든 적의 회랑","story":"설계자가 지금까지의 모든 적을 다시 불러낸다. 여왕, 근위기, 렉스, 거인, 사도가 차례로 나온다.","boss":"보스 연전","reward":"전용 도색 「역전의 용사」","ch":[["여왕의 회랑","제타 여왕과 메아리 여왕을 연달아 쓰러뜨려라",["사격"],"연전"],["군주들의 회랑","렉스와 근위기와 그림자의 군주를 연달아 넘어서라",["근접"],"연전"],["거인들의 회랑","문지기 거인과 공허의 사도를 연달아 쓰러뜨려라",["중장"],"연전"],["결전 · 회랑의 끝","모든 보스의 힘을 합친 그림자와 결전",["기동"],"연전"]]},{"place":"세라의 기억","title":"세라의 선택","story":"세라의 잠긴 기억이 열린다. 세라는 설계자가 심어 둔 감시 AI였다. 원본 세라가 기체를 빼앗으려 한다.","boss":"원본 세라","reward":"칭호 「세라의 파일럿」","ch":[["잠긴 기억","세라의 기억 속 전장을 빠르게 빠져나가라",["기동"],"탈출"],["세라의 목소리","두 개의 목소리가 섞인 전장. 하늘을 비워라",["사격"],"제공권"],["두 개의 세라","세라를 흉내 낸 분신들을 베어라",["근접"],"생존"],["결전 · 원본 세라","설계자의 감시 AI, 원본 세라와 결전",["중장"],"보스"]]},{"place":"대흑점","title":"마지막 비상","story":"모든 기체가 출격한다. 설계자와의 마지막 싸움. 이기면 꺼진 별들이 다시 켜진다.","boss":"설계자","reward":"새 기체 「어센드 제로」(신화·모든 기종 전환) + 엔딩 「한강 야시장」","ch":[["모든 기체 출격","연합 전군과 함께 마지막 방어선을 버텨라",["중장"],"생존"],["설계자의 손","설계자의 손이 부르는 원형 병기를 쏘아 떨어뜨려라",["사격"],"제공권"],["별이 다시 켜질 때","꺼진 별의 봉인을 시간 안에 모두 풀어라",["기동"],"시간제한"],["결전 · 설계자","모든 것을 만든 자, 설계자와의 마지막 결전",["근접"],"보스"]]}]}];
+// 부마다 전장 성격: 적 구성(막 1~6), 바닥 테마, 하늘·땅 색, 보스 모델, 보스 빛깔, 보상
+const PXC = {
+  4: { col: '#7fb8ff', mix: { trooper: 2, robo: 2.2, jet: 1.6, heli: 1.4, roach: 1, spit: 1 }, th: ['city', 'city', 'sand', 'deck', 'ash', 'city'], sky: 0x0c1424, c: ['#3a5a8a', '#0a1222'], g: [.75, .82, 1], mdl: ['m_sky', 'm_striker', 'm_phantom', 'm_artillery', 'm_wizard', 'm_sky'], bc: 0x6fb8ff,
+    rw: [{ gem: 300, core: 1500 }, { emblem: '자유의 깃발' }, { gem: 320, core: 1600 }, { skin: 'fedblue' }, { gem: 340, core: 1700 }, { rw: 'fortune' }] },
+  5: { col: '#ffe9a0', mix: { robo: 2.6, lurk: 1.4, plasma: 1.4, wing: 1.4, ling: .5 }, th: ['snow', 'void', 'sand', 'void', 'void', 'snow'], sky: 0x14121e, c: ['#9a8a5a', '#141008'], g: [1, .95, .8], mdl: ['m_origin', 'mech_leg', 'm_guardian', 'm_wizard', 'mech_leg', 'god'], bc: 0xffe9a0,
+    rw: [{ gem: 360, core: 1800 }, { emblem: '학과 보름달' }, { gem: 380, core: 1900 }, { skin: 'starsilver' }, { gem: 400, core: 2000 }, { rw: 'lumen' }] },
+  6: { col: '#c58cff', mix: { robo: 2.6, trooper: 2, jet: 1.5, heli: 1.4, lurk: 1, ling: .4 }, th: ['ash', 'ash', 'lava', 'void', 'deck', 'lava'], sky: 0x120a1c, c: ['#4a2a6a', '#0c0612'], g: [.8, .7, .95], mdl: ['m_titan', 'm_artillery', 'm_guardian', 'm_phantom', 'm_titan', 'm_titan'], bc: 0xb48cff,
+    rw: [{ gem: 420, core: 2100 }, { emblem: '거인의 해골' }, { gem: 440, core: 2200 }, { skin: 'shadow' }, { gem: 460, core: 2300 }, { rw: 'wraith' }] },
+  7: { col: '#d85aff', mix: { robo: 3, trooper: 2, behemoth: .4, roach: 1, plasma: 1, jet: 1 }, th: ['deck', 'ash', 'hive', 'deck', 'deck', 'void'], sky: 0x16081a, c: ['#5a2a6a', '#10060e'], g: [.85, .65, .9], mdl: ['m_artillery', 'm_titan', 'mech_leg', 'm_origin', 'm_samurai', 'god_black'], bc: 0xd85aff,
+    rw: [{ gem: 480, core: 2400 }, { emblem: '강철 늑대' }, { gem: 500, core: 2500 }, { skin: 'omega' }, { gem: 520, core: 2600 }, { rw: 'arkos' }] },
+  8: { col: '#8a9aff', mix: { lurk: 2.4, ling: 1.5, plasma: 2, spit: 1.5, bane: 1.4, wing: 1.2 }, th: ['void', 'city', 'deck', 'void', 'void', 'void'], sky: 0x05060e, c: ['#2a2a4a', '#040408'], g: [.62, .66, .9], mdl: ['m_phantom', 'm_wizard', 'm_titan', 'mech_leg', 'm_origin', 'god_black'], bc: 0x8a9aff,
+    rw: [{ gem: 540, core: 2700 }, { emblem: '거꾸로 탑' }, { gem: 560, core: 2800 }, { skin: 'first' }, { gem: 580, core: 2900 }, { rw: 'ironlead' }] },
+  9: { col: '#fff3b0', mix: { robo: 2.6, wing: 2, jet: 1.8, heli: 1 }, th: ['snow', 'sand', 'snow', 'lava', 'void', 'snow'], sky: 0x1a160c, c: ['#c8b070', '#1a1408'], g: [1.05, 1, .85], mdl: ['mech_leg', 'god', 'god_white', 'god_red', 'god_black', 'mech_leg'], bc: 0xfff3b0,
+    rw: [{ gem: 600, core: 3000 }, { star: 'god' }, { star: 'god_white' }, { star: 'god_red' }, { star: 'god_black' }, { skin: 'awaken', emblem: '신의 자격' }] },
+  10: { col: '#ffffff', mix: { robo: 2.4, trooper: 1.6, jet: 1.4, lurk: 1.2, plasma: 1.2, roach: 1 }, th: ['deck', 'void', 'snow', 'deck', 'void', 'void'], sky: 0x020208, c: ['#3a3a4a', '#020204'], g: [.8, .8, .9], mdl: ['m_titan', 'm_origin', 'mech_leg', 'god', 'm_origin', 'god_white'], bc: 0xffffff,
+    rw: [{ gem: 700, core: 3500 }, { emblem: '꺼지지 않는 별' }, { gem: 750, core: 3700 }, { skin: 'veteran' }, { emblem: '세라의 파일럿' }, { rw: 'zero' }] },
+};
+const PX_POS = [[16, 64], [32, 30], [52, 54], [68, 22], [86, 46], [62, 80]];
+const PX_PATS = ['volley', 'lance', 'pillars', 'summon', 'nova', 'barrage2'];
+const PX_ACTS = [], PX_STG = [], PX_DEB = [];
+{ let gi = 72;   // 3부까지 72장
+  for (const P of PXD) { const C = PXC[P.no];
+    P.acts.forEach((A, ai) => {
+      const R = C.rw[ai] || {}, bk = 'mb_p' + P.no + '_' + (ai + 1), gk = 'mb_p' + P.no + '_g' + (ai + 1), bossNm = A.boss.replace(/\(.*\)/, '').trim();
+      ET[bk] = { virt: 1, h: 30 + ai, r: 12, hp: Math.round(9000 + (P.no - 4) * 800 + ai * 400), spd: 34 + ai * 2, dmg: 34 + (P.no - 4) * 3, xp: 0, max: 1, yaw: 0, col: C.bc, mech: 1, boss: bossNm };
+      ET[gk] = { virt: 1, h: 26, r: 11, hp: Math.round(6000 + (P.no - 4) * 500 + ai * 200), spd: 38, dmg: 30 + (P.no - 4) * 3, xp: 0, max: 1, yaw: 0, col: C.bc, mech: 1, boss: A.title + ' 근위기' };
+      MB[bk] = { mdl: C.mdl[ai], pats: PX_PATS.slice(0, 3 + Math.min(3, ai)) }; MB[gk] = { mdl: C.mdl[(ai + 2) % 6], pats: ['volley', 'lance', 'summon'] };
+      PX_ACTS.push({ part: P.no, x: PX_POS[ai][0], y: PX_POS[ai][1], nm: A.place, st: A.title, col: C.col, story: A.story, ...R });
+      A.ch.forEach(([nm, ds, rec, type], ci) => { const rush = type === '연전';
+        PX_STG.push({ part: P.no, nm, ds, rec, type: rush ? '연전' : type, boss: type === '보스' || rush ? bk : gk, mix: C.mix, mids: ['goliath', 'scorp', 'brood'], g: C.g, sky: C.sky, c: C.c, theme: C.th[ai], ai,
+          rush: rush ? ['mb_p4_6', 'mb_p6_6', 'mb_p7_6', bk].slice(0, 2 + ci) : null });
+        const who = ['세라', '민재', '루나', '이그니', '라인하르트', '세라'][(gi + ci) % 6];
+        PX_DEB.push([who, ci === 3 ? `${bossNm} 격파. ${A.title}의 막이 내렸습니다.` : [`「${nm}」 확보. 다음 좌표로 이동합니다.`, `${nm}, 정리 끝. 아직 숨 돌릴 때는 아니야.`, `방금 그 움직임, 기록해 둘게요. 「${nm}」 클리어!`, `${nm}… 생각보다 뜨거웠군. 다음 가자.`][(gi + ci) % 4]]);
+        gi++; });
+    }); } }
 const PARTS = [
   { no: 1, nm: '첫 침공', syn: '분대가 하룻밤 사이에 사라졌다. 살아남은 것은 당신 하나. 보조조종 AI 세라가 깨어난 기체에 올라, 하늘에서 쏟아지는 제타 군체를 막아라. 지구에서 우주로, 불과 얼음을 지나 제타의 모성까지.', end: '하이브 퀸이 쓰러졌다. 하이브 깊은 곳에서 나온 배양 기록에는 제타를 만든 자의 서명이 남아 있다 ─ 「OMEGA」. 그리고 그 순간, 궤도에 정체 모를 함대가 나타났다.' },
   { no: 2, nm: '망명자의 그림자', syn: '궤도의 함대는 제타에게 멸망한 문명 「알파」의 망명자들이었다. 사령관 세라핀은 손을 내밀지만, 그 손에는 행성째 지우는 「정화 계획」이 들려 있다. 폐허가 된 알파의 고향 에덴으로 내려가 지워진 기록을 찾아라.', end: '세라핀의 기함이 무너지는 순간, 알파의 마지막 수호기 아스트라가 눈을 떴다. "나는 심판이 아닌 수호를 택하겠다." 그리고 알파의 비밀을 말했다. 제타는 실패작, 오메가는 성공작. 알파는 둘 다 언젠가 지울 생각이었다.' },
   { no: 3, nm: "제국의 칼날", syn: "알파의 비밀이 퍼지자 은하 제국이 움직인다. 제국 제독 「라인하르트」는 연맹 국경을 넘으며 말한다. \"내 함대를 세 번 짓밟은 괴물이 있다. 네 실력을 증명해 봐라.\" 그러나 제국 안에도 오메가의 서명을 단 첩자가 숨어 있었다.", end: "황금 왕좌 앞에서 황제 근위기 「아우렐리안 렉스」를 쓰러뜨린다. 무너지는 황궁에서 라인하르트가 함대를 돌린다. \"약속대로 빚을 갚으러 왔다. 제국 함대, 전진.\" 제국은 적에서 동맹이 된다." },
+  ...PXD.map((P) => ({ no: P.no, nm: P.nm, syn: P.syn, end: P.end })),
 ];
 const ACTS = [
   { part: 1, pl: 'earth', nm: '지구 · 네오 서울', st: '첫 침공', col: '#5ad1ff', rw: 'm_guardian', story: '분대가 전멸한 밤. 세라가 말한다. "생존자 1명 확인. 설명은 살아남은 뒤에 하겠습니다." 하윤의 인식표 뒷면에는 「한강 야시장, 네가 쏘는 거야」라고 적혀 있다.' },
@@ -4102,6 +4179,7 @@ const ACTS = [
   {"part":3,"x":70,"y":24,"nm":"수도 아우렐리아","st":"황도의 밤","col":"#c9b8ff","gem":260,"core":1200,"skin":"lion","story":"불 꺼진 수도의 밤. 거리에서는 봉기가 일어나고, 황궁 지하에서는 새 기체가 시험되고 있다."},
   {"part":3,"x":86,"y":48,"nm":"라인하르트의 함대","st":"라인하르트의 빚","col":"#9fc8ff","gem":280,"core":1300,"story":"라인하르트와 첫 공동 작전. 배양 기록의 서명을 쫓던 그가 웃는다. \"제국 정보부가 놓친 이름이군. 흥미롭다.\""},
   {"part":3,"x":62,"y":80,"nm":"황궁","st":"황금 왕좌","col":"#ffe08a","rw":"rex","story":"황제 친위대가 지키는 황금 왕좌. 이 싸움이 끝나면 제국의 깃발이 바뀐다."},
+  ...PX_ACTS,
 ];
 const STG1 = [
   // 1막 지구 · 네오 서울
@@ -4170,12 +4248,13 @@ const CHAPTERS = [
     th: +(2.4 + j * .27).toFixed(2), early: Math.round(Math.min(120, 40 + j * 3.5)) })),
   ...STG3.map(([nm, ds, rec, mix, mids, gg, sky, c, twin, type, boss], j) => ({ part: 3, a: 12 + Math.floor(j / 4), ai: Math.floor(j / 4), n: j % 4 + 1, nm, ds, rec, mix, mids, g: gg, sky, c, twin: !!twin, type, boss,
     th: +(8.9 + j * .26).toFixed(2), early: Math.round(Math.min(125, 60 + j * 2.8)) })),
+  ...PX_STG.map((S, j) => ({ ...S, a: 18 + Math.floor(j / 4), n: j % 4 + 1, twin: false, th: +(15 + (S.part - 4) * .9 + (j % 24) * .04).toFixed(2), early: Math.round(Math.min(130, 70 + (j % 24) * 2.5)) })),
 ];
-CHAPTERS.forEach((c, i) => { c.theme = THEME_OF[i] || 'sand'; });
+CHAPTERS.forEach((c, i) => { c.theme = c.theme || THEME_OF[i] || 'sand'; });
 // 장을 이기면 결과 화면에 나오는 한 줄 대사(장 순서대로)
 const DEBRIEF3 = [["세라","제국 저격병의 조준경이 우리 쪽을 보고 있었습니다. 국경은 이미 전쟁터입니다."],["민재","장벽에 구멍 하나 냈다. 제국 놈들, 꽤 당황했겠는데."],["세라","제국 기갑의 장갑이 연맹 것보다 두껍습니다. 정면 승부는 피하는 게 좋겠습니다."],["라인하르트","…괴물이라더니 소문만은 아니군. 내 함대에서 다시 보자."],["세라","갑판 아래에서 제국 강습병 신호가 더 잡힙니다. 끝이 아닙니다."],["루나","함포 사이를 춤추듯 빠져나가다니! 오늘 직감이 맞았네요."],["세라","구명정 탑승자 전원 무사. 그중에 제국 기술자가 한 명 있습니다."],["라인하르트","아우로라가 떨어지다니. 좋다, 네 실력은 증명됐다. 다음은 황금 달이다."],["세라","광산의 금빛 먼지가 센서를 흐립니다. 조준 보정을 올리겠습니다."],["이그니","전투기 떨어지는 소리, 이건 좀 좋다. 계속 태워 줄까?"],["세라","근위 기사들의 문장 아래에… 오메가의 서명이 새겨져 있습니다."],["라인하르트","감시자가 누구에게 신호를 보냈는지 알아내라. 황궁 안이다."],["세라","시민들이 제국군이 아니라 '검은 망토'를 피해 숨고 있습니다."],["민재","다리는 지켰다. 그런데 저 기갑, 제국 문장을 지웠던데?"],["세라","시험 병기 설계도에 '렉스'라는 이름이 있습니다. 미완성이라고 적혀 있습니다."],["라인하르트","폭주한 시험기를 멈췄군. …황제 폐하는 이걸 알고 계셨을까."],["라인하르트","연맹 파일럿과 나란히 싸우는 날이 올 줄은 몰랐다. 나쁘지 않군."],["세라","배신한 함대의 지휘 코드가 오메가 서명과 일치합니다."],["루나","거의 잡았는데! 첩자가 남긴 단말기에 황궁 좌표가 찍혀 있어요."],["라인하르트","제국 기체의 껍데기를 쓴 오메가였다. …제국 정보부가 놓친 이름이군."],["세라","친위대의 움직임이 지나치게 정확합니다. 누군가 위에서 지휘하고 있습니다."],["민재","광장 가득 기갑이라니. 그래도 버텼다, 우리가."],["세라","돔이 무너지기 3초 전에 빠져나왔습니다. …다음엔 5초 여유를 주십시오."],["라인하르트","약속대로 빚을 갚으러 왔다. 제국 함대, 전진."]];
 const DEBRIEF = [["세라","첫 전투 생존. …당신, 손이 떨리지 않는군요."],["세라","도로가 무너진 건 제타 때문만이 아닙니다. 누군가 길을 끊어 두었습니다."],["세라","대공 보병의 장비가 연맹 제식이 아닙니다. 기록해 두겠습니다."],["세라","여왕 격파. 네오 서울 상공 확보. …하윤 님의 인식표는 제가 보관하겠습니다."],["세라","기계 병사들의 명령 코드가 바깥에서 들어왔습니다. 출처는 알 수 없습니다."],["세라","하늘이 비었습니다. 피난선이 출발할 수 있습니다."],["세라","반란은 진압했습니다. 그런데 이 신호… 이지스 바깥에서 오고 있습니다."],["세라","정체 모를 함대가 물러났습니다. 공격이 아니라… 관찰이었습니다."],["이그니","오, 제법인데? 그 녀석들은 원래 내 둥지 손님이 아니었어."],["이그니","길 뚫어 줘서 고마워. 이제 불은 네 편이야."],["세라","용암 온도가 오르고 있습니다. 오래 머물면 기체가 견디지 못합니다."],["이그니","하하! 마음에 들었어. 앞으로는 내가 같이 타 줄게!"],["세라","얼음 아래에서 오래된 연구 시설의 신호가 잡힙니다."],["세라","연구 일지 1권 회수. 날짜가… 제타가 처음 나타난 날보다 앞섭니다."],["세라","일지에 같은 단어가 되풀이됩니다. 「배양」."],["세라","제타는 누군가 길러 낸 것입니다. 누가, 왜인지는 아직 모릅니다."],["루나","와, 저 틈 봤어요? 저기서 뭔가 우릴 보고 있었어요."],["루나","사원 벽에 날개 넷 달린 기체 그림이 있어요. 무슨 뜻일까요?"],["루나","거봐요, 오늘 운 좋을 거라고 했잖아요!"],["세라","사원의 수호 신호가 깨어났습니다. 다음 목적지, 제타의 모성."],["세라","하이브까지 남은 거리 4천. 늪을 건넜습니다."],["세라","외벽 돌파. 안쪽에서 거대한 생체 신호가 뜁니다."],["세라","배양 기록 저장소를 찾았습니다. 여왕을 쓰러뜨리면 열 수 있습니다."],["세라","기록 해독 중… 서명 확인. 「OMEGA」."],["세라","봉쇄선에 틈이 생겼습니다. 알파 초계기는 모두 무인기였습니다."],["세라","피난선 도착. 승객 412명 모두 무사합니다."],["세라핀","어둠 속에서도 칼끝이 흔들리지 않는군. 흥미롭다."],["세라핀","시험은 통과다. 우리 함대로 와라, 파일럿."],["세라","알파 함대에도 제타가 숨어 있었습니다. 그들도 쫓기는 중입니다."],["세라","격납고 정리 완료. 봉인된 문 쪽 경비가 두 배로 늘었습니다."],["세라","엔진 폭주는 사고가 아니었습니다. 누군가 우리를 막으려 했습니다."],["세라","봉인된 문 너머 기록에서 단어 하나를 읽었습니다. 「정화」."],["세라","여기가 알파의 고향, 에덴입니다. 생존자 신호는… 없습니다."],["세라","성당 벽에 알파의 기도문이 남아 있습니다. 「우리가 지운 것들을 용서하소서」."],["세라","방송탑이 전송을 마쳤습니다. 받는 곳은… 세라핀의 기함입니다."],["세라","파수꾼이 지키던 것은 정원이 아니라, 지하로 가는 길이었습니다."],["세라","계단 끝에 서고가 있습니다. 알파의 모든 기록이 모인 곳입니다."],["세라","해독 완료. 「정화 계획」 ─ 행성째 생명을 지우는 계획입니다."],["세라","지워진 이름들 가운데… 제타와 오메가가 있습니다."],["세라핀","…그 기록은 지워졌어야 했다."],["세라","정화포 조준 좌표 확인. 지구입니다."],["세라","냉각탑 정지. 충전 속도가 떨어졌습니다. 아직 시간이 있습니다."],["세라","회로 차단 성공. 정화포 충전이 37%에서 멈췄습니다."],["세라","정화포 무력화. 세라핀의 기함이 움직입니다."],["세라","궤도 도달. 기함까지 직선거리 2천."],["세라","근위 함대 무력화. 이제 세라핀뿐입니다."],["세라핀","여기까지 오다니. 그렇다면 끝까지 시험해 주지."],["아스트라","파일럿. 나는 심판이 아닌 수호를 택하겠다. 당신이 그것을 증명했으니."]];
-DEBRIEF.push(...DEBRIEF3);
+DEBRIEF.push(...DEBRIEF3, ...PX_DEB);
 const stLabel = (i) => `${CHAPTERS[i].part}부 ${CHAPTERS[i].ai + 1}막 ${CHAPTERS[i].n}장`;
 const recHtml = (c, cls) => `<span class="rec"><span class="mty">${c.type}</span>${c.theme && c.theme !== 'sand' ? `<span class="mth">${THEME_NM[c.theme]}</span>` : ''}${c.rec.map((k) => `<span class="${k === cls ? 'ok' : ''}">${ico(CLS[k].k)}${k}</span>`).join('')}</span>`;
 const CH = () => CHAPTERS[(G.chi ?? save.ch - 1)] || CHAPTERS[0];
@@ -4200,7 +4279,9 @@ function runReward(won) {
     if (CHAPTERS[ci].n === 4) { const C = CHAPTERS[ci], A = ACTS[C.a], lab = `${C.part}부 ${C.ai + 1}막 완료 보상`;
       if (A.rw) { const rid = A.rw, rm = MECH(rid), s0 = starOf(rid); if (!s0) { save.own[rid] = 1; notes.push(`${lab} · ${rm.nm} 획득`); } else if (s0 < 5) { save.own[rid] = s0 + 1; notes.push(`${lab} · ${rm.nm} 별 +1`); } else { gem += 300; notes.push(`${lab} ✦300`); } }
       else { gem += A.gem || 150; save.core += A.core || 600; notes.push(`${lab} · ✦${A.gem || 150} · 코어 ${A.core || 600}`);
-        if (A.skin && !skinOwned(A.skin)) { (save.skins ||= []).push(A.skin); notes.push(`전용 도색 「${SKIN(A.skin).nm}」 획득 · 기체 정보창의 도색에서 입히세요`); } } } }
+        if (A.skin && !skinOwned(A.skin)) { (save.skins ||= []).push(A.skin); notes.push(`전용 도색 「${SKIN(A.skin).nm}」 획득 · 기체 정보창의 도색에서 입히세요`); }
+        if (A.emblem && !(save.emblems || []).includes(A.emblem)) { (save.emblems ||= []).push(A.emblem); notes.push(`칭호 「${A.emblem}」 획득 · 프로필에서 달 수 있습니다`); }
+        if (A.star) { const s0 = starOf(A.star), m2 = MECH(A.star); if (!s0) { save.own[A.star] = 1; notes.push(`${m2.nm} 각성 · 기체 획득`); } else if (s0 < 5) { save.own[A.star] = s0 + 1; notes.push(`${m2.nm} 각성 · 별 +1`); } else { gem += 300; notes.push(`${m2.nm} 별 최대 · ✦300`); } } } } }
   if (n > prev && !G.chal) { gem += (n - prev) * CH_STAR_GEM; save.stars[ci + 1] = n; notes.push(`별 ${n - prev}개 ✦${(n - prev) * CH_STAR_GEM}`); }
   save.gem += gem; G.lastGem = gem; G.lastStars = got;
   // 임무 진행
@@ -4377,7 +4458,7 @@ function drawChapters() {
   if (mapPart == null || !partOpen(mapPart)) mapPart = ACTS[mapAct].part;
   if (ACTS[mapAct].part !== mapPart) { let la = null; ACTS.forEach((A, a) => { if (A.part === mapPart && actOpen(a)) la = a; }); if (la != null) mapAct = la; }
   $('#partTabs').innerHTML = PARTS.map((p) => `<button class="pt ${p.no === mapPart ? 'on' : ''}" data-p="${p.no}" ${partOpen(p.no) ? '' : 'disabled'}><small>${p.no}부</small><b>${p.nm}</b>${partOpen(p.no) ? '' : '<i>잠김</i>'}</button>`).join('')
-    + '<button class="pt soon" disabled><small>4부</small><b>연맹의 균열</b><i>준비 중</i></button>';
+    + '';
   $('#partTabs').querySelectorAll('.pt[data-p]').forEach((b) => b.addEventListener('click', () => { mapPart = +b.dataset.p; drawChapters(); }));
   const GX = window.ASCEND_GALAXY, P0 = GX ? Object.fromEntries(GX.places.map((p) => [p.id, p])) : {};
   const posOf = (A) => (A.x != null ? { x: A.x, y: A.y } : P0[A.pl] || { x: 50, y: 50 });
