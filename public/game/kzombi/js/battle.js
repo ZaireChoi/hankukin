@@ -450,7 +450,7 @@ function hurtT(tg, dmg) {
     if (fxN('lastStand') && !G.lastStandUsed && p.hp - dmg < p.max * 0.3) { G.lastStandUsed = true; p.invT = 2; FX.ring(p.x, p.y, 90, '255,240,160', 0.5, 8); G.banner = { s: '흑립의 가호! 잠시 무적', t: 1.6, kind: 'win' }; }
   }
   if (tg === G.shrine) { if (G.guards.some(g => g.id === 'turtle' && !(g.seal > 0))) dmg *= 0.7; if (G.shShield > 0) { const a = Math.min(G.shShield, dmg); G.shShield -= a; dmg -= a; if (dmg <= 0) { FX.ring(tg.x, tg.y - 40, 90, '255,215,110', 0.2, 4); return; } } G.alertT = 1.2; if (G.bubbleCd <= 0) { G.bubble = { s: '사당이 공격받고 있어!', t: 2.6 }; G.bubbleCd = 9; } }
-  if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4);
+  if (tg.kind === 'beacon') dmg *= (G.night === 0 ? 0.3 : 0.4) * (G.nm ? 0.55 : 1);   /* 악몽·3막: 적 피해 배율이 커서 봉화대가 사당보다 먼저 무너짐(11-28 시뮬 90장 0/4) */
   if (tg.pad != null && TUR[tg.type]) dmg /= tScale() * (1 + 0.04 * G.ch + 0.03 * Math.max(0, G.ch - 14));
   tg.hp -= dmg; tg.hitT = 0.12;
   if (tg.style === 'soldier' && tg.hp <= 0) { FX.smoke(tg.x, tg.y, 5, '150,140,120', 14, 30); G.corpses.push({ type: tg.spr, x: tg.x, y: tg.y, t: 0, sc: 1, dir: 1, d8: dir8(tg.fdir), hasDie: !!(SPR[tg.spr] && SPR[tg.spr].A && SPR[tg.spr].A.die), life: 2 }); }
