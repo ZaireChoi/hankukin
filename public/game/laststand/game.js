@@ -3562,6 +3562,8 @@ function drawShopCpn() {
     ${used.length ? `<p class="fine">사용한 쿠폰: ${used.join(' · ')}</p>` : ''}</div>`;
   const go = () => { const r = redeemCoupon($('#cpnIn').value), el = $('#cpnMsg'); el.textContent = r.msg; el.className = 'cpnMsg ' + (r.ok ? 'ok' : 'bad');
     if (r.ok) { sfx.lvl(); screenFlash(0xf2b544, .3, .5); try { drawTitle(); } catch (e) {} try { drawShopHead(); } catch (e) {} drawShopCpn(); $('#cpnMsg').textContent = r.msg; $('#cpnMsg').className = 'cpnMsg ok'; } };
+  const qc = new URLSearchParams(location.search).get('coupon'); if (qc && !drawShopCpn.used) { drawShopCpn.used = 1; $('#cpnIn').value = qc; }
+  setTimeout(() => { try { $('#cpnIn').focus(); } catch (e) {} }, 60);
   $('#cpnGo').onclick = go; $('#cpnIn').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') go(); };
 }
 function drawShopGem() {
@@ -3955,6 +3957,7 @@ $('#chNext').addEventListener('click', () => { save.ch = Math.min(save.chMax, sa
 $('#chMap').addEventListener('click', () => { mapAct = null; mapPart = null; $('#chapters').classList.remove('hide'); drawChapters(); });
 $('#cClose').addEventListener('click', () => $('#chapters').classList.add('hide'));
 $('#bGacha').addEventListener('click', openGacha);
+$('#bCpn').addEventListener('click', () => openGacha('cpn'));
 let gachaTop = null;
 $('#gClose').addEventListener('click', () => { $('#gacha').classList.add('hide'); if (gachaTop) { viewMech = gachaTop; save.mech = gachaTop; persist(); gachaTop = null; drawTitle(); if (lobby.on) enterLobby().then(() => screenFlash(rarOf(MECH(viewMech)).col, .45, .8)); } });
 $('#pull1').addEventListener('click', () => doPull(1));
@@ -4001,7 +4004,7 @@ $('#mute').addEventListener('click', (e) => { muted = !muted; e.target.textConte
 function drawStaticIcons() {
   $('#bGacha').innerHTML = `${ico('shop')}<span>상점</span>`; $('#bHangar').innerHTML = `${ico('upgrade')}<span>강화</span>`; $('#bRoster').innerHTML = `${ico('mech')}<span>기체</span>`; $('#rTitle').innerHTML = `${ico('mech')}기체`;
   $('#bSound').innerHTML = ico(muted ? 'soundOff' : 'soundOn'); $('#chMap').innerHTML = `${ico('map')}<span>지도</span>`;
-  $('#bPause').innerHTML = ico('pause'); $('#bArms').innerHTML = `${ico('anvil')}<span>정비</span>`; $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#bDash').firstElementChild.innerHTML = ico('dash');
+  $('#bPause').innerHTML = ico('pause'); $('#bArms').innerHTML = `${ico('anvil')}<span>정비</span>`; $('#bCpn').innerHTML = `${ico('gacha')}<span>쿠폰</span>`; $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#bDash').firstElementChild.innerHTML = ico('dash');
   $('#chTitle').innerHTML = `${ico('map')} 작전 지도<span class="gxs"> · ASCEND 은하</span>`; $('#hTitle').innerHTML = `${ico('repair')} 격납고 강화`; $('#dTitle').innerHTML = `${ico('calendar')} 출석 · 일일 임무`;
 }
 
@@ -4017,6 +4020,7 @@ function drawStaticIcons() {
     imPod = WPN.mpod.clone(true); imPod.scale.setScalar(6.4); imPod.visible = false; scene.add(imPod);
     resetRun(); await setMech(save.mech);
     $('#load').classList.add('hide'); booted = true; drawTitle(); await enterLobby();
+    if (new URLSearchParams(location.search).get('coupon')) openGacha('cpn');
   } catch (e) { $('#load').textContent = '자료를 불러오지 못했습니다. 새로고침해 주세요.' + (location.search.includes('dev') ? ' ' + e.message + ' @ ' + (e.stack || '').split('\n')[1] : ''); console.error(e); }
   requestAnimationFrame(frame);
 })();
