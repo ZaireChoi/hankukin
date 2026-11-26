@@ -468,7 +468,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       (ss.own ? '<p style="font-size:19px">' + stars(ss.star, 22) + ' 레벨 ' + ss.lv + '/' + maxLv + ' · 조각 ' + ss.sh + '</p>' +
         '<div class="row"><div class="btn ' + (S.team.includes(sel.id) ? 'r' : 'b') + '" data-act="team" data-v="' + sel.id + '">' + (S.team.includes(sel.id) ? '출전 빼기' : '출전하기') + '</div>' +
         '<div class="btn g ' + (S.gold >= lvCost && ss.lv < maxLv ? '' : 'dis') + '" data-act="compUp" data-v="' + sel.id + '" style="flex-direction:column;gap:0"><span>레벨업</span><small style="font-size:16px">' + (ss.lv < maxLv ? '엽전 ' + fmt(lvCost) : '별을 올려야 해요') + '</small></div>' +
-        '<div class="btn y ' + (ss.sh >= stCost && ss.star < 5 ? '' : 'dis') + '" data-act="compStar" data-v="' + sel.id + '" style="flex-direction:column;gap:0"><span>별 올리기</span><small style="font-size:16px;color:#7a3300">' + (ss.star < 5 ? '조각 ' + stCost : '최고') + '</small></div></div>'
+        '<div class="btn y ' + (ss.sh >= stCost && ss.star < 5 ? '' : 'dis') + '" data-act="compStar" data-v="' + sel.id + '" style="flex-direction:column;gap:0"><span>별 올리기</span><small style="font-size:16px;color:#7a3300">' + (ss.star < 5 ? '조각 ' + stCost : '최고') + '</small></div></div>' + heroSkRow(sel, ss)
         : '<p>조각 10개를 모으면 함께할 수 있어요. 상점의 영웅 뽑기에서 얻어요.</p><div class="row"><div class="btn y ' + (ss.sh >= 10 ? '' : 'dis') + '" data-act="compUnlock" data-v="' + sel.id + '">맞이하기 (조각 ' + ss.sh + '/10)</div><div class="btn p" data-act="tab" data-v="shop">뽑으러 가기</div></div>') +
       '</div>');
   }  let selComp = 'dokkaebi', infoFold = false;
@@ -716,7 +716,7 @@ skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT
     if (!WBX && !ARX) S.torch -= 5; S.quests.battle = (S.quests.battle || 0) + 1; S.plays++; lastCh = n; save();
     closeModal();
     const st = stats();
-    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? curAct() : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
+    const cfg = { afx: afxSum(), skin: S.skin && S.skin !== 'base' ? S.skin : null, chapter: n, heroLv: S.lv, atk: st.atk / 100, hp: st.hp / 1000, companions: S.team.filter(id => S.comps[id] && S.comps[id].own).slice(0, 2), heroG: Object.fromEntries(S.team.map(id => [id, (COMP[id] || {}).g || 0])), heroSk: Object.fromEntries(S.team.map(id => [id, [(S.comps[id] || {}).skl || 1, (S.comps[id] || {}).ull || 1]])), skillStars: Object.assign({}, S.skills), weapon: (byUid(S.equip.weapon) || {}).w || 'bow', items: Object.values(S.equip).map(byUid).filter(Boolean).map(it => ({ id: jziId(it), grade: (it.g === 5 ? 4 : it.g >= 6 ? 5 : it.g), lv: it.lv })).filter(x => x.id), itemsFxOnly: true, mode: S.nextMode || 'adventure', hqLv: 1, sets: setsOf(), nightmare: !S.nextMode && isNM(), act: !S.nextMode && isA3() ? curAct() : 0, mount: S.mount || null, wbBoss: WBX ? WBX.boss : null, wbName: WBX ? WBX.name : null, arena: ARX }; S.nextMode = null; S.nextWB = null; S.nextAR = null; lastWB = WBX;
     stopMusic();
     const J = window.JZB;
     if (J && typeof J.start === 'function') {
@@ -989,6 +989,19 @@ skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT
       '<p style="font-size:19px;line-height:1.6;margin:10px 0">영웅 <b style="color:#e39bff">홍길동</b> 바로 합류<br>영웅 등급 장비 4점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20<br><small style="color:#ffd36b">계정당 한 번 · ' + (S.starter ? '이미 받았어요' : '남은 기간 ' + stDays() + '일') + '</small></p></div>' +
       '<div class="row">' + (S.starter ? '<div class="btn b dis">받음</div>' : '<div class="btn p" data-act="payBuy" data-v="starter" style="flex-direction:column;gap:0;min-width:300px"><span>990원</span><small style="font-size:16px">' + payNote() + '</small></div>') + '</div>' +
       '<div class="row"><div class="btn b" data-act="coupon">시험 쿠폰 입력</div></div>');
+  }
+  /* 영웅 고유 기술·궁극기 강화 Lv1~5 (사용자 11-29) */
+  function hsCost(l, g) { return { gold: Math.round(1500 * l * (g + 1) * (1 + 0.5 * (l - 1))), sh: l * 3 }; }
+  function heroSkRow(sel, ss) {
+    const EN = !!window.IS_EN, sl = ss.skl || 1, ul = ss.ull || 1, g = sel.g || 0;
+    const skTxt = l => { const k = Math.round(((1 + 0.15 * (l - 1)) * (l >= 5 ? 1.2 : 1) - 1) * 100); let s = (EN ? 'Dmg +' : '피해 +') + k + '%'; if (l >= 3) s += sel.id === 'jangyeongsil' ? (EN ? ', +1 turret' : ', 포탑 +1') : (EN ? ', attack speed +18%' : ', 공격 빠르기 +18%'); if (l >= 5) s += sel.id === 'jangyeongsil' ? (EN ? ', +1 big turret' : ', 큰 포탑 +1') : (EN ? ', awakened ×1.2' : ', 각성 ×1.2'); return s; };
+    const ulTxt = l => { const k = Math.round(((1 + 0.2 * (l - 1)) * (l >= 5 ? 1.25 : 1) - 1) * 100); let s = (EN ? 'Power +' : '위력 +') + k + '%'; if (l >= 3) s += EN ? ', cooldown −15%' : ', 대기 −15%'; if (l >= 5) s += EN ? ', awakened ×1.25' : ', 각성 ×1.25'; return s; };
+    const btn = (act, l, txt) => { if (l >= 5) return '<div class="btn dis" style="flex-direction:column;gap:0;flex:1"><span>' + txt + ' Lv5</span><small style="font-size:14px">' + (EN ? 'MAX' : '최고') + '</small></div>'; const c = hsCost(l, g), ok = S.gold >= c.gold && ss.sh >= c.sh; return '<div class="btn p ' + (ok ? '' : 'dis') + '" data-act="' + act + '" data-v="' + sel.id + '" style="flex-direction:column;gap:0;flex:1"><span>' + txt + ' Lv' + l + '→' + (l + 1) + '</span><small style="font-size:13px">' + (EN ? 'Coin ' : '엽전 ') + fmt(c.gold) + (EN ? ' · Shards ' : ' · 조각 ') + c.sh + '</small></div>'; };
+    const GRK = { 0: 0.75, 1: 0.82, 2: 0.9, 3: 1.05, 4: 1.35 }, pw = Math.round(100 * (GRK[g] || 1) * (1 + 0.3 * ((ss.lv || 1) - 1)) * (1 + 0.25 * ((ss.star || 1) - 1)) * (1 + 0.15 * (sl - 1)) * (sl >= 5 ? 1.2 : 1));
+    return '<div style="margin-top:8px;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.25);font-size:14px;line-height:1.45">' + '<div style="font-size:17px"><b style="color:#fff">' + (EN ? 'Attack ' : '공격력 ') + fmt(pw) + '</b> <span style="opacity:.7">(' + (EN ? 'grade ×' : '등급 ×') + (GRK[g] || 1) + ')</span></div>' +
+      '<div><b style="color:#ffd36b">' + (EN ? 'Signature skill' : '고유 기술') + ' Lv' + sl + '</b> · ' + skTxt(sl) + (sl < 5 ? ' <span style="color:#9fe39f">→ ' + skTxt(sl + 1) + '</span>' : '') + '</div>' +
+      '<div><b style="color:#ff9f7a">' + (EN ? 'Ultimate' : '궁극기') + ' · ' + sel.ult + ' Lv' + ul + '</b> · ' + ulTxt(ul) + (ul < 5 ? ' <span style="color:#9fe39f">→ ' + ulTxt(ul + 1) + '</span>' : '') + '</div></div>' +
+      '<div class="row" style="gap:8px">' + btn('hsk', sl, EN ? 'Skill' : '고유 기술') + btn('hul', ul, EN ? 'Ultimate' : '궁극기') + '</div>';
   }
   function couponModal() {
     modal('<h3 class="stroke">쿠폰 입력</h3><p style="text-align:center">행사 코드를 입력하세요</p>' +
@@ -1817,6 +1830,7 @@ skSetBtn() + (window.JZD && JZD.traitOf && JZD.traitOf(1, n) ? (T0 => '<p>' + TT
       case 'infoFold': infoFold = v === '1'; renderLobby(); break;
       case 'team': { const i = S.team.indexOf(v); if (i >= 0) S.team.splice(i, 1); else { if (S.team.length >= 2) S.team.shift(); S.team.push(v); } refresh(); break; }
       case 'unteam': S.team = S.team.filter(x => x !== v); refresh(); break;
+      case 'hsk': case 'hul': { const c = S.comps[v], key = a === 'hsk' ? 'skl' : 'ull', l = c[key] || 1, cc = hsCost(l, COMP[v].g || 0); if (!c.own || l >= 5 || S.gold < cc.gold || c.sh < cc.sh) break; S.gold -= cc.gold; c.sh -= cc.sh; c[key] = l + 1; save(); refresh(); toast(COMP[v].n + (a === 'hsk' ? (window.IS_EN ? ' skill Lv' : ' 고유 기술 Lv') : (window.IS_EN ? ' ultimate Lv' : ' 궁극기 Lv')) + (l + 1)); break; }
       case 'compUp': { const c = S.comps[v], lc = 300 * c.lv * (COMP[v].g + 1); if (S.gold < lc || c.lv >= c.star * 10) break; S.gold -= lc; c.lv++; refresh(); toast(COMP[v].n + ' 레벨 ' + c.lv); break; }
       case 'compStar': { const c = S.comps[v], sc = c.star * 10; if (c.sh < sc || c.star >= 5) break; c.sh -= sc; c.star++; refresh(); toast(COMP[v].n + ' 별 ' + c.star + '개!'); break; }
       case 'compUnlock': { const c = S.comps[v]; if (c.sh < 10) break; c.sh -= 10; c.own = true; refresh(); toast(COMP[v].n + '이(가) 함께해요!'); break; }
