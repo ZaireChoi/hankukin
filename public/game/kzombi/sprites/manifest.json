@@ -847,7 +847,46 @@
   "ch": 0.898,
   "v": 91082
  },
- "haetae": {"src":"haetae_walk.webp","cell":220,"frames":8,"dirs":8,"fps":10,"height":70,"anchorX":0.484,"anchorY":0.985,"ch":0.468,"v":35121,"toon":1,"anims":{"walk":{"src":"haetae_walk.webp","frames":8,"loop":true},"idle":{"src":"haetae_idle.webp","frames":6,"loop":true},"atk":{"src":"haetae_atk.webp","frames":8,"loop":false},"atk2":{"src":"haetae_atk2.webp","frames":8,"loop":true},"hit":{"src":"haetae_hit.webp","frames":4,"loop":false}}},
+ "haetae": {
+  "src": "haetae_walk.webp",
+  "cell": 220,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 70,
+  "anchorX": 0.484,
+  "anchorY": 0.985,
+  "ch": 0.468,
+  "v": 35121,
+  "toon": 1,
+  "anims": {
+   "walk": {
+    "src": "haetae_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "haetae_idle.webp",
+    "frames": 6,
+    "loop": true
+   },
+   "atk": {
+    "src": "haetae_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "atk2": {
+    "src": "haetae_atk2.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "hit": {
+    "src": "haetae_hit.webp",
+    "frames": 4,
+    "loop": false
+   }
+  }
+ },
  "samjoko": {
   "src": "samjoko_walk.webp",
   "cell": 200,
@@ -2741,15 +2780,16 @@
  },
  "wb_stone": {
   "src": "wb_stone_walk.webp",
-  "cell": 256,
+  "cell": 300,
   "frames": 8,
   "dirs": 8,
   "fps": 10,
-  "height": 150,
-  "anchorX": 0.51,
-  "anchorY": 0.926,
-  "ch": 0.535,
-  "v": 82359,
+  "height": 210,
+  "anchorX": 0.498,
+  "anchorY": 0.977,
+  "ch": 0.747,
+  "v": 61864,
+  "toon": 1,
   "anims": {
    "walk": {
     "src": "wb_stone_walk.webp",
@@ -2763,7 +2803,12 @@
    },
    "atk": {
     "src": "wb_stone_atk.webp",
-    "frames": 8,
+    "frames": 10,
+    "loop": false
+   },
+   "atk2": {
+    "src": "wb_stone_atk2.webp",
+    "frames": 10,
     "loop": false
    },
    "hit": {
@@ -2776,8 +2821,7 @@
     "frames": 10,
     "loop": false
    }
-  },
-  "toon": 1
+  }
  },
  "wb_fire": {
   "src": "wb_fire_walk.webp",
@@ -3380,5 +3424,165 @@
   "anchorY": 0.5,
   "ch": 0.604,
   "v": 91082
+ },
+ "boss_sugwi": {
+  "src": "boss_sugwi_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 130,
+  "anchorX": 0.496,
+  "anchorY": 0.996,
+  "ch": 0.408,
+  "v": 22390,
+  "toon": 1,
+  "anims": {
+   "walk": {
+    "src": "boss_sugwi_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "boss_sugwi_idle.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "atk": {
+    "src": "boss_sugwi_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "atk2": {
+    "src": "boss_sugwi_atk2.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "boss_sugwi_hit.webp",
+    "frames": 1,
+    "loop": false
+   }
+  }
+ },
+ "boss_morgan": {
+  "src": "boss_morgan_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 132,
+  "anchorX": 0.471,
+  "anchorY": 0.996,
+  "ch": 0.775,
+  "v": 63259,
+  "toon": 1,
+  "anims": {
+   "walk": {
+    "src": "boss_morgan_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "boss_morgan_idle.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "atk": {
+    "src": "boss_morgan_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "atk2": {
+    "src": "boss_morgan_atk2.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "boss_morgan_hit.webp",
+    "frames": 1,
+    "loop": false
+   }
+  }
+ },
+ "boss_noegong": {
+  "src": "boss_noegong_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 136,
+  "anchorX": 0.531,
+  "anchorY": 0.954,
+  "ch": 0.438,
+  "v": 29025,
+  "toon": 1,
+  "anims": {
+   "walk": {
+    "src": "boss_noegong_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "boss_noegong_idle.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "atk": {
+    "src": "boss_noegong_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "atk2": {
+    "src": "boss_noegong_atk2.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "boss_noegong_hit.webp",
+    "frames": 1,
+    "loop": false
+   }
+  }
+ },
+ "boss_sacheon": {
+  "src": "boss_sacheon_walk.webp",
+  "cell": 240,
+  "frames": 8,
+  "dirs": 8,
+  "fps": 10,
+  "height": 140,
+  "anchorX": 0.55,
+  "anchorY": 0.9,
+  "ch": 0.417,
+  "v": 16164,
+  "toon": 1,
+  "anims": {
+   "walk": {
+    "src": "boss_sacheon_walk.webp",
+    "frames": 8,
+    "loop": true
+   },
+   "idle": {
+    "src": "boss_sacheon_idle.webp",
+    "frames": 1,
+    "loop": true
+   },
+   "atk": {
+    "src": "boss_sacheon_atk.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "atk2": {
+    "src": "boss_sacheon_atk2.webp",
+    "frames": 8,
+    "loop": false
+   },
+   "hit": {
+    "src": "boss_sacheon_hit.webp",
+    "frames": 1,
+    "loop": false
+   }
+  }
  }
 }
