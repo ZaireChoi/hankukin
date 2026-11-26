@@ -1161,9 +1161,12 @@ function movePlayer(dt) {
   else if (G.auto && isNight()) {
     /* 자동: 가까운 적은 피하고, 무리가 많은 쪽을 향해 성벽 앞을 오간다 */
     let ax = 0, ay = 0;
-    for (const e of G.enemies) { const d = Math.hypot(e.x - p.x, e.y - p.y); if (d < 130) { ax -= (e.x - p.x) / d * (130 - d); ay -= (e.y - p.y) / d * (130 - d); } }
-    const tg = densest(p.x, p.y, 600);
-    const hx = tg ? clamp(tg.x, CX - 400, CX + 400) : CX, hy = WALL_Y - 150;
+    for (const e of G.enemies) { const rr = e.boss ? 230 : e.elite ? 170 : 130, d = Math.hypot(e.x - p.x, e.y - p.y) || 1; if (d < rr) { const w = (rr - d) * (e.boss || e.elite ? 1.6 : 1); ax -= (e.x - p.x) / d * w; ay -= (e.y - p.y) / d * w; } }
+    /* 11-28 자동 개선: 예고 고리·장판은 피하고, 체력 30% 아래면 사당 쪽으로 물러난다(사람처럼) */
+    for (const z of (G.tele || []).concat(G.pzs || [])) { const d = Math.hypot(z.x - p.x, (z.y - p.y) / 0.62) || 1, R = (z.r || 60) + 50; if (d < R) { ax -= (z.x - p.x) / d * (R - d) * 4; ay -= (z.y - p.y) / d * (R - d) * 4; } }
+    const low = p.hp < p.max * 0.3; let near = null, nd = 360; if (!low) for (const e of G.enemies) { if (e.fly) continue; const d = Math.hypot(e.x - sh.x, e.y - sh.y); if (d < nd) { nd = d; near = e; } }   /* 사당에 붙은 적이 있으면 그쪽부터 막는다 */
+    const tg = low ? null : near || densest(p.x, p.y, 600);
+    const hx = low ? sh.x : tg ? clamp(tg.x, CX - 400, CX + 400) : CX, hy = low ? sh.y - 170 : near ? near.y - 70 : WALL_Y - 150;
     ax += (hx - p.x) * 0.6; ay += (hy - p.y) * 0.6;
     const l = Math.hypot(ax, ay); if (l > 20) { mx = ax / l; my = ay / l; }
   }
