@@ -2585,7 +2585,7 @@ async function startRun() {
   G.chi = clamp(save.ch, 1, save.chMax) - 1; G.threat = CHAPTERS[G.chi].th; leaveLobby(); resetRun(); await setMech(save.mech);
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
-  { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico2(m.ult.k, '#ffd98a'); const EL0 = ELEM[m.el]; $('#bElem').firstElementChild.innerHTML = ico2('el_' + m.el, EL0.col); $('#bElem').style.setProperty('--ec', EL0.col); $('#bElem').title = `${EL0.sk.nm} · 계열 기술 (R)`; $('#bAuto').style.setProperty('--ec', EL0.col); UP.elemUp.nm = `${EL0.nm} 각성`; $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico2(m.auto.k, '#ffffff'); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
+  { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico2('sk:' + m.id + ':q', '#ffd98a'); const EL0 = ELEM[m.el]; $('#bElem').firstElementChild.innerHTML = ico2('el_' + m.el, EL0.col); $('#bElem').style.setProperty('--ec', EL0.col); $('#bElem').title = `${EL0.sk.nm} · 계열 기술 (R)`; $('#bAuto').style.setProperty('--ec', EL0.col); UP.elemUp.nm = `${EL0.nm} 각성`; $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico2('sk:' + m.id + ':e', '#ffffff'); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
     $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=15)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
@@ -3152,7 +3152,12 @@ const ICO = {
 Object.assign(ICO, { rifleUp: ICO.rifle, cannon: ICO.shotgun, great: ICO.katana, staff: ICO.bits, hammer: ICO.mortar, _heal: ICO.heal });
 const GK = { rifleUp: 'rifle', cannon: 'shotgun', great: 'katana', staff: 'bits', hammer: 'mortar', _heal: 'heal', spear: 'katana', power: 'overdrive', thrust: 'thruster', cool: 'reactor', lv: 'upgrade', hangar: 'upgrade' };
 const gic = (k) => { const G0 = window.GICO; if (!G0) return null; const n = GK[k] || k; return G0[n] ? n : null; };
-const ico = (k, cls = '') => { const n = gic(k); return n ? `<svg class="ico gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><path d="${GICO[n]}"/></svg>` : `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ICO.star}</svg>`; };
+const IMGI = { core: 'u_core', gem: 'u_gem', ore: 'u_ore', chip: 'u_chip', mail: 'u_mail', gacha: 'u_coupon', gear: 'u_gear', shop: 'u_shop', anvil: 'u_anvil', quest: 'u_quest', map: 'u_map', mech: 'u_mech', dash: 'u_dash', fly: 'u_fly', chest: 'u_chest',
+  el_fire: 'e_fire', el_water: 'e_water', el_wind: 'e_wind', el_elec: 'e_elec', el_ice: 'e_ice', el_light: 'e_light', el_dark: 'e_dark' };
+const IMGI2 = { pistol: 'w_pistol', rifle: 'w_rifle', katana: 'w_katana', saber: 'w_saber', shotgun: 'w_shotgun', gatling: 'w_gatling', rail: 'w_rail', mortar: 'w_mortar', homing: 'w_homing', bits: 'w_bits', burst: 'w_burst', beam: 'w_beam', feather: 'w_feather' };
+for (const k of ['flash', 'iaido', 'overdrive', 'palm', 'bash', 'quake', 'backstep', 'mortar3', 'dive', 'cloak', 'bitstorm', 'blink', 'featherstorm', 'bladefall', 'tenzan', 'laserstorm', 'phoenix', 'aegis', 'titanfall', 'satsnipe', 'carpet', 'mstorm', 'execute', 'allrange', 'nova', 'descent']) IMGI2[k] = 's_' + k;
+const imgIco = (f, cls = '') => `<img class="ico ii ${/^(s_|e_)/.test(f) ? 'sq' : ''} ${cls}" src="img/icon/${f}.webp?v=1" alt="" draggable="false">`;
+const ico = (k, cls = '') => { if (IMGI[k]) return imgIco(IMGI[k], cls); const n = gic(k); return n ? `<svg class="ico gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><path d="${GICO[n]}"/></svg>` : `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ICO.star}</svg>`; };
 
 // ───────── 계열(속성) 7종: 기체마다 하나. 계열마다 노는 맛이 다르다
 const ELEM = {
@@ -3197,6 +3202,8 @@ let _ig = 0;
 function shadeHex(c, k = .45) { const n = parseInt(c.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; const f = (v) => Math.round(v * k).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
 function tintHex(c, k) { const n = parseInt(c.slice(1), 16), f = (v) => Math.round(v + (255 - v) * k).toString(16).padStart(2, '0'); return '#' + f((n >> 16) & 255) + f((n >> 8) & 255) + f(n & 255); }
 function ico2(k, c = '#9ff3ff', cls = '') {
+  if (typeof k === 'string' && k.startsWith('sk:')) { const [, id, s] = k.split(':'); return imgIco(`s_${id}_${s}`, cls); }
+  { const f0 = IMGI[k] || IMGI2[k]; if (f0) return imgIco(f0, cls); }
   const id = 'ig' + (++_ig), n = gic(k);
   if (n) return `<svg class="ico ico2 gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="362" y2="512"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="${tintHex(c, .45)}"/><stop offset="1" stop-color="${c}"/></linearGradient></defs><path fill="url(#${id})" d="${GICO[n]}"/></svg>`;
   const src = ICO[k] || ICO.star, fg = src.replace(/class="f"/g, `class="f" style="fill:url(#${id})"`);
@@ -3261,6 +3268,7 @@ function applyGear(m) {
     if (P.wo.crit) P.crit += .08; if (P.wo.cool) P.cdMul *= .9; if (P.wo.guard) P.taken = (P.taken || 1) * .92;
     P.rel = w.rel || null;
   }
+  applyParts(m);
 }
 
 // ───────── 상태 이상: 화상·빙결·둔화·혼란·약화·기절·방어 약화
@@ -3441,12 +3449,12 @@ function dropWeapon(won) {
   if (!won && (G.t < 90 || Math.random() > .35)) return null;
   const c = CHAPTERS[G.chi], lift = Math.min(1, (G.chi || 0) / 30), r = Math.random() * 100;
   const tb = won ? [36, 30, 20, 9 + lift * 4, 3 + lift * 3, .8, .3] : [62, 30, 8, 0, 0, 0, 0], rar = WR[rollGrade(tb, maxG())];
-  const w = mkWeapon(rar, Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w);
-  if (save.wpn.inv.length > 60) { const i = save.wpn.inv.findIndex((x) => WR.indexOf(x.rar) === 0 && !Object.values(save.wpn.eq).includes(x.u)); if (i >= 0) save.wpn.inv.splice(i, 1); }
+  const w = Math.random() < .55 ? mkPart(null, rar) : mkWeapon(rar, Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w);
+  if (save.wpn.inv.length > 150) { const i = save.wpn.inv.findIndex((x) => WR.indexOf(x.rar) === 0 && !Object.values(save.wpn.eq).includes(x.u)); if (i >= 0) save.wpn.inv.splice(i, 1); }
   return w;
 }
-function wdropHtml(w) { const R0 = RAR[w.rar], X = ELEM[w.el];
-  return `<div class="wdrop" style="--rc:${R0.col};--ec:${X.col}"><span class="wi">${ico2('wpn', X.col)}</span><span><em>무기 획득</em><b>${wName(w)}</b><small>${R0.nm} · ${X.nm} 계열${w.rel ? ' · 해방 보유' : ''}</small></span></div>`; }
+function wdropHtml(w) { const R0 = RAR[w.rar];
+  return `<div class="wdrop" style="--rc:${R0.col}"><span class="wi it g${gI(w)}">${itemIco(w)}</span><span><em>${isPart(w) ? '부품' : '무기'} 획득</em><b>${itemName(w)}</b><small>${R0.nm} · ${isPart(w) ? PSLOT[w.slot].nm : ELEM[w.el].nm + ' 계열'}${w.rel ? ' · 해방 보유' : ''}</small></span></div>`; }
 
 // ───────── 무기고: 기체 숙련(기종별 성장)과 무기 장착·강화·분해
 // ───────── 대기 화면 정리: 오른쪽 정보창(작은 글씨·스킬 칸), 기체 목록 창, 정비(무기·숙련·공통 강화), 상점
@@ -3462,9 +3470,9 @@ function drawMdet(m, st) {
   const rel = w && w.rel ? ` · 해방 「${REL[w.rel].nm}」` : '';
   const T = [
     { k: 'w', ic: m.prim, col: '#ffd98a', lb: '무기', nm: an.nm, ds: an.ds0, sub: '기본 무기 · 자동 공격' },
-    { k: 'e', ic: m.auto.k, col: '#cfefff', lb: 'E', nm: m.auto.nm, ds: AUTO_DS[m.auto.k] || '', sub: `스킬 · E · ${m.auto.cd}초` },
+    { k: 'e', ic: 'sk:' + m.id + ':e', col: '#cfefff', lb: 'E', nm: m.auto.nm, ds: AUTO_DS[m.auto.k] || '', sub: `스킬 · E · ${m.auto.cd}초` },
     { k: 'r', ic: 'el_' + m.el, col: X.col, lb: 'R', nm: X.sk.nm, ds: X.sk.ds, sub: `계열 기술 · R · ${X.sk.cd}초` },
-    { k: 'q', ic: m.ult.k, col: '#ffc24a', lb: 'Q', nm: m.ult.nm, ds: (ULT_DS[m.ult.k] || '') + rel, sub: '필살기 · Q' },
+    { k: 'q', ic: 'sk:' + m.id + ':q', col: '#ffc24a', lb: 'Q', nm: m.ult.nm, ds: (ULT_DS[m.ult.k] || '') + rel, sub: '필살기 · Q' },
   ];
   const sel = T.find((t) => t.k === skSel) || T[2];
   const bar = (l, v, mx, s) => `<div class="sr"><span>${l}</span><i><em style="width:${Math.round(clamp(v / mx, .06, 1) * 100)}%"></em></i><b class="num">${s}</b></div>`;
@@ -3474,7 +3482,7 @@ function drawMdet(m, st) {
     + `<div class="st4">${bar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm))}${bar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm))}${bar('속도', m.spd, 1.3, Math.round(100 * m.spd))}${bar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))}</div>`
     + `<div class="sk4">${T.map((t) => `<button class="skb ${t.k === sel.k ? 'on' : ''}" data-k="${t.k}" style="--ec:${t.col}"><span class="skt">${ico2(t.ic, t.col)}</span><small>${t.lb}</small></button>`).join('')}</div>`
     + `<div class="skd" style="--ec:${sel.col}"><b>${sel.nm}</b><small>${sel.sub}</small><p>${sel.ds}</p></div>`
-    + (st ? `<button class="gearl" id="toArms" style="--rc:${w ? RAR[w.rar].col : '#5a6478'};--ec:${w ? ELEM[w.el].col : '#8a93a8'}"><span class="skt sm">${ico2('wpn', w ? ELEM[w.el].col : '#8a93a8')}</span><span class="gt"><b>${w ? wName(w, m) : '무기 없음'}</b><small>${w ? `${RAR[w.rar].nm} · +${w.lv} · 피해 +${wDmg(w)}%` : '정비에서 무기를 장착하세요'}</small></span><span class="gm"><small>숙련</small><b class="num">${lv}</b></span></button>` : '')
+    + (st ? `<button class="gearl" id="toArms" style="--rc:${w ? RAR[w.rar].col : '#5a6478'};--ec:${w ? ELEM[w.el].col : '#8a93a8'}"><span class="skt sm it ${w ? 'g' + gI(w) : ''}">${w ? itemIco(w, m) : ico2('wpn', '#8a93a8')}</span><span class="gt"><b>${w ? wName(w, m) : '무기 없음'}</b><small>${w ? `${RAR[w.rar].nm} · +${w.lv} · 피해 +${wDmg(w)}%` : '정비에서 무기를 장착하세요'}</small></span><span class="gm"><small>숙련</small><b class="num">${lv}</b></span></button>` : '')
     + `<div class="ps">${m.pass}</div>`
     + (st ? '' : `<div class="buy"><button class="bp" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()}<small>코어로 구매</small></button><button class="bs" id="toGacha">${ico('shop')}<small>상점에서 모집</small></button></div>`);
   $('#mdet').querySelectorAll('.skb').forEach((b) => b.addEventListener('click', () => { skSel = b.dataset.k; drawMdet(m, st); }));
@@ -3496,9 +3504,9 @@ function drawArsenal() {
   const m = MECH(save.mech), X = ELEM[m.el];
   $('#aTitle').innerHTML = `${ico('anvil')}정비`;
   $('#aCur').innerHTML = `<span class="cur">${curHtml('core')}</span>${curMini('ore')}${curMini('chip')}`; bindCur($('#aCur'));
-  $('#aTabs').innerHTML = [['wpn', '무기'], ['sk', '스킬 강화'], ['mlv', '기체 숙련'], ['up', '공통 강화']].map(([k, n]) => `<button data-t="${k}" class="${arsTab === k ? 'on' : ''}">${n}</button>`).join('');
+  $('#aTabs').innerHTML = [['wpn', '장비'], ['sk', '스킬 강화'], ['mlv', '기체 숙련'], ['up', '공통 강화']].map(([k, n]) => `<button data-t="${k}" class="${arsTab === k ? 'on' : ''}">${n}</button>`).join('');
   $('#aTabs').querySelectorAll('button').forEach((b) => (b.onclick = () => { arsTab = b.dataset.t; drawArsenal(); }));
-  $('#aNote').innerHTML = `무기는 장착한 기체 · 스킬 강화와 기체 숙련은 <em>${m.nm}</em>만 · 공통 강화는 모든 기체에 적용`;
+  $('#aNote').innerHTML = `무기는 기체마다 · 부품 5칸은 모든 기체 공용 · 스킬 강화와 숙련은 <em>${m.nm}</em>만`;
   const body = $('#arsBody');
   if (arsTab === 'wpn') { drawWpnTab(body, m);
   } else if (arsTab === 'sk') { drawSkTab(body, m);
@@ -3539,8 +3547,8 @@ if (window.GICO) Object.assign(window.GICO, {
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const RWN = { core: ['core', '코어'], gem: ['gem', '결정'], ore: ['ore', '정련 합금'], chip: ['chip', '강화 회로'] };
 const curMini = (k) => `<span class="cur mini ${k}" title="${RWN[k][1]}"><i class="ci">${ico(k)}</i><span class="cv"><small>${RWN[k][1]}</small><b class="num">${(save[k] || 0).toLocaleString()}</b></span></span>`;
-function give(rw) { for (const k in rw) { if (k === 'wpn') { const w = mkWeapon(rw.wpn, null); save.wpn.inv.push(w); } else save[k] = (save[k] || 0) + rw[k]; } }
-const rwHtml = (rw) => Object.entries(rw).map(([k, v]) => k === 'wpn' ? `<span class="rwc" style="--rc:${RAR[v].col}">${ico('wpn')}${RAR[v].nm} 무기</span>` : `<span class="rwc ${k}">${ico(RWN[k][0])}${RWN[k][1]} <b class="num">${Number(v).toLocaleString()}</b></span>`).join('');
+function give(rw) { for (const k in rw) { if (k === 'part') { save.wpn.inv.push(mkPart(null, rw.part)); continue; } if (k === 'wpn') { const w = mkWeapon(rw.wpn, null); save.wpn.inv.push(w); } else save[k] = (save[k] || 0) + rw[k]; } }
+const rwHtml = (rw) => Object.entries(rw).map(([k, v]) => k === 'part' ? `<span class="rwc" style="--rc:${RAR[v].col}">${ico('mech')}${RAR[v].nm} 부품</span>` : k === 'wpn' ? `<span class="rwc" style="--rc:${RAR[v].col}">${ico('wpn')}${RAR[v].nm} 무기</span>` : `<span class="rwc ${k}">${ico(RWN[k][0])}${RWN[k][1]} <b class="num">${Number(v).toLocaleString()}</b></span>`).join('');
 
 // ── 계정 레벨(조선좀비 needExp: 100 + 레벨×60). 레벨마다 모든 기체 내구·화력 +0.5%, 오르면 우편으로 보상
 const needExp = (lv) => 100 + lv * 60;
@@ -3615,63 +3623,30 @@ function drawProfP() {
 // ── 무기 등급 뽑기(관문 위 등급은 빼고 남은 확률을 다시 나눈다)
 function gradeTable(tb, cap) { const t = tb.map((p, i) => (i <= cap ? p : 0)), s = t.reduce((a, b) => a + b, 0) || 1; return t.map((p) => p / s * 100); }
 function rollGrade(tb, cap) { const t = gradeTable(tb, cap); let r = Math.random() * 100; for (let i = 0; i < t.length; i++) if ((r -= t[i]) < 0) return i; return 0; }
-const wFree = (x) => !Object.values(save.wpn.eq).includes(x.u) && !x.lk;
-const wFodder = (w) => save.wpn.inv.filter((x) => x !== w && x.rar === w.rar && wFree(x) && !(x.s > 0)).sort((a, b) => a.lv - b.lv);
-function wPromote(w) { const g0 = gI(w); if (g0 >= 6) return; w.rar = WR[g0 + 1]; w.s = 0; const g1 = g0 + 1;
+const wFree = (x) => !Object.values(save.wpn.eq).includes(x.u) && !Object.values(save.wpn.peq || {}).includes(x.u) && !x.lk;
+const wFodder = (w) => save.wpn.inv.filter((x) => x !== w && x.rar === w.rar && (x.slot || '') === (w.slot || '') && wFree(x) && !(x.s > 0)).sort((a, b) => a.lv - b.lv);
+function wPromote(w) { const g0 = gI(w); if (g0 >= 6) return;
+  if (w.slot) { w.rar = WR[g0 + 1]; w.s = 0; rollAf(w); if (g0 + 1 >= 5 && !(w.opts || []).length) addUq(w); return; } w.rar = WR[g0 + 1]; w.s = 0; const g1 = g0 + 1;
   if (g1 >= 4 && !w.opts.includes('auto_' + w.el)) w.opts.unshift('auto_' + w.el);
   const pool = Object.keys(WOPT).filter((k) => !k.startsWith('auto_') && !w.opts.includes(k)); while (w.opts.length < W_OPT_N[w.rar] && pool.length) w.opts.push(pool.splice(Math.random() * pool.length | 0, 1)[0]);
   if (g1 >= 4) w.rel = w.el; }
 // 승급: 영웅 이하는 같은 등급 3개 → 다음 등급 / 전설 이상은 같은 등급 1개로 별 +1, 별이 다 차면 다음 등급
 function wMergeInfo(w) { const g0 = gI(w), F = wFodder(w), nx = WR[g0 + 1];
-  if (g0 <= 3) { if (g0 + 1 > maxG()) return { ok: false, t: `${RAR[nx].nm}은 ${GATE[g0 + 1]}장을 열어야 만들 수 있습니다` }; return { ok: F.length >= 2, t: `같은 ${RAR[w.rar].nm} 무기 2개를 더해 ${RAR[nx].nm}으로 (${Math.min(F.length, 2)}/2)`, use: 2 }; }
+  if (g0 <= 3) { if (g0 + 1 > maxG()) return { ok: false, t: `${RAR[nx].nm}은 ${GATE[g0 + 1]}장을 열어야 만들 수 있습니다` }; return { ok: F.length >= 2, t: `같은 ${RAR[w.rar].nm} ${itemKind(w)} 2개를 더해 ${RAR[nx].nm}으로 (${Math.min(F.length, 2)}/2)`, use: 2 }; }
   const mx = STAR_MAX[g0]; if ((w.s || 0) >= mx) { if (g0 >= 6) return { ok: false, t: '최고 등급 · 별 최대' }; return { ok: false, t: `${RAR[nx].nm}은 ${GATE[g0 + 1]}장을 열어야 오릅니다` }; }
-  return { ok: F.length >= 1, t: `같은 ${RAR[w.rar].nm} 무기 1개로 별 +1 (별 ${w.s || 0}/${mx}${g0 < 6 ? ` · 다 차면 ${RAR[nx].nm}` : ''})`, use: 1 }; }
+  return { ok: F.length >= 1, t: `같은 ${RAR[w.rar].nm} ${itemKind(w)} 1개로 별 +1 (별 ${w.s || 0}/${mx}${g0 < 6 ? ` · 다 차면 ${RAR[nx].nm}` : ''})`, use: 1 }; }
 function wMerge(w) { const I = wMergeInfo(w); if (!I.ok) return false; const used = wFodder(w).slice(0, I.use), g0 = gI(w);
   for (const x of used) save.ore += Math.floor(x.lv / 2); save.wpn.inv = save.wpn.inv.filter((x) => !used.includes(x));
   if (g0 <= 3) wPromote(w); else { w.s = (w.s || 0) + 1; if (w.s >= STAR_MAX[g0] && g0 < 6 && g0 + 1 <= maxG()) wPromote(w); }
   return true; }
 function wUp(w, times) { let k = 0; while (k < times && w.lv < wCap(w)) { const c = wUpCost(w); if (save.core < c.core || save.ore < c.ore) break; save.core -= c.core; save.ore -= c.ore; w.lv++; k++; } return k; }
-function drawWpnTab(body, m) {
-  const cur = wOf(m.id), eqU = (x) => Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === x.u);
-  const list = save.wpn.inv.slice().sort((a, b) => (b.u === (cur && cur.u)) - (a.u === (cur && cur.u)) || gI(b) - gI(a) || (b.s || 0) - (a.s || 0) || b.lv - a.lv);
-  if (!wSel || !save.wpn.inv.find((w) => w.u === wSel)) wSel = cur ? cur.u : list[0] && list[0].u;
-  const w = save.wpn.inv.find((x) => x.u === wSel);
-  const stars = (x) => (STAR_MAX[gI(x)] ? `<span class="wsr">${'★'.repeat(x.s || 0)}<s>${'★'.repeat(STAR_MAX[gI(x)] - (x.s || 0))}</s></span>` : '');
-  const tile = (x) => { const R0 = RAR[x.rar], E0 = ELEM[x.el], eq = eqU(x);
-    return `<button class="wt g${gI(x)} ${x.u === wSel ? 'sel' : ''}" data-u="${x.u}" style="--rc:${R0.col};--ec:${E0.col}"><span class="wg">${ico2('wpn', E0.col)}</span><i class="we">${ico('el_' + x.el)}</i><b class="num">+${x.lv}</b>${x.s ? `<i class="ws num">★${x.s}</i>` : ''}${x.lk ? '<i class="wl">🔒</i>' : ''}${eq ? `<em>${eq === m.id ? '장착' : '사용 중'}</em>` : ''}</button>`; };
-  let det = '<div class="wdet empty"><p>무기가 없습니다. 장을 깨거나 상점의 무기 보급에서 얻을 수 있습니다.</p></div>';
-  if (w) { const R0 = RAR[w.rar], E0 = ELEM[w.el], owner = eqU(w), mine = owner === m.id, mt = w.el === m.el, c = wUpCost(w), cap = wCap(w), sv = wSell(w), MI = wMergeInfo(w), canUp = w.lv < cap && save.core >= c.core && save.ore >= c.ore;
-    det = `<div class="wdet" style="--rc:${R0.col};--ec:${E0.col}"><div class="wh"><span class="skt lg">${ico2('wpn', E0.col)}</span><div><small class="rr">${R0.nm} · ${E0.nm} 계열 ${stars(w)}</small><b>${wName(w, m)}</b><span class="lvb"><i style="width:${Math.min(100, w.lv / cap * 100)}%"></i></span><small class="num">강화 +${w.lv} / ${cap}</small></div></div>`
-      + `<div class="wst"><div><small>피해</small><b class="num">+${wDmg(w)}%</b></div><div><small>계열 일치</small><b>${mt ? '+10%' : '없음'}</b></div><div><small>다음 강화</small><b class="num">${w.lv >= cap ? '상한' : '+' + Math.round((W_DMG[w.rar] + (w.lv + 1) * 1.6) * (1 + .12 * (w.s || 0))) + '%'}</b></div></div>`
-      + `<ul class="wop">${w.opts.length ? w.opts.map((o) => `<li class="${WOPT[o].auto ? 'au' : ''}"><b>${WOPT[o].nm}</b><small>${WOPT[o].ds}</small></li>`).join('') : '<li class="none"><small>각인 없음 · 고급 이상부터 각인이 붙습니다</small></li>'}</ul>`
-      + (w.rel ? `<div class="wrel"><span class="skt sm">${ico2('release', E0.col)}</span><span><small>고유 해방 · 필살기와 함께 발동</small><b>${REL[w.rel].nm}</b><p>${REL[w.rel].ds}</p></span></div>` : '')
-      + `<div class="wmg ${MI.ok ? 'ok' : ''}"><span>${ico('upgrade')}<b>승급</b><small>${MI.t}</small></span><button class="bs" data-a="mg" ${MI.ok ? '' : 'disabled'}>승급</button></div>`
-      + `<div class="wbt">${mine ? `<button class="bs" data-a="off">해제</button>` : `<button class="bp" data-a="eq">${owner ? `${MECH(owner).nm}에게서 가져와 장착` : '장착'}</button>`}`
-      + `<button class="bp" data-a="up" ${canUp ? '' : 'disabled'}>${w.lv >= cap ? '강화 상한' : `강화 ${ico('core')}${c.core.toLocaleString()} ${ico('ore')}${c.ore}`}</button>`
-      + `<button class="bs" data-a="up5" ${canUp ? '' : 'disabled'}>강화 ×5</button>`
-      + `<button class="bs" data-a="lk">${w.lk ? '잠금 해제' : '잠금'}</button>`
-      + `${!owner && !w.lk ? `<button class="bs" data-a="sc">분해 ${ico('core')}${sv.core} ${ico('ore')}${sv.ore}</button>` : ''}</div></div>`; }
-  const bulk = save.wpn.inv.filter((x) => gI(x) <= 2 && wFree(x)), bc = bulk.reduce((a, x) => a + wSell(x).core, 0), bo = bulk.reduce((a, x) => a + wSell(x).ore, 0);
-  body.innerHTML = `<div class="ars2"><div class="wgrid"><div class="gh"><b>보유 무기</b><small class="num">${save.wpn.inv.length}개</small><button class="bs sm" id="wBulk" ${bulk.length ? '' : 'disabled'}>일괄 분해</button></div><div class="wts">${list.map(tile).join('')}</div></div>${det}</div>`;
-  body.querySelectorAll('.wt').forEach((b) => (b.onclick = () => { wSel = +b.dataset.u; drawArsenal(); }));
-  $('#wBulk').onclick = (e) => { const b = e.currentTarget; if (!b.dataset.ok) { b.dataset.ok = 1; b.classList.add('warn'); b.innerHTML = `일반·고급·희귀 ${bulk.length}개 분해? ${ico('core')}${bc} ${ico('ore')}${bo}`; return; }
-    save.core += bc; save.ore += bo; save.wpn.inv = save.wpn.inv.filter((x) => !bulk.includes(x)); persist(); tone(500, 200, .2, 'triangle', .08); drawArsenal(); drawTitle(); };
-  body.querySelectorAll('.wbt button, .wmg button').forEach((b) => (b.onclick = () => { const a = b.dataset.a;
-    if (a === 'eq') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.wpn.eq[m.id] = w.u; sfx.lvl(); }
-    if (a === 'off') delete save.wpn.eq[m.id];
-    if (a === 'up' || a === 'up5') { if (wUp(w, a === 'up' ? 1 : 5)) { sfx.lvl(); screenFlash(RAR[w.rar].col, .12, .3); } }
-    if (a === 'lk') w.lk = !w.lk;
-    if (a === 'mg') { const g0 = gI(w); if (wMerge(w)) { sfx.lvl(); screenFlash(RAR[w.rar].col, gI(w) > g0 ? .45 : .2, .7); flashMsg(gI(w) > g0 ? `${RAR[w.rar].nm} 등급으로 승급` : `별 ${w.s}개`); } }
-    if (a === 'sc') { const s = wSell(w); save.core += s.core; save.ore += s.ore; save.wpn.inv = save.wpn.inv.filter((x) => x !== w); wSel = null; tone(500, 200, .2, 'triangle', .08); }
-    persist(); drawArsenal(); drawTitle(); }));
-}
 
 // ── 스킬 강화(조선좀비 신력 방식): 기체마다 E·R·Q 1~5단계, 강화 회로 + 코어
 const SK_MAX = 5, skCost = (lv) => ({ chip: lv * 10, core: lv * 300 });
 const SK_FX = { e: (l) => `위력 +${(l - 1) * 20}% · 재사용 -${(l - 1) * 4}%`, r: (l) => `위력 +${(l - 1) * 20}%`, q: (l) => `위력 +${(l - 1) * 20}% · 필살 게이지 +${(l - 1) * 6}%` };
 function drawSkTab(body, m) {
   const S0 = (save.sk[m.id] ||= {}), X = ELEM[m.el];
-  const rows = [['e', 'E · 스킬', m.auto.nm, AUTO_DS[m.auto.k], ico2(m.auto.k, '#9ff3ff')], ['r', 'R · 계열 기술', X.sk.nm, X.sk.ds, ico2('el_' + m.el, X.col)], ['q', 'Q · 필살기', m.ult.nm, ULT_DS[m.ult.k], ico2(m.ult.k, '#ffd98a')]];
+  const rows = [['e', 'E · 스킬', m.auto.nm, AUTO_DS[m.auto.k], ico2('sk:' + m.id + ':e', '#9ff3ff')], ['r', 'R · 계열 기술', X.sk.nm, X.sk.ds, ico2('el_' + m.el, X.col)], ['q', 'Q · 필살기', m.ult.nm, ULT_DS[m.ult.k], ico2('sk:' + m.id + ':q', '#ffd98a')]];
   body.innerHTML = `<div class="skw"><p class="snote"><b>${m.nm}</b>의 스킬을 강화합니다 · 강화 회로는 장을 깨거나 상점·메일로 얻습니다</p>${rows.map(([k, t, nm, ds, ic]) => { const lv = S0[k] || 1, c = skCost(lv), max = lv >= SK_MAX, ok = !max && save.chip >= c.chip && save.core >= c.core;
     return `<div class="skc"><span class="skt lg">${ic}</span><div class="skx"><small>${t}</small><b>${nm}</b><p>${ds || ''}</p><span class="sks">${Array.from({ length: SK_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''}"></i>`).join('')}<em class="num">Lv ${lv}</em></span>
       <div class="skf"><span>지금 <b>${lv > 1 ? SK_FX[k](lv) : '기본'}</b></span>${max ? '' : `<span>다음 <b>${SK_FX[k](lv + 1)}</b></span>`}</div></div>
@@ -3683,8 +3658,8 @@ function drawSkTab(body, m) {
 // ── 무기 보급(조선좀비 장비 뽑기 방식): 확률 공개 · 관문 · 50회 확정 · 10회 희귀 이상 보장 · 주간 전설 확정 구매
 const EQP = [45, 30, 17, 6.5, 1.3, .15, .05], CRATE_C = [55, 30, 12, 3, 0, 0, 0], W_PITY = 50, LEG_PRICE = 2400;
 const BOXES = [
-  { k: 'c1', nm: '정비 보급', ds: '코어로 사는 기본 보급 1회', cur: 'core', cost: 400, n: 1, tb: CRATE_C },
-  { k: 'g1', nm: '고급 보급', ds: '결정으로 사는 보급 1회', cur: 'gem', cost: 60, n: 1, tb: EQP },
+  { k: 'c1', nm: '정비 보급', ds: '무기나 부품 1개 · 코어로 구매', cur: 'core', cost: 400, n: 1, tb: CRATE_C },
+  { k: 'g1', nm: '고급 보급', ds: '무기나 부품 1개 · 결정으로 구매', cur: 'gem', cost: 60, n: 1, tb: EQP },
   { k: 'g10', nm: '고급 보급 10회', ds: '희귀 이상 1개 보장 · 10% 할인', cur: 'gem', cost: 540, n: 10, tb: EQP },
 ];
 const LWK = () => Math.floor((Date.now() / 864e5 + 3) / 7), legEls = () => { const k = LWK(); return [EL_KEYS[(k * 3) % 7], EL_KEYS[(k * 3 + 2) % 7]]; };
@@ -3694,9 +3669,9 @@ function pullBox(B) { if (save[B.cur] < B.cost) { flashMsg(B.cur === 'gem' ? '�
     if (B.cur === 'gem') { save.wpity++; if (save.wpity >= W_PITY) { gi = Math.max(gi, Math.min(cap, 4)); } if (gi >= Math.min(cap, 4)) save.wpity = 0; }
     got.push(gi); }
   if (B.n >= 10 && !got.some((x) => x >= 2)) got[got.length - 1] = Math.min(2, cap);
-  const ws = got.map((gi) => { const w = mkWeapon(WR[gi], Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w); return w; });
+  const ws = got.map((gi) => { const w = Math.random() < .55 ? mkPart(null, WR[gi]) : mkWeapon(WR[gi], Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w); return w; });
   persist(); return ws; }
-function wMini(w) { const R0 = RAR[w.rar], X = ELEM[w.el]; return `<div class="wmn g${gI(w)}" style="--rc:${R0.col};--ec:${X.col}"><span>${ico2('wpn', X.col)}</span><b>${R0.nm}</b><small>${X.nm}</small></div>`; }
+function wMini(w) { const R0 = RAR[w.rar]; return `<div class="wmn g${gI(w)}" style="--rc:${R0.col}"><span class="it g${gI(w)}">${itemIco(w)}</span><b>${R0.nm}</b><small>${itemKind(w)}</small></div>`; }
 function drawShopWpn(keep) {
   const res = keep ? ($('#crateRes') || {}).innerHTML || '' : '', cap = maxG(), [la, lb] = legEls(), bought = save.shop.legWk === LWK();
   const rateRow = (tb) => gradeTable(tb, cap).map((p, i) => p > 0 ? `<span style="--rc:${RAR[WR[i]].col}"><i></i>${RAR[WR[i]].nm} <b class="num">${p < 1 ? p.toFixed(2) : p.toFixed(1)}%</b></span>` : '').join('');
@@ -3727,6 +3702,104 @@ function drawShopGoods() {
       + `<button class="bp" data-i="${i}" ${out || poor ? 'disabled' : ''}>${out ? '오늘 완료' : G0.cost ? `${ico(G0.cur)} ${G0.cost.toLocaleString()}` : '무료 받기'}</button></div>`; }).join('')}</div><p class="fine">매일 0시에 횟수가 다시 채워집니다 · 정련 합금은 무기 강화, 강화 회로는 스킬 강화에 씁니다</p>`;
   $('#shopGoods').querySelectorAll('.gd button').forEach((b) => (b.onclick = () => { const G0 = GOODS[+b.dataset.i]; if (save.shop.day !== dayKey()) { save.shop.day = dayKey(); save.shop.d = {}; }
     const u = save.shop.d[G0.k] || 0; if ((G0.lim && u >= G0.lim) || save[G0.cur] < G0.cost) return; save[G0.cur] -= G0.cost; save.shop.d[G0.k] = u + 1; give(G0.rw); persist(); sfx.lvl(); flashMsg('구매 완료'); drawShopHead(); drawShopGoods(); drawTitle(); }));
+}
+
+// ═════════ v28 장비: 무기 + 기체 부품 5부위(조선좀비 6칸 장비 방식) · 기체 전용 세트 · 그림 아이콘 ═════════
+// 부품은 모든 기체가 함께 쓰고(계정 공용), 무기는 기체마다 따로 낀다. 부품 그림은 각 기체의 실제 모습에서 따왔다
+const PSLOT = { head: { nm: '헤드 센서', b: 2, st: '최대 내구' }, chest: { nm: '흉부 장갑', b: 3, st: '최대 내구' }, arm: { nm: '팔 구동기', b: 2, st: '모든 피해' }, leg: { nm: '다리 추진기', b: 2, st: '이동·내구' }, core: { nm: '반응로 코어', b: 2.5, st: '모든 피해' } };
+const PSLOTS = Object.keys(PSLOT), GMUL = [1, 1.6, 2.6, 4.2, 7, 9.5, 12];
+const AFX = { dmg: { nm: '피해', r: [1, 3], u: '%' }, hp: { nm: '내구', r: [1.5, 4], u: '%' }, crit: { nm: '치명타', r: [1, 2.5], u: '%' }, cd: { nm: '재사용 감소', r: [1, 2.5], u: '%' }, spd: { nm: '이동', r: [1, 2.5], u: '%' },
+  regen: { nm: '초당 수리', r: [.1, .3], u: '' }, guard: { nm: '받는 피해 감소', r: [.8, 2], u: '%' }, ult: { nm: '필살 게이지', r: [2, 5], u: '%' }, mag: { nm: '수집 범위', r: [4, 10], u: '%' }, melee: { nm: '근접 피해', r: [2, 5], u: '%' } };
+const AF_N = [0, 1, 1, 2, 3, 3, 4], AF_GM = [1, 1, 1.2, 1.4, 1.7, 2, 2.4];
+const SET_FX = [[2, '모든 피해 +8%'], [3, '최대 내구 +10%'], [5, '모든 재사용 -12% · 필살 게이지 +15%']];
+save.wpn.peq ??= {};
+const pVal = (x) => +(PSLOT[x.slot].b * GMUL[gI(x)] * (1 + .03 * x.lv) * (1 + .12 * (x.s || 0))).toFixed(1);
+const pStat = (x, v = pVal(x)) => (x.slot === 'leg' ? `이동 +${(v * .4).toFixed(1)}% · 내구 +${(v * .6).toFixed(1)}%` : `${PSLOT[x.slot].st} +${v}%`);
+function rollAf(x) { const g = gI(x), keys = Object.keys(AFX); let guard = 0; x.af ||= [];
+  while (x.af.length < AF_N[g] && guard++ < 50) { const k = keys[Math.random() * keys.length | 0]; if (x.af.some((a) => a[0] === k)) continue; const [a, b] = AFX[k].r; x.af.push([k, +((a + Math.random() * (b - a)) * AF_GM[g]).toFixed(1)]); } }
+function addUq(x) { const pool = Object.keys(WOPT).filter((k) => !k.startsWith('auto_') && !(x.opts || []).includes(k)); if (pool.length) (x.opts ||= []).push(pool[Math.random() * pool.length | 0]); }
+function mkPart(slot, rar, set) {
+  slot ||= PSLOTS[Math.random() * PSLOTS.length | 0];
+  set ||= Math.random() < .45 ? save.mech : MECHS[Math.random() * MECHS.length | 0].id;
+  const x = { u: save.wpn.uid++, slot, set, rar, lv: 0, s: 0, af: [], opts: [] }, g = gI(x);
+  rollAf(x); if (g >= 5 || (g === 4 && Math.random() < .3)) addUq(x); return x;
+}
+const isPart = (x) => !!(x && x.slot);
+const WICO = { pistol: 'w_pistol', rifle: 'w_rifle', katana: 'w_katana', saber: 'w_saber', cannon: 'w_cannon', gatling: 'w_gatling', rail: 'w_rail', hammer: 'w_hammer', great: 'w_great', spear: 'w_spear', staff: 'w_beam' };
+const itemFile = (x, m) => (isPart(x) ? `p_${x.set}_${x.slot}` : WICO[(m || MECH(save.mech)).arm] || 'w_rifle');
+const itemIco = (x, m, cls = '') => `<img class="iic ${isPart(x) ? '' : 'wel-' + x.el} ${cls}" src="img/icon/${itemFile(x, m)}.webp?v=1" alt="" draggable="false">`;
+const itemName = (x, m) => (isPart(x) ? `${MECH(x.set).nm} ${PSLOT[x.slot].nm}` : wName(x, m));
+const itemKind = (x) => (isPart(x) ? PSLOT[x.slot].nm : '무기');
+function itemScore(x, m) { if (isPart(x)) return pVal(x) + x.af.reduce((a, b) => a + b[1], 0) * .6 + (x.opts || []).length * 4 + (x.set === m.id ? 4 : 0); return wDmg(x) + (x.el === m.el ? 10 : 0) + x.opts.length * 4 + (x.rel ? 6 : 0); }
+const eqOf = (s, m) => (s === 'wpn' ? wOf(m.id) : save.wpn.inv.find((x) => x.u === save.wpn.peq[s]));
+const setCount = (m) => PSLOTS.filter((s) => { const x = eqOf(s, m); return x && x.set === m.id; }).length;
+function applyAf(k, a) {
+  if (k === 'dmg') P.dmgMul *= 1 + a / 100; else if (k === 'hp') P.maxHp *= 1 + a / 100; else if (k === 'crit') P.crit += a / 100; else if (k === 'cd') P.cdMul *= 1 - a / 100;
+  else if (k === 'spd') P.spdMul *= 1 + a / 100; else if (k === 'regen') P.regen += a; else if (k === 'guard') P.taken = (P.taken || 1) * (1 - a / 100); else if (k === 'ult') P.ultGain = (P.ultGain || 1) * (1 + a / 100);
+  else if (k === 'mag') P.magnet *= 1 + a / 100; else if (k === 'melee') P.meleeMul = (P.meleeMul || 1) * (1 + a / 100);
+}
+function applyParts(m) {
+  for (const s of PSLOTS) { const x = eqOf(s, m); if (!x) continue; const v = pVal(x);
+    if (s === 'head' || s === 'chest') P.maxHp *= 1 + v / 100; else if (s === 'arm' || s === 'core') P.dmgMul *= 1 + v / 100; else { P.spdMul *= 1 + v * .4 / 100; P.maxHp *= 1 + v * .6 / 100; }
+    for (const [k, a] of x.af || []) applyAf(k, a);
+    for (const o of x.opts || []) { if (P.wo[o]) continue; P.wo[o] = 1; if (o === 'crit') P.crit += .08; if (o === 'cool') P.cdMul *= .9; if (o === 'guard') P.taken = (P.taken || 1) * .92; } }
+  const n = setCount(m); if (n >= 2) P.dmgMul *= 1.08; if (n >= 3) P.maxHp *= 1.1; if (n >= 5) { P.cdMul *= .88; P.ultGain = (P.ultGain || 1) * 1.15; }
+}
+function autoEquip(m) { let k = 0;
+  for (const s of PSLOTS) { const cur = eqOf(s, m), best = save.wpn.inv.filter((x) => x.slot === s && (x === cur || wFree(x) || x.lk && !Object.values(save.wpn.eq).includes(x.u))).sort((a, b) => itemScore(b, m) - itemScore(a, m))[0];
+    if (best && best !== cur) { save.wpn.peq[s] = best.u; k++; } }
+  const cw = wOf(m.id), bw = save.wpn.inv.filter((x) => !isPart(x) && (x === cw || !Object.values(save.wpn.eq).includes(x.u))).sort((a, b) => itemScore(b, m) - itemScore(a, m))[0];
+  if (bw && bw !== cw) { save.wpn.eq[m.id] = bw.u; k++; }
+  return k; }
+
+let eqF = 'all';
+function drawWpnTab(body, m) {
+  const inv = save.wpn.inv, owner = (x) => (isPart(x) ? (Object.keys(save.wpn.peq).find((s) => save.wpn.peq[s] === x.u) ? 'part' : null) : Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === x.u));
+  const slotOf = (x) => (isPart(x) ? x.slot : 'wpn'), cmpTo = (x) => eqOf(slotOf(x), m);
+  const list = inv.filter((x) => eqF === 'all' || slotOf(x) === eqF).sort((a, b) => !!owner(b) - !!owner(a) || gI(b) - gI(a) || (b.s || 0) - (a.s || 0) || b.lv - a.lv);
+  if (!wSel || !inv.find((x) => x.u === wSel)) wSel = (eqOf('wpn', m) || list[0] || {}).u;
+  const w = inv.find((x) => x.u === wSel);
+  const stars = (x) => (STAR_MAX[gI(x)] ? `<span class="wsr">${'★'.repeat(x.s || 0)}<s>${'★'.repeat(STAR_MAX[gI(x)] - (x.s || 0))}</s></span>` : '');
+  const tile = (x) => { const R0 = RAR[x.rar], o = owner(x), c = cmpTo(x), d = c && c !== x ? Math.sign(Math.round(itemScore(x, m) - itemScore(c, m))) : !c ? 1 : 0;
+    return `<button class="it g${gI(x)} ${x.u === wSel ? 'sel' : ''}" data-u="${x.u}" style="--rc:${R0.col}" title="${R0.nm} ${itemName(x, m)}">${itemIco(x, m)}<b class="num">+${x.lv}</b>${x.s ? `<i class="ws num">★${x.s}</i>` : ''}${x.lk ? '<i class="wl">🔒</i>' : ''}${!isPart(x) ? `<i class="we">${ico('el_' + x.el)}</i>` : ''}${o ? `<em>${o === m.id || o === 'part' ? '장착' : '사용 중'}</em>` : d > 0 ? '<i class="up">▲</i>' : d < 0 ? '<i class="dn">▼</i>' : ''}</button>`; };
+  const slots = [['wpn', '무기'], ...PSLOTS.map((s) => [s, PSLOT[s].nm])];
+  const doll = slots.map(([s, nm]) => { const x = eqOf(s, m); return `<button class="sl ${x ? 'g' + gI(x) : 'emp'} ${eqF === s ? 'on' : ''}" data-s="${s}" style="--rc:${x ? RAR[x.rar].col : '#3a4356'}">${x ? itemIco(x, m) : `<span class="slx">${s === 'wpn' ? ico2('wpn', '#5a6478') : ico('mech')}</span>`}<small>${nm}</small>${x ? `<b class="num">+${x.lv}</b>` : ''}</button>`; }).join('');
+  const sc = setCount(m);
+  const setBox = `<div class="setb"><div class="sbh"><img src="img/icon/p_${m.id}_chest.webp?v=1" alt=""><span><small>기체 전용 세트</small><b>${m.nm} 세트 <em class="num">${sc}/5</em></b></span></div><ul>${SET_FX.map(([n, t]) => `<li class="${sc >= n ? 'ok' : ''}"><i class="num">${n}</i>${t}</li>`).join('')}</ul><p>지금 고른 기체와 같은 이름의 부품을 낄수록 강해집니다</p></div>`;
+  let det = '<div class="wdet empty"><p>장비가 없습니다. 장을 깨거나 상점의 보급에서 얻을 수 있습니다.</p></div>';
+  if (w) { const R0 = RAR[w.rar], E0 = isPart(w) ? null : ELEM[w.el], o = owner(w), mine = isPart(w) ? o === 'part' : o === m.id, c = wUpCost(w), cap = wCap(w), sv = wSell(w), MI = wMergeInfo(w), canUp = w.lv < cap && save.core >= c.core && save.ore >= c.ore;
+    const statRow = isPart(w)
+      ? `<div><small>${PSLOT[w.slot].st}</small><b class="num">${pStat(w)}</b></div><div><small>세트</small><b>${w.set === m.id ? '<span class="ok">전용 일치</span>' : MECH(w.set).nm}</b></div><div><small>다음 강화</small><b class="num">${w.lv >= cap ? '상한' : pStat(w, +(PSLOT[w.slot].b * GMUL[gI(w)] * (1 + .03 * (w.lv + 1)) * (1 + .12 * (w.s || 0))).toFixed(1))}</b></div>`
+      : `<div><small>피해</small><b class="num">+${wDmg(w)}%</b></div><div><small>계열 일치</small><b>${w.el === m.el ? '+10%' : '없음'}</b></div><div><small>다음 강화</small><b class="num">${w.lv >= cap ? '상한' : '+' + Math.round((W_DMG[w.rar] + (w.lv + 1) * 1.6) * (1 + .12 * (w.s || 0))) + '%'}</b></div>`;
+    const afl = isPart(w) ? (w.af || []).map(([k, a]) => `<li class="af"><b>${AFX[k].nm}</b><small class="num">+${a}${AFX[k].u}</small></li>`).join('') : '';
+    const opl = (w.opts || []).map((o2) => `<li class="${WOPT[o2].auto ? 'au' : 'uq'}"><b>${isPart(w) ? '고유 · ' : ''}${WOPT[o2].nm}</b><small>${WOPT[o2].ds}</small></li>`).join('');
+    det = `<div class="wdet g${gI(w)}" style="--rc:${R0.col};--ec:${E0 ? E0.col : R0.col}"><div class="wh"><span class="ibig g${gI(w)}">${itemIco(w, m)}</span><div><small class="rr">${R0.nm} · ${itemKind(w)}${E0 ? ` · ${E0.nm} 계열` : ''} ${stars(w)}</small><b>${itemName(w, m)}</b><span class="lvb"><i style="width:${Math.min(100, w.lv / cap * 100)}%"></i></span><small class="num">강화 +${w.lv} / ${cap}</small></div></div>`
+      + `<div class="wst">${statRow}</div>`
+      + `<ul class="wop">${afl + opl || `<li class="none"><small>${isPart(w) ? '추가 옵션 없음 · 고급 이상부터 붙습니다' : '각인 없음 · 고급 이상부터 각인이 붙습니다'}</small></li>`}</ul>`
+      + (!isPart(w) && w.rel ? `<div class="wrel"><span class="skt sm">${ico2('release', E0.col)}</span><span><small>고유 해방 · 필살기와 함께 발동</small><b>${REL[w.rel].nm}</b><p>${REL[w.rel].ds}</p></span></div>` : '')
+      + `<div class="wmg ${MI.ok ? 'ok' : ''}"><span>${ico('upgrade')}<b>승급</b><small>${MI.t}</small></span><button class="bs" data-a="mg" ${MI.ok ? '' : 'disabled'}>승급</button></div>`
+      + `<div class="wbt">${mine ? `<button class="bs" data-a="off">해제</button>` : `<button class="bp" data-a="eq">${!isPart(w) && o ? `${MECH(o).nm}에게서 가져와 장착` : '장착'}</button>`}`
+      + `<button class="bp" data-a="up" ${canUp ? '' : 'disabled'}>${w.lv >= cap ? '강화 상한' : `강화 ${ico('core')}${c.core.toLocaleString()} ${ico('ore')}${c.ore}`}</button>`
+      + `<button class="bs" data-a="up5" ${canUp ? '' : 'disabled'}>강화 ×5</button><button class="bs" data-a="lk">${w.lk ? '잠금 해제' : '잠금'}</button>`
+      + `${!o && !w.lk ? `<button class="bs" data-a="sc">분해 ${ico('core')}${sv.core} ${ico('ore')}${sv.ore}</button>` : ''}</div></div>`; }
+  const bulk = inv.filter((x) => gI(x) <= 2 && wFree(x)), bc = bulk.reduce((a, x) => a + wSell(x).core, 0), bo = bulk.reduce((a, x) => a + wSell(x).ore, 0);
+  const flt = [['all', '전체'], ['wpn', '무기'], ...PSLOTS.map((s) => [s, PSLOT[s].nm.split(' ')[0]])];
+  body.innerHTML = `<div class="eqw"><div class="eqL"><div class="doll">${doll}</div>${setBox}<button class="bp big" id="eqAuto">${ico('upgrade')} 자동 장착</button></div>`
+    + `<div class="eqM"><div class="gh"><div class="flt">${flt.map(([k, n]) => `<button data-f="${k}" class="${eqF === k ? 'on' : ''}">${n}</button>`).join('')}</div><small class="num">${inv.length}개</small><button class="bs sm" id="wBulk" ${bulk.length ? '' : 'disabled'}>일괄 분해</button></div><div class="its">${list.map(tile).join('') || '<p class="emp">이 부위의 장비가 없습니다</p>'}</div></div>${det}</div>`;
+  body.querySelectorAll('.it').forEach((b) => (b.onclick = () => { wSel = +b.dataset.u; drawArsenal(); }));
+  body.querySelectorAll('.flt button').forEach((b) => (b.onclick = () => { eqF = b.dataset.f; drawArsenal(); }));
+  body.querySelectorAll('.sl').forEach((b) => (b.onclick = () => { const s = b.dataset.s, x = eqOf(s, m); eqF = eqF === s ? 'all' : s; if (x) wSel = x.u; drawArsenal(); }));
+  $('#eqAuto').onclick = () => { const k = autoEquip(m); persist(); sfx.lvl(); flashMsg(k ? `${k}칸을 더 좋은 장비로 바꿨습니다` : '이미 가장 좋은 장비입니다'); drawArsenal(); drawTitle(); };
+  $('#wBulk').onclick = (e) => { const b = e.currentTarget; if (!b.dataset.ok) { b.dataset.ok = 1; b.classList.add('warn'); b.innerHTML = `일반·고급·희귀 ${bulk.length}개 분해? ${ico('core')}${bc} ${ico('ore')}${bo}`; return; }
+    save.core += bc; save.ore += bo; save.wpn.inv = inv.filter((x) => !bulk.includes(x)); persist(); tone(500, 200, .2, 'triangle', .08); drawArsenal(); drawTitle(); };
+  body.querySelectorAll('.wbt button, .wmg button').forEach((b) => (b.onclick = () => { const a = b.dataset.a;
+    if (a === 'eq') { if (isPart(w)) save.wpn.peq[w.slot] = w.u; else { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.wpn.eq[m.id] = w.u; } sfx.lvl(); }
+    if (a === 'off') { if (isPart(w)) delete save.wpn.peq[w.slot]; else delete save.wpn.eq[m.id]; }
+    if (a === 'up' || a === 'up5') { if (wUp(w, a === 'up' ? 1 : 5)) { sfx.lvl(); screenFlash(RAR[w.rar].col, .12, .3); } }
+    if (a === 'lk') w.lk = !w.lk;
+    if (a === 'mg') { const g0 = gI(w); if (wMerge(w)) { sfx.lvl(); screenFlash(RAR[w.rar].col, gI(w) > g0 ? .45 : .2, .7); flashMsg(gI(w) > g0 ? `${RAR[w.rar].nm} 등급으로 승급` : `별 ${w.s}개`); } }
+    if (a === 'sc') { const s = wSell(w); save.core += s.core; save.ore += s.ore; save.wpn.inv = save.wpn.inv.filter((x) => x !== w); wSel = null; tone(500, 200, .2, 'triangle', .08); }
+    persist(); drawArsenal(); drawTitle(); }));
 }
 
 // ───────── 쿠폰 ─────────
@@ -4078,8 +4151,8 @@ function drawTitle() {
   $('#mdet').innerHTML = `<span class="rar">${R0.nm}</span><span class="clsb">${ico(CLS[m.cls].k)}${m.cls}</span>${st ? `<span class="stars">${'★'.repeat(st)}${'☆'.repeat(5 - st)}</span>` : ''}<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
     + statBar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm)) + statBar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm)) + statBar('속도', m.spd, 1.3, Math.round(100 * m.spd)) + statBar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))
     + `<div class="kit"><div><span class="bd">${ico2(m.prim, '#ffd98a')}</span><span><b>${an.nm}</b><small>기본 무기 · ${an.ds0}</small></span></div>`
-    + `<div><span class="bd a" style="--ec:${ELEM[m.el].col}">${ico2(m.auto.k, '#ffffff')}</span><span><b>${m.auto.nm}</b><small>스킬 · E · ${m.auto.cd}초</small></span></div>`
-    + `<div><span class="bd u">${ico2(m.ult.k, '#ffd98a')}</span><span><b>${m.ult.nm}</b><small>필살기 · Q${wOf(m.id) && wOf(m.id).rel ? ' · 무기 해방 「' + REL[wOf(m.id).rel].nm + '」' : ''}</small></span></div><div><span class="bd e" style="--ec:${ELEM[m.el].col}">${ico2('el_' + m.el, ELEM[m.el].col)}</span><span><b>${ELEM[m.el].sk.nm} <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm} 계열</i></b><small>계열 기술 · R · ${ELEM[m.el].sk.ds}</small></span></div>${starOf(m.id) ? (() => { const w = wOf(m.id), X = w && ELEM[w.el]; return `<div><span class="bd w" style="--ec:${X ? X.col : '#8a93a8'}">${ico2('wpn', X ? X.col : '#8a93a8')}</span><span><b>${w ? wName(w, m) : '무기 없음'} ${w ? `<i class="elc" style="--ec:${RAR[w.rar].col}">${RAR[w.rar].nm} · Lv ${w.lv}</i>` : ''}</b><small>${w ? `피해 +${wDmg(w)}% · ${w.opts.map((o) => WOPT[o].nm).join(' · ') || '각인 없음'}` : '무기고에서 장착하세요'} · 숙련 Lv ${save.mlv[m.id] || 0}</small></span></div>`; })() : ''}</div>`
+    + `<div><span class="bd a" style="--ec:${ELEM[m.el].col}">${ico2('sk:' + m.id + ':e', '#ffffff')}</span><span><b>${m.auto.nm}</b><small>스킬 · E · ${m.auto.cd}초</small></span></div>`
+    + `<div><span class="bd u">${ico2('sk:' + m.id + ':q', '#ffd98a')}</span><span><b>${m.ult.nm}</b><small>필살기 · Q${wOf(m.id) && wOf(m.id).rel ? ' · 무기 해방 「' + REL[wOf(m.id).rel].nm + '」' : ''}</small></span></div><div><span class="bd e" style="--ec:${ELEM[m.el].col}">${ico2('el_' + m.el, ELEM[m.el].col)}</span><span><b>${ELEM[m.el].sk.nm} <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm} 계열</i></b><small>계열 기술 · R · ${ELEM[m.el].sk.ds}</small></span></div>${starOf(m.id) ? (() => { const w = wOf(m.id), X = w && ELEM[w.el]; return `<div><span class="bd w" style="--ec:${X ? X.col : '#8a93a8'}">${ico2('wpn', X ? X.col : '#8a93a8')}</span><span><b>${w ? wName(w, m) : '무기 없음'} ${w ? `<i class="elc" style="--ec:${RAR[w.rar].col}">${RAR[w.rar].nm} · Lv ${w.lv}</i>` : ''}</b><small>${w ? `피해 +${wDmg(w)}% · ${w.opts.map((o) => WOPT[o].nm).join(' · ') || '각인 없음'}` : '무기고에서 장착하세요'} · 숙련 Lv ${save.mlv[m.id] || 0}</small></span></div>`; })() : ''}</div>`
     + `<div class="ps">${m.pass}</div>`
     + (st ? '' : `<div class="buy"><button class="go" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()} 코어로 구매</button><button class="ghost" id="toGacha">${ico('gacha')} 뽑기로 얻기</button></div>`);
   if (!st) { $('#unlock').onclick = () => { if (save.core < m.cost) return; save.core -= m.cost; save.own[m.id] = 1; save.mech = m.id; persist(); sfx.lvl(); screenFlash(R0.col, .35, .6); if (lobby.on) enterLobby(); drawTitle(); }; $('#toGacha').onclick = openGacha; }

@@ -673,6 +673,57 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 .mrw{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin:6px 0;font-size:13px;color:#cfd8ea}.mrw span{display:inline-flex;align-items:center;gap:4px}.mrw .ico{font-size:15px;color:#ffc46b}.mrw b{color:#fff}.mrw em{font-style:normal;color:#9ff0a8;font-weight:800}
 @media (max-width:640px){.pfc{flex-direction:column;text-align:center}.pfn{justify-content:center}.pfs{grid-template-columns:repeat(3,minmax(0,1fr))}.pfm{grid-template-columns:1fr}.plg{grid-template-columns:repeat(2,minmax(0,1fr))}.skc{flex-wrap:wrap}.skc .bp{width:100%}.pfa{width:104px;height:104px}}
 
+/* v28 그림 아이콘 · 장비 6칸 · 등급 테두리 */
+img.ico.ii{width:1em;height:1em;object-fit:contain;display:inline-block;vertical-align:-.15em;fill:none;stroke:none;-webkit-user-drag:none}
+img.ico.ii.sq{object-fit:cover;border-radius:18%;box-shadow:0 0 0 1px #ffffff22}
+.rb img.ico.ii.sq{border-radius:50%;width:100%;height:100%}
+.skt img.ico.ii.sq{width:100%;height:100%;border-radius:0;box-shadow:none}
+.skt img.ico.ii:not(.sq){width:78%;height:78%}
+.rl img.ico.ii{filter:drop-shadow(0 2px 3px #000a)}
+/* 무기 그림은 계열 색으로 빛이 바뀐다 */
+.iic{display:block;width:100%;height:100%;object-fit:contain;-webkit-user-drag:none;filter:drop-shadow(0 3px 4px #000c)}
+.wel-fire{filter:sepia(.6) saturate(2.5) hue-rotate(-25deg) drop-shadow(0 3px 4px #000c)}.wel-water{filter:hue-rotate(25deg) saturate(1.3) drop-shadow(0 3px 4px #000c)}
+.wel-wind{filter:hue-rotate(-60deg) saturate(1.4) drop-shadow(0 3px 4px #000c)}.wel-elec{filter:sepia(.55) saturate(2.6) hue-rotate(5deg) brightness(1.1) drop-shadow(0 3px 4px #000c)}
+.wel-ice{filter:saturate(.55) brightness(1.18) drop-shadow(0 3px 4px #000c)}.wel-light{filter:sepia(.55) saturate(1.8) hue-rotate(-10deg) brightness(1.15) drop-shadow(0 3px 4px #000c)}
+.wel-dark{filter:sepia(.5) saturate(2.5) hue-rotate(225deg) brightness(.9) drop-shadow(0 3px 4px #000c)}
+/* 등급 칸(조선좀비 g0~g6처럼 테두리·배경·빛) */
+.it{--rc:#a7adb8;position:relative;display:block;aspect-ratio:1;padding:6%;border:0;cursor:pointer;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--rc) 34%,#141a28),#070a11 78%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 70%,transparent);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.it.g3{box-shadow:inset 0 0 0 1px var(--rc),inset 0 -14px 18px -10px color-mix(in srgb,var(--rc) 60%,transparent)}
+.it.g4,.it.g5{box-shadow:inset 0 0 0 2px var(--rc),inset 0 0 18px color-mix(in srgb,var(--rc) 45%,transparent)}
+.it.g6{box-shadow:inset 0 0 0 2px var(--rc),inset 0 0 22px color-mix(in srgb,var(--rc) 60%,transparent);animation:gMyth 2.4s ease-in-out infinite}
+@keyframes gMyth{50%{box-shadow:inset 0 0 0 2px #ffd0d8,inset 0 0 30px color-mix(in srgb,var(--rc) 80%,transparent)}}
+.it>b{position:absolute;right:5px;bottom:3px;font:900 11px var(--ff);color:#fff;text-shadow:0 1px 2px #000}
+.it .ws{position:absolute;left:5px;bottom:3px;font:900 10px var(--ff);color:#ffd36b;font-style:normal;text-shadow:0 1px 2px #000}
+.it .wl{position:absolute;right:4px;top:3px;font-size:10px;font-style:normal}
+.it .we{position:absolute;left:4px;top:4px;width:15px;height:15px;font-size:15px;font-style:normal}
+.it em{position:absolute;left:0;right:0;top:0;padding:1px 0;background:var(--ac);color:#1a1206;font:900 9.5px var(--ff);font-style:normal;text-align:center}
+.it .up,.it .dn{position:absolute;right:5px;top:3px;font-size:11px;font-style:normal;text-shadow:0 1px 2px #000}.it .up{color:#6fe08a}.it .dn{color:#ff7a6a}
+.it.sel{outline:2px solid #fff;outline-offset:-2px}
+.eqw{display:grid;grid-template-columns:250px minmax(0,1fr) 330px;gap:12px;align-items:start;text-align:left;width:100%}
+.eqL{display:grid;gap:10px}
+.doll{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sl{--rc:#3a4356;position:relative;aspect-ratio:1;padding:8px 8px 18px;border:0;cursor:pointer;background:radial-gradient(circle at 50% 36%,color-mix(in srgb,var(--rc) 30%,#121826),#070a11 80%);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 80%,transparent);color:#fff;font-family:var(--ff)}
+.sl.emp{background:#0a0e16;box-shadow:inset 0 0 0 1px #2a3242;border:1px dashed #2f394b}.sl .slx{display:grid;place-items:center;height:100%;font-size:26px;opacity:.35}
+.sl small{position:absolute;left:0;right:0;bottom:3px;font:800 10px var(--ff);color:#aab6cc;text-align:center}.sl b{position:absolute;right:5px;top:3px;font:900 10.5px var(--ff)}
+.sl.on{outline:2px solid var(--ac);outline-offset:-2px}.sl.g4,.sl.g5,.sl.g6{box-shadow:inset 0 0 0 2px var(--rc),inset 0 0 16px color-mix(in srgb,var(--rc) 45%,transparent)}
+.setb{padding:10px;background:#0d1322ee;box-shadow:inset 0 0 0 1px var(--ln)}.sbh{display:flex;align-items:center;gap:8px}.sbh img{width:40px;height:40px;object-fit:contain}
+.sbh small{display:block;font:800 10px var(--ff);color:var(--ac);letter-spacing:1px}.sbh b{font:900 14px var(--ff)}.sbh em{font-style:normal;color:var(--ac);margin-left:4px}
+.setb ul{margin:8px 0 6px;padding:0;list-style:none;display:grid;gap:4px}.setb li{display:flex;align-items:center;gap:7px;font-size:12px;color:#7d889c}.setb li i{display:grid;place-items:center;width:18px;height:18px;background:#1a2132;font:900 10.5px var(--ff);font-style:normal}
+.setb li.ok{color:#e7f7ea}.setb li.ok i{background:#6fe08a;color:#06210d}.setb p{margin:0;font-size:11px;color:var(--tx2)}
+.eqL .bp.big{width:100%;padding:11px}
+.eqM .gh{display:flex;align-items:center;gap:8px;margin-bottom:8px}.flt{display:flex;flex-wrap:wrap;gap:4px;flex:1}
+.flt button{padding:5px 9px;border:0;background:#121826;box-shadow:inset 0 0 0 1px var(--ln);color:#aab6cc;font:800 11.5px var(--ff);cursor:pointer}.flt button.on{background:var(--ac);color:#1a1206;box-shadow:none}
+.its{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:6px;max-height:calc(100vh - 230px);overflow-y:auto;padding:2px}
+.wdet .wh{display:flex;gap:12px;align-items:center}.ibig{--rc:#a7adb8;flex:0 0 auto;width:88px;height:88px;padding:6px;background:radial-gradient(circle at 50% 38%,color-mix(in srgb,var(--rc) 40%,#141a28),#070a11 80%);box-shadow:inset 0 0 0 2px var(--rc)}
+.wdet.g6 .ibig{animation:gMyth 2.4s ease-in-out infinite}
+.wop li.af b,.wop li.uq b{display:inline}.wop li.af{display:flex;justify-content:space-between}.wop li.af small{color:#9ff0a8;font-weight:800}.wop li.uq b{color:#ffd36b}
+.wst .ok{color:#6fe08a}
+.wdrop .wi.it{width:58px;height:58px;flex:0 0 auto}
+.wmn{width:84px}.wmn span.it{width:64px;height:64px;margin:0 auto 4px;font-size:0}
+.gearl .skt.it{width:46px;height:46px;padding:3px}
+@media (max-width:1100px){.eqw{grid-template-columns:220px minmax(0,1fr)}.eqw>.wdet{grid-column:1 / -1}}
+@media (max-width:700px){.eqw{grid-template-columns:1fr}.doll{grid-template-columns:repeat(6,1fr)}.sl small{font-size:8.5px}.its{max-height:none}}
+
 </style>
 </head>
 <body>
@@ -752,6 +803,6 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
 <script src="lib/gicons.js?v=1"></script>
-<script type="module" src="game.js?v=27"></script>
+<script type="module" src="game.js?v=28"></script>
 </body>
 </html>
