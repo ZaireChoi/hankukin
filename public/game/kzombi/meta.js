@@ -97,7 +97,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   /* 부가 옵션 13종·고유 효과 15종: 전투에는 기존 fx 키로 넘긴다(afxSum) */
   const AFX = { atkP: ['공격력', 2, 6, '%'], hpP: ['체력', 3, 8, '%'], crit: ['치명 확률', 1, 4, '%'], critD: ['치명 피해', 5, 15, '%'], aspd: ['공격 속도', 2, 6, '%'], mspd: ['이동 속도', 2, 5, '%'], cdr: ['기술 대기 감소', 2, 6, '%'], towerP: ['시설 피해', 3, 9, '%'], heroP: ['영웅 피해', 3, 9, '%'], gold: ['엽전 획득', 4, 12, '%'], ls: ['피흡', 0.5, 2, '%'], eliteP: ['정예·우두머리 피해', 3, 9, '%'], dmgCut: ['받는 피해 감소', 1, 4, '%'] };
   const AFX_FX = { crit: ['crit10', 10], critD: ['critDmg30', 30], aspd: ['haste10', 10], mspd: ['speed10', 10], cdr: ['skillCd10', 10], towerP: ['build20', 20], heroP: ['compDmg30', 30], gold: ['coin30', 30], ls: ['ls', 1], eliteP: ['eliteDmg25', 25], dmgCut: ['dmgCut10', 10] };
-  const UQ = { cheoyong: ['처용의 분노', '처치한 적이 폭발한다', { killBlast: 1 }], haechi: ['해치의 불씨', '쏘는 속도 +15%, 치명 피해 +30%', { haste15: 1, critDmg30: 1 }], jeoseung: ['저승사자의 낫', '체력 10% 아래 일반 적은 바로 쓰러진다', { execute: 1 }], cheolgap: ['철갑 반사', '가까이서 때린 적에게 피해를 돌려준다', { thorns: 1 }], okhwang: ['옥황의 축복', '5초마다 체력 3% 회복', { regen: 1 }], sabang: ['사방신의 가호', '체력 30% 아래 2초 무적', { lastStand: 1 }], sinmyeong: ['신명', '큰 기술 대기 -20%', { ultCd20: 1 }], janggun: ['장군의 기백', '시설 위력 +20%', { build20: 1 }], heuphyeol: ['흡혈 부적', '피흡 +3%', { ls: 3 }], baram: ['바람신', '이동 +10%, 10% 회피', { speed10: 1, dodge10: 1 }], geumdukkeobi: ['금두꺼비', '엽전 +60%', { coin30: 2 }], gwisin: ['귀신잡이', '정예·우두머리 피해 +50%', { eliteDmg25: 2 }], ssanggeom: ['쌍검무', '쏘는 속도 +25%', { haste10: 2.5 }], cheondung: ['천둥 부적', '치명 확률 +15%', { crit5: 3 }], dokkaebi: ['도깨비 방망이', '동료 피해 +40%', { compDmg30: 1.35 }] };
+  const UQ = { cgArrow: ['천궁의 세 화살', '화살이 세 갈래로 나가 적을 둘씩 꿰뚫는다', { tripleArrow: 1, pierce1: 2, multi1: 1 }], cgHunt: ['하늘 사냥', '정예·우두머리 피해 +60%, 치명 피해 +60%', { eliteDmg25: 2.4, critDmg30: 2 }], cheoyong: ['처용의 분노', '처치한 적이 폭발한다', { killBlast: 1 }], haechi: ['해치의 불씨', '쏘는 속도 +15%, 치명 피해 +30%', { haste15: 1, critDmg30: 1 }], jeoseung: ['저승사자의 낫', '체력 10% 아래 일반 적은 바로 쓰러진다', { execute: 1 }], cheolgap: ['철갑 반사', '가까이서 때린 적에게 피해를 돌려준다', { thorns: 1 }], okhwang: ['옥황의 축복', '5초마다 체력 3% 회복', { regen: 1 }], sabang: ['사방신의 가호', '체력 30% 아래 2초 무적', { lastStand: 1 }], sinmyeong: ['신명', '큰 기술 대기 -20%', { ultCd20: 1 }], janggun: ['장군의 기백', '시설 위력 +20%', { build20: 1 }], heuphyeol: ['흡혈 부적', '피흡 +3%', { ls: 3 }], baram: ['바람신', '이동 +10%, 10% 회피', { speed10: 1, dodge10: 1 }], geumdukkeobi: ['금두꺼비', '엽전 +60%', { coin30: 2 }], gwisin: ['귀신잡이', '정예·우두머리 피해 +50%', { eliteDmg25: 2 }], ssanggeom: ['쌍검무', '쏘는 속도 +25%', { haste10: 2.5 }], cheondung: ['천둥 부적', '치명 확률 +15%', { crit5: 3 }], dokkaebi: ['도깨비 방망이', '동료 피해 +40%', { compDmg30: 1.35 }] };
   function rollAffix(it) { const g = it.g || 0, n = [0, 1, 1 + (Math.random() < 0.5 ? 1 : 0), 2, 3, 3 + (Math.random() < 0.5 ? 1 : 0), 4][g], gm = [1, 1, 1.2, 1.4, 1.7, 2, 2.4][g], ks = Object.keys(AFX).sort(() => Math.random() - 0.5).slice(0, n); it.af = ks.map(k => { const A = AFX[k], v = (A[1] + Math.random() * (A[2] - A[1])) * gm; return [k, Math.round(v * 10) / 10]; }); const uk = Object.keys(UQ).sort(() => Math.random() - 0.5); it.uq = g >= 6 ? uk.slice(0, 2) : g === 5 ? uk.slice(0, 1) : g === 4 && Math.random() < 0.3 ? uk.slice(0, 1) : []; }
   function afxSum(eqList) { const fx = {}, add = (k, v) => { fx[k] = (fx[k] || 0) + v; }; for (const it of eqList || Object.values(S.equip).map(byUid).filter(Boolean)) { for (const [k, v] of (it.af || [])) if (AFX_FX[k]) add(AFX_FX[k][0], v / AFX_FX[k][1]); for (const u of (it.uq || [])) if (UQ[u]) for (const k in UQ[u][2]) add(k, UQ[u][2][k]); } return fx; }
   const afPct = (k) => { let s = 0; for (const it of Object.values(S.equip).map(byUid).filter(Boolean)) for (const [kk, v] of (it.af || [])) if (kk === k) s += v; return s; };
@@ -178,8 +178,8 @@ if (window.IS_EN) document.title = 'K Zombi';
   const itemImg = it => '<img class="iimg" src="' + itemSrc(it) + '" style="width:78%;height:78%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))" onerror="this.style.display=\'none\'">' + ((it.s || 0) > 0 ? '<div class="st stroke-s" style="position:absolute;right:4px;top:2px;font-size:18px;color:#ffe27a">+' + it.s + '</div>' : '') + (it.sg ? '<div class="stroke-s" style="position:absolute;left:4px;top:2px;font-size:16px;color:#ff6a6a">독보</div>' : '');
   function setsOf() { const c = {}; for (const sl in S.equip) { const it = byUid(S.equip[sl]); if (it && it.set) c[it.set] = (c[it.set] || 0) + 1; } return c; }
   const itemIc = it => it.slot === 'weapon' && (it.w === 'jochong' || it.w === 'seungja') ? 'skGun' : SLOT[it.slot].ic;
-  const itemVal = it => Math.round(SLOT[it.slot].base * GMUL[it.g] * (1 + 0.15 * (it.lv - 1)) * (1 + 0.15 * (it.s || 0)) * (it.sg ? 1.6 : 1) * (1 + 0.35 * ((it.t || 1) - 1)) * ((it.q || 100) / 100));
-  const itemName = it => 'T' + (it.t || 1) + ' ' + itemName0(it);
+  const itemVal = it => Math.round(SLOT[it.slot].base * GMUL[it.g] * (1 + 0.15 * (it.lv - 1)) * (1 + 0.15 * (it.s || 0)) * (it.sg ? 1.6 : 1) * (1 + 0.35 * ((it.mbow ? curTier() + 1 : (it.t || 1)) - 1)) * ((it.q || 100) / 100) * (it.mbow ? 1.35 : 1));
+  const itemName = it => 'T' + (it.mbow ? curTier() + 1 : (it.t || 1)) + ' ' + (it.mbow ? '신화 활 · 천궁' : itemName0(it));
   const itemName0 = it => it.sg ? SG[it.sg].n : it.slot === 'weapon' ? (it.w && it.w !== 'bow' ? GR[it.g].n + ' ' + WN[it.w] : SLOT.weapon.names[it.g]) : SLOT[it.slot].names[it.g];
   const byUid = u => S.inv.find(i => i.uid === u);
   const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
@@ -565,6 +565,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       ['jade300', '옥 주머니', 'jade', '옥 300', '500원', 'y', ''],
       ['jade1k', '옥 상자', 'jade', '옥 1,000', '990원', 'y', '']];
     return '<div class="hdr stroke">상점<span class="sub">옥으로 장비와 동료를 뽑아요</span></div><div class="shop" style="top:96px">' +
+      (S.mbow ? '' : '<div class="banner gold-frame mbowbn" data-act="mbow"><div class="art" style="background-image:url(img/items/weapon_g5.webp);background-size:contain;background-repeat:no-repeat;background-position:right 10px center"></div><h3 class="stroke" style="color:#ff7a5a">신화 활 · 천궁</h3><div class="d stroke-s">계정당 한 번 · 착용하면 막힌 판을 바로 넘어요. 진행할수록 함께 강해지는 성장형 신화.</div><div class="bb">' + (mbowItem() === 'mbowL' ? '<div class="mbowtag">출시 기념 · ' + mbowDays() + '일 남음 <s>1,900원</s></div>' : '') + '<div class="btn y" data-act="mbow"><span>' + payPriceTxt(mbowItem()) + '</span></div></div></div>') +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/bn_gear.webp?v=1);background-position:right center"></div><h3 class="stroke">장비 뽑기</h3><div class="d stroke-s">10번 뽑으면 희귀 이상 1개 보장. 전설, 신화 장비가 나올 수 있어요.</div>' +
       '<div class="prob" data-act="prob" data-v="eq">확률 안내</div><div class="bb"><div class="btn b" data-act="gacha" data-v="eq1"><span>1번</span><small>' + ic('jade') + '60</small></div><div class="btn y" data-act="gacha" data-v="eq10"><span>10번</span><small>' + ic('jade') + '540</small></div></div></div>' +
       '<div class="banner gold-frame"><div class="art" style="background-image:url(img/ui/hero_yisunsin.webp?v=4);background-position:center 30%"></div><h3 class="stroke">영웅 뽑기</h3><div class="d stroke-s">이순신, 강감찬, 삼족오 같은 전설 영웅 조각이 나와요. 조각으로 영웅을 맞이하고 별을 올려요.</div>' +
@@ -724,7 +725,8 @@ if (window.IS_EN) document.title = 'K Zombi';
     meta.classList.remove('off');
     try { window.JZB && window.JZB.hide && window.JZB.hide(); } catch (e) {}
     const A3r = (r.act | 0) === 3, n = r.chapter || lastCh, C = A3r ? a3chapters() : chapters(), c = C[n - 1] || C[0], waves = r.waves || c.waves, wave = Math.min(r.wave || 0, waves);
-    const win = !!r.win, NMr = !!r.nightmare; if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} }; if (!S.a3) S.a3 = { chap: 1, stars: {}, best: {}, first: {} }; const wasA3 = a3Open();
+    const win = !!r.win, NMr = !!r.nightmare;
+    { const ckey = (r.nightmare ? 'n' : 'c') + (r.chapter || lastCh); if (win) S.loseSt = null; else { S.loseSt = S.loseSt && S.loseSt.k === ckey ? { k: ckey, n: S.loseSt.n + 1 } : { k: ckey, n: 1 }; if (S.loseSt.n >= 2 && !S.mbow && S.mbowAsk !== today()) { S.mbowAsk = today(); setTimeout(() => { try { mbowModal(true); } catch (e) {} }, 1600); } } }   /* 같은 장 2연패: 신화 활 제안(하루 1번) */ if (!S.nm) S.nm = { chap: 1, stars: {}, best: {}, first: {} }; if (!S.a3) S.a3 = { chap: 1, stars: {}, best: {}, first: {} }; const wasA3 = a3Open();
     const STb = A3r ? S.a3.stars : NMr ? S.nm.stars : S.stars, BSb = A3r ? S.a3.best : NMr ? S.nm.best : S.best, wasOpen = nmOpen();
     const stars = win ? (wave >= waves ? 3 : 2) : wave >= waves * 0.66 ? 2 : wave >= waves * 0.33 ? 1 : 0;
     if (stars > (STb[n] || 0)) STb[n] = stars;
@@ -797,7 +799,7 @@ if (window.IS_EN) document.title = 'K Zombi';
     const mainB = eq ? '<div class="gd-btn main" data-act="swap" data-v="' + it.slot + '">교체</div>' : '<div class="gd-btn main" data-act="equip" data-v="' + uid + '">' + (cur ? '착용 (교체)' : '착용') + '</div>';
     modal('<div class="gd gq' + it.g + '" style="--gc:' + GR[it.g].c + '">' +
       '<div class="gd-hd"><span class="gd-badge">' + GR[it.g].n + '</span><span class="gd-t">' + itemName(it) + '</span><span class="gd-lk' + (it.lk ? ' on' : '') + '" data-act="lock" data-v="' + uid + '">' + (it.lk ? '🔒' : '🔓') + '</span></div>' +
-      '<div class="gd-top"><div class="gd-pic slot g' + it.g + '">' + itemImg(it) + (it.lv > 1 ? '<div class="gd-plus">+' + (it.lv - 1) + '</div>' : '') + '</div><div class="gd-main"><div class="gd-stat"><span>' + stN + '</span><b>' + fmt(v0) + '</b></div><div class="gd-q"><i style="width:' + Math.max(6, Math.min(100, (q - 85) / 30 * 100)) + '%"></i><span>품질 ' + q + '%</span></div><div class="gd-meta">' + s.n + ' · Lv ' + it.lv + '/' + cap + ' · T' + (it.t || 1) + (eq ? ' · <b>착용 중</b>' : '') + '</div></div></div>' +
+      '<div class="gd-top"><div class="gd-pic slot g' + it.g + '">' + itemImg(it) + (it.lv > 1 ? '<div class="gd-plus">+' + (it.lv - 1) + '</div>' : '') + '</div><div class="gd-main"><div class="gd-stat"><span>' + stN + '</span><b>' + fmt(v0) + '</b></div><div class="gd-q"><i style="width:' + Math.max(6, Math.min(100, (q - 85) / 30 * 100)) + '%"></i><span>품질 ' + q + '%</span></div><div class="gd-meta">' + s.n + ' · Lv ' + it.lv + '/' + cap + ' · T' + (it.mbow ? curTier() + 1 : (it.t || 1)) + (it.mbow ? ' · 성장형' : '') + (eq ? ' · <b>착용 중</b>' : '') + '</div></div></div>' +
       cmp + (af ? '<div class="gd-sec">' + af + '</div>' : '') + (uq ? '<div class="gd-sec">' + uq + '</div>' : '') + '<div class="gd-sec">' + fx + extra + '</div>' + up +
       '<div class="gd-src">입수 · ' + (it.src || (it.nw === undefined ? '이전 기록 없음' : '보상')) + '</div>' +
       '<div class="gd-foot">' + subB + '<div class="gd-btn up' + (IUP ? ' on' : '') + '" data-act="itemUpTog" data-v="' + uid + '">강화</div>' + mainB + '</div></div>');
@@ -843,7 +845,7 @@ if (window.IS_EN) document.title = 'K Zombi';
      코드 원문은 넣지 않고 해시만 둔다. rep: 여러 번 쓸 수 있는 시험용. 이 검사는 기기 안에서만 하므로
      정식 유료 판매 전에는 서버 검사로 바꿔야 한다. */
   const CPN_SALT = 'jz:MQMRT2QLZ2';
-  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 } };
+  const CPN = { '1c3xotbdevi': { jade: 0, starter: 1 }, 'yq1o8r10h4': { jade: 0, mbow: 1 }, 'emcd515lgu': { jade: 10000, rep: true }, 'xtc3izhfdg': { jade: 300 }, '1g0kle3wmjk': { jade: 10000, rep: true }, 'ii2xa7zzi3': { jade: 300 }, '17tfciwa04h': { jade: 100000 }, '19go3zxjsvd': { jade: 100000 } };
   const cpnHash = (str, seed) => { let h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0); for (let i = 0, ch; i < str.length; i++) { ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); } h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507); h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909); h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507); h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909); return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36); };
   /* 신규 스타트팩(990원, 계정당 1회): 홍길동 + 영웅 장비 4점 + 옥 300 + 횃불 20. 결제 전에는 시험 쿠폰으로만 받는다 */
   const stBorn = () => { if (!S.born) S.born = Date.now(); return S.born; };
@@ -864,8 +866,9 @@ if (window.IS_EN) document.title = 'K Zombi';
   /* 웹 결제 켜기: 사장님 토스 키(시험/실결제)를 받으면 true. 문서 공개 시험 키는 토스가 거부해 지금은 '결제 준비 중'으로 둔다. */
   const PAY_WEB_ON = false;
   const PLAY_PRICE = {}; /* 앱: 구글 플레이에서 읽은 실제 가격 표시 문자열 */
-  const PAY_ITEMS = { jade300: [500, '옥 주머니 (옥 300)'], jade1k: [990, '옥 상자 (옥 1,000)'], starter: [990, '신규 스타트팩'], pass: [990, '황금 패스'] };
-  const PAY_PLAY = { jade300: 'kz_jade_s', jade1k: 'kz_jade_m', starter: 'kz_starter', pass: 'kz_pass' };
+  const PAY_ITEMS = { jade300: [500, '옥 주머니 (옥 300)'], jade1k: [990, '옥 상자 (옥 1,000)'], starter: [990, '신규 스타트팩'], pass: [990, '황금 패스'], mbow: [1900, '신화 활 · 천궁'], mbowL: [990, '신화 활 · 천궁 (출시 기념)'] };
+  const PAY_PLAY = { jade300: 'kz_jade_s', jade1k: 'kz_jade_m', starter: 'kz_starter', pass: 'kz_pass', mbow: 'kz_mythic_bow', mbowL: 'kz_mythic_bow_launch' };
+  const MBOW_END = new Date('2026-12-04T00:00:00+09:00').getTime(), mbowItem = () => Date.now() < MBOW_END ? 'mbowL' : 'mbow', mbowDays = () => Math.max(1, Math.ceil((MBOW_END - Date.now()) / 864e5));   /* 출시 기념 7일(11-26~12-03) 990원, 이후 1,900원 */
   const isApp = () => { try { return /(^|[?&])src=app/.test(location.search) || sessionStorage.getItem('hk_src') === 'app' || document.referrer.indexOf('android-app://') === 0; } catch (e) { return false; } };
   const payNote = () => isApp() ? '구글 플레이' : (!PAY_WEB_ON ? '결제 준비 중' : (PAY_TEST ? '시험 결제' : ''));
   const payPriceTxt = item => (isApp() && PLAY_PRICE[item]) || (PAY_ITEMS[item] ? PAY_ITEMS[item][0] + '원' : '');
@@ -874,6 +877,7 @@ if (window.IS_EN) document.title = 'K Zombi';
   function payModal(item) {
     const P = PAY_ITEMS[item]; if (!P) return;
     if (item === 'starter' && S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; }
+      if ((item === 'mbow' || item === 'mbowL') && S.mbow) { toast('신화 활은 계정당 한 번이에요'); return; }
     if (item === 'pass' && S.pass && S.pass.paid) { toast('이미 황금 패스를 열었어요'); return; }
     const webOff = !isApp() && !PAY_WEB_ON;
     modal('<h3 class="stroke">' + P[1] + '</h3><p style="text-align:center;font-size:30px;margin:6px 0;color:#ffd36b"><b>' + payPriceTxt(item) + '</b></p>' +
@@ -944,12 +948,24 @@ if (window.IS_EN) document.title = 'K Zombi';
       if (r.item === 'jade300') S.jade += 300; else if (r.item === 'jade1k') S.jade += 1000;
       else if (r.item === 'starter') { if (!S.starter) grantStarter(); else S.jade += 300; }
       else if (r.item === 'pass') { S.pass = S.pass || {}; S.pass.paid = 1; }
+      else if (r.item === 'mbow' || r.item === 'mbowL') { if (!S.mbow) grantMbow(); else S.jade += 1000; }
       got = PAY_ITEMS[r.item][1];
     }
     if (got) { S.paidIds = S.paidIds.slice(-200); save(); toast(got + ' 지급 완료!'); try { refresh(); } catch (e) {} }
   }
   setTimeout(() => { try { payClaim(); } catch (e) { console.warn(e); } }, 1200);
   window.addEventListener('storage', e => { if (e.key === 'kz_pay_rcpt') try { payClaim(); } catch (e2) {} });
+  /* 신화 활 · 천궁 (유료 990원, 계정당 1회, 성장형: 장비 단계 = 진행 단계 + 1) */
+  function grantMbow() { if (S.mbow) return; S.mbow = 1; ITEM_SRC = '신화 활 · 천궁(확정 구매)'; const it = mkItem('weapon', 6, 'bow'); ITEM_SRC = ''; it.mbow = 1; it.q = 110; it.lk = 1; it.af = [['atkP', 30], ['crit', 10], ['aspd', 15], ['eliteP', 25]]; it.uq = ['cgArrow', 'cgHunt']; S.inv.push(it); S.equip.weapon = it.uid; save(); RARE_HIT = 6; rareShow(it); try { refresh(); } catch (e) {} }
+  function mbowModal(fromLose) { const it = { slot: 'weapon', w: 'bow', g: 6, lv: 1, t: curTier() + 1, q: 110, mbow: 1 };
+    modal('<div class="gd gq6" style="--gc:#ff3a3a"><div class="gd-hd"><span class="gd-badge">신화</span><span class="gd-t">신화 활 · 천궁</span></div>' +
+      (fromLose ? '<div class="gd-note" style="margin:10px 12px 0;font-size:14px;color:#ffd36b">이 판이 어렵다면? 천궁을 착용하면 막힌 판을 바로 넘을 수 있어요.</div>' : '') +
+      '<div class="gd-top"><div class="gd-pic slot g6">' + itemImg(it) + '</div><div class="gd-main"><div class="gd-stat"><span>공격력</span><b>' + fmt(itemVal(it)) + '</b></div><div class="gd-meta">신화 무기 · 품질 110% · 장비 단계 T' + it.t + ' (진행에 따라 함께 오름)</div></div></div>' +
+      '<div class="gd-sec"><div class="gd-uq"><b>★ ' + UQ.cgArrow[0] + '</b><span>' + UQ.cgArrow[1] + '</span></div><div class="gd-uq"><b>★ ' + UQ.cgHunt[0] + '</b><span>' + UQ.cgHunt[1] + '</span></div>' +
+      '<div class="gd-af"><span>공격력</span><b>+30%</b></div><div class="gd-af"><span>치명 확률</span><b>+10%</b></div><div class="gd-af"><span>공격 속도</span><b>+15%</b></div><div class="gd-af"><span>정예·우두머리 피해</span><b>+25%</b></div></div>' +
+      '<div class="gd-src">계정당 한 번 · 확정 구매(확률 상품 아님) · 결제 즉시 지급되는 디지털 상품이에요. 환불·청약 철회는 유료 상품 이용 안내를 따라요.</div>' +
+      (mbowItem() === 'mbowL' && !S.mbow ? '<div class="gd-note" style="margin:6px 12px 0;font-size:14px"><b style="color:#ffd36b">출시 기념 990원</b> <s style="opacity:.6">1,900원</s> · 남은 기간 ' + mbowDays() + '일</div>' : '') +
+      '<div class="gd-foot">' + (S.mbow ? '<div class="gd-btn main dis">이미 받았어요</div>' : '<div class="gd-btn sub" data-act="coupon">시험 쿠폰</div><div class="gd-btn main" data-act="payBuy" data-v="' + mbowItem() + '" style="flex:2.4;flex-direction:column;display:flex;justify-content:center;align-items:center"><span>' + payPriceTxt(mbowItem()) + '</span><small style="font-size:11px">' + payNote() + '</small></div>') + '</div></div>'); }
   function starterModal() {
     modal('<h3 class="stroke">신규 스타트팩</h3><div style="text-align:center"><div style="width:220px;height:220px;margin:0 auto;border-radius:20px;background:#2a1a3a url(img/ui/hero_honggildong.webp?v=4) center/cover;box-shadow:0 0 0 4px #e39bff"></div>' +
       '<p style="font-size:19px;line-height:1.6;margin:10px 0">영웅 <b style="color:#e39bff">홍길동</b> 바로 합류<br>영웅 등급 장비 4점 (무기·갓·도포·토시)<br>옥 300 · 횃불 20<br><small style="color:#ffd36b">계정당 한 번 · ' + (S.starter ? '이미 받았어요' : '남은 기간 ' + stDays() + '일') + '</small></p></div>' +
@@ -968,11 +984,12 @@ if (window.IS_EN) document.title = 'K Zombi';
     const k = cpnHash(CPN_SALT + code), c = CPN[k];
     S.cpn = S.cpn || {};
     if (c && S.cpn[k] && !c.rep) { toast('이미 쓴 코드예요'); return; }
-    const grant = (kk, jade, starter) => {
+    const grant = (kk, jade, starter, mb) => {
+      if (mb) { if (S.mbow) { toast('신화 활은 계정당 한 번이에요'); return; } S.cpn[kk] = 1; closeModal(); grantMbow(); return; }
       if (starter) { if (S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; } S.cpn[kk] = 1; grantStarter(); return; }
       S.cpn[kk] = (S.cpn[kk] || 0) + 1; S.jade += jade; save(); closeModal(); toast('쿠폰 보상: 옥 ' + fmt(jade)); refresh();
     };
-    const local = () => { if (!c) { toast('없는 코드예요'); return; } grant(k, c.jade, c.starter); };
+    const local = () => { if (!c) { toast('없는 코드예요'); return; } grant(k, c.jade, c.starter, c.mbow); };
     /* 로그인했으면 서버에서 계정당 사용 횟수를 먼저 확인(3초 넘거나 실패하면 예전처럼 기기에서 확인) */
     const u = accUser();
     if (!u || typeof u.getIdToken !== 'function' || !/hankuk-in\.com$/.test(location.hostname)) return local();
@@ -990,7 +1007,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       if (r && r.ok === false && r.code === 'USED') { toast('이미 쓴 코드예요'); return; }
       if (r && r.ok && r.mode === 'server' && r.receipt && r.reward) {
         S.cpnR = S.cpnR || {}; const rid = String(r.receipt.sig || '').slice(0, 16); if (!rid || S.cpnR[rid]) return; S.cpnR[rid] = 1;
-        grant(String(r.key || k), +r.reward.jade || 0, !!r.reward.starter); return;
+        grant(String(r.key || k), +r.reward.jade || 0, !!r.reward.starter, !!r.reward.mbow); return;
       }
       local();
     })();
@@ -1737,6 +1754,7 @@ if (window.IS_EN) document.title = 'K Zombi';
       case 'runlogAll': runLogModal('all'); break;
       case 'runlogDl': runLogDownload(); break;
       case 'starter': starterModal(); break;
+      case 'mbow': mbowModal(false); break;
       case 'cpnUse': useCoupon(); break;
       case 'toggleVib': { const off = localStorage.getItem('kz_vib') === '0'; localStorage.setItem('kz_vib', off ? '1' : '0'); if (off && navigator.vibrate) navigator.vibrate(40); settingsModal(); break; }
       case 'toggleCutin': try { localStorage.setItem('kz_cutin_off', localStorage.getItem('kz_cutin_off') === '1' ? '0' : '1'); } catch (e) {} settingsModal(); break;
