@@ -1765,7 +1765,7 @@ function comps(dt) {
     } else if (c.id === 'kimchungseon') {
       const T0 = c.tg && !c.tg.dead && (EN[c.tg.type].range || EN[c.tg.type].caster || EN[c.tg.type].gun) ? c.tg : null;
       if (!T0) { c.cd = 0.2; continue; }
-      const bx = T0.x - Math.cos(Math.atan2(T0.y - p.y, T0.x - p.x)) * -34, by = T0.y - 10;
+      const bx = T0.x - Math.cos(Math.atan2(T0.y - G.player.y, T0.x - G.player.x)) * -34 /* 오류 고침: p 미정의(11-29) */, by = T0.y - 10;
       FX.smoke(c.x, c.y - 20, 5, '30,20,30', 16, 30); FX.p({ kind: 'glow', x: c.x, y: c.y - 30, life: 0.2, s: 40, s2: 6, c: '220,60,60' });
       c.x = clamp(bx, 50, WW - 50); c.y = clamp(by, 120, H - 90); c.fdir = Math.atan2(T0.y - c.y, T0.x - c.x); c.fire = 0.35;
       FX.smoke(c.x, c.y - 20, 3, '30,20,30', 16, 30);
