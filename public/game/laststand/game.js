@@ -3806,14 +3806,19 @@ function drawWpnTab(body, m) {
 const cpnNorm = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9가-힣]/g, '');
 const cpnHash = (s) => { let x = 5381; for (const c of cpnNorm(s)) x = ((x * 33) ^ c.charCodeAt(0)) >>> 0; return x.toString(36); };
 const COUPONS = {
+  // 시험용: 모든 기체 + 시험 재화 + 지금 기체의 전설 무기·전설 부품 5칸(그 기체 세트)
+  'khdqfh': { nm: '기체 시험 패키지', rep: 1, run() { let n = 0; for (const m of MECHS) if (!save.own[m.id]) { save.own[m.id] = 1; n++; }
+    give({ core: 100000, gem: 20000, ore: 3000, chip: 1000 }); const m0 = MECH(save.mech), w = mkWeapon('SSR', m0.el); save.wpn.inv.push(w);
+    for (const s of PSLOTS) save.wpn.inv.push(mkPart(s, 'SSR', m0.id));
+    return `기동전사 ${MECHS.length}기 모두 열림(새로 ${n}기) · 코어 100,000 · 결정 20,000 · 정련 합금 3,000 · 강화 회로 1,000 · ${m0.nm} 전설 무기 1개와 전설 부품 5개 지급`; } },
   '1nc94ca': { nm: '모든 기동전사 해금', run() { let n = 0; for (const m of MECHS) if (!save.own[m.id]) { save.own[m.id] = 1; n++; } return n ? `기동전사 ${n}기를 새로 얻었습니다. 이제 ${MECHS.length}기 모두 쓸 수 있습니다.` : `이미 ${MECHS.length}기를 모두 가지고 있습니다.`; } },
 };
 function redeemCoupon(code) {
   const k = cpnHash(code), C = COUPONS[k]; save.cpn ??= [];
   if (!cpnNorm(code)) return { ok: false, msg: '쿠폰 번호를 넣어 주세요.' };
   if (!C) return { ok: false, msg: '없는 쿠폰 번호입니다. 다시 확인해 주세요.' };
-  if (save.cpn.includes(k)) { const msg = C.run(); persist(); return { ok: true, msg: '이미 쓴 쿠폰입니다. ' + msg }; }
-  const msg = C.run(); save.cpn.push(k); persist(); return { ok: true, nm: C.nm, msg };
+  if (save.cpn.includes(k) && !C.rep) { const msg = C.run(); persist(); return { ok: true, msg: '이미 쓴 쿠폰입니다. ' + msg }; }
+  const msg = C.run(); if (!save.cpn.includes(k)) save.cpn.push(k); persist(); return { ok: true, nm: C.nm, msg };
 }
 function drawCpn(root) {
   const used = (save.cpn || []).map((k) => COUPONS[k]?.nm).filter(Boolean);
