@@ -2952,7 +2952,9 @@ const ICO = {
 };
 // 키 별칭: 강화 카드 키·무기 키를 같은 그림으로
 Object.assign(ICO, { rifleUp: ICO.rifle, cannon: ICO.shotgun, great: ICO.katana, staff: ICO.bits, hammer: ICO.mortar, _heal: ICO.heal });
-const ico = (k, cls = '') => `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ICO.star}</svg>`;
+const GK = { rifleUp: 'rifle', cannon: 'shotgun', great: 'katana', staff: 'bits', hammer: 'mortar', _heal: 'heal', spear: 'katana', power: 'overdrive', thrust: 'thruster', cool: 'reactor', lv: 'upgrade', hangar: 'upgrade' };
+const gic = (k) => { const G0 = window.GICO; if (!G0) return null; const n = GK[k] || k; return G0[n] ? n : null; };
+const ico = (k, cls = '') => { const n = gic(k); return n ? `<svg class="ico gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><path d="${GICO[n]}"/></svg>` : `<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${ICO[k] || ICO.star}</svg>`; };
 
 // ───────── 계열(속성) 7종: 기체마다 하나. 계열마다 노는 맛이 다르다
 const ELEM = {
@@ -2995,10 +2997,13 @@ Object.assign(ICO, {
 });
 let _ig = 0;
 function shadeHex(c, k = .45) { const n = parseInt(c.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255; const f = (v) => Math.round(v * k).toString(16).padStart(2, '0'); return '#' + f(r) + f(g) + f(b); }
+function tintHex(c, k) { const n = parseInt(c.slice(1), 16), f = (v) => Math.round(v + (255 - v) * k).toString(16).padStart(2, '0'); return '#' + f((n >> 16) & 255) + f((n >> 8) & 255) + f(n & 255); }
 function ico2(k, c = '#9ff3ff', cls = '') {
-  const id = 'ig' + (++_ig), src = ICO[k] || ICO.star, fg = src.replace(/class="f"/g, `class="f" style="fill:url(#${id})"`);
+  const id = 'ig' + (++_ig), n = gic(k);
+  if (n) return `<svg class="ico ico2 gi ${cls}" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="150" y1="0" x2="362" y2="512"><stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="${tintHex(c, .45)}"/><stop offset="1" stop-color="${c}"/></linearGradient></defs><path fill="url(#${id})" d="${GICO[n]}"/></svg>`;
+  const src = ICO[k] || ICO.star, fg = src.replace(/class="f"/g, `class="f" style="fill:url(#${id})"`);
   return `<svg class="ico ico2 ${cls}" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="5" y1="1" x2="15" y2="23"><stop offset="0" stop-color="#ffffff"/><stop offset=".42" stop-color="${c}"/><stop offset="1" stop-color="${shadeHex(c, .62)}"/></linearGradient></defs>`
-    + `<g class="gw" style="stroke:${c};color:${c}">${src}</g><g style="stroke:url(#${id})">${fg}</g></svg>`;
+    + `<g style="stroke:url(#${id})">${fg}</g></svg>`;
 }
 
 // ───────── 무기 장비: 일반~신화. 특수 각인과 다른 계열 기술 자동 시전, 전설·신화는 고유 해방(만해 같은 궁극기)
@@ -3235,38 +3240,137 @@ function wdropHtml(w) { const R0 = RAR[w.rar], X = ELEM[w.el];
   return `<div class="wdrop" style="--rc:${R0.col};--ec:${X.col}"><span class="wi">${ico2('wpn', X.col)}</span><span><em>무기 획득</em><b>${wName(w)}</b><small>${R0.nm} · ${X.nm} 계열${w.rel ? ' · 해방 보유' : ''}</small></span></div>`; }
 
 // ───────── 무기고: 기체 숙련(기종별 성장)과 무기 장착·강화·분해
-if (location.search.includes('dev')) Object.assign(window, { __el: { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, drawArsenal, wOf, placeArms, get HZ() { return HZ; } } });
+// ───────── 대기 화면 정리: 오른쪽 정보창(작은 글씨·스킬 칸), 기체 목록 창, 정비(무기·숙련·공통 강화), 상점
+const AUTO_DS = { flash: '가까운 적에게 번개처럼 돌진해 주변을 벤다', iaido: '한순간에 앞으로 미끄러지며 일직선을 베어낸다', overdrive: '3.5초 동안 사격 속도가 크게 오른다', palm: '손바닥을 뻗어 레이저 7발을 퍼붓는다',
+  backstep: '뒤로 뛰어 물러나며 있던 자리에 폭탄을 남긴다', mortar3: '적 무리 위로 포탄 세 발을 떨어뜨린다', bash: '방패로 돌진해 적을 밀치고 기절시킨다', quake: '땅을 내려찍어 주변을 흔들고 기절시킨다',
+  dive: '하늘에서 급강하해 폭격한다', cloak: '3초 동안 모습을 감추고 다음 공격이 3배', bitstorm: '비트 8기가 한꺼번에 저격한다', blink: '순간이동하며 떠난 자리에 빛 폭발', featherstorm: '사방으로 빛 깃털 16개를 쏜다' };
+const ULT_DS = { bladefall: '하늘에서 빛의 검 22자루가 떨어진다', tenzan: '세 방향으로 거대한 참격을 날린다', laserstorm: '사방으로 레이저를 세 번 퍼붓는다', phoenix: '불사조처럼 돌진하며 길 위의 적을 모두 태운다',
+  satsnipe: '가장 강한 적 7기를 위성으로 저격한다', carpet: '앞쪽에 포탄 20발을 깔아 융단 폭격', aegis: '결계로 주변을 날리고 큰 보호막을 두른다', titanfall: '하늘에서 떨어져 넓게 부수고 기절시킨다',
+  mstorm: '미사일 24발을 한꺼번에 쏜다', execute: '가장 강한 적 9기를 차례로 처형한다', allrange: '비트가 주변 적 36기를 동시에 공격한다', nova: '거대한 빛 폭발 두 번과 내구 30% 회복', descent: '빛기둥 9개가 내리꽂히고 내구 50% 회복' };
+let skSel = 'r';
+function drawMdet(m, st) {
+  const R0 = rarOf(m), X = ELEM[m.el], an = ARM_NAME[m.prim], pm = st ? powMul(m) : R0.mul, w = wOf(m.id), lv = save.mlv[m.id] || 0;
+  const rel = w && w.rel ? ` · 해방 「${REL[w.rel].nm}」` : '';
+  const T = [
+    { k: 'w', ic: m.prim, col: '#ffd98a', lb: '무기', nm: an.nm, ds: an.ds0, sub: '기본 무기 · 자동 공격' },
+    { k: 'e', ic: m.auto.k, col: '#cfefff', lb: 'E', nm: m.auto.nm, ds: AUTO_DS[m.auto.k] || '', sub: `스킬 · E · ${m.auto.cd}초` },
+    { k: 'r', ic: 'el_' + m.el, col: X.col, lb: 'R', nm: X.sk.nm, ds: X.sk.ds, sub: `계열 기술 · R · ${X.sk.cd}초` },
+    { k: 'q', ic: m.ult.k, col: '#ffc24a', lb: 'Q', nm: m.ult.nm, ds: (ULT_DS[m.ult.k] || '') + rel, sub: '필살기 · Q' },
+  ];
+  const sel = T.find((t) => t.k === skSel) || T[2];
+  const bar = (l, v, mx, s) => `<div class="sr"><span>${l}</span><i><em style="width:${Math.round(clamp(v / mx, .06, 1) * 100)}%"></em></i><b class="num">${s}</b></div>`;
+  $('#mdet').style.setProperty('--rc', R0.col); $('#mdet').style.setProperty('--ec', X.col);
+  $('#mdet').innerHTML = `<div class="mtop"><span class="rar">${R0.nm}</span><span class="chip">${ico(CLS[m.cls].k)}${m.cls}</span><span class="chip el">${ico('el_' + m.el)}${X.nm}</span>${st ? `<span class="stars">${'★'.repeat(st)}<s>${'★'.repeat(5 - st)}</s></span>` : '<span class="stars lk">미보유</span>'}</div>`
+    + `<div class="mh">${m.nm}</div><div class="ty">${m.ty}</div>`
+    + `<div class="st4">${bar('내구', m.hp * pm, 2.3, Math.round(100 * m.hp * pm))}${bar('화력', m.dmg * pm, 2.2, Math.round(100 * m.dmg * pm))}${bar('속도', m.spd, 1.3, Math.round(100 * m.spd))}${bar('냉각', 1 / m.cd, 1.45, Math.round(100 / m.cd))}</div>`
+    + `<div class="sk4">${T.map((t) => `<button class="skb ${t.k === sel.k ? 'on' : ''}" data-k="${t.k}" style="--ec:${t.col}"><span class="skt">${ico2(t.ic, t.col)}</span><small>${t.lb}</small></button>`).join('')}</div>`
+    + `<div class="skd" style="--ec:${sel.col}"><b>${sel.nm}</b><small>${sel.sub}</small><p>${sel.ds}</p></div>`
+    + (st ? `<button class="gearl" id="toArms" style="--rc:${w ? RAR[w.rar].col : '#5a6478'};--ec:${w ? ELEM[w.el].col : '#8a93a8'}"><span class="skt sm">${ico2('wpn', w ? ELEM[w.el].col : '#8a93a8')}</span><span class="gt"><b>${w ? wName(w, m) : '무기 없음'}</b><small>${w ? `${RAR[w.rar].nm} · +${w.lv} · 피해 +${wDmg(w)}%` : '정비에서 무기를 장착하세요'}</small></span><span class="gm"><small>숙련</small><b class="num">${lv}</b></span></button>` : '')
+    + `<div class="ps">${m.pass}</div>`
+    + (st ? '' : `<div class="buy"><button class="bp" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()}<small>코어로 구매</small></button><button class="bs" id="toGacha">${ico('shop')}<small>상점에서 모집</small></button></div>`);
+  $('#mdet').querySelectorAll('.skb').forEach((b) => b.addEventListener('click', () => { skSel = b.dataset.k; drawMdet(m, st); }));
+  if ($('#toArms')) $('#toArms').onclick = () => openArsenal('wpn');
+  if (!st) { $('#unlock').onclick = () => { if (save.core < m.cost) return; save.core -= m.cost; save.own[m.id] = 1; save.mech = m.id; persist(); sfx.lvl(); screenFlash(R0.col, .35, .6); if (lobby.on) enterLobby(); drawTitle(); }; $('#toGacha').onclick = () => openGacha('mech'); }
+}
+function mechOrder() { return MECHS.slice().sort((a, b) => (!!starOf(b.id) - !!starOf(a.id)) || RAR_ORDER.indexOf(a.rar) - RAR_ORDER.indexOf(b.rar)); }
+function stepMech(d) { const L = mechOrder(), i = L.findIndex((m) => m.id === viewMech), m = L[(i + d + L.length) % L.length]; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (lobby.on) enterLobby(); drawTitle(); }
+const curHtml = (k) => k === 'core'
+  ? `<i class="ci">${ico('core')}</i><span class="cv"><small>코어</small><b class="num">${save.core.toLocaleString()}</b></span><button class="pl" data-go="daily" aria-label="코어 얻기">+</button>`
+  : `<i class="ci">${ico('gem')}</i><span class="cv"><small>결정</small><b class="num">${save.gem.toLocaleString()}</b></span><button class="pl" data-go="gem" aria-label="결정 얻기">+</button>`;
+function bindCur(root) { root.querySelectorAll('.pl').forEach((b) => (b.onclick = () => { if (b.dataset.go === 'daily') { drawDaily(); $('#daily').classList.remove('hide'); } else openGacha('gem'); })); }
+
+// ── 정비: 무기 · 기체 숙련 · 공통 강화
+let arsTab = 'wpn', wSel = null;
+function openArsenal(t) { if (t) arsTab = t; drawArsenal(); $('#arsenal').classList.remove('hide'); }
+if (location.search.includes('dev')) Object.assign(window, { __el: Object.assign(window.__el || {}, { castElem, castRelease, mkWeapon, applySt, mkAlly, ELEM, wOf, placeArms, get HZ() { return HZ; } }) });
 function drawArsenal() {
-  const m = MECH(save.mech), X = ELEM[m.el], lv = save.mlv[m.id] || 0, tier = Math.floor(lv / 5), cost = mlvCost(lv);
-  $('#coreA').textContent = save.core;
-  const tiers = ['계열 기술 위력 +25%', '계열 효과 확률 1.5배', '그림자·소환 +1 / 기술 위력 +25%', '계열 기술 재사용 -25%'];
-  $('#mmBox').innerHTML = `<div class="mm" style="--ec:${X.col}"><img src="img/${m.id}.jpg?v=15" alt=""><div class="tx"><b>${m.nm}</b><span class="elb">${ico2('el_' + m.el, X.col)}${X.nm} 계열</span><small>${X.ds}</small>`
-    + `<div class="sk">${ico2('el_' + m.el, X.col)}<span><b>계열 기술 · ${X.sk.nm}</b><small>R · ${X.sk.cd}초 · ${X.sk.ds}</small></span></div>`
-    + `<span class="lvp">${Array.from({ length: MLV_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''} ${(i + 1) % 5 === 0 ? 'k' : ''}"></i>`).join('')}</span>`
-    + `<em>숙련 Lv ${lv}/${MLV_MAX} · 내구·화력 +${lv * 3}%${tier ? ' · ' + tiers.slice(0, tier).join(' · ') : ''}</em>${tier < 4 ? `<em class="nx">다음 단계(Lv ${(tier + 1) * 5}): ${tiers[tier]}</em>` : ''}</div>`
-    + `<button id="mUp" ${lv >= MLV_MAX || save.core < cost ? 'disabled' : ''}>${lv >= MLV_MAX ? '최대' : `숙련 올리기<br>${ico('core')} ${cost}`}</button></div>`;
-  const row = (w, eqd) => { const R0 = RAR[w.rar], W = ELEM[w.el], owner = Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === w.u), mt = w.el === m.el;
-    return `<div class="wp ${eqd ? 'on' : ''}" style="--rc:${R0.col};--ec:${W.col}"><span class="wi">${ico2('wpn', W.col)}<i>${R0.nm}</i></span><div class="tx"><b>${wName(w, m)} <small>Lv ${w.lv}/10</small></b>`
-      + `<em>${ico2('el_' + w.el, W.col)} ${W.nm} 계열 · 피해 +${wDmg(w)}%${mt ? ' · 계열 일치 +10%' : ''}${owner && !eqd ? ` · ${MECH(owner).nm} 장착 중` : ''}</em>`
-      + (w.opts.length ? `<ul>${w.opts.map((o) => `<li class="${WOPT[o].auto ? 'au' : ''}"><b>${WOPT[o].nm}</b> ${WOPT[o].ds}</li>`).join('')}</ul>` : '<ul><li>특수 기능 없음</li></ul>')
-      + (w.rel ? `<p class="rel">${ico2('release', W.col)}<b>${REL[w.rel].nm}</b> 필살기와 함께 발동 · ${REL[w.rel].ds}</p>` : '') + `</div>`
-      + `<div class="bt">${eqd ? `<button data-a="off" data-u="${w.u}" class="gh">해제</button>` : `<button data-a="eq" data-u="${w.u}">장착</button>`}`
-      + `<button data-a="up" data-u="${w.u}" ${w.lv >= 10 || save.core < wUpCost(w) ? 'disabled' : ''}>${w.lv >= 10 ? '최대' : `강화 ${ico('core')} ${wUpCost(w)}`}</button>`
-      + (eqd ? '' : `<button data-a="sc" data-u="${w.u}" class="gh">분해 +${wSell(w)}</button>`) + `</div></div>`; };
-  const cur = wOf(m.id);
-  $('#weqBox').innerHTML = cur ? row(cur, true) : '<p class="pnote">장착한 무기가 없습니다. 아래에서 골라 장착하세요</p>';
-  const list = save.wpn.inv.filter((w) => !cur || w.u !== cur.u).sort((a, b) => WR.indexOf(b.rar) - WR.indexOf(a.rar) || b.lv - a.lv);
-  $('#wCnt').textContent = `${save.wpn.inv.length}개`;
-  $('#wList').innerHTML = list.length ? list.map((w) => row(w, false)).join('') : '<p class="pnote">장을 깨면 무기를 얻습니다. 뒤 장일수록 높은 등급이 잘 나옵니다</p>';
-  $('#mUp').onclick = () => { const l = save.mlv[m.id] || 0, c = mlvCost(l); if (l >= MLV_MAX || save.core < c) return; save.core -= c; save.mlv[m.id] = l + 1; persist(); sfx.lvl(); screenFlash(X.col, .25, .5); drawArsenal(); drawTitle(); };
-  $('#arsenal').querySelectorAll('.wp button').forEach((b) => b.addEventListener('click', () => { const w = save.wpn.inv.find((x) => x.u === +b.dataset.u); if (!w) return; const a = b.dataset.a;
-    if (a === 'eq') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.wpn.eq[m.id] = w.u; sfx.lvl(); }
-    if (a === 'off') delete save.wpn.eq[m.id];
-    if (a === 'up') { const c = wUpCost(w); if (w.lv >= 10 || save.core < c) return; save.core -= c; w.lv++; sfx.lvl(); }
-    if (a === 'sc') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.core += wSell(w); save.wpn.inv = save.wpn.inv.filter((x) => x !== w); tone(500, 200, .2, 'triangle', .08); }
-    persist(); drawArsenal(); drawTitle(); }));
+  const m = MECH(save.mech), X = ELEM[m.el];
+  $('#aTitle').innerHTML = `${ico('anvil')}정비`;
+  $('#aCur').innerHTML = `<span class="cur">${curHtml('core')}</span>`; bindCur($('#aCur'));
+  $('#aTabs').innerHTML = [['wpn', '무기'], ['mlv', '기체 숙련'], ['up', '공통 강화']].map(([k, n]) => `<button data-t="${k}" class="${arsTab === k ? 'on' : ''}">${n}</button>`).join('');
+  $('#aTabs').querySelectorAll('button').forEach((b) => (b.onclick = () => { arsTab = b.dataset.t; drawArsenal(); }));
+  $('#aNote').innerHTML = `<b>강화는 세 갈래</b> · 공통 강화는 모든 기체 · 기체 숙련은 <em>${m.nm}</em>만 · 무기는 장착한 기체에 적용`;
+  const body = $('#arsBody');
+  if (arsTab === 'wpn') {
+    const cur = wOf(m.id), list = save.wpn.inv.slice().sort((a, b) => (b.u === (cur && cur.u)) - (a.u === (cur && cur.u)) || WR.indexOf(b.rar) - WR.indexOf(a.rar) || b.lv - a.lv);
+    if (!wSel || !save.wpn.inv.find((w) => w.u === wSel)) wSel = cur ? cur.u : list[0] && list[0].u;
+    const w = save.wpn.inv.find((x) => x.u === wSel);
+    const tile = (x) => { const R0 = RAR[x.rar], E0 = ELEM[x.el], eq = Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === x.u);
+      return `<button class="wt ${x.u === wSel ? 'sel' : ''}" data-u="${x.u}" style="--rc:${R0.col};--ec:${E0.col}"><span class="wg">${ico2('wpn', E0.col)}</span><i class="we">${ico('el_' + x.el)}</i><b class="num">+${x.lv}</b>${eq ? `<em>${eq === m.id ? '장착' : '사용 중'}</em>` : ''}</button>`; };
+    let det = '<div class="wdet empty"><p>무기가 없습니다. 장을 깨거나 상점의 무기 보급에서 얻을 수 있습니다.</p></div>';
+    if (w) { const R0 = RAR[w.rar], E0 = ELEM[w.el], owner = Object.keys(save.wpn.eq).find((k) => save.wpn.eq[k] === w.u), mine = owner === m.id, mt = w.el === m.el, c = wUpCost(w);
+      det = `<div class="wdet" style="--rc:${R0.col};--ec:${E0.col}"><div class="wh"><span class="skt lg">${ico2('wpn', E0.col)}</span><div><small class="rr">${R0.nm} · ${E0.nm} 계열</small><b>${wName(w, m)}</b><span class="lvb"><i style="width:${w.lv * 10}%"></i></span><small class="num">강화 +${w.lv} / 10</small></div></div>`
+        + `<div class="wst"><div><small>피해</small><b class="num">+${wDmg(w)}%</b></div><div><small>계열 일치</small><b>${mt ? '+10%' : '없음'}</b></div><div><small>다음 강화</small><b class="num">${w.lv >= 10 ? '최대' : '+' + (wDmg(w) + 2) + '%'}</b></div></div>`
+        + `<ul class="wop">${w.opts.length ? w.opts.map((o) => `<li class="${WOPT[o].auto ? 'au' : ''}"><span class="skt xs" style="--ec:${WOPT[o].auto ? ELEM[WOPT[o].auto].col : '#9fb4d8'}">${ico2(WOPT[o].auto ? 'el_' + WOPT[o].auto : ({ burn: 'el_fire', frz: 'el_ice', chain: 'el_elec', conf: 'el_wind', stun: 'stunUp', boom: 'aoeUp', hack: 'el_dark', leech: 'heal', crit: 'crit', cool: 'reactor', guard: 'armor' })[o] || 'star', WOPT[o].auto ? ELEM[WOPT[o].auto].col : '#cfe0ff')}</span><span><b>${WOPT[o].nm}</b><small>${WOPT[o].ds}</small></span></li>`).join('') : '<li class="no"><span><small>특수 각인이 없습니다. 영웅 등급부터 각인이 2개 붙습니다</small></span></li>'}</ul>`
+        + (w.rel ? `<div class="wrel"><span class="skt sm">${ico2('release', E0.col)}</span><span><small>고유 해방 · 필살기와 함께 발동</small><b>${REL[w.rel].nm}</b><p>${REL[w.rel].ds}</p></span></div>` : '')
+        + `<div class="wbt">${mine ? `<button class="bs" data-a="off">해제</button>` : `<button class="bp" data-a="eq">${owner ? `${MECH(owner).nm}에게서 가져와 장착` : '장착'}</button>`}`
+        + `<button class="bp" data-a="up" ${w.lv >= 10 || save.core < c ? 'disabled' : ''}>${w.lv >= 10 ? '최대 강화' : `강화 ${ico('core')} ${c}`}</button>${mine ? '' : `<button class="bs" data-a="sc">분해 +${wSell(w)}</button>`}</div></div>`; }
+    body.innerHTML = `<div class="ars2"><div class="wgrid"><div class="gh"><b>보유 무기</b><small class="num">${save.wpn.inv.length}개</small></div><div class="wts">${list.map(tile).join('')}</div></div>${det}</div>`;
+    body.querySelectorAll('.wt').forEach((b) => (b.onclick = () => { wSel = +b.dataset.u; drawArsenal(); }));
+    body.querySelectorAll('.wbt button').forEach((b) => (b.onclick = () => { const a = b.dataset.a;
+      if (a === 'eq') { for (const k in save.wpn.eq) if (save.wpn.eq[k] === w.u) delete save.wpn.eq[k]; save.wpn.eq[m.id] = w.u; sfx.lvl(); }
+      if (a === 'off') delete save.wpn.eq[m.id];
+      if (a === 'up') { const c = wUpCost(w); if (w.lv >= 10 || save.core < c) return; save.core -= c; w.lv++; sfx.lvl(); }
+      if (a === 'sc') { save.core += wSell(w); save.wpn.inv = save.wpn.inv.filter((x) => x !== w); wSel = null; tone(500, 200, .2, 'triangle', .08); }
+      persist(); drawArsenal(); drawTitle(); }));
+  } else if (arsTab === 'mlv') {
+    const lv = save.mlv[m.id] || 0, tier = Math.floor(lv / 5), cost = mlvCost(lv);
+    const tiers = [[5, '계열 기술 위력 +25%'], [10, '계열 효과 확률 1.5배'], [15, '소환 +1 · 기술 위력 +25%'], [20, '계열 기술 재사용 -25%']];
+    body.innerHTML = `<div class="mlv" style="--ec:${X.col};--rc:${rarOf(m).col}"><div class="mp"><img src="img/${m.id}.jpg?v=15" alt=""><div class="mpn"><small>${rarOf(m).nm} · ${m.cls}</small><b>${m.nm}</b><span class="chip el">${ico('el_' + m.el)}${X.nm} 계열</span></div></div>`
+      + `<div class="mr"><div class="mlvn"><small>숙련</small><b class="num">${lv}</b><em class="num">/ ${MLV_MAX}</em></div><div class="mbar">${Array.from({ length: MLV_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''} ${(i + 1) % 5 === 0 ? 'k' : ''}"></i>`).join('')}</div>`
+      + `<div class="mfx"><div><small>지금</small><b>내구·화력 +${lv * 3}%</b></div><div><small>다음 단계</small><b>${lv >= MLV_MAX ? '최대' : `+${(lv + 1) * 3}%`}</b></div></div>`
+      + `<ul class="mt">${tiers.map(([L, d], i) => `<li class="${i < tier ? 'ok' : ''}"><span class="num">Lv ${L}</span><b>${d}</b>${i < tier ? '<em>달성</em>' : ''}</li>`).join('')}</ul>`
+      + `<div class="msk"><span class="skt sm">${ico2('el_' + m.el, X.col)}</span><span><small>계열 기술 · R</small><b>${X.sk.nm}</b><p>${X.sk.ds}</p></span></div>`
+      + `<button class="bp big" id="mUp" ${lv >= MLV_MAX || save.core < cost ? 'disabled' : ''}>${lv >= MLV_MAX ? '최대 숙련' : `숙련 올리기 ${ico('core')} ${cost}`}</button></div></div>`;
+    $('#mUp').onclick = () => { const l = save.mlv[m.id] || 0, c = mlvCost(l); if (l >= MLV_MAX || save.core < c) return; save.core -= c; save.mlv[m.id] = l + 1; persist(); sfx.lvl(); screenFlash(X.col, .25, .5); drawArsenal(); drawTitle(); };
+  } else {
+    body.innerHTML = `<div class="ugrid">${UPG.map((u) => { const lv = save.up[u.k] || 0, c = upCost(lv), max = lv >= UPG_MAX;
+      return `<div class="uc"><span class="skt">${ico2(u.ic, '#ffd27a')}</span><div class="ut"><b>${u.nm}</b><span class="upp">${Array.from({ length: UPG_MAX }, (_, i) => `<i class="${i < lv ? 'on' : ''}"></i>`).join('')}</span><small>${lv ? u.ds(lv) : '없음'}${max ? '' : ` → <em>${u.ds(lv + 1)}</em>`}</small></div><button class="bp" data-k="${u.k}" ${max || save.core < c ? 'disabled' : ''}>${max ? '최대' : `${ico('core')} ${c}`}</button></div>`; }).join('')}</div>`;
+    body.querySelectorAll('.uc button').forEach((b) => (b.onclick = () => { const k = b.dataset.k, lv = save.up[k] || 0, c = upCost(lv); if (lv >= UPG_MAX || save.core < c) return; save.core -= c; save.up[k] = lv + 1; persist(); sfx.lvl(); drawArsenal(); drawTitle(); }));
+  }
 }
 
+// ── 상점: 기체 모집 · 무기 보급 · 결정 얻기
+let shopTab = 'mech';
+const CRATES = [
+  { k: 'core', nm: '정비 보급 상자', ds: '전선에서 쓰는 무기를 한 자루 받습니다', cur: 'core', cost: 400, rates: [['N', 50], ['R', 35], ['SR', 12], ['SSR', 3]] },
+  { k: 'gem', nm: '고급 보급 상자', ds: '각인이 많은 무기가 잘 나옵니다. 영웅 이상 50%', cur: 'gem', cost: 150, rates: [['R', 45], ['SR', 38], ['SSR', 14], ['UR', 3]] },
+];
+function buyCrate(i) {
+  const C = CRATES[i]; if (save[C.cur] < C.cost) { flashMsg(C.cur === 'gem' ? '결정이 부족합니다' : '코어가 부족합니다'); return; }
+  save[C.cur] -= C.cost; let r = Math.random() * 100, rar = C.rates[0][0]; for (const [k, p] of C.rates) { if ((r -= p) < 0) { rar = k; break; } }
+  const w = mkWeapon(rar, Math.random() < .35 ? MECH(save.mech).el : null); save.wpn.inv.push(w); persist(); sfx.lvl();
+  if (WR.indexOf(rar) >= 3) screenFlash(RAR[rar].col, .45, .8);
+  $('#crateRes').innerHTML = wdropHtml(w) + `<button class="bs" id="toArms2">정비에서 보기</button>`; $('#toArms2').onclick = () => { $('#gacha').classList.add('hide'); wSel = w.u; openArsenal('wpn'); };
+  drawShopHead(); drawShopWpn(true); drawTitle();
+}
+function drawShopHead() {
+  $('#gTitle').innerHTML = `${ico('shop')}상점`;
+  $('#gCur').innerHTML = `<span class="cur">${curHtml('core')}</span><span class="cur gem">${curHtml('gem')}</span>`; bindCur($('#gCur'));
+  $('#gTabs').innerHTML = [['mech', '기체 모집'], ['wpn', '무기 보급'], ['gem', '결정 얻기']].map(([k, n]) => `<button data-t="${k}" class="${shopTab === k ? 'on' : ''}">${n}</button>`).join('');
+  $('#gTabs').querySelectorAll('button').forEach((b) => (b.onclick = () => { shopTab = b.dataset.t; drawGacha(); }));
+  for (const [k, id] of [['mech', 'shopMech'], ['wpn', 'shopWpn'], ['gem', 'shopGem']]) $('#' + id).classList.toggle('hide', shopTab !== k);
+}
+function drawShopWpn(keep) {
+  const res = keep ? ($('#crateRes') || {}).innerHTML || '' : '';
+  $('#shopWpn').innerHTML = `<div class="crates">${CRATES.map((C, i) => `<div class="crate ${C.k}"><div class="cimg">${ico2('chest', C.k === 'gem' ? '#ffb0e0' : '#ffd27a')}</div><div class="ct"><b>${C.nm}</b><small>${C.ds}</small>`
+    + `<div class="crr">${C.rates.map(([k, p]) => `<span style="--rc:${RAR[k].col}"><i></i>${RAR[k].nm} <b class="num">${p}%</b></span>`).join('')}</div></div>`
+    + `<button class="bp" data-i="${i}" ${save[C.cur] < C.cost ? 'disabled' : ''}>${ico(C.cur === 'gem' ? 'gem' : 'core')} ${C.cost}</button></div>`).join('')}</div>`
+    + `<div id="crateRes">${res}</div><p class="fine">무기의 계열은 무작위이며 35%는 지금 고른 기체의 계열로 나옵니다 · 전설·신화 무기는 고유 해방을 가집니다 · 확률은 표에 적힌 그대로입니다</p>`;
+  $('#shopWpn').querySelectorAll('.crate button').forEach((b) => (b.onclick = () => buyCrate(+b.dataset.i)));
+  if ($('#toArms2')) $('#toArms2').onclick = () => { $('#gacha').classList.add('hide'); openArsenal('wpn'); };
+}
+function drawShopGem() {
+  const L0 = LOGIN[(save.daily.streak || 0) % 7];
+  const rows = [
+    ['calendar', '출석 보상', loginReady() ? `오늘 받을 보상이 있습니다 (${L0.g ? '결정 ' + L0.g : '코어 ' + L0.c})` : '오늘 출석 완료 · 7일째에 결정 200', 'daily', loginReady()],
+    ['quest', '일일 임무', '임무 하나마다 결정 10과 코어', 'daily', dailyPending()],
+    ['map', '장 첫 클리어', '처음 깨는 장마다 결정 · 막을 끝내면 새 기체', 'map', false],
+  ];
+  $('#shopGem').innerHTML = `<div class="gway">${rows.map(([ic, n, d, go, dot]) => `<button class="gw" data-go="${go}"><span class="skt">${ico2(ic, '#ffb0e0')}</span><span><b>${n}${dot ? '<i class="dot"></i>' : ''}</b><small>${d}</small></span><em>바로 가기 ›</em></button>`).join('')}</div>`
+    + `<div id="adGemBox"></div><p class="fine">유료 결정 판매는 아직 없습니다. 모든 결정은 플레이로 얻습니다.</p>`;
+  $('#shopGem').querySelectorAll('.gw').forEach((b) => (b.onclick = () => { $('#gacha').classList.add('hide'); if (b.dataset.go === 'daily') { drawDaily(); $('#daily').classList.remove('hide'); } else $('#chMap').click(); }));
+}
 
 // ───────── 첫 화면 ─────────
 // ───────── 성장·해금·출석·임무·챕터·뽑기 (계속 다시 하고 싶게 만드는 장치) ─────────
@@ -3472,12 +3576,14 @@ function doPull(n) {
   drawGacha(); drawTitle();
 }
 function drawGacha() {
-  $('#pull1').innerHTML = `1회 뽑기<small>${ico('gem')} ${GACHA.one}</small>`; $('#pull10').innerHTML = `10회 뽑기<small>${ico('gem')} ${GACHA.ten} · 영웅 이상 1개 확정</small>`;
+  drawShopHead(); if (shopTab === 'wpn') drawShopWpn(true); if (shopTab === 'gem') drawShopGem();
+  $('#pull1').innerHTML = `<b>1회 모집</b><small>${ico('gem')} ${GACHA.one}</small>`; $('#pull10').innerHTML = `<b>10회 모집</b><small>${ico('gem')} ${GACHA.ten} · 영웅 이상 1개 확정</small>`;
   $('#pull1').disabled = save.gem < GACHA.one; $('#pull10').disabled = save.gem < GACHA.ten;
-  $('#pity').innerHTML = `보유 ${ico('gem')} <b>${save.gem}</b> · 신화 확정까지 <b>${GACHA.pity - (save.pity.n || 0)}</b>회`;
+  const left = GACHA.pity - (save.pity.n || 0);
+  $('#pity').innerHTML = `<div class="pbar"><span>신화 확정까지</span><i><em style="width:${Math.round((save.pity.n || 0) / GACHA.pity * 100)}%"></em></i><b class="num">${left}회</b></div>`;
   const names = (t) => MECHS.filter((m) => m.rar === t).map((m) => m.nm).join(', ');
   $('#rates').innerHTML = GACHA.rates.map(([k, w]) => `<tr><td style="color:${(RAR[k] || {}).col || '#5fe3ff'}">${RAR[k] ? RAR[k].nm : '코어 꾸러미'}</td><td style="opacity:.7">${RAR[k] ? names(k) : '코어 80 · 120 · 200'}</td><td>${w}%</td></tr>`).join('')
-    + `<tr><td colspan="3" style="opacity:.6;text-align:left">같은 등급 안에서는 같은 확률 · 10회 뽑기는 영웅 이상 1개 확정 · ${GACHA.pity}회 안에 신화 1개 확정 · 별 5개 이후 중복은 결정으로 돌려받음</td></tr>`;
+    + `<tr><td colspan="3" style="opacity:.6;text-align:left">같은 등급 안에서는 같은 확률 · 10회 모집은 영웅 이상 1개 확정 · ${GACHA.pity}회 안에 신화 1개 확정 · 별 5개 이후 중복은 결정으로 돌려받음</td></tr>`;
   $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=15" alt="">`).join('');
   ADS.offer('gem', $('#adGem'), `광고 보고 ${ico('gem')} 30`, () => { save.gem += 30; save.daily.ads = (save.daily.ads || 0) + 1; persist(); drawGacha(); drawTitle(); }, () => (save.daily.ads || 0) < 5);
 }
@@ -3522,7 +3628,7 @@ function buildLobby() {
   L.fog = new THREE.Fog(0x070a14, 160, 420);
   // 끌어서 돌리기
   const el = $('#title');
-  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,#mdet,#roster,#deploy,#topbar,.panel')) return; lobby.drag = { x: e.clientX, r: lobby.rot }; });
+  el.addEventListener('pointerdown', (e) => { if (e.target.closest('button,#mdet,#rail,#deploy,#topbar,.panel')) return; lobby.drag = { x: e.clientX, r: lobby.rot }; });
   addEventListener('pointermove', (e) => { if (!lobby.drag) return; lobby.rot = lobby.drag.r + (e.clientX - lobby.drag.x) * .012; lobby.vr = 0; });
   addEventListener('pointerup', () => { if (lobby.drag) lobby.rel = performance.now() / 1000; lobby.drag = null; });
 }
@@ -3534,7 +3640,10 @@ function lobbyFrame(dt) {
   // 화면이 넓으면 기체를 가운데 칸(목록과 정보 사이)에 맞춘다
   const wide = W > 820, h = viewMech.startsWith('god') ? 35 : 24;
   lobby.cam.position.set(wide ? 0 : 0, h * .62, wide ? 74 : 92); lobby.cam.lookAt(0, h * .48, 0);
-  if (wide) { const off = ((270 - 340) / 2) / W * 2; lobby.cam.setViewOffset(W, H, -off * W / 2, 0, W, H); } else lobby.cam.setViewOffset(W, H, 0, H * .06, W, H);
+  // 기체 무대(#stage) 칸 한가운데에, 칸 높이에 맞춰 크게 보이게
+  const r = $('#stage') && $('#stage').getBoundingClientRect();
+  if (r && r.width > 60 && r.height > 60) { const fit = clamp(r.height / H, .3, .95) * .84, V = h * 1.08 / fit, dd = V / (2 * Math.tan(15 * Math.PI / 180)); lobby.cam.position.set(0, h * .55, dd); lobby.cam.lookAt(0, h * .5, 0); lobby.cam.setViewOffset(W, H, W / 2 - (r.left + r.width / 2), H / 2 - (r.top + r.height / 2), W, H); }
+  else if (wide) lobby.cam.setViewOffset(W, H, 35, 0, W, H); else lobby.cam.setViewOffset(W, H, 0, H * .06, W, H);
 }
 async function enterLobby() {
   if (!booted) return;
@@ -3556,16 +3665,14 @@ let viewMech = save.mech, booted = false;
 const statBar = (l, v, max, s) => `<div class="sb"><span>${l}</span><i><em style="width:${Math.round(clamp(v / max, .06, 1) * 100)}%"></em></i><b>${s}</b></div>`;
 function drawTitle() {
   rollDaily();
-  $('#curCore').innerHTML = `${ico('core')}<b class="num">${save.core}</b>`;
-  $('#curGem').innerHTML = `${ico('gem')}<b class="num">${save.gem}</b><button id="gemPlus" aria-label="결정 얻기">+</button>`;
-  $('#gemPlus').onclick = () => openGacha();
-  $('#bDaily').innerHTML = `${ico('calendar')}<span>출석·임무</span>${dailyPending() ? '<i class="dot"></i>' : ''}`;
+  $('#curCore').innerHTML = curHtml('core'); $('#curGem').innerHTML = curHtml('gem'); bindCur($('#topbar'));
+  $('#bDaily').innerHTML = `${ico('quest')}<span>임무</span>${dailyPending() ? '<i class="dot"></i>' : ''}`;
   const box = $('#mechs'), sx = box.scrollLeft, sy = box.scrollTop; box.innerHTML = '';
   const list = MECHS.slice().sort((a, b) => (!!starOf(b.id) - !!starOf(a.id)) || RAR_ORDER.indexOf(a.rar) - RAR_ORDER.indexOf(b.rar));
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg?v=15" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls} · <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm}</i></em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg?v=15" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls} · <i class="elc" style="--ec:${ELEM[m.el].col}">${ELEM[m.el].nm}</i></em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : `<span class="lk">${ico('lock')}</span>`}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -3581,6 +3688,7 @@ function drawTitle() {
     + `<div class="ps">${m.pass}</div>`
     + (st ? '' : `<div class="buy"><button class="go" id="unlock" ${save.core >= m.cost ? '' : 'disabled'}>${ico('core')} ${m.cost.toLocaleString()} 코어로 구매</button><button class="ghost" id="toGacha">${ico('gacha')} 뽑기로 얻기</button></div>`);
   if (!st) { $('#unlock').onclick = () => { if (save.core < m.cost) return; save.core -= m.cost; save.own[m.id] = 1; save.mech = m.id; persist(); sfx.lvl(); screenFlash(R0.col, .35, .6); if (lobby.on) enterLobby(); drawTitle(); }; $('#toGacha').onclick = openGacha; }
+  drawMdet(m, st);
   $('#start').textContent = st ? '출격' : `출격 · ${MECH(save.mech).nm}`; $('#start').disabled = !booted || !starOf(save.mech);
   if (st && save.mech !== m.id) { save.mech = m.id; persist(); }
   // 챕터
@@ -3637,7 +3745,7 @@ function storyAfter(ci) {
   const lastOfPart = !CHAPTERS[ci + 1] || CHAPTERS[ci + 1].part !== C.part;
   if (lastOfPart && C.n === 4 && Pt && !save.seen['e' + C.part]) { save.seen['e' + C.part] = 1; persist(); setTimeout(() => showStory(`${C.part}부 완료`, Pt.nm, Pt.end), 1200); }
 }
-function openGacha() { $('#gres').innerHTML = ''; drawGacha(); $('#gacha').classList.remove('hide'); }
+function openGacha(t) { shopTab = typeof t === 'string' ? t : 'mech'; $('#gres').innerHTML = ''; drawGacha(); $('#gacha').classList.remove('hide'); }
 $('#chPrev').addEventListener('click', () => { save.ch = Math.max(1, save.ch - 1); persist(); drawTitle(); });
 $('#chNext').addEventListener('click', () => { save.ch = Math.min(save.chMax, save.ch + 1); persist(); drawTitle(); });
 $('#chMap').addEventListener('click', () => { mapAct = null; mapPart = null; $('#chapters').classList.remove('hide'); drawChapters(); });
@@ -3670,10 +3778,14 @@ function drawDaily() {
   $('#msList').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { const m = D.ms[+b.dataset.i]; if (!m.done || m.got) return; m.got = true; save.core += m.rw; save.gem += 10; persist(); sfx.lvl(); drawDaily(); drawTitle(); }));
 }
 $('#claimLogin').addEventListener('click', () => { const D = save.daily; if (!loginReady()) return; const L0 = LOGIN[(D.streak || 0) % 7]; save.core += L0.c || 0; save.gem += L0.g || 0; D.streak = (D.streak || 0) + 1; D.lastClaim = dayKey(); persist(); sfx.lvl(); drawDaily(); drawTitle(); });
-$('#bHangar').addEventListener('click', () => { drawHangar(); $('#hangar').classList.remove('hide'); });
+$('#bHangar').addEventListener('click', () => openArsenal('up'));
 $('#bDaily').addEventListener('click', () => { drawDaily(); $('#daily').classList.remove('hide'); });
 $('#hClose').addEventListener('click', () => $('#hangar').classList.add('hide'));
-$('#bArms').addEventListener('click', () => { drawArsenal(); $('#arsenal').classList.remove('hide'); });
+$('#bArms').addEventListener('click', () => openArsenal());
+$('#bRoster').addEventListener('click', () => { drawTitle(); $('#rosterP').classList.remove('hide'); });
+$('#rClose').addEventListener('click', () => $('#rosterP').classList.add('hide'));
+$('#mechs').addEventListener('click', (e) => { if (e.target.closest('.mech')) setTimeout(() => $('#rosterP').classList.add('hide'), 60); });
+$('#mPrev').addEventListener('click', () => stepMech(-1)); $('#mNext').addEventListener('click', () => stepMech(1));
 $('#aClose').addEventListener('click', () => $('#arsenal').classList.add('hide'));
 $('#dClose').addEventListener('click', () => $('#daily').classList.add('hide'));
 function toTitle() { $('#over').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.add('hide'); $('#title').classList.remove('hide'); G.state = 'title'; music.pause(); drawTitle(); enterLobby(); }
@@ -3683,9 +3795,9 @@ $('#quit').addEventListener('click', toTitle);
 $('#mute').addEventListener('click', (e) => { muted = !muted; e.target.textContent = muted ? '소리 켜기' : '소리 끄기'; drawStaticIcons(); });
 // 고정 아이콘(단추·제목)
 function drawStaticIcons() {
-  $('#bGacha').innerHTML = `${ico('gacha')}<span>뽑기</span>`; $('#bHangar').innerHTML = `${ico('repair')}<span>강화</span>`;
+  $('#bGacha').innerHTML = `${ico('shop')}<span>상점</span>`; $('#bHangar').innerHTML = `${ico('upgrade')}<span>강화</span>`; $('#bRoster').innerHTML = `${ico('mech')}<span>기체</span>`; $('#rTitle').innerHTML = `${ico('mech')}기체`;
   $('#bSound').innerHTML = ico(muted ? 'soundOff' : 'soundOn'); $('#chMap').innerHTML = `${ico('map')}<span>지도</span>`;
-  $('#bPause').innerHTML = ico('pause'); $('#bArms').innerHTML = `${ico('wpn')}<span>무기</span>`; $('#aTitle').innerHTML = `${ico('wpn')} 무기고 · 기체 숙련`; $('#bDash').firstElementChild.innerHTML = ico('dash');
+  $('#bPause').innerHTML = ico('pause'); $('#bArms').innerHTML = `${ico('anvil')}<span>정비</span>`; $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#bDash').firstElementChild.innerHTML = ico('dash');
   $('#chTitle').innerHTML = `${ico('map')} 작전 지도<span class="gxs"> · ASCEND 은하</span>`; $('#hTitle').innerHTML = `${ico('repair')} 격납고 강화`; $('#dTitle').innerHTML = `${ico('calendar')} 출석 · 일일 임무`;
 }
 
