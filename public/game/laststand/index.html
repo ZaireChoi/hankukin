@@ -193,6 +193,24 @@ button{font-family:inherit;cursor:pointer}
 .rec span{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#ffffff1c;letter-spacing:0;color:#fff}
 .rec span svg{width:12px;height:12px}
 .rec span.ok{background:#3ddc8440;color:#a6f5c8;box-shadow:inset 0 0 0 1px #3ddc8488}
+#ovLine{max-width:min(620px,92vw);margin:10px auto 2px;padding:10px 16px;border-radius:10px;background:#ffffff0d;border-left:3px solid var(--gold);text-align:left;font-size:15px;line-height:1.6}
+#ovLine b{display:block;font:800 11px var(--ff);letter-spacing:2px;color:var(--gold);margin-bottom:2px}
+#partTabs{display:flex;gap:8px;width:min(1220px,96vw);margin-bottom:10px;overflow-x:auto}
+.pt{flex:0 0 auto;text-align:left;padding:8px 14px;border-radius:8px;border:1px solid #ffffff22;background:var(--pan);color:inherit;cursor:pointer}
+.pt small{display:block;font:800 10px var(--ff);letter-spacing:2px;color:var(--gold)}
+.pt b{font-size:14px}.pt i{display:block;font-style:normal;font-size:10px;opacity:.6}
+.pt.on{outline:2px solid var(--gold);background:#2a2412}.pt:disabled{opacity:.45;cursor:default}
+.rec .mty{background:#ffcf5a2a;color:#ffe39a;box-shadow:inset 0 0 0 1px #ffcf5a55}
+#mis{margin-top:3px;font:700 12px var(--ff);color:#ffe39a;text-shadow:0 1px 3px #000;letter-spacing:.5px}
+#misArrow{position:fixed;left:0;top:0;width:0;height:0;z-index:5;pointer-events:none}
+#misArrow i{position:absolute;left:-14px;top:-14px;width:28px;height:28px;background:#ffd166;clip-path:polygon(100% 50%,0 0,25% 50%,0 100%);filter:drop-shadow(0 0 6px #ffd166)}
+#misArrow b{position:absolute;left:-30px;top:16px;width:60px;text-align:center;font:800 11px var(--ff);color:#ffe39a;text-shadow:0 1px 3px #000}
+#story{z-index:60;background:radial-gradient(ellipse at center,#0a0e1ccc,#000000ee)}
+.stbox{width:min(640px,92vw);padding:26px 28px;border-radius:14px;border:1px solid #ffffff22;background:linear-gradient(160deg,#141a2e,#0a0d18);box-shadow:0 20px 60px #000a;animation:stIn .5s ease}
+.stbox small{font:800 11px var(--ff);letter-spacing:3px;color:var(--gold)}
+.stbox h3{margin:6px 0 12px;font-size:26px}
+.stbox p{margin:0 0 20px;font-size:16px;line-height:1.75;opacity:.92;white-space:pre-line}
+@keyframes stIn{from{opacity:0;transform:translateY(12px)}}
 #chRec{display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap}
 #chRec > small{font-size:10px;opacity:.6;letter-spacing:1px}
 #chRec .rec{margin:0}
@@ -343,10 +361,11 @@ button{font-family:inherit;cursor:pointer}
   <div id="xpbar"><div id="xpfill"></div></div>
   <div id="lvB"><div><small>LV</small><span id="lv">1</span></div></div>
   <div id="slots"></div>
-  <div id="timeBox"><div id="time" class="num">5:00</div><div id="chLabel">CHAPTER 1</div></div>
+  <div id="timeBox"><div id="time" class="num">5:00</div><div id="chLabel">CHAPTER 1</div><div id="mis" class="hide"></div></div>
   <div id="kills"><span class="k num"></span><span class="c num"></span></div>
   <div id="boss" class="hide"><div id="bossname"><span>제타 여왕</span></div><div id="bossbar"><div id="bossfill"></div></div></div>
   <div id="banner"></div>
+<div id="misArrow" class="hide"><i></i><b></b></div>
   <div id="hpwrap"><div id="pfp"></div><div id="hpcol"><div id="hpbar"><div id="hpfill"></div><div id="barfill"></div></div><div id="hptxt" class="num"></div></div></div>
   <button id="bPause" aria-label="일시정지"></button>
   <div id="btns">
@@ -378,7 +397,7 @@ button{font-family:inherit;cursor:pointer}
   <div id="load">불러오는 중</div>
 </div>
 
-<div id="chapters" class="ov hide panel"><button class="close" id="cClose">✕</button><h2 id="chTitle"></h2><p class="pnote">장을 깨면 다음 장, 막을 끝내면 새 기체 · 추천 기종으로 출격하면 화력 +15%, 내구 +10%<span class="gxs"> · 별: 클리어 · 내구 50% 이상 · 여왕 60초 안에 격파</span></p><div class="mapwrap"><div id="gx"><canvas id="gxc"></canvas><div id="gxn"></div></div><div id="actPanel"><div id="actHead"></div><div id="chList"></div></div></div></div>
+<div id="chapters" class="ov hide panel"><button class="close" id="cClose">✕</button><h2 id="chTitle"></h2><p class="pnote">장을 깨면 다음 장, 막을 끝내면 새 기체 · 추천 기종으로 출격하면 화력 +15%, 내구 +10%<span class="gxs"> · 별: 보스 격파 · 내구 50% 이상 · 결전 60초 안에</span></p><div id="partTabs"></div><div class="mapwrap"><div id="gx"><canvas id="gxc"></canvas><div id="gxn"></div></div><div id="actPanel"><div id="actHead"></div><div id="chList"></div></div></div></div>
 <div id="gacha" class="ov hide panel"><button class="close" id="gClose">✕</button>
   <div class="bnr"><div><h4>보급 신호 · 신화 강림</h4><p>신화 기체 솔라리스 · 아크엔젤 · 블러드 이클립스 · 녹턴. 중복으로 얻으면 별이 올라 더 강해집니다.</p><div class="pity" id="pity"></div></div><div class="gods" id="gods"></div></div>
   <div class="pulls"><button class="go" id="pull1"></button><button class="go alt" id="pull10"></button><button class="adbtn hide" id="adGem"></button></div>
@@ -390,7 +409,8 @@ button{font-family:inherit;cursor:pointer}
 <div id="lvl" class="ov hide"><div class="rays"></div><h2 id="lvlT">LEVEL UP</h2><p id="lvlS">강화 하나를 고르세요</p><div id="cards"></div><div id="lvlFoot"><button class="ghost" id="reroll"></button></div></div>
 <div id="pause" class="ov hide"><h2 style="margin:0;letter-spacing:6px;font-size:30px">일시정지</h2><div id="build"></div>
   <button class="go" id="resume">계속</button><div style="display:flex;gap:8px"><button class="ghost" id="mute">소리 끄기</button><button class="ghost" id="quit">나가기</button></div></div>
-<div id="over" class="ov hide"><h2 id="ovT"></h2><div id="ovSub"></div><div id="ovStars"></div><div id="newrec" class="hide">신기록</div><div id="stats"></div>
+<div id="story" class="ov hide"><div class="stbox"><small id="stK"></small><h3 id="stT"></h3><p id="stP"></p><button class="go" id="stGo">계속</button></div></div>
+<div id="over" class="ov hide"><h2 id="ovT"></h2><div id="ovSub"></div><div id="ovLine" class="hide"></div><div id="ovStars"></div><div id="newrec" class="hide">신기록</div><div id="stats"></div>
   <div id="reward"></div><div id="ovBtns"><button class="go hide" id="nextThreat">다음 장</button><button class="go" id="retry">다시 출격</button><button class="adbtn hide" id="adDouble"></button><button class="ghost" id="toTitle">격납고로</button></div></div>
 
 <script>window.__MSLE_BB=23.75/90; window.__MSLE_PROF = { vertical: { climb: .2, v0: 120, vClimb: 250, vmax: 780, vEnd: 1050, endR: 300, acc: 1500, turn: 10, turnUp: 32, wob: .2 } };window.__phone=matchMedia("(pointer:coarse)").matches;window.step=function(){};window.mdlAnimate=function(){};window.__tfHoldOK=true;</script>
@@ -399,6 +419,6 @@ button{font-family:inherit;cursor:pointer}
 <script src="lib/transform.js?v=3"></script>
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
-<script type="module" src="game.js?v=14"></script>
+<script type="module" src="game.js?v=15"></script>
 </body>
 </html>

@@ -64,6 +64,9 @@ const MECHS = [
   { id: 'mech_leg', nm: '세라핌 프라임', ty: '전설 · 대검·빛 깃털', hp: 1.4, dmg: 1.35, spd: 1.15, cd: .8, arm: 'great', prim: 'feather', cost: 4500, rar: 'SSR',
     pass: '모든 피해 +10% · 가까이선 대검, 멀면 빛 깃털', auto: { k: 'featherstorm', nm: '광익 방출', ic: '🕊️', cd: 5 }, ult: { k: 'descent', nm: '세라핌 강림', ic: '👼' },
     init(p) { p.dmgMul *= 1.1; } },
+  { id: 'astra', nm: '아스트라 센티널', ty: '알파 수호기 · 알파 빔·방패', hp: 1.32, dmg: 1.25, spd: 1.05, cd: .85, arm: 'rifle', off: 'shield', prim: 'beam', cost: 6000, rar: 'SSR',
+    pass: '받는 피해 -15% · 모든 재사용 -10% · 2부 「망명자의 그림자」 완료 보상', auto: { k: 'blink', nm: '수호 도약', ic: '✨', cd: 5.5 }, ult: { k: 'aegis', nm: '수호의 빛', ic: '💠' },
+    init(p) { p.taken = .85; p.cdMul *= .9; } },
   // 신화(뽑기·장기 구매): 날개 달린 신 기체 4종. 등급 배율이 가장 높고 패시브도 강하다
   { id: 'god', nm: '솔라리스', ty: '신화 · 태양 대검·빛 깃털', hp: 1.6, dmg: 1.5, spd: 1.18, cd: .75, arm: 'great', prim: 'feather', cost: 9000, rar: 'UR',
     pass: '모든 피해 +15% · 피격 20% 확률로 피해 무효', auto: { k: 'featherstorm', nm: '태양 깃털', ic: '☀️', cd: 3.5 }, ult: { k: 'descent', nm: '태양 강림', ic: '🌞' },
@@ -84,10 +87,10 @@ const RAR_ORDER = ['N', 'R', 'SR', 'SSR', 'UR'];
 const MECH = (id) => MECHS.find((m) => m.id === id) || MECHS[0];
 // 기종 분류: 장마다 추천 기종이 있고, 맞춰 출격하면 보너스
 const CLS = { 근접: { k: 'katana', ds: '가까이 붙어 베는 기체' }, 사격: { k: 'rifle', ds: '멀리서 쏘는 기체' }, 기동: { k: 'dash', ds: '빠르게 움직이는 기체' }, 중장: { k: 'armor', ds: '튼튼하고 묵직한 기체' } };
-const CLS_OF = { mech4: '기동', m_samurai: '근접', m_striker: '사격', mech3: '근접', m_guardian: '중장', m_titan: '중장', m_ranger: '사격', m_artillery: '중장', m_sky: '기동', m_phantom: '기동', m_wizard: '사격', m_origin: '사격', mech_leg: '근접', god: '근접', god_white: '사격', god_red: '근접', god_black: '기동' };
+const CLS_OF = { mech4: '기동', m_samurai: '근접', m_striker: '사격', mech3: '근접', m_guardian: '중장', m_titan: '중장', m_ranger: '사격', m_artillery: '중장', m_sky: '기동', m_phantom: '기동', m_wizard: '사격', m_origin: '사격', mech_leg: '근접', god: '근접', god_white: '사격', god_red: '근접', god_black: '기동', astra: '사격' };
 for (const m of MECHS) m.cls = CLS_OF[m.id] || '사격';
 // 기체별 전투기 모델(변신 엔진 JETM과 같은 이름)
-const JET_OF = { mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet', god: 'm_wizard_jet', god_white: 'm_sky_jet', god_red: 'm_striker_jet', god_black: 'm_phantom_jet' };
+const JET_OF = { mech3: 'saberjet', mech4: 'mech4_jet', m_sky: 'm_sky_jet', m_striker: 'm_striker_jet', m_titan: 'm_titan_jet', m_ranger: 'm_ranger_jet', m_artillery: 'm_artillery_jet', m_wizard: 'm_wizard_jet', m_phantom: 'm_phantom_jet', m_samurai: 'm_samurai_jet', m_origin: 'm_origin_jet', m_guardian: 'm_guardian_jet', mech_leg: 'mech_leg_jet', god: 'm_wizard_jet', god_white: 'm_sky_jet', god_red: 'm_striker_jet', god_black: 'm_phantom_jet', astra: 'm_guardian_jet' };
 // 주무기 이름: 같은 강화(rifle)라도 기체의 기본 무기에 맞춰 부른다
 const ARM_NAME = {
   pistol: { nm: '빔 권총', ic: '🔫', ds0: '가까운 적을 권총으로 자동 사격' },
@@ -125,6 +128,14 @@ const ET = {
   heli:     { file: 'a_heli', h: 13, fit: 1, r: 7, hp: 150, spd: 34, dmg: 0, xp: 6, max: 3, yaw: 0, col: 0xbfe0ff, fly: 24, mech: 1 },
   goliath:  { file: 'v_goliath', h: 30, r: 12.5, hp: 1800, spd: 19, dmg: 24, xp: 0, max: 1, yaw: 0, col: 0xffc05a, mech: 1, boss: '골리앗 강습 보행기' },
   scorp:    { file: 'fb_scorp', h: 36, fit: 1, r: 14, hp: 2600, spd: 27, dmg: 24, xp: 0, max: 1, yaw: 0, col: 0x5ab0ff, boss: '심연 거미' },
+  nest:     { file: 'p_crystal', h: 17, fit: 1, r: 7, hp: 420, spd: 0, dmg: 0, xp: 6, max: 12, yaw: 0, col: 0xc08cff },
+  warden:   { file: 'v_goliath', h: 38, r: 15, hp: 5200, spd: 17, dmg: 26, xp: 0, max: 1, yaw: 0, col: 0xe0d0ff, mech: 1, boss: '정원의 파수꾼' },
+  keeper:   { file: 'fb_scorp', h: 40, fit: 1, r: 15, hp: 6000, spd: 28, dmg: 26, xp: 0, max: 1, yaw: 0, col: 0x9f8cff, boss: '서고의 문지기' },
+  mb_guard:     { virt: 1, h: 24, r: 11, hp: 2600, spd: 34, dmg: 20, xp: 0, max: 1, yaw: 0, col: 0xd8c8ff, mech: 1, boss: '알파 근위기' },
+  mb_honor:     { virt: 1, h: 26, r: 11, hp: 5200, spd: 38, dmg: 22, xp: 0, max: 1, yaw: 0, col: 0xb89cff, mech: 1, boss: '세라핀 근위기' },
+  mb_heavy:     { virt: 1, h: 28, r: 12, hp: 6400, spd: 24, dmg: 26, xp: 0, max: 1, yaw: 0, col: 0xcfc4ff, mech: 1, boss: '함장실 방어 기체' },
+  mb_core:      { virt: 1, h: 27, r: 11, hp: 7600, spd: 36, dmg: 24, xp: 0, max: 1, yaw: 0, col: 0xffe7a0, mech: 1, boss: '정화포 수호기' },
+  mb_seraphine: { virt: 1, h: 32, r: 12, hp: 9800, spd: 40, dmg: 26, xp: 0, max: 1, yaw: 0, col: 0xc9a8ff, mech: 1, boss: '알파 사령관 세라핀' },
   brood:    { file: 'z_broodlord', h: 38, fit: 1, r: 14, hp: 3000, spd: 24, dmg: 0, xp: 0, max: 1, yaw: 0, col: 0xc07aff, fly: 30, boss: '브루드로드' },
 };
 
@@ -168,7 +179,7 @@ const SKY = new THREE.Color(0x2a1a24);
 scene.background = SKY;
 scene.fog = new THREE.Fog(SKY, 300, 760);
 const cam = new THREE.PerspectiveCamera(42, 1, 1, 1600);
-scene.add(new THREE.HemisphereLight(0xffe2c0, 0x4a3040, 1.25));
+const hemi = new THREE.HemisphereLight(0xffe2c0, 0x4a3040, 1.25); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffd0a0, 1.9);
 sun.position.set(-120, 220, 90);
 scene.add(sun);
@@ -306,7 +317,8 @@ const PAINT = {
   m_artillery: { two: { h: [38, 175], t: .44, hi: [214, .06, 1.42], lo: [218, .82, .95] }, dark: [.4, .55], unsat: [219, .75, .9, .36] }, // 파랑 + 흰색
   m_sky: { swap: [[0, 52, 356, 1.5, .95], [330, 360, 356, 1.5, .95]] },                                  // 흰색 + 빨강
   m_phantom: { colorize: [.12, 281, .62, 1.2], dark: [.12, .5] },                                                         // 자주 + 검정
-  m_origin: { swap: [[150, 215, 189, 1.6, 1.05]] },                                                      // 흰색 + 청록
+  m_origin: { swap: [[150, 215, 189, 1.6, 1.05]] },
+  astra: { swap: [[180, 262, 262, .16, 1.75]], dark: [.3, .55] },                                         // 알파 백색 + 보랏빛                                                      // 흰색 + 청록
 };
 const _hsl2rgb = (h, s, l) => { const C = (1 - Math.abs(2 * l - 1)) * s, H = (((h % 360) + 360) % 360) / 60, X = C * (1 - Math.abs(H % 2 - 1)), m = l - C / 2;
   const [R, G, B] = H < 1 ? [C, X, 0] : H < 2 ? [X, C, 0] : H < 3 ? [0, C, X] : H < 4 ? [0, X, C] : H < 5 ? [X, 0, C] : [C, 0, X]; return [(R + m) * 255, (G + m) * 255, (B + m) * 255]; };
@@ -351,6 +363,7 @@ const MARKS = {
   m_wizard: [{ at: 'back', img: 'crane', c: '#ff5fbf' }, { at: 'lsh', img: 'crane', c: '#ff5fbf' }],
   m_origin: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#2fd6ff' }, { at: 'back', img: 'eagle', c: '#2fd6ff' }],
   god_white: [{ at: 'lsh', img: 'taegukgi', w: 1.5, c: '#3a7fe0' }],
+  astra: [{ at: 'lsh', img: 'crane', c: '#b48cff' }, { at: 'back', img: 'eagle', c: '#c9a8ff' }],
 };
 const _decImg = {};
 const loadDecal = (k) => _decImg[k] ??= new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = `img/decal_${k}.png`; });
@@ -437,9 +450,10 @@ function heroicBody(g) {
   const headY = wp(B.Head).y, minY = new THREE.Box3().setFromObject(g.scene).min.y, bodyH = (headY - minY) * 1.1;
   if (bodyH > 1) g.scene.scale.multiplyScalar(UR_BODY / bodyH);
 }
+const MODEL_FILE = { astra: 'm_guardian' };   // 다른 기체의 몸을 빌려 쓰는 기체
 async function loadMech(id) {
   if (mechCache[id]) return mechCache[id];
-  const g = await gltfL.loadAsync(`models/${id}.glb`);
+  const g = await gltfL.loadAsync(`models/${MODEL_FILE[id] || id}.glb`);
   // 본편 모델은 크기가 제각각이라 키를 19로 맞춘다(이 게임의 기존 기체 키)
   { g.scene.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(g.scene), h = bb.max.y - bb.min.y; if (h > 0 && Math.abs(h - 19) > .5) g.scene.scale.multiplyScalar(19 / h); }
   if (MECH(id).rar === 'UR') heroicBody(g);
@@ -613,6 +627,7 @@ const addMat = (c) => new THREE.MeshBasicMaterial({ color: c, transparent: true,
 
 function buildPools() {
   for (const k in ET) {
+    if (ET[k].virt) { IM[k] = []; continue; }
     const m = new THREE.MeshLambertMaterial({ map: MODELS[k].map, emissiveMap: MODELS[k].map, emissive: new THREE.Color(ET[k].col).lerp(new THREE.Color(0xffffff), .45), emissiveIntensity: .95 });
     if (ET[k].mech) m.emissiveIntensity = .55;
     m.color.setScalar(1.7); IM[k] = MODELS[k].geos.map((g) => instanced(g, m, ET[k].max));
@@ -980,7 +995,8 @@ function resetRun() {
   for (const d of decals) cancelDecal(d);
   E = []; shots = []; ebs = []; gems = []; picks = []; msl = []; nums.length = 0; if (XF) XF.clear();
   AN.over = null; AN.overT = 0; mslClear();
-  Object.assign(G, { t: 0, kills: 0, shake: 0, slow: 0, bossOn: false, boss: null, mid: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0, st: { big: 0, flights: 0, ults: 0, skills: 0 } });
+  clearMission();
+  Object.assign(G, { finalT: null, t: 0, kills: 0, shake: 0, slow: 0, bossOn: false, boss: null, mid: null, won: false, spawnAcc: 0, ev: 0, pend: 0, endT: 0, st: { big: 0, flights: 0, ults: 0, skills: 0 } });
   LATER.length = 0; shells = []; clearVFX();
   Object.assign(P, {
     x: 0, z: 0, yaw: 0, hp: 100, maxHp: 100, inv: 0, lvl: 1, xp: 0, need: 6, spdMul: 1, cdMul: 1, crit: .05, magnet: 30, regen: 0,
@@ -1776,7 +1792,7 @@ function drawSlots() {
 }
 function drawBuild() {
   const m = MECH(save.mech);
-  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg?v=13" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
+  $('#build').innerHTML = `<div style="grid-column:1/3"><img src="img/${m.id}.jpg?v=15" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover"><span><b>${m.nm} · Lv ${P.lvl}</b><small>${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm} · 남은 시간 ${fmt(Math.max(0, RUN_TIME - G.t))}</small></span></div>`
     + Object.keys(UP).filter((k) => P.w[k] > 0).map((k) => { const u = UP[k], an = k === 'rifle' && ARM_NAME[PRIM], lv = P.w[k];
       return `<div>${ico(k === 'rifle' ? PRIM : k)}<span><b>${an ? an.nm : u.nm} Lv ${lv}/${u.max}</b><small>${an && lv === 1 ? an.ds0 : u.ds[Math.min(lv - 1, u.ds.length - 1)]}</small></span></div>`; }).join('');
 }
@@ -1790,7 +1806,8 @@ function spawn(type, x, z) {
   const tm = Math.min(G.t, RUN_TIME) / 60, hs = (1 + .5 * tm + .13 * tm * tm) * (1 + .35 * (G.threat - 1));
   const e = { t: type, T, x, z, vx: 0, vz: 0, kx: 0, kz: 0, yaw: 0, hp: T.hp * (T.r > 10 ? 1 + .35 * (G.threat - 1) : hs), flash: 0, bladeT: 0,
     st: 'move', tm: rand(1, 3), ph: rand(0, 6), sc: 1, born: .35, sm: (1 + .05 * tm) * rand(.92, 1.1) };
-  e.max = e.hp; E.push(e); return e;
+  e.max = e.hp; if (G.mis && G.mis.tgt && !T.fly && !T.boss && !T.virt && T.dmg > 0 && type !== 'bane' && Math.random() < (G.mis.tgtP || .4)) e.tgo = 1;
+  E.push(e); return e;
 }
 function spawnPos(dMin, dMax) {
   for (let i = 0; i < 8; i++) {
@@ -1820,8 +1837,153 @@ const EVENTS = [
   [210, () => { banner('거대 개체 접근'); sfx.warn(); for (let i = 0; i < 2; i++) { const [x, z] = spawnPos(170, 190); spawn('behemoth', x, z); } }],
   [235, () => midBoss(CH().mids[2])],
   [262, () => { banner('무리 습격'); sfx.warn(); swarm(38); }],
-  [RUN_TIME, () => { banner('여왕 출현', 3000); sfx.warn(); const [x, z] = spawnPos(150, 170); G.boss = spawn('queen', x, z); G.bossOn = true; if (CH().twin) { const [x2, z2] = spawnPos(150, 170), b2 = spawn('brood', x2, z2); if (b2) G.mid = b2; } $('#boss').classList.remove('hide'); G.shake = 5; }],
+  [RUN_TIME, () => { if (!(G.mis && G.mis.obj)) spawnFinal(); }],
 ];
+function spawnFinal() {
+  if (G.bossOn || G.won) return; G.finalT = G.t; const bk = CH().boss;
+  const [x, z] = spawnPos(150, 170);
+  if (bk && ET[bk]) {
+    banner(`결전 · ${ET[bk].boss}`, 3000); sfx.warn(); screenFlash('#c9a8ff', .3, .8);
+    const e = spawn(bk, x, z); G.boss = e;
+    if (e && ET[bk].virt) loadBossVis(bk).then((v) => { if (!e.dead && G.state !== 'over') { e.vis = v; scene.add(v.wrap); G.visOn = v; } }).catch(() => { });
+  } else {
+    banner('여왕 출현', 3000); sfx.warn(); G.boss = spawn('queen', x, z);
+    if (CH().twin) { const [x2, z2] = spawnPos(150, 170), b2 = spawn('brood', x2, z2); if (b2) G.mid = b2; }
+  }
+  G.bossOn = true; $('#boss').classList.remove('hide'); G.shake = 5;
+}
+// ───────── 적 기체 보스: 우리 기체 모델에 알파의 빛깔을 입혀 공중에 떠서 싸운다
+const MB = {
+  mb_guard: { mdl: 'm_wizard', pats: ['volley', 'lance', 'pillars'] },
+  mb_honor: { mdl: 'm_wizard', pats: ['volley', 'lance', 'pillars', 'summon'] },
+  mb_heavy: { mdl: 'm_titan', pats: ['barrage2', 'volley', 'summon'] },
+  mb_core: { mdl: 'm_origin', pats: ['volley', 'pillars', 'lance', 'nova'] },
+  mb_seraphine: { mdl: 'mech_leg', pats: ['volley', 'lance', 'pillars', 'summon', 'nova'] },
+};
+const MBV = {};
+function loadBossVis(k) {
+  if (MBV[k]) return MBV[k];
+  const T = ET[k], col = new THREE.Color(T.col);
+  return (MBV[k] = gltfL.loadAsync(`models/${MB[k].mdl}.glb`).then((gl) => {
+    const s = gl.scene; s.updateMatrixWorld(true); const bb = new THREE.Box3().setFromObject(s), hh = bb.max.y - bb.min.y; if (hh > 0) s.scale.multiplyScalar(T.h / hh);
+    s.traverse((o) => { if (o.isMesh) { o.frustumCulled = false; const m = o.material; m.metalness = Math.min(m.metalness ?? 0, .2); m.roughness = Math.max(m.roughness ?? 1, .5); m.metalnessMap = null; m.emissive = col.clone(); m.emissiveMap = m.map || null; m.emissiveIntensity = .85; m.color = col.clone().multiplyScalar(1.35); m.needsUpdate = true; } });
+    const inner = new THREE.Group(); inner.add(s); inner.rotation.y = -Math.PI / 2; const wrap = new THREE.Group(); wrap.add(inner);
+    const aura = new THREE.Mesh(new THREE.RingGeometry(8, 11, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: T.col, transparent: true, opacity: .55, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); aura.position.y = -1.5; wrap.add(aura);
+    const mixer = new THREE.AnimationMixer(s), clip = gl.animations.find((c) => /hover|fly/i.test(c.name)) || gl.animations.find((c) => /idle/i.test(c.name)) || gl.animations[0];
+    if (clip) mixer.clipAction(clip).play();
+    return { wrap, mixer, aura };
+  }).catch((e) => { delete MBV[k]; throw e; }));
+}
+function dropBossVis(e) { if (e.vis) { scene.remove(e.vis.wrap); e.vis = null; } G.visOn = null; }
+function syncBossVis(dt) {
+  for (const e of E) { if (!e.vis) continue; const v = e.vis; v.wrap.position.set(e.x, 3 + Math.sin(e.ph * 2) * 1.4, e.z); v.wrap.rotation.y = e.yaw; v.mixer.update(dt);
+    const s = e.flash > 0 ? 1.06 : 1; v.wrap.scale.setScalar(s); v.aura.rotation.y += dt * 1.5; }
+}
+function mechBossAI(e, dt, d, dx, dz) {
+  const T = e.T, toP = Math.atan2(dx, dz), rage = e.hp < e.max * .45, col = T.col, B = MB[e.t];
+  e.yaw = e.st === 'ldash' ? e.ang : toP;
+  if (e.st === 'move') {
+    e.side = e.side || (Math.random() < .5 ? 1 : -1);
+    e.mv = d > 95 ? toP : d < 55 ? toP + Math.PI : toP + e.side * Math.PI / 2;
+    if (e.tm <= 0) {
+      e.pat = ((e.pat ?? -1) + 1) % B.pats.length; const p = B.pats[e.pat]; e.st = p; e.cnt = 0; e.ct = 0;
+      e.tm = { volley: 1.6, lance: .9, pillars: 1.7, summon: .8, nova: 1.2, barrage2: 1.8 }[p];
+      if (p === 'lance') { e.ang = toP; e.dec = lineDecal(e.x, e.z, e.ang, 220, 26, .9, col); sfx.tele(); }
+      if (p === 'nova') { e.dec = decal(e.x, e.z, 62, 1.2, col); sfx.tele(); }
+    }
+    return T.spd * (rage ? 1.25 : 1);
+  }
+  const done = () => { e.st = 'move'; e.tm = rage ? 1.0 : 1.7; e.dec = null; e.side = Math.random() < .5 ? 1 : -1; };
+  e.ct -= dt;
+  switch (e.st) {
+    case 'volley':
+      if (e.ct <= 0 && e.cnt < 3) { e.ct = .45; e.cnt++; const n = rage ? 9 : 7; for (let i = 0; i < n; i++) eShot(e.x, e.z, toP + (i - (n - 1) / 2) * .14, 95, 12, 3, col); flare(e.x, T.h * .6, e.z, col, 14, .08); tone(700, 300, .08, 'triangle', .05); }
+      if (e.tm <= 0) done(); return 0;
+    case 'lance': if (e.tm <= 0) { e.st = 'ldash'; e.tm = .6; sfx.dash(); } return 0;
+    case 'ldash': e.mv = e.ang; burst(e.x, 8, e.z, 3, col, 30, .4, 12); if (e.tm <= 0) { G.shake = 3; done(); } return 310;
+    case 'pillars':
+      if (e.ct <= 0 && e.cnt < (rage ? 7 : 5)) { e.ct = .28; e.cnt++; const x = P.x + inp.x * 28 + rand(-20, 20), z = P.z + inp.z * 28 + rand(-20, 20);
+        decal(x, z, 18, .8, col, () => { ring(x, z, 4, 18, .3, col); beamFx(x, 120, z, x, 0, z, 2.4, col, .35); burst(x, 4, z, 16, col, 60, .4, 10); lightFlash(x, 12, z, col, 30, .25); sfx.boom(); if (Math.hypot(P.x - x, P.z - z) < 18 + P.r) hurtPlayer(16); }); }
+      if (e.tm <= 0) done(); return T.spd * .3;
+    case 'summon': if (e.tm <= 0) { const n = rage ? 6 : 4; for (let i = 0; i < n; i++) { const a = i / n * TAU; spawn('robo', e.x + Math.cos(a) * 24, e.z + Math.sin(a) * 24); } ring(e.x, e.z, 8, 40, .4, col); done(); } return 0;
+    case 'nova': if (e.tm <= 0) { const n = rage ? 28 : 20; for (let i = 0; i < n; i++) eShot(e.x, e.z, i / n * TAU, 70, 12, 5, col); ring(e.x, e.z, 8, 62, .5, col); lightFlash(e.x, 14, e.z, col, 60, .3); if (d < 62 + P.r) hurtPlayer(20); sfx.boom(); G.shake = 4; done(); } return 0;
+    case 'barrage2':
+      if (e.ct <= 0 && e.cnt < (rage ? 10 : 7)) { e.ct = .18; e.cnt++; const x = P.x + inp.x * 26 + rand(-26, 26), z = P.z + inp.z * 26 + rand(-26, 26); flare(e.x, T.h * .9, e.z, col, 10, .1);
+        decal(x, z, 17, .85, col, () => { ring(x, z, 4, 18, .3, col); burst(x, 4, z, 18, col, 70, .45, 10); mark(x, z, 12, 0x0e0805, 'scorch', 6, .55); sfx.boom(); if (Math.hypot(P.x - x, P.z - z) < 17 + P.r) hurtPlayer(16); }); }
+      if (e.tm <= 0) done(); return 0;
+  }
+  done(); return 0;
+}
+// ───────── 임무 방식: 방어·호위·소탕·돌파·탈출·시간제한·야간 (목표를 이루면 결전)
+const MIS_INFO = { 생존: '버티고 보스를 쓰러뜨려라', 보스: '막 보스를 쓰러뜨려라', 제공권: '하늘의 적을 걷어 내라', 야간: '어둠 속에서 버텨라', 방어: '거점을 끝까지 지켜라', 호위: '피난선을 끝까지 지켜라', 소탕: '둥지를 모두 부숴라', 돌파: '목표 지점까지 돌파하라', 탈출: '시간 안에 빠져나가라', 시간제한: '시간 안에 장치를 모두 부숴라' };
+let misObjs = [];
+function clearMission() { for (const o of misObjs) scene.remove(o); misObjs = []; G.mis = null; G.failMsg = null; for (const k in MBV) MBV[k].then((v) => scene.remove(v.wrap)).catch(() => { }); }
+function misMesh(kind, col) {
+  const grp = new THREE.Group(), glow = (c, o = .8) => new THREE.MeshBasicMaterial({ color: c, transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
+  const metal = new THREE.MeshStandardMaterial({ color: 0x3a4258, metalness: .6, roughness: .35, emissive: 0x141a28 });
+  if (kind === 'pylon') {
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(9, 11, 4, 8), metal); base.position.y = 2; grp.add(base);
+    const core = new THREE.Mesh(new THREE.OctahedronGeometry(6), new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.4, metalness: .3, roughness: .2 })); core.position.y = 16; core.scale.y = 1.6; grp.add(core); grp.userData.spin = core;
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(9, .5, 8, 40), glow(col)); ring1.rotation.x = Math.PI / 2; ring1.position.y = 16; grp.add(ring1); grp.userData.ring = ring1;
+  } else if (kind === 'ship') {
+    const hull = new THREE.Mesh(new THREE.CylinderGeometry(3.5, 5.5, 26, 10), metal); hull.rotation.z = Math.PI / 2; grp.add(hull);
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(18, 3, 9), metal); deck.position.y = 3; grp.add(deck);
+    for (const z of [-3, 3]) { const eng = new THREE.Mesh(new THREE.SphereGeometry(2.2, 12, 8), glow(0x7fe6ff, 1)); eng.position.set(-14, 0, z); grp.add(eng); }
+    const win = new THREE.Mesh(new THREE.BoxGeometry(6, 1.2, 9.2), glow(0xffe7a0, .9)); win.position.set(5, 4, 0); grp.add(win);
+  } else {
+    const pil = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 160, 20, 1, true), glow(col, .22)); pil.position.y = 80; grp.add(pil);
+    const r = new THREE.Mesh(new THREE.RingGeometry(18, 22, 48).rotateX(-Math.PI / 2), glow(col, .8)); r.position.y = .3; grp.add(r); grp.userData.ring = r;
+  }
+  scene.add(grp); misObjs.push(grp); return grp;
+}
+function initMission(C) {
+  const ty = C.type || '생존', k = 1 + .3 * (G.threat - 1), M = { ty, obj: false }; G.mis = M; G.failMsg = null;
+  if (ty === '방어') { const o = { x: 0, z: -34, r: 11, hp: 1200 * k, kind: 'pylon' }; o.max = o.hp; o.mesh = misMesh('pylon', 0x9fd8ff); M.tgt = o; M.obj = true; M.until = 170; M.tgtP = .3; }
+  if (ty === '호위') { const o = { x: -185, z: 0, r: 12, hp: 1100 * k, kind: 'ship', vx: 370 / 150 }; o.max = o.hp; o.mesh = misMesh('ship'); M.tgt = o; M.obj = true; M.tgtP = .28; P.x = -160; P.z = 26; }
+  if (ty === '소탕' || ty === '시간제한') { const N = ty === '소탕' ? 6 : 5; M.nests = N; M.obj = true; if (ty === '시간제한') M.limit = 140;
+    for (let i = 0; i < N; i++) { const a = i / N * TAU + rand(-.3, .3), r = rand(115, 195); spawn('nest', Math.cos(a) * r, Math.sin(a) * r); } }
+  if (ty === '돌파' || ty === '탈출') { M.obj = true; M.wps = [[-55, 95], [75, -75], [175, 60]]; M.wi = 0; P.x = -175; P.z = -70; if (ty === '탈출') M.limit = 165; M.bea = misMesh('beacon', 0xffd166); }
+}
+function misTarget() { const M = G.mis; if (!M || M.done) return null; if (M.tgt) return M.tgt; if (M.wps) return { x: M.wps[M.wi][0], z: M.wps[M.wi][1] };
+  if (M.nests != null) { let b = null, bd = 1e9; for (const e of E) if (e.t === 'nest' && !e.dead) { const q = (e.x - P.x) ** 2 + (e.z - P.z) ** 2; if (q < bd) { bd = q; b = e; } } return b; } return null; }
+function misFail(msg) { if (G.state !== 'play') return; G.failMsg = msg; banner(msg, 2000); endRun(false); }
+function misDone() { const M = G.mis; if (M.done) return; M.done = true; banner('임무 달성 · 결전', 2400); screenFlash('#ffd166', .3, .7); sfx.lvl(); if (M.bea) M.bea.visible = false; spawnFinal(); }
+function updMission(dt) {
+  syncBossVis(dt);
+  const M = G.mis; if (!M || G.won) return;
+  for (const o of misObjs) { if (o.userData.spin) o.userData.spin.rotation.y += dt * 1.2; if (o.userData.ring) o.userData.ring.rotation.z += dt * .8; }
+  if (M.tgt) { const o = M.tgt;
+    if (o.kind === 'ship' && !M.done) o.x = Math.min(185, o.x + o.vx * dt);
+    o.mesh.position.set(o.x, o.kind === 'ship' ? 10 + Math.sin(G.t * 1.6) * 1.2 : 0, o.z);
+    if (o.hitT > 0) { o.hitT -= dt; if (Math.random() < .3) burst(o.x, 10, o.z, 2, 0xffa04a, 30, .3, 6); }
+    if (o.hp <= 0) { misFail(o.kind === 'ship' ? '피난선이 격추되었다' : '거점이 무너졌다'); return; } }
+  if (M.done) return;
+  if (M.limit && G.t > M.limit) { misFail('시간 초과'); return; }
+  if (M.tgt && M.tgt.kind === 'pylon' && G.t >= M.until) misDone();
+  if (M.tgt && M.tgt.kind === 'ship' && M.tgt.x >= 185) misDone();
+  if (M.nests != null) { let left = 0; for (const e of E) if (e.t === 'nest' && !e.dead) left++; M.left = left;
+    if (left === 0) misDone(); else if ((M.spT = (M.spT || 0) + dt) > 6.5) { M.spT = 0; for (const e of E) if (e.t === 'nest' && !e.dead) for (let i = 0; i < 2; i++) spawn('ling', e.x + rand(-12, 12), e.z + rand(-12, 12)); } }
+  if (M.wps) { const [wx, wz] = M.wps[M.wi]; M.bea.position.set(wx, 0, wz);
+    if (Math.hypot(P.x - wx, P.z - wz) < 24) { ring(wx, wz, 6, 40, .5, 0xffd166); sfx.lvl(); M.wi++; if (M.wi >= M.wps.length) misDone(); } }
+}
+function misHud() {
+  const M = G.mis, el = $('#mis'); if (!M || !M.obj || G.bossOn) { el.classList.add('hide'); $('#misArrow').classList.add('hide'); return; }
+  el.classList.remove('hide'); let s = '';
+  if (M.done) s = '임무 달성 · 결전';
+  else if (M.tgt) s = M.tgt.kind === 'ship' ? `피난선 ${Math.max(0, Math.ceil(M.tgt.hp / M.tgt.max * 100))}% · 남은 거리 ${Math.max(0, Math.round(185 - M.tgt.x))}` : `거점 ${Math.max(0, Math.ceil(M.tgt.hp / M.tgt.max * 100))}% · ${fmt(Math.max(0, M.until - G.t))}`;
+  else if (M.nests != null) s = `${M.ty === '소탕' ? '둥지' : '장치'} ${M.left ?? M.nests} 남음`;
+  else if (M.wps) s = `목표 ${M.wi + 1}/${M.wps.length} · ${Math.round(Math.hypot(P.x - M.wps[M.wi][0], P.z - M.wps[M.wi][1]))}m`;
+  el.textContent = s;
+  // 화면 밖 목표 화살표
+  const tg = misTarget(), ar = $('#misArrow'); if (!tg) { ar.classList.add('hide'); return; }
+  _vmis.set(tg.x, 8, tg.z).project(cam); const sx = (_vmis.x * .5 + .5) * innerWidth, sy = (-_vmis.y * .5 + .5) * innerHeight, m = 46;
+  if (_vmis.z < 1 && sx > m && sx < innerWidth - m && sy > m && sy < innerHeight - m) { ar.classList.add('hide'); return; }
+  const cx = innerWidth / 2, cy = innerHeight / 2; let ax = sx - cx, ay = sy - cy; if (_vmis.z > 1) { ax = -ax; ay = -ay; }
+  const k = Math.min((cx - m) / Math.abs(ax || 1e-3), (cy - m) / Math.abs(ay || 1e-3)); ar.classList.remove('hide');
+  ar.style.transform = `translate(${cx + ax * k}px, ${cy + ay * k}px)`; ar.firstElementChild.style.transform = `rotate(${Math.atan2(ay, ax)}rad)`;
+  ar.lastElementChild.textContent = Math.round(Math.hypot(P.x - tg.x, P.z - tg.z)) + 'm';
+}
+const _vmis = new THREE.Vector3();
 function swarm(n) {
   for (let i = 0; i < n; i++) {
     const a = i / n * TAU, d = 150 * camScale; let x = P.x + Math.cos(a) * d, z = P.z + Math.sin(a) * d;
@@ -1909,7 +2071,7 @@ function unitAI(e, dt, d, dx, dz) {
       if (e.cnt > 0 && (e.ct -= dt) <= 0) { e.cnt--; e.ct = .14; if (P.fly) aaShot(e, 170, 9, .08, 0xffd27a); else eShot(e.x, e.z, toP + rand(-.08, .08), 120, 10, 2.2, 0xffd27a); flare(e.x + Math.sin(toP) * 6, 10, e.z + Math.cos(toP) * 6, 0xffe08a, 9, .06); tone(260, 140, .06, 'square', .03); }
       return d < 110 ? T.spd * .5 : T.spd;
     }
-    case 'goliath': case 'scorp': case 'brood': if (P.fly && (e.flk = (e.flk || 0) - dt) <= 0) { e.flk = rage ? .5 : .8; for (let i = -1; i <= 1; i++) aaShot(e, 140, 9, .02 + Math.abs(i) * .12, T.col); }   // 보스도 날고 있으면 대공탄
+    case 'goliath': case 'scorp': case 'brood': case 'warden': case 'keeper': if (P.fly && (e.flk = (e.flk || 0) - dt) <= 0) { e.flk = rage ? .5 : .8; for (let i = -1; i <= 1; i++) aaShot(e, 140, 9, .02 + Math.abs(i) * .12, T.col); }   // 보스도 날고 있으면 대공탄
       return bossAI(e, dt, d, toP, rage);
   }
   return T.spd;
@@ -1920,7 +2082,7 @@ function bossAI(e, dt, d, toP, rage) {
     if (k === 'brood') { const orb = Math.atan2(e.x - P.x, e.z - P.z) + .35; e.mv = Math.atan2(P.x + Math.sin(orb) * 70 - e.x, P.z + Math.cos(orb) * 70 - e.z); }
     if (e.tm <= 0) {
       e.pat = ((e.pat ?? -1) + 1) % 3; e.cnt = 0; e.ct = 0;
-      const P0 = { goliath: ['barrage', 'stomp', 'gatling'], scorp: ['charge', 'acidring', 'lob'], brood: ['bombrun', 'brood', 'rain'] }[k][e.pat];
+      const P0 = { goliath: ['barrage', 'stomp', 'gatling'], scorp: ['charge', 'acidring', 'lob'], brood: ['bombrun', 'brood', 'rain'], warden: ['barrage', 'stomp', 'gatling'], keeper: ['charge', 'acidring', 'lob'] }[k][e.pat];
       e.st = P0; e.tm = { barrage: 1.8, stomp: 1.1, gatling: 1.9, charge: .9, acidring: 1.4, lob: 1.6, bombrun: 2.2, brood: .9, rain: 1.8 }[P0];
       if (P0 === 'stomp') { e.dec = decal(e.x, e.z, 48, 1.1, 0xff5a2a); sfx.tele(); }
       if (P0 === 'charge') { e.ang = toP; e.dec = lineDecal(e.x, e.z, e.ang, 200, 28, .9, 0x5ab0ff); sfx.tele(); }
@@ -1972,7 +2134,8 @@ function kill(e) {
   if (T.r > 10) {
     ring(e.x, e.z, 6, 70, .6, T.col); sfx.boom(); G.shake = 6; G.slow = .35; P.ult = Math.min(100, P.ult + 25 * (P.ultGain || 1)); G.st.big++;
     xfBoom(e.x, e.z, e.t === 'queen' ? 'boss' : 'elite', T.h * .9, 'zeta');
-    if (e.t === 'queen') { win(); return; }
+    if (e.vis) dropBossVis(e);
+    if (e.t === 'queen' || e === G.boss) { win(); return; }
     picks.push({ kind: 'chest', x: e.x, z: e.z, t: 0 }); picks.push({ kind: 'heal', x: e.x + 12, z: e.z + 6, t: 0 });
     for (let i = 0; i < 14; i++) dropGem(e.x + rand(-14, 14), e.z + rand(-14, 14), 3);
   } else {
@@ -1985,7 +2148,7 @@ function updEnemies(dt) {
   const n = E.length;
   for (let i = 0; i < n; i++) {
     const e = E[i]; if (e.dead) continue; const T = e.T;
-    const dx = P.x - e.x, dz = P.z - e.z, d = Math.hypot(dx, dz) || 1, ux = dx / d, uz = dz / d;
+    const TG = e.tgo && G.mis && G.mis.tgt && G.mis.tgt.hp > 0 ? G.mis.tgt : P, dx = TG.x - e.x, dz = TG.z - e.z, d = Math.hypot(dx, dz) || 1, ux = dx / d, uz = dz / d;
     let mx = ux, mz = uz, sp = T.spd * e.sm; e.tm -= dt; e.flash -= dt; e.bladeT -= dt; e.born -= dt; e.ph += dt;
 
     if (e.t === 'bane') {
@@ -2018,6 +2181,7 @@ function updEnemies(dt) {
         if (e.tm <= 0) { e.st = 'move'; e.tm = 4.2; e.sc = 1; e.dec = null; ring(e.x, e.z, 8, 40, .35, 0xff7a3a); burst(e.x, 3, e.z, 40, 0xffb04a, 90, .5, 11); sfx.boom(); G.shake = 4; if (d < 40 + P.r) hurtPlayer(26); }
       }
     } else if (e.t === 'queen') { sp = queenAI(e, dt, d, dx, dz); if (e.st === 'dash') { mx = Math.sin(e.ang); mz = Math.cos(e.ang); } }
+    else if (T.virt) { sp = mechBossAI(e, dt, d, dx, dz); mx = Math.sin(e.mv); mz = Math.cos(e.mv); }
     else if (T.anim || T.fly || T.boss || e.t === 'spit' || e.t === 'aagun') { sp = unitAI(e, dt, d, dx, dz) * e.sm; mx = Math.sin(e.mv); mz = Math.cos(e.mv); }
 
     if (e.stun > 0) { e.stun -= dt; sp = 0; if (Math.random() < .08) burst(e.x, e.T.h + 2, e.z, 1, 0xfff07a, 10, .3, 6, .2); }
@@ -2034,7 +2198,8 @@ function updEnemies(dt) {
     const er = Math.hypot(e.x, e.z), lim = e.t === 'jet' ? ARENA_R + 70 : ARENA_R - 4; if (er > lim) { e.x *= lim / er; e.z *= lim / er; }
     if (e.st !== 'fuse' && e.st !== 'stomp' && sp > 0) { const want = Math.atan2(mx, mz); let da = want - e.yaw; while (da > Math.PI) da -= TAU; while (da < -Math.PI) da += TAU; e.yaw += da * Math.min(1, dt * 9); }
     // 접촉 피해
-    if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0) {
+    if (TG !== P) { if (d < T.r + TG.r && e.born <= 0 && T.dmg > 0) { TG.hp -= T.dmg * dt * .55; TG.hitT = .15; } }
+    else if (d < T.r + P.r && e.born <= 0 && e.t !== 'bane' && T.dmg > 0) {
       if (P.alt > 10) { if (T.fly) hurtPlayer(T.dmg, true); }
       else if (!T.fly || (e.alt || 0) < -T.fly * .6) hurtPlayer(e.st === 'dash' ? T.dmg * 1.3 : T.dmg);
     }
@@ -2096,15 +2261,18 @@ function endRun(won) {
   const better = (won && !prev.w) || (won === !!prev.w && (won ? G.t < prev.t : G.t > prev.t));
   if (better) save.best[key] = { t: Math.round(G.t), k: G.kills, w: won ? 1 : 0 };
   const rw = runReward(won); persist();
-  $('#ovT').textContent = won ? '임무 완료' : '기체 대파'; $('#ovT').className = won ? 'win' : 'lose';
+  $('#ovT').textContent = won ? '임무 완료' : G.failMsg ? '임무 실패' : '기체 대파'; $('#ovT').className = won ? 'win' : 'lose';
   $('#ovSub').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`;
-  $('#ovStars').innerHTML = ['여왕 격파', '내구 50% 이상', '여왕 60초 안에'].map((s, i) => `<span class="${G.lastStars[i] ? 'on' : ''}"><i>★</i>${s}</span>`).join('');
+  $('#ovStars').innerHTML = ['보스 격파', '내구 50% 이상', '결전 60초 안에'].map((s, i) => `<span class="${G.lastStars[i] ? 'on' : ''}"><i>★</i>${s}</span>`).join('');
   $('#newrec').classList.toggle('hide', !better);
   $('#stats').innerHTML = [['clock', fmt(G.t), '생존 시간'], ['skull', G.kills, '격파'], ['lv', P.lvl, '레벨'], ['star', G.st.big, '보스 격파']].map(([i, v, l]) => `<div>${ico(i)}<b class="num">${v}</b><small>${l}</small></div>`).join('');
   $('#reward').innerHTML = rw.html;
   const nextOk = won && G.chi + 1 < CHAPTERS.length; $('#nextThreat').classList.toggle('hide', !nextOk); $('#nextThreat').textContent = nextOk ? `다음 · ${stLabel(G.chi + 1)}` : '';
   ADS.offer('double', $('#adDouble'), `광고 보고 보상 2배`, () => { save.core += rw.earned; save.gem += rw.gem; persist(); $('#reward').insertAdjacentHTML('beforeend', '<div class="rwm">광고 보상 2배 지급 완료</div>'); });
   setTimeout(() => { $('#over').classList.remove('hide'); countUp($('#reward')); }, won ? 300 : 700);
+  if (won) storyAfter(G.chi);
+  { const dl = won && DEBRIEF[G.chi]; $('#ovLine').classList.toggle('hide', !dl); if (dl) $('#ovLine').innerHTML = `<b>${dl[0]}</b><span>${dl[1]}</span>`; }
+  if (!won && G.failMsg) $('#ovSub').textContent += ` · ${G.failMsg}`;
   $('#hud').classList.add('hide');
 }
 function togglePause() {
@@ -2123,10 +2291,11 @@ async function startRun() {
   applyMech(MECH(save.mech)); applyChapterLook(CHAPTERS[G.chi]); P.rr = 2;
   G.recOk = (CHAPTERS[G.chi].rec || []).includes(MECH(save.mech).cls); if (G.recOk) { P.dmgMul *= 1.15; P.maxHp = Math.round(P.maxHp * 1.1); P.hp = P.maxHp; }
   { const m = MECH(save.mech); $('#bUlt').firstElementChild.innerHTML = ico(m.ult.k); $('#bUlt').title = `${m.ult.nm} (Q)`; $('#bAuto').firstElementChild.innerHTML = ico(m.auto.k); $('#bAuto').title = `${m.auto.nm} · 스킬 (E)`;
-    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=13)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
+    $('#bFly').firstElementChild.innerHTML = ico('fly'); $('#pfp').style.backgroundImage = `url(img/${m.id}.jpg?v=15)`; $('#chLabel').textContent = `${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}`; }
   save.stat.runs++; const D = save.daily; if (D.mechs && !D.mechs.includes(save.mech)) D.mechs.push(save.mech); persist();
   $('#title').classList.add('hide'); $('#over').classList.add('hide'); $('#lvl').classList.add('hide'); $('#pause').classList.add('hide'); $('#hud').classList.remove('hide'); $('#boss').classList.add('hide');
-  $('#btns').style.display = ''; drawSlots(); G.state = 'play'; last = performance.now();
+  initMission(CHAPTERS[G.chi]); { const bk = CHAPTERS[G.chi].boss; if (bk && ET[bk] && ET[bk].virt) loadBossVis(bk).catch(() => { }); }
+  $('#btns').style.display = ''; drawSlots(); await storyBefore(G.chi); G.state = 'play'; last = performance.now();
   music.currentTime = 0; if (!muted) music.play().catch(() => { });
   for (let i = 0; i < 9; i++) { const a = i / 9 * TAU; spawn('ling', Math.cos(a) * 105, Math.sin(a) * 105); }
   banner(`${stLabel(G.chi)} · ${CHAPTERS[G.chi].nm}${G.recOk ? ' · 추천 기종 보너스' : ''}`, 2600); $('#start').disabled = false;
@@ -2139,6 +2308,7 @@ function drawInstances(time) {
   put(P.x, P.z, P.alt > 5 ? 9 : 7);
   for (const e of E) {
     const F = IM[e.t].length, moving = e.st === 'move' || e.st === 'dash' || e.st === 'dive' || e.st === 'pass';
+    if (!F) { put(e.x, e.z, e.T.r * 1.1); continue; }
     const f = F > 1 && moving ? Math.floor(e.ph * e.T.spd * .26) % F : 0, im = IM[e.t][f], i = cnt[e.t][f]++; if (i >= e.T.max) continue;
     const big = e.T.r > 10, air = e.T.fly ? e.T.fly + (e.alt || 0) + Math.sin(e.ph * 2.2) * 1.2 : 0;
     const hop = moving && F === 1 && !e.T.fly ? Math.abs(Math.sin(e.ph * (big ? 4 : 9))) * (big ? 1.2 : 1.6) : 0;
@@ -2250,7 +2420,8 @@ function drawHud(dt) {
   hudT -= dt; if (hudT > 0) return; hudT = .08;
   $('#xpfill').style.width = clamp(P.xp / P.need * 100, 0, 100) + '%';
   $('#lv').textContent = P.lvl;
-  $('#time').textContent = G.bossOn ? '결전' : fmt(Math.max(0, RUN_TIME - G.t));
+  $('#time').textContent = G.bossOn ? '결전' : G.mis && G.mis.limit ? fmt(Math.max(0, G.mis.limit - G.t)) : G.mis && G.mis.obj ? '임무' : fmt(Math.max(0, RUN_TIME - G.t));
+  misHud();
   const ks = $('#kills').children; ks[0].innerHTML = `${ico('skull')}${G.kills}`; ks[1].innerHTML = `${ico('core')}${Math.round((G.kills / 9 + G.t / 5 + G.st.big * 15) * (1 + .25 * (G.threat - 1)))}`;
   $('#hpfill').style.width = clamp(P.hp / P.maxHp * 100, 0, 100) + '%';
   $('#hptxt').innerHTML = `<span>${Math.ceil(P.hp)} / ${P.maxHp}</span><span>${P.bar > 0 ? '보호막 ' + Math.ceil(P.bar) : ''}</span>`;
@@ -2415,6 +2586,7 @@ function placeArms(dt) {
 function step(dt, raw) {
   if (G.state === 'play') {
     if (!G.won) { G.t += dt; updSpawner(dt); }
+    updMission(dt);
     updPlayer(dt); updEnemies(dt); updShots(dt); updMissiles(dt); mslSync(dt); updPickups(dt); updDecals(dt);
     if (G.won) { G.endT -= raw; if (G.endT <= 0) endRun(true); }
     else if (G.pend > 0 && G.state === 'play') openLevelUp();
@@ -2576,15 +2748,26 @@ const dailyPending = () => loginReady() || (save.daily.ms || []).some((m) => m.d
 
 // ── 챕터: 1장은 처음 난이도 그대로. 장이 오를수록 적 구성·땅 색·중간 보스가 바뀌고 강해진다
 // 막 = ASCEND 은하 지도의 행성, 장 = 그 행성의 전장. 기체는 유저가 고르고, 장마다 추천 기종만 있다
-const ACTS = [
-  { pl: 'earth', nm: '지구 · 네오 서울', st: '첫 침공', col: '#5ad1ff', rw: 'm_guardian' },
-  { pl: 'aegis', nm: '궤도 기지 이지스', st: '망명자의 함대', col: '#9fe0ff', rw: 'm_ranger' },
-  { pl: 'ignis', nm: '화산 행성 이그니스', st: '불의 행성', col: '#ff7a2a', rw: 'm_titan' },
-  { pl: 'niv', nm: '빙하 위성 니브', st: '얼음 아래의 진실', col: '#bfe9ff', rw: 'm_sky' },
-  { pl: 'lumen', nm: '빛의 성운 루멘', st: '수호자의 각성', col: '#ffd166', rw: 'm_origin' },
-  { pl: 'hive', nm: '제타 대모 하이브', st: '최후의 저항', col: '#ffa040', rw: 'mech_leg' },
+// 부: 이야기 단위(6막 24장). 1부는 처음 만든 그대로, 2부부터 임무 방식과 막 보스가 붙는다
+const PARTS = [
+  { no: 1, nm: '첫 침공', syn: '분대가 하룻밤 사이에 사라졌다. 살아남은 것은 당신 하나. 보조조종 AI 세라가 깨어난 기체에 올라, 하늘에서 쏟아지는 제타 군체를 막아라. 지구에서 우주로, 불과 얼음을 지나 제타의 모성까지.', end: '하이브 퀸이 쓰러졌다. 하이브 깊은 곳에서 나온 배양 기록에는 제타를 만든 자의 서명이 남아 있다 ─ 「OMEGA」. 그리고 그 순간, 궤도에 정체 모를 함대가 나타났다.' },
+  { no: 2, nm: '망명자의 그림자', syn: '궤도의 함대는 제타에게 멸망한 문명 「알파」의 망명자들이었다. 사령관 세라핀은 손을 내밀지만, 그 손에는 행성째 지우는 「정화 계획」이 들려 있다. 폐허가 된 알파의 고향 에덴으로 내려가 지워진 기록을 찾아라.', end: '세라핀의 기함이 무너지는 순간, 알파의 마지막 수호기 아스트라가 눈을 떴다. "나는 심판이 아닌 수호를 택하겠다." 그리고 알파의 비밀을 말했다. 제타는 실패작, 오메가는 성공작. 알파는 둘 다 언젠가 지울 생각이었다.' },
 ];
-const STG = [
+const ACTS = [
+  { part: 1, pl: 'earth', nm: '지구 · 네오 서울', st: '첫 침공', col: '#5ad1ff', rw: 'm_guardian', story: '분대가 전멸한 밤. 세라가 말한다. "생존자 1명 확인. 설명은 살아남은 뒤에 하겠습니다." 하윤의 인식표 뒷면에는 「한강 야시장, 네가 쏘는 거야」라고 적혀 있다.' },
+  { part: 1, pl: 'aegis', nm: '궤도 기지 이지스', st: '망명자의 함대', col: '#9fe0ff', rw: 'm_ranger', story: '피난민을 실은 이지스 기지에서 기계 병사의 반란이 일어났다. 폭격 사이로, 정체 모를 함대의 신호가 스친다.' },
+  { part: 1, pl: 'ignis', nm: '화산 행성 이그니스', st: '불의 행성', col: '#ff7a2a', rw: 'm_titan', story: '용암 둥지에서 불의 정령 이그니가 깨어난다. "…날 깨운 게 너야? 좋아, 불타는 놈들은 내가 다 맡지."' },
+  { part: 1, pl: 'niv', nm: '빙하 위성 니브', st: '얼음 아래의 진실', col: '#bfe9ff', rw: 'm_sky', story: '얼음 속에서 연구 일지가 나왔다. 제타는 자연에서 생긴 것이 아니었다. 누군가 "배양"한 것이었다.' },
+  { part: 1, pl: 'lumen', nm: '빛의 성운 루멘', st: '수호자의 각성', col: '#ffd166', rw: 'm_origin', story: '루멘 사원에서 파일럿 루나가 합류한다. "와, 진짜 사람이다! 오늘 운이 좋을 것 같아요. 제 직감은 틀린 적이 거의 없거든요."' },
+  { part: 1, pl: 'hive', nm: '제타 대모 하이브', st: '최후의 저항', col: '#ffa040', rw: 'mech_leg', story: '모든 것이 시작된 둥지. 하이브의 심장에 제타를 만든 자의 기록이 잠들어 있다.' },
+  { part: 2, x: 36, y: 45, nm: '중립 회랑', st: '회색 지대', col: '#a0dcff', gem: 150, core: 600, story: '알파 함대가 중립 회랑을 봉쇄했다. 사령관 세라핀의 첫 통신. "기체를 다룰 줄 아는 인간이 있었군. 시험해 보지."' },
+  { part: 2, x: 57, y: 11, nm: '알파 망명 항로', st: '빛을 잃은 함대', col: '#c58cff', gem: 150, core: 700, story: '세라핀의 함대에 오른다. 빛나는 복도 끝, 봉인된 문 너머에 한 단어가 적혀 있다 ─ 「정화」.' },
+  { part: 2, x: 70, y: 21, nm: '알파 모성 에덴', st: '무너진 낙원', col: '#d8b0ff', gem: 200, core: 800, story: '제타에게 삼켜진 알파의 고향. 잿빛 정원 한가운데, 아직 꺼지지 않은 방송탑 하나가 같은 기록을 되풀이해 보내고 있다.' },
+  { part: 2, x: 78, y: 31, nm: '에덴 지하 서고', st: '기억의 서고', col: '#9f8cff', gem: 200, core: 900, story: '지하 서고에서 「정화 계획」 문서가 나왔다. 세라핀이 낮게 말한다. "…그 기록은 지워졌어야 했다."' },
+  { part: 2, x: 82, y: 13, nm: '정화포 요새', st: '심판의 창', col: '#ffd166', gem: 250, core: 1000, story: '행성 하나를 통째로 지우는 알파의 정화포가 지구를 겨눈다. 세라가 짧게 말한다. "충전 완료까지 남은 시간이 많지 않습니다."' },
+  { part: 2, x: 64, y: 35, nm: '에덴 궤도', st: '수호를 택한 빛', col: '#e0c8ff', rw: 'astra', story: '세라핀의 기함과 정면으로 맞선다. 무너지는 함교 아래, 오래 잠들어 있던 알파의 마지막 빛이 희미하게 깜빡인다.' },
+];
+const STG1 = [
   // 1막 지구 · 네오 서울
   ['모래 전선', '제타 무리의 첫 습격. 넓은 사막이니 빠르게 움직이며 싸워라', ['기동'], {}, ['goliath', 'scorp', 'brood'], [1, 1, 1], 0x2a1a24, ['#6a4a2a', '#2a1a14']],
   ['무너진 고가도로', '좁은 도로로 보병이 밀려든다. 몰려오는 적을 베어 넘겨라', ['근접'], { trooper: 2, robo: 1.4 }, ['goliath', 'scorp', 'goliath'], [.9, .88, .95], 0x1c1a26, ['#4a4a5a', '#16141e']],
@@ -2616,15 +2799,50 @@ const STG = [
   ['군체의 심장', '심장부의 정예 무리. 붙어서 끊어 내라', ['근접'], { lurk: 2, bane: 2, spit: 1.5 }, ['scorp', 'brood', 'scorp'], [.95, .6, .45], 0x200a06, ['#8a3a1a', '#1e0804']],
   ['결전 · 최후의 저항', '모든 적, 여왕과 브루드로드. 은하의 운명이 이 전장에 달렸다', ['중장', '근접'], { jet: 3, aagun: 2, heli: 3 }, ['goliath', 'scorp', 'brood'], [1.08, .86, .55], 0x241608, ['#a8782a', '#2a1806'], 1],
 ];
-const CHAPTERS = STG.map(([nm, ds, rec, mix, mids, gg, sky, c, twin], i) => ({ a: Math.floor(i / 4), n: i % 4 + 1, nm, ds, rec, mix, mids, g: gg, sky, c, twin: !!twin,
-  th: +(1 + i * .283).toFixed(2), early: Math.round(Math.min(115, i * 5)) }));
-const stLabel = (i) => `${CHAPTERS[i].a + 1}막 ${CHAPTERS[i].n}장`;
-const recHtml = (c, cls) => `<span class="rec">${c.rec.map((k) => `<span class="${k === cls ? 'ok' : ''}">${ico(CLS[k].k)}${k}</span>`).join('')}</span>`;
+// 2부: [이름, 설명, 추천, 적 구성, 중간 보스, 땅 색, 하늘, 카드 색, 쌍둥이, 임무, 결전 보스]
+const STG2 = [
+  ['봉쇄선', '알파 무인 초계기가 회랑을 막는다. 먼저 하늘을 비워라', ['사격'], { jet: 3, heli: 2.5, wing: 2, robo: 1.5 }, ['brood', 'goliath', 'brood'], [.8, .88, 1], 0x10182a, ['#5a7a9a', '#101826'], 0, '제공권', 'mb_guard'],
+  ['표류하는 피난선', '고장 난 피난선을 끝까지 지켜라', ['중장'], { robo: 2, trooper: 1.5 }, ['goliath', 'scorp', 'goliath'], [.8, .88, 1], 0x10182a, ['#5a7a9a', '#101826'], 0, '호위', 'mb_guard'],
+  ['회색 성운', '시야가 짧은 성운 속 매복. 붙는 적을 끊어라', ['근접'], { lurk: 2, robo: 2 }, ['scorp', 'scorp', 'brood'], [.62, .7, .86], 0x0a0f1c, ['#3a4a6a', '#080c16'], 0, '야간', 'mb_guard'],
+  ['결전 · 세라핀의 시험', '알파 사령관의 근위기가 시험하러 온다', ['기동'], { robo: 2.2, jet: 2 }, ['goliath', 'brood', 'scorp'], [.8, .88, 1], 0x10182a, ['#5a7a9a', '#101826'], 0, '보스', 'mb_honor'],
+  ['망명자 정박지', '정박지에 숨어든 제타 잔당을 몰아내라', ['사격'], { roach: 1.6, spit: 1.5, robo: 1.4 }, ['scorp', 'goliath', 'brood'], [.78, .76, .9], 0x120c22, ['#5a4a8a', '#100a1e'], 0, '생존', 'mb_guard'],
+  ['격납고의 침입자', '격납고 곳곳의 둥지를 모두 깨부숴라', ['근접'], { bane: 1.5, roach: 1.4 }, ['goliath', 'scorp', 'goliath'], [.78, .76, .9], 0x120c22, ['#5a4a8a', '#100a1e'], 0, '소탕', 'mb_guard'],
+  ['엔진실 폭주', '폭주하는 엔진실을 지나 반대편까지 돌파하라', ['기동'], { plasma: 2, bane: 1.5 }, ['scorp', 'brood', 'scorp'], [.9, .7, .8], 0x1e0c1a, ['#7a3a6a', '#1a0814'], 0, '돌파', 'mb_guard'],
+  ['결전 · 함장실 방어선', '봉인된 문을 지키는 알파 중기체를 쓰러뜨려라', ['중장'], { robo: 2.4, aat: 1.6 }, ['goliath', 'goliath', 'scorp'], [.78, .76, .9], 0x120c22, ['#5a4a8a', '#100a1e'], 0, '보스', 'mb_heavy'],
+  ['잿빛 정원', '재가 쌓인 정원. 넓게 움직이며 무리를 흩어라', ['기동'], { roach: 1.8, lurk: 1.5 }, ['goliath', 'scorp', 'brood'], [.72, .7, .74], 0x1a1418, ['#6a6070', '#141016'], 0, '생존', 'mb_guard'],
+  ['무너진 성당', '좁은 성당 안으로 적이 쏟아진다', ['근접'], { trooper: 1.5, robo: 2 }, ['scorp', 'goliath', 'scorp'], [.7, .66, .72], 0x161216, ['#5a5060', '#120e14'], 0, '생존', 'mb_guard'],
+  ['마지막 방송탑', '방송탑이 기록을 다 보낼 때까지 지켜라', ['사격'], { wing: 2, spit: 1.8 }, ['brood', 'goliath', 'brood'], [.72, .7, .74], 0x1a1418, ['#6a6070', '#141016'], 0, '방어', 'mb_guard'],
+  ['결전 · 정원의 파수꾼', '수천 년을 지켜 온 거대 파수 기계가 깨어난다', ['중장'], { roach: 2, robo: 1.6 }, ['goliath', 'scorp', 'goliath'], [.72, .7, .74], 0x1a1418, ['#6a6070', '#141016'], 0, '보스', 'warden'],
+  ['봉인된 계단', '끝없는 계단을 내려가며 길을 뚫어라', ['근접'], { lurk: 1.8, roach: 1.6 }, ['scorp', 'scorp', 'goliath'], [.55, .5, .7], 0x0c0a18, ['#3a2a6a', '#08060e'], 0, '돌파', 'mb_guard'],
+  ['자료 보관실', '세라가 기록을 해독하는 동안 버텨라', ['사격'], { spit: 2, robo: 1.6 }, ['brood', 'goliath', 'scorp'], [.55, .5, .7], 0x0c0a18, ['#3a2a6a', '#08060e'], 0, '방어', 'mb_guard'],
+  ['지워진 이름들', '불 꺼진 서가 사이의 잠복충을 찾아내라', ['기동'], { lurk: 2.4, wing: 1.5 }, ['scorp', 'brood', 'scorp'], [.5, .46, .66], 0x08060e, ['#2a1a4a', '#06040a'], 0, '야간', 'mb_guard'],
+  ['결전 · 서고의 문지기', '기록을 지키는 거대한 문지기를 넘어서라', ['중장'], { spit: 1.8, lurk: 1.6 }, ['brood', 'scorp', 'goliath'], [.55, .5, .7], 0x0c0a18, ['#3a2a6a', '#08060e'], 0, '보스', 'keeper'],
+  ['포대 외곽', '요새 외곽의 포대를 맞으며 밀고 들어가라', ['중장'], { aagun: 2.5, aat: 2, robo: 1.5 }, ['goliath', 'goliath', 'scorp'], [1.05, .98, .85], 0x1e1a10, ['#a89a6a', '#1e1a0e'], 0, '생존', 'mb_guard'],
+  ['냉각탑', '냉각탑 위의 저격 기체들을 먼저 잡아라', ['사격'], { aat: 2, jet: 2.5, heli: 2 }, ['brood', 'goliath', 'brood'], [.95, 1, 1.05], 0x161a22, ['#8a9aaa', '#12161e'], 0, '제공권', 'mb_guard'],
+  ['충전 회로', '정화포 충전이 끝나기 전에 회로를 끊어라', ['기동'], { robo: 2, plasma: 1.6 }, ['scorp', 'brood', 'scorp'], [1.05, .98, .85], 0x1e1a10, ['#a89a6a', '#1e1a0e'], 0, '시간제한', 'mb_guard'],
+  ['결전 · 정화포 핵', '정화포의 핵을 지키는 수호기를 베어라', ['근접'], { robo: 2.2, aat: 1.8, jet: 1.6 }, ['goliath', 'scorp', 'brood'], [1.08, 1, .82], 0x221c0e, ['#b8a060', '#221a08'], 0, '보스', 'mb_core'],
+  ['궤도 엘리베이터', '무너지는 궤도 엘리베이터를 타고 끝까지 달려라', ['기동'], { robo: 2, wing: 2 }, ['brood', 'scorp', 'goliath'], [.62, .66, .9], 0x06061a, ['#2a2a6a', '#04040e'], 0, '탈출', 'mb_guard'],
+  ['근위 함대', '근위 함대의 전투기 편대를 걷어 내라', ['사격'], { jet: 4, heli: 3, wing: 2 }, ['brood', 'brood', 'goliath'], [.62, .66, .9], 0x06061a, ['#2a2a6a', '#04040e'], 0, '제공권', 'mb_guard'],
+  ['세라핀의 기함', '기함 갑판 위의 근위 기사들을 베어라', ['근접'], { robo: 2.6, trooper: 1.6 }, ['goliath', 'scorp', 'goliath'], [.7, .66, .92], 0x0a0820, ['#4a3a8a', '#08061a'], 0, '생존', 'mb_honor'],
+  ['결전 · 심판할 자인가 지킬 자인가', '알파 사령관 세라핀과의 결전. 이기면 알파의 마지막 빛이 깨어난다', ['중장'], { robo: 2.4, jet: 2.4, heli: 2 }, ['goliath', 'scorp', 'brood'], [.7, .66, .92], 0x0a0820, ['#4a3a8a', '#08061a'], 0, '보스', 'mb_seraphine'],
+];
+const CHAPTERS = [
+  ...STG1.map(([nm, ds, rec, mix, mids, gg, sky, c, twin], i) => ({ part: 1, a: Math.floor(i / 4), ai: Math.floor(i / 4), n: i % 4 + 1, nm, ds, rec, mix, mids, g: gg, sky, c, twin: !!twin, type: i % 4 === 3 ? '보스' : '생존',
+    th: +(1 + i * .283).toFixed(2), early: Math.round(Math.min(115, i * 5)) })),
+  ...STG2.map(([nm, ds, rec, mix, mids, gg, sky, c, twin, type, boss], j) => ({ part: 2, a: 6 + Math.floor(j / 4), ai: Math.floor(j / 4), n: j % 4 + 1, nm, ds, rec, mix, mids, g: gg, sky, c, twin: !!twin, type, boss,
+    th: +(2.4 + j * .27).toFixed(2), early: Math.round(Math.min(120, 40 + j * 3.5)) })),
+];
+// 장을 이기면 결과 화면에 나오는 한 줄 대사(장 순서대로)
+const DEBRIEF = [["세라","첫 전투 생존. …당신, 손이 떨리지 않는군요."],["세라","도로가 무너진 건 제타 때문만이 아닙니다. 누군가 길을 끊어 두었습니다."],["세라","대공 보병의 장비가 연맹 제식이 아닙니다. 기록해 두겠습니다."],["세라","여왕 격파. 네오 서울 상공 확보. …하윤 님의 인식표는 제가 보관하겠습니다."],["세라","기계 병사들의 명령 코드가 바깥에서 들어왔습니다. 출처는 알 수 없습니다."],["세라","하늘이 비었습니다. 피난선이 출발할 수 있습니다."],["세라","반란은 진압했습니다. 그런데 이 신호… 이지스 바깥에서 오고 있습니다."],["세라","정체 모를 함대가 물러났습니다. 공격이 아니라… 관찰이었습니다."],["이그니","오, 제법인데? 그 녀석들은 원래 내 둥지 손님이 아니었어."],["이그니","길 뚫어 줘서 고마워. 이제 불은 네 편이야."],["세라","용암 온도가 오르고 있습니다. 오래 머물면 기체가 견디지 못합니다."],["이그니","하하! 마음에 들었어. 앞으로는 내가 같이 타 줄게!"],["세라","얼음 아래에서 오래된 연구 시설의 신호가 잡힙니다."],["세라","연구 일지 1권 회수. 날짜가… 제타가 처음 나타난 날보다 앞섭니다."],["세라","일지에 같은 단어가 되풀이됩니다. 「배양」."],["세라","제타는 누군가 길러 낸 것입니다. 누가, 왜인지는 아직 모릅니다."],["루나","와, 저 틈 봤어요? 저기서 뭔가 우릴 보고 있었어요."],["루나","사원 벽에 날개 넷 달린 기체 그림이 있어요. 무슨 뜻일까요?"],["루나","거봐요, 오늘 운 좋을 거라고 했잖아요!"],["세라","사원의 수호 신호가 깨어났습니다. 다음 목적지, 제타의 모성."],["세라","하이브까지 남은 거리 4천. 늪을 건넜습니다."],["세라","외벽 돌파. 안쪽에서 거대한 생체 신호가 뜁니다."],["세라","배양 기록 저장소를 찾았습니다. 여왕을 쓰러뜨리면 열 수 있습니다."],["세라","기록 해독 중… 서명 확인. 「OMEGA」."],["세라","봉쇄선에 틈이 생겼습니다. 알파 초계기는 모두 무인기였습니다."],["세라","피난선 도착. 승객 412명 모두 무사합니다."],["세라핀","어둠 속에서도 칼끝이 흔들리지 않는군. 흥미롭다."],["세라핀","시험은 통과다. 우리 함대로 와라, 파일럿."],["세라","알파 함대에도 제타가 숨어 있었습니다. 그들도 쫓기는 중입니다."],["세라","격납고 정리 완료. 봉인된 문 쪽 경비가 두 배로 늘었습니다."],["세라","엔진 폭주는 사고가 아니었습니다. 누군가 우리를 막으려 했습니다."],["세라","봉인된 문 너머 기록에서 단어 하나를 읽었습니다. 「정화」."],["세라","여기가 알파의 고향, 에덴입니다. 생존자 신호는… 없습니다."],["세라","성당 벽에 알파의 기도문이 남아 있습니다. 「우리가 지운 것들을 용서하소서」."],["세라","방송탑이 전송을 마쳤습니다. 받는 곳은… 세라핀의 기함입니다."],["세라","파수꾼이 지키던 것은 정원이 아니라, 지하로 가는 길이었습니다."],["세라","계단 끝에 서고가 있습니다. 알파의 모든 기록이 모인 곳입니다."],["세라","해독 완료. 「정화 계획」 ─ 행성째 생명을 지우는 계획입니다."],["세라","지워진 이름들 가운데… 제타와 오메가가 있습니다."],["세라핀","…그 기록은 지워졌어야 했다."],["세라","정화포 조준 좌표 확인. 지구입니다."],["세라","냉각탑 정지. 충전 속도가 떨어졌습니다. 아직 시간이 있습니다."],["세라","회로 차단 성공. 정화포 충전이 37%에서 멈췄습니다."],["세라","정화포 무력화. 세라핀의 기함이 움직입니다."],["세라","궤도 도달. 기함까지 직선거리 2천."],["세라","근위 함대 무력화. 이제 세라핀뿐입니다."],["세라핀","여기까지 오다니. 그렇다면 끝까지 시험해 주지."],["아스트라","파일럿. 나는 심판이 아닌 수호를 택하겠다. 당신이 그것을 증명했으니."]];
+const stLabel = (i) => `${CHAPTERS[i].part}부 ${CHAPTERS[i].ai + 1}막 ${CHAPTERS[i].n}장`;
+const recHtml = (c, cls) => `<span class="rec"><span class="mty">${c.type}</span>${c.rec.map((k) => `<span class="${k === cls ? 'ok' : ''}">${ico(CLS[k].k)}${k}</span>`).join('')}</span>`;
 const CH = () => CHAPTERS[(G.chi ?? save.ch - 1)] || CHAPTERS[0];
 const CH_CLEAR_GEM = (i) => 80 + i * 12, CH_STAR_GEM = 30;
 function applyChapterLook(ch) {
   if (terrainMat) terrainMat.color.setRGB(ch.g[0], ch.g[1], ch.g[2]);
   scene.background.set(ch.sky); scene.fog.color.set(ch.sky);
+  const night = ch.type === '야간'; hemi.intensity = night ? .42 : 1.25; sun.intensity = night ? .5 : 1.9; scene.fog.near = night ? 110 : 300; scene.fog.far = night ? 360 : 760;
+  if (night && !P.lamp) { P.lamp = new THREE.PointLight(0xcfe6ff, 60, 230, 1); P.lamp.position.set(0, 30, 0); P.group.add(P.lamp); } if (P.lamp) P.lamp.visible = night;
 }
 function chStarsTxt(i) { const s = save.stars[i + 1] || 0; return '★'.repeat(s) + '☆'.repeat(3 - s); }
 
@@ -2634,10 +2852,12 @@ function runReward(won) {
   let earned = Math.round((a + b + c + d) * mul); save.core += earned; G.lastCore = earned;
   save.stat.kills += G.kills; if (won) save.stat.wins++;
   // 별: 클리어 · 내구 50% 이상 · 여왕을 60초 안에
-  const ci = G.chi, got = [won, won && P.hp >= P.maxHp * .5, won && G.t <= RUN_TIME + 60], n = got.filter(Boolean).length, prev = save.stars[ci + 1] || 0;
+  const ci = G.chi, got = [won, won && P.hp >= P.maxHp * .5, won && G.t <= (G.finalT ?? RUN_TIME) + 60], n = got.filter(Boolean).length, prev = save.stars[ci + 1] || 0;
   let gem = 0; const notes = [];
   if (won && !prev) { gem += CH_CLEAR_GEM(ci); notes.push(`${stLabel(ci)} 첫 클리어 ✦${CH_CLEAR_GEM(ci)}`); if (ci + 2 <= CHAPTERS.length) { save.chMax = Math.max(save.chMax, ci + 2); notes.push(`${stLabel(ci + 1)} 「${CHAPTERS[ci + 1].nm}」 열림`); }
-    if (CHAPTERS[ci].n === 4) { const A = ACTS[CHAPTERS[ci].a], rid = A.rw, rm = MECH(rid), s0 = starOf(rid); if (!s0) { save.own[rid] = 1; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 · ${rm.nm} 획득`); } else if (s0 < 5) { save.own[rid] = s0 + 1; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 · ${rm.nm} 별 +1`); } else { gem += 300; notes.push(`${CHAPTERS[ci].a + 1}막 완료 보상 ✦300`); } } }
+    if (CHAPTERS[ci].n === 4) { const C = CHAPTERS[ci], A = ACTS[C.a], lab = `${C.part}부 ${C.ai + 1}막 완료 보상`;
+      if (A.rw) { const rid = A.rw, rm = MECH(rid), s0 = starOf(rid); if (!s0) { save.own[rid] = 1; notes.push(`${lab} · ${rm.nm} 획득`); } else if (s0 < 5) { save.own[rid] = s0 + 1; notes.push(`${lab} · ${rm.nm} 별 +1`); } else { gem += 300; notes.push(`${lab} ✦300`); } }
+      else { gem += A.gem || 150; save.core += A.core || 600; notes.push(`${lab} · ✦${A.gem || 150} · 코어 ${A.core || 600}`); } } }
   if (n > prev) { gem += (n - prev) * CH_STAR_GEM; save.stars[ci + 1] = n; notes.push(`별 ${n - prev}개 ✦${(n - prev) * CH_STAR_GEM}`); }
   save.gem += gem; G.lastGem = gem; G.lastStars = got;
   // 임무 진행
@@ -2678,7 +2898,7 @@ function doPull(n) {
   persist(); sfx.lvl();
   const best = out.reduce((a, o) => Math.max(a, RAR_ORDER.indexOf(o.tier)), -1); { const top = out.filter((o) => o.m).sort((a, b) => RAR_ORDER.indexOf(b.tier) - RAR_ORDER.indexOf(a.tier))[0]; if (top && RAR_ORDER.indexOf(top.tier) >= 3) gachaTop = top.m.id; } if (best >= 3) { screenFlash(best === 4 ? '#ff5a7a' : '#ffb84a', .5, .9); tone(400, 1600, .6, 'triangle', .1); }
   $('#gres').innerHTML = out.map((o, i) => { const R0 = RAR[o.tier] || { nm: '코어', col: '#5fe3ff' };
-    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg?v=13" alt="">` : `<div class="ic">${ico('core')}</div>`}`
+    return `<div class="gc" style="--rc:${R0.col};--rg:${R0.col}66;animation-delay:${i * .09}s">${o.m ? `<img src="img/${o.m.id}.jpg?v=15" alt="">` : `<div class="ic">${ico('core')}</div>`}`
       + `${o.isNew ? '<span class="new">NEW</span>' : ''}<b>${o.m ? o.m.nm : '코어 ' + o.v}</b><small>${o.m ? R0.nm + (o.up ? ' · ★' + o.up : o.back ? ' · ✦' + o.back : '') : '재화'}</small></div>`; }).join('');
   drawGacha(); drawTitle();
 }
@@ -2689,7 +2909,7 @@ function drawGacha() {
   const names = (t) => MECHS.filter((m) => m.rar === t).map((m) => m.nm).join(', ');
   $('#rates').innerHTML = GACHA.rates.map(([k, w]) => `<tr><td style="color:${(RAR[k] || {}).col || '#5fe3ff'}">${RAR[k] ? RAR[k].nm : '코어 꾸러미'}</td><td style="opacity:.7">${RAR[k] ? names(k) : '코어 80 · 120 · 200'}</td><td>${w}%</td></tr>`).join('')
     + `<tr><td colspan="3" style="opacity:.6;text-align:left">같은 등급 안에서는 같은 확률 · 10회 뽑기는 영웅 이상 1개 확정 · ${GACHA.pity}회 안에 신화 1개 확정 · 별 5개 이후 중복은 결정으로 돌려받음</td></tr>`;
-  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=13" alt="">`).join('');
+  $('#gods').innerHTML = ['god', 'god_white', 'god_red', 'god_black'].map((id) => `<img src="img/${id}.jpg?v=15" alt="">`).join('');
   ADS.offer('gem', $('#adGem'), `광고 보고 ${ico('gem')} 30`, () => { save.gem += 30; save.daily.ads = (save.daily.ads || 0) + 1; persist(); drawGacha(); drawTitle(); }, () => (save.daily.ads || 0) < 5);
 }
 function flashMsg(t) { banner(t, 1400); const b = $('#banner'); b.style.zIndex = 9; }
@@ -2750,7 +2970,7 @@ function lobbyFrame(dt) {
 async function enterLobby() {
   if (!booted) return;
   if (!lobby.on) { lobby.on = true; lobby.sc.add(P.group); }
-  P.group.position.set(0, 0, 0); P.group.visible = true; P.x = P.z = 0; P.alt = 0; P.fly = false;
+  P.group.position.set(0, 0, 0); P.group.visible = true; P.x = P.z = 0; P.alt = 0; P.fly = false; if (P.lamp) P.lamp.visible = false;
   lobby.rot = LOBBY_FRONT; lobby.rel = 0;
   await setMech(viewMech);
   if (!lobby.on) return;
@@ -2776,7 +2996,7 @@ function drawTitle() {
   for (const m of list) {
     const st = starOf(m.id), b = document.createElement('button'), R0 = rarOf(m);
     b.className = 'mech' + (m.id === viewMech ? ' on' : '') + (st ? '' : ' locked'); b.style.setProperty('--rc', R0.col);
-    b.innerHTML = `<img src="img/${m.id}.jpg?v=13" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
+    b.innerHTML = `<img src="img/${m.id}.jpg?v=15" alt="" loading="lazy"><div class="mi"><strong>${m.nm}</strong><em>${R0.nm} · ${m.cls}</em></div>${st ? `<span class="st">${'★'.repeat(st)}</span>` : '<span class="lk">🔒</span>'}`;
     b.addEventListener('click', () => { const chg = viewMech !== m.id; viewMech = m.id; if (starOf(m.id)) { save.mech = m.id; persist(); } if (chg && lobby.on) enterLobby(); drawTitle(); });
     box.appendChild(b);
   }
@@ -2800,37 +3020,58 @@ function drawTitle() {
   { const cl = MECH(save.mech).cls, ok = C0.rec.includes(cl); $('#chRec').innerHTML = `<small>추천</small>${recHtml(C0, cl)}<em class="${ok ? 'ok' : ''}">${ok ? '보너스 적용 · 화력 +15% 내구 +10%' : '추천 기종이면 화력 +15% 내구 +10%'}</em>`; }
   $('#chPrev').disabled = save.ch <= 1; $('#chNext').disabled = save.ch >= save.chMax; $('#chPrev').style.opacity = save.ch <= 1 ? .3 : 1; $('#chNext').style.opacity = save.ch >= save.chMax ? .3 : 1;
 }
-let mapAct = null;
-function actOpen(a) { return a * 4 + 1 <= save.chMax; }
+let mapAct = null, mapPart = null;
+function actOpen(a) { const i = CHAPTERS.findIndex((c) => c.a === a); return i >= 0 && i + 1 <= save.chMax; }
+function partOpen(p) { const i = CHAPTERS.findIndex((c) => c.part === p); return i >= 0 && i + 1 <= save.chMax; }
 function drawChapters() {
   if (mapAct == null || !actOpen(mapAct)) mapAct = CHAPTERS[save.ch - 1].a;
+  if (mapPart == null || !partOpen(mapPart)) mapPart = ACTS[mapAct].part;
+  if (ACTS[mapAct].part !== mapPart) { let la = null; ACTS.forEach((A, a) => { if (A.part === mapPart && actOpen(a)) la = a; }); if (la != null) mapAct = la; }
+  $('#partTabs').innerHTML = PARTS.map((p) => `<button class="pt ${p.no === mapPart ? 'on' : ''}" data-p="${p.no}" ${partOpen(p.no) ? '' : 'disabled'}><small>${p.no}부</small><b>${p.nm}</b>${partOpen(p.no) ? '' : '<i>잠김</i>'}</button>`).join('')
+    + '<button class="pt soon" disabled><small>3부</small><b>제국의 칼날</b><i>준비 중</i></button>';
+  $('#partTabs').querySelectorAll('.pt[data-p]').forEach((b) => b.addEventListener('click', () => { mapPart = +b.dataset.p; drawChapters(); }));
   const GX = window.ASCEND_GALAXY, P0 = GX ? Object.fromEntries(GX.places.map((p) => [p.id, p])) : {};
-  // 막 노드
-  $('#gxn').innerHTML = ACTS.map((A, a) => { const p = P0[A.pl] || { x: 10 + a * 15, y: 50 }, open = actOpen(a), done = !!save.stars[a * 4 + 4], got = [1, 2, 3, 4].reduce((s, n) => s + (save.stars[a * 4 + n] || 0), 0);
-    return `<button class="an ${open ? '' : 'lock'} ${a === mapAct ? 'on' : ''} ${done ? 'done' : ''}" data-a="${a}" style="left:${p.x}%;top:${p.y}%;--ac:${A.col}" ${open ? '' : 'disabled'}><b>${a + 1}막</b><i>${A.nm}<small>${open ? `★ ${got}/12` : '잠김'}</small></i></button>`; }).join('');
+  const posOf = (A) => (A.x != null ? { x: A.x, y: A.y } : P0[A.pl] || { x: 50, y: 50 });
+  const acts = ACTS.map((A, a) => ({ A, a })).filter((o) => o.A.part === mapPart);
+  $('#gxn').innerHTML = acts.map(({ A, a }) => { const p = posOf(A), open = actOpen(a), idx = CHAPTERS.map((c, i) => (c.a === a ? i : -1)).filter((i) => i >= 0), done = !!save.stars[idx[3] + 1], got = idx.reduce((s, i) => s + (save.stars[i + 1] || 0), 0);
+    return `<button class="an ${open ? '' : 'lock'} ${a === mapAct ? 'on' : ''} ${done ? 'done' : ''}" data-a="${a}" style="left:${p.x}%;top:${p.y}%;--ac:${A.col}" ${open ? '' : 'disabled'}><b>${CHAPTERS[idx[0]].ai + 1}막</b><i>${A.nm}<small>${open ? `★ ${got}/12` : '잠김'}</small></i></button>`; }).join('');
   $('#gxn').querySelectorAll('.an').forEach((b) => b.addEventListener('click', () => { mapAct = +b.dataset.a; drawChapters(); }));
-  // 막 정보 + 장 목록
-  const A = ACTS[mapAct], rm = MECH(A.rw), done = !!save.stars[mapAct * 4 + 4], cl = MECH(save.mech).cls;
+  const A = ACTS[mapAct], idx = CHAPTERS.map((c, i) => (c.a === mapAct ? i : -1)).filter((i) => i >= 0), done = !!save.stars[idx[3] + 1], cl = MECH(save.mech).cls, C0 = CHAPTERS[idx[0]];
+  const rwHtml = A.rw ? (() => { const rm = MECH(A.rw); return `<img src="img/${rm.id}.jpg?v=15" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>`; })() : `<span><em>막 완료 보상</em>${ico('gem')} ${A.gem || 150} · ${ico('core')} ${A.core || 600}</span>`;
   $('#actHead').style.setProperty('--ac', A.col);
-  $('#actHead').innerHTML = `<small>${mapAct + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw"><img src="img/${rm.id}.jpg?v=13" alt=""><span><em>막 완료 보상</em>${rm.nm} <i>${rarOf(rm).nm} · ${rm.cls}</i></span>${done ? '<span class="ok">받음</span>' : ''}</div>`;
-  $('#chList').innerHTML = [0, 1, 2, 3].map((k) => { const i = mapAct * 4 + k, c = CHAPTERS[i], lock = i + 1 > save.chMax;
+  $('#actHead').innerHTML = `<small>${C0.part}부 ${C0.ai + 1}막 · ${A.nm}</small><b>${A.st}</b><div class="arw">${rwHtml}${done ? '<span class="ok">받음</span>' : ''}</div>`;
+  $('#chList').innerHTML = idx.map((i) => { const c = CHAPTERS[i], lock = i + 1 > save.chMax;
     return `<button class="cc ${lock ? 'lock' : ''} ${i + 1 === save.ch ? 'on' : ''}" data-i="${i + 1}" style="--c1:${c.c[0]};--c2:${c.c[1]}" ${lock ? 'disabled' : ''}><small>${stLabel(i)}</small><b>${c.nm}</b><p>${c.ds}</p>${recHtml(c, cl)}<span class="s">${chStarsTxt(i)}</span><span class="rw">${save.stars[i + 1] ? '클리어' : `첫 클리어 ${ico('gem')} ${CH_CLEAR_GEM(i)}`}</span></button>`; }).join('');
   $('#chList').querySelectorAll('.cc').forEach((b) => b.addEventListener('click', () => { save.ch = +b.dataset.i; persist(); $('#chapters').classList.add('hide'); drawTitle(); }));
-  // 은하 지도 그리기 (화면이 보인 뒤 크기를 재서)
   requestAnimationFrame(() => { const cv = $('#gxc'), r = cv.getBoundingClientRect(); if (!GX || !r.width) return; const k = Math.min(2, devicePixelRatio || 1);
     cv.width = Math.round(r.width * k); cv.height = Math.round(r.height * k);
-    try { GX.draw(cv, { lang: 'ko', title: false, legend: false, skip: ACTS.map((x) => x.pl) }); } catch (e) { console.warn(e); }
-    const x = cv.getContext('2d'), X = (p) => p / 100 * cv.width, Y = (p) => p / 100 * cv.height;
-    x.lineCap = 'round';
-    for (let a = 0; a < ACTS.length - 1; a++) { const p = P0[ACTS[a].pl], q = P0[ACTS[a + 1].pl]; if (!p || !q) continue; const on = actOpen(a + 1);
+    try { GX.draw(cv, { lang: 'ko', title: false, legend: false, skip: GX.places.filter((pl) => acts.some(({ A }) => { const q = posOf(A); return Math.hypot(q.x - pl.x, q.y - pl.y) < 7; })).map((pl) => pl.id) }); } catch (e) { console.warn(e); }
+    const x = cv.getContext('2d'), X = (p) => p / 100 * cv.width, Y = (p) => p / 100 * cv.height; x.lineCap = 'round';
+    for (let i = 0; i < acts.length - 1; i++) { const p = posOf(acts[i].A), q = posOf(acts[i + 1].A), on = actOpen(acts[i + 1].a);
       x.setLineDash(on ? [] : [6 * k, 7 * k]); x.lineWidth = (on ? 3.2 : 2) * k; x.strokeStyle = on ? 'rgba(255,207,90,.9)' : 'rgba(200,210,230,.35)';
       x.shadowColor = on ? 'rgba(255,207,90,.8)' : 'transparent'; x.shadowBlur = on ? 10 * k : 0; x.beginPath(); x.moveTo(X(p.x), Y(p.y)); x.lineTo(X(q.x), Y(q.y)); x.stroke(); }
     x.setLineDash([]); x.shadowBlur = 0; });
 }
+// ───────── 이야기 장면: 부와 막을 처음 시작할 때, 부를 끝냈을 때 한 번씩
+function showStory(kick, title, text) {
+  return new Promise((res) => { $('#stK').textContent = kick; $('#stT').textContent = title; $('#stP').textContent = text; $('#story').classList.remove('hide');
+    $('#stGo').onclick = () => { $('#story').classList.add('hide'); res(); }; });
+}
+async function storyBefore(ci) {
+  const C = CHAPTERS[ci], A = ACTS[C.a], Pt = PARTS.find((p) => p.no === C.part); save.seen ??= {};
+  if (C.n !== 1) return;
+  if (C.ai === 0 && Pt && !save.seen['p' + C.part]) { save.seen['p' + C.part] = 1; persist(); await showStory(`${C.part}부`, Pt.nm, Pt.syn); }
+  if (A && A.story && !save.seen['a' + C.a]) { save.seen['a' + C.a] = 1; persist(); await showStory(`${C.part}부 ${C.ai + 1}막 · ${A.nm}`, A.st, A.story); }
+}
+function storyAfter(ci) {
+  const C = CHAPTERS[ci], Pt = PARTS.find((p) => p.no === C.part); save.seen ??= {};
+  const lastOfPart = !CHAPTERS[ci + 1] || CHAPTERS[ci + 1].part !== C.part;
+  if (lastOfPart && C.n === 4 && Pt && !save.seen['e' + C.part]) { save.seen['e' + C.part] = 1; persist(); setTimeout(() => showStory(`${C.part}부 완료`, Pt.nm, Pt.end), 1200); }
+}
 function openGacha() { $('#gres').innerHTML = ''; drawGacha(); $('#gacha').classList.remove('hide'); }
 $('#chPrev').addEventListener('click', () => { save.ch = Math.max(1, save.ch - 1); persist(); drawTitle(); });
 $('#chNext').addEventListener('click', () => { save.ch = Math.min(save.chMax, save.ch + 1); persist(); drawTitle(); });
-$('#chMap').addEventListener('click', () => { mapAct = null; $('#chapters').classList.remove('hide'); drawChapters(); });
+$('#chMap').addEventListener('click', () => { mapAct = null; mapPart = null; $('#chapters').classList.remove('hide'); drawChapters(); });
 $('#cClose').addEventListener('click', () => $('#chapters').classList.add('hide'));
 $('#bGacha').addEventListener('click', openGacha);
 let gachaTop = null;
@@ -2882,7 +3123,7 @@ function drawStaticIcons() {
   drawStaticIcons(); drawTitle();
   const jobs = [buildTerrain(), ensureMech(save.mech), loadModel('rock', 'p_rock2', 22, 0), loadModel('crystal', 'p_crystal', 20, 0),
     loadMissile(), loadMoves(), loadWeapon('mpod', 'wm_mpod')];
-  for (const k in ET) jobs.push(loadModel(k, ET[k].file, ET[k].h, 0, ET[k]));
+  for (const k in ET) if (!ET[k].virt) jobs.push(loadModel(k, ET[k].file, ET[k].h, 0, ET[k]));
   let done = 0; jobs.forEach((j) => j.then(() => ($('#load').textContent = `불러오는 중 ${Math.round(++done / jobs.length * 100)}%`)));
   try {
     await Promise.all(jobs); initXF(); buildVFX(); buildLobby(); buildPools(); buildParticles(); buildDrones(); buildBarrier(); buildBeams(); buildBits(); mslInit(); tfInit();
