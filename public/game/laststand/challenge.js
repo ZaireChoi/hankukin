@@ -46,7 +46,7 @@
   // ───────── 보상 ─────────
   const maxG = () => { const c = S().chMax || 1; let r = 0; GATE.forEach((v, i) => { if (c >= v) r = i; }); return r; };
   const capR = (r) => WR[Math.min(WR.indexOf(r), maxG())];
-  const MYI = { chal: 'u_chal', pass: 'u_pass', ach: 'u_ach', scout: 'u_scout', rank: 'u_rank', squad: 'u_squad' };
+  const MYI = { chal: 'u_chal', pass: 'u_pass', ach: 'u_ach', scout: 'u_scout', rank: 'u_rank', squad: 'u_squad', event: 'u_event' };
   const ic = (k) => { if (MYI[k]) return `<img class="ico ii" src="img/icon/${MYI[k]}.webp?v=1" alt="" draggable="false">`; try { return LS.ico(k); } catch (e) { return ''; } };
   function rwFix(rw) { const o = Object.assign({}, rw); if (o.wpn) o.wpn = capR(o.wpn); if (o.part) o.part = capR(o.part); return o; }
   function rwHtml(rw, cls = '') {
@@ -168,6 +168,7 @@
   function onRunEnd(d) {
     const x = X(), w = x.wm, chal = d.chal || null, kind = chal && chal.kind;
     w.runs++; if (d.won) w.wins++; w.kills += d.kills || 0; if ((d.maxCombo || 0) >= 100) w.combo++; if (d.mech && !w.mechs.includes(d.mech)) w.mechs.push(d.mech);
+    { const rc = raceSt(); if (rc.id) { rc.k += d.kills || 0; postScore('lsrace-' + rc.id, rc.k); } }
     x.tot.runs++; x.tot.combo = Math.max(x.tot.combo || 0, d.maxCombo || 0);
     let xp = 15 + (d.won ? 15 : 0), html = '';
     if (kind === 'dc') {
@@ -361,10 +362,72 @@
   const weekend = () => { const g = new Date().getDay(); return g === 0 || g === 6; };
   const nextWeekend = () => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7)); return d; };
 
+  // ───────── 이벤트: 한정 레이스(금~일 격파 수 경쟁) · 이달의 출석 축제 · 주말 작전 안내 ─────────
+  const RACE_ST = [{ n: 500, rw: { gem: 30 } }, { n: 2000, rw: { ore: 20, chip: 10 } }, { n: 5000, rw: { gem: 80 } }, { n: 10000, rw: { core: 20000 } }, { n: 20000, rw: { gem: 200, part: 'SSR' } }];
+  const RK_RACE = [[1, 1, 1000], [2, 3, 600], [4, 10, 300], [11, 50, 150], [51, 1e9, 50]];
+  function raceNow() { const d = new Date(), wd = d.getDay(), back = wd === 5 ? 0 : wd === 6 ? 1 : wd === 0 ? 2 : -1;
+    if (back < 0) return { on: false, next: new Date(d.getFullYear(), d.getMonth(), d.getDate() + ((5 - wd + 7) % 7)) };
+    const fr = new Date(d.getFullYear(), d.getMonth(), d.getDate() - back); return { on: true, id: dayKey(fr), end: new Date(fr.getFullYear(), fr.getMonth(), fr.getDate() + 3) }; }
+  function raceSt() { const x = X(), R = raceNow(); const c = (x.race ||= { id: '', k: 0, got: {} });
+    if (c.id && (!R.on || R.id !== c.id)) { let n = 0; RACE_ST.forEach((s, i) => { if (c.k >= s.n && !c.got[i]) { LS.give(rwFix(s.rw)); n++; } }); if (n) setTimeout(() => LS.toast(`지난 레이스 단계 보상 ${n}개를 받았습니다`), 600); if (c.k > 0) x.racePrev = { id: c.id, k: c.k, settled: false }; c.id = ''; c.k = 0; c.got = {}; save(); }
+    if (R.on && !c.id) { c.id = R.id; c.k = 0; c.got = {}; }
+    return c; }
+  const raceDot = () => { try { const c = raceSt(); return !!c.id && RACE_ST.some((s, i) => c.k >= s.n && !c.got[i]); } catch (e) { return false; } };
+  async function settleRace() { const x = X(), p = x.racePrev, a = A(); if (!p || p.settled || !a || !a.user || !a.topScores) return;
+    try { const L = await a.topScores('lsrace-' + p.id, 300); const i = L.findIndex((e) => e.uid === a.user.uid || e.id === a.user.uid), rk = i + 1, row = RK_RACE.find((r) => rk && rk >= r[0] && rk <= r[1]) || RK_RACE[4];
+      p.settled = true; save(); LS.mail('한정 레이스 순위 보상', `지난 레이스(${p.id} 금요일 시작) 격파 ${fmtN(p.k)}기${rk ? ` · 순위 ${rk}위` : ''}.`, { gem: row[2] }); LS.toast('한정 레이스 순위 보상이 우편함에 도착했습니다'); } catch (e) { } }
+  const FEST = [{ gem: 50 }, { core: 5000 }, { ore: 15, chip: 8 }, { gem: 80 }, { core: 10000 }, { ore: 25, chip: 15 }, { gem: 150, part: 'SR' }];
+  const monthKey = () => 'S' + season().n;
+  function festSt() { const x = X(); if (!x.fest || x.fest.m !== monthKey()) x.fest = { m: monthKey(), got: 0, last: '' }; return x.fest; }
+  const festDot = () => { const f = festSt(); return f.got < 7 && f.last !== dayKey(); };
+  const evDot = () => festDot() || raceDot();
+  function vFest() {
+    const f = festSt(), end = season().en, canGet = f.got < 7 && f.last !== dayKey();
+    const cells = FEST.map((r, i) => { const got = i < f.got, now = i === f.got && canGet; return `<div class="lsx-pc ${got ? 'got' : ''} ${now ? 'ok' : ''} ${i === 6 ? 'big' : ''}"><span class="lv">${i + 1}일째</span>${rwHtml(r)}<button class="lsx-btn ${now ? '' : 'dk'}" data-a="fest" ${now ? '' : 'disabled'}>${got ? '받음' : now ? '받기' : '잠김'}</button></div>`; }).join('');
+    return `<div class="lsx-card lsx-ev"><b>시즌 출석 축제</b><span>이번 시즌(4주) 안에 7일을 들르면 날마다 한 칸씩 선물을 받습니다. 남은 기간 ${leftTxt(end)}</span></div><div class="lsx-card"><div class="lsx-pass" style="grid-auto-columns:minmax(108px,1fr)">${cells}</div>${f.got >= 7 ? '<p>이번 시즌 축제 선물을 모두 받았습니다. 다음 시즌에 다시 열립니다.</p>' : ''}</div>`;
+  }
+  function vRace() {
+    const c = raceSt(), R = raceNow();
+    if (!R.on) return `<div class="lsx-card lsx-ev off"><b>한정 레이스 · 기체 사냥</b><span>매주 금요일 0시부터 일요일 밤 12시까지 열립니다. 다음 레이스까지 ${leftTxt(R.next)}</span></div><div class="lsx-card"><p>레이스 동안 모든 출격(장 진행·도전 포함)에서 격파한 적 수로 겨룹니다. 격파 수에 따라 단계 보상을 받고, 끝난 뒤 순위 보상이 우편으로 옵니다.</p><div class="lsx-list" style="margin-top:8px">${RACE_ST.map((s) => `<div class="lsx-it"><div class="tx"><b>${fmtN(s.n)}기 격파</b></div>${rwHtml(s.rw)}</div>`).join('')}</div></div>`;
+    const stg = RACE_ST.map((s, i) => { const ok = c.k >= s.n, got = c.got[i]; return `<div class="lsx-it ${got ? 'done' : ''}"><div class="tx"><b>${fmtN(s.n)}기 격파</b><span class="lsx-row"><span class="lsx-bar2"><i style="width:${Math.min(1, c.k / s.n) * 100}%"></i></span><small>${fmtN(Math.min(c.k, s.n))} / ${fmtN(s.n)}</small></span></div>${rwHtml(s.rw)}<button class="lsx-btn" data-a="race" data-v="${i}" ${ok && !got ? '' : 'disabled'}>${got ? '받음' : ok ? '받기' : '진행 중'}</button></div>`; }).join('');
+    return `<div class="lsx-card lsx-ev"><b>한정 레이스 진행 중</b><span>남은 시간 ${leftTxt(R.end)} · 내 기록 ${fmtN(c.k)}기 격파</span></div><div class="lsx-card"><div class="k">단계 보상</div><div class="lsx-list" style="margin-top:8px">${stg}</div></div>
+      <div class="lsx-card"><div class="k">레이스 순위 · 순위 보상: 1위 결정 1,000 · 2~3위 600 · 4~10위 300 · 11~50위 150 · 참여 50 (끝난 뒤 첫 접속 때 우편)</div><div class="lsx-list" id="lsxRace" style="margin-top:8px"><p>순위를 불러오는 중…</p></div></div>`;
+  }
+  async function loadRace() {
+    const box = () => document.getElementById('lsxRace'); if (!box()) return; const c = raceSt();
+    let a = A(); for (let i = 0; i < 16 && !(a && a.topScores); i++) { await new Promise((r) => setTimeout(r, 250)); a = A(); }
+    if (!box()) return; if (!a || !a.topScores) { box().innerHTML = '<p>온라인 순위표에 연결되지 않았습니다. hankuk-in.com 에서 열면 순위가 보입니다.</p>'; return; }
+    if (a.user) { settleRace(); if (c.k > 0) await a.submitScore('lsrace-' + c.id, c.k, myName()).catch(() => { }); }
+    let L = []; try { L = (await a.topScores('lsrace-' + c.id, 50)).filter((e) => (e.score || 0) > 0); } catch (e) { if (box()) box().innerHTML = '<p>순위를 불러오지 못했습니다.</p>'; return; }
+    if (!box()) return; const me = a.user && a.user.uid;
+    box().innerHTML = (L.length ? L.map((e, i) => `<div class="lsx-rk ${e.uid === me || e.id === me ? 'me' : ''}"><b>${i + 1}</b><span>${esc(e.name || '파일럿')}</span><em>${fmtN(e.score)}기</em></div>`).join('') : '<p>아직 이번 레이스 기록이 없습니다. 첫 번째가 되어 보세요.</p>') + (a.user ? '' : '<p>로그인하면 내 기록이 순위에 올라갑니다 (랭킹 화면에서 로그인).</p>');
+  }
+  function vWeekendEv() {
+    return weekend() ? `<div class="lsx-card lsx-ev"><b>주말 작전 진행 중</b><span>일일 도전 보상 2배 · 패스 경험치 1.5배 · 남은 시간 ${leftTxt(nextMidnightOf(new Date().getDay() === 6 ? 2 : 1))}</span></div><div class="lsx-card"><div class="lsx-row"><p>지금 일일 도전에 나가면 보상이 두 배입니다.</p><span class="lsx-sp"></span><button class="go lsx-go" data-a="toDc">일일 도전으로</button></div></div>`
+      : `<div class="lsx-card lsx-ev off"><b>주말 작전</b><span>토·일요일에는 일일 도전 보상 2배 · 패스 경험치 1.5배. 시작까지 ${leftTxt(nextWeekend())}</span></div>`;
+  }
+  const nextMidnightOf = (days) => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + days); return d; };
+
+  // ───────── 도감: 기체 · 무기 등급 (처음 모을 때 결정) ─────────
+  const CD_WIMG = { N: 'pistol', A: 'rifle', R: 'shotgun', SR: 'katana', SSR: 'rail', UQ: 'beam', UR: 'feather' };
+  const CD_MECH = { N: 20, R: 40, SR: 80, SSR: 150, UR: 300 }, CD_WPN = { N: 10, A: 20, R: 30, SR: 60, SSR: 120, UQ: 200, UR: 400 };
+  function cdSt() { const x = X(); const c = (x.cd ||= { m: {}, w: {}, seenW: {} }); for (const w of ((S().wpn || {}).inv || [])) if (w && w.rar) c.seenW[w.rar] = 1; return c; }
+  const cdMechList = () => LS.MECHS.map((m) => ({ k: m.id, nm: m.nm, rar: m.rar, own: !!(S().own || {})[m.id], st: (S().own || {})[m.id] || 0, g: CD_MECH[m.rar] || 20 }));
+  const cdWpnList = () => { const c = cdSt(); return WR.map((r) => ({ k: r, nm: `${WRN[r]} 무기`, rar: r, own: !!c.seenW[r], g: CD_WPN[r] })); };
+  const cdDot = () => { const c = cdSt(); return cdMechList().some((m) => m.own && !c.m[m.k]) || cdWpnList().some((w) => w.own && !c.w[w.k]); };
+  const RC = (r) => `var(--${r === 'UQ' ? 'UR' : r === 'A' ? 'R' : r},#a7b0c2)`;
+  function vCodex(kind) {
+    const c = cdSt(), L = kind === 'm' ? cdMechList() : cdWpnList(), have = L.filter((x) => x.own).length, ready = L.filter((x) => x.own && !c[kind][x.k]).length;
+    const cells = L.map((x) => { const got = c[kind][x.k], ok = x.own && !got;
+      const pic = kind === 'm' ? `<img class="lsx-cdi" src="img/${x.k}.jpg?v=15" alt="" loading="lazy" style="${x.own ? '' : 'filter:brightness(.15) grayscale(1)'}">` : `<span class="lsx-cdw" style="--rc:${RC(x.rar)};${x.own ? '' : 'filter:brightness(.2) grayscale(1)'}">${(() => { try { return LS.ico2(CD_WIMG[x.rar] || 'rifle'); } catch (e) { return ic('wpn'); } })()}</span>`;
+      return `<div class="lsx-cd ${x.own ? '' : 'no'}" style="--rc:${RC(x.rar)}">${pic}<b>${x.own ? esc(x.nm) : '???'}</b>${kind === 'm' && x.own ? `<small>${'★'.repeat(x.st)}</small>` : `<small>${WRN[x.rar] || ''}</small>`}<button class="lsx-btn ${ok ? '' : 'dk'}" data-a="cd" data-v="${kind}|${x.k}" ${ok ? '' : 'disabled'}>${got ? '받음' : ok ? `${ic('gem')} ${x.g}` : '미발견'}</button></div>`; }).join('');
+    return `<div class="lsx-card"><div class="lsx-row"><div><div class="k">${kind === 'm' ? '기체 도감' : '무기 도감'} · 모은 것 ${have}/${L.length}</div><p>${kind === 'm' ? '기체를 처음 얻으면 등급에 따라 결정을 받습니다.' : '무기 등급을 처음 손에 넣으면 결정을 받습니다.'}</p></div><span class="lsx-sp"></span><button class="lsx-btn" data-a="cdAll" data-v="${kind}" ${ready ? '' : 'disabled'}>모두 받기${ready ? ` (${ready})` : ''}</button></div></div><div class="lsx-cds">${cells}</div>`;
+  }
+
   // ───────── 화면 ─────────
   const CSS = `
 #lsx-bar{position:absolute;top:8px;left:186px;display:flex;gap:4px;z-index:4}
-#lsx-bar .rl{width:56px;height:50px;font-size:10.5px;gap:3px}
+#lsx-bar .rl{width:52px;height:50px;font-size:10.5px;gap:3px}
 #lsx-bar .rl .ico{font-size:21px}
 #lsx-bar .lsx-tag{position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);padding:1px 5px;font:900 9px var(--ff);font-style:normal;white-space:nowrap;background:linear-gradient(180deg,#ffe08a,#ff9a3a);color:#1a0f08}
 #lsx-bar .rl small{position:absolute;left:0;right:0;bottom:-13px;font:800 9px var(--ff);color:var(--ac);letter-spacing:0;white-space:nowrap}
@@ -424,6 +487,13 @@
 .lsx-embb{width:46px;height:46px;border:0;background:#0a0e16;box-shadow:inset 0 0 0 1px var(--ln2);display:grid;place-items:center}.lsx-embb .ico{font-size:30px}.lsx-embb.on{box-shadow:inset 0 0 0 2px var(--ac);background:#f2b5441a}
 .lsx-ev{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 16px;background:linear-gradient(90deg,#ff9a3a33,#141b2aee 60%);box-shadow:inset 0 0 0 1px #ff9a3a66}
 .lsx-ev b{font:900 14px var(--ff);color:#ffd08a}.lsx-ev span{font-size:12.5px;color:#e6d9c4}.lsx-ev.off{background:linear-gradient(180deg,#141b2aee,#0b0f19ee);box-shadow:inset 0 0 0 1px var(--ln)}.lsx-ev.off b{color:var(--tx2)}
+.lsx-cds{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.lsx-cd{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px;background:linear-gradient(180deg,#141b2aee,#0b0f19ee);box-shadow:inset 0 0 0 1px var(--rc);text-align:center}
+.lsx-cd.no{box-shadow:inset 0 0 0 1px #ffffff14}
+.lsx-cd b{font-size:12px;line-height:1.25;min-height:30px;display:flex;align-items:center}.lsx-cd small{font-size:11px;color:var(--ac);min-height:14px}
+.lsx-cdi{width:100%;aspect-ratio:1;object-fit:cover;background:#0d1428}
+.lsx-cdw{width:100%;aspect-ratio:1;display:grid;place-items:center;background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--rc) 35%,transparent),#0d1428 70%);box-shadow:inset 0 0 0 1px var(--rc)}.lsx-cdw .ico{width:80%!important;height:80%!important;object-fit:contain;vertical-align:middle}
+.lsx-cd .lsx-btn{width:100%}
 #lsxOver{display:flex;flex-direction:column;align-items:center;gap:6px;margin:6px 0}
 #lsxOver:empty{display:none}
 .lsx-ovh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
@@ -437,7 +507,8 @@
   const BTNS = [
     { k: 'chal', nm: '도전', ic: 'chal', dot: () => dcOpen() && X().dc.n < DC_TRIES || raidOpen() && X().raid.n < RAID_TRIES || wmDot() },
     { k: 'pass', nm: '패스', ic: 'pass', dot: passDot },
-    { k: 'ach', nm: '업적', ic: 'ach', dot: achDot },
+    { k: 'event', nm: '이벤트', ic: 'event', dot: evDot },
+    { k: 'ach', nm: '업적', ic: 'ach', dot: () => achDot() || cdDot() },
     { k: 'idle', nm: '정찰', ic: 'scout', dot: idleDot },
     { k: 'squad', nm: '부대', ic: 'squad', dot: () => false },
     { k: 'rank', nm: '랭킹', ic: 'rank', dot: () => false },
@@ -449,10 +520,10 @@
     bar.querySelectorAll('button').forEach((b) => (b.onclick = () => openS(b.dataset.k)));
   }
 
-  const TITLES = { chal: ['chal', '도전'], pass: ['pass', '작전 패스'], ach: ['ach', '업적'], idle: ['scout', '정찰 보상'], rank: ['rank', '랭킹 · 계정'], squad: ['squad', '부대 · 친구'] };
-  const TABS = { squad: [['mine', '내 부대'], ['find', '부대 찾기'], ['rank', '부대 순위'], ['friend', '친구']], chal: [['dc', '일일 도전'], ['raid', '주간 토벌'], ['wm', '주간 임무']], rank: [['raid', '주간 토벌'], ['dc', '오늘의 도전'], ['prog', '작전 진행']] };
+  const TITLES = { chal: ['chal', '도전'], pass: ['pass', '작전 패스'], ach: ['ach', '업적 · 도감'], event: ['event', '이벤트'], idle: ['scout', '정찰 보상'], rank: ['rank', '랭킹 · 계정'], squad: ['squad', '부대 · 친구'] };
+  const TABS = { ach: [['ach', '업적'], ['cdm', '기체 도감'], ['cdw', '무기 도감']], event: [['race', '한정 레이스'], ['fest', '출석 축제'], ['wkd', '주말 작전']], squad: [['mine', '내 부대'], ['find', '부대 찾기'], ['rank', '부대 순위'], ['friend', '친구']], chal: [['dc', '일일 도전'], ['raid', '주간 토벌'], ['wm', '주간 임무']], rank: [['raid', '주간 토벌'], ['dc', '오늘의 도전'], ['prog', '작전 진행']] };
   function openS(k, t) {
-    cur = k; tab = t || (TABS[k] ? TABS[k][0][0] : null);
+    cur = k; tab = t || (k === 'event' ? (raceNow().on ? 'race' : 'fest') : TABS[k] ? TABS[k][0][0] : null);
     let s = document.getElementById('lsxS');
     if (!s) { s = el('div', { id: 'lsxS', class: 'ov panel scr hide' }, `<div class="scrH"><h2 id="lsxT"></h2><div class="tabs" id="lsxTabs"></div><button class="close" id="lsxC">✕</button></div><div class="lsx-b" id="lsxB"></div>`); document.body.appendChild(s); s.querySelector('#lsxC').onclick = closeS; }
     s.classList.remove('hide'); render();
@@ -461,20 +532,27 @@
   function render() {
     if (!cur) return; X();
     const [ik, nm] = TITLES[cur]; document.getElementById('lsxT').innerHTML = `${ic(ik)}${nm}`;
-    const T = TABS[cur] || [], dots = { dc: () => dcOpen() && X().dc.n < DC_TRIES, raid: () => raidOpen() && X().raid.n < RAID_TRIES, wm: wmDot };
-    document.getElementById('lsxTabs').innerHTML = T.map(([k, n]) => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${n}${cur === 'chal' && dots[k] && dots[k]() ? '<i class="dot"></i>' : ''}</button>`).join('');
+    const T = TABS[cur] || [], dots = { dc: () => dcOpen() && X().dc.n < DC_TRIES, raid: () => raidOpen() && X().raid.n < RAID_TRIES, wm: wmDot, ach: achDot, cdm: () => { const c = cdSt(); return cdMechList().some((m) => m.own && !c.m[m.k]); }, cdw: () => { const c = cdSt(); return cdWpnList().some((w) => w.own && !c.w[w.k]); }, race: raceDot, fest: festDot };
+    document.getElementById('lsxTabs').innerHTML = T.map(([k, n]) => `<button data-t="${k}" class="${k === tab ? 'on' : ''}">${n}${cur !== 'rank' && cur !== 'squad' && dots[k] && dots[k]() ? '<i class="dot"></i>' : ''}</button>`).join('');
     document.querySelectorAll('#lsxTabs button').forEach((b) => (b.onclick = () => { tab = b.dataset.t; render(); }));
     const B = document.getElementById('lsxB');
     if (cur === 'squad') { B.innerHTML = '<div class="lsx-card"><p>불러오는 중…</p></div>'; vSquad(B, tab); return; }
-    B.innerHTML = ({ chal: { dc: vDc, raid: vRaid, wm: vWm }[tab], pass: vPass, ach: vAch, idle: vIdle, rank: vRank })[cur]();
+    B.innerHTML = ({ chal: { dc: vDc, raid: vRaid, wm: vWm }[tab], pass: vPass, ach: { ach: vAch, cdm: () => vCodex('m'), cdw: () => vCodex('w') }[tab], event: { race: vRace, fest: vFest, wkd: vWeekendEv }[tab], idle: vIdle, rank: vRank })[cur]();
     B.querySelectorAll('[data-a]').forEach((b) => (b.onclick = () => act(b.dataset.a, b.dataset.v)));
     if (cur === 'rank') loadRank();
+    if (cur === 'event' && tab === 'race' && raceNow().on) loadRace();
   }
   const SOA = ['frAdd', 'frOk', 'frNo', 'frGift', 'frTake', 'frLink', 'gFind', 'gMake', 'gJoin', 'gAtt', 'gAttGet', 'gGoal', 'gKick', 'gLeave'];
   function act(a, v) {
     if (SOA.includes(a)) return soAct(a, v);
     if (a === 'gEmb') { SO().gemb = +v; document.querySelectorAll('.lsx-embb').forEach((b) => b.classList.toggle('on', b.dataset.v === v)); return; }
     const x = X();
+    if (a === 'toDc') return openS('chal', 'dc');
+    if (a === 'fest') { const f = festSt(); if (f.got < 7 && f.last !== dayKey()) { const r = FEST[f.got]; f.got++; f.last = dayKey(); give(r, 20); LS.toast('축제 선물을 받았습니다'); } return render(); }
+    if (a === 'race') { const c = raceSt(), i = +v, s = RACE_ST[i]; if (s && c.id && !c.got[i] && c.k >= s.n) { c.got[i] = 1; give(s.rw, 20); LS.toast('레이스 단계 보상을 받았습니다'); } return render(); }
+    if (a === 'cd' || a === 'cdAll') { const c = cdSt(); let g = 0, n = 0; const take = (kind, it) => { if (it.own && !c[kind][it.k]) { c[kind][it.k] = 1; g += it.g; n++; } };
+      if (a === 'cd') { const [kind, k] = String(v).split('|'); const it = (kind === 'm' ? cdMechList() : cdWpnList()).find((q) => q.k === k); if (it) take(kind, it); } else { const kind = v; for (const it of (kind === 'm' ? cdMechList() : cdWpnList())) take(kind, it); }
+      if (n) { give({ gem: g }); LS.toast(`도감 ${n}칸 · 결정 ${g}`); } return render(); }
     if (a === 'dc') dcStart();
     else if (a === 'raid') raidStart(+v || 0);
     else if (a === 'wch') { const i = +v, c = WCH[i]; if (wmPts() >= c.p && !x.wm.got[i]) { x.wm.got[i] = 1; give(c.rw, 40); LS.toast('주간 상자를 열었습니다'); } render(); }
