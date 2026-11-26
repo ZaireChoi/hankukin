@@ -967,10 +967,33 @@ if (window.IS_EN) document.title = 'K Zombi';
     if (!code) return;
     const k = cpnHash(CPN_SALT + code), c = CPN[k];
     S.cpn = S.cpn || {};
-    if (!c) { toast('없는 코드예요'); return; }
-    if (S.cpn[k] && !c.rep) { toast('이미 쓴 코드예요'); return; }
-    if (c.starter) { if (S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; } S.cpn[k] = 1; grantStarter(); return; }
-    S.cpn[k] = (S.cpn[k] || 0) + 1; S.jade += c.jade; save(); closeModal(); toast('쿠폰 보상: 옥 ' + fmt(c.jade)); refresh();
+    if (c && S.cpn[k] && !c.rep) { toast('이미 쓴 코드예요'); return; }
+    const grant = (kk, jade, starter) => {
+      if (starter) { if (S.starter) { toast('스타트팩은 계정당 한 번이에요'); return; } S.cpn[kk] = 1; grantStarter(); return; }
+      S.cpn[kk] = (S.cpn[kk] || 0) + 1; S.jade += jade; save(); closeModal(); toast('쿠폰 보상: 옥 ' + fmt(jade)); refresh();
+    };
+    const local = () => { if (!c) { toast('없는 코드예요'); return; } grant(k, c.jade, c.starter); };
+    /* 로그인했으면 서버에서 계정당 사용 횟수를 먼저 확인(3초 넘거나 실패하면 예전처럼 기기에서 확인) */
+    const u = accUser();
+    if (!u || typeof u.getIdToken !== 'function' || !/hankuk-in\.com$/.test(location.hostname)) return local();
+    if (useCoupon.busy) return; useCoupon.busy = 1;
+    (async () => {
+      let r = null;
+      try {
+        const to = new Promise((_, no) => setTimeout(() => no(new Error('timeout')), 3000));
+        const tk = await Promise.race([u.getIdToken(), to]);
+        const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 3000);
+        const res = await fetch('/api/kzcoupon/redeem', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + tk }, body: JSON.stringify({ code }), signal: ctl.signal });
+        clearTimeout(tm); r = await res.json().catch(() => null);
+      } catch (e) { r = null; }
+      useCoupon.busy = 0;
+      if (r && r.ok === false && r.code === 'USED') { toast('이미 쓴 코드예요'); return; }
+      if (r && r.ok && r.mode === 'server' && r.receipt && r.reward) {
+        S.cpnR = S.cpnR || {}; const rid = String(r.receipt.sig || '').slice(0, 16); if (!rid || S.cpnR[rid]) return; S.cpnR[rid] = 1;
+        grant(String(r.key || k), +r.reward.jade || 0, !!r.reward.starter); return;
+      }
+      local();
+    })();
   }
   function settingsModal() {
     modal('<h3 class="stroke">설정</h3>' + accountBox() + '<div class="row"><div class="btn ' + (S.music ? 'g' : 'b') + '" data-act="toggleMusic">' + ic(S.music ? 'note' : 'noteOff').replace('class="ic ', 'style="width:40px;height:40px" class="ic ') + (S.music ? '음악 켬' : '음악 끔') + '</div></div>' +
