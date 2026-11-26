@@ -876,10 +876,12 @@ function levelChoices() {
   const ev = evoReady(); if (ev.length) { const id = ev[0], S0 = SKILLS.find(s => s.id === id); return [{ id: 'ev_' + id, evo: id, n: D.EVO[id].n, kind: 'evo', max: 1, c: S0.c, d: () => D.AWAKE[id] || '진화!' }, ...levelChoicesBase().slice(0, 2)]; }
   return levelChoicesBase();
 }
+function skSetOk(s) { if (s.kind !== 'atk' || s.hero || !G.skSet) return true; return G.skSet.indexOf(s.id) >= 0 || skLv(s.id) > 0; }   /* 출전 전 기술 묶음 */
+function loadSkSet() { G.skSet = null; let L = null; try { L = JSON.parse(localStorage.getItem('kz_skset') || 'null'); } catch (e) {} if (!Array.isArray(L) || !L.length) return; const av = SKILLS.filter(s => s.kind === 'atk' && !s.hero && L.indexOf(s.id) >= 0 && (!s.act || actNowSk() >= s.act) && (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))); if (av.length >= 3) G.skSet = av.map(s => s.id); }
 function actNowSk() { return G && G.cfg && G.cfg.act >= 3 ? G.cfg.act : G && G.nm ? 2 : 1; }   /* 막마다 새 기술(사용자 11-28: 기술이 매번 같아 지루함) */
 function levelChoicesBase() {
   const ownAtk = SKILLS.filter(s => s.kind === 'atk' && skLv(s.id) > 0).length;
-  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (!s.act || actNowSk() >= s.act) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
+  const pool = SKILLS.filter(s => skLv(s.id) < s.max && (!s.need || s.need(G)) && (!s.act || actNowSk() >= s.act) && skSetOk(s) && (s.hero ? G.comps.some(c => c.active && c.id === s.hero) : (!D.skUnlocked || D.skUnlocked(s.id, G.ch, G.nm))) && !(s.kind === 'atk' && !skLv(s.id) && ownAtk >= 6));
   const w = pool.map(s => (s.kind === 'atk' ? (skLv(s.id) ? 3 : 2.2) : s.hero ? 1.6 : 1) * (s.id === 'repair' && G.shrine.hp < G.shrine.max * 0.5 ? 3 : 1));
   const out = [];
   while (out.length < 3 && pool.length) { let tot = w.reduce((a, b) => a + b, 0), r = Math.random() * tot, i = 0; while (r > w[i]) { r -= w[i]; i++; } out.push(pool.splice(i, 1)[0]); w.splice(i, 1); }
@@ -2818,8 +2820,8 @@ function logFinish(res) {
 /* ---------- 바깥과 잇는 창구 ---------- */
 const JZB = window.JZB = {
   buildWalls,
-  testLevelUp: o => { if (!G) return 0; o = o || {}; if (o.sk) G.sk = Object.assign({}, o.sk); if (o.legend) G.lgForce = 1; if (o.nm) G.nm = true; openLevel(); return 1; },   /* 시험용(화면 확인), 사용자 흐름에서는 안 불림 */
-  start: cfg => { newGame(cfg); try { setTrait(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
+  testLevelUp: o => { if (!G) return 0; o = o || {}; if (o.build) { const em = PADS.map((q, i) => i).filter(i => !G.turrets.some(t => t.pad === i)); if (em.length) { G.gold += 9999; G._fb = 1; build(em[0], o.build); G._fb = 0; } } if (o.sk) G.sk = Object.assign({}, o.sk); if (o.legend) G.lgForce = 1; if (o.nm) G.nm = true; openLevel(); return 1; },   /* 시험용(화면 확인), 사용자 흐름에서는 안 불림 */
+  start: cfg => { newGame(cfg); try { setTrait(); } catch (e) {} try { loadSkSet(); } catch (e) {} try { logInit(); } catch (e) {} try { newBuildIntro(); } catch (e) {} try { newSkillIntro(); } catch (e) {} },
   hide: () => { stage.style.display = 'none'; setBgm(''); G = null; },
   onEnd: defaultEnd,
   CHAPTERS: D.CHAPTERS.map(c => ({ n: c.n, name: c.name, theme: c.theme, waves: c.nights })),
