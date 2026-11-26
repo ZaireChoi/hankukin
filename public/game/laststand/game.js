@@ -1013,7 +1013,7 @@ function readMove() {
 const save = (() => { try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || {}; } catch (e) { return {}; } })();
 save.maxThreat ||= 1; save.best ||= {}; save.mech ||= 'mech4'; save.threat ||= 1;
 // 성장 자료: 코어(재화), 가진 기체, 격납고 강화, 출석·임무, 누적 기록
-save.core ??= 0; save.own ??= { mech4: 1, m_samurai: 1, m_striker: 1 }; save.up ??= {}; save.daily ??= {}; save.stat ??= { runs: 0, kills: 0, wins: 0 };
+save.cpn ??= []; save.core ??= 0; save.own ??= { mech4: 1, m_samurai: 1, m_striker: 1 }; save.up ??= {}; save.daily ??= {}; save.stat ??= { runs: 0, kills: 0, wins: 0 };
 if (!save.own[save.mech]) save.mech = 'mech4';
 save.gem ??= 300; save.stars ??= {}; save.pity ??= { n: 0 }; save.chMax ??= Math.min(10, Math.max(1, save.maxThreat || 1)); save.ch ??= Math.min(save.chMax, save.threat || 1);
 if (!save.stv) { const oc = save.chMax || 1; save.chMax = Math.min(24, 1 + Math.round((oc - 1) * 23 / 9)); const ns = {}; for (let i = 1; i < save.chMax; i++) ns[i] = 1; save.stars = ns; save.ch = save.chMax; save.stv = 2; }
@@ -3529,9 +3529,9 @@ function buyCrate(i) {
 function drawShopHead() {
   $('#gTitle').innerHTML = `${ico('shop')}상점`;
   $('#gCur').innerHTML = `<span class="cur">${curHtml('core')}</span><span class="cur gem">${curHtml('gem')}</span>`; bindCur($('#gCur'));
-  $('#gTabs').innerHTML = [['mech', '기체 모집'], ['wpn', '무기 보급'], ['gem', '결정 얻기']].map(([k, n]) => `<button data-t="${k}" class="${shopTab === k ? 'on' : ''}">${n}</button>`).join('');
+  $('#gTabs').innerHTML = [['mech', '기체 모집'], ['wpn', '무기 보급'], ['gem', '결정 얻기'], ['cpn', '쿠폰']].map(([k, n]) => `<button data-t="${k}" class="${shopTab === k ? 'on' : ''}">${n}</button>`).join('');
   $('#gTabs').querySelectorAll('button').forEach((b) => (b.onclick = () => { shopTab = b.dataset.t; drawGacha(); }));
-  for (const [k, id] of [['mech', 'shopMech'], ['wpn', 'shopWpn'], ['gem', 'shopGem']]) $('#' + id).classList.toggle('hide', shopTab !== k);
+  for (const [k, id] of [['mech', 'shopMech'], ['wpn', 'shopWpn'], ['gem', 'shopGem'], ['cpn', 'shopCpn']]) $('#' + id).classList.toggle('hide', shopTab !== k);
 }
 function drawShopWpn(keep) {
   const res = keep ? ($('#crateRes') || {}).innerHTML || '' : '';
@@ -3541,6 +3541,28 @@ function drawShopWpn(keep) {
     + `<div id="crateRes">${res}</div><p class="fine">무기의 계열은 무작위이며 35%는 지금 고른 기체의 계열로 나옵니다 · 전설·신화 무기는 고유 해방을 가집니다 · 확률은 표에 적힌 그대로입니다</p>`;
   $('#shopWpn').querySelectorAll('.crate button').forEach((b) => (b.onclick = () => buyCrate(+b.dataset.i)));
   if ($('#toArms2')) $('#toArms2').onclick = () => { $('#gacha').classList.add('hide'); openArsenal('wpn'); };
+}
+// ───────── 쿠폰 ─────────
+const cpnNorm = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9가-힣]/g, '');
+const cpnHash = (s) => { let x = 5381; for (const c of cpnNorm(s)) x = ((x * 33) ^ c.charCodeAt(0)) >>> 0; return x.toString(36); };
+const COUPONS = {
+  '1nc94ca': { nm: '모든 기동전사 해금', run() { let n = 0; for (const m of MECHS) if (!save.own[m.id]) { save.own[m.id] = 1; n++; } return n ? `기동전사 ${n}기를 새로 얻었습니다. 이제 ${MECHS.length}기 모두 쓸 수 있습니다.` : `이미 ${MECHS.length}기를 모두 가지고 있습니다.`; } },
+};
+function redeemCoupon(code) {
+  const k = cpnHash(code), C = COUPONS[k]; save.cpn ??= [];
+  if (!cpnNorm(code)) return { ok: false, msg: '쿠폰 번호를 넣어 주세요.' };
+  if (!C) return { ok: false, msg: '없는 쿠폰 번호입니다. 다시 확인해 주세요.' };
+  if (save.cpn.includes(k)) { const msg = C.run(); persist(); return { ok: true, msg: '이미 쓴 쿠폰입니다. ' + msg }; }
+  const msg = C.run(); save.cpn.push(k); persist(); return { ok: true, nm: C.nm, msg };
+}
+function drawShopCpn() {
+  const used = (save.cpn || []).map((k) => COUPONS[k]?.nm).filter(Boolean);
+  $('#shopCpn').innerHTML = `<div class="cpnBox"><div class="cpnH">${ico2('gacha', '#f2b544')}<span><b>쿠폰 입력</b><small>받은 쿠폰 번호를 넣고 사용을 누르세요. 대소문자·띄어쓰기는 상관없습니다.</small></span></div>
+    <div class="cpnRow"><input id="cpnIn" maxlength="24" autocomplete="off" spellcheck="false" placeholder="쿠폰 번호"><button class="go small" id="cpnGo">사용</button></div><p class="cpnMsg" id="cpnMsg"></p>
+    ${used.length ? `<p class="fine">사용한 쿠폰: ${used.join(' · ')}</p>` : ''}</div>`;
+  const go = () => { const r = redeemCoupon($('#cpnIn').value), el = $('#cpnMsg'); el.textContent = r.msg; el.className = 'cpnMsg ' + (r.ok ? 'ok' : 'bad');
+    if (r.ok) { sfx.lvl(); screenFlash(0xf2b544, .3, .5); try { drawTitle(); } catch (e) {} try { drawShopHead(); } catch (e) {} drawShopCpn(); $('#cpnMsg').textContent = r.msg; $('#cpnMsg').className = 'cpnMsg ok'; } };
+  $('#cpnGo').onclick = go; $('#cpnIn').onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') go(); };
 }
 function drawShopGem() {
   const L0 = LOGIN[(save.daily.streak || 0) % 7];
@@ -3758,7 +3780,7 @@ function doPull(n) {
   drawGacha(); drawTitle();
 }
 function drawGacha() {
-  drawShopHead(); if (shopTab === 'wpn') drawShopWpn(true); if (shopTab === 'gem') drawShopGem();
+  drawShopHead(); if (shopTab === 'wpn') drawShopWpn(true); if (shopTab === 'gem') drawShopGem(); if (shopTab === 'cpn') drawShopCpn();
   $('#pull1').innerHTML = `<b>1회 모집</b><small>${ico('gem')} ${GACHA.one}</small>`; $('#pull10').innerHTML = `<b>10회 모집</b><small>${ico('gem')} ${GACHA.ten} · 영웅 이상 1개 확정</small>`;
   $('#pull1').disabled = save.gem < GACHA.one; $('#pull10').disabled = save.gem < GACHA.ten;
   const left = GACHA.pity - (save.pity.n || 0);

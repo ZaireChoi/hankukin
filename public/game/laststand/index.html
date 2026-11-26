@@ -592,6 +592,12 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
   .scrH{padding-left:12px}.curS{display:none}
 }
 
+/* 쿠폰 */
+.cpnBox{max-width:560px;margin:10px auto;padding:18px;background:#10141ccc;border:1px solid #2a3140;clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+.cpnH{display:flex;gap:12px;align-items:center;text-align:left}.cpnH .skt{flex:0 0 auto}.cpnH b{display:block;font-size:17px;color:#f2e6cc}.cpnH small{color:#9aa3b5;font-size:12.5px;line-height:1.45}
+.cpnRow{display:flex;gap:8px;margin-top:14px}.cpnRow input{flex:1;min-width:0;padding:11px 12px;background:#070a10;border:1px solid #3a4356;color:#fff;font-size:17px;letter-spacing:3px;text-transform:uppercase;outline:none}
+.cpnRow input:focus{border-color:#f2b544}.cpnRow .go{margin:0;padding:10px 22px}
+.cpnMsg{min-height:20px;margin:10px 0 0;font-size:14px}.cpnMsg.ok{color:#9ff0a8}.cpnMsg.bad{color:#ff9a8a}
 </style>
 </head>
 <body>
@@ -651,6 +657,7 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
   </div>
   <div class="shopT hide" id="shopWpn"></div>
   <div class="shopT hide" id="shopGem"></div>
+  <div class="shopT hide" id="shopCpn"></div>
 </div>
 <div id="hangar" class="ov hide panel"><button class="close" id="hClose">✕</button><h2 id="hTitle"></h2><p class="pnote">모든 기체에 영구 적용됩니다 · 보유 코어 <b id="coreH">0</b></p><div id="upList"></div></div>
 <div id="arsenal" class="ov hide panel scr"><div class="scrH"><h2 id="aTitle"></h2><div class="tabs" id="aTabs"></div><div class="curS" id="aCur"></div><button class="close" id="aClose">✕</button></div><p class="snote" id="aNote"></p><div id="arsBody"></div></div>
@@ -669,6 +676,6 @@ details.rate{margin-top:10px;font-size:12px;color:#9aa6bd}details.rate summary{c
 <script src="lib/ascend_tf3.js?v=3"></script>
 <script src="lib/galaxy.js?v=1"></script>
 <script src="lib/gicons.js?v=1"></script>
-<script type="module" src="game.js?v=24"></script>
+<script type="module" src="game.js?v=25"></script>
 </body>
 </html>
