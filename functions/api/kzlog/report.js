@@ -25,6 +25,24 @@ async function saToken(sa) {
   return TOK.v;
 }
 const FS = 'https://firestore.googleapis.com/v1/projects/' + PROJECT + '/databases/(default)/documents';
+const b64uDec = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0));
+const ADMIN_H = ['1e0c8a2cfea8762da8a66aa642bd97ee25ffc1fbe7c68ebe066178b99e9b7e17'];   /* 관리자 메일 sha256 (메일 원문은 저장 안 함) */
+const sha256 = async s => [...new Uint8Array(await crypto.subtle.digest('SHA-256', enc(String(s).toLowerCase())))].map(b => b.toString(16).padStart(2, '0')).join('');
+let JWKS = null;
+async function verifyIdToken(tok) {
+  const p = String(tok || '').split('.'); if (p.length !== 3) throw new Error('BAD_TOKEN');
+  const head = JSON.parse(new TextDecoder().decode(b64uDec(p[0]))), body = JSON.parse(new TextDecoder().decode(b64uDec(p[1])));
+  const now = Math.floor(Date.now() / 1000);
+  if (head.alg !== 'RS256' || body.aud !== PROJECT || body.iss !== 'https://securetoken.google.com/' + PROJECT || !body.sub || body.exp < now || body.iat > now + 300) throw new Error('BAD_TOKEN');
+  if (!JWKS || JWKS.exp < Date.now()) { const r = await fetch('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'); JWKS = { keys: (await r.json()).keys || [], exp: Date.now() + 3600e3 }; }
+  const jwk = JWKS.keys.find(k => k.kid === head.kid); if (!jwk) throw new Error('BAD_TOKEN');
+  const key = await crypto.subtle.importKey('jwk', jwk, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['verify']);
+  if (!(await crypto.subtle.verify('RSASSA-PKCS1-v1_5', key, b64uDec(p[2]), enc(p[0] + '.' + p[1])))) throw new Error('BAD_TOKEN');
+  return body;
+}
+/* 최근 오류 200건: Cloudflare 캐시(데이터센터마다 따로, 7일) — Firestore 권한이 없을 때 관리자 보기용 */
+const RK = 'https://kzlog.local/recent';
+async function pushRecent(rec) { try { const c = caches.default; const old = await c.match(RK); let a = []; if (old) a = await old.json().catch(() => []); a.unshift(rec); a = a.slice(0, 200); await c.put(RK, new Response(JSON.stringify(a), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' } })); } catch (e) {} }
 const S = (v, n) => String(v == null ? '' : v).slice(0, n || 200);
 const N = v => (isFinite(+v) ? +v : 0);
 
@@ -42,6 +60,7 @@ export async function onRequestPost({ request, env }) {
     t: new Date().toISOString()
   };
   const day = rec.t.slice(0, 10).replace(/-/g, '');
+  await pushRecent(rec);
   let sa; try { sa = JSON.parse(env.GP_SA_JSON || ''); } catch (e) { sa = null; }
   if (!sa) { console.log('kzlog', JSON.stringify(rec)); return J({ ok: true, mode: 'log' }); }
   try {
@@ -56,5 +75,13 @@ export async function onRequestPost({ request, env }) {
     if (!wr.ok) { console.log('kzlog', JSON.stringify(rec)); return J({ ok: true, mode: 'log' }); }
     return J({ ok: true, mode: 'fs' });
   } catch (e) { console.log('kzlog', JSON.stringify(rec)); return J({ ok: true, mode: 'log' }); }
+}
+/* 관리자 보기: GET + Firebase 로그인 토큰(관리자 메일만) → 최근 오류 목록 */
+export async function onRequestGet({ request }) {
+  const tok = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  let u; try { u = await verifyIdToken(tok); } catch (e) { return J({ ok: false, code: 'LOGIN_REQUIRED' }, 401); }
+  if (!u.email || !u.email_verified || !ADMIN_H.includes(await sha256(u.email))) return J({ ok: false, code: 'NOT_ADMIN' }, 403);
+  let a = []; try { const old = await caches.default.match(RK); if (old) a = await old.json(); } catch (e) {}
+  return J({ ok: true, items: a, note: 'Cloudflare 데이터센터별 최근 200건' });
 }
 export const onRequest = () => J({ ok: false, code: 'METHOD' }, 405);
